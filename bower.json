@@ -1,0 +1,26 @@
+{
+  "name": "image-editor",
+  "version": "0.0.0",
+  "authors": [
+    "NHNEnt FE Development Team <dl_javascript@nhnent.com>"
+  ],
+  "description": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "tui-code-snippet": "^1.0.7",
+    "jquery": "1.8.3",
+    "fabric.js": "fabric#^1.5.0"
+  },
+  "devDependencies": {
+    "json2": "*",
+    "html5shiv": "^3.7.3",
+    "ExplorerCanvas": "https://github.com/GerHobbelt/excanvas.git"
+  }
+}
