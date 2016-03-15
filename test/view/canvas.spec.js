@@ -1,20 +1,15 @@
 'use strict';
 
-var Canvas = require('../../src/js/view/canvas');
+var Canvas = require('./../../src/js/view/canvas');
 
-describe('canvas', function() {
-    var editorMock = {};
+describe('Canvas view', function() {
+    var canvas;
 
-    it('should have viewName', function() {
-        var canvas = new Canvas(editorMock);
-
-        expect(canvas.getName()).toEqual('canvas');
+    beforeEach(function() {
+        canvas = new Canvas({});
     });
 
-    it('should throw error when call a not implemented render method', function() {
-        var canvas = new Canvas(editorMock),
-            renderMethod = (delete canvas.render) && tui.util.bind(canvas.render, canvas);
-
-        expect(renderMethod).toThrowError(/canvas.*render/);
+    it('should have view name', function() {
+        expect(canvas.getName()).toEqual('canvas');
     });
 });

@@ -1,10 +1,11 @@
 'use strict';
-var View = require('./../base/view');
+var View = require('./../interface/view');
 
 var Menu = tui.util.defineClass(View, {
     init: function() {
-        View.call(this, 'menu');
-    }
+    },
+
+    name: 'menu'
 });
 
 module.exports = Menu;

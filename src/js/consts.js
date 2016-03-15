@@ -2,5 +2,10 @@
 
 module.exports = {
     CLASSNAME_PREFIX: 'tui-image-editor',
-    MSG_NOT_IMPLEMENTED: 'Not implemented method'
+
+    messages: {
+        NOT_IMPLEMENTED: 'You should implement this method',
+        NO_VIEW_NAME: 'You should set a view name',
+        NO_ELEMENT: 'You should render element(s)'
+    }
 };
