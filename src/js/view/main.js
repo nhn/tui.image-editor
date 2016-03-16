@@ -2,7 +2,8 @@
 var View = require('./../interface/view'),
     Menu = require('./menu'),
     Canvas = require('./canvas'),
-    Detail = require('./detail');
+    Detail = require('./detail'),
+    consts = require('../consts');
 var template = require('./../../template/main.hbs');
 
 var Main = tui.util.defineClass(View, {
@@ -13,7 +14,7 @@ var Main = tui.util.defineClass(View, {
          * Components broker
          * @type {Broker}
          */
-        this.borker = broker;
+        this.broker = broker;
 
         /**
          * Child views
@@ -41,7 +42,7 @@ var Main = tui.util.defineClass(View, {
      * @type {Object}
      */
     templateContext: {
-        className: 'tui-image-editor-main'
+        className: consts.CLASSNAME_PREFIX + '-main'
     },
 
     addChild: function(view) {
@@ -63,6 +64,13 @@ var Main = tui.util.defineClass(View, {
         }
     },
 
+    clearChildren: function() {
+        tui.util.forEach(this.children, function(view) {
+            view.destroy();
+        });
+        this.children = {};
+    },
+
     doAfterRender: function() {
         this.addChild(new Menu(this));
         this.addChild(new Canvas(this));
@@ -73,11 +81,8 @@ var Main = tui.util.defineClass(View, {
         this.clearChildren();
     },
 
-    clearChildren: function() {
-        tui.util.forEach(this.children, function(view) {
-            view.destroy();
-        });
-        this.children = {};
+    postCommand: function(data, callback) {
+        this.broker.receive(data, callback);
     }
 });
 

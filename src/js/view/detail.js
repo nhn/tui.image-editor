@@ -1,6 +1,7 @@
 'use strict';
 var View = require('./../interface/view'),
-    template = require('./../../template/detail.hbs');
+    consts = require('./../consts');
+var template = require('./../../template/detail.hbs');
 
 var Detail = tui.util.defineClass(View, {
     init: function(parent) {
@@ -12,7 +13,7 @@ var Detail = tui.util.defineClass(View, {
     name: 'detail',
 
     templateContext: {
-        className: 'tui-image-editor-detail'
+        className: consts.CLASSNAME_PREFIX + '-detail'
     },
 
     template: template

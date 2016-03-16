@@ -3,6 +3,10 @@
 var Broker = tui.util.defineClass({
     init: function() {
 
+    },
+
+    receive: function() {
+
     }
 });
 

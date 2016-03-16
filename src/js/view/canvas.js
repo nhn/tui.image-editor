@@ -1,5 +1,6 @@
 'use strict';
-var View = require('./../interface/view');
+var View = require('./../interface/view'),
+    consts = require('./../consts');
 var template = require('./../../template/canvas.hbs');
 
 var Canvas = tui.util.defineClass(View, {
@@ -12,7 +13,7 @@ var Canvas = tui.util.defineClass(View, {
     name: 'canvas',
 
     templateContext: {
-        className: 'tui-image-editor-canvas'
+        className: consts.CLASSNAME_PREFIX + '-canvas'
     },
 
     template: template

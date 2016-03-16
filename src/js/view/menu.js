@@ -1,5 +1,6 @@
 'use strict';
-var View = require('./../interface/view');
+var View = require('./../interface/view'),
+    consts = require('./../consts');
 var template = require('./../../template/menu.hbs');
 
 var Menu = tui.util.defineClass(View, {
@@ -12,7 +13,7 @@ var Menu = tui.util.defineClass(View, {
     name: 'menu',
 
     templateContext: {
-        className: 'tui-image-editor-menu'
+        className: consts.CLASSNAME_PREFIX + '-menu'
     },
 
     template: template
