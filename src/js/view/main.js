@@ -19,7 +19,7 @@ var Main = tui.util.defineClass(View, {
          * Child views
          * @type {Object<string, View>}
          */
-        this.childViews = {};
+        this.children = {};
 
         this.render();
     },
@@ -44,17 +44,17 @@ var Main = tui.util.defineClass(View, {
         className: 'tui-image-editor-main'
     },
 
-    addView: function(view) {
+    addChild: function(view) {
         var name = view.getName(),
             el = view.getElement();
 
-        this.removeView(name);
-        this.childViews[name] = view;
+        this.removeChild(name);
+        this.children[name] = view;
         this.$element.append(el);
     },
 
-    removeView: function(viewName) {
-        var views = this.childViews,
+    removeChild: function(viewName) {
+        var views = this.children,
             view = views[viewName];
 
         if (view) {
@@ -64,9 +64,9 @@ var Main = tui.util.defineClass(View, {
     },
 
     doAfterRender: function() {
-        this.addView(new Menu(this));
-        this.addView(new Canvas(this));
-        this.addView(new Detail(this));
+        this.addChild(new Menu(this));
+        this.addChild(new Canvas(this));
+        this.addChild(new Detail(this));
     },
 
     doAfterDestroy: function() {
@@ -74,10 +74,10 @@ var Main = tui.util.defineClass(View, {
     },
 
     clearChildren: function() {
-        tui.util.forEach(this.childViews, function(view) {
+        tui.util.forEach(this.children, function(view) {
             view.destroy();
         });
-        this.childViews = {};
+        this.children = {};
     }
 });
 
