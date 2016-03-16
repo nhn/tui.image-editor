@@ -4,13 +4,14 @@ var consts = require('./../consts');
 var View = tui.util.defineClass({
     init: function(parent) {
         /**
-         *
-         * @type {null}
+         * jQuery Element
+         * @type {jQuery}
          */
         this.$element = null;
 
         /**
-         *
+         * Parent view or null
+         * @type {View|null}
          */
         this._parentView = parent;
     },

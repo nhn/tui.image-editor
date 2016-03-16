@@ -6,14 +6,14 @@ var ViewManager = require('./viewManager'),
 var ImageEditor = tui.util.defineClass({
     init: function(wrapper) {
         /**
-         * Components borker
-         * It receives the command
+         * Components broker
+         * @type {Broker}
          */
         this.borker = new Broker();
 
         /**
          * View manager
-         * It builds and handles the view
+         * @type {ViewManager}
          */
         this.viewManager = new ViewManager(wrapper, this.borker);
     }
