@@ -1,6 +1,6 @@
 'use strict';
 
-var ViewInterface = require('./../../src/js/view/interface'),
+var ViewInterface = require('./../../src/js/interface/view'),
     consts = require('./../../src/js/consts');
 
 describe('View interface', function() {
@@ -14,24 +14,12 @@ describe('View interface', function() {
         var msg = consts.messages.NOT_IMPLEMENTED;
 
         expect(function() {
-            instance.hasView();
-        }).toThrowError(msg);
-
-        expect(function() {
-            instance.addView();
-        }).toThrowError(msg);
-
-        expect(function() {
-            instance.removeView();
-        }).toThrowError(msg);
-
-        expect(function() {
             instance.render();
         }).toThrowError(msg);
 
         expect(function() {
             instance.destroy();
-        }).toThrowError(msg);
+        }).not.toThrowError();
     });
 
     it('should throw error if nameless', function() {

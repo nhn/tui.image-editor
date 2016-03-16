@@ -1,38 +1,47 @@
 'use strict';
-var View = require('./../interface/view');
-var mainTemplate = require('./../../template/main.hbs');
+var View = require('./../interface/view'),
+    Menu = require('./menu'),
+    Canvas = require('./canvas'),
+    Detail = require('./detail');
+var template = require('./../../template/main.hbs');
 
 var Main = tui.util.defineClass(View, {
-    init: function(options) {
-        /**
-         *
-         * @type {null}
-         */
-        this.$element = null;
+    init: function(broker) {
+        View.call(this, parent);
 
         /**
-         * Template context
-         * @type {Object}
+         * Components broker
+         * @type {Broker}
          */
-        this.templateContext = options.templateContext || {};
+        this.borker = broker;
 
         /**
-         *
+         * Child views
          * @type {Object<string, View>}
          */
-        this._views = {};
-
-        this._events = {};
+        this.childViews = {};
 
         this.render();
     },
 
+    /**
+     * View name
+     * @type {string}
+     */
     name: 'main',
 
-    hasView: function(view) {
-        var name = view.getName();
+    /**
+     * Render template
+     * @type {function}
+     */
+    template: template,
 
-        return !!this._views[name];
+    /**
+     * Template context
+     * @type {Object}
+     */
+    templateContext: {
+        className: 'tui-image-editor-main'
     },
 
     addView: function(view) {
@@ -40,37 +49,35 @@ var Main = tui.util.defineClass(View, {
             el = view.getElement();
 
         this.removeView(name);
-        this._views[name] = view;
+        this.childViews[name] = view;
         this.$element.append(el);
     },
 
     removeView: function(viewName) {
-        var view = this._views[viewName];
+        var views = this.childViews,
+            view = views[viewName];
 
         if (view) {
             view.destroy();
+            delete views[viewName];
         }
     },
 
-    render: function() {
-        var ctx = this.templateContext,
-            $el = $(mainTemplate(ctx));
-
-        this.$element = $el;
-        this.$wrapper.append($el);
+    doAfterRender: function() {
+        this.addView(new Menu(this));
+        this.addView(new Canvas(this));
+        this.addView(new Detail(this));
     },
 
-    destroy: function() {
-        var $element = this.$element;
+    doAfterDestroy: function() {
+        this.clearChildren();
+    },
 
-        tui.util.forEach(this._views, function(view) {
+    clearChildren: function() {
+        tui.util.forEach(this.childViews, function(view) {
             view.destroy();
         });
-
-        if ($element) {
-            $element.remove();
-            this.$element = null;
-        }
+        this.childViews = {};
     }
 });
 
