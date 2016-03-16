@@ -81,8 +81,13 @@ var View = tui.util.defineClass({
     },
 
     postCommand: function(data, callback) {
-        this.getRoot()
-            .postCommand(data, callback);
+        var root = this.getRoot();
+
+        if (this.postCommand === root.postCommand) {
+            throw new Error(consts.messages.NOT_IMPLEMENTED);
+        }
+
+        root.postCommand(data, callback);
     }
 });
 
