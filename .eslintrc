@@ -120,6 +120,7 @@
         "no-undefined": 2,
         "no-unused-vars": 2,
         "no-use-before-define": [2, "nofunc"],
+        "no-restricted-globals": ["warn", "event", "fdescribe", "fit"],
 
         // Node.js and CommonJS
         "global-require": 2,
@@ -192,6 +193,10 @@
         "space-infix-ops": 2,
         "space-unary-ops": [2, {"words": true, "nonwords": false}],
         "spaced-comment": 0,
-        "wrap-regex": 0
+        "wrap-regex": 0,
+        "newline-before-return": "warn",
+
+        //ES6
+        "no-confusing-arrow": ["error", {"allowParens": true}]
     }
 }
