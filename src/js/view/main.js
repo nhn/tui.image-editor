@@ -73,6 +73,15 @@ var Main = tui.util.defineClass(View, {
      */
     postCommand: function(command, callback) {
         this.broker.receive(command, callback);
+    },
+
+    /**
+     * Register action(s) to broker
+     */
+    registerAction: function() {
+        var broker = this.broker;
+
+        broker.register.apply(broker, arguments);
     }
 });
 

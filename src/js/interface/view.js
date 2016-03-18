@@ -1,5 +1,6 @@
 'use strict';
-var consts = require('./../consts');
+var Delegator = require('./../interface/delegator'),
+    errorThrower = require('./../errorThrower');
 
 /**
  * View interface
@@ -14,11 +15,7 @@ var View = tui.util.defineClass({
          */
         this.$element = null;
 
-        /**
-         * Parent view or null
-         * @type {View|null}
-         */
-        this._parentView = parent;
+        this.setParent(parent);
     },
 
     /**
@@ -29,7 +26,7 @@ var View = tui.util.defineClass({
         var $element = this.$element;
 
         if (!$element) {
-            throw new Error(consts.messages.NO_ELEMENT);
+            errorThrower.throwNoElement(this.getName());
         }
 
         return $element;
@@ -43,7 +40,7 @@ var View = tui.util.defineClass({
         var name = this.name;
 
         if (!name) {
-            throw new Error(consts.messages.NO_VIEW_NAME);
+            errorThrower.throwNoView();
         }
 
         return name;
@@ -53,7 +50,7 @@ var View = tui.util.defineClass({
      * HTML Template method
      */
     template: function() {
-        throwNotImplementedError('template');
+        errorThrower.throwUnImplementation('template');
     },
 
     /**
@@ -84,58 +81,8 @@ var View = tui.util.defineClass({
         if (this.doAfterDestroy) {
             this.doAfterDestroy();
         }
-    },
-
-    /**
-     * Return parentView.
-     * If the view is root, return null
-     * @returns {View|null}
-     */
-    getParent: function() {
-        return this._parentView;
-    },
-
-    /**
-     * Return root view
-     * @returns {View}
-     */
-    getRoot: function() {
-        var nextView = this.getParent(),
-        /* eslint-disable consistent-this */
-            currentView = this;
-        /* eslint-enable consistent-this */
-
-        while (nextView) {
-            currentView = nextView;
-            nextView = currentView.getParent();
-        }
-
-        return currentView;
-    },
-
-    /**
-     * Post a command to broker
-     * The root will be override this method
-     * @param {object} command - Command data
-     * @param {function} callback - Callback if succeeded
-     */
-    postCommand: function(command, callback) {
-        var root = this.getRoot();
-
-        if (this.postCommand === root.postCommand) {
-            throwNotImplementedError('postCommand');
-        }
-
-        root.postCommand(command, callback);
     }
 });
 
-/**
- * Throw error: NOT_IMPLEMENTED
- * @param {string} name - Method name
- */
-function throwNotImplementedError(name) {
-    throw new Error(consts.messages.NOT_IMPLEMENTED + ': ' + name);
-}
-
+Delegator.mixin(View);
 module.exports = View;
