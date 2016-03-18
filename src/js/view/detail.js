@@ -1,5 +1,6 @@
 'use strict';
 var View = require('./../interface/view'),
+    BranchView = require('./../interface/branchView'),
     consts = require('./../consts');
 var template = require('./../../template/detail.hbs');
 
@@ -22,4 +23,5 @@ var Detail = tui.util.defineClass(View, {
     template: template
 });
 
+BranchView.mixin(Detail);
 module.exports = Detail;

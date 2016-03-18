@@ -1,6 +1,6 @@
 'use strict';
 
-var ViewManager = require('./viewManager'),
+var MainView = require('./view/main'),
     Broker = require('./broker');
 
 var ImageEditor = tui.util.defineClass({
@@ -13,9 +13,10 @@ var ImageEditor = tui.util.defineClass({
 
         /**
          * View manager
-         * @type {ViewManager}
+         * @type {MainView}
          */
-        this.viewManager = new ViewManager(wrapper, this.borker);
+        this.mainView = new MainView(this.borker);
+        $(wrapper).append(this.mainView.getElement());
     }
 });
 

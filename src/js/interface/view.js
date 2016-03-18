@@ -91,7 +91,7 @@ var View = tui.util.defineClass({
      * If the view is root, return null
      * @returns {View|null}
      */
-    getParentView: function() {
+    getParent: function() {
         return this._parentView;
     },
 
@@ -100,14 +100,14 @@ var View = tui.util.defineClass({
      * @returns {View}
      */
     getRoot: function() {
-        var nextView = this.getParentView(),
+        var nextView = this.getParent(),
         /* eslint-disable consistent-this */
             currentView = this;
         /* eslint-enable consistent-this */
 
         while (nextView) {
             currentView = nextView;
-            nextView = currentView.getParentView();
+            nextView = currentView.getParent();
         }
 
         return currentView;
