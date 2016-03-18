@@ -1,10 +1,13 @@
 'use strict';
 
-var MainView = require('./../../src/js/view/main');
+var MainView = require('./../../src/js/view/main'),
+    BranchView = require('./../../src/js/interface/branchView');
 
 describe('Main view', function() {
     var mainView,
-        brokerMock = {};
+        brokerMock = {
+            receive: jasmine.createSpy()
+        };
 
     beforeEach(function() {
         mainView = new MainView(brokerMock);
@@ -14,7 +17,7 @@ describe('Main view', function() {
         expect(mainView.getName()).toEqual('main');
     });
 
-    it('should have jquery element', function() {
-        expect(mainView.getElement().jquery).toBeTruthy();
+    it('should be extended from ViewBranch', function() {
+        expect(MainView.prototype).toEqual(jasmine.objectContaining(BranchView.prototype));
     });
 });

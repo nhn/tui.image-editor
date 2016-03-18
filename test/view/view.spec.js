@@ -3,7 +3,7 @@
 var ViewInterface = require('./../../src/js/interface/view'),
     consts = require('./../../src/js/consts');
 
-describe('View interface', function() {
+describe('Interface: View', function() {
     var instance;
 
     beforeEach(function() {
@@ -11,15 +11,13 @@ describe('View interface', function() {
     });
 
     it('should have unimplemented methods', function() {
-        var msg = consts.messages.NOT_IMPLEMENTED;
-
         expect(function() {
             instance.render();
-        }).toThrowError(msg);
+        }).toThrowError(/template/);
 
         expect(function() {
             instance.postCommand();
-        }).toThrowError();
+        }).toThrowError(/postCommand/);
     });
 
     describe('getName', function() {

@@ -1,26 +1,29 @@
 'use strict';
 var View = require('./../interface/view'),
+    BranchView = require('./../interface/branchView'),
     Menu = require('./menu'),
     Canvas = require('./canvas'),
     Detail = require('./detail'),
     consts = require('../consts');
-var template = require('./../../template/main.hbs');
 
+var template = require('./../../template/container.hbs');
+
+/**
+ * MainView Class
+ * @implements {View}
+ * @implements {BranchView}
+ * @Class
+ * @param {Broker} broker - Components broker
+*/
 var Main = tui.util.defineClass(View, {
     init: function(broker) {
-        View.call(this, parent);
+        View.call(this);
 
         /**
          * Components broker
          * @type {Broker}
          */
         this.broker = broker;
-
-        /**
-         * Child views
-         * @type {Object<string, View>}
-         */
-        this.children = {};
 
         this.render();
     },
@@ -45,45 +48,33 @@ var Main = tui.util.defineClass(View, {
         className: consts.CLASSNAME_PREFIX + '-main'
     },
 
-    addChild: function(view) {
-        var name = view.getName(),
-            el = view.getElement();
-
-        this.removeChild(name);
-        this.children[name] = view;
-        this.$element.append(el);
-    },
-
-    removeChild: function(viewName) {
-        var views = this.children,
-            view = views[viewName];
-
-        if (view) {
-            view.destroy();
-            delete views[viewName];
-        }
-    },
-
-    clearChildren: function() {
-        tui.util.forEach(this.children, function(view) {
-            view.destroy();
-        });
-        this.children = {};
-    },
-
+    /**
+     * Post processing after render
+     * It adds children
+     */
     doAfterRender: function() {
         this.addChild(new Menu(this));
         this.addChild(new Canvas(this));
         this.addChild(new Detail(this));
     },
 
+    /**
+     * Post processing after destroy
+     * It clears children
+     */
     doAfterDestroy: function() {
         this.clearChildren();
     },
 
-    postCommand: function(data, callback) {
-        this.broker.receive(data, callback);
+    /**
+     * Post a command to broker
+     * @param {object} command - Command data
+     * @param {function} callback - Callback if succeeded
+     */
+    postCommand: function(command, callback) {
+        this.broker.receive(command, callback);
     }
 });
 
+BranchView.mixin(Main);
 module.exports = Main;

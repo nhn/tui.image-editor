@@ -6,10 +6,18 @@ describe('Canvas view', function() {
     var canvas;
 
     beforeEach(function() {
-        canvas = new Canvas({});
+        Canvas.prototype.postCommand = jasmine.createSpy();
+        canvas = new Canvas();
     });
 
     it('should have view name', function() {
         expect(canvas.getName()).toEqual('canvas');
+    });
+
+    it('should post command after render', function() {
+        expect(Canvas.prototype.postCommand).toHaveBeenCalledWith({
+            name: 'setCanvasElement',
+            args: jasmine.any(Object)
+        });
     });
 });

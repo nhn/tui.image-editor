@@ -6,14 +6,17 @@ var template = require('./../../template/detail.hbs');
 var Detail = tui.util.defineClass(View, {
     init: function(parent) {
         View.call(this, parent);
-
         this.render();
     },
 
     name: 'detail',
 
     templateContext: {
-        className: consts.CLASSNAME_PREFIX + '-detail'
+        classNames: {
+            container: consts.CLASSNAME_PREFIX + '-detail',
+            imageInfo: consts.CLASSNAME_PREFIX + '-image-info',
+            setting: consts.CLASSNAME_PREFIX + '-setting'
+        }
     },
 
     template: template

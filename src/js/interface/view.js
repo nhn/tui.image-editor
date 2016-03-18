@@ -1,6 +1,11 @@
 'use strict';
 var consts = require('./../consts');
 
+/**
+ * View interface
+ * @interface
+ * @param {View} parent - Parent view
+ */
 var View = tui.util.defineClass({
     init: function(parent) {
         /**
@@ -16,79 +21,121 @@ var View = tui.util.defineClass({
         this._parentView = parent;
     },
 
+    /**
+     * Return jquery element
+     * @returns {jQuery}
+     */
     getElement: function() {
         var $element = this.$element;
 
         if (!$element) {
             throw new Error(consts.messages.NO_ELEMENT);
         }
+
         return $element;
     },
 
+    /**
+     * Return view name
+     * @returns {string}
+     */
     getName: function() {
         var name = this.name;
 
         if (!name) {
             throw new Error(consts.messages.NO_VIEW_NAME);
         }
+
         return name;
     },
 
+    /**
+     * HTML Template method
+     */
     template: function() {
-        throw new Error(consts.messages.NOT_IMPLEMENTED);
+        throwNotImplementedError('template');
     },
 
+    /**
+     * Render view
+     */
     render: function() {
-        var ctx = this.templateContext,
-            $el = $(this.template(ctx));
+        var ctx = this.templateContext;
 
         this.destroy();
-        this.$element = $el;
+        this.$element = $(this.template(ctx));
 
         if (this.doAfterRender) {
             this.doAfterRender();
         }
     },
 
+    /**
+     * Destroy view
+     */
     destroy: function() {
         var $element = this.$element;
 
-        this.$element = null;
         if ($element) {
             $element.remove();
         }
+        this.$element = null;
 
         if (this.doAfterDestroy) {
             this.doAfterDestroy();
         }
     },
 
+    /**
+     * Return parentView.
+     * If the view is root, return null
+     * @returns {View|null}
+     */
     getParentView: function() {
         return this._parentView;
     },
 
+    /**
+     * Return root view
+     * @returns {View}
+     */
     getRoot: function() {
-        /* eslint-disable consistent-this */
         var nextView = this.getParentView(),
+        /* eslint-disable consistent-this */
             currentView = this;
+        /* eslint-enable consistent-this */
+
         while (nextView) {
             currentView = nextView;
             nextView = currentView.getParentView();
         }
 
         return currentView;
-        /* eslint-enable consistent-this */
     },
 
-    postCommand: function(data, callback) {
+    /**
+     * Post a command to broker
+     * The root will be override this method
+     * @param {object} command - Command data
+     * @param {function} callback - Callback if succeeded
+     */
+    postCommand: function(command, callback) {
         var root = this.getRoot();
 
         if (this.postCommand === root.postCommand) {
-            throw new Error(consts.messages.NOT_IMPLEMENTED);
+            throwNotImplementedError('postCommand');
         }
 
-        root.postCommand(data, callback);
+        root.postCommand(command, callback);
     }
 });
+
+/**
+ * Throw error: NOT_IMPLEMENTED
+ * @param {string} name - Method name
+ */
+function throwNotImplementedError(name) {
+    throw new Error(consts.messages.NOT_IMPLEMENTED + ': ' + name);
+}
 
 module.exports = View;
