@@ -6,10 +6,10 @@ var template = require('./../../template/canvas.hbs');
 /**
  * Canvas view
  * @extends {View}
- * @Class
+ * @class
  * @param {Delegator} parent - Parent delegator
  */
-var Canvas = tui.util.defineClass(View, {
+var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
     init: function(parent) {
         View.call(this, parent);
         this.render();
@@ -33,6 +33,7 @@ var Canvas = tui.util.defineClass(View, {
 
     /**
      * Render template
+     * @override
      * @type {function}
      */
     template: template,

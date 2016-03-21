@@ -8,10 +8,10 @@ var template = require('./../../template/detail.hbs');
  * Detail view
  * @extends {View}
  * @mixin {BranchView}
- * @Class
+ * @class
  * @param {Delegator} parent - Parent delegator
  */
-var Detail = tui.util.defineClass(View, {
+var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
     init: function(parent) {
         View.call(this, parent);
         this.render();
@@ -37,6 +37,7 @@ var Detail = tui.util.defineClass(View, {
 
     /**
      * Render template
+     * @override
      * @type {function}
      */
     template: template,

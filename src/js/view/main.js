@@ -12,10 +12,10 @@ var template = require('./../../template/container.hbs');
  * MainView Class
  * @extends {View}
  * @mixin {BranchView}
- * @Class
+ * @class
  * @param {Broker} broker - Components broker
 */
-var Main = tui.util.defineClass(View, {
+var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
     init: function(broker) {
         View.call(this);
 
@@ -44,6 +44,7 @@ var Main = tui.util.defineClass(View, {
 
     /**
      * Render template
+     * @override
      * @type {function}
      */
     template: template,
@@ -68,6 +69,7 @@ var Main = tui.util.defineClass(View, {
 
     /**
      * Post a command to broker
+     * @override
      * @param {object} command - Command data
      * @param {function} callback - Callback if succeeded
      */
@@ -77,6 +79,7 @@ var Main = tui.util.defineClass(View, {
 
     /**
      * Register action(s) to broker
+     * @override
      */
     registerAction: function() {
         var broker = this.broker;

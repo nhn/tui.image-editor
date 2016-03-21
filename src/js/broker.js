@@ -1,7 +1,12 @@
 'use strict';
 
 var isExisty = tui.util.isExisty;
-var Broker = tui.util.defineClass({
+
+/**
+ * Broker
+ * @class
+ */
+var Broker = tui.util.defineClass(/* @lends Broker.prototype */{
     init: function() {
         this.customEvents = new tui.util.CustomEvents();
     },

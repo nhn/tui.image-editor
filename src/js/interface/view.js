@@ -8,7 +8,7 @@ var Delegator = require('./../interface/delegator'),
  * @mixin {Delegator}
  * @param {View} parent - Parent view
  */
-var View = tui.util.defineClass({
+var View = tui.util.defineClass(/* @lends View.prototype */{
     init: function(parent) {
         /**
          * jQuery Element
@@ -49,6 +49,7 @@ var View = tui.util.defineClass({
 
     /**
      * HTML Template method
+     * @virtual
      */
     template: function() {
         errorThrower.throwUnImplementation('template');

@@ -4,7 +4,7 @@
  * BranchView
  * @class
  */
-var BranchView = tui.util.defineClass({
+var BranchView = tui.util.defineClass(/* @lends BranchView.prototype */{
     static: {
         /**
          * Mixin

@@ -3,6 +3,11 @@
 var MainView = require('./view/main'),
     Broker = require('./broker');
 
+/**
+ * Image editor
+ * @class
+ * @param {string|jQuery|element} wrapper - Wrapper element or selector
+ */
 var ImageEditor = tui.util.defineClass({
     init: function(wrapper) {
         /**

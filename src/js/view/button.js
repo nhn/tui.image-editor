@@ -6,12 +6,12 @@ var template = require('./../../template/button.hbs');
 /**
  * Button view
  * @extends {View}
- * @Class
+ * @class
  * @param {Delegator} parent - Parent delegator
  * @param {string} name - Button name
  * @param {object} templateContext - Template context
  */
-var Button = tui.util.defineClass(View, {
+var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
     init: function(parent, name, templateContext) {
         View.call(this, parent);
 
@@ -36,6 +36,7 @@ var Button = tui.util.defineClass(View, {
 
     /**
      * Render template
+     * @override
      * @type {function}
      */
     template: template,

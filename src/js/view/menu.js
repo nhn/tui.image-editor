@@ -9,10 +9,10 @@ var template = require('./../../template/container.hbs');
  * Menu view
  * @extends {View}
  * @mixin {BranchView}
- * @Class
+ * @class
  * @param {Delegator} parent - Parent delegator
  */
-var Menu = tui.util.defineClass(View, {
+var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
     init: function(parent) {
         View.call(this, parent);
         this.render();
@@ -34,6 +34,7 @@ var Menu = tui.util.defineClass(View, {
 
     /**
      * Render template
+     * @override
      * @type {function}
      */
     template: template,

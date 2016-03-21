@@ -57,4 +57,38 @@ describe('Interface: View', function() {
             }).toThrowError();
         });
     });
+
+    describe('doAftereRender', function() {
+        beforeEach(function() {
+            instance.template = function() {};
+        });
+
+        it('shuold call if exists', function() {
+            instance.doAfterRender = jasmine.createSpy();
+            instance.render();
+
+            expect(instance.doAfterRender).toHaveBeenCalled();
+        });
+
+        it('should not throw error if not exists', function() {
+            expect(function() {
+                instance.render();
+            }).not.toThrowError();
+        });
+    });
+
+    describe('doBeforeDestroy', function() {
+        it('should call if exists', function() {
+            instance.doBeforeDestroy = jasmine.createSpy();
+            instance.destroy();
+
+            expect(instance.doBeforeDestroy).toHaveBeenCalled();
+        });
+
+        it('should not throw error if not exists', function() {
+            expect(function() {
+                instance.destroy();
+            }).not.toThrowError();
+        });
+    });
 });

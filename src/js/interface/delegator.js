@@ -6,7 +6,7 @@ var errorThrower = require('./../errorThrower');
  * @class
  * @param {Delegator} parent - Parent
  */
-var Delegator = tui.util.defineClass({
+var Delegator = tui.util.defineClass(/* @lends Delegator.prototype */{
     static: {
         /**
          * Mixin
