@@ -71,7 +71,7 @@ var Delegator = tui.util.defineClass({
         var root = this.getRoot();
 
         if (this.registerAction === root.registerAction) {
-            errorThrower.throwUnImplementation('registerCommand');
+            errorThrower.throwUnImplementation('registerAction');
         }
 
         root.registerAction.apply(root, arguments);
