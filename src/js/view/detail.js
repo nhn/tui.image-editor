@@ -7,6 +7,7 @@ var template = require('./../../template/detail.hbs');
 /**
  * Detail view
  * @extends {View}
+ * @mixin {BranchView}
  * @Class
  * @param {Delegator} parent - Parent delegator
  */

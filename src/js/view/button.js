@@ -26,13 +26,6 @@ var Button = tui.util.defineClass(View, {
     },
 
     /**
-     * Default button name
-     * It will be overridden
-     * @type {string}
-     */
-    name: 'button',
-
-    /**
      * Template context
      * It will be overridden
      * @type {Object}

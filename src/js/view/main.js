@@ -11,7 +11,7 @@ var template = require('./../../template/container.hbs');
 /**
  * MainView Class
  * @extends {View}
- * @extends {BranchView}
+ * @mixin {BranchView}
  * @Class
  * @param {Broker} broker - Components broker
 */

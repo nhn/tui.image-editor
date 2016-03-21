@@ -5,7 +5,7 @@ var Delegator = require('./../interface/delegator'),
 /**
  * View interface
  * @class
- * @extends {Delegator}
+ * @mixin {Delegator}
  * @param {View} parent - Parent view
  */
 var View = tui.util.defineClass({

@@ -8,6 +8,7 @@ var template = require('./../../template/container.hbs');
 /**
  * Menu view
  * @extends {View}
+ * @mixin {BranchView}
  * @Class
  * @param {Delegator} parent - Parent delegator
  */

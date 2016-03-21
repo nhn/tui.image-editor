@@ -12,7 +12,7 @@ var ImageEditor = tui.util.defineClass({
         this.borker = new Broker();
 
         /**
-         * View manager
+         * Main view
          * @type {MainView}
          */
         this.mainView = new MainView(this.borker);
