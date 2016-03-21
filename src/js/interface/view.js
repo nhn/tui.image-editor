@@ -4,7 +4,8 @@ var Delegator = require('./../interface/delegator'),
 
 /**
  * View interface
- * @interface
+ * @class
+ * @extends {Delegator}
  * @param {View} parent - Parent view
  */
 var View = tui.util.defineClass({
@@ -71,16 +72,17 @@ var View = tui.util.defineClass({
      * Destroy view
      */
     destroy: function() {
-        var $element = this.$element;
+        var $element;
 
+        if (this.doBeforeDestroy) {
+            this.doBeforeDestroy();
+        }
+
+        $element = this.$element;
         if ($element) {
             $element.remove();
         }
         this.$element = null;
-
-        if (this.doAfterDestroy) {
-            this.doAfterDestroy();
-        }
     }
 });
 

@@ -4,14 +4,28 @@ var View = require('./../interface/view'),
     consts = require('./../consts');
 var template = require('./../../template/detail.hbs');
 
+/**
+ * Detail view
+ * @extends {View}
+ * @Class
+ * @param {Delegator} parent - Parent delegator
+ */
 var Detail = tui.util.defineClass(View, {
     init: function(parent) {
         View.call(this, parent);
         this.render();
     },
 
+    /**
+     * View name
+     * @type {string}
+     */
     name: 'detail',
 
+    /**
+     * Template context
+     * @type {Object}
+     */
     templateContext: {
         classNames: {
             container: consts.CLASSNAME_PREFIX + '-detail',
@@ -20,7 +34,27 @@ var Detail = tui.util.defineClass(View, {
         }
     },
 
-    template: template
+    /**
+     * Render template
+     * @type {function}
+     */
+    template: template,
+
+    /**
+     * Processing after render
+     * @todo: imageInfo, detailSetting 나누기
+     */
+    doAfterRender: function() {
+
+    },
+
+    /**
+     * Processing before destroy
+     * It clears children
+     */
+    doBeforeDestroy: function() {
+        this.clearChildren();
+    }
 });
 
 BranchView.mixin(Detail);

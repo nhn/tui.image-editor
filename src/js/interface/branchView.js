@@ -2,19 +2,26 @@
 
 /**
  * BranchView
- * @interface
+ * @class
  */
 var BranchView = tui.util.defineClass({
     static: {
+        /**
+         * Mixin
+         * @param {Function} Target - Target constructor
+         */
         mixin: function(Target) {
             tui.util.extend(Target.prototype, BranchView.prototype);
         }
     },
-
     init: function() {
         this._children = {};
     },
 
+    /**
+     * Add child
+     * @param {View} view - View instance
+     */
     addChild: function(view) {
         var name = view.getName(),
             el = view.getElement();
@@ -25,6 +32,10 @@ var BranchView = tui.util.defineClass({
         this.$element.append(el);
     },
 
+    /**
+     * Remove child
+     * @param {string} viewName - View name
+     */
     removeChild: function(viewName) {
         var views = this._children,
             view = views[viewName];
@@ -35,6 +46,9 @@ var BranchView = tui.util.defineClass({
         }
     },
 
+    /**
+     * Clear children
+     */
     clearChildren: function() {
         tui.util.forEach(this._children, function(view) {
             view.destroy();

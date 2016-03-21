@@ -1,13 +1,21 @@
 'use strict';
 var errorThrower = require('./../errorThrower');
 
+/**
+ * Delegator
+ * @class
+ * @param {Delegator} parent - Parent
+ */
 var Delegator = tui.util.defineClass({
     static: {
-        mixin: function(target) {
-            tui.util.extend(target.prototype, Delegator.prototype);
+        /**
+         * Mixin
+         * @param {Function} Target - Target constructor
+         */
+        mixin: function(Target) {
+            tui.util.extend(Target.prototype, Delegator.prototype);
         }
     },
-
     init: function(parent) {
         this.setParent(parent);
     },

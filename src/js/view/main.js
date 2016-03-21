@@ -10,8 +10,8 @@ var template = require('./../../template/container.hbs');
 
 /**
  * MainView Class
- * @implements {View}
- * @implements {BranchView}
+ * @extends {View}
+ * @extends {BranchView}
  * @Class
  * @param {Broker} broker - Components broker
 */
@@ -35,12 +35,6 @@ var Main = tui.util.defineClass(View, {
     name: 'main',
 
     /**
-     * Render template
-     * @type {function}
-     */
-    template: template,
-
-    /**
      * Template context
      * @type {Object}
      */
@@ -49,7 +43,13 @@ var Main = tui.util.defineClass(View, {
     },
 
     /**
-     * Post processing after render
+     * Render template
+     * @type {function}
+     */
+    template: template,
+
+    /**
+     * Processing after render
      * It adds children
      */
     doAfterRender: function() {
@@ -59,10 +59,10 @@ var Main = tui.util.defineClass(View, {
     },
 
     /**
-     * Post processing after destroy
+     * Processing before destroy
      * It clears children
      */
-    doAfterDestroy: function() {
+    doBeforeDestroy: function() {
         this.clearChildren();
     },
 

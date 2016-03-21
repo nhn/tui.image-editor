@@ -1,6 +1,6 @@
 'use strict';
 
-var Button = require('./button');
+var Button = require('./button/button');
 
 /**
  * Create button view
@@ -10,10 +10,9 @@ var Button = require('./button');
  */
 function create(parent, option) {
     var name = option.name,
-        templateContext = option.templateContext,
-        btnView = new Button(parent, name, templateContext);
+        templateContext = option.templateContext;
 
-    return btnView;
+    return new Button(parent, name, templateContext);
 }
 
 //@todo: 종류별 버튼 팩토리
