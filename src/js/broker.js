@@ -44,7 +44,7 @@ var Broker = tui.util.defineClass({
         if (isExisty(args) && !isExisty(args.length)) {
             args = [args];
         }
-        args.unshift(name);
+        Array.prototype.unshift.call(args, name);
 
         return events.hasListener(name) && events.invoke.apply(events, args);
     }

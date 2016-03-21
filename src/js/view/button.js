@@ -18,10 +18,10 @@ var Button = tui.util.defineClass(View, {
     template: template,
 
     setTemplateContext: function(templateContext) {
-        delete this.templateContext;
+        //@todo: template context 오버라이드 방식 개선
         this.templateContext = tui.util.extend(
             {},
-            this.templateContext, // = Button.prototype.templateContext
+            Button.prototype.templateContext,
             templateContext
         );
     },

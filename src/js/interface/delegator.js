@@ -14,10 +14,10 @@ var Delegator = tui.util.defineClass({
 
     /**
      * Set parent
-     * @param {Delegator} parent - Parent
+     * @param {Delegator|null} parent - Parent
      */
     setParent: function(parent) {
-        this._parent = parent;
+        this._parent = parent || null;
     },
 
     /**

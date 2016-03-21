@@ -1,7 +1,6 @@
 'use strict';
 
-var ViewInterface = require('./../../src/js/interface/view'),
-    consts = require('./../../src/js/consts');
+var ViewInterface = require('./../../src/js/interface/view');
 
 describe('Interface: View', function() {
     var instance;
@@ -22,11 +21,9 @@ describe('Interface: View', function() {
 
     describe('getName', function() {
         it('should throw an error if nameless', function() {
-            var msg = consts.messages.NO_VIEW_NAME;
-
             expect(function() {
                 instance.getName();
-            }).toThrowError(msg);
+            }).toThrowError();
         });
 
         it('should return name if named', function() {
@@ -37,11 +34,9 @@ describe('Interface: View', function() {
 
     describe('getElement', function() {
         it('should throw an error if does not have an element', function() {
-            var msg = consts.messages.NO_ELEMENT;
-
             expect(function() {
                 instance.getElement();
-            }).toThrowError(msg);
+            }).toThrowError();
         });
 
         it('should return element if has', function() {
@@ -54,14 +49,12 @@ describe('Interface: View', function() {
 
     describe('destroy', function() {
         it('should remove element', function() {
-            var msg = consts.messages.NO_ELEMENT;
-
             instance.$element = $('<div />');
             instance.destroy();
 
             expect(function() {
                 instance.getElement();
-            }).toThrowError(msg);
+            }).toThrowError();
         });
     });
 });

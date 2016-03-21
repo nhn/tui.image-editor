@@ -16,6 +16,7 @@ function create(parent, option) {
     return btnView;
 }
 
+//@todo: 종류별 버튼 팩토리
 module.exports = {
     create: create
 };
