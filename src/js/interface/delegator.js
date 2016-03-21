@@ -2,8 +2,8 @@
 var errorThrower = require('./../errorThrower');
 
 /**
- * Delegator
- * @class
+ * @class Delegator
+ * @mixin
  * @param {Delegator} parent - Parent
  */
 var Delegator = tui.util.defineClass(/* @lends Delegator.prototype */{

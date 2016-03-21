@@ -6,7 +6,7 @@ var MainView = require('./view/main'),
 /**
  * Image editor
  * @class
- * @param {string|jQuery|element} wrapper - Wrapper element or selector
+ * @param {string|jQuery|HTMLElement} wrapper - Wrapper element or selector
  */
 var ImageEditor = tui.util.defineClass({
     init: function(wrapper) {
@@ -14,14 +14,22 @@ var ImageEditor = tui.util.defineClass({
          * Components broker
          * @type {Broker}
          */
-        this.borker = new Broker();
+        this.broker = new Broker();
 
         /**
          * Main view
          * @type {MainView}
          */
-        this.mainView = new MainView(this.borker);
+        this.mainView = new MainView(this.broker);
         $(wrapper).append(this.mainView.getElement());
+    },
+
+    // stub
+    loadImageFromURL: function(url) {
+        this.broker.receive({
+            name: 'loadImageFromURL',
+            args: url
+        });
     }
 });
 

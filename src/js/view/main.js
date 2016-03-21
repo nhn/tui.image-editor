@@ -10,8 +10,8 @@ var template = require('./../../template/container.hbs');
 
 /**
  * MainView Class
- * @extends {View}
- * @mixin {BranchView}
+ * @extends View
+ * @mixes BranchView
  * @class
  * @param {Broker} broker - Components broker
 */
@@ -37,6 +37,7 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
     /**
      * Template context
      * @type {Object}
+     // @todo: Classname prefix 자동 셋팅 helper
      */
     templateContext: {
         className: consts.CLASSNAME_PREFIX + '-main'

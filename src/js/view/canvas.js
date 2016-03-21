@@ -5,8 +5,8 @@ var template = require('./../../template/canvas.hbs');
 
 /**
  * Canvas view
- * @extends {View}
- * @class
+ * @extends View
+ * @class Canvas
  * @param {Delegator} parent - Parent delegator
  */
 var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{

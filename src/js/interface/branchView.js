@@ -1,8 +1,8 @@
 'use strict';
 
 /**
- * BranchView
- * @class
+ * @class BranchView
+ * @mixin
  */
 var BranchView = tui.util.defineClass(/* @lends BranchView.prototype */{
     static: {

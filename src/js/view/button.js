@@ -4,9 +4,8 @@ var View = require('./../interface/view'),
 var template = require('./../../template/button.hbs');
 
 /**
- * Button view
- * @extends {View}
- * @class
+ * @extends View
+ * @class Button
  * @param {Delegator} parent - Parent delegator
  * @param {string} name - Button name
  * @param {object} templateContext - Template context
