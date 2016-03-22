@@ -1,6 +1,6 @@
 'use strict';
-var Delegator = require('./../interface/delegator'),
-    errorThrower = require('./../errorThrower');
+var mixer = require('./../mixin/mixer'),
+    createError = require('./../factory/error').create;
 
 /**
  * View interface
@@ -27,7 +27,7 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
         var $element = this.$element;
 
         if (!$element) {
-            errorThrower.throwNoElement(this.getName());
+            throw createError('noElement', this.getName());
         }
 
         return $element;
@@ -41,7 +41,7 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
         var name = this.name;
 
         if (!name) {
-            errorThrower.throwNoView();
+            throw createError('noView');
         }
 
         return name;
@@ -52,7 +52,7 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
      * @virtual
      */
     template: function() {
-        errorThrower.throwUnImplementation('template');
+        throw createError('unImplementation', 'template');
     },
 
     /**
@@ -87,5 +87,5 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
     }
 });
 
-Delegator.mixin(View);
+mixer.mixin(View, 'Delegator');
 module.exports = View;

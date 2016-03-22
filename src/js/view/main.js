@@ -1,10 +1,9 @@
 'use strict';
 var View = require('./../interface/view'),
-    BranchView = require('./../interface/branchView'),
     Menu = require('./menu'),
     Canvas = require('./canvas'),
     Detail = require('./detail'),
-    consts = require('../consts');
+    mixer = require('./../mixin/mixer');
 
 var template = require('./../../template/container.hbs');
 
@@ -40,7 +39,7 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      // @todo: Classname prefix 자동 셋팅 helper
      */
     templateContext: {
-        className: consts.CLASSNAME_PREFIX + '-main'
+        name: 'main'
     },
 
     /**
@@ -89,5 +88,5 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
     }
 });
 
-BranchView.mixin(Main);
+mixer.mixin(Main, 'BranchView');
 module.exports = Main;

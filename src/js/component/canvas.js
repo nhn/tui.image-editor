@@ -35,6 +35,7 @@ var Canvas = tui.util.defineClass(/* @lends Canvas.prototype */{
                 this.broker.receive({
                     name: 'onLoad',
                     args: {
+                        onLoad: true,
                         imageName: url,
                         originalWidth: oImage.width,
                         originalHeight: oImage.height,
@@ -42,6 +43,17 @@ var Canvas = tui.util.defineClass(/* @lends Canvas.prototype */{
                         currentHeight: parseInt(oImage.height * oImage.scaleY, 10)
                     }
                 });
+
+                oImage.on('scaling', $.proxy(function() {
+                    this.broker.receive({
+                        name: 'update',
+                        args: {
+                            onScaling: true,
+                            currentWidth: parseInt(oImage.width * oImage.scaleX, 10),
+                            currentHeight: parseInt(oImage.height * oImage.scaleY, 10)
+                        }
+                    });
+                }, this));
             }
         }, this));
     }

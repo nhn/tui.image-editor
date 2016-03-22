@@ -10,17 +10,21 @@ var MainView = require('./view/main'),
  */
 var ImageEditor = tui.util.defineClass({
     init: function(wrapper) {
+        var broker = new Broker();
+
         /**
          * Components broker
          * @type {Broker}
          */
-        this.broker = new Broker();
+        this.broker = broker;
+
+        //this.mainComponent = new MainComponent(broker)
 
         /**
          * Main view
          * @type {MainView}
          */
-        this.mainView = new MainView(this.broker);
+        this.mainView = new MainView(broker);
         $(wrapper).append(this.mainView.getElement());
     },
 

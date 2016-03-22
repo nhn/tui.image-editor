@@ -1,25 +1,11 @@
 'use strict';
-var errorThrower = require('./../errorThrower');
+var createError = require('./../factory/error').create;
 
 /**
- * @class Delegator
- * @mixin
- * @param {Delegator} parent - Parent
+ * This provides methods used for command delegation.
+ * @mixin Delegator
  */
-var Delegator = tui.util.defineClass(/* @lends Delegator.prototype */{
-    static: {
-        /**
-         * Mixin
-         * @param {Function} Target - Target constructor
-         */
-        mixin: function(Target) {
-            tui.util.extend(Target.prototype, Delegator.prototype);
-        }
-    },
-    init: function(parent) {
-        this.setParent(parent);
-    },
-
+var Delegator = {
     /**
      * Set parent
      * @param {Delegator|null} parent - Parent
@@ -65,7 +51,7 @@ var Delegator = tui.util.defineClass(/* @lends Delegator.prototype */{
         var root = this.getRoot();
 
         if (this.postCommand === root.postCommand) {
-            errorThrower.throwUnImplementation('postCommand');
+            throw createError('unImplementation', 'postCommand');
         }
 
         root.postCommand(command, callback);
@@ -79,11 +65,11 @@ var Delegator = tui.util.defineClass(/* @lends Delegator.prototype */{
         var root = this.getRoot();
 
         if (this.registerAction === root.registerAction) {
-            errorThrower.throwUnImplementation('registerAction');
+            throw createError('unImplementation', 'registerAction');
         }
 
         root.registerAction.apply(root, arguments);
     }
-});
+};
 
 module.exports = Delegator;

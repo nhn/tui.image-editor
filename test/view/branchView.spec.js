@@ -1,4 +1,6 @@
-var BranchView = require('./../../src/js/interface/branchView');
+'use strict';
+
+var mixer = require('./../../src/js/mixin/mixer');
 
 describe('View Extension: ViewBranch', function() {
     var ViewClass, view, childMock;
@@ -20,7 +22,7 @@ describe('View Extension: ViewBranch', function() {
             },
             destroy: jasmine.createSpy()
         };
-        BranchView.mixin(ViewClass);
+        mixer.mixin(ViewClass, 'BranchView');
 
         view = new ViewClass();
     });

@@ -30,7 +30,7 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
      * @type {Object}
      */
     templateContext: {
-        className: consts.CLASSNAME_PREFIX + '-button'
+        buttonName: 'button'
     },
 
     /**

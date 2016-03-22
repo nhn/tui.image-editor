@@ -1,23 +1,10 @@
 'use strict';
 
 /**
- * @class BranchView
- * @mixin
+ * This provides methods used for view-branching.
+ * @mixin BranchView
  */
-var BranchView = tui.util.defineClass(/* @lends BranchView.prototype */{
-    static: {
-        /**
-         * Mixin
-         * @param {Function} Target - Target constructor
-         */
-        mixin: function(Target) {
-            tui.util.extend(Target.prototype, BranchView.prototype);
-        }
-    },
-    init: function() {
-        this._children = {};
-    },
-
+var BranchView = {
     /**
      * Add child
      * @param {View} view - View instance
@@ -55,6 +42,6 @@ var BranchView = tui.util.defineClass(/* @lends BranchView.prototype */{
         });
         this._children = {};
     }
-});
+};
 
 module.exports = BranchView;

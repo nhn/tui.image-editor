@@ -1,8 +1,8 @@
 'use strict';
 var View = require('./../interface/view'),
-    BranchView = require('./../interface/branchView'),
     ImageInformation = require('./imageInformation'),
-    consts = require('./../consts');
+    mixer = require('./../mixin/mixer');
+
 var template = require('./../../template/container.hbs');
 
 /**
@@ -29,7 +29,7 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
      * @type {Object}
      */
     templateContext: {
-        className: consts.CLASSNAME_PREFIX + '-detail'
+        name: 'detail'
     },
 
     /**
@@ -58,5 +58,5 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
     }
 });
 
-BranchView.mixin(Detail);
+mixer.mixin(Detail, 'BranchView');
 module.exports = Detail;

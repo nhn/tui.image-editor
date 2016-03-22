@@ -1,20 +1,24 @@
 'use strict';
 
 var Detail = require('./../../src/js/view/detail'),
-    BranchView = require('./../../src/js/interface/branchView');
+    mixer = require('./../../src/js/mixin/mixer');
 
 describe('Detail view', function() {
-    var detail;
+    var branchView = mixer.getMixture('BranchView'),
+        detail;
 
     beforeEach(function() {
-        detail = new Detail({});
+        detail = new Detail({
+            getParent: function() {},
+            registerAction: function() {}
+        });
     });
 
     it('should have view name', function() {
         expect(detail.getName()).toEqual('detail');
     });
 
-    it('should be extended from ViewBranch', function() {
-        expect(Detail.prototype).toEqual(jasmine.objectContaining(BranchView.prototype));
+    it('should be extended from BranchView', function() {
+        expect(Detail.prototype).toEqual(jasmine.objectContaining(branchView));
     });
 });

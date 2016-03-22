@@ -1,6 +1,6 @@
 'use strict';
 
-var Button = require('./button');
+var Button = require('./../view/button');
 
 /**
  * Create button view

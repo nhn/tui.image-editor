@@ -7,7 +7,7 @@ var isExisty = tui.util.isExisty,
 
 /**
  * Broker
- * @class Broker
+ * @class
  */
 var Broker = tui.util.defineClass(/* @lends Broker.prototype */{
     init: function() {

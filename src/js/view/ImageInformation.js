@@ -1,6 +1,7 @@
 'use strict';
 
-var View = require('./../interface/view');
+var View = require('./../interface/view'),
+    consts = require('./../consts');
 
 var template = require('./../../template/ImageInformation.hbs');
 
@@ -25,19 +26,29 @@ var ImageInformation = tui.util.defineClass(View, /* @lends ImageInformation.pro
 
     /**
      * Template context
-     * @type {Object}
+     * @type {function}
      */
     template: template,
 
     // stub
     // @todo: Classname prefix 자동 셋팅 helper
     templateContext: {
-        classNames: {
-            imageInformation: '-imageInformation',
-            original: '-original',
-            current: '-current',
-            spanText: '-spanText'
-        }
+        title: 'title',
+        imageInformation: 'imageInformation',
+        original: 'original',
+        current: 'current',
+        spanText: 'spanText'
+    },
+
+    // stub
+    doAfterRender: function() {
+        var prefix = consts.CLASSNAME_PREFIX,
+            curInfoClass = prefix + '-' + this.templateContext.current;
+
+        this.registerAction('update', $.proxy(function(ctx) {
+            ctx.onUpdate = true;
+            this.$element.find('.' + curInfoClass).html(this.template(ctx));
+        }, this));
     },
 
     /**

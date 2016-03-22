@@ -1,8 +1,8 @@
 'use strict';
 var View = require('./../interface/view'),
-    BranchView = require('./../interface/branchView'),
-    consts = require('./../consts'),
-    Button = require('./button');
+    Button = require('./button'),
+    mixer = require('./../mixin/mixer');
+
 var template = require('./../../template/container.hbs');
 
 /**
@@ -29,7 +29,7 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
      * @type {Object}
      */
     templateContext: {
-        className: consts.CLASSNAME_PREFIX + '-menu'
+        name: 'menu'
     },
 
     /**
@@ -58,5 +58,5 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
     }
 });
 
-BranchView.mixin(Menu);
+mixer.mixin(Menu, 'BranchView');
 module.exports = Menu;
