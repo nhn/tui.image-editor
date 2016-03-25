@@ -15,7 +15,7 @@ var template = require('./../../template/container.hbs');
  * @param {Broker} broker - Components broker
 */
 var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
-    init: function(broker) {
+    init: function(broker, wrapper) {
         View.call(this);
 
         /**
@@ -25,6 +25,7 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
         this.broker = broker;
 
         this.render();
+        this.getElement().appendTo(wrapper);
     },
 
     /**
@@ -36,7 +37,6 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
     /**
      * Template context
      * @type {Object}
-     // @todo: Classname prefix 자동 셋팅 helper
      */
     templateContext: {
         name: 'main'
@@ -71,10 +71,10 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * Post a command to broker
      * @override
      * @param {object} command - Command data
-     * @param {function} callback - Callback if succeeded
+     * @returns {boolean}
      */
-    postCommand: function(command, callback) {
-        this.broker.receive(command, callback);
+    postCommand: function(command) {
+        return this.broker.invoke(command);
     },
 
     /**
@@ -82,6 +82,16 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * @override
      */
     registerAction: function() {
+        var broker = this.broker;
+
+        broker.register.apply(broker, arguments);
+    },
+
+    /**
+     * Deregister action(s)
+     * @override
+     */
+    deregisterAction: function() {
         var broker = this.broker;
 
         broker.register.apply(broker, arguments);

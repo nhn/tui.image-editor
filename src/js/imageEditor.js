@@ -1,7 +1,9 @@
 'use strict';
 
 var MainView = require('./view/main'),
-    Broker = require('./broker');
+    MainHandler = require('./handler/main'),
+    Broker = require('./broker'),
+    commands = require('./consts').commands;
 
 /**
  * Image editor
@@ -18,20 +20,23 @@ var ImageEditor = tui.util.defineClass({
          */
         this.broker = broker;
 
-        //this.mainComponent = new MainComponent(broker)
+        /**
+         * Main components
+         * @type {Canvas}
+         */
+        this.mainHandler = new MainHandler(broker);
 
         /**
          * Main view
          * @type {MainView}
          */
-        this.mainView = new MainView(broker);
-        $(wrapper).append(this.mainView.getElement());
+        this.mainView = new MainView(broker, wrapper);
     },
 
     // stub
     loadImageFromURL: function(url) {
-        this.broker.receive({
-            name: 'loadImageFromURL',
+        this.broker.invoke({
+            name: commands.LOAD_IMAGE_FROM_URL,
             args: url
         });
     }

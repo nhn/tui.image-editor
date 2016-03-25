@@ -3,78 +3,74 @@
 var mixer = require('./../../src/js/mixin/mixer');
 
 describe('View Extension: ViewBranch', function() {
-    var ViewClass, view, childMock;
-
-    beforeEach(function() {
-        ViewClass = function() {
-            this.$element = $('<div />');
-            this.getElement = function() {
-                return this.$element;
-            };
-        };
-        childMock = {
-            $element: $('<div />'),
-            getName: function() {
-                return 'mock';
+    var View = tui.util.defineClass({
+            init: function(name) {
+                this.name = name;
+                this.$element = $('<div />');
             },
+
             getElement: function() {
                 return this.$element;
             },
-            destroy: jasmine.createSpy()
-        };
-        mixer.mixin(ViewClass, 'BranchView');
 
-        view = new ViewClass();
+            getName: function() {
+                return this.name;
+            },
+
+            render: function() {},
+
+            destroy: function() {}
+        }),
+        view, child1;
+
+    mixer.mixin(View, 'BranchView');
+
+    beforeEach(function() {
+        view = new View();
+        child1 = new View('child1');
     });
 
     describe('addChild', function() {
         it('should append child', function() {
-            view.addChild(childMock);
+            view.addChild(child1);
 
-            expect(view._children.mock).toEqual(childMock);
+            expect(view._children.child1).toEqual(child1);
         });
 
         it('should append element', function() {
-            view.addChild(childMock);
+            view.addChild(child1);
 
             expect(
-                $.contains(view.$element[0], childMock.$element[0])
+                $.contains(view.$element[0], child1.$element[0])
             ).toBe(true);
         });
     });
 
     describe('removeChild', function() {
         beforeEach(function() {
-            view.addChild(childMock);
+            view.addChild(child1);
         });
 
         it('should remove child', function() {
-            view.removeChild('mock');
-            expect(view._children.mock).toBeUndefined();
+            view.removeChild('child1');
+            expect(view._children.child1).toBeUndefined();
         });
 
         it('should destroy child', function() {
-            view.removeChild('mock');
-            expect(childMock.destroy).toHaveBeenCalled();
+            spyOn(child1, 'destroy');
+            view.removeChild('child1');
+
+            expect(child1.destroy).toHaveBeenCalled();
         });
     });
 
     describe('clearChildren', function() {
-        var childMock2;
+        var child2;
 
         beforeEach(function() {
-            childMock2 = {
-                $element: $('<div />'),
-                getName: function() {
-                    return 'mock2';
-                },
-                getElement: function() {
-                    return this.$element;
-                },
-                destroy: jasmine.createSpy()
-            };
-            view.addChild(childMock);
-            view.addChild(childMock2);
+            child2 = new View('child2');
+            view.addChild(child1);
+            view.addChild(child2);
         });
 
         it('should remove all children', function() {
@@ -84,10 +80,12 @@ describe('View Extension: ViewBranch', function() {
         });
 
         it('should destroy all children', function() {
+            spyOn(child1, 'destroy');
+            spyOn(child2, 'destroy');
             view.clearChildren();
 
-            expect(childMock.destroy).toHaveBeenCalled();
-            expect(childMock2.destroy).toHaveBeenCalled();
+            expect(child1.destroy).toHaveBeenCalled();
+            expect(child2.destroy).toHaveBeenCalled();
         });
     });
 });

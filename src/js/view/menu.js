@@ -15,7 +15,6 @@ var template = require('./../../template/container.hbs');
 var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
     init: function(parent) {
         View.call(this, parent);
-        this.render();
     },
 
     /**

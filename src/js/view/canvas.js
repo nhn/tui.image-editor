@@ -1,6 +1,6 @@
 'use strict';
 var View = require('./../interface/view'),
-    consts = require('./../consts');
+    commands = require('./../consts').commands;
 var template = require('./../../template/canvas.hbs');
 
 /**
@@ -12,7 +12,6 @@ var template = require('./../../template/canvas.hbs');
 var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
     init: function(parent) {
         View.call(this, parent);
-        this.render();
     },
 
     /**
@@ -44,7 +43,7 @@ var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
      */
     doAfterRender: function() {
         this.postCommand({
-            name: 'setCanvasElement',
+            name: commands.SET_CANVAS_ELEMENT,
             args: this.$element.find('canvas')[0]
         });
     }

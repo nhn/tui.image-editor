@@ -2,7 +2,8 @@
 
 /**
  * This provides methods used for view-branching.
- * @mixin BranchView
+ * @module BranchView
+ * @mixin
  */
 var BranchView = {
     /**
@@ -11,12 +12,15 @@ var BranchView = {
      */
     addChild: function(view) {
         var name = view.getName(),
-            el = view.getElement();
+            $el;
+
+        view.render();
+        $el = view.getElement();
 
         this._children = this._children || {};
         this.removeChild(name);
         this._children[name] = view;
-        this.$element.append(el);
+        this.$element.append($el);
     },
 
     /**

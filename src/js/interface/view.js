@@ -79,6 +79,7 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
             this.doBeforeDestroy();
         }
 
+        this.deregisterAction(this);
         $element = this.$element;
         if ($element) {
             $element.remove();

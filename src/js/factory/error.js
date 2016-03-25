@@ -9,19 +9,19 @@ var messages = {
 
 var errorMap = {
     unimplementation: function(methodName) {
-        return new Error(messages.UN_IMPLEMENTATION + methodName);
+        return Error(messages.UN_IMPLEMENTATION + methodName);
     },
 
     noview: function() {
-        return new Error(messages.NO_VIEW_NAME);
+        return Error(messages.NO_VIEW_NAME);
     },
 
     noelement: function(viewName) {
-        return new Error(messages.NO_ELEMENT + viewName);
+        return Error(messages.NO_ELEMENT + viewName);
     },
 
     unknown: function(msg) {
-        return new Error(messages.UNKNOWN + msg);
+        return Error(messages.UNKNOWN + msg);
     }
 };
 

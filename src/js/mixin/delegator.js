@@ -3,7 +3,8 @@ var createError = require('./../factory/error').create;
 
 /**
  * This provides methods used for command delegation.
- * @mixin Delegator
+ * @module Delegator
+ * @mixin
  */
 var Delegator = {
     /**
@@ -69,6 +70,20 @@ var Delegator = {
         }
 
         root.registerAction.apply(root, arguments);
+    },
+
+    /**
+     * Deregister action(s)
+     * The root will be override this method
+     */
+    deregisterAction: function() {
+        var root = this.getRoot();
+
+        if (this.deregisterAction === root.deregisterAction) {
+            throw createError('unImplementation', 'deregisterAction');
+        }
+
+        root.deregisterAction.apply(root, arguments);
     }
 };
 

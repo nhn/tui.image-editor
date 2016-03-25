@@ -21,7 +21,6 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
         this.name = name;
 
         this.setTemplateContext(templateContext);
-        this.render();
     },
 
     /**

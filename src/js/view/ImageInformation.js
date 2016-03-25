@@ -1,7 +1,8 @@
 'use strict';
 
 var View = require('./../interface/view'),
-    consts = require('./../consts');
+    consts = require('./../consts'),
+    commands = consts.commands;
 
 var template = require('./../../template/ImageInformation.hbs');
 
@@ -15,7 +16,6 @@ var ImageInformation = tui.util.defineClass(View, /* @lends ImageInformation.pro
     init: function(parent, templateContext) {
         View.call(this, parent);
         this.setTemplateContext(templateContext);
-        this.render();
     },
 
     /**
@@ -25,13 +25,15 @@ var ImageInformation = tui.util.defineClass(View, /* @lends ImageInformation.pro
     name: 'imageInformation',
 
     /**
-     * Template context
+     * Template function
      * @type {function}
      */
     template: template,
 
-    // stub
-    // @todo: Classname prefix 자동 셋팅 helper
+    /**
+     * Default template context
+     * @type {object}
+     */
     templateContext: {
         title: 'title',
         imageInformation: 'imageInformation',
@@ -40,14 +42,18 @@ var ImageInformation = tui.util.defineClass(View, /* @lends ImageInformation.pro
         spanText: 'spanText'
     },
 
-    // stub
+    /**
+     * Process after render
+     *  - Register onScale action
+     */
     doAfterRender: function() {
         var prefix = consts.CLASSNAME_PREFIX,
-            curInfoClass = prefix + '-' + this.templateContext.current;
+            curInfoClass = prefix + '-' + this.templateContext.current,
+            $currentInfoElement = this.$element.find('.' + curInfoClass);
 
-        this.registerAction('update', $.proxy(function(ctx) {
-            ctx.onUpdate = true;
-            this.$element.find('.' + curInfoClass).html(this.template(ctx));
+        this.registerAction(commands.ON_SCALE_IMAGE, $.proxy(function(ctx) {
+            ctx.onScaling = true;
+            $currentInfoElement.html(this.template(ctx));
         }, this));
     },
 

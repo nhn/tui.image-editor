@@ -1,7 +1,8 @@
 'use strict';
 var View = require('./../interface/view'),
     ImageInformation = require('./imageInformation'),
-    mixer = require('./../mixin/mixer');
+    mixer = require('./../mixin/mixer'),
+    commands = require('./../consts').commands;
 
 var template = require('./../../template/container.hbs');
 
@@ -15,7 +16,6 @@ var template = require('./../../template/container.hbs');
 var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
     init: function(parent) {
         View.call(this, parent);
-        this.render();
     },
 
     /**
@@ -44,7 +44,7 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
      * @todo: imageInfo, detailSetting 나누기
      */
     doAfterRender: function() {
-        this.registerAction('onLoad', $.proxy(function(templateContext) {
+        this.registerAction(commands.ON_LOAD_IMAGE, $.proxy(function(templateContext) {
             this.addChild(new ImageInformation(this, templateContext));
         }, this));
     },
