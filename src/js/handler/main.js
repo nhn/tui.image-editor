@@ -20,6 +20,9 @@ var Main = tui.util.defineClass(Component, {
     },
 
     setCanvasImage: function(oImage) {
+        if (this.oImage) {
+            this.oImage.remove();
+        }
         this.oImage = oImage;
     },
 
