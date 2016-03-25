@@ -10,6 +10,7 @@ module.exports = function(config) {
             'bower_components/json2/json2.js',
             'bower_components/jquery/jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
+            'src/template/helper.js',
             'src/js/**/*.js',
             'test/**/*.spec.js'
         ],

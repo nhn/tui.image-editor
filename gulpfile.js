@@ -32,7 +32,8 @@ var config = {
     },
     browserSync: {
         server: {
-            baseDir: './'
+            index: './default.html',
+            baseDir: './samples'
         },
         port: 3000,
         ui: {
@@ -76,7 +77,7 @@ gulp.task('watch', function() {
     bundler.on('update', watcher);
     bundler.on('log', gutil.log);
 
-    return watcher();
+    watcher();
 });
 
 gulp.task('eslint', function() {

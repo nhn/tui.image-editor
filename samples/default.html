@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Default</title>
+    <link href="css/tui-image-editor.css" rel="stylesheet" type="text/css">
+    <!--[If lt IE 9]>
+        <script type="text/javascript" src="libs/html5shiv-printshiv.min.js"></script>
+        <script type="text/javascript" src="libs/json2.js"></script>
+        <script type="text/javascript" src="libs/excanvas.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+    <div id="editor"></div>
+    <button id="imgDownload">Download</button>
+    <script type="text/javascript" src="libs/fabric.min.js"></script>
+    <script type="text/javascript" src="libs/jquery.min.js"></script>
+    <script type="text/javascript" src="libs/code-snippet.min.js"></script>
+    <script type="text/javascript" src="js/image-editor.js"></script>
+    <script type="text/javascript">
+        var imageEditor = new tui.component.ImageEditor('#editor');
+
+        imageEditor.loadImageFromURL('./img/packageVersion.png');
+
+        //imageEditor.draw('img/packageVersion.png');
+        //imageEditor.draw('http://handlebarsjs.com/images/handlebars_logo.png');
+//        $('#imgDownload').on('click', function() {
+//            console.log('btn click');
+//        });
+    </script>
+</body>
+</html>
