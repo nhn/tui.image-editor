@@ -1,6 +1,7 @@
 'use strict';
 
-var Canvas = require('./../../src/js/view/canvas');
+var Canvas = require('./../../src/js/view/canvas'),
+    commands = require('./../../src/js/consts').commands;
 
 describe('Canvas view', function() {
     var canvas,
@@ -22,9 +23,13 @@ describe('Canvas view', function() {
     });
 
     it('should register action after render', function() {
-        spyOn(canvas, 'registerAction');
+        spyOn(canvas, 'postCommand');
 
         canvas.render();
-        expect(canvas.registerAction).toHaveBeenCalled();
+        expect(canvas.postCommand).toHaveBeenCalledWith(
+            jasmine.objectContaining({
+                name: commands.SET_CANVAS_ELEMENT
+            })
+        );
     });
 });

@@ -58,6 +58,14 @@ var ImageInformation = tui.util.defineClass(View, /* @lends ImageInformation.pro
     },
 
     /**
+     * Process before destroy
+     *  - Deregister actions
+     */
+    doBeforeDestroy: function() {
+        this.deregisterAction(this);
+    },
+
+    /**
      * Override template context
      * @param {object} templateContext - Template context
      */

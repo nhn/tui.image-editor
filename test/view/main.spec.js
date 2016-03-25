@@ -6,8 +6,10 @@ var Main = require('./../../src/js/view/main'),
 describe('Main view', function() {
     var main,
         brokerMock = {
-            receive: jasmine.createSpy(),
-            register: jasmine.createSpy()
+            receive: function() {},
+            invoke: function() {},
+            register: function() {},
+            deregister: function() {}
         };
 
     beforeEach(function() {

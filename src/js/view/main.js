@@ -64,6 +64,7 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * It clears children
      */
     doBeforeDestroy: function() {
+        this.deregisterAction(this);
         this.clearChildren();
     },
 
