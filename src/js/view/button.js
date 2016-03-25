@@ -1,6 +1,5 @@
 'use strict';
-var View = require('./../interface/view'),
-    consts = require('./../consts');
+var View = require('./../interface/view');
 var template = require('./../../template/button.hbs');
 
 /**

@@ -29,10 +29,10 @@ var Broker = tui.util.defineClass(/* @lends Broker.prototype */{
      * See the "tui-code-snippet"
      *      https://github.com/nhnent/tui.code-snippet/blob/master/src/customEvent.js
      */
-    deregister: function(context) {
+    deregister: function() {
         var events = this.customEvents;
 
-        events.off(context);
+        events.off.apply(events, arguments);
     },
 
     /**

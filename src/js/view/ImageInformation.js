@@ -1,10 +1,11 @@
 'use strict';
 
 var View = require('./../interface/view'),
-    consts = require('./../consts'),
-    commands = consts.commands;
+    consts = require('./../consts');
 
 var template = require('./../../template/ImageInformation.hbs');
+
+var commands = consts.commands;
 
 /**
  * @class ImageInformation
