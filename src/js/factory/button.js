@@ -1,6 +1,6 @@
 'use strict';
 
-var Button = require('./../view/button');
+var Button = require('../view/button');
 
 /**
  * Create button view
@@ -9,13 +9,20 @@ var Button = require('./../view/button');
  * @returns {Button} ButtonView
  */
 function create(parent, option) {
-    var name = option.name,
-        templateContext = option.templateContext;
-
-    return new Button(parent, name, templateContext);
+    return new Button(parent, option);
 }
 
 //@todo: 종류별 버튼 팩토리
 module.exports = {
-    create: create
+    create: create,
+
+    createLoadButton: function(parent) {
+        return create(parent, {
+            name: 'load',
+            templateContext: {
+                text: '불러오기',
+                fileInputName: 'fileInput'
+            }
+        });
+    }
 };

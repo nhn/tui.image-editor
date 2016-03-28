@@ -1,6 +1,6 @@
 'use strict';
 
-var mixer = require('./../mixin/mixer');
+var mixer = require('../mixin/mixer');
 
 var Component = tui.util.defineClass({
     init: function() {},

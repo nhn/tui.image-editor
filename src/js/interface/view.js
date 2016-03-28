@@ -1,6 +1,6 @@
 'use strict';
-var mixer = require('./../mixin/mixer'),
-    createError = require('./../factory/error').create;
+var mixer = require('../mixin/mixer'),
+    createError = require('../factory/error').create;
 
 /**
  * View interface

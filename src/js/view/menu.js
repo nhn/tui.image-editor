@@ -1,9 +1,9 @@
 'use strict';
-var View = require('./../interface/view'),
-    Button = require('./button'),
-    mixer = require('./../mixin/mixer');
+var View = require('../interface/view'),
+    btnFactory = require('../factory/button'),
+    mixer = require('../mixin/mixer');
 
-var template = require('./../../template/container.hbs');
+var template = require('../../template/container.hbs');
 
 /**
  * Menu view
@@ -43,9 +43,19 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
      * It adds buttons
      */
     doAfterRender: function() {
-        this.addChild(new Button(this, 'Load', {text: 'Load'}));
-        this.addChild(new Button(this, 'Save', {text: 'Save'}));
-        this.addChild(new Button(this, 'Reset', {text: 'Reset'}));
+        this.addChild(btnFactory.createLoadButton(this));
+        this.addChild(btnFactory.create(this, {
+            name: 'Save',
+            templateContext: {
+                text: '저장'
+            }
+        }));
+        this.addChild(btnFactory.create(this, {
+            name: 'unknown',
+            templateContext: {
+                text: '그냥 버튼'
+            }
+        }));
     },
 
     /**

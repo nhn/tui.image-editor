@@ -1,11 +1,11 @@
 'use strict';
-var View = require('./../interface/view'),
+var View = require('../interface/view'),
     Menu = require('./menu'),
     Canvas = require('./canvas'),
     Detail = require('./detail'),
-    mixer = require('./../mixin/mixer');
+    mixer = require('../mixin/mixer');
 
-var template = require('./../../template/container.hbs');
+var template = require('../../template/container.hbs');
 
 /**
  * MainView Class

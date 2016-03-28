@@ -1,8 +1,8 @@
 'use strict';
 
-var Component = require('./../interface/component'),
+var Component = require('../interface/component'),
     ImageLoader = require('./imageLoader'),
-    commands = require('./../consts').commands;
+    commands = require('../consts').commands;
 
 var Main = tui.util.defineClass(Component, {
     init: function(broker) {

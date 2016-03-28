@@ -1,6 +1,6 @@
 'use strict';
-var View = require('./../interface/view');
-var template = require('./../../template/button.hbs');
+var View = require('../interface/view');
+var template = require('../../template/button.hbs');
 
 /**
  * @extends View
@@ -10,16 +10,16 @@ var template = require('./../../template/button.hbs');
  * @param {object} templateContext - Template context
  */
 var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
-    init: function(parent, name, templateContext) {
+    init: function(parent, option) {
         View.call(this, parent);
-
+        option = option || {};
         /**
          * Button name
          * @type {string}
          */
-        this.name = name;
+        this.name = option.name;
 
-        this.setTemplateContext(templateContext);
+        this.setTemplateContext(option.templateContext);
     },
 
     /**
@@ -51,13 +51,25 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
         );
     },
 
-    /**
-     * Bind event handlers
-     */
-    on: function() {
-        var $el = this.$element;
+    doAfterRender: function() {
+        this._attachEvents();
+    },
 
-        $el.on.apply($el, arguments);
+    _attachEvents: function() {
+        var self = this;
+
+        switch (this.name.toLowerCase()) {
+            case 'load':
+                this.$element.on('change', function(event) {
+                    console.log(event.target);
+                    self.postCommand({
+
+                    });
+                });
+                break;
+            default:
+                break;
+        }
     }
 });
 

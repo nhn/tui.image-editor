@@ -11,7 +11,6 @@ var gulpif = require('gulp-if');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
-var assign = require('lodash.assign');
 var filename = require('./package.json').name.replace('component-', '');
 
 //
@@ -44,7 +43,7 @@ var config = {
         once: true
     }
 };
-config.watchify = assign({}, watchify.args, config.browserify);
+config.watchify = Object.assign({}, watchify.args, config.browserify);
 
 //
 // Bundle function

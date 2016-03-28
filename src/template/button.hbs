@@ -1,3 +1,10 @@
-<button class="{{className buttonName}}">
-    <span>{{text}}</span>
-</button>
+<span class="{{className buttonName}}">
+    {{#if fileInputName}}
+        <!--<button class="{{className buttonType}}">-->
+            <!--{{text}}-->
+        <!--</button>-->
+        <input type="file" class="{{className fileInputName}}" style="width:100px;" accept="image/*"/>
+    {{else}}
+        <button class="{{className buttonType}}">{{text}}</button>
+    {{/if}}
+</span>

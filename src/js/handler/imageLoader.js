@@ -1,7 +1,7 @@
 'use strict';
 
-var Component = require('./../interface/component'),
-    commands = require('./../consts').commands;
+var Component = require('../interface/component'),
+    commands = require('../consts').commands;
 
 var CANVAS_MARGIN = 70;
 
@@ -31,7 +31,9 @@ var ImageLoader = tui.util.defineClass(Component, {
 
             this.postCommands(url, oImage);
             this.attachImageEvents(oImage);
-        }, this));
+        }, this), {
+            selectable: false
+        });
     },
 
     /**

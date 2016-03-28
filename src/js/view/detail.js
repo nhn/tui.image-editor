@@ -1,10 +1,10 @@
 'use strict';
-var View = require('./../interface/view'),
+var View = require('../interface/view'),
     ImageInformation = require('./imageInformation'),
-    mixer = require('./../mixin/mixer'),
-    commands = require('./../consts').commands;
+    mixer = require('../mixin/mixer'),
+    commands = require('../consts').commands;
 
-var template = require('./../../template/container.hbs');
+var template = require('../../template/container.hbs');
 
 /**
  * Detail view

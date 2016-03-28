@@ -1,5 +1,5 @@
 'use strict';
-var createError = require('./../factory/error').create;
+var createError = require('../factory/error').create;
 
 /**
  * This provides methods used for command delegation.

@@ -1,7 +1,7 @@
 'use strict';
-var View = require('./../interface/view'),
-    commands = require('./../consts').commands;
-var template = require('./../../template/canvas.hbs');
+var View = require('../interface/view'),
+    commands = require('../consts').commands;
+var template = require('../../template/canvas.hbs');
 
 /**
  * Canvas view

@@ -1,9 +1,9 @@
 'use strict';
 
-var View = require('./../interface/view'),
-    consts = require('./../consts');
+var View = require('../interface/view'),
+    consts = require('../consts');
 
-var template = require('./../../template/ImageInformation.hbs');
+var template = require('../../template/ImageInformation.hbs');
 
 var commands = consts.commands;
 
