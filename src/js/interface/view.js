@@ -1,6 +1,6 @@
 'use strict';
 var mixer = require('../mixin/mixer'),
-    createError = require('../factory/error').create;
+    createMessage = require('../factory/errorMessage').create;
 
 /**
  * View interface
@@ -27,7 +27,7 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
         var $element = this.$element;
 
         if (!$element) {
-            throw createError('noElement', this.getName());
+            throw new Error(createMessage('noElement', this.getName()));
         }
 
         return $element;
@@ -41,7 +41,7 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
         var name = this.name;
 
         if (!name) {
-            throw createError('noView');
+            throw new Error(createMessage('noView'));
         }
 
         return name;
@@ -52,17 +52,21 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
      * @virtual
      */
     template: function() {
-        throw createError('unImplementation', 'template');
+        throw new Error(createMessage('unImplementation', 'template'));
     },
 
     /**
      * Render view
+     * @param {jQuery} $wrapper - $Wrapper element
      */
-    render: function() {
+    render: function($wrapper) {
         var ctx = this.templateContext;
 
         this.destroy();
         this.$element = $(this.template(ctx));
+        if ($wrapper) {
+            $wrapper.append(this.$element);
+        }
 
         if (this.doAfterRender) {
             this.doAfterRender();

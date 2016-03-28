@@ -7,21 +7,21 @@ var messages = {
     UNKNOWN: 'Unknown: '
 };
 
-var errorMap = {
+var map = {
     unimplementation: function(methodName) {
-        return Error(messages.UN_IMPLEMENTATION + methodName);
+        return messages.UN_IMPLEMENTATION + methodName;
     },
 
     noview: function() {
-        return Error(messages.NO_VIEW_NAME);
+        return messages.NO_VIEW_NAME;
     },
 
     noelement: function(viewName) {
-        return Error(messages.NO_ELEMENT + viewName);
+        return messages.NO_ELEMENT + viewName;
     },
 
     unknown: function(msg) {
-        return Error(messages.UNKNOWN + msg);
+        return messages.UNKNOWN + msg;
     }
 };
 
@@ -30,7 +30,7 @@ module.exports = {
         var func;
 
         type = type.toLowerCase();
-        func = errorMap[type] || errorMap.unknown;
+        func = map[type] || map.unknown;
         Array.prototype.shift.apply(arguments);
 
         return func.apply(null, arguments);

@@ -14,15 +14,5 @@ function create(parent, option) {
 
 //@todo: 종류별 버튼 팩토리
 module.exports = {
-    create: create,
-
-    createLoadButton: function(parent) {
-        return create(parent, {
-            name: 'load',
-            templateContext: {
-                text: '불러오기',
-                fileInputName: 'fileInput'
-            }
-        });
-    }
+    create: create
 };

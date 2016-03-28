@@ -11,16 +11,16 @@ var BranchView = {
      * @param {View} view - View instance
      */
     addChild: function(view) {
-        var name = view.getName(),
-            $el;
-
-        view.render();
-        $el = view.getElement();
+        var name = view.getName();
 
         this._children = this._children || {};
         this.removeChild(name);
         this._children[name] = view;
-        this.$element.append($el);
+        view.render(this.getElement());
+
+        if (view.events) {
+            view.getElement().on(view.events);
+        }
     },
 
     /**

@@ -1,6 +1,7 @@
 'use strict';
 var View = require('../interface/view'),
     ImageInformation = require('./imageInformation'),
+    //UploadForm = require('./uploadForm'),
     mixer = require('../mixin/mixer'),
     commands = require('../consts').commands;
 
@@ -54,7 +55,6 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
      * It clears children
      */
     doBeforeDestroy: function() {
-        this.deregisterAction(this);
         this.clearChildren();
     }
 });

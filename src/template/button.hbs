@@ -1,10 +1,21 @@
-<span class="{{className buttonName}}">
-    {{#if fileInputName}}
-        <!--<button class="{{className buttonType}}">-->
-            <!--{{text}}-->
-        <!--</button>-->
-        <input type="file" class="{{className fileInputName}}" style="width:100px;" accept="image/*"/>
-    {{else}}
-        <button class="{{className buttonType}}">{{text}}</button>
-    {{/if}}
-</span>
+<label class="{{className buttonName}}" style="position:relative; overflow:hidden; margin-right:5px; height:100%;">
+    <button>{{text}}</button>
+
+    {{!--@todo: File api가 지원되면 file-uploader 컴포넌트 사용하지 않고, 버튼 + 인풋 조합하여 사용--}}
+    {{!--{{#if fileInputName}}--}}
+        {{!--<input type="file" name="{{fileInputName}}" class="{{className fileInputName}}" accept="image/*"--}}
+            {{!--style="--}}
+                {{!--position:absolute;--}}
+                {{!--margin: 0;--}}
+                {{!--opacity: 0;--}}
+                {{!--filter:alpha(opacity=0);--}}
+                {{!--font-size: 200px;--}}
+                {{!--top: 0;--}}
+                {{!--left: 0;--}}
+                {{!--width: 100%;--}}
+                {{!--height: 100%;--}}
+                {{!--overflow:hidden;--}}
+                {{!--cursor: pointer;--}}
+       {{!--"/>--}}
+    {{!--{{/if}}--}}
+</label>

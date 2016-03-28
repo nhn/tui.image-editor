@@ -60,25 +60,36 @@ function bundle(bundler) {
         .pipe(buffer())
         .pipe(gulp.dest(DIST))
         .pipe(gulp.dest(SAMPLE_DIST))
-        .pipe(gulpif(browserSync.active, browserSync.stream(config.browserSyncStream)));
+        .pipe(
+            gulpif(
+                browserSync.active,
+                browserSync.stream(config.browserSyncStream)
+            )
+        );
 }
 
 //
-// Tasks
+// Development
 //
 gulp.task('watch', function() {
-    var bundler = watchify(browserify(config.watchify)),
-        watcher = function() {
-            bundle(bundler);
-        };
+    var bundler = watchify(browserify(config.watchify));
 
     browserSync.init(config.browserSync);
-    bundler.on('update', watcher);
+    bundler.on('update', function() {
+        bundle(this);
+    });
     bundler.on('log', gutil.log);
-
-    watcher();
+    bundle(bundler);
 });
 
+gulp.task('connect', function() {
+    connect.server();
+    gulp.watch(SOURCE_DIR, ['bundle']);
+});
+
+//
+// Build
+//
 gulp.task('eslint', function() {
     return gulp.src(['./src/**/*.js'])
         .pipe(eslint())
@@ -86,10 +97,6 @@ gulp.task('eslint', function() {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('connect', function() {
-    connect.server();
-    gulp.watch(SOURCE_DIR, ['bundle']);
-});
 
 gulp.task('bundle', ['eslint'], function() {
     return bundle(browserify(config.browserify));
@@ -102,4 +109,7 @@ gulp.task('compress', ['bundle'], function() {
         .pipe(gulp.dest('./'));
 });
 
+//
+// DefaultCommand
+//
 gulp.task('default', ['eslint', 'bundle', 'compress']);

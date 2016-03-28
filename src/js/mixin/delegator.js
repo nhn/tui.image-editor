@@ -1,5 +1,5 @@
 'use strict';
-var createError = require('../factory/error').create;
+var createMessage = require('../factory/errorMessage').create;
 
 /**
  * This provides methods used for command delegation.
@@ -52,7 +52,7 @@ var Delegator = {
         var root = this.getRoot();
 
         if (this.postCommand === root.postCommand) {
-            throw createError('unImplementation', 'postCommand');
+            throw new Error(createMessage('unImplementation', 'postCommand'));
         }
 
         root.postCommand(command, callback);
@@ -66,7 +66,7 @@ var Delegator = {
         var root = this.getRoot();
 
         if (this.registerAction === root.registerAction) {
-            throw createError('unImplementation', 'registerAction');
+            throw new Error(createMessage('unImplementation', 'registerAction'));
         }
 
         root.registerAction.apply(root, arguments);
@@ -80,7 +80,7 @@ var Delegator = {
         var root = this.getRoot();
 
         if (this.deregisterAction === root.deregisterAction) {
-            throw createError('unImplementation', 'deregisterAction');
+            throw new Error(createMessage('unImplementation', 'deregisterAction'));
         }
 
         root.deregisterAction.apply(root, arguments);

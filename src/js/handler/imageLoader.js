@@ -14,13 +14,15 @@ var ImageLoader = tui.util.defineClass(Component, {
     init: function(parent) {
         this.setParent(parent);
         this.registerAction(commands.LOAD_IMAGE_FROM_URL, this.loadImageFromURL, this);
+        //this.registerAction(commands.LOAD_IMAGE_FROM_INPUT, this.loadImageFromFile, this);
     },
 
     /**
      * Load image from url
-     * @param {string} url - url
+     * @param {string} url - File url
+     * @param {string} name - File name
      */
-    loadImageFromURL: function(url) {
+    loadImageFromURL: function(url, name) {
         fabric.Image.fromURL(url, $.proxy(function(oImage) {
             var canvas = this.getCanvas(),
                 scaleFactor = this.calcInitialScale(oImage);
@@ -29,19 +31,40 @@ var ImageLoader = tui.util.defineClass(Component, {
             canvas.add(oImage);
             canvas.centerObject(oImage);
 
-            this.postCommands(url, oImage);
+            this.postCommands(name || url, oImage);
             this.attachImageEvents(oImage);
         }, this), {
-            selectable: false
+            hasControls: false,
+            padding: 10,
+            lockMovementX: true,
+            lockMovementY: true,
+            crossOrigin: ''
         });
     },
 
+    ///**
+    // * Load image from fileInput
+    // * @param fileInput
+    // */
+    //loadImageFromFile: function(fileInput) {
+    //    var imgFile;
+    //    if (!fileInput.files) {
+    //        return;
+    //    }
+    //
+    //    imgFile = fileInput.files[0];
+    //    this.loadImageFromURL(
+    //        URL.createObjectURL(imgFile),
+    //        imgFile.name
+    //    );
+    //},
+
     /**
      * Post commands
-     * @param {string} url - image url
+     * @param {string} name - image name
      * @param {fabric.Image} oImage - Image object
      */
-    postCommands: function(url, oImage) {
+    postCommands: function(name, oImage) {
         this.postCommand({
             name: commands.SET_CANVAS_IMAGE,
             args: oImage
@@ -49,7 +72,7 @@ var ImageLoader = tui.util.defineClass(Component, {
         this.postCommand({
             name: commands.ON_LOAD_IMAGE,
             args: tui.util.extend({
-                imageName: url,
+                imageName: name || 'unknown',
                 originalWidth: oImage.width,
                 originalHeight: oImage.height
             }, this.getCurrentSize(oImage))

@@ -13,16 +13,18 @@
 </head>
 <body>
     <div id="editor"></div>
-    <button id="imgDownload">Download</button>
+
     <script type="text/javascript" src="libs/fabric.min.js"></script>
     <script type="text/javascript" src="libs/jquery.min.js"></script>
     <script type="text/javascript" src="libs/code-snippet.min.js"></script>
+    <script type="text/javascript" src="libs/file-uploader.min.js"></script>
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
         var imageEditor = new tui.component.ImageEditor('#editor');
 
         imageEditor.loadImageFromURL('./img/tree.jpg');
-//        imageEditor.loadImageFromURL('./img/packageVersion.png');
+
+//        document.body.appendChild(img);
 
         //imageEditor.draw('img/packageVersion.png');
         //imageEditor.draw('http://handlebarsjs.com/images/handlebars_logo.png');

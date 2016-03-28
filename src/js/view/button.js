@@ -19,6 +19,12 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
          */
         this.name = option.name;
 
+        /**
+         * Event handler (onClick button)
+         * @type {Function}
+         */
+        this.events = option.events;
+
         this.setTemplateContext(option.templateContext);
     },
 
@@ -41,7 +47,6 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
     /**
      * Override template context
      * @param {object} templateContext - Template context
-     * @todo: template context 오버라이드 방식 개선??
      */
     setTemplateContext: function(templateContext) {
         this.templateContext = tui.util.extend(
@@ -49,27 +54,6 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
             Button.prototype.templateContext,
             templateContext
         );
-    },
-
-    doAfterRender: function() {
-        this._attachEvents();
-    },
-
-    _attachEvents: function() {
-        var self = this;
-
-        switch (this.name.toLowerCase()) {
-            case 'load':
-                this.$element.on('change', function(event) {
-                    console.log(event.target);
-                    self.postCommand({
-
-                    });
-                });
-                break;
-            default:
-                break;
-        }
     }
 });
 
