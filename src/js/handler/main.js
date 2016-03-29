@@ -2,6 +2,7 @@
 
 var Component = require('../interface/component'),
     ImageLoader = require('./imageLoader'),
+    Cropper = require('./cropper'),
     commands = require('../consts').commands;
 
 var Main = tui.util.defineClass(Component, {
@@ -10,7 +11,7 @@ var Main = tui.util.defineClass(Component, {
 
         this.canvas = null;
         this.oImage = null;
-        this.components = {};
+        this.components = null;
         this.registerActions();
     },
 
@@ -45,7 +46,10 @@ var Main = tui.util.defineClass(Component, {
      * Set components
      */
     setComponents: function() {
-        this.components.imageLoader = new ImageLoader(this);
+        this.components = {
+            imageLoader: new ImageLoader(this),
+            cropper: new Cropper(this)
+        };
     },
 
     /**

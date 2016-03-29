@@ -84,7 +84,11 @@ gulp.task('watch', function() {
 
 gulp.task('connect', function() {
     connect.server();
-    gulp.watch(SOURCE_DIR, ['bundle']);
+    gulp.watch(SOURCE_DIR, ['liveBundle']);
+});
+
+gulp.task('liveBundle', function() {
+    return bundle(browserify(config.browserify));
 });
 
 //

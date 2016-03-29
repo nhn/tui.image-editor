@@ -50,7 +50,7 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
                 text: 'Crop'
             },
             clickCommand: {
-                name: commands.CROP_IMAGE
+                name: commands.ON_CROP_START
             }
         }));
     },

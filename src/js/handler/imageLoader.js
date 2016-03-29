@@ -8,7 +8,7 @@ var Component = require('../interface/component'),
  * @extends {Component}
  * @class ImageLoader
  */
-var ImageLoader = tui.util.defineClass(Component, {
+var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototype */{
     init: function(parent) {
         this.setParent(parent);
         this.registerAction(commands.LOAD_IMAGE_FROM_URL, this.loadImageFromURL, this);

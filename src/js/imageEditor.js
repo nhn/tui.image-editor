@@ -10,7 +10,7 @@ var MainView = require('./view/main'),
  * @class
  * @param {string|jQuery|HTMLElement} wrapper - Wrapper element or selector
  */
-var ImageEditor = tui.util.defineClass({
+var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
     init: function(wrapper) {
         var broker = new Broker();
 
@@ -34,12 +34,21 @@ var ImageEditor = tui.util.defineClass({
     },
 
     /**
+     * Invoke command
+     * @param {{name: string, args: (Object|Array)}} command - Command
+     * @private
+     */
+    _invoke: function(command) {
+        this.broker.invoke(command);
+    },
+
+    /**
      * Load image from url
      * @param {string} url - File url
      * @param {string} filename - File name
      */
     loadImageFromURL: function(url, filename) {
-        this.broker.invoke({
+        this._invoke({
             name: commands.LOAD_IMAGE_FROM_URL,
             args: [url, filename]
         });
@@ -50,7 +59,7 @@ var ImageEditor = tui.util.defineClass({
      * @param {File} file - Image file
      */
     loadImageFromFile: function(file) {
-        this.broker.invoke({
+        this._invoke({
             name: commands.LOAD_IMAGE_FROM_FILE,
             args: file
         });

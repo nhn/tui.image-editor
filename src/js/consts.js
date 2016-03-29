@@ -11,6 +11,6 @@ module.exports = {
         LOAD_IMAGE_FROM_URL: 'loadImageFromUrl',
         LOAD_IMAGE_FROM_FILE: 'loadImageFromFile',
         ON_LOAD_IMAGE: 'onLoadImage',
-        CROP_IMAGE: 'cropImage'
+        ON_CROP_START: 'onCropStart'
     }
 };
