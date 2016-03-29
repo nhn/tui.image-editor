@@ -3,8 +3,6 @@
 var Component = require('../interface/component'),
     commands = require('../consts').commands;
 
-var CANVAS_MARGIN = 70;
-
 /**
  * ImageLoader components
  * @extends {Component}
@@ -14,26 +12,28 @@ var ImageLoader = tui.util.defineClass(Component, {
     init: function(parent) {
         this.setParent(parent);
         this.registerAction(commands.LOAD_IMAGE_FROM_URL, this.loadImageFromURL, this);
-        //this.registerAction(commands.LOAD_IMAGE_FROM_INPUT, this.loadImageFromFile, this);
+        this.registerAction(commands.LOAD_IMAGE_FROM_FILE, this.loadImageFromFile, this);
     },
 
     /**
      * Load image from url
      * @param {string} url - File url
-     * @param {string} name - File name
+     * @param {string} filename - File name
      */
-    loadImageFromURL: function(url, name) {
+    loadImageFromURL: function(url, filename) {
         fabric.Image.fromURL(url, $.proxy(function(oImage) {
             var canvas = this.getCanvas(),
                 scaleFactor = this.calcInitialScale(oImage);
 
             oImage.scale(scaleFactor);
-            canvas.add(oImage);
-            canvas.centerObject(oImage);
-
-            this.postCommands(name || url, oImage);
-            this.attachImageEvents(oImage);
+            canvas.setBackgroundImage(oImage);
+            canvas.setDimensions({ //set canvas size equal to image
+                width: oImage.getWidth(),
+                height: oImage.getHeight()
+            });
+            this.postCommands(filename || url, oImage);
         }, this), {
+            selectable: false,
             hasControls: false,
             padding: 10,
             lockMovementX: true,
@@ -42,22 +42,20 @@ var ImageLoader = tui.util.defineClass(Component, {
         });
     },
 
-    ///**
-    // * Load image from fileInput
-    // * @param fileInput
-    // */
-    //loadImageFromFile: function(fileInput) {
-    //    var imgFile;
-    //    if (!fileInput.files) {
-    //        return;
-    //    }
-    //
-    //    imgFile = fileInput.files[0];
-    //    this.loadImageFromURL(
-    //        URL.createObjectURL(imgFile),
-    //        imgFile.name
-    //    );
-    //},
+    /**
+     * Load image from file
+     * @param {File} imgFile - Image file
+     */
+    loadImageFromFile: function(imgFile) {
+        if (!imgFile) {
+            return;
+        }
+
+        this.loadImageFromURL(
+            URL.createObjectURL(imgFile),
+            imgFile.name
+        );
+    },
 
     /**
      * Post commands
@@ -65,31 +63,17 @@ var ImageLoader = tui.util.defineClass(Component, {
      * @param {fabric.Image} oImage - Image object
      */
     postCommands: function(name, oImage) {
+        name = name || 'unknown';
         this.postCommand({
             name: commands.SET_CANVAS_IMAGE,
-            args: oImage
+            args: [oImage, name]
         });
         this.postCommand({
             name: commands.ON_LOAD_IMAGE,
             args: tui.util.extend({
-                imageName: name || 'unknown',
-                originalWidth: oImage.width,
-                originalHeight: oImage.height
-            }, this.getCurrentSize(oImage))
+                imageName: name
+            }, this.getSize(oImage))
         });
-    },
-
-    /**
-     * Attach events to image
-     * @param {fabric.Image} oImage - Image object
-     */
-    attachImageEvents: function(oImage) {
-        oImage.on('scaling', $.proxy(function() {
-            this.postCommand({
-                name: commands.ON_SCALE_IMAGE,
-                args: this.getCurrentSize(oImage)
-            });
-        }, this));
     },
 
     /**
@@ -97,10 +81,12 @@ var ImageLoader = tui.util.defineClass(Component, {
      * @param {fabric.Image} oImage - Image object
      * @returns {{currentWidth: Number, currentHeight: Number}}
      */
-    getCurrentSize: function(oImage) {
+    getSize: function(oImage) {
         return {
-            currentWidth: parseInt(oImage.width * oImage.scaleX, 10),
-            currentHeight: parseInt(oImage.height * oImage.scaleY, 10)
+            originalWidth: oImage.width,
+            originalHeight: oImage.height,
+            currentWidth: Math.floor(oImage.getWidth()),
+            currentHeight: Math.floor(oImage.getHeight())
         };
     },
 
@@ -116,9 +102,9 @@ var ImageLoader = tui.util.defineClass(Component, {
             scaleFactor;
 
         if (oImage.width > oImage.height) {
-            scaleFactor = (canvas.width - CANVAS_MARGIN) / oWidth;
+            scaleFactor = (canvas.width) / oWidth;
         } else {
-            scaleFactor = (canvas.height - CANVAS_MARGIN) / oHeight;
+            scaleFactor = (canvas.height) / oHeight;
         }
 
         return scaleFactor;

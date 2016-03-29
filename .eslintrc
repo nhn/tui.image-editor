@@ -105,6 +105,7 @@
         "vars-on-top": 2,
         "wrap-iife": [2, "inside"],
         "yoda": 2,
+        "no-useless-escape": 2,
 
         // Strict Mode
         "strict": [2, "global"],
@@ -196,8 +197,10 @@
         "spaced-comment": 0,
         "wrap-regex": 0,
         "newline-before-return": 1,
+        "max-statements-per-line": [2, {"max": 1}],
 
         //ES6
-        "no-confusing-arrow": [2, {"allowParens": true}]
+        "no-confusing-arrow": [2, {"allowParens": true}],
+        "no-duplicate-imports": 2
     }
 }

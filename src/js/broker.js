@@ -48,7 +48,8 @@ var Broker = tui.util.defineClass(/* @lends Broker.prototype */{
         if (isExisty(args) && !isExisty(args.length) || isString(args)) {
             args = [args];
         }
-        Array.prototype.unshift.call(args || [], name);
+        args = args || [];
+        Array.prototype.unshift.call(args, name);
 
         return events.invoke.apply(events, args);
     }

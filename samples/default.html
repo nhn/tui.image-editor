@@ -12,25 +12,53 @@
 
 </head>
 <body>
-    <div id="editor"></div>
 
+    <a id="btn-download"><button>다운로드</button></a>
+    <div id="editor"></div>
+    <br>
+    <div>
+        <div id="uploader"></div>
+        <div id="list">
+            <div class="count">count : <strong id="file_count"></strong></div>
+            <div class="size">size : <strong id="size_count"></strong></div>
+            <ul id="files"></ul>
+        </div>
+    </div>
     <script type="text/javascript" src="libs/fabric.min.js"></script>
     <script type="text/javascript" src="libs/jquery.min.js"></script>
     <script type="text/javascript" src="libs/code-snippet.min.js"></script>
     <script type="text/javascript" src="libs/file-uploader.min.js"></script>
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
-        var imageEditor = new tui.component.ImageEditor('#editor');
+        var imageEditor = new tui.component.ImageEditor('#editor'),
+            downloadBtn = document.getElementById('btn-download');
 
         imageEditor.loadImageFromURL('./img/tree.jpg');
+        downloadBtn.addEventListener('click', function () {
+            downloadBtn.href = imageEditor.toDataURL();
+            downloadBtn.download = imageEditor.getImageName();
+        });
 
-//        document.body.appendChild(img);
+        var uploader = new tui.component.Uploader({
+            url: {
+                send: 'http://10.77.29.126:4000/upload',
+                remove: 'http://10.77.29.126:4000/remove'
+            },
+            formTarget: 'hiddenFrame',
+            listInfo: {
+                list: $('#files'),
+                count: $('#file_count'),
+                size: $('#size_count')
+            }
+        }, $('#uploader'));
 
-        //imageEditor.draw('img/packageVersion.png');
-        //imageEditor.draw('http://handlebarsjs.com/images/handlebars_logo.png');
-//        $('#imgDownload').on('click', function() {
-//            console.log('btn click');
-//        });
+        uploader.on('success', function(data) {
+            var fileInfo = data.filelist[0],
+                filename = fileInfo.name;
+
+            console.log(filename);
+            imageEditor.loadImageFromURL(fileInfo.path, filename);
+        })
     </script>
 </body>
 </html>

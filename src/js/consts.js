@@ -9,8 +9,8 @@ module.exports = {
         SET_CANVAS_ELEMENT: 'setCanvasElement',
         SET_CANVAS_IMAGE: 'setCanvasImage',
         LOAD_IMAGE_FROM_URL: 'loadImageFromUrl',
-        LOAD_IMAGE_FROM_INPUT: 'loadImageFromInput',
+        LOAD_IMAGE_FROM_FILE: 'loadImageFromFile',
         ON_LOAD_IMAGE: 'onLoadImage',
-        ON_SCALE_IMAGE: 'onScaleImage'
+        CROP_IMAGE: 'cropImage'
     }
 };

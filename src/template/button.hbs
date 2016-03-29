@@ -1,5 +1,9 @@
 <label class="{{className buttonName}}" style="position:relative; overflow:hidden; margin-right:5px; height:100%;">
-    <button>{{text}}</button>
+    {{#if href}}
+        <a><button>{{text}}</button></a>
+    {{else}}
+        <button>{{text}}</button>
+    {{/if}}
 
     {{!--@todo: File api가 지원되면 file-uploader 컴포넌트 사용하지 않고, 버튼 + 인풋 조합하여 사용--}}
     {{!--{{#if fileInputName}}--}}

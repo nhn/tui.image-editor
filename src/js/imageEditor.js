@@ -33,12 +33,44 @@ var ImageEditor = tui.util.defineClass({
         this.mainView = new MainView(broker, wrapper);
     },
 
-    // stub
-    loadImageFromURL: function(url) {
+    /**
+     * Load image from url
+     * @param {string} url - File url
+     * @param {string} filename - File name
+     */
+    loadImageFromURL: function(url, filename) {
         this.broker.invoke({
             name: commands.LOAD_IMAGE_FROM_URL,
-            args: url
+            args: [url, filename]
         });
+    },
+
+    /**
+     * Load image from file
+     * @param {File} file - Image file
+     */
+    loadImageFromFile: function(file) {
+        this.broker.invoke({
+            name: commands.LOAD_IMAGE_FROM_FILE,
+            args: file
+        });
+    },
+
+    /**
+     * Get data url
+     * @param {string} type - A DOMString indicating the image format. The default type is image/png.
+     * @returns {string} A DOMString containing the requested data URI.
+     */
+    toDataURL: function(type) {
+        return this.mainHandler.toDataURL(type);
+    },
+
+    /**
+     * Get image name
+     * @returns {string}
+     */
+    getImageName: function() {
+        return this.mainHandler.getImageName();
     }
 });
 

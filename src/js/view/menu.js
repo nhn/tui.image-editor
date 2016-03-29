@@ -1,7 +1,7 @@
 'use strict';
 var View = require('../interface/view'),
     btnFactory = require('../factory/button'),
-    UploadForm = require('./uploadForm'),
+    commands = require('../consts').commands,
     mixer = require('../mixin/mixer');
 
 var template = require('../../template/container.hbs');
@@ -44,29 +44,13 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
      * It adds buttons
      */
     doAfterRender: function() {
-        this.addChild(new UploadForm(this, {
-            url: {
-                send: 'http://10.77.29.126:4000/upload',
-                remove: 'http://10.77.29.126:4000/remove'
+        this.addChild(btnFactory.create(this, {
+            name: 'Crop',
+            templateContext: {
+                text: 'Crop'
             },
-            formTarget: 'hiddenFrame',
-            listInfo: {
-                list: $(),
-                count: $(),
-                size: $()
-            }
-        }));
-
-        this.addChild(btnFactory.create(this, {
-            name: 'Save',
-            templateContext: {
-                text: '저장'
-            }
-        }));
-        this.addChild(btnFactory.create(this, {
-            name: 'unknown',
-            templateContext: {
-                text: '그냥 버튼'
+            clickCommand: {
+                name: commands.CROP_IMAGE
             }
         }));
     },

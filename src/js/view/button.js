@@ -19,11 +19,9 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
          */
         this.name = option.name;
 
-        /**
-         * Event handler (onClick button)
-         * @type {Function}
-         */
-        this.events = option.events;
+        this.templateContext = null;
+
+        this.clickCommand = option.clickCommand;
 
         this.setTemplateContext(option.templateContext);
     },
@@ -43,6 +41,14 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
      * @type {function}
      */
     template: template,
+
+    doAfterRender: function() {
+        if (this.clickCommand) {
+            this.$element.on('click', $.proxy(function() {
+                this.postCommand(this.clickCommand);
+            }, this));
+        }
+    },
 
     /**
      * Override template context

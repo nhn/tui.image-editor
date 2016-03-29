@@ -26,8 +26,8 @@ var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
      */
     templateContext: {
         name: 'canvas',
-        canvasWidth: 700,
-        canvasHeight: 700
+        canvasWidth: 600,
+        canvasHeight: 600
     },
 
     /**

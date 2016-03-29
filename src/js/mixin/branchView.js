@@ -17,10 +17,6 @@ var BranchView = {
         this.removeChild(name);
         this._children[name] = view;
         view.render(this.getElement());
-
-        if (view.events) {
-            view.getElement().on(view.events);
-        }
     },
 
     /**
