@@ -1,5 +1,6 @@
 'use strict';
 var Component = require('../interface/component'),
+    Cropzone = require('../extension/cropzone'),
     commands = require('../consts').commands;
 
 /**
@@ -18,7 +19,20 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
     },
 
     onCropStart: function() {
-        console.log('crop start');
+        var canvas = this.getCanvas(),
+            cropZone = new Cropzone({
+                left: 10,
+                top: 10,
+                fill: 'transparent',
+                width: 100,
+                height: 100,
+                hasBorders: false,
+                hasRotatingPoint: false,
+                cornerColor: 'black',
+                cornerSize: 10
+            });
+        canvas.add(cropZone);
+        canvas.setActiveObject(canvas.item(0));
     }
 });
 

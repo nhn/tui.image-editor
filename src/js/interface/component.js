@@ -26,7 +26,7 @@ var Component = tui.util.defineClass({
             return this.oImage;
         }
 
-        return this.getRoot().getCanvas();
+        return this.getRoot().getCanvasImage();
     }
 });
 

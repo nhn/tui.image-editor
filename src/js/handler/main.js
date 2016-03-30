@@ -38,7 +38,7 @@ var Main = tui.util.defineClass(Component, {
      * @param {Element} canvasElement - Canvas element
      */
     setCanvasElement: function(canvasElement) {
-        this.canvas = new fabric.Canvas(canvasElement);
+        this.canvas = new fabric.Canvas(canvasElement, 'myCanvas');
         this.setComponents();
     },
 
