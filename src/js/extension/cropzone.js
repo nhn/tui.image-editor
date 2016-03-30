@@ -119,7 +119,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
                 -(halfHeight + top),
                 -(halfHeight),
                 halfHeight,
-                halfHeight + (ctx.canvas.width - top - height)
+                halfHeight + (ctx.canvas.height - top - height)
             ], ceil)
         };
     },
