@@ -5,6 +5,10 @@ var Component = require('../interface/component'),
 
 var MOUSE_MOVE_THRESHOLD = 10;
 
+var isEmpty = tui.util.isEmpty,
+    min = Math.min,
+    abs = Math.abs;
+
 /**
  * Cropper components
  * @param {Delegator} parent - parent component
@@ -54,18 +58,23 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         }
 
         this.cropzone = new Cropzone({
-            left: -1,
-            top: -1,
+            left: -10,
+            top: -10,
             width: 1,
             height: 1,
             fill: 'transparent',
-            selectable: false
+            hasBorders: false,
+            cornerColor: 'black',
+            cornerSize: 10,
+            lockRotation: true,
+            hasRotatingPoint: false
         });
 
         this.getCanvas()
             .add(this.cropzone)
             .on('mouse:down', this.handlers.mousedown)
             .defaultCursor = 'crosshair';
+
     },
 
     /**
@@ -93,6 +102,41 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         }
     },
 
+    //@todo: BUG - 캔버스 외부에서만 마우스를 움직일때.
+    getSettingsFromPoint: function(x, y) {
+        var settings = {},
+            canvas = this.getCanvas(),
+            width = canvas.getWidth(),
+            height = canvas.getHeight();
+
+        if (x < 0) {
+            settings.left = 0;
+        }
+
+        if (y < 0) {
+            settings.top = 0;
+        }
+
+        if (x > width) {
+            settings.width = width - this.cropzone.left;
+        }
+
+        if (y > height) {
+            settings.height = height - this.cropzone.top;
+        }
+
+        if (isEmpty(settings)) {
+            settings = {
+                left: min(x, this.startX),
+                top: min(y, this.startY),
+                width: abs(x - this.startX),
+                height: abs(y - this.startY)
+            };
+        }
+
+        return settings;
+    },
+
     /**
      * onMousemove handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
@@ -102,23 +146,13 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             coord = canvas.getPointer(fEvent.e),
             x = coord.x,
             y = coord.y,
-            min = Math.min,
-            abs = Math.abs;
+            cropzone = this.cropzone;
 
         if (abs(x - this.startX) + abs(y - this.startY) > MOUSE_MOVE_THRESHOLD) {
-            this.cropzone.remove();
-            this.cropzone = new Cropzone({
-                left: min(x, this.startX),
-                top: min(y, this.startY),
-                width: abs(x - this.startX),
-                height: abs(y - this.startY),
-                fill: 'transparent',
-                hasBorders: false,
-                cornerColor: 'black',
-                cornerSize: 10,
-                lockRotation: true,
-                hasRotatingPoint: false
-            });
+            cropzone
+                .remove()
+                .set(this.getSettingsFromPoint(x, y));
+
             canvas.add(this.cropzone);
         }
     },
@@ -127,17 +161,16 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      * onMouseup handler in fabric canvas
      */
     onFabricMouseUp: function() {
-        var canvas = this.getCanvas(),
-            cropzone = this.cropzone;
+        var cropzone = this.cropzone,
+            handlers = this.handlers;
 
-        if (cropzone.selectable) {
-            canvas.setActiveObject(cropzone);
-        }
-        canvas.selection = true;
-        canvas.off({
-            'mouse:move': this.handlers.mousemove,
-            'mouse:up': this.handlers.mouseup
-        });
+        cropzone.setCoords();
+        this.getCanvas()
+            .setActiveObject(cropzone)
+            .off({
+                'mouse:move': handlers.mousemove,
+                'mouse:up': handlers.mouseup
+            });
     },
 
     /**
