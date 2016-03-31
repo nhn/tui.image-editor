@@ -5,8 +5,8 @@ var Component = require('../interface/component'),
 
 var MOUSE_MOVE_THRESHOLD = 10;
 
-var isEmpty = tui.util.isEmpty,
-    min = Math.min,
+var min = Math.min,
+    max = Math.max,
     abs = Math.abs;
 
 /**
@@ -45,7 +45,9 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         this.handlers = {
             mousedown: $.proxy(this.onFabricMouseDown, this),
             mousemove: $.proxy(this.onFabricMouseMove, this),
-            mouseup: $.proxy(this.onFabricMouseUp, this)
+            mouseup: $.proxy(this.onFabricMouseUp, this),
+            onCropzoneMoving: $.proxy(this.onCropzoneMoving, this),
+            onCropzoneScaling: $.proxy(this.onCropzoneScaling, this)
         };
     },
 
@@ -70,11 +72,31 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             hasRotatingPoint: false
         });
 
+        this.cropzone.on({
+            moving: this.handlers.onCropzoneMoving,
+            scaling: this.handlers.onCropzoneScaling
+        });
+
         this.getCanvas()
             .add(this.cropzone)
             .on('mouse:down', this.handlers.mousedown)
             .defaultCursor = 'crosshair';
+    },
 
+    /**
+     * onCropzoneMoving event handler
+     * @param {{e: MouseEvent}} fEvent - Fabric event
+     */
+    onCropzoneMoving: function(fEvent) {
+        //@todo: Prevent moving cropzone from going out the canvas
+    },
+
+    /**
+     * onCropzoneScaling event handler
+     * @param {{e: MouseEvent}} fEvent - Fabric event
+     */
+    onCropzoneScaling: function(fEvent) {
+        //@todo: Prevent scaling cropzone from going out the canvas
     },
 
     /**
@@ -102,37 +124,28 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         }
     },
 
-    //@todo: BUG - 캔버스 외부에서만 마우스를 움직일때.
+    /**
+     * Get rect position setting from Canvas-Mouse-Position(x, y)
+     * @param {number} x - Canvas-Mouse-Position x
+     * @param {number} y - Canvas-Mouse-Position Y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     */
     getSettingsFromPoint: function(x, y) {
-        var settings = {},
-            canvas = this.getCanvas(),
+        var canvas = this.getCanvas(),
             width = canvas.getWidth(),
-            height = canvas.getHeight();
+            height = canvas.getHeight(),
+            startX = this.startX,
+            startY = this.startY,
+            settings, left, top;
 
-        if (x < 0) {
-            settings.left = 0;
-        }
-
-        if (y < 0) {
-            settings.top = 0;
-        }
-
-        if (x > width) {
-            settings.width = width - this.cropzone.left;
-        }
-
-        if (y > height) {
-            settings.height = height - this.cropzone.top;
-        }
-
-        if (isEmpty(settings)) {
-            settings = {
-                left: min(x, this.startX),
-                top: min(y, this.startY),
-                width: abs(x - this.startX),
-                height: abs(y - this.startY)
-            };
-        }
+        left = max(0, min(x, startX));
+        top = max(0, min(y, startY));
+        settings = {
+            left: left,
+            top: top,
+            width: min(width, max(x, startX)) - left,
+            height: min(height, max(y, startY)) - top
+        };
 
         return settings;
     },
@@ -167,6 +180,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         cropzone.setCoords();
         this.getCanvas()
             .setActiveObject(cropzone)
+            .calcOffset()
             .off({
                 'mouse:move': handlers.mousemove,
                 'mouse:up': handlers.mouseup
@@ -183,7 +197,9 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         this.cropzone = null;
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        canvas.off('mouse:down', this.handlers.mousedown);
+        canvas
+            .calcOffset()
+            .off('mouse:down', this.handlers.mousedown);
     }
 });
 

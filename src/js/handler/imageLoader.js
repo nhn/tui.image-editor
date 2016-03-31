@@ -1,7 +1,8 @@
 'use strict';
 
-var Component = require('../interface/component'),
-    commands = require('../consts').commands;
+var Component = require('../interface/component');
+var commands = require('../consts').commands;
+var ceil = Math.ceil;
 
 /**
  * ImageLoader components
@@ -28,8 +29,8 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
             oImage.scale(scaleFactor);
             canvas.setBackgroundImage(oImage);
             canvas.setDimensions({ //set canvas size equal to image
-                width: oImage.getWidth(),
-                height: oImage.getHeight()
+                width: ceil(oImage.getWidth()),
+                height: ceil(oImage.getHeight())
             });
             this.postCommands(filename || url, oImage);
         }, this), {
@@ -85,8 +86,8 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
         return {
             originalWidth: oImage.width,
             originalHeight: oImage.height,
-            currentWidth: Math.floor(oImage.getWidth()),
-            currentHeight: Math.floor(oImage.getHeight())
+            currentWidth: ceil(oImage.getWidth()),
+            currentHeight: ceil(oImage.getHeight())
         };
     },
 
