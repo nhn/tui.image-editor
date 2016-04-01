@@ -155,6 +155,18 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
         ctx.restore();
     },
 
+    /**
+     * Get last clicked corner
+     *  - 'tl': Top-Left
+     *  - 'mt': Medium-Top
+     *  - 'tr': Top-Right
+     *  - 'mr': Medium-Right
+     *  - 'br': Bottom-Right
+     *  - 'mb': Medium-Bottom
+     *  - 'bl': Bottom-Left
+     *  - 'ml': Medium-Left
+     * @returns {string}
+     */
     getLastCorner: function() {
         return this.__corner;
     }
