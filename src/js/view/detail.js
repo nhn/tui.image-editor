@@ -1,7 +1,6 @@
 'use strict';
 var View = require('../interface/view'),
     ImageInformation = require('./imageInformation'),
-    //UploadForm = require('./uploadForm'),
     mixer = require('../mixin/mixer'),
     commands = require('../consts').commands;
 
