@@ -63,7 +63,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
      * @private
      */
     _fillOuterRect: function(ctx, fillStyle) {
-        var coordinates = this.getCoordinates(ctx),
+        var coordinates = this._getCoordinates(ctx),
             x = coordinates.x,
             y = coordinates.y;
 
@@ -98,7 +98,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
      * @returns {{x: Array, y: Array}}
      * @private
      */
-    getCoordinates: function(ctx) {
+    _getCoordinates: function(ctx) {
         var ceil = Math.ceil,
             width = this.getWidth(),
             height = this.getHeight(),

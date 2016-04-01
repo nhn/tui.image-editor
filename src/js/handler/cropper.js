@@ -88,14 +88,14 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      * onCropzoneMoving event handler
      */
     onCropzoneMoving: function() {
-        var canvas = this.getCanvas();
-        var cropzone = this.cropzone;
-        var left = cropzone.getLeft();
-        var top = cropzone.getTop();
-        var width = cropzone.getWidth();
-        var height = cropzone.getHeight();
-        var maxLeft = canvas.getWidth() - width;
-        var maxTop = canvas.getHeight() - height;
+        var canvas = this.getCanvas(),
+            cropzone = this.cropzone,
+            left = cropzone.getLeft(),
+            top = cropzone.getTop(),
+            width = cropzone.getWidth(),
+            height = cropzone.getHeight(),
+            maxLeft = canvas.getWidth() - width,
+            maxTop = canvas.getHeight() - height;
 
         if (left < 0) {
             cropzone.setLeft(0);
@@ -115,49 +115,80 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      * @param {{e: MouseEvent}} fEvent - Fabric event
      */
     onCropzoneScaling: function(fEvent) {
-        var cropzone = this.cropzone;
-        var canvas = this.getCanvas();
-        var pointer = canvas.getPointer(fEvent.e);
-        var settings;
+        var cropzone = this.cropzone,
+            canvas = this.getCanvas(),
+            pointer = canvas.getPointer(fEvent.e),
+            settings = this._calcScalingSizeFromPointer(cropzone, pointer);
 
-        settings = this.calcScaledSizeFromPointer(cropzone, pointer);
-        cropzone.set(settings)
-            .scale(1)
-            .setCoords();
+        cropzone.scale(1).set(settings);
     },
 
     /**
      * Calc scaled size from mouse pointer with selected corner
      * @param {Cropzone} cropzone - cropzone(=== this.cropzone)
      * @param {{x: number, y: number}} pointer - Mouse position
+     * @private
      * @returns {object} Having left or(and) top or(and) width or(and) height.
-     * @todo: tl일때 width, height 계산
      */
-    calcScaledSizeFromPointer: function(cropzone, pointer) {
-        var canvas = this.getCanvas();
-        var maxX = canvas.getWidth();
-        var maxY = canvas.getHeight();
-        var left = cropzone.getLeft();
-        var top = cropzone.getTop();
-        var right = cropzone.getWidth() + left;
-        var bottom = cropzone.getHeight() + top;
+    _calcScalingSizeFromPointer: function(cropzone, pointer) {
+        var canvas = this.getCanvas(),
+            maxX = canvas.getWidth(),
+            maxY = canvas.getHeight(),
+            top = cropzone.getTop(),
+            left = cropzone.getLeft(),
+            bottom = cropzone.getHeight() + top,
+            right = cropzone.getWidth() + left,
+            pointerX = pointer.x,
+            pointerY = pointer.y,
+            tlWidth = min(max(1, right - pointerX), right),
+            tlHeight = min(max(1, bottom - pointerY), bottom),
+            tl = {
+                width: tlWidth,
+                height: tlHeight,
+                left: right - tlWidth,
+                top: bottom - tlHeight
+            },
+            br = {
+                width: max(1, (min(pointerX, maxX) - left)),
+                height: max(1, (min(pointerY, maxY) - top))
+            };
 
-        var pointerX = pointer.x;
-        var pointerY = pointer.y;
-        
-        var brWidth = max(1, (min(pointerX, maxX) - left));
-        var brHeight = max(1, (min(pointerY, maxY) - top));
+        return this._makeScalingSettings(tl, br);
+    },
 
-        // @todo
-        // var tlWidth = max(1, (right - pointerX));
-        // var tlHeight = max(1, (bottom - pointerY));
+    /**
+     * Make scaling settings
+     * @param {{width: number, height: number, left: number, top: number}} tl - Top-Left setting
+     * @param {{width: number, height: number}} br - Bottom-Right setting
+     * @returns {{width: ?number, height: ?number, left: ?number, top: ?number}} Position setting
+     * @private
+     */
+    /*eslint-disable complexity*/
+    _makeScalingSettings: function(tl, br) {
+        var tlWidth = tl.width,
+            tlHeight = tl.height,
+            brHeight = br.height,
+            brWidth = br.width,
+            tlLeft = tl.left,
+            tlTop = tl.top,
+            settings;
 
-        var settings;
-        switch (cropzone.getLastCorner()) {
+        switch (this.cropzone.getLastCorner()) {
             case 'tl':  // top-left
-                settings = { // left, top 셋팅은 정상 아래가 맞음.
-                    left: pointerX < 0 ? 0 : left,
-                    top: pointerY < 0 ? 0 : top
+                settings = tl;
+                break;
+            case 'tr':  // top-right
+                settings = {
+                    width: brWidth,
+                    height: tlHeight,
+                    top: tlTop
+                };
+                break;
+            case 'bl':  // bottom-left
+                settings = {
+                    width: tlWidth,
+                    height: brHeight,
+                    left: tlLeft
                 };
                 break;
             case 'br':  // bottom-right
@@ -166,23 +197,35 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
                     height: brHeight
                 };
                 break;
+            case 'ml':  // medium-left
+                settings = {
+                    width: tlWidth,
+                    left: tlLeft
+                };
+                break;
+            case 'mt':  // medium-top
+                settings = {
+                    height: tlHeight,
+                    top: tlTop
+                };
+                break;
+            case 'mr':  // medium-right
+                settings = {
+                    width: brWidth
+                };
+                break;
             case 'mb':  // medium-bottom
                 settings = {
                     height: brHeight
                 };
                 break;
-            case 'mr':
-                settings = {
-                    width: brWidth
-                };
-                break;
             default:
-                settings = {};
                 break;
         }
 
         return settings;
     },
+    /*eslint-enable complexity*/
 
     /**
      * onMousedown handler in fabric canvas
@@ -210,12 +253,32 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
     },
 
     /**
+     * onMousemove handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     */
+    onFabricMouseMove: function(fEvent) {
+        var canvas = this.getCanvas(),
+            pointer = canvas.getPointer(fEvent.e),
+            x = pointer.x,
+            y = pointer.y,
+            cropzone = this.cropzone;
+
+        if (abs(x - this.startX) + abs(y - this.startY) > MOUSE_MOVE_THRESHOLD) {
+            cropzone.remove();
+            cropzone.set(this._getSettingsFromPoint(x, y));
+
+            canvas.add(cropzone);
+        }
+    },
+
+    /**
      * Get rect position setting from Canvas-Mouse-Position(x, y)
      * @param {number} x - Canvas-Mouse-Position x
      * @param {number} y - Canvas-Mouse-Position Y
      * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
      */
-    getSettingsFromPoint: function(x, y) {
+    _getSettingsFromPoint: function(x, y) {
         var image = this.getCanvasImage(),
             width = image.getWidth(),
             height = image.getHeight(),
@@ -236,32 +299,12 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
     },
 
     /**
-     * onMousemove handler in fabric canvas
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-     */
-    onFabricMouseMove: function(fEvent) {
-        var canvas = this.getCanvas(),
-            pointer = canvas.getPointer(fEvent.e),
-            x = pointer.x,
-            y = pointer.y,
-            cropzone = this.cropzone;
-
-        if (abs(x - this.startX) + abs(y - this.startY) > MOUSE_MOVE_THRESHOLD) {
-            cropzone.remove();
-            cropzone.set(this.getSettingsFromPoint(x, y));
-
-            canvas.add(cropzone);
-        }
-    },
-
-    /**
      * onMouseup handler in fabric canvas
      */
     onFabricMouseUp: function() {
         var cropzone = this.cropzone,
             handlers = this.handlers;
 
-        console.log('?');
         this.getCanvas()
             .setActiveObject(cropzone)
             .off({
