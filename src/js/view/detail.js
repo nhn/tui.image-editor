@@ -16,7 +16,6 @@ var template = require('../../template/container.hbs');
 var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
     init: function(parent) {
         View.call(this, parent);
-        this.state = 'default';
     },
 
     /**
@@ -33,7 +32,7 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
         name: 'detail'
     },
 
-    /**zw
+    /**
      * Render template
      * @override
      * @type {function}
@@ -42,7 +41,6 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
 
     /**
      * Processing after render
-     * @todo: imageInfo, detailSetting 나누기
      */
     doAfterRender: function() {
         this.registerAction(commands.ON_LOAD_IMAGE, function(templateContext) {

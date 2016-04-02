@@ -12,6 +12,9 @@ var template = require('../../template/canvas.hbs');
 var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
     init: function(parent) {
         View.call(this, parent);
+        this.registerAction(commands.ON_LOAD_IMAGE, function(imageInfo) {
+            this.$element.css('height', imageInfo.currentHeight);
+        }, this);
     },
 
     /**
@@ -25,9 +28,7 @@ var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
      * @type {Object}
      */
     templateContext: {
-        name: 'canvas',
-        canvasWidth: 600,
-        canvasHeight: 600
+        name: 'canvas'
     },
 
     /**

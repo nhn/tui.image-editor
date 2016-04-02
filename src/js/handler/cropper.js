@@ -46,9 +46,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         this.handlers = {
             mousedown: $.proxy(this.onFabricMouseDown, this),
             mousemove: $.proxy(this.onFabricMouseMove, this),
-            mouseup: $.proxy(this.onFabricMouseUp, this),
-            onCropzoneMoving: $.proxy(this.onCropzoneMoving, this),
-            onCropzoneScaling: $.proxy(this.onCropzoneScaling, this)
+            mouseup: $.proxy(this.onFabricMouseUp, this)
         };
     },
 
@@ -132,9 +130,9 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      * @private
      */
     _calcRectPositionFromPoint: function(x, y) {
-        var image = this.getCanvasImage(),
-            width = image.getWidth(),
-            height = image.getHeight(),
+        var canvas = this.getCanvas(),
+            width = canvas.getWidth(),
+            height = canvas.getHeight(),
             startX = this.startX,
             startY = this.startY,
             settings, left, top;
@@ -172,6 +170,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      */
     onCropEnd: function(btnType) {
         var canvas = this.getCanvas(),
+            image = this.getCanvasImage(),
             cropzone = this.cropzone,
             cropInfo;
 
@@ -193,9 +192,10 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
                 width: cropzone.getWidth(),
                 height: cropzone.getHeight()
             };
+
             this.postCommand({
                 name: commands.LOAD_IMAGE_FROM_URL,
-                args: [canvas.toDataURL(cropInfo), this.getImageName()]
+                args: [image.toDataURL(cropInfo), this.getImageName()]
             });
         }
     }

@@ -14,6 +14,7 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
         this.setParent(parent);
         this.registerAction(commands.LOAD_IMAGE_FROM_URL, this.loadImageFromURL, this);
         this.registerAction(commands.LOAD_IMAGE_FROM_FILE, this.loadImageFromFile, this);
+        this.prevScaleFactor = null;
     },
 
     /**
@@ -23,22 +24,25 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
      */
     loadImageFromURL: function(url, filename) {
         fabric.Image.fromURL(url, $.proxy(function(oImage) {
-            var canvas = this.getCanvas(),
-                scaleFactor = this.calcInitialScale(oImage);
+            var canvas = this.getCanvas();
 
-            oImage.scale(scaleFactor);
-            canvas.setBackgroundImage(oImage);
-            canvas.setDimensions({ //set canvas size equal to image
-                width: ceil(oImage.getWidth()),
-                height: ceil(oImage.getHeight())
-            });
+            canvas.setBackgroundImage(oImage)
+                .setDimensions({
+                    width: '100%',
+                    'max-width': oImage.getWidth() + 'px',
+                    height: 'auto'
+                }, {
+                    cssOnly: true
+                })
+                .setDimensions({
+                    width: oImage.getWidth(),
+                    height: oImage.getHeight()
+                }, {
+                    backstoreOnly: true
+                });
+
             this.postCommands(filename || url, oImage);
         }, this), {
-            selectable: false,
-            hasControls: false,
-            padding: 10,
-            lockMovementX: true,
-            lockMovementY: true,
             crossOrigin: ''
         });
     },
@@ -108,7 +112,7 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
             scaleFactor = (canvas.height) / oHeight;
         }
 
-        return scaleFactor < 1 ? scaleFactor : 1;
+        return Math.min(1, scaleFactor);
     }
 });
 
