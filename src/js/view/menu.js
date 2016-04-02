@@ -1,6 +1,7 @@
 'use strict';
 var View = require('../interface/view'),
     btnFactory = require('../factory/button'),
+    CropSubButtonGroup = require('./CropSubButtonGroup'),
     commands = require('../consts').commands,
     mixer = require('../mixin/mixer');
 
@@ -44,6 +45,11 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
      * It adds buttons
      */
     doAfterRender: function() {
+        this._addChildren();
+        this._registerActions();
+    },
+
+    _addChildren: function() {
         this.addChild(btnFactory.create(this, {
             name: 'Crop',
             templateContext: {
@@ -53,6 +59,15 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
                 name: commands.ON_CROP_START
             }
         }));
+    },
+
+    _registerActions: function() {
+        this.registerAction(commands.ON_CROP_START, function() {
+            this.addChild(new CropSubButtonGroup(this));
+        }, this);
+        this.registerAction(commands.ON_CROP_END, function() {
+            this.removeChild('subButtonGroup');
+        }, this);
     },
 
     /**
