@@ -27,6 +27,18 @@ var Component = tui.util.defineClass({
         }
 
         return this.getRoot().getCanvasImage();
+    },
+
+    /**
+     * Get image name
+     * @returns {string}
+     */
+    getImageName: function() {
+        if (this === this.getRoot()) {
+            return this.imageName;
+        }
+
+        return this.getRoot().getImageName();
     }
 });
 

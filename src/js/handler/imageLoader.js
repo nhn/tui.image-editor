@@ -108,7 +108,7 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
             scaleFactor = (canvas.height) / oHeight;
         }
 
-        return scaleFactor;
+        return scaleFactor < 1 ? scaleFactor : 1;
     }
 });
 

@@ -3,15 +3,7 @@ var Component = require('../interface/component'),
     Cropzone = require('../extension/cropzone'),
     commands = require('../consts').commands;
 
-var MOUSE_MOVE_THRESHOLD = 10,
-    CORNER_TYPE_TOP_LEFT = 'tl',
-    CORNER_TYPE_TOP_RIGHT = 'tr',
-    CORNER_TYPE_MIDDLE_TOP = 'mt',
-    CORNER_TYPE_MIDDLE_LEFT = 'ml',
-    CORNER_TYPE_MIDDLE_RIGHT = 'mr',
-    CORNER_TYPE_MIDDLE_BOTTOM = 'mb',
-    CORNER_TYPE_BOTTOM_LEFT = 'bl',
-    CORNER_TYPE_BOTTOM_RIGHT = 'br';
+var MOUSE_MOVE_THRESHOLD = 10;
 
 var min = Math.min,
     max = Math.max,
@@ -81,159 +73,12 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             lockScalingFlip: true,
             lockRotation: true
         });
-        this.cropzone.on({
-            moving: this.handlers.onCropzoneMoving,
-            scaling: this.handlers.onCropzoneScaling
-        });
 
         this.getCanvas()
             .add(this.cropzone)
             .on('mouse:down', this.handlers.mousedown)
             .defaultCursor = 'crosshair';
     },
-
-    /**
-     * onCropzoneMoving event handler
-     */
-    onCropzoneMoving: function() {
-        var canvas = this.getCanvas(),
-            cropzone = this.cropzone,
-            left = cropzone.getLeft(),
-            top = cropzone.getTop(),
-            width = cropzone.getWidth(),
-            height = cropzone.getHeight(),
-            maxLeft = canvas.getWidth() - width,
-            maxTop = canvas.getHeight() - height;
-
-        if (left < 0) {
-            cropzone.setLeft(0);
-        } else if (left > maxLeft) {
-            cropzone.setLeft(maxLeft);
-        }
-        if (top < 0) {
-            cropzone.setTop(0);
-        } else if (top > maxTop) {
-            cropzone.setTop(maxTop);
-        }
-        cropzone.setCoords();
-    },
-
-    /**
-     * onCropzoneScaling event handler
-     * @param {{e: MouseEvent}} fEvent - Fabric event
-     */
-    onCropzoneScaling: function(fEvent) {
-        var cropzone = this.cropzone,
-            canvas = this.getCanvas(),
-            pointer = canvas.getPointer(fEvent.e),
-            settings = this._calcScalingSizeFromPointer(cropzone, pointer);
-
-        cropzone.scale(1).set(settings);
-    },
-
-    /**
-     * Calc scaled size from mouse pointer with selected corner
-     * @param {Cropzone} cropzone - cropzone(=== this.cropzone)
-     * @param {{x: number, y: number}} pointer - Mouse position
-     * @returns {object} Having left or(and) top or(and) width or(and) height.
-     * @private
-     */
-    _calcScalingSizeFromPointer: function(cropzone, pointer) {
-        var canvas = this.getCanvas(),
-            maxX = canvas.getWidth(),
-            maxY = canvas.getHeight(),
-            top = cropzone.getTop(),
-            left = cropzone.getLeft(),
-            bottom = cropzone.getHeight() + top,
-            right = cropzone.getWidth() + left,
-            pointerX = pointer.x,
-            pointerY = pointer.y,
-            tlWidth = min(max(1, (right - pointerX)), right),
-            tlHeight = min(max(1, (bottom - pointerY)), bottom),
-            tl = {  // When scaling "Top-Left corner": It fixes right and bottom coordinates
-                width: tlWidth,
-                height: tlHeight,
-                left: right - tlWidth,
-                top: bottom - tlHeight
-            },
-            br = {  // When scaling "Bottom-Right corner": It fixes left and top coordinates
-                width: max(1, (min(pointerX, maxX) - left)),
-                height: max(1, (min(pointerY, maxY) - top))
-            };
-
-        return this._makeScalingSettings(tl, br);
-    },
-
-    /**
-     * Make scaling settings
-     * @param {{width: number, height: number, left: number, top: number}} tl - Top-Left setting
-     * @param {{width: number, height: number}} br - Bottom-Right setting
-     * @returns {{width: ?number, height: ?number, left: ?number, top: ?number}} Position setting
-     * @private
-     */
-    /*eslint-disable complexity*/
-    _makeScalingSettings: function(tl, br) {
-        var tlWidth = tl.width,
-            tlHeight = tl.height,
-            brHeight = br.height,
-            brWidth = br.width,
-            tlLeft = tl.left,
-            tlTop = tl.top,
-            settings;
-
-        switch (this.cropzone.getLastCorner()) {
-            case CORNER_TYPE_TOP_LEFT:
-                settings = tl;
-                break;
-            case CORNER_TYPE_TOP_RIGHT:
-                settings = {
-                    width: brWidth,
-                    height: tlHeight,
-                    top: tlTop
-                };
-                break;
-            case CORNER_TYPE_BOTTOM_LEFT:
-                settings = {
-                    width: tlWidth,
-                    height: brHeight,
-                    left: tlLeft
-                };
-                break;
-            case CORNER_TYPE_BOTTOM_RIGHT:
-                settings = {
-                    width: brWidth,
-                    height: brHeight
-                };
-                break;
-            case CORNER_TYPE_MIDDLE_LEFT:
-                settings = {
-                    width: tlWidth,
-                    left: tlLeft
-                };
-                break;
-            case CORNER_TYPE_MIDDLE_TOP:
-                settings = {
-                    height: tlHeight,
-                    top: tlTop
-                };
-                break;
-            case CORNER_TYPE_MIDDLE_RIGHT:
-                settings = {
-                    width: brWidth
-                };
-                break;
-            case CORNER_TYPE_MIDDLE_BOTTOM:
-                settings = {
-                    height: brHeight
-                };
-                break;
-            default:
-                break;
-        }
-
-        return settings;
-    },
-    /*eslint-enable complexity*/
 
     /**
      * onMousedown handler in fabric canvas
@@ -273,7 +118,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
 
         if (abs(x - this.startX) + abs(y - this.startY) > MOUSE_MOVE_THRESHOLD) {
             cropzone.remove();
-            cropzone.set(this._getSettingsFromPoint(x, y));
+            cropzone.set(this._calcRectPositionFromPoint(x, y));
 
             canvas.add(cropzone);
         }
@@ -286,7 +131,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
-    _getSettingsFromPoint: function(x, y) {
+    _calcRectPositionFromPoint: function(x, y) {
         var image = this.getCanvasImage(),
             width = image.getWidth(),
             height = image.getHeight(),
@@ -323,16 +168,36 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
 
     /**
      * onCropEnd handler
+     * @param {string} btnType - Clicked button type
      */
-    onCropEnd: function() {
-        var canvas = this.getCanvas();
+    onCropEnd: function(btnType) {
+        var canvas = this.getCanvas(),
+            cropzone = this.cropzone,
+            cropInfo;
 
+        cropzone.remove();
+        this.cropzone = null;
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.discardActiveObject()
             .off('mouse:down', this.handlers.mousedown);
-        this.cropzone.remove();
-        this.cropzone = null;
+
+        if (!cropzone.isValid()) {
+            return;
+        }
+
+        if (btnType === 'apply') {
+            cropInfo = {
+                left: cropzone.getLeft(),
+                top: cropzone.getTop(),
+                width: cropzone.getWidth(),
+                height: cropzone.getHeight()
+            };
+            this.postCommand({
+                name: commands.LOAD_IMAGE_FROM_URL,
+                args: [canvas.toDataURL(cropInfo), this.getImageName()]
+            });
+        }
     }
 });
 

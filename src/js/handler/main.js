@@ -88,14 +88,6 @@ var Main = tui.util.defineClass(Component, {
      */
     toDataURL: function(type) {
         return this.canvas && this.canvas.toDataURL(type);
-    },
-
-    /**
-     * Get image name
-     * @returns {string}
-     */
-    getImageName: function() {
-        return this.imageName;
     }
 });
 
