@@ -14,7 +14,6 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
         this.setParent(parent);
         this.registerAction(commands.LOAD_IMAGE_FROM_URL, this.loadImageFromURL, this);
         this.registerAction(commands.LOAD_IMAGE_FROM_FILE, this.loadImageFromFile, this);
-        this.prevScaleFactor = null;
     },
 
     /**
