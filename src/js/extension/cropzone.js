@@ -158,13 +158,13 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
     /**
      * Get last clicked corner
      *  - 'tl': Top-Left
-     *  - 'mt': Medium-Top
+     *  - 'mt': Middle-Top
      *  - 'tr': Top-Right
-     *  - 'mr': Medium-Right
+     *  - 'mr': Middle-Right
      *  - 'br': Bottom-Right
-     *  - 'mb': Medium-Bottom
+     *  - 'mb': Middle-Bottom
      *  - 'bl': Bottom-Left
-     *  - 'ml': Medium-Left
+     *  - 'ml': Middle-Left
      * @returns {string}
      */
     getLastCorner: function() {

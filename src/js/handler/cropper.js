@@ -3,7 +3,15 @@ var Component = require('../interface/component'),
     Cropzone = require('../extension/cropzone'),
     commands = require('../consts').commands;
 
-var MOUSE_MOVE_THRESHOLD = 10;
+var MOUSE_MOVE_THRESHOLD = 10,
+    CORNER_TYPE_TOP_LEFT = 'tl',
+    CORNER_TYPE_TOP_RIGHT = 'tr',
+    CORNER_TYPE_MIDDLE_TOP = 'mt',
+    CORNER_TYPE_MIDDLE_LEFT = 'ml',
+    CORNER_TYPE_MIDDLE_RIGHT = 'mr',
+    CORNER_TYPE_MIDDLE_BOTTOM = 'mb',
+    CORNER_TYPE_BOTTOM_LEFT = 'bl',
+    CORNER_TYPE_BOTTOM_RIGHT = 'br';
 
 var min = Math.min,
     max = Math.max,
@@ -127,8 +135,8 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      * Calc scaled size from mouse pointer with selected corner
      * @param {Cropzone} cropzone - cropzone(=== this.cropzone)
      * @param {{x: number, y: number}} pointer - Mouse position
-     * @private
      * @returns {object} Having left or(and) top or(and) width or(and) height.
+     * @private
      */
     _calcScalingSizeFromPointer: function(cropzone, pointer) {
         var canvas = this.getCanvas(),
@@ -140,15 +148,15 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             right = cropzone.getWidth() + left,
             pointerX = pointer.x,
             pointerY = pointer.y,
-            tlWidth = min(max(1, right - pointerX), right),
-            tlHeight = min(max(1, bottom - pointerY), bottom),
-            tl = {
+            tlWidth = min(max(1, (right - pointerX)), right),
+            tlHeight = min(max(1, (bottom - pointerY)), bottom),
+            tl = {  // When scaling "Top-Left corner": It fixes right and bottom coordinates
                 width: tlWidth,
                 height: tlHeight,
                 left: right - tlWidth,
                 top: bottom - tlHeight
             },
-            br = {
+            br = {  // When scaling "Bottom-Right corner": It fixes left and top coordinates
                 width: max(1, (min(pointerX, maxX) - left)),
                 height: max(1, (min(pointerY, maxY) - top))
             };
@@ -174,47 +182,47 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             settings;
 
         switch (this.cropzone.getLastCorner()) {
-            case 'tl':  // top-left
+            case CORNER_TYPE_TOP_LEFT:
                 settings = tl;
                 break;
-            case 'tr':  // top-right
+            case CORNER_TYPE_TOP_RIGHT:
                 settings = {
                     width: brWidth,
                     height: tlHeight,
                     top: tlTop
                 };
                 break;
-            case 'bl':  // bottom-left
+            case CORNER_TYPE_BOTTOM_LEFT:
                 settings = {
                     width: tlWidth,
                     height: brHeight,
                     left: tlLeft
                 };
                 break;
-            case 'br':  // bottom-right
+            case CORNER_TYPE_BOTTOM_RIGHT:
                 settings = {
                     width: brWidth,
                     height: brHeight
                 };
                 break;
-            case 'ml':  // medium-left
+            case CORNER_TYPE_MIDDLE_LEFT:
                 settings = {
                     width: tlWidth,
                     left: tlLeft
                 };
                 break;
-            case 'mt':  // medium-top
+            case CORNER_TYPE_MIDDLE_TOP:
                 settings = {
                     height: tlHeight,
                     top: tlTop
                 };
                 break;
-            case 'mr':  // medium-right
+            case CORNER_TYPE_MIDDLE_RIGHT:
                 settings = {
                     width: brWidth
                 };
                 break;
-            case 'mb':  // medium-bottom
+            case CORNER_TYPE_MIDDLE_BOTTOM:
                 settings = {
                     height: brHeight
                 };
