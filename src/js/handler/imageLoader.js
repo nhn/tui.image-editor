@@ -22,26 +22,27 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
      * @param {string} filename - File name
      */
     loadImageFromURL: function(url, filename) {
-        fabric.Image.fromURL(url, $.proxy(function(oImage) {
-            var canvas = this.getCanvas();
+        var canvas = this.getCanvas(),
+            self = this;
 
-            canvas.setBackgroundImage(oImage)
-                .setDimensions({
-                    width: '100%',
-                    'max-width': oImage.getWidth() + 'px',
-                    height: 'auto'
-                }, {
-                    cssOnly: true
-                })
-                .setDimensions({
-                    width: oImage.getWidth(),
-                    height: oImage.getHeight()
-                }, {
-                    backstoreOnly: true
-                });
+        canvas.setBackgroundImage(url, function() {
+            var oImage = canvas.backgroundImage;
 
-            this.postCommands(filename || url, oImage);
-        }, this), {
+            canvas.setDimensions({
+                width: '100%',
+                'max-width': oImage.getWidth() + 'px',
+                height: ''  // No inline-css "height" for IE9
+            }, {
+                cssOnly: true
+            })
+            .setDimensions({
+                width: oImage.getWidth(),
+                height: oImage.getHeight()
+            }, {
+                backstoreOnly: true
+            });
+            self.postCommands(filename || url, oImage);
+        }, {
             crossOrigin: ''
         });
     },
@@ -86,32 +87,14 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
      * @returns {{currentWidth: Number, currentHeight: Number}}
      */
     getSize: function(oImage) {
+        var $canvasElement = $(this.getCanvas().getSelectionElement());
+
         return {
             originalWidth: oImage.width,
             originalHeight: oImage.height,
-            currentWidth: ceil(oImage.getWidth()),
-            currentHeight: ceil(oImage.getHeight())
+            currentWidth: $canvasElement.width(),
+            currentHeight: $canvasElement.height()
         };
-    },
-
-    /**
-     * Calculate initial scale
-     * @param {fabric.Image} oImage - Image object
-     * @returns {number}
-     */
-    calcInitialScale: function(oImage) {
-        var canvas = this.getCanvas(),
-            oWidth = oImage.width,
-            oHeight = oImage.height,
-            scaleFactor;
-
-        if (oImage.width > oImage.height) {
-            scaleFactor = (canvas.width) / oWidth;
-        } else {
-            scaleFactor = (canvas.height) / oHeight;
-        }
-
-        return Math.min(1, scaleFactor);
     }
 });
 

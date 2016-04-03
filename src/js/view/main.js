@@ -54,9 +54,9 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * It adds children
      */
     doAfterRender: function() {
+        this.addChild(new Detail(this));
         this.addChild(new Menu(this));
         this.addChild(new Canvas(this));
-        this.addChild(new Detail(this));
     },
 
     /**

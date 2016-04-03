@@ -170,34 +170,30 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      */
     onCropEnd: function(btnType) {
         var canvas = this.getCanvas(),
-            image = this.getCanvasImage(),
             cropzone = this.cropzone,
             cropInfo;
 
-        cropzone.remove();
         this.cropzone = null;
+        cropzone.remove();
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        canvas.discardActiveObject()
-            .off('mouse:down', this.handlers.mousedown);
+        canvas.discardActiveObject();
+        canvas.off('mouse:down', this.handlers.mousedown);
 
-        if (!cropzone.isValid()) {
+        if (!cropzone.isValid() || btnType !== 'apply') {
             return;
         }
 
-        if (btnType === 'apply') {
-            cropInfo = {
-                left: cropzone.getLeft(),
-                top: cropzone.getTop(),
-                width: cropzone.getWidth(),
-                height: cropzone.getHeight()
-            };
-
-            this.postCommand({
-                name: commands.LOAD_IMAGE_FROM_URL,
-                args: [image.toDataURL(cropInfo), this.getImageName()]
-            });
-        }
+        cropInfo = {
+            left: cropzone.getLeft(),
+            top: cropzone.getTop(),
+            width: cropzone.getWidth(),
+            height: cropzone.getHeight()
+        };
+        this.postCommand({
+            name: commands.LOAD_IMAGE_FROM_URL,
+            args: [canvas.toDataURL(cropInfo), this.getImageName()]
+        });
     }
 });
 
