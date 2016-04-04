@@ -321,11 +321,11 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
      * @returns {boolean}
      */
     isValid: function() {
-        return !(
-            this.left < 0
-            || this.top < 0
-            || this.width < 1
-            || this.height < 1
+        return (
+            this.left >= 0 &&
+            this.top >= 0 &&
+            this.width > 0 &&
+            this.height > 0
         );
     }
 });
