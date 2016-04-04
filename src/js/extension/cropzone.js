@@ -129,20 +129,21 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
             halfWidth = width / 2,
             halfHeight = height / 2,
             left = this.getLeft(),
-            top = this.getTop();
+            top = this.getTop(),
+            canvasEl = ctx.canvas; // canvas element, not fabric object
 
         return {
             x: tui.util.map([
                 -(halfWidth + left),
                 -(halfWidth),
                 halfWidth,
-                halfWidth + (ctx.canvas.width - left - width)
+                halfWidth + (canvasEl.width - left - width)
             ], ceil),
             y: tui.util.map([
                 -(halfHeight + top),
                 -(halfHeight),
                 halfHeight,
-                halfHeight + (ctx.canvas.height - top - height)
+                halfHeight + (canvasEl.height - top - height)
             ], ceil)
         };
     },
