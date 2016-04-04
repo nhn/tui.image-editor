@@ -35,7 +35,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
 
     /**
      * Invoke command
-     * @param {{name: string, args: (Object|Array)}} command - Command
+     * @param {{name: string, args: (Array|*)}} command - Command
      * @private
      */
     _invoke: function(command) {
@@ -65,13 +65,20 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         });
     },
 
-    startCrop: function() {
+    /**
+     * Start cropping
+     */
+    startCropping: function() {
         this._invoke({
             name: commands.START_CROPPING
         });
     },
 
-    endCrop: function(isDone) {
+    /**
+     * Apply cropping
+     * @param {boolean} isDone - Cropping is done or cancel
+     */
+    endCropping: function(isDone) {
         this._invoke({
             name: commands.END_CROPPING,
             args: isDone

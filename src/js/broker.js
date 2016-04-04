@@ -37,7 +37,7 @@ var Broker = tui.util.defineClass(/* @lends Broker.prototype */{
 
     /**
      * Fire custom events
-     * @param {{name: string, args: ?object}} command - Command
+     * @param {{name: string, args: (Array|*)}} command - Command
      * @returns {boolean} invoke result
      */
     invoke: function(command) {
