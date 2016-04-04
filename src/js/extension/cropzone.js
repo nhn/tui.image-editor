@@ -1,5 +1,7 @@
 'use strict';
 
+var util = require('../util');
+
 var CORNER_TYPE_TOP_LEFT = 'tl',
     CORNER_TYPE_TOP_RIGHT = 'tr',
     CORNER_TYPE_MIDDLE_TOP = 'mt',
@@ -32,6 +34,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
             'scaling': this._onScaling
         });
     },
+
     /**
      * Render Crop-zone
      * @param {CanvasRenderingContext2D} ctx - Context
@@ -68,20 +71,35 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
     },
 
     /**
+     * Cropzone-coordinates with outer rectangle
+     *
+     *     x0     x1         x2      x3
+     *  y0 +--------------------------+
+     *     |///////|//////////|///////|
+     *     |///////|//////////|///////|
+     *  y1 +-------+----------+-------+
+     *     |///////| Cropzone |///////|
+     *     |///////|  (0, 0)  |///////|
+     *  y2 +-------+----------+-------+
+     *     |///////|//////////|///////|
+     *     |///////|//////////|///////|
+     *  y3 +--------------------------+
+     *
+     * @typedef {{x: Array<number>, y: Array<number>}} cropzoneCoordinates
+     */
+
+    /**
      * Fill outer rectangle
-     *
-     *    x0     x1         x2      x3
-     * y0 +--------------------------+
-     *    |///////|//////////|///////|
-     *    |///////|//////////|///////|
-     * y1 +-------+----------+-------+
-     *    |///////| Cropzone |///////|
-     *    |///////|  (0, 0)  |///////|
-     * y2 +-------+----------+-------+
-     *    |///////|//////////|///////|
-     *    |///////|//////////|///////|
-     * y3 +--------------------------+
-     *
+     *  +--------------------------+
+     *  |///////|//////////|///////|
+     *  |///////|//////////|///////|
+     *  +-------+----------+-------+
+     *  |///////| Cropzone |///////|
+     *  |///////|  (0, 0)  |///////|
+     *  +-------+----------+-------+
+     *  |///////|//////////|///////|
+     *  |///////|//////////|///////|
+     *  +--------------------------+
      * @param {CanvasRenderingContext2D} ctx - Context
      * @param {string|CanvasGradient|CanvasPattern} fillStyle - Fill-style
      * @private
@@ -119,7 +137,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
     /**
      * Get coordinates
      * @param {CanvasRenderingContext2D} ctx - Context
-     * @returns {{x: Array, y: Array}}
+     * @returns {cropzoneCoordinates} - {@link cropzoneCoordinates}
      * @private
      */
     _getCoordinates: function(ctx) {
@@ -193,16 +211,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
             maxLeft = canvas.getWidth() - width,
             maxTop = canvas.getHeight() - height;
 
-        if (left < 0) {
-            this.setLeft(0);
-        } else if (left > maxLeft) {
-            this.setLeft(maxLeft);
-        }
-        if (top < 0) {
-            this.setTop(0);
-        } else if (top > maxTop) {
-            this.setTop(maxTop);
-        }
+        this.setLeft(util.clamp(left, 0, maxLeft));
+        this.setTop(util.clamp(top, 0, maxTop));
     },
 
     /**
@@ -214,6 +224,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
         var pointer = this.canvas.getPointer(fEvent.e),
             settings = this._calcScalingSizeFromPointer(pointer);
 
+        // On scaling cropzone,
+        // change real width and height and fix scaleFactor to 1
         this.scale(1).set(settings);
     },
 
@@ -222,6 +234,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
      * @param {{x: number, y: number}} pointer - Mouse position
      * @returns {object} Having left or(and) top or(and) width or(and) height.
      * @private
+     * @todo refactoring
      */
     _calcScalingSizeFromPointer: function(pointer) {
         var canvas = this.canvas,

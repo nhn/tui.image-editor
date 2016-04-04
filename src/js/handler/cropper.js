@@ -54,6 +54,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      * Start cropping
      */
     start: function() {
+        var canvas;
         if (this.cropzone) {
             return;
         }
@@ -72,10 +73,10 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             lockRotation: true
         });
 
-        this.getCanvas()
-            .add(this.cropzone)
-            .on('mouse:down', this.handlers.mousedown)
-            .defaultCursor = 'crosshair';
+        canvas = this.getCanvas();
+        canvas.add(this.cropzone);
+        canvas.on('mouse:down', this.handlers.mousedown);
+        canvas.defaultCursor = 'crosshair';
     },
 
     /**
