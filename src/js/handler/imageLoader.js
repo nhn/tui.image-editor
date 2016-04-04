@@ -30,14 +30,14 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
 
             canvas.setDimensions({
                 width: '100%',
-                'max-width': oImage.getWidth() + 'px',
+                'max-width': oImage.width + 'px',
                 height: ''  // No inline-css "height" for IE9
             }, {
                 cssOnly: true
             })
             .setDimensions({
-                width: oImage.getWidth(),
-                height: oImage.getHeight()
+                width: oImage.width,
+                height: oImage.height
             }, {
                 backstoreOnly: true
             });

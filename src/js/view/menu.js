@@ -56,16 +56,16 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
                 text: 'Crop'
             },
             clickCommand: {
-                name: commands.ON_CROP_START
+                name: commands.START_CROPPING
             }
         }));
     },
 
     _registerActions: function() {
-        this.registerAction(commands.ON_CROP_START, function() {
+        this.registerAction(commands.START_CROPPING, function() {
             this.addChild(new CropSubButtonGroup(this));
         }, this);
-        this.registerAction(commands.ON_CROP_END, function() {
+        this.registerAction(commands.END_CROPPING, function() {
             this.removeChild('subButtonGroup');
         }, this);
     },

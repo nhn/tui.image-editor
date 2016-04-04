@@ -18,8 +18,8 @@ var min = Math.min,
 var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
     init: function(parent) {
         this.setParent(parent);
-        this.registerAction(commands.ON_CROP_START, this.onCropStart, this);
-        this.registerAction(commands.ON_CROP_END, this.onCropEnd, this);
+        this.registerAction(commands.START_CROPPING, this.start, this);
+        this.registerAction(commands.END_CROPPING, this.end, this);
 
         /**
          * Cropzone
@@ -51,9 +51,9 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
     },
 
     /**
-     * onCropStart handler
+     * Start cropping
      */
-    onCropStart: function() {
+    start: function() {
         if (this.cropzone) {
             return;
         }
@@ -165,10 +165,10 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
     },
 
     /**
-     * onCropEnd handler
-     * @param {string} btnType - Clicked button type
+     * End cropping
+     * @param {boolean} isDone - Is done or not
      */
-    onCropEnd: function(btnType) {
+    end: function(isDone) {
         var canvas = this.getCanvas(),
             cropzone = this.cropzone,
             cropInfo;
@@ -180,7 +180,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         canvas.discardActiveObject();
         canvas.off('mouse:down', this.handlers.mousedown);
 
-        if (!cropzone.isValid() || btnType !== 'apply') {
+        if (!cropzone.isValid() || !isDone) {
             return;
         }
 

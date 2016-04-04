@@ -65,6 +65,19 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         });
     },
 
+    startCrop: function() {
+        this._invoke({
+            name: commands.START_CROPPING
+        });
+    },
+
+    endCrop: function(isDone) {
+        this._invoke({
+            name: commands.END_CROPPING,
+            args: isDone
+        });
+    },
+
     /**
      * Get data url
      * @param {string} type - A DOMString indicating the image format. The default type is image/png.

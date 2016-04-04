@@ -49,8 +49,8 @@ var CropSubButtonGroup = tui.util.defineClass(View, /* @lends Detail.prototype *
                 text: 'Apply'
             },
             clickCommand: {
-                name: commands.ON_CROP_END,
-                args: 'apply'
+                name: commands.END_CROPPING,
+                args: true
             }
         }));
         this.addChild(btnFactory.create(this, {
@@ -59,8 +59,8 @@ var CropSubButtonGroup = tui.util.defineClass(View, /* @lends Detail.prototype *
                 text: 'Cancel'
             },
             clickCommand: {
-                name: commands.ON_CROP_END,
-                args: 'cancel'
+                name: commands.END_CROPPING,
+                args: false
             }
         }));
     },
