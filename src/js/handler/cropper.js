@@ -59,6 +59,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             return;
         }
 
+
         this.cropzone = new Cropzone({
             left: -10,
             top: -10,
@@ -72,7 +73,6 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             lockScalingFlip: true,
             lockRotation: true
         });
-
         canvas = this.getCanvas();
         canvas.add(this.cropzone);
         canvas.on('mouse:down', this.handlers.mousedown);
@@ -92,16 +92,15 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         }
 
         canvas.selection = false;
-        if (fEvent.target !== this.cropzone) {
-            coord = canvas.getPointer(fEvent.e);
-            this.startX = coord.x;
-            this.startY = coord.y;
+        coord = canvas.getPointer(fEvent.e);
 
-            canvas.on({
-                'mouse:move': this.handlers.mousemove,
-                'mouse:up': this.handlers.mouseup
-            });
-        }
+        this.startX = coord.x;
+        this.startY = coord.y;
+
+        canvas.on({
+            'mouse:move': this.handlers.mousemove,
+            'mouse:up': this.handlers.mouseup
+        });
     },
 
     /**
@@ -117,20 +116,20 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
 
         if (abs(x - this.startX) + abs(y - this.startY) > MOUSE_MOVE_THRESHOLD) {
             cropzone.remove();
-            cropzone.set(this._calcRectPositionFromPoint(x, y));
+            cropzone.set(this._calcRectDimensionFromPoint(x, y));
 
             canvas.add(cropzone);
         }
     },
 
     /**
-     * Get rect position setting from Canvas-Mouse-Position(x, y)
+     * Get rect dimension setting from Canvas-Mouse-Position(x, y)
      * @param {number} x - Canvas-Mouse-Position x
      * @param {number} y - Canvas-Mouse-Position Y
      * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
-    _calcRectPositionFromPoint: function(x, y) {
+    _calcRectDimensionFromPoint: function(x, y) {
         var canvas = this.getCanvas(),
             width = canvas.getWidth(),
             height = canvas.getHeight(),
@@ -152,14 +151,14 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
      */
     onFabricMouseUp: function() {
         var cropzone = this.cropzone,
-            handlers = this.handlers;
+            handlers = this.handlers,
+            canvas = this.getCanvas();
 
-        this.getCanvas()
-            .setActiveObject(cropzone)
-            .off({
-                'mouse:move': handlers.mousemove,
-                'mouse:up': handlers.mouseup
-            });
+        canvas.setActiveObject(cropzone);
+        canvas.off({
+            'mouse:move': handlers.mousemove,
+            'mouse:up': handlers.mouseup
+        });
     },
 
     /**
@@ -188,6 +187,7 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             width: cropzone.getWidth(),
             height: cropzone.getHeight()
         };
+
         this.postCommand({
             name: commands.LOAD_IMAGE_FROM_URL,
             args: [canvas.toDataURL(cropInfo), this.getImageName()]

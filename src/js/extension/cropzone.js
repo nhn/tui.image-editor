@@ -230,6 +230,10 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
             tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY),
             brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
 
+        /*
+         * @todo: 일반 객체에서 shift 조합키를 누르면 free size scaling이 됨 --> 확인해볼것
+         *      canvas.class.js // _scaleObject: function(...){...}
+         */
         return this._makeScalingSettings(tlScalingSize, brScalingSize);
     },
 
