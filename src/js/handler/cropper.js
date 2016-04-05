@@ -6,9 +6,7 @@ var Component = require('../interface/component'),
 
 var MOUSE_MOVE_THRESHOLD = 10;
 
-var min = Math.min,
-    max = Math.max,
-    abs = Math.abs,
+var abs = Math.abs,
     clamp = util.clamp;
 
 /**

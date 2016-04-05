@@ -11,8 +11,7 @@ var CORNER_TYPE_TOP_LEFT = 'tl',
     CORNER_TYPE_BOTTOM_LEFT = 'bl',
     CORNER_TYPE_BOTTOM_RIGHT = 'br';
 
-var min = Math.min,
-    max = Math.max;
+var clamp = util.clamp;
 
 /**
  * Cropzone object
@@ -44,8 +43,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
     _render: function(ctx) {
         var originalFlipX, originalFlipY,
             originalScaleX, originalScaleY,
-            dashWidth = 7,
-            dashOffset = 7;
+            cropzoneDashLineWidth = 7,
+            cropzoneDashLineOffset = 7;
         this.callSuper('_render', ctx);
 
         // Calc original scale
@@ -60,11 +59,11 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
         // Render outer rect
         this._fillOuterRect(ctx, 'rgba(0, 0, 0, 0.55)');
 
-        // black dash line
-        this._strokeBorder(ctx, 'rgb(0, 0, 0)', dashWidth);
+        // Black dash line
+        this._strokeBorder(ctx, 'rgb(0, 0, 0)', cropzoneDashLineWidth);
 
-        // white dash line
-        this._strokeBorder(ctx, 'rgb(255, 255, 255)', dashWidth, dashOffset);
+        // White dash line
+        this._strokeBorder(ctx, 'rgb(255, 255, 255)', cropzoneDashLineWidth, cropzoneDashLineOffset);
 
         // Reset scale
         ctx.scale(1 / originalScaleX, 1 / originalScaleY);
@@ -75,11 +74,11 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
      *
      *     x0     x1         x2      x3
      *  y0 +--------------------------+
-     *     |///////|//////////|///////|
+     *     |///////|//////////|///////|    // <--- "Outer-rectangle"
      *     |///////|//////////|///////|
      *  y1 +-------+----------+-------+
-     *     |///////| Cropzone |///////|
-     *     |///////|  (0, 0)  |///////|
+     *     |///////| Cropzone |///////|    Cropzone is the "Inner-rectangle"
+     *     |///////|  (0, 0)  |///////|    Center point (0, 0)
      *  y2 +-------+----------+-------+
      *     |///////|//////////|///////|
      *     |///////|//////////|///////|
@@ -90,16 +89,6 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
 
     /**
      * Fill outer rectangle
-     *  +--------------------------+
-     *  |///////|//////////|///////|
-     *  |///////|//////////|///////|
-     *  +-------+----------+-------+
-     *  |///////| Cropzone |///////|
-     *  |///////|  (0, 0)  |///////|
-     *  +-------+----------+-------+
-     *  |///////|//////////|///////|
-     *  |///////|//////////|///////|
-     *  +--------------------------+
      * @param {CanvasRenderingContext2D} ctx - Context
      * @param {string|CanvasGradient|CanvasPattern} fillStyle - Fill-style
      * @private
@@ -152,16 +141,16 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
 
         return {
             x: tui.util.map([
-                -(halfWidth + left),
-                -(halfWidth),
-                halfWidth,
-                halfWidth + (canvasEl.width - left - width)
+                -(halfWidth + left),                        // x0
+                -(halfWidth),                               // x1
+                halfWidth,                                  // x2
+                halfWidth + (canvasEl.width - left - width) // x3
             ], ceil),
             y: tui.util.map([
-                -(halfHeight + top),
-                -(halfHeight),
-                halfHeight,
-                halfHeight + (canvasEl.height - top - height)
+                -(halfHeight + top),                            // y0
+                -(halfHeight),                                  // y1
+                halfHeight,                                     // y2
+                halfHeight + (canvasEl.height - top - height)   // y3
             ], ceil)
         };
     },
@@ -211,8 +200,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
             maxLeft = canvas.getWidth() - width,
             maxTop = canvas.getHeight() - height;
 
-        this.setLeft(util.clamp(left, 0, maxLeft));
-        this.setTop(util.clamp(top, 0, maxTop));
+        this.setLeft(clamp(left, 0, maxLeft));
+        this.setTop(clamp(top, 0, maxTop));
     },
 
     /**
@@ -234,32 +223,57 @@ var Cropzone = fabric.util.createClass(fabric.Rect, {
      * @param {{x: number, y: number}} pointer - Mouse position
      * @returns {object} Having left or(and) top or(and) width or(and) height.
      * @private
-     * @todo refactoring
      */
     _calcScalingSizeFromPointer: function(pointer) {
-        var canvas = this.canvas,
-            maxX = canvas.getWidth(),
-            maxY = canvas.getHeight(),
-            top = this.getTop(),
-            left = this.getLeft(),
-            bottom = this.getHeight() + top,
-            right = this.getWidth() + left,
-            pointerX = pointer.x,
+        var pointerX = pointer.x,
             pointerY = pointer.y,
-            tlWidth = min(max(1, (right - pointerX)), right),
-            tlHeight = min(max(1, (bottom - pointerY)), bottom),
-            tl = {  // When scaling "Top-Left corner": It fixes right and bottom coordinates
-                width: tlWidth,
-                height: tlHeight,
-                left: right - tlWidth,
-                top: bottom - tlHeight
-            },
-            br = {  // When scaling "Bottom-Right corner": It fixes left and top coordinates
-                width: max(1, (min(pointerX, maxX) - left)),
-                height: max(1, (min(pointerY, maxY) - top))
-            };
+            tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY),
+            brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
 
-        return this._makeScalingSettings(tl, br);
+        return this._makeScalingSettings(tlScalingSize, brScalingSize);
+    },
+
+    /**
+     * Calc scaling size(position + dimension) from left-top corner
+     * @param {number} x - Mouse position X
+     * @param {number} y - Mouse position Y
+     * @returns {{top: number, left: number, width: number, height: number}}
+     * @private
+     */
+    _calcTopLeftScalingSizeFromPointer: function(x, y) {
+        var bottom = this.getHeight() + this.top,
+            right = this.getWidth() + this.left,
+            top = clamp(y, 0, bottom - 1),  // 0 <= top <= (bottom - 1)
+            left = clamp(x, 0, right - 1);  // 0 <= left <= (right - 1)
+
+        // When scaling "Top-Left corner": It fixes right and bottom coordinates
+        return {
+            top: top,
+            left: left,
+            width: right - left,
+            height: bottom - top
+        };
+    },
+
+    /**
+     * Calc scaling size from right-bottom corner
+     * @param {number} x - Mouse position X
+     * @param {number} y - Mouse position Y
+     * @returns {{width: number, height: number}}
+     * @private
+     */
+    _calcBottomRightScalingSizeFromPointer: function(x, y) {
+        var canvas = this.canvas,
+            maxX = canvas.width,
+            maxY = canvas.height,
+            left = this.left,
+            top = this.top;
+
+        // When scaling "Bottom-Right corner": It fixes left and top coordinates
+        return {
+            width: clamp(x, (left + 1), maxX) - left,    // (width = x - left), (left + 1 <= x <= maxX)
+            height: clamp(y, (top + 1), maxY) - top      // (height = y - top), (top + 1 <= y <= maxY)
+        };
     },
 
     /*eslint-disable complexity*/
