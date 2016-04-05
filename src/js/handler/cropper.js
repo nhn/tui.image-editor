@@ -1,13 +1,15 @@
 'use strict';
 var Component = require('../interface/component'),
     Cropzone = require('../extension/cropzone'),
+    util = require('../util'),
     commands = require('../consts').commands;
 
 var MOUSE_MOVE_THRESHOLD = 10;
 
 var min = Math.min,
     max = Math.max,
-    abs = Math.abs;
+    abs = Math.abs,
+    clamp = util.clamp;
 
 /**
  * Cropper components
@@ -136,18 +138,15 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             height = canvas.getHeight(),
             startX = this.startX,
             startY = this.startY,
-            settings, left, top;
+            left = clamp(x, 0, startX),
+            top = clamp(y, 0, startY);
 
-        left = max(0, min(x, startX));
-        top = max(0, min(y, startY));
-        settings = {
+        return {
             left: left,
             top: top,
-            width: min(width, max(x, startX)) - left,
-            height: min(height, max(y, startY)) - top
+            width: clamp(x, startX, width) - left, // (startX <= x(mouse) <= canvasWidth) - left,
+            height: clamp(y, startY, height) - top // (startY <= y(mouse) <= canvasHeight) - top
         };
-
-        return settings;
     },
 
     /**
