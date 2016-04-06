@@ -2,6 +2,7 @@
 
 var Component = require('../interface/component'),
     ImageLoader = require('./imageLoader'),
+    Cropper = require('./cropper'),
     commands = require('../consts').commands;
 
 var Main = tui.util.defineClass(Component, {
@@ -10,7 +11,7 @@ var Main = tui.util.defineClass(Component, {
 
         this.canvas = null;
         this.oImage = null;
-        this.components = {};
+        this.components = null;
         this.registerActions();
     },
 
@@ -37,7 +38,9 @@ var Main = tui.util.defineClass(Component, {
      * @param {Element} canvasElement - Canvas element
      */
     setCanvasElement: function(canvasElement) {
-        this.canvas = new fabric.Canvas(canvasElement);
+        this.canvas = new fabric.Canvas(canvasElement, {
+            isDrawingMode: false
+        });
         this.setComponents();
     },
 
@@ -45,7 +48,10 @@ var Main = tui.util.defineClass(Component, {
      * Set components
      */
     setComponents: function() {
-        this.components.imageLoader = new ImageLoader(this);
+        this.components = {
+            imageLoader: new ImageLoader(this),
+            cropper: new Cropper(this)
+        };
     },
 
     /**
@@ -82,14 +88,6 @@ var Main = tui.util.defineClass(Component, {
      */
     toDataURL: function(type) {
         return this.canvas && this.canvas.toDataURL(type);
-    },
-
-    /**
-     * Get image name
-     * @returns {string}
-     */
-    getImageName: function() {
-        return this.imageName;
     }
 });
 

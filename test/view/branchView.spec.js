@@ -17,7 +17,11 @@ describe('View Extension: ViewBranch', function() {
                 return this.name;
             },
 
-            render: function() {},
+            render: function($wrapper) {
+                if ($wrapper) {
+                    $wrapper.append(this.$element);
+                }
+            },
 
             destroy: function() {}
         }),

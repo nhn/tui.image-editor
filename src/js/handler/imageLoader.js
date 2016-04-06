@@ -1,14 +1,14 @@
 'use strict';
 
-var Component = require('../interface/component'),
-    commands = require('../consts').commands;
+var Component = require('../interface/component');
+var commands = require('../consts').commands;
 
 /**
  * ImageLoader components
  * @extends {Component}
  * @class ImageLoader
  */
-var ImageLoader = tui.util.defineClass(Component, {
+var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototype */{
     init: function(parent) {
         this.setParent(parent);
         this.registerAction(commands.LOAD_IMAGE_FROM_URL, this.loadImageFromURL, this);
@@ -21,23 +21,27 @@ var ImageLoader = tui.util.defineClass(Component, {
      * @param {string} filename - File name
      */
     loadImageFromURL: function(url, filename) {
-        fabric.Image.fromURL(url, $.proxy(function(oImage) {
-            var canvas = this.getCanvas(),
-                scaleFactor = this.calcInitialScale(oImage);
+        var canvas = this.getCanvas(),
+            self = this;
 
-            oImage.scale(scaleFactor);
-            canvas.setBackgroundImage(oImage);
-            canvas.setDimensions({ //set canvas size equal to image
-                width: oImage.getWidth(),
-                height: oImage.getHeight()
+        canvas.setBackgroundImage(url, function() {
+            var oImage = canvas.backgroundImage;
+
+            canvas.setDimensions({
+                width: '100%',
+                'max-width': oImage.width + 'px',
+                height: ''  // No inline-css "height" for IE9
+            }, {
+                cssOnly: true
+            })
+            .setDimensions({
+                width: oImage.width,
+                height: oImage.height
+            }, {
+                backstoreOnly: true
             });
-            this.postCommands(filename || url, oImage);
-        }, this), {
-            selectable: false,
-            hasControls: false,
-            padding: 10,
-            lockMovementX: true,
-            lockMovementY: true,
+            self.postCommands(filename || url, oImage);
+        }, {
             crossOrigin: ''
         });
     },
@@ -82,32 +86,14 @@ var ImageLoader = tui.util.defineClass(Component, {
      * @returns {{currentWidth: Number, currentHeight: Number}}
      */
     getSize: function(oImage) {
+        var $canvasElement = $(this.getCanvas().getSelectionElement());
+
         return {
             originalWidth: oImage.width,
             originalHeight: oImage.height,
-            currentWidth: Math.floor(oImage.getWidth()),
-            currentHeight: Math.floor(oImage.getHeight())
+            currentWidth: $canvasElement.width(),
+            currentHeight: $canvasElement.height()
         };
-    },
-
-    /**
-     * Calculate initial scale
-     * @param {fabric.Image} oImage - Image object
-     * @returns {number}
-     */
-    calcInitialScale: function(oImage) {
-        var canvas = this.getCanvas(),
-            oWidth = oImage.width,
-            oHeight = oImage.height,
-            scaleFactor;
-
-        if (oImage.width > oImage.height) {
-            scaleFactor = (canvas.width) / oWidth;
-        } else {
-            scaleFactor = (canvas.height) / oHeight;
-        }
-
-        return scaleFactor;
     }
 });
 

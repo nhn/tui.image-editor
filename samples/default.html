@@ -12,9 +12,10 @@
 
 </head>
 <body>
-
-    <a id="btn-download"><button>다운로드</button></a>
     <div id="editor"></div>
+    <div>
+        <a id="btn-download"><button>다운로드</button></a>
+    </div>
     <br>
     <div>
         <div id="uploader"></div>
@@ -24,9 +25,9 @@
             <ul id="files"></ul>
         </div>
     </div>
-    <script type="text/javascript" src="libs/fabric.min.js"></script>
+    <script type="text/javascript" src="libs/fabric.js"></script>
     <script type="text/javascript" src="libs/jquery.min.js"></script>
-    <script type="text/javascript" src="libs/code-snippet.min.js"></script>
+    <script type="text/javascript" src="libs/code-snippet.js"></script>
     <script type="text/javascript" src="libs/file-uploader.min.js"></script>
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
@@ -35,8 +36,8 @@
 
         imageEditor.loadImageFromURL('./img/tree.jpg');
         downloadBtn.addEventListener('click', function () {
-            downloadBtn.href = imageEditor.toDataURL();
             downloadBtn.download = imageEditor.getImageName();
+            downloadBtn.href = imageEditor.toDataURL();
         });
 
         var uploader = new tui.component.Uploader({

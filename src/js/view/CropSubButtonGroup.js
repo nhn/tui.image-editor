@@ -1,7 +1,7 @@
 'use strict';
 var View = require('../interface/view'),
-    ImageInformation = require('./imageInformation'),
     mixer = require('../mixin/mixer'),
+    btnFactory = require('../factory/button'),
     commands = require('../consts').commands;
 
 var template = require('../../template/container.hbs');
@@ -13,7 +13,7 @@ var template = require('../../template/container.hbs');
  * @class
  * @param {Delegator} parent - Parent delegator
  */
-var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
+var CropSubButtonGroup = tui.util.defineClass(View, /* @lends Detail.prototype */{
     init: function(parent) {
         View.call(this, parent);
     },
@@ -22,17 +22,17 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
      * View name
      * @type {string}
      */
-    name: 'detail',
+    name: 'subButtonGroup',
 
     /**
      * Template context
      * @type {Object}
      */
     templateContext: {
-        name: 'detail'
+        name: 'subButtonGroup'
     },
 
-    /**
+    /**zw
      * Render template
      * @override
      * @type {function}
@@ -43,9 +43,26 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
      * Processing after render
      */
     doAfterRender: function() {
-        this.registerAction(commands.ON_LOAD_IMAGE, function(templateContext) {
-            this.addChild(new ImageInformation(this, templateContext));
-        }, this);
+        this.addChild(btnFactory.create(this, {
+            name: 'Apply',
+            templateContext: {
+                text: 'Apply'
+            },
+            clickCommand: {
+                name: commands.END_CROPPING,
+                args: true
+            }
+        }));
+        this.addChild(btnFactory.create(this, {
+            name: 'Cancel',
+            templateContext: {
+                text: 'Cancel'
+            },
+            clickCommand: {
+                name: commands.END_CROPPING,
+                args: false
+            }
+        }));
     },
 
     /**
@@ -57,5 +74,5 @@ var Detail = tui.util.defineClass(View, /* @lends Detail.prototype */{
     }
 });
 
-mixer.mixin(Detail, 'BranchView');
-module.exports = Detail;
+mixer.mixin(CropSubButtonGroup, 'BranchView');
+module.exports = CropSubButtonGroup;
