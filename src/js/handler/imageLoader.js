@@ -2,7 +2,6 @@
 
 var Component = require('../interface/component');
 var commands = require('../consts').commands;
-var ceil = Math.ceil;
 
 /**
  * ImageLoader components
