@@ -1,7 +1,9 @@
 'use strict';
 
 var Component = require('../interface/component');
-var commands = require('../consts').commands;
+var Command = require('../interface/command');
+
+var componentNames = require('../consts').componentNames;
 
 /**
  * ImageLoader components
@@ -11,73 +13,52 @@ var commands = require('../consts').commands;
 var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototype */{
     init: function(parent) {
         this.setParent(parent);
-        this.registerAction(commands.LOAD_IMAGE_FROM_URL, this.loadImageFromURL, this);
-        this.registerAction(commands.LOAD_IMAGE_FROM_FILE, this.loadImageFromFile, this);
     },
 
     /**
      * Load image from url
-     * @param {string} url - File url
-     * @param {string} filename - File name
+     * @param {string} imageName - File name
+     * @param {(fabric.Image|string)} img - fabric.Image instance or URL of an image
+     * @returns {jQuery.Deferred} deferred
      */
-    loadImageFromURL: function(url, filename) {
-        var canvas = this.getCanvas(),
-            self = this;
+    load: function(imageName, img) {
+        this._setBackgroundImage(img).done($.proxy(function(oImage) {
+            this.setCanvasImage(imageName, oImage);
+        }, this));
+    },
 
-        canvas.setBackgroundImage(url, function() {
-            var oImage = canvas.backgroundImage;
+    /**
+     * Set background image
+     * @param {(fabric.Image|String)} image fabric.Image instance or URL of an image to set background to
+     * @returns {*}
+     * @private
+     */
+    _setBackgroundImage: function(image) {
+        var dfd = $.Deferred(), // eslint-disable-line new-cap
+            canvas = this.getCanvas();
+
+        canvas.setBackgroundImage(image, function() {
+            var oImage = canvas.backgroundImage,
+                cssOnly = {cssOnly: true},
+                backstoreOnly = {backstoreOnly: true};
 
             canvas.setDimensions({
                 width: '100%',
                 'max-width': oImage.width + 'px',
                 height: ''  // No inline-css "height" for IE9
-            }, {
-                cssOnly: true
-            })
-            .setDimensions({
+            }, cssOnly);
+
+            canvas.setDimensions({
                 width: oImage.width,
                 height: oImage.height
-            }, {
-                backstoreOnly: true
-            });
-            self.postCommands(filename || url, oImage);
+            }, backstoreOnly);
+
+            dfd.resolve(oImage);
         }, {
             crossOrigin: ''
         });
-    },
 
-    /**
-     * Load image from file
-     * @param {File} imgFile - Image file
-     */
-    loadImageFromFile: function(imgFile) {
-        if (!imgFile) {
-            return;
-        }
-
-        this.loadImageFromURL(
-            URL.createObjectURL(imgFile),
-            imgFile.name
-        );
-    },
-
-    /**
-     * Post commands
-     * @param {string} name - image name
-     * @param {fabric.Image} oImage - Image object
-     */
-    postCommands: function(name, oImage) {
-        name = name || 'unknown';
-        this.postCommand({
-            name: commands.SET_CANVAS_IMAGE,
-            args: [oImage, name]
-        });
-        this.postCommand({
-            name: commands.ON_LOAD_IMAGE,
-            args: tui.util.extend({
-                imageName: name
-            }, this.getSize(oImage))
-        });
+        return dfd;
     },
 
     /**

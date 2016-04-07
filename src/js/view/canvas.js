@@ -1,7 +1,6 @@
 'use strict';
-var View = require('../interface/view'),
-    commands = require('../consts').commands;
-var template = require('../../template/canvas.hbs');
+var View = require('../interface/view');
+var viewNames = require('../consts').viewNames;
 
 /**
  * Canvas view
@@ -10,43 +9,25 @@ var template = require('../../template/canvas.hbs');
  * @param {Delegator} parent - Parent delegator
  */
 var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
-    init: function(parent) {
-        View.call(this, parent);
-        this.registerAction(commands.ON_LOAD_IMAGE, function(imageInfo) {
-            this.$element.css('height', imageInfo.currentHeight);
-        }, this);
+    init: function(parent, $wrapper) {
+        View.call(this, parent, $wrapper);
     },
 
     /**
      * View name
      * @type {string}
      */
-    name: 'canvas',
-
-    /**
-     * Template context
-     * @type {Object}
-     */
-    templateContext: {
-        name: 'canvas'
-    },
-
-    /**
-     * Render template
-     * @override
-     * @type {function}
-     */
-    template: template,
+    name: viewNames.CANVAS,
 
     /**
      * Post processing after render
      * It posts a command to register canvas element
      */
     doAfterRender: function() {
-        this.postCommand({
-            name: commands.SET_CANVAS_ELEMENT,
-            args: this.$element.find('canvas')[0]
-        });
+        var $el = this.$wrapper.find('canvas');
+
+        this.setElement($el);
+        this.getEditor().mainHandler.setCanvasElement($el[0]);
     }
 });
 

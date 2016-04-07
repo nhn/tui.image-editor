@@ -5,6 +5,34 @@ var mixer = require('../mixin/mixer');
 var Component = tui.util.defineClass({
     init: function() {},
 
+    /**
+     * Save image(background) of canvas
+     * @param {string} name - Name of image
+     * @param {fabric.Image} oImage - Fabric image instance
+     */
+    setCanvasImage: function(name, oImage) {
+        var root = this.getRoot();
+
+        root.imageName = name;
+        root.oImage = oImage;
+    },
+
+    /**
+     * Set canvas element to fabric.Canvas
+     * @param {Element} canvasElement - Canvas element
+     */
+    setCanvasElement: function(canvasElement) {
+        var root = this.getRoot();
+
+        root.canvas = new fabric.Canvas(canvasElement, {
+            isDrawingMode: false
+        });
+    },
+
+    /**
+     * Get fabric.Canvas instance
+     * @returns {fabric.Canvas}
+     */
     getCanvas: function() {
         if (this === this.getRoot()) {
             return this.canvas;
@@ -13,14 +41,10 @@ var Component = tui.util.defineClass({
         return this.getRoot().getCanvas();
     },
 
-    getComponent: function(name) {
-        if (this === this.getRoot()) {
-            return this.components[name];
-        }
-
-        return this.getRoot().getComponent(name);
-    },
-
+    /**
+     * Get canvasImage (fabric.Image instance)
+     * @returns {fabric.Image}
+     */
     getCanvasImage: function() {
         if (this === this.getRoot()) {
             return this.oImage;

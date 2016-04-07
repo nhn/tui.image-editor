@@ -5,8 +5,6 @@ var View = require('../interface/view'),
     commands = require('../consts').commands,
     mixer = require('../mixin/mixer');
 
-var template = require('../../template/container.hbs');
-
 /**
  * Menu view
  * @extends View
@@ -15,8 +13,10 @@ var template = require('../../template/container.hbs');
  * @param {Delegator} parent - Parent delegator
  */
 var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
-    init: function(parent) {
+    init: function(parent, $wrapper) {
         View.call(this, parent);
+        this.$wrapper = $wrapper;
+        this.buttons = [];
     },
 
     /**
@@ -26,48 +26,24 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
     name: 'menu',
 
     /**
-     * Template context
-     * @type {Object}
-     */
-    templateContext: {
-        name: 'menu'
-    },
-
-    /**
-     * Render template
-     * @override
-     * @type {function}
-     */
-    template: template,
-
-    /**
      * Processing after render
      * It adds buttons
      */
     doAfterRender: function() {
         this._addChildren();
-        this._registerActions();
     },
 
+    /**
+     * Add children
+     * @private
+     */
     _addChildren: function() {
         this.addChild(btnFactory.create(this, {
             name: 'Crop',
             templateContext: {
                 text: 'Crop'
-            },
-            clickCommand: {
-                name: commands.START_CROPPING
             }
         }));
-    },
-
-    _registerActions: function() {
-        this.registerAction(commands.START_CROPPING, function() {
-            this.addChild(new CropSubButtonGroup(this));
-        }, this);
-        this.registerAction(commands.END_CROPPING, function() {
-            this.removeChild('subButtonGroup');
-        }, this);
     },
 
     /**

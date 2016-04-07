@@ -1,84 +1,56 @@
 'use strict';
 
-var Component = require('../interface/component'),
-    ImageLoader = require('./imageLoader'),
-    Cropper = require('./cropper'),
-    commands = require('../consts').commands;
+var Component = require('../interface/component');
+var ImageLoader = require('./imageLoader');
+var Cropper = require('./cropper');
 
+var componentNames = require('../consts').componentNames;
+
+/**
+ * Main component
+ * @extends Component
+ * @class
+ * @param {ImageEditor} editor - ImageEditor
+ * @param {Invoker} invoker - Invoker
+ */
 var Main = tui.util.defineClass(Component, {
-    init: function(broker) {
-        this.broker = broker;
+    init: function(editor, invoker) {
+        /**
+         * editor
+         * @type {ImageEditor}
+         */
+        this.editor = editor;
 
+        /**
+         * invoker
+         * @type {Invoker}
+         */
+        this.invoker = invoker;
+
+        /**
+         * Fabric canvas instance
+         * @type {fabric.Canvas}
+         */
         this.canvas = null;
+
+        /**
+         * Fabric image instance
+         * @type {fabric.Image}
+         */
         this.oImage = null;
-        this.components = null;
-        this.registerActions();
+
+        this.createComponents();
     },
 
     /**
-     * Register main handler actions
+     * Create components
      */
-    registerActions: function() {
-        this.registerAction(commands.SET_CANVAS_ELEMENT, this.setCanvasElement, this);
-        this.registerAction(commands.SET_CANVAS_IMAGE, this.setCanvasImage, this);
-    },
+    createComponents: function() {
+        var invoker = this.invoker;
 
-    /**
-     * Save image(background) of canvas
-     * @param {fabric.Image} oImage - Fabric image instance
-     * @param {string} name - Name of image
-     */
-    setCanvasImage: function(oImage, name) {
-        this.oImage = oImage;
-        this.imageName = name;
-    },
-
-    /**
-     * Set canvas element to fabric.Canvas
-     * @param {Element} canvasElement - Canvas element
-     */
-    setCanvasElement: function(canvasElement) {
-        this.canvas = new fabric.Canvas(canvasElement, {
-            isDrawingMode: false
-        });
-        this.setComponents();
-    },
-
-    /**
-     * Set components
-     */
-    setComponents: function() {
-        this.components = {
-            imageLoader: new ImageLoader(this),
-            cropper: new Cropper(this)
-        };
-    },
-
-    /**
-     * Register action to broker
-     */
-    registerAction: function() {
-        var broker = this.broker;
-
-        broker.register.apply(broker, arguments);
-    },
-
-    /**
-     * Deregister action from broker
-     */
-    deregisterAction: function() {
-        var broker = this.broker;
-
-        broker.deregister.apply(broker, arguments);
-    },
-
-    /**
-     * Post command to broker
-     * @param {{name: string, args: (object|Array)}} command - command
-     * @returns {boolean} Result of invoking command
-     */
-    postCommand: function(command) {
-        return this.broker.invoke(command);
+        invoker.register(componentNames.MAIN, this);
+        invoker.register(componentNames.IMAGE_LOADER, new ImageLoader(this));
+        invoker.register(componentNames.CROPPER, new Cropper(this));
     },
 
     /**

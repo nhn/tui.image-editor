@@ -4,8 +4,6 @@ var View = require('../interface/view'),
     btnFactory = require('../factory/button'),
     commands = require('../consts').commands;
 
-var template = require('../../template/container.hbs');
-
 /**
  * Detail view
  * @extends View
@@ -25,21 +23,6 @@ var CropSubButtonGroup = tui.util.defineClass(View, /* @lends Detail.prototype *
     name: 'subButtonGroup',
 
     /**
-     * Template context
-     * @type {Object}
-     */
-    templateContext: {
-        name: 'subButtonGroup'
-    },
-
-    /**zw
-     * Render template
-     * @override
-     * @type {function}
-     */
-    template: template,
-
-    /**
      * Processing after render
      */
     doAfterRender: function() {
@@ -47,20 +30,12 @@ var CropSubButtonGroup = tui.util.defineClass(View, /* @lends Detail.prototype *
             name: 'Apply',
             templateContext: {
                 text: 'Apply'
-            },
-            clickCommand: {
-                name: commands.END_CROPPING,
-                args: true
             }
         }));
         this.addChild(btnFactory.create(this, {
             name: 'Cancel',
             templateContext: {
                 text: 'Cancel'
-            },
-            clickCommand: {
-                name: commands.END_CROPPING,
-                args: false
             }
         }));
     },

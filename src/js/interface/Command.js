@@ -1,6 +1,9 @@
 'use strict';
 
-var msgFactory = require('../factory/errorMessage');
+var errorMessage = require('../factory/errorMessage');
+
+var createMessage = errorMessage.create,
+    errorTypes = errorMessage.types;
 
 /**
  * Command class
@@ -33,7 +36,7 @@ var Command = tui.util.defineClass({
      * @abstract
      */
     execute: function() {
-        throw new Error(msgFactory.unimplementation(this.name + '.execute'));
+        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, this.name + '.execute'));
     },
 
     /**
@@ -41,7 +44,7 @@ var Command = tui.util.defineClass({
      * @abstract
      */
     undo: function() {
-        throw new Error(msgFactory.unimplementation(this.name + '.undo'));
+        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, this.name + '.undo'));
     }
 });
 

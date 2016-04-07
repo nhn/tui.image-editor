@@ -34,7 +34,7 @@
         var imageEditor = new tui.component.ImageEditor('#editor'),
             downloadBtn = document.getElementById('btn-download');
 
-        imageEditor.loadImageFromURL('./img/tree.jpg');
+        imageEditor.loadImageFromURL('tree.jpg', './img/tree.jpg');
         downloadBtn.addEventListener('click', function () {
             downloadBtn.download = imageEditor.getImageName();
             downloadBtn.href = imageEditor.toDataURL();

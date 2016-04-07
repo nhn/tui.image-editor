@@ -1,5 +1,8 @@
 'use strict';
-var createMessage = require('../factory/errorMessage').create;
+var errorMessage = require('../factory/errorMessage');
+
+var createMessage = errorMessage.create,
+    errorTypes = errorMessage.types;
 
 /**
  * This provides methods used for command delegation.
@@ -42,48 +45,8 @@ var Delegator = {
         return current;
     },
 
-    /**
-     * Post a command
-     * The root will be override this method
-     * @param {object} command - Command data
-     * @param {function} callback - Callback if succeeded
-     */
-    postCommand: function(command, callback) {
-        var root = this.getRoot();
-
-        if (this.postCommand === root.postCommand) {
-            throw new Error(createMessage('unImplementation', 'postCommand'));
-        }
-
-        root.postCommand(command, callback);
-    },
-
-    /**
-     * Register action(s) to command(s)
-     * The root will be override this method
-     */
-    registerAction: function() {
-        var root = this.getRoot();
-
-        if (this.registerAction === root.registerAction) {
-            throw new Error(createMessage('unImplementation', 'registerAction'));
-        }
-
-        root.registerAction.apply(root, arguments);
-    },
-
-    /**
-     * Deregister action(s)
-     * The root will be override this method
-     */
-    deregisterAction: function() {
-        var root = this.getRoot();
-
-        if (this.deregisterAction === root.deregisterAction) {
-            throw new Error(createMessage('unImplementation', 'deregisterAction'));
-        }
-
-        root.deregisterAction.apply(root, arguments);
+    getEditor: function() {
+        return this.getRoot().editor;
     }
 };
 

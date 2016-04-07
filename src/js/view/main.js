@@ -1,31 +1,51 @@
 'use strict';
-var View = require('../interface/view'),
-    Menu = require('./menu'),
-    Canvas = require('./canvas'),
-    Detail = require('./detail'),
-    mixer = require('../mixin/mixer');
+var View = require('../interface/view');
+var Menu = require('./menu');
+var Canvas = require('./canvas');
+var SubMenu = require('./subMenu');
+var mixer = require('../mixin/mixer');
+var consts = require('../consts');
+var mainTemplate = require('../../template/main.hbs');
 
-var template = require('../../template/container.hbs');
+var viewNames = consts.viewNames;
 
 /**
  * MainView Class
  * @extends View
  * @mixes BranchView
  * @class
- * @param {Broker} broker - Components broker
+ * @param {ImageEditor} editor - ImageEditor
+ * @param {jQuery} $wrapper - Wrapper jquery element
 */
 var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
-    init: function(broker, wrapper) {
-        View.call(this);
+    init: function(editor, $wrapper) {
+        View.call(this, null, $wrapper);
 
         /**
-         * Components broker
-         * @type {Broker}
+         * Command invoker
+         * @type {ImageEditor}
          */
-        this.broker = broker;
+        this.editor = editor;
+
+        /**
+         * Menu view
+         * @type {View}
+         */
+        this.menu = null;
+
+        /**
+         * SubMenu view
+         * @type {View}
+         */
+        this.subMenu = null;
+
+        /**
+         * Canvas view
+         * @type {View}
+         */
+        this.canvas = null;
 
         this.render();
-        this.getElement().appendTo(wrapper);
     },
 
     /**
@@ -39,7 +59,10 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * @type {Object}
      */
     templateContext: {
-        name: 'main'
+        name: viewNames.MAIN,
+        menu: viewNames.MENU,
+        subMenu: viewNames.SUB_MENU,
+        canvas: viewNames.CANVAS
     },
 
     /**
@@ -47,16 +70,22 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * @override
      * @type {function}
      */
-    template: template,
+    template: mainTemplate,
 
     /**
      * Processing after render
      * It adds children
      */
     doAfterRender: function() {
-        this.addChild(new Detail(this));
-        this.addChild(new Menu(this));
-        this.addChild(new Canvas(this));
+        var prefix = '.' + consts.CLASSNAME_PREFIX + '-',
+            menuClassName = prefix + viewNames.MENU,
+            subMenuClassName = prefix + viewNames.SUB_MENU,
+            canvasWrapperClassName = prefix + viewNames.CANVAS,
+            $element = this.$element;
+
+        this.menu = this.addChild(new Menu(this, $element.find(menuClassName)));
+        this.subMenu = this.addChild(new SubMenu(this, $element.find(subMenuClassName)));
+        this.canvas = this.addChild(new Canvas(this, $element.find(canvasWrapperClassName)));
     },
 
     /**
@@ -64,38 +93,16 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * It clears children
      */
     doBeforeDestroy: function() {
-        this.deregisterAction(this);
         this.clearChildren();
     },
 
     /**
      * Post a command to broker
      * @override
-     * @param {object} command - Command data
-     * @returns {boolean}
+     * @param {Command} command - Command
      */
     postCommand: function(command) {
-        return this.broker.invoke(command);
-    },
-
-    /**
-     * Register action(s) to broker
-     * @override
-     */
-    registerAction: function() {
-        var broker = this.broker;
-
-        broker.register.apply(broker, arguments);
-    },
-
-    /**
-     * Deregister action(s)
-     * @override
-     */
-    deregisterAction: function() {
-        var broker = this.broker;
-
-        broker.register.apply(broker, arguments);
+        this.editor.invoke(command);
     }
 });
 

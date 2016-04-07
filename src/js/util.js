@@ -20,5 +20,19 @@ module.exports = {
         }
 
         return max(minValue, min(value, maxValue));
+    },
+
+    /**
+     * Make key-value object from arguments
+     * @returns {object.<string, string>}
+     */
+    keyMirror: function() {
+        var obj = {};
+
+        tui.util.forEach(arguments, function(key) {
+            obj[key] = key;
+        });
+
+        return obj;
     }
 };

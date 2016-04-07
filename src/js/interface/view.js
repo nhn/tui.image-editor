@@ -1,6 +1,9 @@
 'use strict';
 var mixer = require('../mixin/mixer'),
-    createMessage = require('../factory/errorMessage').create;
+    errorMessage = require('../factory/errorMessage');
+
+var createMessage = errorMessage.create,
+    errorTypes = errorMessage.types;
 
 /**
  * View interface
@@ -9,14 +12,27 @@ var mixer = require('../mixin/mixer'),
  * @param {View} parent - Parent view
  */
 var View = tui.util.defineClass(/* @lends View.prototype */{
-    init: function(parent) {
+    init: function(parent, $wrapper) {
         /**
          * jQuery Element
          * @type {jQuery}
          */
-        this.$element = null;
+        this.$wrapper = $wrapper;
 
         this.setParent(parent);
+    },
+
+
+    /**
+     * Get image name
+     * @returns {ImageEditor}
+     */
+    getEditor: function() {
+        if (this === this.getRoot()) {
+            return this.editor;
+        }
+
+        return this.getRoot().getEditor();
     },
 
     /**
@@ -24,13 +40,15 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
      * @returns {jQuery}
      */
     getElement: function() {
-        var $element = this.$element;
+        return this.$element;
+    },
 
-        if (!$element) {
-            throw new Error(createMessage('noElement', this.getName()));
-        }
-
-        return $element;
+    /**
+     * Set jquery element
+     * @param {jQuery} $element - jQuery element
+     */
+    setElement: function($element) {
+        this.$element = $element;
     },
 
     /**
@@ -41,7 +59,7 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
         var name = this.name;
 
         if (!name) {
-            throw new Error(createMessage('noView'));
+            throw new Error(createMessage(errorTypes.NO_VIEW_NAME));
         }
 
         return name;
@@ -49,23 +67,24 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
 
     /**
      * HTML Template method
-     * @virtual
+     * @returns {string}
+     * @protected
      */
     template: function() {
-        throw new Error(createMessage('unImplementation', 'template'));
+        return '';
     },
 
     /**
      * Render view
-     * @param {jQuery} $wrapper - $Wrapper element
      */
-    render: function($wrapper) {
+    render: function() {
         var ctx = this.templateContext;
 
         this.destroy();
         this.$element = $(this.template(ctx));
-        if ($wrapper) {
-            $wrapper.append(this.$element);
+
+        if (this.$wrapper) {
+            this.$wrapper.append(this.$element);
         }
 
         if (this.doAfterRender) {
@@ -77,17 +96,13 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
      * Destroy view
      */
     destroy: function() {
-        var $element;
-
         if (this.doBeforeDestroy) {
             this.doBeforeDestroy();
         }
-
-        $element = this.$element;
-        if ($element) {
-            $element.remove();
+        if (this.$element) {
+            this.$element.remove();
+            this.$element = null;
         }
-        this.$element = null;
     }
 });
 

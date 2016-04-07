@@ -1,9 +1,9 @@
 'use strict';
 
-var MainView = require('./view/main'),
-    MainHandler = require('./handler/main'),
-    Broker = require('./broker'),
-    commands = require('./consts').commands;
+var MainView = require('./view/main');
+var Command = require('./interface/Command');
+var MainHandler = require('./handler/main');
+var Invoker = require('./invoker');
 
 /**
  * Image editor
@@ -12,66 +12,95 @@ var MainView = require('./view/main'),
  */
 var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
     init: function(wrapper) {
-        var broker = new Broker();
+        var invoker = new Invoker();
 
         /**
          * Components broker
-         * @type {Broker}
+         * @private
+         * @type {Invoker}
          */
-        this.broker = broker;
+        this._invoker = invoker;
 
         /**
          * Main components
          * @type {Canvas}
          */
-        this.mainHandler = new MainHandler(broker);
+        this.mainHandler = new MainHandler(this, invoker);
 
         /**
          * Main view
          * @type {MainView}
          */
-        this.mainView = new MainView(broker, wrapper);
+        this.mainView = new MainView(this, $(wrapper));
     },
 
     /**
      * Invoke command
-     * @param {{name: string, args: (Array|*)}} command - Command
-     * @private
+     * @param {Command} command - Command
      */
-    _invoke: function(command) {
-        this.broker.invoke(command);
+    invoke: function(command) {
+        this._invoker.invoke(command);
+    },
+
+    /**
+     * Undo
+     */
+    undo: function() {
+        this._invoker.undo();
+    },
+
+    /**
+     * Redo
+     */
+    redo: function() {
+        this._invoker.redo();
     },
 
     /**
      * Load image from url
+     * @param {string} imageName - imageName
      * @param {string} url - File url
-     * @param {string} filename - File name
      */
-    loadImageFromURL: function(url, filename) {
-        this._invoke({
-            name: commands.LOAD_IMAGE_FROM_URL,
-            args: [url, filename]
-        });
+    loadImageFromURL: function(imageName, url) {
+        this.invoke(new Command({
+            execute: function(components) {
+                var loader = components.imageLoader;
+
+                this.store = {
+                    prevName: loader.getImageName(),
+                    prevImage: loader.getCanvasImage()
+                };
+
+                loader.load(imageName, url);
+            },
+            undo: function(components) {
+                var loader = components.imageLoader;
+                var store = this.store;
+
+                loader.load(store.prevName, store.prevImage);
+            }
+        }));
     },
 
     /**
      * Load image from file
-     * @param {File} file - Image file
+     * @param {File} imgFile - Image file
      */
-    loadImageFromFile: function(file) {
-        this._invoke({
-            name: commands.LOAD_IMAGE_FROM_FILE,
-            args: file
-        });
+    loadImageFromFile: function(imgFile) {
+        if (!imgFile) {
+            return;
+        }
+
+        this.loadImageFromURL(
+            imgFile.name,
+            URL.createObjectURL(imgFile)
+        );
     },
 
     /**
      * Start cropping
      */
     startCropping: function() {
-        this._invoke({
-            name: commands.START_CROPPING
-        });
     },
 
     /**
@@ -79,10 +108,6 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @param {boolean} isDone - Cropping is done or cancel
      */
     endCropping: function(isDone) {
-        this._invoke({
-            name: commands.END_CROPPING,
-            args: isDone
-        });
     },
 
     /**

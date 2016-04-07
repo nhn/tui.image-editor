@@ -43,11 +43,11 @@ var Button = tui.util.defineClass(View, /* @lends Button.prototype */{
     template: template,
 
     doAfterRender: function() {
-        if (this.clickCommand) {
-            this.$element.on('click', $.proxy(function() {
-                this.postCommand(this.clickCommand);
-            }, this));
-        }
+        // if (this.clickCommand) {
+        //     this.$element.on('click', $.proxy(function() {
+        //         this.postCommand(this.clickCommand);
+        //     }, this));
+        // }
     },
 
     /**

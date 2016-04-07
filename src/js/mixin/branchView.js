@@ -9,6 +9,7 @@ var BranchView = {
     /**
      * Add child
      * @param {View} view - View instance
+     * @returns {View}
      */
     addChild: function(view) {
         var name = view.getName();
@@ -16,7 +17,18 @@ var BranchView = {
         this._children = this._children || {};
         this.removeChild(name);
         this._children[name] = view;
-        view.render(this.getElement());
+        view.render();
+
+        return view;
+    },
+
+    /**
+     * Get child view
+     * @param {string} viewName - View name
+     * @returns {View}
+     */
+    getChild: function(viewName) {
+        return this._children[viewName];
     },
 
     /**

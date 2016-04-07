@@ -18,8 +18,8 @@ var abs = Math.abs,
 var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
     init: function(parent) {
         this.setParent(parent);
-        this.registerAction(commands.START_CROPPING, this.start, this);
-        this.registerAction(commands.END_CROPPING, this.end, this);
+        // this.registerAction(commands.START_CROPPING, this.start, this);
+        // this.registerAction(commands.END_CROPPING, this.end, this);
 
         /**
          * Cropzone
@@ -189,8 +189,8 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         };
 
         this.postCommand({
-            name: commands.LOAD_IMAGE_FROM_URL,
-            args: [canvas.toDataURL(cropInfo), this.getImageName()]
+            // name: commands.LOAD_IMAGE_FROM_URL,
+            // args: [canvas.toDataURL(cropInfo), this.getImageName()]
         });
     }
 });
