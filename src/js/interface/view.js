@@ -22,19 +22,6 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
         this.setParent(parent);
     },
 
-
-    /**
-     * Get image name
-     * @returns {ImageEditor}
-     */
-    getEditor: function() {
-        if (this === this.getRoot()) {
-            return this.editor;
-        }
-
-        return this.getRoot().getEditor();
-    },
-
     /**
      * Return jquery element
      * @returns {jQuery}
