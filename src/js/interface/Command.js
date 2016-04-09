@@ -13,12 +13,6 @@ var createMessage = errorMessage.create,
 var Command = tui.util.defineClass({
     init: function(actions) {
         /**
-         * Command name
-         * @type {string}
-         */
-        this.name = actions.name || 'unknownCommand';
-
-        /**
          * Execute function
          * @type {function}
          */
@@ -29,6 +23,18 @@ var Command = tui.util.defineClass({
          * @type {function}
          */
         this.undo = actions.undo;
+
+        /**
+         * After execution callback
+         * @type {null}
+         */
+        this.executionCallback = null;
+
+        /**
+         * After undo callback
+         * @type {null}
+         */
+        this.undoerCallback = null;
     },
 
     /**
@@ -36,7 +42,7 @@ var Command = tui.util.defineClass({
      * @abstract
      */
     execute: function() {
-        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, this.name + '.execute'));
+        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'execute'));
     },
 
     /**
@@ -44,7 +50,29 @@ var Command = tui.util.defineClass({
      * @abstract
      */
     undo: function() {
-        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, this.name + '.undo'));
+        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'undo'));
+    },
+
+    /**
+     * Attach after execute callback
+     * @param {function} callback - Execute callback
+     * @returns {Command} this
+     */
+    setExecutionCallback: function(callback) {
+        this.executionCallback = callback;
+
+        return this;
+    },
+
+    /**
+     * Attach after undo callback
+     * @param {function} callback - Execute callback
+     * @returns {Command} this
+     */
+    setUndoerCallback: function(callback) {
+        this.undoerCallback = callback;
+
+        return this;
     }
 });
 

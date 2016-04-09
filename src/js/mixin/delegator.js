@@ -1,8 +1,4 @@
 'use strict';
-var errorMessage = require('../factory/errorMessage');
-
-var createMessage = errorMessage.create,
-    errorTypes = errorMessage.types;
 
 /**
  * This provides methods used for command delegation.
@@ -43,10 +39,6 @@ var Delegator = {
         }
 
         return current;
-    },
-
-    getEditor: function() {
-        return this.getRoot().editor;
     }
 };
 

@@ -90,6 +90,14 @@ var View = tui.util.defineClass(/* @lends View.prototype */{
             this.$element.remove();
             this.$element = null;
         }
+    },
+
+    /**
+     * Get image editor
+     * @returns {ImageEditor}
+     */
+    getEditor: function() {
+        return this.getRoot().getEditor();
     }
 });
 

@@ -2,6 +2,10 @@
 
 var mixer = require('../mixin/mixer');
 
+/**
+ * Component interface
+ * @class
+ */
 var Component = tui.util.defineClass({
     init: function() {},
 
@@ -11,22 +15,15 @@ var Component = tui.util.defineClass({
      * @param {fabric.Image} oImage - Fabric image instance
      */
     setCanvasImage: function(name, oImage) {
-        var root = this.getRoot();
-
-        root.imageName = name;
-        root.oImage = oImage;
+        this.getRoot().setCanvasImage(name, oImage);
     },
 
     /**
-     * Set canvas element to fabric.Canvas
-     * @param {Element} canvasElement - Canvas element
+     * Returns canvas element of fabric.Canvas[[lower-canvas]]
+     * @returns {HTMLCanvasElement}
      */
-    setCanvasElement: function(canvasElement) {
-        var root = this.getRoot();
-
-        root.canvas = new fabric.Canvas(canvasElement, {
-            isDrawingMode: false
-        });
+    getCanvasElement: function() {
+        return this.getRoot().getCanvasElement();
     },
 
     /**
@@ -34,10 +31,6 @@ var Component = tui.util.defineClass({
      * @returns {fabric.Canvas}
      */
     getCanvas: function() {
-        if (this === this.getRoot()) {
-            return this.canvas;
-        }
-
         return this.getRoot().getCanvas();
     },
 
@@ -46,10 +39,6 @@ var Component = tui.util.defineClass({
      * @returns {fabric.Image}
      */
     getCanvasImage: function() {
-        if (this === this.getRoot()) {
-            return this.oImage;
-        }
-
         return this.getRoot().getCanvasImage();
     },
 
@@ -58,11 +47,23 @@ var Component = tui.util.defineClass({
      * @returns {string}
      */
     getImageName: function() {
-        if (this === this.getRoot()) {
-            return this.imageName;
-        }
-
         return this.getRoot().getImageName();
+    },
+
+    /**
+     * Get image editor
+     * @returns {ImageEditor}
+     */
+    getEditor: function() {
+        return this.getRoot().getEditor();
+    },
+
+    /**
+     * Return component name
+     * @returns {string}
+     */
+    getName: function() {
+        return this.name;
     }
 });
 

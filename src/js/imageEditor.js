@@ -1,9 +1,13 @@
 'use strict';
 
 var MainView = require('./view/main');
-var Command = require('./interface/Command');
-var MainHandler = require('./handler/main');
+var MainComponent = require('./component/main');
 var Invoker = require('./invoker');
+var commandFactory = require('./factory/command');
+var consts = require('./consts');
+
+var eventNames = consts.eventNames;
+var compNames = consts.componentNames;
 
 /**
  * Image editor
@@ -12,20 +16,20 @@ var Invoker = require('./invoker');
  */
 var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
     init: function(wrapper) {
-        var invoker = new Invoker();
+        var mainComponent = new MainComponent(this);
+
+        /**
+         * Main Component
+         * @type {Canvas}
+         */
+        this.mainComponent = mainComponent;
 
         /**
          * Components broker
          * @private
          * @type {Invoker}
          */
-        this._invoker = invoker;
-
-        /**
-         * Main components
-         * @type {Canvas}
-         */
-        this.mainHandler = new MainHandler(this, invoker);
+        this._invoker = new Invoker(mainComponent);
 
         /**
          * Main view
@@ -35,52 +39,56 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
     },
 
     /**
+     * Clear all actions
+     */
+    clear: function() {
+        this.endCropping();
+    },
+
+    /**
      * Invoke command
      * @param {Command} command - Command
      */
-    invoke: function(command) {
-        this._invoker.invoke(command);
+    execute: function(command) {
+        var self = this;
+
+        this.clear();
+        this._invoker.invoke(command).done(function() {
+            self.fire(eventNames.PUSH_UNDO_STACK);
+            self.fire(eventNames.EMPTY_REDO_STACK);
+        });
     },
 
     /**
      * Undo
      */
     undo: function() {
-        this._invoker.undo();
+        var invoker = this._invoker;
+        var self = this;
+
+        invoker.undo().done(function() {
+            if (invoker.isEmptyUndoStack()) {
+                self.fire(eventNames.EMPTY_UNDO_STACK);
+            }
+            self.fire(eventNames.PUSH_REDO_STACK);
+        });
     },
 
     /**
      * Redo
      */
     redo: function() {
-        this._invoker.redo();
-    },
+        var invoker = this._invoker;
+        var self = this;
 
-    /**
-     * Load image from url
-     * @param {string} imageName - imageName
-     * @param {string} url - File url
-     */
-    loadImageFromURL: function(imageName, url) {
-        this.invoke(new Command({
-            execute: function(components) {
-                var loader = components.imageLoader;
-
-                this.store = {
-                    prevName: loader.getImageName(),
-                    prevImage: loader.getCanvasImage()
-                };
-
-                loader.load(imageName, url);
-            },
-            undo: function(components) {
-                var loader = components.imageLoader;
-                var store = this.store;
-
-                loader.load(store.prevName, store.prevImage);
+        invoker.redo().done(function() {
+            if (invoker.isEmptyRedoStack()) {
+                self.fire(eventNames.EMPTY_REDO_STACK);
             }
-        }));
+            self.fire(eventNames.PUSH_UNDO_STACK);
+        });
     },
+
 
     /**
      * Load image from file
@@ -98,16 +106,73 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
     },
 
     /**
+     * Load image from url
+     * @param {string} imageName - imageName
+     * @param {string} url - File url
+     */
+    loadImageFromURL: function(imageName, url) {
+        var callback, command;
+        if (!imageName || !url) {
+            return;
+        }
+
+        callback = $.proxy(this._callbackAfterImageLoading, this);
+        command = commandFactory.createLoadCommand(imageName, url)
+            .setExecutionCallback(callback)
+            .setUndoerCallback(callback);
+
+        this.execute(command);
+    },
+
+    /**
+     * Callback after image loading
+     * @param {?fabric.Image} oImage - Image instance
+     */
+    _callbackAfterImageLoading: function(oImage) {
+        var mainComponent = this.mainComponent;
+        var $canvasElement = $(mainComponent.getCanvasElement());
+
+        if (oImage) {
+            this.fire(eventNames.LOAD_IMAGE, {
+                originalWidth: oImage.width,
+                originalHeight: oImage.height,
+                currentWidth: $canvasElement.width(),
+                currentHeight: $canvasElement.height()
+            });
+        } else {
+            this.fire(eventNames.CLEAR_IMAGE);
+        }
+
+    },
+
+    /**
      * Start cropping
      */
     startCropping: function() {
+        var cropper = this._invoker.get(compNames.CROPPER);
+
+        cropper.start();
     },
 
     /**
      * Apply cropping
-     * @param {boolean} isDone - Cropping is done or cancel
+     * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
      */
-    endCropping: function(isDone) {
+    endCropping: function(isApplying) {
+        var cropper = this._invoker.get(compNames.CROPPER);
+        var data = cropper.end(isApplying);
+
+        if (data) {
+            this.loadImageFromURL(data.imageName, data.url);
+        }
+    },
+
+    /**
+     * Set canvas element
+     * @param {jQuery|Element|string} canvasElement - Canvas element or selector
+     */
+    setCanvasElement: function(canvasElement) {
+        this.mainComponent.setCanvasElement(canvasElement);
     },
 
     /**
@@ -116,7 +181,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @returns {string} A DOMString containing the requested data URI.
      */
     toDataURL: function(type) {
-        return this.mainHandler.toDataURL(type);
+        return this.mainComponent.toDataURL(type);
     },
 
     /**
@@ -124,8 +189,25 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @returns {string}
      */
     getImageName: function() {
-        return this.mainHandler.getImageName();
+        return this.mainComponent.getImageName();
+    },
+
+    /**
+     * Clear undoStack
+     */
+    clearUndoStack: function() {
+        this._invoker.clearUndoStack();
+        this.fire(eventNames.EMPTY_UNDO_STACK);
+    },
+
+    /**
+     * Clear redoStack
+     */
+    clearRedoStack: function() {
+        this._invoker.clearRedoStack();
+        this.fire(eventNames.EMPTY_REDO_STACK);
     }
 });
 
+tui.util.CustomEvents.mixin(ImageEditor);
 module.exports = ImageEditor;
