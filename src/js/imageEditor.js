@@ -66,6 +66,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         var invoker = this._invoker;
         var self = this;
 
+        this.clear();
         invoker.undo().done(function() {
             if (invoker.isEmptyUndoStack()) {
                 self.fire(eventNames.EMPTY_UNDO_STACK);
@@ -81,6 +82,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         var invoker = this._invoker;
         var self = this;
 
+        this.clear();
         invoker.redo().done(function() {
             if (invoker.isEmptyRedoStack()) {
                 self.fire(eventNames.EMPTY_REDO_STACK);
@@ -88,7 +90,6 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
             self.fire(eventNames.PUSH_UNDO_STACK);
         });
     },
-
 
     /**
      * Load image from file
@@ -142,7 +143,6 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         } else {
             this.fire(eventNames.CLEAR_IMAGE);
         }
-
     },
 
     /**
@@ -152,6 +152,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         var cropper = this._invoker.get(compNames.CROPPER);
 
         cropper.start();
+        this.fire(eventNames.START_CROPPING);
     },
 
     /**
@@ -162,6 +163,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         var cropper = this._invoker.get(compNames.CROPPER);
         var data = cropper.end(isApplying);
 
+        this.fire(eventNames.END_CROPPING);
         if (data) {
             this.loadImageFromURL(data.imageName, data.url);
         }

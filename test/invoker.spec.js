@@ -6,17 +6,18 @@ var Invoker = require('../src/js/invoker'),
 describe('Invoker', function() {
     var invoker,
         component = {
+            getName: function() {
+                return 'foo';
+            },
             action: function() {}
         };
 
     beforeEach(function() {
-        invoker = new Invoker();
-        invoker.register('foo', component);
+        invoker = new Invoker(component);
     });
 
     it('invoke', function() {
         var cmd = new Command({
-            name: 'cmd',
             execute: function(componentsMap) {
                 var foo = componentsMap.foo;
                 foo.action();
@@ -32,15 +33,14 @@ describe('Invoker', function() {
 
     it('undo', function() {
         var cmd = new Command({
-            name: 'cmd',
             execute: jasmine.createSpy(),
             undo: jasmine.createSpy()
         });
 
         invoker.invoke(cmd);
-        expect(cmd.execute).toHaveBeenCalledWith(invoker.components);
+        expect(cmd.execute).toHaveBeenCalledWith(invoker.componentMap);
         invoker.undo();
-        expect(cmd.undo).toHaveBeenCalledWith(invoker.components);
+        expect(cmd.undo).toHaveBeenCalledWith(invoker.componentMap);
 
         cmd.undo.calls.reset();
         invoker.undo();
@@ -49,7 +49,6 @@ describe('Invoker', function() {
 
     it('redo', function() {
         var cmd = new Command({
-            name: 'cmd',
             execute: jasmine.createSpy(),
             undo: jasmine.createSpy()
         });
@@ -60,6 +59,6 @@ describe('Invoker', function() {
         cmd.execute.calls.reset();
         expect(cmd.execute).not.toHaveBeenCalled();
         invoker.redo();
-        expect(cmd.execute).toHaveBeenCalledWith(invoker.components);
+        expect(cmd.execute).toHaveBeenCalledWith(invoker.componentMap);
     });
 });

@@ -41,12 +41,11 @@ describe('View Extension: ViewBranch', function() {
             expect(view._children.child1).toEqual(child1);
         });
 
-        it('should append element', function() {
+        it('should render the child', function() {
+            spyOn(child1, 'render');
             view.addChild(child1);
 
-            expect(
-                $.contains(view.$element[0], child1.$element[0])
-            ).toBe(true);
+            expect(child1.render).toHaveBeenCalled();
         });
     });
 

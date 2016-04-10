@@ -7,6 +7,7 @@ var subMenuTemplate = require('../../template/subMenu.hbs');
  * @class
  * @extends View
  * @param {Delegator} parent - Parent delegator
+ * @param {jQuery} $wrapper - Wrapper jquery element
  */
 var SubMenu = tui.util.defineClass(View, /* @lends Detail.prototype */{
     init: function(parent, $wrapper) {

@@ -1,8 +1,6 @@
 'use strict';
 var View = require('../interface/view'),
-    mixer = require('../mixin/mixer'),
-    btnFactory = require('../factory/button'),
-    commands = require('../consts').commands;
+    mixer = require('../mixin/mixer');
 
 /**
  * Detail view
@@ -25,20 +23,7 @@ var CropSubButtonGroup = tui.util.defineClass(View, /* @lends Detail.prototype *
     /**
      * Processing after render
      */
-    doAfterRender: function() {
-        this.addChild(btnFactory.create(this, {
-            name: 'Apply',
-            templateContext: {
-                text: 'Apply'
-            }
-        }));
-        this.addChild(btnFactory.create(this, {
-            name: 'Cancel',
-            templateContext: {
-                text: 'Cancel'
-            }
-        }));
-    },
+    doAfterRender: function() {},
 
     /**
      * Processing before destroy

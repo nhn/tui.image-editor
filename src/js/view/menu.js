@@ -1,9 +1,5 @@
 'use strict';
-var View = require('../interface/view'),
-    btnFactory = require('../factory/button'),
-    CropSubButtonGroup = require('./CropSubButtonGroup'),
-    commands = require('../consts').commands,
-    mixer = require('../mixin/mixer');
+var View = require('../interface/view');
 
 /**
  * Menu view
@@ -11,12 +7,29 @@ var View = require('../interface/view'),
  * @mixes BranchView
  * @class
  * @param {Delegator} parent - Parent delegator
+ * @param {jQuery} $wrapper - Wrapper jquery element
  */
 var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
     init: function(parent, $wrapper) {
-        View.call(this, parent);
-        this.$wrapper = $wrapper;
-        this.buttons = [];
+        View.call(this, parent, $wrapper);
+
+        /**
+         * Undo button
+         * @type {View}
+         */
+        this.undoBtn = null;
+
+        /**
+         * Redo button
+         * @type {View}
+         */
+        this.redoBtn = null;
+
+        /**
+         * Crop button
+         * @type {View}
+         */
+        this.cropBtn = null;
     },
 
     /**
@@ -30,7 +43,7 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
      * It adds buttons
      */
     doAfterRender: function() {
-        this._addChildren();
+        this.setElement(this.$wrapper);
     },
 
     /**
@@ -38,22 +51,8 @@ var Menu = tui.util.defineClass(View, /* @lends Menu.prototype */{
      * @private
      */
     _addChildren: function() {
-        this.addChild(btnFactory.create(this, {
-            name: 'Crop',
-            templateContext: {
-                text: 'Crop'
-            }
-        }));
-    },
-
-    /**
-     * Processing before destroy
-     * It clears children
-     */
-    doBeforeDestroy: function() {
-        this.clearChildren();
+        this.buttons
     }
 });
 
-mixer.mixin(Menu, 'BranchView');
 module.exports = Menu;

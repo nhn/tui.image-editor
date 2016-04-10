@@ -7,6 +7,7 @@ var viewNames = require('../consts').viewNames;
  * @extends View
  * @class Canvas
  * @param {Delegator} parent - Parent delegator
+ * @param {jQuery} $wrapper - Wrapper jquery element
  */
 var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
     init: function(parent, $wrapper) {
@@ -27,7 +28,10 @@ var Canvas = tui.util.defineClass(View, /* @lends Canvas.prototype */{
         var $el = this.$wrapper.find('canvas');
 
         this.setElement($el);
-        this.getEditor().mainHandler.setCanvasElement($el[0]);
+        this.getEditor().setCanvasElement($el[0]);
+
+        // fabricCanvas create a new wrapper element
+        this.$wrapper = $el.parent();
     }
 });
 

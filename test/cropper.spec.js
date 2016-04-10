@@ -1,40 +1,34 @@
 'use strict';
 
-var Cropper = require('../src/js/handler/Cropper'),
-    Component = require('../src/js/interface/component');
+var Cropper = require('../src/js/component/Cropper'),
+    Main = require('../src/js/component/Main');
 
 describe('Cropper', function() {
-    var cropper, mockRoot, canvas;
+    var cropper, main, canvas;
 
     beforeEach(function() {
-        canvas = new fabric.Canvas();
-        mockRoot = new Component();
-        tui.util.extend(mockRoot, {
-            canvas: canvas,
-            components: {},
-            oImage: {},
-            imageName: 'foo',
-            registerAction: function() {}
-        });
-        cropper = new Cropper(mockRoot);
+        canvas = new fabric.Canvas($('<canvas>')[0]);
+        main = new Main({});
+        main.canvas = canvas;
+        cropper = new Cropper(main);
     });
 
     describe('start()', function() {
         it('should create a cropzone', function() {
             cropper.start();
 
-            expect(cropper.cropzone).toBeDefined();
+            expect(cropper._cropzone).toBeDefined();
         });
 
         it('should add a cropzone to canvas', function() {
             spyOn(canvas, 'add');
             cropper.start();
 
-            expect(canvas.add).toHaveBeenCalledWith(cropper.cropzone);
+            expect(canvas.add).toHaveBeenCalledWith(cropper._cropzone);
         });
 
         it('should no action if a croppzone has been defined', function() {
-            cropper.cropzone = {};
+            cropper._cropzone = {};
             spyOn(canvas, 'add');
             cropper.start();
 
@@ -55,15 +49,15 @@ describe('Cropper', function() {
         });
 
         it('should set "selection" to false', function() {
-            cropper.onFabricMouseDown(fEvent);
+            cropper._onFabricMouseDown(fEvent);
             expect(canvas.selection).toBe(false);
         });
 
         it('should set "startX, startY"', function() {
             // canvas.getPointer will return object{x: 10, y: 20}
-            cropper.onFabricMouseDown(fEvent);
-            expect(cropper.startX).toEqual(10);
-            expect(cropper.startY).toEqual(20);
+            cropper._onFabricMouseDown(fEvent);
+            expect(cropper._startX).toEqual(10);
+            expect(cropper._startY).toEqual(20);
         });
     });
 
@@ -79,41 +73,41 @@ describe('Cropper', function() {
 
         it('should re-render(remove->set->add) cropzone ' +
             'if the mouse moving is over the threshold(=10)', function() {
-            cropper.startX = 0;
-            cropper.startY = 0;
+            cropper._startX = 0;
+            cropper._startY = 0;
 
             cropper.start();
-            spyOn(cropper.cropzone, 'remove');
-            spyOn(cropper.cropzone, 'set');
+            spyOn(cropper._cropzone, 'remove');
+            spyOn(cropper._cropzone, 'set');
             spyOn(canvas, 'add');
-            cropper.onFabricMouseMove({e: {}});
+            cropper._onFabricMouseMove({e: {}});
 
-            expect(cropper.cropzone.remove).toHaveBeenCalled();
-            expect(cropper.cropzone.set).toHaveBeenCalled();
+            expect(cropper._cropzone.remove).toHaveBeenCalled();
+            expect(cropper._cropzone.set).toHaveBeenCalled();
             expect(canvas.add).toHaveBeenCalled();
         });
 
         it('should not re-render cropzone ' +
             'if the mouse moving is under the threshold', function() {
-            cropper.startX = 14;
-            cropper.startY = 18;
+            cropper._startX = 14;
+            cropper._startY = 18;
 
             cropper.start();
-            spyOn(cropper.cropzone, 'remove');
-            spyOn(cropper.cropzone, 'set');
+            spyOn(cropper._cropzone, 'remove');
+            spyOn(cropper._cropzone, 'set');
             spyOn(canvas, 'add');
-            cropper.onFabricMouseMove({e: {}});
+            cropper._onFabricMouseMove({e: {}});
 
-            expect(cropper.cropzone.remove).not.toHaveBeenCalled();
-            expect(cropper.cropzone.set).not.toHaveBeenCalled();
+            expect(cropper._cropzone.remove).not.toHaveBeenCalled();
+            expect(cropper._cropzone.set).not.toHaveBeenCalled();
             expect(canvas.add).not.toHaveBeenCalled();
         });
     });
 
     describe('_calcRectDimensionFromPoint()', function() {
         beforeEach(function() {
-            cropper.startX = 10;
-            cropper.startY = 20;
+            cropper._startX = 10;
+            cropper._startY = 20;
             tui.util.extend(canvas, {
                 getWidth: function() {
                     return 100;
@@ -168,9 +162,9 @@ describe('Cropper', function() {
     it('"onFabricMouseUp()" should activate cropzone', function() {
         canvas.setActiveObject = jasmine.createSpy();
         cropper.start();
-        cropper.onFabricMouseUp();
+        cropper._onFabricMouseUp();
 
-        expect(canvas.setActiveObject).toHaveBeenCalledWith(cropper.cropzone);
+        expect(canvas.setActiveObject).toHaveBeenCalledWith(cropper._cropzone);
     });
 
     describe('"end()"', function() {
@@ -178,34 +172,27 @@ describe('Cropper', function() {
             cropper.start();
             cropper.end();
 
-            expect(cropper.cropzone).toBe(null);
+            expect(cropper._cropzone).toBe(null);
         });
 
-        it('should post command if cropzone is valid and crop is not canceled', function() {
+        it('should return cropzone data if the cropzone is valid and not canceled', function() {
             cropper.start();
-            spyOn(cropper.cropzone, 'isValid').and.returnValue(true);
-            cropper.postCommand = jasmine.createSpy();
-            cropper.end(true);
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
 
-            expect(cropper.postCommand).toHaveBeenCalledWith(
-                jasmine.objectContaining({
-                    name: jasmine.any(String),
-                    args: jasmine.anything()
-                })
-            );
+            expect(cropper.end(true)).toEqual({
+                imageName: jasmine.any(String),
+                url: jasmine.any(String)
+            });
         });
 
         it('should not post command if cropzone is invalid or crop is canceled', function() {
             cropper.start();
-            spyOn(cropper.cropzone, 'isValid').and.returnValue(true);
-            cropper.postCommand = jasmine.createSpy();
-            cropper.end(false);
-            expect(cropper.postCommand).not.toHaveBeenCalled();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            expect(cropper.end(false)).toBeFalsy();
 
             cropper.start();
-            spyOn(cropper.cropzone, 'isValid').and.returnValue(false);
-            cropper.end(true);
-            expect(cropper.postCommand).not.toHaveBeenCalled();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(false);
+            expect(cropper.end(false)).toBeFalsy();
         });
     });
 });

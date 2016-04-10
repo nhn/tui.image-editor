@@ -9,16 +9,6 @@ describe('Interface: View', function() {
         instance = new ViewInterface();
     });
 
-    it('should have unimplemented methods', function() {
-        expect(function() {
-            instance.render();
-        }).toThrowError(/template/);
-
-        expect(function() {
-            instance.postCommand();
-        }).toThrowError(/postCommand/);
-    });
-
     describe('getName', function() {
         it('should throw an error if nameless', function() {
             expect(function() {
@@ -33,10 +23,8 @@ describe('Interface: View', function() {
     });
 
     describe('getElement', function() {
-        it('should throw an error if does not have an element', function() {
-            expect(function() {
-                instance.getElement();
-            }).toThrowError();
+        it('should return falsy if does not have an element', function() {
+            expect(instance.getElement()).toBeFalsy();
         });
 
         it('should return element if has', function() {
@@ -48,13 +36,11 @@ describe('Interface: View', function() {
     });
 
     describe('destroy', function() {
-        it('should remove element', function() {
+        it('should remove the element', function() {
             instance.$element = $('<div />');
             instance.destroy();
 
-            expect(function() {
-                instance.getElement();
-            }).toThrowError();
+            expect(instance.getElement()).toBeFalsy();
         });
     });
 
@@ -69,12 +55,6 @@ describe('Interface: View', function() {
 
             expect(instance.doAfterRender).toHaveBeenCalled();
         });
-
-        it('should not throw error if not exists', function() {
-            expect(function() {
-                instance.render();
-            }).not.toThrowError();
-        });
     });
 
     describe('doBeforeDestroy', function() {
@@ -83,12 +63,6 @@ describe('Interface: View', function() {
             instance.destroy();
 
             expect(instance.doBeforeDestroy).toHaveBeenCalled();
-        });
-
-        it('should not throw error if not exists', function() {
-            expect(function() {
-                instance.destroy();
-            }).not.toThrowError();
         });
     });
 });

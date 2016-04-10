@@ -101,8 +101,6 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
             return null;
         }
 
-        this._cropzone = null;
-        cropzone.remove();
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.discardActiveObject();
@@ -110,6 +108,8 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         if (isApplying) {
             data = this._getCroppedImageData();
         }
+        cropzone.remove();
+        this._cropzone = null;
 
         return data;
     },

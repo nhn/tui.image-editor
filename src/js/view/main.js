@@ -77,15 +77,14 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      * It adds children
      */
     doAfterRender: function() {
-        var prefix = '.' + consts.CLASSNAME_PREFIX + '-',
-            menuClassName = prefix + viewNames.MENU,
-            subMenuClassName = prefix + viewNames.SUB_MENU,
-            canvasWrapperClassName = prefix + viewNames.CANVAS,
-            $element = this.$element;
+        var prefix = '.' + consts.CLASSNAME_PREFIX + '-';
+        var menuClassName = prefix + viewNames.MENU;
+        var subMenuClassName = prefix + viewNames.SUB_MENU;
+        var $element = this.$element;
 
         this.menu = this.addChild(new Menu(this, $element.find(menuClassName)));
         this.subMenu = this.addChild(new SubMenu(this, $element.find(subMenuClassName)));
-        this.canvas = this.addChild(new Canvas(this, $element.find(canvasWrapperClassName)));
+        this.canvas = this.addChild(new Canvas(this, $element));
     },
 
     /**
@@ -103,6 +102,22 @@ var Main = tui.util.defineClass(View, /* @lends Main.prototype */{
      */
     postCommand: function(command) {
         this.editor.invoke(command);
+    },
+
+    /**
+     * Get width of mainView
+     * @returns {number}
+     */
+    getWidth: function() {
+        return this.$element.width();
+    },
+
+    /**
+     * Get image editor
+     * @returns {ImageEditor}
+     */
+    getEditor: function() {
+        return this.editor;
     }
 });
 

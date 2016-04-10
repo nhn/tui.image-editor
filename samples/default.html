@@ -12,7 +12,6 @@
 
 </head>
 <body>
-    <div id="editor"></div>
     <div>
         <a id="btn-download"><button>다운로드</button></a>
     </div>
@@ -25,6 +24,7 @@
             <ul id="files"></ul>
         </div>
     </div>
+    <div id="editor"></div>
     <script type="text/javascript" src="libs/fabric.js"></script>
     <script type="text/javascript" src="libs/jquery.min.js"></script>
     <script type="text/javascript" src="libs/code-snippet.js"></script>
@@ -57,8 +57,7 @@
             var fileInfo = data.filelist[0],
                 filename = fileInfo.name;
 
-            console.log(filename);
-            imageEditor.loadImageFromURL(fileInfo.path, filename);
+            imageEditor.loadImageFromURL(filename, fileInfo.path);
         })
     </script>
 </body>
