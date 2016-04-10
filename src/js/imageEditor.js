@@ -15,6 +15,10 @@ var compNames = consts.componentNames;
  * @param {string|jQuery|HTMLElement} wrapper - Wrapper element or selector
  */
 var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
+    static: {
+        eventNames: tui.util.extend({}, eventNames)
+    },
+
     init: function(wrapper) {
         var mainComponent = new MainComponent(this);
 

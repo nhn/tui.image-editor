@@ -100,15 +100,15 @@ var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
         if (!cropzone) {
             return null;
         }
-
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.discardActiveObject();
         canvas.off('mouse:down', this._listeners.mousedown);
+
+        cropzone.remove();
         if (isApplying) {
             data = this._getCroppedImageData();
         }
-        cropzone.remove();
         this._cropzone = null;
 
         return data;

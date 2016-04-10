@@ -126,7 +126,7 @@ var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
      * @returns {boolean}
      */
     isEmptyRedoStack: function() {
-        return !!this.redoStack.length;
+        return this.redoStack.length === 0;
     },
 
     /**
@@ -134,7 +134,7 @@ var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
      * @returns {boolean}
      */
     isEmptyUndoStack: function() {
-        return !!this.undoStack.length;
+        return this.undoStack.length === 0;
     },
 
     /**

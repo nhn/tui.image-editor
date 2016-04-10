@@ -14,13 +14,18 @@
 <body>
     <div>
         <a id="btn-download"><button>다운로드</button></a>
+        <button id="btn-undo">Undo</button>
+        <button id="btn-redo">Redo</button>
+        <button id="btn-crop">Crop</button>
+    </div>
+    <div id="crop-submenu" style="display:none;">
+        <button id="btn-applyCrop">apply</button>
+        <button id="btn-cancelCrop">cancel</button>
     </div>
     <br>
     <div>
         <div id="uploader"></div>
         <div id="list">
-            <div class="count">count : <strong id="file_count"></strong></div>
-            <div class="size">size : <strong id="size_count"></strong></div>
             <ul id="files"></ul>
         </div>
     </div>
@@ -31,15 +36,68 @@
     <script type="text/javascript" src="libs/file-uploader.min.js"></script>
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
-        var imageEditor = new tui.component.ImageEditor('#editor'),
-            downloadBtn = document.getElementById('btn-download');
+        // image editors
+        var imageEditor = new tui.component.ImageEditor('#editor');
+        var eventNames = tui.component.ImageEditor.eventNames;
 
+        // buttons
+        var $cropSubMenu = $('#crop-submenu');
+        var $downloadBtn = $('#btn-download');
+        var $undoBtn = $('#btn-undo');
+        var $redoBtn = $('#btn-redo');
+        var $cropBtn = $('#btn-crop');
+        var $applyCropBtn = $('#btn-applyCrop');
+        var $cancelCropBtn = $('#btn-cancelCrop');
+
+        /**
+         * Image editor
+         */
         imageEditor.loadImageFromURL('tree.jpg', './img/tree.jpg');
-        downloadBtn.addEventListener('click', function () {
-            downloadBtn.download = imageEditor.getImageName();
-            downloadBtn.href = imageEditor.toDataURL();
+        imageEditor.on(eventNames.START_CROPPING, function() {
+            $cropSubMenu.show();
+        });
+        imageEditor.on(eventNames.END_CROPPING, function() {
+            $cropSubMenu.hide();
+        });
+        imageEditor.on(eventNames.EMPTY_UNDO_STACK, function() {
+            $undoBtn.attr('disabled', true);
+        });
+        imageEditor.on(eventNames.PUSH_UNDO_STACK, function() {
+            $undoBtn.attr('disabled', false);
+        });
+        imageEditor.on(eventNames.EMPTY_REDO_STACK, function() {
+            $redoBtn.attr('disabled', true);
+        });
+        imageEditor.on(eventNames.PUSH_REDO_STACK, function() {
+            $redoBtn.attr('disabled', false);
         });
 
+        /**
+         * Set event listeners
+         */
+        $downloadBtn.on('click', function () {
+            this.download = imageEditor.getImageName();
+            this.href = imageEditor.toDataURL();
+        });
+        $undoBtn.on('click', function() {
+            imageEditor.undo()
+        });
+        $redoBtn.on('click', function() {
+            imageEditor.redo()
+        });
+        $cropBtn.on('click', function() {
+            imageEditor.startCropping()
+        });
+        $applyCropBtn.on('click', function() {
+            imageEditor.endCropping(true);
+        });
+        $cancelCropBtn.on('click', function() {
+            imageEditor.endCropping();
+        });
+
+        /**
+         * tui-component-uploader
+         */
         var uploader = new tui.component.Uploader({
             url: {
                 send: 'http://10.77.29.126:4000/upload',
@@ -48,8 +106,8 @@
             formTarget: 'hiddenFrame',
             listInfo: {
                 list: $('#files'),
-                count: $('#file_count'),
-                size: $('#size_count')
+                count: $(),
+                size: $()
             }
         }, $('#uploader'));
 
