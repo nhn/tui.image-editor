@@ -1,9 +1,7 @@
 'use strict';
-var BranchView = require('./branchView'),
-    Delegator = require('./Delegator');
+var Delegator = require('./Delegator');
 
 var mixtureMap = {
-    branchview: BranchView,
     delegator: Delegator
 };
 

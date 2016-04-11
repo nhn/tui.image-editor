@@ -1,32 +1,13 @@
 'use strict';
 
-var CLASSNAME_PREFIX = 'tui-image-editor';
-var viewNames = {
-    MAIN: 'main',
-    MENU: 'menu',
-    SUB_MENU: 'subMenu',
-    CANVAS: 'canvas'
-};
+var util = require('./util');
 
 module.exports = {
-    CLASSNAME_PREFIX: CLASSNAME_PREFIX,
-
-    viewNames: viewNames,
-
-    viewClassNames: (function() {
-        var classNames = {};
-        tui.util.forEach(viewNames, function(value, key) {
-            classNames[key] = CLASSNAME_PREFIX + '-' + value;
-        });
-
-        return classNames;
-    })(),
-
-    componentNames: {
-        MAIN: 'main',
-        IMAGE_LOADER: 'imageLoader',
-        CROPPER: 'cropper'
-    },
+    componentNames: util.keyMirror(
+        'MAIN',
+        'IMAGE_LOADER',
+        'CROPPER'
+    ),
 
     eventNames: {
         LOAD_IMAGE: 'loadImage',

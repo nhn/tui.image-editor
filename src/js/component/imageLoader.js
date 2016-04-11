@@ -47,7 +47,6 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
         }
 
         return dfd;
-
     },
 
     /**

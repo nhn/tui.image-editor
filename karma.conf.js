@@ -11,7 +11,6 @@ module.exports = function(config) {
             'bower_components/jquery/jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
             'bower_components/fabric.js/dist/fabric.js',
-            'src/template/helper.js',
             'src/js/**/*.js',
             'test/**/*.spec.js'
         ],

@@ -11,7 +11,7 @@ var gulpif = require('gulp-if');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
-var filename = require('./package.json').name.replace('component-', '');
+var filename = require('./package.json').name.replace('component-', '').replace('tui-', '');
 
 //
 // Constants

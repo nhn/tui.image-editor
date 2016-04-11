@@ -7,16 +7,9 @@ var consts = require('../consts');
  * Main component
  * @extends Component
  * @class
- * @param {ImageEditor} editor - ImageEditor
  */
 var Main = tui.util.defineClass(Component, {
-    init: function(editor) {
-        /**
-         * editor
-         * @type {ImageEditor}
-         */
-        this.editor = editor;
-
+    init: function() {
         /**
          * Fabric canvas instance
          * @type {fabric.Canvas}
@@ -78,7 +71,7 @@ var Main = tui.util.defineClass(Component, {
      */
     setCanvasElement: function(canvasElement) {
         this.canvas = new fabric.Canvas($(canvasElement)[0], {
-            containerClass: consts.CLASSNAME_PREFIX + '-canvasContainer'
+            containerClass: 'tui-component-imageEditor-canvasContainer'
         });
     },
 
@@ -116,15 +109,6 @@ var Main = tui.util.defineClass(Component, {
      */
     getImageName: function() {
         return this.imageName;
-    },
-
-    /**
-     * Get image editor
-     * @override
-     * @returns {ImageEditor}
-     */
-    getEditor: function() {
-        return this.editor;
     }
 });
 

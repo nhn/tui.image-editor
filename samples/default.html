@@ -29,15 +29,17 @@
             <ul id="files"></ul>
         </div>
     </div>
-    <div id="editor"></div>
+    <div id="editor" style="margin:auto;">
+        <canvas></canvas>
+    </div>
     <script type="text/javascript" src="libs/fabric.js"></script>
     <script type="text/javascript" src="libs/jquery.min.js"></script>
     <script type="text/javascript" src="libs/code-snippet.js"></script>
     <script type="text/javascript" src="libs/file-uploader.min.js"></script>
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
-        // image editors
-        var imageEditor = new tui.component.ImageEditor('#editor');
+        // image editor
+        var imageEditor = new tui.component.ImageEditor('#editor canvas');
         var eventNames = tui.component.ImageEditor.eventNames;
 
         // buttons
@@ -53,6 +55,7 @@
          * Image editor
          */
         imageEditor.loadImageFromURL('tree.jpg', './img/tree.jpg');
+
         imageEditor.on(eventNames.START_CROPPING, function() {
             $cropSubMenu.show();
         });

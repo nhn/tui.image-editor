@@ -1,7 +1,5 @@
 'use strict';
 
-var MainView = require('./view/main');
-var MainComponent = require('./component/main');
 var Invoker = require('./invoker');
 var commandFactory = require('./factory/command');
 var consts = require('./consts');
@@ -12,34 +10,23 @@ var compNames = consts.componentNames;
 /**
  * Image editor
  * @class
- * @param {string|jQuery|HTMLElement} wrapper - Wrapper element or selector
+ * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
  */
 var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
     static: {
         eventNames: tui.util.extend({}, eventNames)
     },
 
-    init: function(wrapper) {
-        var mainComponent = new MainComponent(this);
-
+    init: function(canvasElement) {
         /**
-         * Main Component
-         * @type {Canvas}
-         */
-        this.mainComponent = mainComponent;
-
-        /**
-         * Components broker
+         * Inovker
          * @private
          * @type {Invoker}
          */
-        this._invoker = new Invoker(mainComponent);
+        this._invoker = new Invoker();
 
-        /**
-         * Main view
-         * @type {MainView}
-         */
-        this.mainView = new MainView(this, $(wrapper));
+        // Set canvas element
+        this.setCanvasElement($(canvasElement)[0]);
     },
 
     /**
@@ -134,7 +121,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @param {?fabric.Image} oImage - Image instance
      */
     _callbackAfterImageLoading: function(oImage) {
-        var mainComponent = this.mainComponent;
+        var mainComponent = this._invoker.get(compNames.MAIN);
         var $canvasElement = $(mainComponent.getCanvasElement());
 
         if (oImage) {
@@ -178,7 +165,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @param {jQuery|Element|string} canvasElement - Canvas element or selector
      */
     setCanvasElement: function(canvasElement) {
-        this.mainComponent.setCanvasElement(canvasElement);
+        this._invoker.get(compNames.MAIN).setCanvasElement(canvasElement);
     },
 
     /**
@@ -187,7 +174,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @returns {string} A DOMString containing the requested data URI.
      */
     toDataURL: function(type) {
-        return this.mainComponent.toDataURL(type);
+        return this._invoker.get(compNames.MAIN).toDataURL(type);
     },
 
     /**
@@ -195,7 +182,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @returns {string}
      */
     getImageName: function() {
-        return this.mainComponent.getImageName();
+        return this._invoker.get(compNames.MAIN).getImageName();
     },
 
     /**

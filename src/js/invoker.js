@@ -2,13 +2,14 @@
 
 var ImageLoader = require('./component/imageLoader');
 var Cropper = require('./component/cropper');
+var MainComponent = require('./component/main');
 
 /**
  * Invoker
  * @class
  */
 var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
-    init: function(mainComponent) {
+    init: function() {
         /**
          * Undo stack
          * @type {Array.<Command>}
@@ -27,15 +28,16 @@ var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
          */
         this.componentMap = {};
 
-        this._createComponents(mainComponent);
+        this._createComponents();
     },
 
     /**
      * Create components
-     * @param {Component} main - Main component
      * @private
      */
-    _createComponents: function(main) {
+    _createComponents: function() {
+        var main = new MainComponent();
+
         this._register(main);
         this._register(new ImageLoader(main));
         this._register(new Cropper(main));
