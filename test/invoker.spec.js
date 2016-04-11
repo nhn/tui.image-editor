@@ -13,7 +13,8 @@ describe('Invoker', function() {
         };
 
     beforeEach(function() {
-        invoker = new Invoker(component);
+        invoker = new Invoker();
+        invoker._register(component);
     });
 
     it('invoke', function() {

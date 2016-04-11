@@ -1,7 +1,7 @@
 'use strict';
 
-var Component = require('../interface/component'),
-    consts = require('../consts');
+var Component = require('../interface/component');
+var consts = require('../consts');
 
 var crossOrigin = {crossOrigin: ''};
 var cssOnly = {cssOnly: true};
@@ -9,6 +9,7 @@ var backstoreOnly = {backstoreOnly: true};
 
 /**
  * ImageLoader components
+ * @param {Component} parent - parent component
  * @extends {Component}
  * @class ImageLoader
  */

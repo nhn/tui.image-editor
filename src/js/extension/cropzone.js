@@ -1,17 +1,15 @@
 'use strict';
 
-var util = require('../util');
+var clamp = require('../util').clamp;
 
-var CORNER_TYPE_TOP_LEFT = 'tl',
-    CORNER_TYPE_TOP_RIGHT = 'tr',
-    CORNER_TYPE_MIDDLE_TOP = 'mt',
-    CORNER_TYPE_MIDDLE_LEFT = 'ml',
-    CORNER_TYPE_MIDDLE_RIGHT = 'mr',
-    CORNER_TYPE_MIDDLE_BOTTOM = 'mb',
-    CORNER_TYPE_BOTTOM_LEFT = 'bl',
-    CORNER_TYPE_BOTTOM_RIGHT = 'br';
-
-var clamp = util.clamp;
+var CORNER_TYPE_TOP_LEFT = 'tl';
+var CORNER_TYPE_TOP_RIGHT = 'tr';
+var CORNER_TYPE_MIDDLE_TOP = 'mt';
+var CORNER_TYPE_MIDDLE_LEFT = 'ml';
+var CORNER_TYPE_MIDDLE_RIGHT = 'mr';
+var CORNER_TYPE_MIDDLE_BOTTOM = 'mb';
+var CORNER_TYPE_BOTTOM_LEFT = 'bl';
+var CORNER_TYPE_BOTTOM_RIGHT = 'br';
 
 /**
  * Cropzone object

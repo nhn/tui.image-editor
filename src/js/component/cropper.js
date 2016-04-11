@@ -11,7 +11,7 @@ var clamp = util.clamp;
 
 /**
  * Cropper components
- * @param {Delegator} parent - parent component
+ * @param {Component} parent - parent component
  * @extends {Component}
  * @class Cropper
  */

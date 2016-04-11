@@ -1,7 +1,5 @@
 'use strict';
 
-var mixer = require('../mixin/mixer');
-
 /**
  * Component interface
  * @class
@@ -64,8 +62,42 @@ var Component = tui.util.defineClass({
      */
     getName: function() {
         return this.name;
+    },
+
+    /**
+     * Set parent
+     * @param {Delegator|null} parent - Parent
+     */
+    setParent: function(parent) {
+        this._parent = parent || null;
+    },
+
+    /**
+     * Return parent.
+     * If the view is root, return null
+     * @returns {Delegator|null}
+     */
+    getParent: function() {
+        return this._parent;
+    },
+
+    /**
+     * Return root
+     * @returns {Delegator}
+     */
+    getRoot: function() {
+        var next = this.getParent(),
+        /* eslint-disable consistent-this */
+            current = this;
+        /* eslint-enable consistent-this */
+
+        while (next) {
+            current = next;
+            next = current.getParent();
+        }
+
+        return current;
     }
 });
 
-mixer.mixin(Component, 'Delegator');
 module.exports = Component;

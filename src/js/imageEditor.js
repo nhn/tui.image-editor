@@ -25,7 +25,6 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
          */
         this._invoker = new Invoker();
 
-        // Set canvas element
         this.setCanvasElement($(canvasElement)[0]);
     },
 
