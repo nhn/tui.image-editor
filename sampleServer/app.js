@@ -15,10 +15,10 @@ var LIMIT_FILE_SIZE = 10 * 1024;
 var PORT = 4000,
     app = express(),
     storage = multer.diskStorage({
-        destination: function (req, file, cb) {
+        destination: function(req, file, cb) {
             cb(null, __dirname + '/files');
         },
-        filename: function (req, file, cb) {
+        filename: function(req, file, cb) {
             cb(null, Date.now() + file.originalname);
         }
     }),
@@ -45,22 +45,21 @@ function log(api, data) {
  */
 function makeResponseData(files, host) {
     var filelist = files.map(function(file) {
-            return {
-                message: 'success',
-                name: file.originalname,
-                size: file.size,
-                id: file.filename,
-                path: host + '/files/' + file.filename
-            }
-        }),
-        result = {
-            filelist: filelist,
-            success: filelist.length,
-            failed: 0,
-            count: filelist.length
+        return {
+            message: 'success',
+            name: file.originalname,
+            size: file.size,
+            id: file.filename,
+            path: host + '/files/' + file.filename
         };
+    });
 
-    return result;
+    return {
+        filelist: filelist,
+        success: filelist.length,
+        failed: 0,
+        count: filelist.length
+    };
 }
 
 /**
@@ -76,8 +75,8 @@ app.use(function(req, res, next) { // CORS
 /**
  * Set static files
  */
-app.use('/', express.static('samples'));
-app.use('/files', express.static('sampleServer/files'));
+app.use('/', express['static']('samples'));
+app.use('/files', express['static']('sampleServer/files'));
 
 /**
  * API - post

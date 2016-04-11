@@ -1,16 +1,24 @@
 'use strict';
 
 var Command = require('../interface/command');
-var componentNames = require('../consts').componentNames;
+var consts = require('../consts');
 
+var componentNames = consts.componentNames;
+var commandNames = consts.commandNames;
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
+var creators = {};
+
+/**
+ * Set mapping creators
+ */
+creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 
 /**
  * @param {string} imageName - Image name
  * @param {string} url - Image url
  * @returns {Command}
  */
-function createLoadCommand(imageName, url) {
+function createLoadImageCommand(imageName, url) {
     return new Command({
         execute: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
@@ -31,6 +39,19 @@ function createLoadCommand(imageName, url) {
     });
 }
 
+/**
+ * Create command
+ * @param {string} name - Command name
+ * @param {...*} args - Arguments for creating command
+ * @returns {Command}
+ */
+function create(name, args) {
+    args = Array.prototype.slice.call(arguments, 1);
+
+    return creators[name].apply(null, args);
+}
+
+
 module.exports = {
-    createLoadCommand: createLoadCommand
+    create: create
 };

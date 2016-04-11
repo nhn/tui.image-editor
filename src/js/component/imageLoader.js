@@ -13,7 +13,7 @@ var backstoreOnly = {backstoreOnly: true};
  * @class ImageLoader
  * @param {Component} parent - parent component
  */
-var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototype */{
+var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototype */{
     init: function(parent) {
         this.setParent(parent);
     },
@@ -32,50 +32,51 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
      */
     load: function(imageName, img) {
         var self = this;
-        var dfd;
+        var $defer, canvas;
 
         if (!imageName && !img) { // Back to the initial state, not error.
-            this.getCanvas().backgroundImage = null;
-            this.getCanvas().renderAll();
+            canvas = this.getCanvas();
+            canvas.backgroundImage = null;
+            canvas.renderAll();
 
-            dfd = $.Deferred(function() {
+            $defer= $.Deferred(function() {
                 self.setCanvasImage('', null);
             }).resolve();
         } else {
-            dfd = this._setBackgroundImage(img).done(function(oImage) {
+            $defer= this._setBackgroundImage(img).done(function(oImage) {
                 self._onSuccessImageLoad(oImage);
                 self.setCanvasImage(imageName, oImage);
             });
         }
 
-        return dfd;
+        return $defer;
     },
 
     /**
      * Set background image
      * @param {?(fabric.Image|String)} img fabric.Image instance or URL of an image to set background to
-     * @returns {*}
+     * @returns {$.Deferred} deferred
      * @private
      */
     _setBackgroundImage: function(img) {
-        var dfd = $.Deferred();
+        var $defer= $.Deferred();
         var canvas;
 
         if (!img) {
-            return dfd.reject();
+            return $defer.reject();
         }
         canvas = this.getCanvas();
         canvas.setBackgroundImage(img, function() {
             var oImage = canvas.backgroundImage;
 
             if (oImage.getElement()) {
-                dfd.resolve(oImage);
+                $defer.resolve(oImage);
             } else {
-                dfd.reject();
+                $defer.reject();
             }
         }, crossOrigin);
 
-        return dfd;
+        return $defer;
     },
 
     /**
@@ -86,7 +87,7 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
     _onSuccessImageLoad: function(oImage) {
         var canvas = this.getCanvas();
         var maxWidth = Math.min(
-            Math.floor(1000),
+            Math.floor(1000), //@todo ImageEditor option: Max-Width of canvas
             oImage.width
         );
 

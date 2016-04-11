@@ -10,7 +10,7 @@ var createMessage = errorMessage.create,
  * @class
  * @param {{execute: function, undo: function}} actions - Command actions
  */
-var Command = tui.util.defineClass({
+var Command = tui.util.defineClass(/** @lends Command.prototype */{
     init: function(actions) {
         /**
          * Execute function
@@ -25,13 +25,13 @@ var Command = tui.util.defineClass({
         this.undo = actions.undo;
 
         /**
-         * After execution callback
+         * executeCallback
          * @type {null}
          */
         this.executionCallback = null;
 
         /**
-         * After undo callback
+         * undoCallback
          * @type {null}
          */
         this.undoerCallback = null;
@@ -54,22 +54,22 @@ var Command = tui.util.defineClass({
     },
 
     /**
-     * Attach after execute callback
-     * @param {function} callback - Execute callback
+     * Attach execute callabck
+     * @param {function} callback - Callback after execution
      * @returns {Command} this
      */
-    setExecutionCallback: function(callback) {
+    setExecuteCallback: function(callback) {
         this.executionCallback = callback;
 
         return this;
     },
 
     /**
-     * Attach after undo callback
-     * @param {function} callback - Execute callback
+     * Attach undo callback
+     * @param {function} callback - Callback after undo
      * @returns {Command} this
      */
-    setUndoerCallback: function(callback) {
+    setUndoCallback: function(callback) {
         this.undoerCallback = callback;
 
         return this;

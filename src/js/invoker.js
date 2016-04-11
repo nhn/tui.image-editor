@@ -8,7 +8,7 @@ var MainComponent = require('./component/main');
  * Invoker
  * @class
  */
-var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
+var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
     init: function() {
         /**
          * Undo stack
@@ -57,7 +57,7 @@ var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
      * @param {string} name - Component name
      * @returns {Component}
      */
-    get: function(name) {
+    getComponent: function(name) {
         return this.componentMap[name];
     },
 
@@ -72,7 +72,7 @@ var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
         var self = this;
 
         return $.when(command.execute(this.componentMap))
-            .done(command.executionCallback)
+            .done(command.executeCallback)
             .done(function() {
                 self.undoStack.push(command);
                 self.clearRedoStack();
@@ -86,19 +86,19 @@ var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
     undo: function() {
         var command = this.undoStack.pop();
         var self = this;
-        var dfd;
+        var $defer;
 
         if (command) {
-            dfd = $.when(command.undo(this.componentMap))
-                .done(command.undoerCallback)
+            $defer = $.when(command.undo(this.componentMap))
+                .done(command.undoCallback)
                 .done(function() {
                     self.redoStack.push(command);
                 });
         } else {
-            dfd = $.Deferred().reject();
+            $defer = $.Deferred().reject();
         }
 
-        return dfd;
+        return $defer;
     },
 
     /**
@@ -108,19 +108,19 @@ var Invoker = tui.util.defineClass(/* @lends Invoker.prototype */{
     redo: function() {
         var command = this.redoStack.pop();
         var self = this;
-        var dfd;
+        var $defer;
 
         if (command) {
-            dfd = $.when(command.execute(this.componentMap))
-                .done(command.executionCallback)
+            $defer = $.when(command.execute(this.componentMap))
+                .done(command.executeCallback)
                 .done(function() {
                     self.undoStack.push(command);
                 });
         } else {
-            dfd = $.Deferred().reject();
+            $defer = $.Deferred().reject();
         }
 
-        return dfd;
+        return $defer;
     },
 
     /**

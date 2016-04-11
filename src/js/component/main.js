@@ -8,7 +8,7 @@ var consts = require('../consts');
  * @extends Component
  * @class
  */
-var Main = tui.util.defineClass(Component, /* @lends Main.prototype */{
+var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     init: function() {
         /**
          * Fabric canvas instance

@@ -15,7 +15,7 @@ var clamp = util.clamp;
  * @extends {Component}
  * @class Cropper
  */
-var Cropper = tui.util.defineClass(Component, /* @lends Cropper.prototype */{
+var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
     init: function(parent) {
         this.setParent(parent);
 

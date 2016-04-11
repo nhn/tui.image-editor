@@ -4,19 +4,16 @@ var Invoker = require('./invoker');
 var commandFactory = require('./factory/command');
 var consts = require('./consts');
 
-var eventNames = consts.eventNames;
-var compNames = consts.componentNames;
+var events = consts.eventNames;
+var commands = consts.commandNames;
+var compList = consts.componentNames;
 
 /**
  * Image editor
  * @class
  * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
  */
-var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
-    static: {
-        eventNames: tui.util.extend({}, eventNames)
-    },
-
+var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     init: function(canvasElement) {
         /**
          * Inovker
@@ -29,12 +26,29 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
     },
 
     /**
+     * Return event names
+     * @returns {Object}
+     */
+    getEventNames: function() {
+        return tui.util.extend({}, events);
+    },
+
+    /**
      * Set canvas element
      * @param {jQuery|Element|string} canvasElement - Canvas element or selector
      * @private
      */
     _setCanvasElement: function(canvasElement) {
-        this._invoker.get(compNames.MAIN).setCanvasElement(canvasElement);
+        this._getMainComponent().setCanvasElement(canvasElement);
+    },
+
+    /**
+     * Returns main component
+     * @returns {Component} Main component
+     * @private
+     */
+    _getMainComponent: function() {
+        return this._invoker.getComponent(compList.MAIN);
     },
 
     /**
@@ -53,8 +67,8 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
 
         this.clear();
         this._invoker.invoke(command).done(function() {
-            self.fire(eventNames.PUSH_UNDO_STACK);
-            self.fire(eventNames.EMPTY_REDO_STACK);
+            self.fire(events.PUSH_UNDO_STACK);
+            self.fire(events.EMPTY_REDO_STACK);
         });
     },
 
@@ -68,9 +82,9 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         this.clear();
         invoker.undo().done(function() {
             if (invoker.isEmptyUndoStack()) {
-                self.fire(eventNames.EMPTY_UNDO_STACK);
+                self.fire(events.EMPTY_UNDO_STACK);
             }
-            self.fire(eventNames.PUSH_REDO_STACK);
+            self.fire(events.PUSH_REDO_STACK);
         });
     },
 
@@ -84,9 +98,9 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         this.clear();
         invoker.redo().done(function() {
             if (invoker.isEmptyRedoStack()) {
-                self.fire(eventNames.EMPTY_REDO_STACK);
+                self.fire(events.EMPTY_REDO_STACK);
             }
-            self.fire(eventNames.PUSH_UNDO_STACK);
+            self.fire(events.PUSH_UNDO_STACK);
         });
     },
 
@@ -111,15 +125,22 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @param {string} url - File url
      */
     loadImageFromURL: function(imageName, url) {
+        var self = this;
         var callback, command;
+
         if (!imageName || !url) {
             return;
         }
 
         callback = $.proxy(this._callbackAfterImageLoading, this);
-        command = commandFactory.createLoadCommand(imageName, url)
-            .setExecutionCallback(callback)
-            .setUndoerCallback(callback);
+        command = commandFactory.create(commands.LOAD_IMAGE, imageName, url)
+            .setExecuteCallback(callback)
+            .setUndoCallback(function(oImage) {
+                if (oImage) {
+                    callback(oImage);
+                }
+                self.fire(events.CLEAR_IMAGE);
+            });
 
         this.execute(command);
     },
@@ -129,29 +150,25 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @param {?fabric.Image} oImage - Image instance
      */
     _callbackAfterImageLoading: function(oImage) {
-        var mainComponent = this._invoker.get(compNames.MAIN);
+        var mainComponent = this._getMainComponent();
         var $canvasElement = $(mainComponent.getCanvasElement());
 
-        if (oImage) {
-            this.fire(eventNames.LOAD_IMAGE, {
-                originalWidth: oImage.width,
-                originalHeight: oImage.height,
-                currentWidth: $canvasElement.width(),
-                currentHeight: $canvasElement.height()
-            });
-        } else {
-            this.fire(eventNames.CLEAR_IMAGE);
-        }
+        this.fire(events.LOAD_IMAGE, {
+            originalWidth: oImage.width,
+            originalHeight: oImage.height,
+            currentWidth: $canvasElement.width(),
+            currentHeight: $canvasElement.height()
+        });
     },
 
     /**
      * Start cropping
      */
     startCropping: function() {
-        var cropper = this._invoker.get(compNames.CROPPER);
+        var cropper = this._invoker.getComponent(compList.CROPPER);
 
         cropper.start();
-        this.fire(eventNames.START_CROPPING);
+        this.fire(events.START_CROPPING);
     },
 
     /**
@@ -159,10 +176,10 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
      */
     endCropping: function(isApplying) {
-        var cropper = this._invoker.get(compNames.CROPPER);
+        var cropper = this._invoker.getComponent(compList.CROPPER);
         var data = cropper.end(isApplying);
 
-        this.fire(eventNames.END_CROPPING);
+        this.fire(events.END_CROPPING);
         if (data) {
             this.loadImageFromURL(data.imageName, data.url);
         }
@@ -174,7 +191,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @returns {string} A DOMString containing the requested data URI.
      */
     toDataURL: function(type) {
-        return this._invoker.get(compNames.MAIN).toDataURL(type);
+        return this._getMainComponent().toDataURL(type);
     },
 
     /**
@@ -182,7 +199,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      * @returns {string}
      */
     getImageName: function() {
-        return this._invoker.get(compNames.MAIN).getImageName();
+        return this._getMainComponent().getImageName();
     },
 
     /**
@@ -190,7 +207,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      */
     clearUndoStack: function() {
         this._invoker.clearUndoStack();
-        this.fire(eventNames.EMPTY_UNDO_STACK);
+        this.fire(events.EMPTY_UNDO_STACK);
     },
 
     /**
@@ -198,7 +215,7 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
      */
     clearRedoStack: function() {
         this._invoker.clearRedoStack();
-        this.fire(eventNames.EMPTY_REDO_STACK);
+        this.fire(events.EMPTY_REDO_STACK);
     }
 });
 

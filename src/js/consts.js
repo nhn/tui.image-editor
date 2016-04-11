@@ -9,6 +9,10 @@ module.exports = {
         'CROPPER'
     ),
 
+    commandNames: util.keyMirror(
+        'LOAD_IMAGE'
+    ),
+
     eventNames: {
         LOAD_IMAGE: 'loadImage',
         CLEAR_IMAGE: 'clearImage',
