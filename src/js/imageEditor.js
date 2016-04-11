@@ -25,7 +25,16 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
          */
         this._invoker = new Invoker();
 
-        this.setCanvasElement($(canvasElement)[0]);
+        this._setCanvasElement($(canvasElement)[0]);
+    },
+
+    /**
+     * Set canvas element
+     * @param {jQuery|Element|string} canvasElement - Canvas element or selector
+     * @private
+     */
+    _setCanvasElement: function(canvasElement) {
+        this._invoker.get(compNames.MAIN).setCanvasElement(canvasElement);
     },
 
     /**
@@ -157,14 +166,6 @@ var ImageEditor = tui.util.defineClass(/* @lends ImageEditor.prototype */{
         if (data) {
             this.loadImageFromURL(data.imageName, data.url);
         }
-    },
-
-    /**
-     * Set canvas element
-     * @param {jQuery|Element|string} canvasElement - Canvas element or selector
-     */
-    setCanvasElement: function(canvasElement) {
-        this._invoker.get(compNames.MAIN).setCanvasElement(canvasElement);
     },
 
     /**

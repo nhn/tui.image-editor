@@ -9,9 +9,9 @@ var backstoreOnly = {backstoreOnly: true};
 
 /**
  * ImageLoader components
- * @param {Component} parent - parent component
  * @extends {Component}
  * @class ImageLoader
+ * @param {Component} parent - parent component
  */
 var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototype */{
     init: function(parent) {
