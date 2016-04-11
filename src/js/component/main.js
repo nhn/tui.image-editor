@@ -8,7 +8,7 @@ var consts = require('../consts');
  * @extends Component
  * @class
  */
-var Main = tui.util.defineClass(Component, {
+var Main = tui.util.defineClass(Component, /* @lends Main.prototype */{
     init: function() {
         /**
          * Fabric canvas instance
@@ -34,15 +34,6 @@ var Main = tui.util.defineClass(Component, {
      * @type {string}
      */
     name: consts.componentNames.MAIN,
-
-    /**
-     * Get component
-     * @param {string} name - Component name
-     * @returns {Component}
-     */
-    getComponent: function(name) {
-        return this.children[name];
-    },
 
     /**
      * To data url from canvas

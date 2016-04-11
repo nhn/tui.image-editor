@@ -34,7 +34,7 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
         var self = this;
         var dfd;
 
-        if (!imageName && !img) {
+        if (!imageName && !img) { // Back to the initial state, not error.
             this.getCanvas().backgroundImage = null;
             this.getCanvas().renderAll();
 
@@ -43,6 +43,7 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
             }).resolve();
         } else {
             dfd = this._setBackgroundImage(img).done(function(oImage) {
+                self._onSuccessImageLoad(oImage);
                 self.setCanvasImage(imageName, oImage);
             });
         }
@@ -58,18 +59,16 @@ var ImageLoader = tui.util.defineClass(Component, /* @lends ImageLoader.prototyp
      */
     _setBackgroundImage: function(img) {
         var dfd = $.Deferred();
-        var canvas, self;
+        var canvas;
+
         if (!img) {
             return dfd.reject();
         }
-
-        self = this;
         canvas = this.getCanvas();
         canvas.setBackgroundImage(img, function() {
             var oImage = canvas.backgroundImage;
 
             if (oImage.getElement()) {
-                self._onSuccessImageLoad(oImage);
                 dfd.resolve(oImage);
             } else {
                 dfd.reject();

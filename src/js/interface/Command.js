@@ -8,7 +8,7 @@ var createMessage = errorMessage.create,
 /**
  * Command class
  * @class
- * @param {{name: string, execute: function, undo: function}} actions - Command actions
+ * @param {{execute: function, undo: function}} actions - Command actions
  */
 var Command = tui.util.defineClass({
     init: function(actions) {
