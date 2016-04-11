@@ -24,8 +24,7 @@ module.exports = function(config) {
         },
 
         browserify: {
-            debug: true,
-            transform: ['hbsfy']
+            debug: true
         },
 
         reporters: [

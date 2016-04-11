@@ -1,6 +1,5 @@
 var gulp = require('gulp');
 var browserify = require('browserify');
-var hbsfy = require('hbsfy');
 var browserSync = require('browser-sync').create();
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
@@ -49,8 +48,7 @@ config.watchify = Object.assign({}, watchify.args, config.browserify);
 // Bundle function
 //
 function bundle(bundler) {
-    return bundler.transform(hbsfy)
-        .bundle()
+    return bundler.bundle()
         .on('error', function(err) {
             console.log(err.message);
             browserSync.notify('Browserify Error!');

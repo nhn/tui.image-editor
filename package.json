@@ -1,5 +1,5 @@
 {
-  "name": "tui-image-editor",
+  "name": "image-editor",
   "version": "0.0.0",
   "description": "",
   "private": true,
@@ -16,7 +16,6 @@
     "gulp-if": "^2.0.0",
     "gulp-uglify": "^1.5.3",
     "gulp-util": "^3.0.7",
-    "hbsfy": "^2.5.1",
     "jasmine-core": "^2.3.4",
     "karma": "0.13.22",
     "karma-browserify": "^5.0.2",

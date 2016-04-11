@@ -66,7 +66,7 @@ var Component = tui.util.defineClass({
 
     /**
      * Set parent
-     * @param {Delegator|null} parent - Parent
+     * @param {Component|null} parent - Parent
      */
     setParent: function(parent) {
         this._parent = parent || null;
@@ -75,7 +75,7 @@ var Component = tui.util.defineClass({
     /**
      * Return parent.
      * If the view is root, return null
-     * @returns {Delegator|null}
+     * @returns {Component|null}
      */
     getParent: function() {
         return this._parent;
@@ -83,7 +83,7 @@ var Component = tui.util.defineClass({
 
     /**
      * Return root
-     * @returns {Delegator}
+     * @returns {Component}
      */
     getRoot: function() {
         var next = this.getParent(),
