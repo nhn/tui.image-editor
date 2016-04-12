@@ -39,11 +39,11 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
             canvas.backgroundImage = null;
             canvas.renderAll();
 
-            $defer= $.Deferred(function() {
+            $defer = $.Deferred(function() {
                 self.setCanvasImage('', null);
             }).resolve();
         } else {
-            $defer= this._setBackgroundImage(img).done(function(oImage) {
+            $defer = this._setBackgroundImage(img).done(function(oImage) {
                 self._onSuccessImageLoad(oImage);
                 self.setCanvasImage(imageName, oImage);
             });
@@ -59,7 +59,7 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      * @private
      */
     _setBackgroundImage: function(img) {
-        var $defer= $.Deferred();
+        var $defer = $.Deferred();
         var canvas;
 
         if (!img) {
