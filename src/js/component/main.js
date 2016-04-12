@@ -5,7 +5,7 @@ var consts = require('../consts');
 
 /**
  * Main component
- * @extends Component
+ * @extends {Component}
  * @class
  */
 var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{

@@ -6,7 +6,8 @@ module.exports = {
     componentNames: util.keyMirror(
         'MAIN',
         'IMAGE_LOADER',
-        'CROPPER'
+        'CROPPER',
+        'FLIP'
     ),
 
     commandNames: util.keyMirror(
