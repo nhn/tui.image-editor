@@ -1,7 +1,9 @@
 'use strict';
+var path = require('path');
 var gulp = require('gulp');
 var browserify = require('browserify');
 var browserSync = require('browser-sync').create();
+var KarmaServer = require('karma').Server;
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var eslint = require('gulp-eslint');
@@ -93,6 +95,14 @@ gulp.task('liveBundle', function() {
 //
 // Build
 //
+gulp.task('karma', ['eslint'], function(done) {
+    new KarmaServer({
+        configFile: path.join(__dirname, 'karma.conf.private.js'),
+        singleRun: true,
+        logLevel: 'error'
+    }, done).start();
+});
+
 gulp.task('eslint', function() {
     return gulp.src(['./src/**/*.js'])
         .pipe(eslint())
@@ -101,7 +111,7 @@ gulp.task('eslint', function() {
 });
 
 
-gulp.task('bundle', ['eslint'], function() {
+gulp.task('bundle', ['karma'], function() {
     return bundle(browserify(config.browserify));
 });
 
@@ -115,4 +125,4 @@ gulp.task('compress', ['bundle'], function() {
 //
 // DefaultCommand
 //
-gulp.task('default', ['eslint', 'bundle', 'compress']);
+gulp.task('default', ['eslint', 'karma', 'bundle', 'compress']);

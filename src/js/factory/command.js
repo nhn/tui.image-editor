@@ -5,9 +5,10 @@ var consts = require('../consts');
 
 var componentNames = consts.componentNames;
 var commandNames = consts.commandNames;
+var creators = {};
+
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
 var FLIP = componentNames.FLIP;
-var creators = {};
 
 /**
  * Set mapping creators
