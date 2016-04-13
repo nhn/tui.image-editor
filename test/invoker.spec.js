@@ -4,62 +4,67 @@ var Invoker = require('../src/js/invoker'),
     Command = require('../src/js/interface/command');
 
 describe('Invoker', function() {
-    var invoker,
-        component = {
-            getName: function() {
-                return 'foo';
-            },
-            action: function() {}
-        };
+    var component = {
+        getName: function() {
+            return 'foo';
+        },
+        action: function() {}
+    };
+    var invoker, cmd;
 
     beforeEach(function() {
         invoker = new Invoker();
         invoker._register(component);
-    });
 
-    it('invoke', function() {
-        var cmd = new Command({
-            execute: function(componentsMap) {
-                var foo = componentsMap.foo;
-                foo.action();
-            },
-            undo: function() {}
-        });
-        spyOn(component, 'action');
-
-        expect(component.action).not.toHaveBeenCalled();
-        invoker.invoke(cmd);
-        expect(component.action).toHaveBeenCalled();
-    });
-
-    it('undo', function() {
-        var cmd = new Command({
+        cmd = new Command({
             execute: jasmine.createSpy(),
             undo: jasmine.createSpy()
         });
-
-        invoker.invoke(cmd);
-        expect(cmd.execute).toHaveBeenCalledWith(invoker.componentMap);
-        invoker.undo();
-        expect(cmd.undo).toHaveBeenCalledWith(invoker.componentMap);
-
-        cmd.undo.calls.reset();
-        invoker.undo();
-        expect(cmd.undo).not.toHaveBeenCalled();
     });
 
-    it('redo', function() {
-        var cmd = new Command({
-            execute: jasmine.createSpy(),
-            undo: jasmine.createSpy()
-        });
+    it('should inject registered components to "command.execute"', function() {
+        invoker.invoke(cmd);
 
+        expect(cmd.execute).toHaveBeenCalledWith(jasmine.objectContaining({
+            foo: component
+        }));
+    });
+
+    it('should inject registered components to "command.undo"', function() {
+        invoker.invoke(cmd);
+        invoker.undo();
+
+        expect(cmd.undo).toHaveBeenCalledWith(jasmine.objectContaining({
+            foo: component
+        }));
+    });
+
+    it('redo() should call "command.execute" again', function() {
         invoker.invoke(cmd);
         invoker.undo();
 
         cmd.execute.calls.reset();
-        expect(cmd.execute).not.toHaveBeenCalled();
         invoker.redo();
-        expect(cmd.execute).toHaveBeenCalledWith(invoker.componentMap);
+
+        expect(cmd.execute).toHaveBeenCalled();
+    });
+
+    it('should call the "command.executeCallback" after invoke', function() {
+        var spyCallback = jasmine.createSpy();
+
+        cmd.setExecuteCallback(spyCallback);
+        invoker.invoke(cmd);
+
+        expect(spyCallback).toHaveBeenCalled();
+    });
+
+    it('should call the "command.undoCallback" after undo', function() {
+        var spyCallback = jasmine.createSpy();
+
+        cmd.setUndoCallback(spyCallback);
+        invoker.invoke(cmd);
+        invoker.undo();
+
+        expect(spyCallback).toHaveBeenCalled();
     });
 });
