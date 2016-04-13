@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Test cases of "src/js/extension/cropzone.js"
+ */
 'use strict';
 
 var Cropzone = require('../src/js/extension/cropzone');

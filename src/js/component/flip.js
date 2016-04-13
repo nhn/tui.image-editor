@@ -1,6 +1,4 @@
 /**
- * flip.js created on 2016. 4. 12.
- *
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image flip module
  */

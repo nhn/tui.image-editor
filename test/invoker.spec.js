@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Test cases of "src/js/invoker.js"
+ */
 'use strict';
 
 var Invoker = require('../src/js/invoker'),

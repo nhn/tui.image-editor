@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Test cases of "src/js/component/cropper.js"
+ */
 'use strict';
 
 var Cropper = require('../src/js/component/Cropper'),
@@ -8,7 +12,7 @@ describe('Cropper', function() {
 
     beforeEach(function() {
         canvas = new fabric.Canvas($('<canvas>')[0]);
-        main = new Main({});
+        main = new Main();
         main.canvas = canvas;
         cropper = new Cropper(main);
     });
