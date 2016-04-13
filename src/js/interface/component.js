@@ -65,6 +65,24 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
     },
 
     /**
+     * Set image properties
+     * @param {object} setting - Image properties
+     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
+     */
+    setImageProperties: function(setting, withRendering) {
+        this.getRoot().setImageProperties(setting, withRendering);
+    },
+
+    /**
+     * Toggle properties of the image
+     * @param {Array.<string>} properties - Image property names
+     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
+     */
+    toggleImageProperties: function(properties, withRendering) {
+        this.getRoot().toggleImageProperties(properties, withRendering);
+    },
+
+    /**
      * Set parent
      * @param {Component|null} parent - Parent
      */

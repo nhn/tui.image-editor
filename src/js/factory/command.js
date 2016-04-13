@@ -6,12 +6,14 @@ var consts = require('../consts');
 var componentNames = consts.componentNames;
 var commandNames = consts.commandNames;
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
+var FLIP = componentNames.FLIP;
 var creators = {};
 
 /**
  * Set mapping creators
  */
 creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
+creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
 
 /**
  * @param {string} imageName - Image name
@@ -35,6 +37,27 @@ function createLoadImageCommand(imageName, url) {
             var store = this.store;
 
             return loader.load(store.prevName, store.prevImage);
+        }
+    });
+}
+
+/**
+ * @param {string} type - 'flipX' or 'flipY' or 'reset'
+ * @returns {$.Deferred}
+ */
+function createFlipImageCommand(type) {
+    return new Command({
+        execute: function(compMap) {
+            var flipComp = compMap[FLIP];
+
+            this.store = flipComp.getCurrentSetting();
+
+            return flipComp[type]();
+        },
+        undo: function(compMap) {
+            var flipComp = compMap[FLIP];
+
+            return flipComp.set(this.store);
         }
     });
 }

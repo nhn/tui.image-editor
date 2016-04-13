@@ -48,7 +48,17 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _getMainComponent: function() {
-        return this._invoker.getComponent(compList.MAIN);
+        return this._getComponent(compList.MAIN);
+    },
+
+    /**
+     * Get component
+     * @param {string} name - Component name
+     * @returns {Component}
+     * @private
+     */
+    _getComponent: function(name) {
+        return this._invoker.getComponent(name);
     },
 
     /**
@@ -165,7 +175,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * Start cropping
      */
     startCropping: function() {
-        var cropper = this._invoker.getComponent(compList.CROPPER);
+        var cropper = this._getComponent(compList.CROPPER);
 
         cropper.start();
         this.fire(events.START_CROPPING);
@@ -176,13 +186,48 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
      */
     endCropping: function(isApplying) {
-        var cropper = this._invoker.getComponent(compList.CROPPER);
+        var cropper = this._getComponent(compList.CROPPER);
         var data = cropper.end(isApplying);
 
         this.fire(events.END_CROPPING);
         if (data) {
             this.loadImageFromURL(data.imageName, data.url);
         }
+    },
+
+    /**
+     * Flip
+     * @param {string} type - 'flipX' or 'flipY' or 'reset'
+     * @private
+     */
+    _flip: function(type) {
+        var callback = $.proxy(this.fire, this, events.FLIP_IMAGE);
+        var command = commandFactory.create(commands.FLIP_IMAGE, type)
+            .setExecuteCallback(callback)
+            .setUndoCallback(callback);
+
+        this.execute(command);
+    },
+
+    /**
+     * Flip x
+     */
+    flipX: function() {
+        this._flip('flipX');
+    },
+
+    /**
+     * Flip y
+     */
+    flipY: function() {
+        this._flip('flipY');
+    },
+
+    /**
+     * Reset flip
+     */
+    resetFlip: function() {
+        this._flip('reset');
     },
 
     /**

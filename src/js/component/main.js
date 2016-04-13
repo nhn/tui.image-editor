@@ -67,6 +67,44 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     },
 
     /**
+     * Set image properties
+     * @param {object} setting - Image properties
+     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
+     * @override
+     */
+    setImageProperties: function(setting, withRendering) {
+        var oImage = this.oImage;
+
+        if (!oImage) {
+            return;
+        }
+
+        oImage.set(setting);
+        if (withRendering) {
+            this.canvas.renderAll();
+        }
+    },
+
+    /**
+     * Toggle properties of the image
+     * @param {Array.<string>} properties - Image property names
+     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
+     * @override
+     */
+    toggleImageProperties: function(properties, withRendering) {
+        var oImage = this.oImage;
+
+        if (!oImage) {
+            return;
+        }
+
+        oImage.toggle.apply(oImage, properties);
+        if (withRendering) {
+            this.canvas.renderAll();
+        }
+    },
+
+    /**
      * Returns canvas element of fabric.Canvas[[lower-canvas]]
      * @returns {HTMLCanvasElement}
      * @override

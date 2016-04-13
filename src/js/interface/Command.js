@@ -28,13 +28,13 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
          * executeCallback
          * @type {null}
          */
-        this.executionCallback = null;
+        this.executeCallback = null;
 
         /**
          * undoCallback
          * @type {null}
          */
-        this.undoerCallback = null;
+        this.undoCallback = null;
     },
 
     /**
@@ -59,7 +59,7 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
      * @returns {Command} this
      */
     setExecuteCallback: function(callback) {
-        this.executionCallback = callback;
+        this.executeCallback = callback;
 
         return this;
     },
@@ -70,7 +70,7 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
      * @returns {Command} this
      */
     setUndoCallback: function(callback) {
-        this.undoerCallback = callback;
+        this.undoCallback = callback;
 
         return this;
     }
