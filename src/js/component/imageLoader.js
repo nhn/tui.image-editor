@@ -32,24 +32,24 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      */
     load: function(imageName, img) {
         var self = this;
-        var $defer, canvas;
+        var jqDefer, canvas;
 
         if (!imageName && !img) { // Back to the initial state, not error.
             canvas = this.getCanvas();
             canvas.backgroundImage = null;
             canvas.renderAll();
 
-            $defer = $.Deferred(function() {
+            jqDefer = $.Deferred(function() {
                 self.setCanvasImage('', null);
             }).resolve();
         } else {
-            $defer = this._setBackgroundImage(img).done(function(oImage) {
+            jqDefer = this._setBackgroundImage(img).done(function(oImage) {
                 self._onSuccessImageLoad(oImage);
                 self.setCanvasImage(imageName, oImage);
             });
         }
 
-        return $defer;
+        return jqDefer;
     },
 
     /**
@@ -59,24 +59,24 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      * @private
      */
     _setBackgroundImage: function(img) {
-        var $defer = $.Deferred();
+        var jqDefer = $.Deferred();
         var canvas;
 
         if (!img) {
-            return $defer.reject();
+            return jqDefer.reject();
         }
         canvas = this.getCanvas();
         canvas.setBackgroundImage(img, function() {
             var oImage = canvas.backgroundImage;
 
             if (oImage.getElement()) {
-                $defer.resolve(oImage);
+                jqDefer.resolve(oImage);
             } else {
-                $defer.reject();
+                jqDefer.reject();
             }
         }, crossOrigin);
 
-        return $defer;
+        return jqDefer;
     },
 
     /**

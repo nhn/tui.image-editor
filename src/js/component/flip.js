@@ -44,19 +44,19 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
      */
     set: function(flipSetting) {
         var current = this.getCurrentSetting();
-        var $defer = $.Deferred();
+        var jqDefer = $.Deferred();
 
         flipSetting.flipX = !!(flipSetting.flipX);
         flipSetting.flipY = !!(flipSetting.flipY);
         if (flipSetting.flipX === current.flipX && flipSetting.flipY === current.flipY) {
-            $defer.reject();
+            jqDefer.reject();
         } else {
-            tui.util.extend(current, flipSetting);
+            flipSetting = tui.util.extend(current, flipSetting);
             this.setImageProperties(flipSetting, true);
-            $defer.resolve(flipSetting);
+            jqDefer.resolve(flipSetting);
         }
 
-        return $defer;
+        return jqDefer;
     },
 
     /**

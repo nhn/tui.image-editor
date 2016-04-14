@@ -88,19 +88,19 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
     undo: function() {
         var command = this.undoStack.pop();
         var self = this;
-        var $defer;
+        var jqDefer;
 
         if (command) {
-            $defer = $.when(command.undo(this.componentMap))
+            jqDefer = $.when(command.undo(this.componentMap))
                 .done(command.undoCallback)
                 .done(function() {
                     self.redoStack.push(command);
                 });
         } else {
-            $defer = $.Deferred().reject();
+            jqDefer = $.Deferred().reject();
         }
 
-        return $defer;
+        return jqDefer;
     },
 
     /**
@@ -110,19 +110,19 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
     redo: function() {
         var command = this.redoStack.pop();
         var self = this;
-        var $defer;
+        var jqDefer;
 
         if (command) {
-            $defer = $.when(command.execute(this.componentMap))
+            jqDefer = $.when(command.execute(this.componentMap))
                 .done(command.executeCallback)
                 .done(function() {
                     self.undoStack.push(command);
                 });
         } else {
-            $defer = $.Deferred().reject();
+            jqDefer = $.Deferred().reject();
         }
 
-        return $defer;
+        return jqDefer;
     },
 
     /**

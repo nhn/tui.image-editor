@@ -68,6 +68,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
 
     /**
      * Set image properties
+     * {@link http://fabricjs.com/docs/fabric.Image.html#set}
      * @param {object} setting - Image properties
      * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
      * @override
@@ -87,6 +88,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
 
     /**
      * Toggle properties of the image
+     * {@link http://fabricjs.com/docs/fabric.Image.html#toggle}
      * @param {Array.<string>} properties - Image property names
      * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
      * @override
