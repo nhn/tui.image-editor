@@ -16,7 +16,6 @@ var map = {
     UN_IMPLEMENTATION: function(methodName) {
         return messages.UN_IMPLEMENTATION + methodName;
     },
-
     NO_COMPONENT_NAME: function() {
         return messages.NO_COMPONENT_NAME;
     }

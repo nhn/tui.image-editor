@@ -7,12 +7,14 @@ module.exports = {
         'MAIN',
         'IMAGE_LOADER',
         'CROPPER',
-        'FLIP'
+        'FLIP',
+        'ROTATION'
     ),
 
     commandNames: util.keyMirror(
         'LOAD_IMAGE',
-        'FLIP_IMAGE'
+        'FLIP_IMAGE',
+        'ROTATE_IMAGE'
     ),
 
     eventNames: {
@@ -21,6 +23,7 @@ module.exports = {
         START_CROPPING: 'startCropping',
         END_CROPPING: 'endCropping',
         FLIP_IMAGE: 'flipImage',
+        ROTATE_IMAGE: 'rotateImage',
         EMPTY_REDO_STACK: 'emptyRedoStack',
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',

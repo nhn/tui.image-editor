@@ -22,7 +22,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          */
         this._invoker = new Invoker();
 
-        this._setCanvasElement($(canvasElement)[0]);
+        this._getMainComponent().setCanvasElement(canvasElement);
     },
 
     /**
@@ -31,15 +31,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     getEventNames: function() {
         return tui.util.extend({}, events);
-    },
-
-    /**
-     * Set canvas element
-     * @param {jQuery|Element|string} canvasElement - Canvas element or selector
-     * @private
-     */
-    _setCanvasElement: function(canvasElement) {
-        this._getMainComponent().setCanvasElement(canvasElement);
     },
 
     /**

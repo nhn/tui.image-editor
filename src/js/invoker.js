@@ -4,6 +4,7 @@ var ImageLoader = require('./component/imageLoader');
 var Cropper = require('./component/cropper');
 var MainComponent = require('./component/main');
 var Flip = require('./component/flip');
+var Rotation = require('./component/rotation');
 
 /**
  * Invoker
@@ -43,6 +44,7 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         this._register(new ImageLoader(main));
         this._register(new Cropper(main));
         this._register(new Flip(main));
+        this._register(new Rotation(main));
     },
 
     /**
