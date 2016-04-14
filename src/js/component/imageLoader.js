@@ -3,9 +3,10 @@
 var Component = require('../interface/component');
 var consts = require('../consts');
 
-var crossOrigin = {crossOrigin: ''};
-var cssOnly = {cssOnly: true};
-var backstoreOnly = {backstoreOnly: true};
+var imageOption = {
+    padding: 0,
+    crossOrigin: ''
+};
 
 /**
  * ImageLoader components
@@ -65,6 +66,7 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
         if (!img) {
             return jqDefer.reject();
         }
+
         canvas = this.getCanvas();
         canvas.setBackgroundImage(img, function() {
             var oImage = canvas.backgroundImage;
@@ -74,7 +76,7 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
             } else {
                 jqDefer.reject();
             }
-        }, crossOrigin);
+        }, imageOption);
 
         return jqDefer;
     },
@@ -85,23 +87,17 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      * @private
      */
     _onSuccessImageLoad: function(oImage) {
-        var canvas = this.getCanvas();
-        var maxWidth = Math.min(
-            Math.floor(1000), //@todo ImageEditor option: Max-Width of canvas
-            oImage.width
-        );
-
-        canvas.setDimensions({
+        this.setCanvasCssDimension({
             margin: 'auto',
             width: '100%',
             height: '',  // No inline-css "height" for IE9
-            'max-width': maxWidth + 'px'
-        }, cssOnly);
+            'max-width': oImage.width + 'px'
+        });
 
-        canvas.setDimensions({
+        this.setCanvasBackstoreDimension({
             width: oImage.width,
             height: oImage.height
-        }, backstoreOnly);
+        });
     }
 });
 

@@ -9,12 +9,14 @@ var creators = {};
 
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
 var FLIP = componentNames.FLIP;
+var ROTATION = componentNames.ROTATION;
 
 /**
  * Set mapping creators
  */
 creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
+creators[commandNames.ROTATE_IMAGE] = createRotationImageCommand;
 
 /**
  * @param {string} imageName - Image name
@@ -59,6 +61,27 @@ function createFlipImageCommand(type) {
             var flipComp = compMap[FLIP];
 
             return flipComp.set(this.store);
+        }
+    });
+}
+
+/**
+ * @param {number} angle - Angle value to rotate
+ * @returns {$.Deferred}
+ */
+function createRotationImageCommand(angle) {
+    return new Command({
+        execute: function(compMap) {
+            var rotationComp = compMap[ROTATION];
+
+            this.store = rotationComp.getCurrentAngle();
+
+            return rotationComp.rotate(angle);
+        },
+        undo: function(compMap) {
+            var rotationComp = compMap[ROTATION];
+
+            return rotationComp.setAngle(this.store);
         }
     });
 }

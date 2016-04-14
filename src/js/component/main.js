@@ -3,6 +3,10 @@
 var Component = require('../interface/component');
 var consts = require('../consts');
 
+var DEFAULT_MAX_WIDTH = 1000;
+
+var cssOnly = {cssOnly: true};
+var backstoreOnly = {backstoreOnly: true};
 /**
  * Main component
  * @extends {Component}
@@ -67,6 +71,31 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     },
 
     /**
+     * Set canvas dimension - css only
+     *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
+     * @param {object} dimension - Canvas css dimension
+     * @override
+     */
+    setCanvasCssDimension: function(dimension) {
+        var maxWidth = parseInt(dimension['max-width'], 10);
+        if (maxWidth) {
+            dimension['max-width'] = Math.min(maxWidth, DEFAULT_MAX_WIDTH) + 'px';
+        }
+
+        this.canvas.setDimensions(dimension, cssOnly);
+    },
+
+    /**
+     * Set canvas dimension - css only
+     *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
+     * @param {object} dimension - Canvas backstore dimension
+     * @override
+     */
+    setCanvasBackstoreDimension: function(dimension) {
+        this.canvas.setDimensions(dimension, backstoreOnly);
+    },
+
+    /**
      * Set image properties
      * {@link http://fabricjs.com/docs/fabric.Image.html#set}
      * @param {object} setting - Image properties
@@ -80,7 +109,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
             return;
         }
 
-        oImage.set(setting);
+        oImage.set(setting).setCoords();
         if (withRendering) {
             this.canvas.renderAll();
         }

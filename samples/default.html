@@ -20,6 +20,7 @@
         <button id="btn-flipX" class="tui-image-editor-button">FlipX</button>
         <button id="btn-flipY" class="tui-image-editor-button">FlipY</button>
         <button id="btn-resetFlip" class="tui-image-editor-button">ResetFlip</button>
+        <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise</button>
         <div id="crop-submenu" class="tui-image-editor-submenu">
             Crop
             <button id="btn-applyCrop" class="tui-image-editor-button">apply</button>
@@ -55,6 +56,7 @@
         var $flipXBtn = $('#btn-flipX');
         var $flipYBtn = $('#btn-flipY');
         var $resetFlipBtn = $('#btn-resetFlip');
+        var $RotationClockwiseBtn = $('#btn-rotation-clockwise');
         var $applyCropBtn = $('#btn-applyCrop');
         var $cancelCropBtn = $('#btn-cancelCrop');
 
@@ -63,6 +65,9 @@
          */
         imageEditor.loadImageFromURL('tree.jpg', './img/tree.jpg');
 
+        imageEditor.once(eventNames.LOAD_IMAGE, function() {
+            imageEditor.clearUndoStack();
+        });
         imageEditor.on(eventNames.START_CROPPING, function() {
             $cropSubMenu.show();
         });
@@ -112,6 +117,9 @@
         });
         $resetFlipBtn.on('click', function() {
             imageEditor.resetFlip();
+        });
+        $RotationClockwiseBtn.on('click', function() {
+            imageEditor.rotate(30);
         });
 
         /**

@@ -68,7 +68,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this.clear();
         this._invoker.invoke(command).done(function() {
-            self.fire(events.PUSH_UNDO_STACK);
+            if (!self._invoker.isEmptyUndoStack()) {
+                self.fire(events.PUSH_UNDO_STACK);
+            }
             self.fire(events.EMPTY_REDO_STACK);
         });
     },
@@ -219,6 +221,19 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     resetFlip: function() {
         this._flip('reset');
+    },
+
+    /**
+     * Rotate image
+     * @param {number} angle - Angle to rotate image
+     */
+    rotate: function(angle) {
+        var callback = $.proxy(this.fire, this, events.ROTATE_IMAGE);
+        var command = commandFactory.create(commands.ROTATE_IMAGE, angle)
+            .setExecuteCallback(callback)
+            .setUndoCallback(callback);
+
+        this.execute(command);
     },
 
     /**

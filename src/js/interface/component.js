@@ -83,6 +83,22 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
     },
 
     /**
+     * Set canvas dimension - css only
+     * @param {object} dimension - Canvas css dimension
+     */
+    setCanvasCssDimension: function(dimension) {
+        this.getRoot().setCanvasCssDimension(dimension);
+    },
+
+    /**
+     * Set canvas dimension - css only
+     * @param {object} dimension - Canvas backstore dimension
+     */
+    setCanvasBackstoreDimension: function(dimension) {
+        this.getRoot().setCanvasBackstoreDimension(dimension);
+    },
+
+    /**
      * Set parent
      * @param {Component|null} parent - Parent
      */
