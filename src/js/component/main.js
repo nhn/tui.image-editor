@@ -86,7 +86,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     },
 
     /**
-     * Set canvas dimension - css only
+     * Set canvas dimension - backstore only
      *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
      * @param {object} dimension - Canvas backstore dimension
      * @override
