@@ -40,7 +40,6 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
     setAngle: function(angle) {
         var current = this.getCurrentAngle();
         var jqDefer = $.Deferred();
-        var canvasImage, boundingRect;
 
         if (angle === current) {
             return jqDefer.reject();
@@ -51,12 +50,23 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
          * Before setting angle, The originX,Y of image should be set to center.
          *  See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
          */
-        canvasImage = this.getCanvasImage()
+        this.getCanvasImage()
             .setAngle(angle)
             .setCoords();
+        this._adjustCanvasDimension();
+
+        return jqDefer.resolve(angle);
+    },
+
+    /**
+     * Adjust canvas dimension from image-rotation
+     * @private
+     */
+    _adjustCanvasDimension: function() {
+        var canvasImage = this.getCanvasImage(),
+            boundingRect = canvasImage.getBoundingRect();
 
         // BoundingRect dimensions +1, so that don't get blurry image.
-        boundingRect = canvasImage.getBoundingRect();
         boundingRect.width = Math.floor(boundingRect.width) + 1;
         boundingRect.height = Math.floor(boundingRect.height) + 1;
 
@@ -68,8 +78,6 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
             height: boundingRect.height
         });
         this.getCanvas().centerObject(canvasImage);
-
-        return jqDefer.resolve(angle);
     },
 
     /**

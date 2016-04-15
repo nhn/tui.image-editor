@@ -20,7 +20,8 @@
         <button id="btn-flipX" class="tui-image-editor-button">FlipX</button>
         <button id="btn-flipY" class="tui-image-editor-button">FlipY</button>
         <button id="btn-resetFlip" class="tui-image-editor-button">ResetFlip</button>
-        <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise</button>
+        <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise (30)</button>
+        <button id="btn-rotation-counter-clockwise" class="tui-image-editor-button">Rotation-Counter-Clockwise (30)</button>
         <div id="crop-submenu" class="tui-image-editor-submenu">
             Crop
             <button id="btn-applyCrop" class="tui-image-editor-button">apply</button>
@@ -57,13 +58,14 @@
         var $flipYBtn = $('#btn-flipY');
         var $resetFlipBtn = $('#btn-resetFlip');
         var $RotationClockwiseBtn = $('#btn-rotation-clockwise');
+        var $RotationCounterClockwiseBtn = $('#btn-rotation-counter-clockwise');
         var $applyCropBtn = $('#btn-applyCrop');
         var $cancelCropBtn = $('#btn-cancelCrop');
 
         /**
          * Image editor
          */
-        imageEditor.loadImageFromURL('tree.jpg', './img/tree.jpg');
+        imageEditor.loadImageFromURL('NHN Ent 01.png', './img/NHN Ent 01.png');
 
         imageEditor.once(eventNames.LOAD_IMAGE, function() {
             imageEditor.clearUndoStack();
@@ -120,6 +122,9 @@
         });
         $RotationClockwiseBtn.on('click', function() {
             imageEditor.rotate(30);
+        });
+        $RotationCounterClockwiseBtn.on('click', function() {
+            imageEditor.rotate(-30);
         });
 
         /**
