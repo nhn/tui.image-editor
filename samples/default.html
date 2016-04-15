@@ -12,22 +12,143 @@
 
 </head>
 <body>
-    <div id="editor"></div>
-    <button id="imgDownload">Download</button>
-    <script type="text/javascript" src="libs/fabric.min.js"></script>
+    <div class="tui-image-editor-menu">
+        <a id="btn-download"><button class="tui-image-editor-button">다운로드</button></a>
+        <button id="btn-undo" class="tui-image-editor-button">Undo</button>
+        <button id="btn-redo" class="tui-image-editor-button">Redo</button>
+        <button id="btn-crop" class="tui-image-editor-button">Crop</button>
+        <button id="btn-flipX" class="tui-image-editor-button">FlipX</button>
+        <button id="btn-flipY" class="tui-image-editor-button">FlipY</button>
+        <button id="btn-resetFlip" class="tui-image-editor-button">ResetFlip</button>
+        <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise (30)</button>
+        <button id="btn-rotation-counter-clockwise" class="tui-image-editor-button">Rotation-Counter-Clockwise (30)</button>
+        <div id="crop-submenu" class="tui-image-editor-submenu">
+            Crop
+            <button id="btn-applyCrop" class="tui-image-editor-button">apply</button>
+            <button id="btn-cancelCrop" class="tui-image-editor-button">cancel</button>
+        </div>
+    </div>
+    <br>
+    <div>
+        <div id="uploader"></div>
+        <div id="list">
+            <ul id="files"></ul>
+        </div>
+    </div>
+    <div id="editor" style="margin:auto;">
+        <canvas></canvas>
+    </div>
+    <script type="text/javascript" src="libs/fabric.js"></script>
     <script type="text/javascript" src="libs/jquery.min.js"></script>
-    <script type="text/javascript" src="libs/code-snippet.min.js"></script>
+    <script type="text/javascript" src="libs/code-snippet.js"></script>
+    <script type="text/javascript" src="libs/file-uploader.min.js"></script>
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
-        var imageEditor = new tui.component.ImageEditor('#editor');
+        // image editor
+        var imageEditor = new tui.component.ImageEditor('#editor canvas');
+        var eventNames = imageEditor.getEventNames();
 
-        imageEditor.loadImageFromURL('./img/packageVersion.png');
+        // buttons
+        var $cropSubMenu = $('#crop-submenu');
+        var $downloadBtn = $('#btn-download');
+        var $undoBtn = $('#btn-undo');
+        var $redoBtn = $('#btn-redo');
+        var $cropBtn = $('#btn-crop');
+        var $flipXBtn = $('#btn-flipX');
+        var $flipYBtn = $('#btn-flipY');
+        var $resetFlipBtn = $('#btn-resetFlip');
+        var $RotationClockwiseBtn = $('#btn-rotation-clockwise');
+        var $RotationCounterClockwiseBtn = $('#btn-rotation-counter-clockwise');
+        var $applyCropBtn = $('#btn-applyCrop');
+        var $cancelCropBtn = $('#btn-cancelCrop');
 
-        //imageEditor.draw('img/packageVersion.png');
-        //imageEditor.draw('http://handlebarsjs.com/images/handlebars_logo.png');
-//        $('#imgDownload').on('click', function() {
-//            console.log('btn click');
-//        });
+        /**
+         * Image editor
+         */
+        imageEditor.loadImageFromURL('NHN Ent 01.png', './img/NHN Ent 01.png');
+
+        imageEditor.once(eventNames.LOAD_IMAGE, function() {
+            imageEditor.clearUndoStack();
+        });
+        imageEditor.on(eventNames.START_CROPPING, function() {
+            $cropSubMenu.show();
+        });
+        imageEditor.on(eventNames.END_CROPPING, function() {
+            $cropSubMenu.hide();
+        });
+        imageEditor.on(eventNames.EMPTY_UNDO_STACK, function() {
+            $undoBtn.attr('disabled', true);
+        });
+        imageEditor.on(eventNames.PUSH_UNDO_STACK, function() {
+            $undoBtn.attr('disabled', false);
+        });
+        imageEditor.on(eventNames.EMPTY_REDO_STACK, function() {
+            $redoBtn.attr('disabled', true);
+        });
+        imageEditor.on(eventNames.PUSH_REDO_STACK, function() {
+            $redoBtn.attr('disabled', false);
+        });
+
+        /**
+         * Set event listeners
+         */
+        $downloadBtn.on('click', function () {
+            this.download = imageEditor.getImageName();
+            this.href = imageEditor.toDataURL();
+        });
+        $undoBtn.on('click', function() {
+            imageEditor.undo()
+        });
+        $redoBtn.on('click', function() {
+            imageEditor.redo()
+        });
+        $cropBtn.on('click', function() {
+            imageEditor.startCropping()
+        });
+        $applyCropBtn.on('click', function() {
+            imageEditor.endCropping(true);
+        });
+        $cancelCropBtn.on('click', function() {
+            imageEditor.endCropping();
+        });
+        $flipXBtn.on('click', function() {
+            imageEditor.flipX();
+        });
+        $flipYBtn.on('click', function() {
+            imageEditor.flipY()
+        });
+        $resetFlipBtn.on('click', function() {
+            imageEditor.resetFlip();
+        });
+        $RotationClockwiseBtn.on('click', function() {
+            imageEditor.rotate(30);
+        });
+        $RotationCounterClockwiseBtn.on('click', function() {
+            imageEditor.rotate(-30);
+        });
+
+        /**
+         * tui-component-uploader
+         */
+        var uploader = new tui.component.Uploader({
+            url: {
+                send: 'http://10.77.29.126:4000/upload',
+                remove: 'http://10.77.29.126:4000/remove'
+            },
+            formTarget: 'hiddenFrame',
+            listInfo: {
+                list: $('#files'),
+                count: $(),
+                size: $()
+            }
+        }, $('#uploader'));
+
+        uploader.on('success', function(data) {
+            var fileInfo = data.filelist[0],
+                filename = fileInfo.name;
+
+            imageEditor.loadImageFromURL(filename, fileInfo.path);
+        })
     </script>
 </body>
 </html>

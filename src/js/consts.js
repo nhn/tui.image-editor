@@ -1,13 +1,34 @@
 'use strict';
 
-module.exports = {
-    CLASSNAME_PREFIX: 'tui-image-editor',
+var util = require('./util');
 
-    commands: {
-        SET_CANVAS_ELEMENT: 'setCanvasElement',
-        SET_CANVAS_IMAGE: 'setCanvasImage',
-        LOAD_IMAGE_FROM_URL: 'loadImageFromUrl',
-        ON_LOAD_IMAGE: 'onLoadImage',
-        ON_SCALE_IMAGE: 'onScaleImage'
-    }
+module.exports = {
+    componentNames: util.keyMirror(
+        'MAIN',
+        'IMAGE_LOADER',
+        'CROPPER',
+        'FLIP',
+        'ROTATION'
+    ),
+
+    commandNames: util.keyMirror(
+        'LOAD_IMAGE',
+        'FLIP_IMAGE',
+        'ROTATE_IMAGE'
+    ),
+
+    eventNames: {
+        LOAD_IMAGE: 'loadImage',
+        CLEAR_IMAGE: 'clearImage',
+        START_CROPPING: 'startCropping',
+        END_CROPPING: 'endCropping',
+        FLIP_IMAGE: 'flipImage',
+        ROTATE_IMAGE: 'rotateImage',
+        EMPTY_REDO_STACK: 'emptyRedoStack',
+        EMPTY_UNDO_STACK: 'emptyUndoStack',
+        PUSH_UNDO_STACK: 'pushUndoStack',
+        PUSH_REDO_STACK: 'pushRedoStack'
+    },
+
+    IS_SUPPORT_FILE_API: !!(window.File && window.FileList && window.FileReader)
 };

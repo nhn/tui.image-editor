@@ -10,7 +10,7 @@ module.exports = function(config) {
             'bower_components/json2/json2.js',
             'bower_components/jquery/jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
-            'src/template/helper.js',
+            'bower_components/fabric.js/dist/fabric.js',
             'src/js/**/*.js',
             'test/**/*.spec.js'
         ],
@@ -24,8 +24,7 @@ module.exports = function(config) {
         },
 
         browserify: {
-            debug: true,
-            transform: ['hbsfy']
+            debug: true
         },
 
         reporters: [

@@ -1,7 +1,9 @@
+'use strict';
+var path = require('path');
 var gulp = require('gulp');
 var browserify = require('browserify');
-var hbsfy = require('hbsfy');
 var browserSync = require('browser-sync').create();
+var KarmaServer = require('karma').Server;
 var connect = require('gulp-connect');
 var uglify = require('gulp-uglify');
 var eslint = require('gulp-eslint');
@@ -11,8 +13,7 @@ var gulpif = require('gulp-if');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
-var assign = require('lodash.assign');
-var filename = require('./package.json').name.replace('component-', '');
+var filename = require('./package.json').name.replace('component-', '').replace('tui-', '');
 
 //
 // Constants
@@ -44,14 +45,13 @@ var config = {
         once: true
     }
 };
-config.watchify = assign({}, watchify.args, config.browserify);
+config.watchify = Object.assign({}, watchify.args, config.browserify);
 
 //
 // Bundle function
 //
 function bundle(bundler) {
-    return bundler.transform(hbsfy)
-        .bundle()
+    return bundler.bundle()
         .on('error', function(err) {
             console.log(err.message);
             browserSync.notify('Browserify Error!');
@@ -61,23 +61,46 @@ function bundle(bundler) {
         .pipe(buffer())
         .pipe(gulp.dest(DIST))
         .pipe(gulp.dest(SAMPLE_DIST))
-        .pipe(gulpif(browserSync.active, browserSync.stream(config.browserSyncStream)));
+        .pipe(
+            gulpif(
+                browserSync.active,
+                browserSync.stream(config.browserSyncStream)
+            )
+        );
 }
 
 //
-// Tasks
+// Development
 //
 gulp.task('watch', function() {
-    var bundler = watchify(browserify(config.watchify)),
-        watcher = function() {
-            bundle(bundler);
-        };
+    var bundler = watchify(browserify(config.watchify));
 
     browserSync.init(config.browserSync);
-    bundler.on('update', watcher);
+    bundler.on('update', function() {
+        bundle(this);
+    });
     bundler.on('log', gutil.log);
+    bundle(bundler);
+});
 
-    watcher();
+gulp.task('connect', function() {
+    connect.server();
+    gulp.watch(SOURCE_DIR, ['liveBundle']);
+});
+
+gulp.task('liveBundle', function() {
+    return bundle(browserify(config.browserify));
+});
+
+//
+// Build
+//
+gulp.task('karma', ['eslint'], function(done) {
+    new KarmaServer({
+        configFile: path.join(__dirname, 'karma.conf.private.js'),
+        singleRun: true,
+        logLevel: 'error'
+    }, done).start();
 });
 
 gulp.task('eslint', function() {
@@ -87,12 +110,8 @@ gulp.task('eslint', function() {
         .pipe(eslint.failAfterError());
 });
 
-gulp.task('connect', function() {
-    connect.server();
-    gulp.watch(SOURCE_DIR, ['bundle']);
-});
 
-gulp.task('bundle', ['eslint'], function() {
+gulp.task('bundle', ['karma'], function() {
     return bundle(browserify(config.browserify));
 });
 
@@ -103,4 +122,7 @@ gulp.task('compress', ['bundle'], function() {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('default', ['eslint', 'bundle', 'compress']);
+//
+// DefaultCommand
+//
+gulp.task('default', ['eslint', 'karma', 'bundle', 'compress']);
