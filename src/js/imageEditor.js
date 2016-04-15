@@ -136,15 +136,16 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         }
 
         callback = $.proxy(this._callbackAfterImageLoading, this);
-        command = commandFactory.create(commands.LOAD_IMAGE, imageName, url)
-            .setExecuteCallback(callback)
+        command = commandFactory.create(commands.LOAD_IMAGE, imageName, url);
+
+        command.setExecuteCallback(callback)
             .setUndoCallback(function(oImage) {
                 if (oImage) {
                     callback(oImage);
+                } else {
+                    self.fire(events.CLEAR_IMAGE);
                 }
-                self.fire(events.CLEAR_IMAGE);
             });
-
         this.execute(command);
     },
 
@@ -195,10 +196,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     _flip: function(type) {
         var callback = $.proxy(this.fire, this, events.FLIP_IMAGE);
-        var command = commandFactory.create(commands.FLIP_IMAGE, type)
-            .setExecuteCallback(callback)
-            .setUndoCallback(callback);
+        var command = commandFactory.create(commands.FLIP_IMAGE, type);
 
+        command.setExecuteCallback(callback)
+            .setUndoCallback(callback);
         this.execute(command);
     },
 
@@ -229,10 +230,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     rotate: function(angle) {
         var callback = $.proxy(this.fire, this, events.ROTATE_IMAGE);
-        var command = commandFactory.create(commands.ROTATE_IMAGE, angle)
-            .setExecuteCallback(callback)
-            .setUndoCallback(callback);
+        var command = commandFactory.create(commands.ROTATE_IMAGE, angle);
 
+        command.setExecuteCallback(callback)
+            .setUndoCallback(callback);
         this.execute(command);
     },
 
