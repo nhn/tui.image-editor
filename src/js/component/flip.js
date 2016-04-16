@@ -39,24 +39,44 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
 
     /**
      * Set flipX, flipY
-     * @param {{flipX: ?Boolean, flipY: ?Boolean}} flipSetting - Flip setting
+     * @param {{flipX: ?Boolean, flipY: ?Boolean}} newSetting - Flip setting
      * @returns {jQuery.Deferred}
      */
-    set: function(flipSetting) {
-        var current = this.getCurrentSetting();
+    set: function(newSetting) {
+        var setting = this.getCurrentSetting();
         var jqDefer = $.Deferred();
+        var isChangingFlipX = (setting.flipX !== !!newSetting.flipX);
+        var isChangingFlipY = (setting.flipY !== !!newSetting.flipY);
+        var angle;
 
-        flipSetting.flipX = !!(flipSetting.flipX);
-        flipSetting.flipY = !!(flipSetting.flipY);
-        if (flipSetting.flipX === current.flipX && flipSetting.flipY === current.flipY) {
-            jqDefer.reject();
-        } else {
-            flipSetting = tui.util.extend(current, flipSetting);
-            this.setImageProperties(flipSetting, true);
-            jqDefer.resolve(flipSetting);
+        if (!isChangingFlipX && !isChangingFlipY) {
+            return jqDefer.reject();
         }
 
-        return jqDefer;
+        if (isChangingFlipX) {
+            angle = this._negateAngle();
+        }
+        if (isChangingFlipY) {
+            angle = this._negateAngle();
+        }
+        tui.util.extend(setting, newSetting);
+        this.setImageProperties(setting, true);
+
+        return jqDefer.resolve(setting, angle);
+    },
+
+    /**
+     * Negate angle for flip
+     * @returns {number} Negated angle
+     * @private
+     */
+    _negateAngle: function() {
+        var canvasImage = this.getCanvasImage();
+        var angle = parseFloat(canvasImage.angle * -1); // parseFloat for -0 to 0
+
+        canvasImage.setAngle(angle);
+
+        return angle;
     },
 
     /**
@@ -75,9 +95,11 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
      * @returns {jQuery.Deferred}
      */
     flipX: function() {
+        var angle = this._negateAngle();
+
         this.toggleImageProperties(['flipX'], true);
 
-        return $.Deferred().resolve(this.getCurrentSetting());
+        return $.Deferred().resolve(this.getCurrentSetting(), angle);
     },
 
     /**
@@ -85,9 +107,11 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
      * @returns {jQuery.Deferred}
      */
     flipY: function() {
+        var angle = this._negateAngle();
+
         this.toggleImageProperties(['flipY'], true);
 
-        return $.Deferred().resolve(this.getCurrentSetting());
+        return $.Deferred().resolve(this.getCurrentSetting(), angle);
     }
 });
 
