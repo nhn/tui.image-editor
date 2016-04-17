@@ -66,10 +66,6 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
         var canvasImage = this.getCanvasImage(),
             boundingRect = canvasImage.getBoundingRect();
 
-        // BoundingRect dimensions +1, so that don't get blurry image.
-        boundingRect.width = Math.floor(boundingRect.width) + 1;
-        boundingRect.height = Math.floor(boundingRect.height) + 1;
-
         this.setCanvasCssDimension({
             'max-width': boundingRect.width + 'px'
         });

@@ -48,8 +48,8 @@ describe('Rotation', function() {
         });
 
         rotationModule._adjustCanvasDimension();
-        expect(main.canvas.getWidth()).toEqual(101);
-        expect(main.canvas.getHeight()).toEqual(111);
+        expect(main.canvas.getWidth()).toEqual(100);
+        expect(main.canvas.getHeight()).toEqual(110);
     });
 
     it('"rotate()" should add angle value', function() {
