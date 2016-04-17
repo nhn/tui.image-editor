@@ -73,6 +73,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
             top: -10,
             width: 1,
             height: 1,
+            strokeWidth: 0, // {@link https://github.com/kangax/fabric.js/issues/2860}
             cornerSize: 10,
             cornerColor: 'black',
             fill: 'transparent',
@@ -113,7 +114,6 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
 
         return data;
     },
-
 
     /**
      * onMousedown handler in fabric canvas

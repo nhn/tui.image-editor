@@ -16,6 +16,7 @@ describe('Cropzone', function() {
             width: 100,
             height: 100,
             cornerSize: 10,
+            strokeWidth: 0,
             cornerColor: 'black',
             fill: 'transparent',
             hasRotatingPoint: false,
