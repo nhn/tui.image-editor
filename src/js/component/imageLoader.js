@@ -5,7 +5,7 @@ var consts = require('../consts');
 
 var imageOption = {
     padding: 0,
-    crossOrigin: ''
+    crossOrigin: 'anonymous'
 };
 
 /**
