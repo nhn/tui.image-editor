@@ -87,15 +87,16 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      * @private
      */
     _onSuccessImageLoad: function(oImage) {
+        var boundingRect = oImage.getBoundingRect();
+
         this.setCanvasCssDimension({
             width: '100%',
             height: '',  // No inline-css "height" for IE9
-            'max-width': oImage.width + 'px'
+            'max-width': boundingRect.width + 'px'
         });
-
         this.setCanvasBackstoreDimension({
-            width: oImage.width,
-            height: oImage.height
+            width: boundingRect.width,
+            height: boundingRect.height
         });
     }
 });
