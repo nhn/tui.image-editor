@@ -66,17 +66,18 @@ function createFlipImageCommand(type) {
 }
 
 /**
- * @param {number} angle - Angle value to rotate
+ * @param {string} type - 'rotate' or 'setAngle'
+ * @param {number} angle - angle value (degree)
  * @returns {$.Deferred}
  */
-function createRotationImageCommand(angle) {
+function createRotationImageCommand(type, angle) {
     return new Command({
         execute: function(compMap) {
             var rotationComp = compMap[ROTATION];
 
             this.store = rotationComp.getCurrentAngle();
 
-            return rotationComp.rotate(angle);
+            return rotationComp[type](angle);
         },
         undo: function(compMap) {
             var rotationComp = compMap[ROTATION];

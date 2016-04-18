@@ -66,7 +66,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      */
     setCanvasElement: function(canvasElement) {
         this.canvas = new fabric.Canvas($(canvasElement)[0], {
-            containerClass: 'tui-component-imageEditor-canvasContainer'
+            containerClass: 'tui-imageEditor-canvasContainer'
         });
     },
 

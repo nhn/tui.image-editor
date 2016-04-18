@@ -30,6 +30,14 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
          */
         this.componentMap = {};
 
+        /**
+         * Lock-flag for executing command
+         * @type {boolean}
+         */
+        this._isLocked = false;
+
+        this.lock = $.proxy(this.lock, this);
+        this.unlock = $.proxy(this.unlock, this);
         this._createComponents();
     },
 
@@ -75,12 +83,31 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
     invoke: function(command) {
         var self = this;
 
-        return $.when(command.execute(this.componentMap))
+        if (this._isLocked) {
+            return $.Deferred.reject();
+        }
+
+        return $.when(this.lock, command.execute(this.componentMap))
             .done(function() {
                 self.undoStack.push(command);
                 self.clearRedoStack();
             })
-            .done(command.executeCallback);
+            .done(command.executeCallback)
+            .always(this.unlock);
+    },
+
+    /**
+     * Lock this invoker
+     */
+    lock: function() {
+        this._isLocked = true;
+    },
+
+    /**
+     * Unlock this invoker
+     */
+    unlock: function() {
+        this._isLocked = false;
     },
 
     /**
@@ -88,16 +115,23 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
      * @returns {jQuery.Deferred}
      */
     undo: function() {
-        var command = this.undoStack.pop();
+        var undoStack = this.undoStack;
+        var command = undoStack.pop();
         var self = this;
         var jqDefer;
 
+        if (command && this._isLocked) {
+            undoStack.push(command);
+            command = null;
+        }
+
         if (command) {
-            jqDefer = $.when(command.undo(this.componentMap))
+            jqDefer = $.when(this.lock, command.undo(this.componentMap))
                 .done(function() {
                     self.redoStack.push(command);
                 })
-                .done(command.undoCallback);
+                .done(command.undoCallback)
+                .always(this.unlock);
         } else {
             jqDefer = $.Deferred().reject();
         }
@@ -110,16 +144,23 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
      * @returns {jQuery.Deferred}
      */
     redo: function() {
-        var command = this.redoStack.pop();
+        var redoStack = this.redoStack;
+        var command = redoStack.pop();
         var self = this;
         var jqDefer;
 
+        if (command && this._isLocked) {
+            redoStack.push(command);
+            command = null;
+        }
+
         if (command) {
-            jqDefer = $.when(command.execute(this.componentMap))
+            jqDefer = $.when(this.lock, command.execute(this.componentMap))
                 .done(function() {
                     self.undoStack.push(command);
                 })
-                .done(command.executeCallback);
+                .done(command.executeCallback)
+                .always(this.unlock, this);
         } else {
             jqDefer = $.Deferred().reject();
         }

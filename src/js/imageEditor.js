@@ -225,16 +225,48 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * Rotate image
-     * @param {number} angle - Angle to rotate image
+     * @param {string} type - 'rotate' or 'setAngle'
+     * @param {number} angle - angle value (degree)
+     * @private
      */
-    rotate: function(angle) {
+    _rotate: function(type, angle) {
         var callback = $.proxy(this.fire, this, events.ROTATE_IMAGE);
-        var command = commandFactory.create(commands.ROTATE_IMAGE, angle);
+        var command = commandFactory.create(commands.ROTATE_IMAGE, type, angle);
 
         command.setExecuteCallback(callback)
             .setUndoCallback(callback);
         this.execute(command);
+    },
+
+    /**
+     * Rotate image
+     * @param {number} angle - Additional angle to rotate image
+     */
+    rotate: function(angle) {
+        this._rotate('rotate', angle);
+    },
+
+    /**
+     * Set angle
+     * @param {number} angle - Angle of image
+     */
+    setAngle: function(angle) {
+        this._rotate('setAngle', angle);
+    },
+
+    /**
+     * Brighten image
+     * @param {number} value - Brightness
+     */
+    brighten: function(value) {
+        var mainComponent = this._getMainComponent();
+
+        mainComponent.getCanvasImage().filters.push(
+            new fabric.Image.filters.Brightness({brightness: value})
+        );
+        mainComponent.getCanvasImage().applyFilters(function() {
+            mainComponent.getCanvas().renderAll();
+        });
     },
 
     /**

@@ -38,10 +38,11 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      * @returns {jQuery.Deferred}
      */
     setAngle: function(angle) {
-        var current = this.getCurrentAngle();
+        var current = this.getCurrentAngle() % 360;
         var jqDefer = $.Deferred();
         var canvasImage;
 
+        angle %= 360;
         if (angle === current) {
             return jqDefer.reject();
         }

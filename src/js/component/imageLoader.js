@@ -88,7 +88,6 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      */
     _onSuccessImageLoad: function(oImage) {
         this.setCanvasCssDimension({
-            margin: 'auto',
             width: '100%',
             height: '',  // No inline-css "height" for IE9
             'max-width': oImage.width + 'px'

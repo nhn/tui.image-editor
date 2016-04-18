@@ -1,3 +1,4 @@
 * {font-family: "NanumGothic", "Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;}
 .tui-image-editor-submenu {display:none; margin: 10px; padding: 10px;}
-#editor canvas {border: 1px solid black;}
+.tui-imageEditor-canvasContainer {margin: 0 auto; top: 50%; transform: translateY(-50%);}
+
