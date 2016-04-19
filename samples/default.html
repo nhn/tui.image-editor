@@ -22,11 +22,9 @@
         <button id="btn-resetFlip" class="tui-image-editor-button">ResetFlip</button>
         <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise (30)</button>
         <button id="btn-rotation-counter-clockwise" class="tui-image-editor-button">Rotation-Counter-Clockwise (30)</button>
-        <button id="btn-brighten" class="tui-image-editor-button">Brighten (10)</button>
 
         <div>
             <label> Rotation <input id="rotation-range-input" type="range" min="-360" max="360"></label> <br>
-            <label> Brigtness <input id="brightness-range-input" type="range" min="-100" max="100"></label>
         </div>
 
         <div id="crop-submenu" class="tui-image-editor-submenu">
@@ -70,7 +68,6 @@
         var $resetFlipBtn = $('#btn-resetFlip');
         var $RotationClockwiseBtn = $('#btn-rotation-clockwise');
         var $RotationCounterClockwiseBtn = $('#btn-rotation-counter-clockwise');
-        var $BrightenBtn = $('#btn-brighten');
         var $applyCropBtn = $('#btn-applyCrop');
         var $cancelCropBtn = $('#btn-cancelCrop');
 
@@ -145,9 +142,7 @@
         $RotationCounterClockwiseBtn.on('click', function() {
             imageEditor.rotate(-30);
         });
-        $BrightenBtn.on('click', function() {
-            imageEditor.brighten(10);
-        });
+
         $rotationRangeInput.on('mousedown', function() {
             var changeAngle = function() {
                 imageEditor.setAngle(parseInt($rotationRangeInput.val(), 10));

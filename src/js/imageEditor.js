@@ -255,21 +255,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * Brighten image
-     * @param {number} value - Brightness
-     */
-    brighten: function(value) {
-        var mainComponent = this._getMainComponent();
-
-        mainComponent.getCanvasImage().filters.push(
-            new fabric.Image.filters.Brightness({brightness: value})
-        );
-        mainComponent.getCanvasImage().applyFilters(function() {
-            mainComponent.getCanvas().renderAll();
-        });
-    },
-
-    /**
      * Get data url
      * @param {string} type - A DOMString indicating the image format. The default type is image/png.
      * @returns {string} A DOMString containing the requested data URI.
