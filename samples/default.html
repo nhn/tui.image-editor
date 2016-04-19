@@ -14,9 +14,10 @@
 <body>
     <div class="tui-image-editor-menu">
         <div>
-            Undo/Redo
+            Undo/Redo/ClearObjects
             <button id="btn-undo" class="tui-image-editor-button">Undo</button>
             <button id="btn-redo" class="tui-image-editor-button">Redo</button>
+            <button id="btn-clearObjects" class="tui-image-editor-button">ClearObjects</button>
         </div>
 
         <div>
@@ -77,6 +78,7 @@
 
         var $undoBtn = $('#btn-undo');
         var $redoBtn = $('#btn-redo');
+        var $clearObjects = $('#btn-clearObjects');
 
         var $flipXBtn = $('#btn-flipX');
         var $flipYBtn = $('#btn-flipY');
@@ -119,9 +121,9 @@
         imageEditor.on(eventNames.PUSH_REDO_STACK, function() {
             $redoBtn.attr('disabled', false);
         });
-        imageEditor.on(eventNames.FLIP_IMAGE, function(flipSetting, angle) {
-            console.log(flipSetting, angle);
-        });
+//        imageEditor.on(eventNames.FLIP_IMAGE, function(flipSetting, angle) {
+//            console.log(flipSetting, angle);
+//        });
 
         /**
          * Set event listeners
@@ -140,6 +142,9 @@
         });
         $redoBtn.on('click', function() {
             imageEditor.redo()
+        });
+        $clearObjects.on('click', function() {
+            imageEditor.clear();
         });
 
         $cropBtn.on('click', function() {

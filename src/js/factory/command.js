@@ -7,6 +7,7 @@ var componentNames = consts.componentNames;
 var commandNames = consts.commandNames;
 var creators = {};
 
+var MAIN = componentNames.MAIN;
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
 var FLIP = componentNames.FLIP;
 var ROTATION = componentNames.ROTATION;
@@ -17,6 +18,7 @@ var ROTATION = componentNames.ROTATION;
 creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
 creators[commandNames.ROTATE_IMAGE] = createRotationImageCommand;
+creators[commandNames.CLEAR_OBJECTS] = createClearCommand;
 
 /**
  * @param {string} imageName - Image name
@@ -27,17 +29,24 @@ function createLoadImageCommand(imageName, url) {
     return new Command({
         execute: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
+            var canvas = loader.getCanvas();
 
             this.store = {
                 prevName: loader.getImageName(),
-                prevImage: loader.getCanvasImage()
+                prevImage: loader.getCanvasImage(),
+                objects: canvas.getObjects().slice() // Slice: "canvas.clear()" clears the objects array
             };
+            canvas.clear();
 
             return loader.load(imageName, url);
         },
         undo: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
+            var canvas = loader.getCanvas();
             var store = this.store;
+
+            canvas.clear();
+            canvas.add.apply(canvas, store.objects);
 
             return loader.load(store.prevName, store.prevImage);
         }
@@ -83,6 +92,31 @@ function createRotationImageCommand(type, angle) {
             var rotationComp = compMap[ROTATION];
 
             return rotationComp.setAngle(this.store);
+        }
+    });
+}
+
+function createClearCommand() {
+    return new Command({
+        execute: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
+
+            // Slice: "canvas.clear()" clears the objects array
+            this.store = canvas.getObjects().slice();
+            if (this.store.length) {
+                canvas.clear();
+                jqDefer.resolve();
+            } else {
+                jqDefer.reject();
+            }
+
+            return jqDefer;
+        },
+        undo: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+
+            canvas.add.apply(canvas, this.store);
         }
     });
 }

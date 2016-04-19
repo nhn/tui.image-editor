@@ -16,20 +16,43 @@ var consts = require('../consts');
 var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
     init: function(parent) {
         this.setParent(parent);
+        this.onAddDrawing = $.proxy(this.onAddDrawing, this);
     },
 
     name: consts.componentNames.FREE_DRAWING,
 
     start: function() {
-        this.getCanvas().isDrawingMode = true;
+        var canvas = this.getCanvas();
+        var brush;
+
+        canvas.isDrawingMode = true;
+        brush = canvas.freeDrawingBrush;
+        brush.width = 10;
+        brush.color = 'rgba(0, 0, 0, 0.5)';
+
+        //@todo: Move to imageEditor class
+        canvas.on('path:created', this.onAddDrawing);
     },
 
-    onAddDrawing: function() {
+    //@todo: Move to imageEditor class
+    onAddDrawing: function(obj) {
+        var path = obj.path;
 
+        path.set({
+            rotatingPointOffset: 30,
+            borderColor: 'red',
+            transparentCorners: false,
+            cornerColor: 'green',
+            cornerSize: 6
+        });
     },
 
     end: function() {
-        this.getCanvas().isDrawingMode = false;
+        var canvas = this.getCanvas();
+
+        //@todo: Move to imageEditor class
+        canvas.off('path:created', this.onAddDrawing);
+        canvas.isDrawingMode = false;
     }
 });
 

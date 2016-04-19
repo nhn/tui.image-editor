@@ -83,6 +83,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
             lockRotation: true
         });
         canvas = this.getCanvas();
+        canvas.deactivateAll();
         canvas.add(this._cropzone);
         canvas.on('mouse:down', this._listeners.mousedown);
         canvas.defaultCursor = 'crosshair';

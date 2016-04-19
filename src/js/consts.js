@@ -13,6 +13,7 @@ module.exports = {
     ),
 
     commandNames: util.keyMirror(
+        'CLEAR',
         'LOAD_IMAGE',
         'FLIP_IMAGE',
         'ROTATE_IMAGE'
@@ -20,6 +21,7 @@ module.exports = {
 
     eventNames: {
         LOAD_IMAGE: 'loadImage',
+        CLEAR_OBJECTS: 'clear',
         CLEAR_IMAGE: 'clearImage',
         START_CROPPING: 'startCropping',
         END_CROPPING: 'endCropping',
