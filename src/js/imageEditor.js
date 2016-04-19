@@ -56,6 +56,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * Clear all actions
      */
     clear: function() {
+        this.endFreeDrawing();
         this.endCropping();
     },
 
@@ -252,6 +253,20 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     setAngle: function(angle) {
         this._rotate('setAngle', angle);
+    },
+
+    /**
+     * Start free-drawing mode
+     */
+    startFreeDrawing: function() {
+        this._getComponent(compList.FREE_DRAWING).start();
+    },
+
+    /**
+     * End free-drawing mode
+     */
+    endFreeDrawing: function() {
+        this._getComponent(compList.FREE_DRAWING).end();
     },
 
     /**

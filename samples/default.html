@@ -13,32 +13,47 @@
 </head>
 <body>
     <div class="tui-image-editor-menu">
-        <a id="btn-download"><button class="tui-image-editor-button">다운로드</button></a>
-        <button id="btn-undo" class="tui-image-editor-button">Undo</button>
-        <button id="btn-redo" class="tui-image-editor-button">Redo</button>
-        <button id="btn-crop" class="tui-image-editor-button">Crop</button>
-        <button id="btn-flipX" class="tui-image-editor-button">FlipX</button>
-        <button id="btn-flipY" class="tui-image-editor-button">FlipY</button>
-        <button id="btn-resetFlip" class="tui-image-editor-button">ResetFlip</button>
-        <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise (30)</button>
-        <button id="btn-rotation-counter-clockwise" class="tui-image-editor-button">Rotation-Counter-Clockwise (30)</button>
+        <div>
+            Undo/Redo
+            <button id="btn-undo" class="tui-image-editor-button">Undo</button>
+            <button id="btn-redo" class="tui-image-editor-button">Redo</button>
+        </div>
 
         <div>
-            <label> Rotation <input id="rotation-range-input" type="range" min="-360" max="360"></label> <br>
+            Crop
+            <button id="btn-crop" class="tui-image-editor-button">Crop</button>
+            <div id="crop-submenu" class="tui-image-editor-submenu">
+                Crop
+                <button id="btn-applyCrop" class="tui-image-editor-button">apply</button>
+                <button id="btn-cancelCrop" class="tui-image-editor-button">cancel</button>
+            </div>
         </div>
 
-        <div id="crop-submenu" class="tui-image-editor-submenu">
-            Crop
-            <button id="btn-applyCrop" class="tui-image-editor-button">apply</button>
-            <button id="btn-cancelCrop" class="tui-image-editor-button">cancel</button>
+        <div>
+            Flip
+            <button id="btn-flipX" class="tui-image-editor-button">FlipX</button>
+            <button id="btn-flipY" class="tui-image-editor-button">FlipY</button>
+            <button id="btn-resetFlip" class="tui-image-editor-button">ResetFlip</button>
+        </div>
+
+        <div>
+            Rotation
+            <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise (30)</button>
+            <button id="btn-rotation-counter-clockwise" class="tui-image-editor-button">Rotation-Counter-Clockwise (30)</button>
+            <label> Range input <input id="rotation-range-input" type="range" min="-360" max="360"></label> <br>
+        </div>
+
+        <div>
+            Free drawing
+            <button id="btn-start-freeDrawing" class="tui-image-editor-button">startFreeDrawing</button>
+            <button id="btn-end-freeDrawing" class="tui-image-editor-button">endFreeDrawing</button>
         </div>
     </div>
-    <br>
-    <div>
-        <div id="uploader"></div>
-        <div id="list">
-            <ul id="files"></ul>
-        </div>
+
+    <a id="btn-download"><button class="tui-image-editor-button">download</button></a>
+    <div id="uploader">Upload</div>
+    <div id="list">
+        <ul id="files"></ul>
     </div>
     <div id="editor">
         <canvas></canvas>
@@ -58,23 +73,30 @@
         var $brightnessRangeInput = $('#brightness-range-input');
 
         // buttons
-        var $cropSubMenu = $('#crop-submenu');
         var $downloadBtn = $('#btn-download');
+
         var $undoBtn = $('#btn-undo');
         var $redoBtn = $('#btn-redo');
-        var $cropBtn = $('#btn-crop');
+
         var $flipXBtn = $('#btn-flipX');
         var $flipYBtn = $('#btn-flipY');
         var $resetFlipBtn = $('#btn-resetFlip');
-        var $RotationClockwiseBtn = $('#btn-rotation-clockwise');
-        var $RotationCounterClockwiseBtn = $('#btn-rotation-counter-clockwise');
+
+        var $rotationClockwiseBtn = $('#btn-rotation-clockwise');
+        var $rotationCounterClockwiseBtn = $('#btn-rotation-counter-clockwise');
+
+        var $startFreeDrawing = $('#btn-start-freeDrawing');
+        var $endFreeDrawing = $('#btn-end-freeDrawing');
+
+        var $cropBtn = $('#btn-crop');
+        var $cropSubMenu = $('#crop-submenu');
         var $applyCropBtn = $('#btn-applyCrop');
         var $cancelCropBtn = $('#btn-cancelCrop');
 
         /**
          * Image editor
          */
-        imageEditor.loadImageFromURL('lena_std.jpg', './img/lena_std.jpg');
+        imageEditor.loadImageFromURL('imageEditorClasses.png', './img/imageEditorClasses.png');
 
         imageEditor.once(eventNames.LOAD_IMAGE, function() {
             imageEditor.clearUndoStack();
@@ -112,12 +134,14 @@
             this.download = name;
             this.href = imageEditor.toDataURL();
         });
+
         $undoBtn.on('click', function() {
             imageEditor.undo()
         });
         $redoBtn.on('click', function() {
             imageEditor.redo()
         });
+
         $cropBtn.on('click', function() {
             imageEditor.startCropping()
         });
@@ -127,6 +151,7 @@
         $cancelCropBtn.on('click', function() {
             imageEditor.endCropping();
         });
+
         $flipXBtn.on('click', function() {
             imageEditor.flipX();
         });
@@ -136,12 +161,21 @@
         $resetFlipBtn.on('click', function() {
             imageEditor.resetFlip();
         });
-        $RotationClockwiseBtn.on('click', function() {
+
+        $rotationClockwiseBtn.on('click', function() {
             imageEditor.rotate(30);
         });
-        $RotationCounterClockwiseBtn.on('click', function() {
+        $rotationCounterClockwiseBtn.on('click', function() {
             imageEditor.rotate(-30);
         });
+
+        $startFreeDrawing.on('click', function() {
+            imageEditor.startFreeDrawing();
+        });
+        $endFreeDrawing.on('click', function() {
+            imageEditor.endFreeDrawing();
+        });
+
 
         $rotationRangeInput.on('mousedown', function() {
             var changeAngle = function() {

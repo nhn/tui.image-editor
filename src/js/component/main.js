@@ -78,10 +78,10 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      */
     setCanvasCssDimension: function(dimension) {
         var maxWidth = parseInt(dimension['max-width'], 10);
+
         if (maxWidth) {
             dimension['max-width'] = Math.min(maxWidth, DEFAULT_MAX_WIDTH) + 'px';
         }
-
         this.canvas.setDimensions(dimension, cssOnly);
     },
 

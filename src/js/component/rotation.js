@@ -64,15 +64,17 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      * @private
      */
     _adjustCanvasDimension: function() {
-        var canvasImage = this.getCanvasImage(),
-            boundingRect = canvasImage.getBoundingRect();
+        var canvasImage = this.getCanvasImage();
+        var boundingRect = canvasImage.getBoundingRect();
+        var width = boundingRect.width;
+        var height = boundingRect.height;
 
         this.setCanvasCssDimension({
-            'max-width': boundingRect.width + 'px'
+            'max-width': width + 'px'
         });
         this.setCanvasBackstoreDimension({
-            width: boundingRect.width,
-            height: boundingRect.height
+            width: width,
+            height: height
         });
         this.getCanvas().centerObject(canvasImage);
     },

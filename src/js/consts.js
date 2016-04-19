@@ -8,7 +8,8 @@ module.exports = {
         'IMAGE_LOADER',
         'CROPPER',
         'FLIP',
-        'ROTATION'
+        'ROTATION',
+        'FREE_DRAWING'
     ),
 
     commandNames: util.keyMirror(
