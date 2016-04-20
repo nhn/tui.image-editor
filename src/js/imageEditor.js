@@ -15,23 +15,50 @@ var compList = consts.componentNames;
  */
 var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     init: function(canvasElement) {
-        var mainComponent;
-
         /**
-         * Inovker
+         * Invoker
          * @private
          * @type {Invoker}
          */
         this._invoker = new Invoker();
-
-        mainComponent = this._getMainComponent();
-        mainComponent.setCanvasElement(canvasElement);
 
         /**
          * Fabric-Canvas instance
          * @type {fabric.Canvas}
          * @private
          */
+        this._canvas = null;
+
+        this._attachInvokerEvents();
+        this._setCanvas(canvasElement);
+    },
+
+    /**
+     * Attach invoker events
+     * @private
+     */
+    _attachInvokerEvents: function() {
+        var PUSH_UNDO_STACK = events.PUSH_UNDO_STACK;
+        var PUSH_REDO_STACK = events.PUSH_REDO_STACK;
+        var EMPTY_UNDO_STACK = events.EMPTY_UNDO_STACK;
+        var EMPTY_REDO_STACK = events.EMPTY_REDO_STACK;
+
+        this._invoker.on(PUSH_UNDO_STACK, $.proxy(this.fire, this, PUSH_UNDO_STACK));
+        this._invoker.on(PUSH_REDO_STACK, $.proxy(this.fire, this, PUSH_REDO_STACK));
+        this._invoker.on(EMPTY_UNDO_STACK, $.proxy(this.fire, this, EMPTY_UNDO_STACK));
+        this._invoker.on(EMPTY_REDO_STACK, $.proxy(this.fire, this, EMPTY_REDO_STACK));
+    },
+
+    /**
+     * Set canvas element
+     * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
+     * @private
+     */
+    _setCanvas: function(canvasElement) {
+        var mainComponent;
+
+        mainComponent = this._getMainComponent();
+        mainComponent.setCanvasElement(canvasElement);
         this._canvas = mainComponent.getCanvas();
     },
 
@@ -94,47 +121,24 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {Command} command - Command
      */
     execute: function(command) {
-        var self = this;
-
         this.endAll();
-        this._invoker.invoke(command).done(function() {
-            if (!self._invoker.isEmptyUndoStack()) {
-                self.fire(events.PUSH_UNDO_STACK);
-            }
-            self.fire(events.EMPTY_REDO_STACK);
-        });
+        this._invoker.invoke(command);
     },
 
     /**
      * Undo
      */
     undo: function() {
-        var invoker = this._invoker;
-        var self = this;
-
         this.endAll();
-        invoker.undo().done(function() {
-            if (invoker.isEmptyUndoStack()) {
-                self.fire(events.EMPTY_UNDO_STACK);
-            }
-            self.fire(events.PUSH_REDO_STACK);
-        });
+        this._invoker.undo();
     },
 
     /**
      * Redo
      */
     redo: function() {
-        var invoker = this._invoker;
-        var self = this;
-
         this.endAll();
-        invoker.redo().done(function() {
-            if (invoker.isEmptyRedoStack()) {
-                self.fire(events.EMPTY_REDO_STACK);
-            }
-            self.fire(events.PUSH_UNDO_STACK);
-        });
+        this._invoker.redo();
     },
 
     /**
@@ -322,7 +326,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     clearUndoStack: function() {
         this._invoker.clearUndoStack();
-        this.fire(events.EMPTY_UNDO_STACK);
     },
 
     /**
@@ -330,7 +333,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     clearRedoStack: function() {
         this._invoker.clearRedoStack();
-        this.fire(events.EMPTY_REDO_STACK);
     }
 });
 
