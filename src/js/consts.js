@@ -16,7 +16,8 @@ module.exports = {
         'CLEAR',
         'LOAD_IMAGE',
         'FLIP_IMAGE',
-        'ROTATE_IMAGE'
+        'ROTATE_IMAGE',
+        'ADD_OBJECT'
     ),
 
     eventNames: {
@@ -27,6 +28,8 @@ module.exports = {
         END_CROPPING: 'endCropping',
         FLIP_IMAGE: 'flipImage',
         ROTATE_IMAGE: 'rotateImage',
+        ADD_OBJECT: 'addObject',
+        REMOVE_OBJECT: 'removeObject',
         EMPTY_REDO_STACK: 'emptyRedoStack',
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',

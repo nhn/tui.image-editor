@@ -19,6 +19,30 @@ creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
 creators[commandNames.ROTATE_IMAGE] = createRotationImageCommand;
 creators[commandNames.CLEAR_OBJECTS] = createClearCommand;
+creators[commandNames.ADD_OBJECT] = createAddObjectCommand;
+
+/**
+ * @param {fabric.Object} object - Fabric object
+ * @returns {Command}
+ */
+function createAddObjectCommand(object) {
+    return new Command({
+        execute: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+
+            if (!canvas.contains(object)) {
+                canvas.add(object);
+            }
+
+            return $.Deferred().resolve(object);
+        },
+        undo: function(compMap) {
+            compMap[MAIN].getCanvas().remove(object);
+
+            return $.Deferred().resolve(object);
+        }
+    });
+}
 
 /**
  * @param {string} imageName - Image name
@@ -34,7 +58,8 @@ function createLoadImageCommand(imageName, url) {
             this.store = {
                 prevName: loader.getImageName(),
                 prevImage: loader.getCanvasImage(),
-                objects: canvas.getObjects().slice() // Slice: "canvas.clear()" clears the objects array
+                // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
+                objects: canvas.getObjects().slice()
             };
             canvas.clear();
 
@@ -96,13 +121,16 @@ function createRotationImageCommand(type, angle) {
     });
 }
 
+/**
+ * @returns {Command}
+ */
 function createClearCommand() {
     return new Command({
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
             var jqDefer = $.Deferred();
 
-            // Slice: "canvas.clear()" clears the objects array
+            // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
             this.store = canvas.getObjects().slice();
             if (this.store.length) {
                 canvas.clear();

@@ -29,8 +29,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          */
         this._canvas = null;
 
-        this._attachInvokerEvents();
         this._setCanvas(canvasElement);
+        this._attachInvokerEvents();
+        this._attachCanvasEvents();
     },
 
     /**
@@ -47,6 +48,45 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._invoker.on(PUSH_REDO_STACK, $.proxy(this.fire, this, PUSH_REDO_STACK));
         this._invoker.on(EMPTY_UNDO_STACK, $.proxy(this.fire, this, EMPTY_UNDO_STACK));
         this._invoker.on(EMPTY_REDO_STACK, $.proxy(this.fire, this, EMPTY_REDO_STACK));
+    },
+
+    /**
+     * Attach canvas events
+     * @private
+     */
+    _attachCanvasEvents: function() {
+        this._canvas.on({
+            'path:created': $.proxy(this._onPathCreated, this),
+            'object:added': $.proxy(function(event) {
+                var obj = event.target;
+                var command = commandFactory.create(commands.ADD_OBJECT, obj);
+
+                this.fire(events.ADD_OBJECT, obj);
+                this._invoker.pushUndoStack(command);
+            }, this),
+            'object:removed': $.proxy(function(event) {
+                this.fire(events.REMOVE_OBJECT, event.target);
+            }, this)
+        });
+    },
+
+    /**
+     * EventListener - "path:created"
+     *  - Events:: "object:added" -> "path:created"
+     * @param {{path: fabric.Path}} obj - Path object
+     * @private
+     */
+    _onPathCreated: function(obj) {
+        var path = obj.path;
+
+        path.set({
+            rotatingPointOffset: 30,
+            borderColor: 'red',
+            transparentCorners: false,
+            cornerColor: 'green',
+            cornerSize: 6
+        });
+        this.startFreeDrawing();
     },
 
     /**
