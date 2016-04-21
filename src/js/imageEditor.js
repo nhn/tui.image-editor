@@ -60,7 +60,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             'object:added': $.proxy(function(event) {
                 var obj = event.target;
                 var command;
-                if (obj !== this._getMainComponent().getCanvasImage()) {
+                if (!tui.util.hasStamp(obj)) {
                     command = commandFactory.create(commands.ADD_OBJECT, obj);
                     this.fire(events.ADD_OBJECT, obj);
                     this._invoker.pushUndoStack(command);
@@ -333,10 +333,19 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Start free-drawing mode
+     * @param {{width: number, color: string}} setting - Brush width & color
      */
-    startFreeDrawing: function() {
+    startFreeDrawing: function(setting) {
         this.endAll();
-        this._getComponent(compList.FREE_DRAWING).start();
+        this._getComponent(compList.FREE_DRAWING).start(setting);
+    },
+
+    /**
+     * Set drawing brush
+     * @param {{width: number, color: string}} setting - Brush width & color
+     */
+    setBrush: function(setting) {
+        this._getComponent(compList.FREE_DRAWING).setBrush(setting);
     },
 
     /**

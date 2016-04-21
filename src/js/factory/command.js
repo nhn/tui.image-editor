@@ -26,20 +26,33 @@ creators[commandNames.ADD_OBJECT] = createAddObjectCommand;
  * @returns {Command}
  */
 function createAddObjectCommand(object) {
+    tui.util.stamp(object);
+
     return new Command({
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
 
             if (!canvas.contains(object)) {
                 canvas.add(object);
+                jqDefer.resolve(object);
+            } else {
+                jqDefer.reject();
             }
 
-            return $.Deferred().resolve(object);
+            return jqDefer;
         },
         undo: function(compMap) {
-            compMap[MAIN].getCanvas().remove(object);
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
 
-            return $.Deferred().resolve(object);
+            if (canvas.contains(object)) {
+                canvas.remove(object);
+            } else {
+                jqDefer.reject();
+            }
+
+            return jqDefer.resolve(object);
         }
     });
 }

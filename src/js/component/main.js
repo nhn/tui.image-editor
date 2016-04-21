@@ -55,6 +55,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @override
      */
     setCanvasImage: function(name, oImage) {
+        tui.util.stamp(oImage);
         this.imageName = name;
         this.oImage = oImage;
     },

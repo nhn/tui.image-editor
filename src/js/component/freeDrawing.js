@@ -16,20 +16,48 @@ var consts = require('../consts');
 var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
     init: function(parent) {
         this.setParent(parent);
+
+        this.width = 12;
+        this.color = 'rgba(0, 0, 0, 0.5)';
     },
 
+    /**
+     * Component name
+     * @type {string}
+     */
     name: consts.componentNames.FREE_DRAWING,
 
-    start: function() {
+    /**
+     * Start free drawing mode
+     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
+     */
+    start: function(setting) {
         var canvas = this.getCanvas();
-        var brush;
 
         canvas.isDrawingMode = true;
-        brush = canvas.freeDrawingBrush;
-        brush.width = 10;
-        brush.color = 'rgba(0, 0, 0, 0.5)';
+        this.setBrush(setting);
     },
 
+    /**
+     * Set brush
+     * @param {{width: ?number, color: ?string}} setting - Brush width & color
+     */
+    setBrush: function(setting) {
+        var brush = this.getCanvas().freeDrawingBrush;
+
+        if (!setting) {
+            return;
+        }
+
+        this.width = setting.width || this.width;
+        this.color = setting.color || this.color;
+        brush.width = this.width;
+        brush.color = this.color;
+    },
+
+    /**
+     * End free drawing mode
+     */
     end: function() {
         var canvas = this.getCanvas();
 

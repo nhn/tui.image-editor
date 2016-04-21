@@ -22,6 +22,7 @@
   "devDependencies": {
     "json2": "*",
     "html5shiv": "^3.7.3",
-    "ExplorerCanvas": "https://github.com/GerHobbelt/excanvas.git"
+    "ExplorerCanvas": "https://github.com/GerHobbelt/excanvas.git",
+    "tui-component-colorpicker": "^1.0.1"
   }
 }
