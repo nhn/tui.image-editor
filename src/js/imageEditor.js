@@ -59,10 +59,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             'path:created': $.proxy(this._onPathCreated, this),
             'object:added': $.proxy(function(event) {
                 var obj = event.target;
-                var command = commandFactory.create(commands.ADD_OBJECT, obj);
-
-                this.fire(events.ADD_OBJECT, obj);
-                this._invoker.pushUndoStack(command);
+                var command;
+                if (obj !== this._getMainComponent().getCanvasImage()) {
+                    command = commandFactory.create(commands.ADD_OBJECT, obj);
+                    this.fire(events.ADD_OBJECT, obj);
+                    this._invoker.pushUndoStack(command);
+                }
             }, this),
             'object:removed': $.proxy(function(event) {
                 this.fire(events.REMOVE_OBJECT, event.target);

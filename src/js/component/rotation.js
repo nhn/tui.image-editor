@@ -34,6 +34,11 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
 
     /**
      * Set angle of the image
+     *
+     *  Do not call "this.setImageProperties" for setting angle directly.
+     *  Before setting angle, The originX,Y of image should be set to center.
+     *      See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
+     *
      * @param {number} angle - Angle value
      * @returns {jQuery.Deferred}
      */
@@ -46,12 +51,6 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
         if (angle === current) {
             return jqDefer.reject();
         }
-
-        /**
-         * Do not call "this.setImageProperties" for setting angle directly.
-         * Before setting angle, The originX,Y of image should be set to center.
-         *  See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
-         */
         canvasImage = this.getCanvasImage();
         canvasImage.setAngle(angle).setCoords();
         this._adjustCanvasDimension();
@@ -85,7 +84,7 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      * @returns {jQuery.Deferred}
      */
     rotate: function(additionalAngle) {
-        var current = this.getCanvasImage().angle;
+        var current = this.getCurrentAngle();
 
         // The angle is lower than 2*PI(===360 degrees)
         return this.setAngle((current + additionalAngle) % 360);
