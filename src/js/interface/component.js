@@ -107,6 +107,13 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
     },
 
     /**
+     * Adjust canvas dimension with scaling image
+     */
+    adjustCanvasDimension: function() {
+        this.getRoot().adjustCanvasDimension();
+    },
+
+    /**
      * Return parent.
      * If the view is root, return null
      * @returns {Component|null}

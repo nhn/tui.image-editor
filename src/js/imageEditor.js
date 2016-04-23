@@ -88,7 +88,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             cornerColor: 'green',
             cornerSize: 6
         });
-        this.startFreeDrawing();
     },
 
     /**

@@ -4,6 +4,7 @@ var Component = require('../interface/component');
 var consts = require('../consts');
 
 var DEFAULT_MAX_WIDTH = 1000;
+var DEFAULT_MAX_HEIGHT = 700;
 
 var cssOnly = {cssOnly: true};
 var backstoreOnly = {backstoreOnly: true};
@@ -11,9 +12,12 @@ var backstoreOnly = {backstoreOnly: true};
  * Main component
  * @extends {Component}
  * @class
+ * @param {{maxWidth: number, maxHeight: number}} option - Option
  */
 var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
-    init: function() {
+    init: function(option) {
+        option = option || {};
+
         /**
          * Fabric canvas instance
          * @type {fabric.Canvas}
@@ -25,6 +29,10 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
          * @type {fabric.Image}
          */
         this.oImage = null;
+
+        this.maxWidth = DEFAULT_MAX_WIDTH || option.maxWidth;
+
+        this.maxHeight = DEFAULT_MAX_HEIGHT || option.maxHeight;
 
         /**
          * Image name
@@ -72,17 +80,46 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     },
 
     /**
+     * Adjust canvas dimension with scaling image
+     */
+    adjustCanvasDimension: function() {
+        var canvasImage = this.getCanvasImage().scale(1);
+        var boundingRect = canvasImage.getBoundingRect();
+        var width = boundingRect.width;
+        var height = boundingRect.height;
+        var wScaleFactor = this.maxWidth / width;
+        var hScaleFactor = this.maxHeight / height;
+        var maxWidth = Math.min(width, this.maxWidth);
+        var maxHeight = Math.min(height, this.maxHeight);
+
+        if (wScaleFactor < 1 && wScaleFactor < hScaleFactor) {
+            maxWidth = width * wScaleFactor;
+            maxHeight = height * wScaleFactor;
+        } else if (hScaleFactor < 1 && hScaleFactor < wScaleFactor) {
+            maxWidth = width * hScaleFactor;
+            maxHeight = height * hScaleFactor;
+        }
+
+        this.setCanvasCssDimension({
+            width: '100%',
+            height: '', // Set height '' for IE9
+            'max-width': maxWidth + 'px',
+            'max-height': maxHeight + 'px'
+        });
+        this.setCanvasBackstoreDimension({
+            width: width,
+            height: height
+        });
+        this.getCanvas().centerObject(canvasImage);
+    },
+
+    /**
      * Set canvas dimension - css only
      *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
      * @param {object} dimension - Canvas css dimension
      * @override
      */
     setCanvasCssDimension: function(dimension) {
-        var maxWidth = parseInt(dimension['max-width'], 10);
-
-        if (maxWidth) {
-            dimension['max-width'] = Math.min(maxWidth, DEFAULT_MAX_WIDTH) + 'px';
-        }
         this.canvas.setDimensions(dimension, cssOnly);
     },
 

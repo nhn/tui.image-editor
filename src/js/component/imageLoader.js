@@ -45,8 +45,8 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
             }).resolve();
         } else {
             jqDefer = this._setBackgroundImage(img).done(function(oImage) {
-                self._onSuccessImageLoad(oImage);
                 self.setCanvasImage(imageName, oImage);
+                self.adjustCanvasDimension();
             });
         }
 

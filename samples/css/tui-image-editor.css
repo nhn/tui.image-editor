@@ -1,5 +1,5 @@
 * {font-family: "NanumGothic", "Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;}
-#editor {height: 700px; max-height:700px;}
+#editor {height: 700px;}
 .tui-image-editor-menu {padding-bottom: 10px;}
 .tui-image-editor-menu .tui-image-editor-submenu {padding: 5px;}
 .tui-image-editor-hiddenmenu {display:none; margin: 10px; padding: 10px;}

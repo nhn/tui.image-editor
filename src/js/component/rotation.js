@@ -45,6 +45,7 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
     setAngle: function(angle) {
         var current = this.getCurrentAngle() % 360;
         var jqDefer = $.Deferred();
+        var canvas = this.getCanvas();
         var canvasImage;
 
         angle %= 360;
@@ -53,29 +54,12 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
         }
         canvasImage = this.getCanvasImage();
         canvasImage.setAngle(angle).setCoords();
-        this._adjustCanvasDimension();
+        canvas.getObjects().forEach(function(obj) {
+            obj.setAngle(angle).setCoords();
+        });
+        this.adjustCanvasDimension();
 
         return jqDefer.resolve(angle);
-    },
-
-    /**
-     * Adjust canvas dimension from image-rotation
-     * @private
-     */
-    _adjustCanvasDimension: function() {
-        var canvasImage = this.getCanvasImage();
-        var boundingRect = canvasImage.getBoundingRect();
-        var width = boundingRect.width;
-        var height = boundingRect.height;
-
-        this.setCanvasCssDimension({
-            'max-width': width + 'px'
-        });
-        this.setCanvasBackstoreDimension({
-            width: width,
-            height: height
-        });
-        this.getCanvas().centerObject(canvasImage);
     },
 
     /**
