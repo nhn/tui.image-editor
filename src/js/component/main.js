@@ -163,26 +163,6 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     },
 
     /**
-     * Toggle properties of the image
-     * {@link http://fabricjs.com/docs/fabric.Image.html#toggle}
-     * @param {Array.<string>} properties - Image property names
-     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
-     * @override
-     */
-    toggleImageProperties: function(properties, withRendering) {
-        var oImage = this.oImage;
-
-        if (!oImage) {
-            return;
-        }
-
-        oImage.toggle.apply(oImage, properties);
-        if (withRendering) {
-            this.canvas.renderAll();
-        }
-    },
-
-    /**
      * Returns canvas element of fabric.Canvas[[lower-canvas]]
      * @returns {HTMLCanvasElement}
      * @override
