@@ -17,7 +17,16 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
     init: function(parent) {
         this.setParent(parent);
 
+        /**
+         * Brush width
+         * @type {number}
+         */
         this.width = 12;
+
+        /**
+         * Brush color
+         * @type {string} - RGBa
+         */
         this.color = 'rgba(0, 0, 0, 0.5)';
     },
 
@@ -40,15 +49,12 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
 
     /**
      * Set brush
-     * @param {{width: ?number, color: ?string}} setting - Brush width & color
+     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
     setBrush: function(setting) {
         var brush = this.getCanvas().freeDrawingBrush;
 
-        if (!setting) {
-            return;
-        }
-
+        setting = setting || {};
         this.width = setting.width || this.width;
         this.color = setting.color || this.color;
         brush.width = this.width;

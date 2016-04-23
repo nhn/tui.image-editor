@@ -4,10 +4,11 @@ var Component = require('../interface/component');
 var consts = require('../consts');
 
 var DEFAULT_MAX_WIDTH = 1000;
-var DEFAULT_MAX_HEIGHT = 700;
+var DEFAULT_MAX_HEIGHT = 800;
 
 var cssOnly = {cssOnly: true};
 var backstoreOnly = {backstoreOnly: true};
+
 /**
  * Main component
  * @extends {Component}
@@ -30,8 +31,16 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
          */
         this.oImage = null;
 
+        /**
+         * Max width of canvas elements
+         * @type {number}
+         */
         this.maxWidth = DEFAULT_MAX_WIDTH || option.maxWidth;
 
+        /**
+         * Max height of canvas elements
+         * @type {number}
+         */
         this.maxHeight = DEFAULT_MAX_HEIGHT || option.maxHeight;
 
         /**
@@ -103,8 +112,8 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
         this.setCanvasCssDimension({
             width: '100%',
             height: '', // Set height '' for IE9
-            'max-width': maxWidth + 'px',
-            'max-height': maxHeight + 'px'
+            'max-width': Math.floor(maxWidth) + 'px',
+            'max-height': Math.floor(maxHeight) + 'px'
         });
         this.setCanvasBackstoreDimension({
             width: width,

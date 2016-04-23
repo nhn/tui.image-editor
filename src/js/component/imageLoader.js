@@ -79,27 +79,6 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
         }, imageOption);
 
         return jqDefer;
-    },
-
-    /**
-     * onSuccess callback
-     * @param {fabric.Image} oImage - Fabric image instance
-     * @private
-     */
-    _onSuccessImageLoad: function(oImage) {
-        var boundingRect = oImage.getBoundingRect();
-        var width = boundingRect.width;
-        var height = boundingRect.height;
-
-        this.setCanvasCssDimension({
-            width: '100%',
-            height: '',  // No inline-css "height" for IE9
-            'max-width': width + 'px'
-        });
-        this.setCanvasBackstoreDimension({
-            width: width,
-            height: height
-        });
     }
 });
 

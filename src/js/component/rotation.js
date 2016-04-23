@@ -43,23 +43,49 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      * @returns {jQuery.Deferred}
      */
     setAngle: function(angle) {
-        var current = this.getCurrentAngle() % 360;
+        var oldAngle = this.getCurrentAngle() % 360; //The angle is lower than 2*PI(===360 degrees)
         var jqDefer = $.Deferred();
-        var canvas = this.getCanvas();
-        var canvasImage;
+        var oldImageCenter, newImageCenter, canvasImage;
 
         angle %= 360;
-        if (angle === current) {
+        if (angle === oldAngle) {
             return jqDefer.reject();
         }
         canvasImage = this.getCanvasImage();
+
+        oldImageCenter = canvasImage.getCenterPoint();
         canvasImage.setAngle(angle).setCoords();
-        canvas.getObjects().forEach(function(obj) {
-            obj.setAngle(angle).setCoords();
-        });
         this.adjustCanvasDimension();
+        newImageCenter = canvasImage.getCenterPoint();
+        this._rotateForEachObject(oldImageCenter, newImageCenter, angle - oldAngle);
 
         return jqDefer.resolve(angle);
+    },
+
+    /**
+     * Rotate for each object
+     * @param {fabric.Point} oldImageCenter - Image center point before rotation
+     * @param {fabric.Point} newImageCenter - Image center point after rotation
+     * @param {number} angleDiff - Image angle difference after rotation
+     * @private
+     */
+    _rotateForEachObject: function(oldImageCenter, newImageCenter, angleDiff) {
+        var canvas = this.getCanvas();
+
+        canvas.forEachObject(function(obj) {
+            var objCenter = obj.getCenterPoint();
+            var radian = fabric.util.degreesToRadians(angleDiff);
+            var newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
+            var centerDiff = oldImageCenter.subtractEquals(newImageCenter);
+
+            obj.set({
+                left: newObjCenter.x - centerDiff.x,
+                top: newObjCenter.y - centerDiff.y,
+                angle: (obj.angle + angleDiff) % 360
+            });
+            obj.setCoords();
+        });
+        canvas.renderAll();
     },
 
     /**
@@ -70,8 +96,7 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
     rotate: function(additionalAngle) {
         var current = this.getCurrentAngle();
 
-        // The angle is lower than 2*PI(===360 degrees)
-        return this.setAngle((current + additionalAngle) % 360);
+        return this.setAngle(current + additionalAngle);
     }
 });
 
