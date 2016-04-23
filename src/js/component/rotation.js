@@ -71,12 +71,15 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      */
     _rotateForEachObject: function(oldImageCenter, newImageCenter, angleDiff) {
         var canvas = this.getCanvas();
+        var centerDiff = {
+            x: oldImageCenter.x - newImageCenter.x,
+            y: oldImageCenter.y - newImageCenter.y
+        };
 
         canvas.forEachObject(function(obj) {
             var objCenter = obj.getCenterPoint();
             var radian = fabric.util.degreesToRadians(angleDiff);
             var newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
-            var centerDiff = oldImageCenter.subtractEquals(newImageCenter);
 
             obj.set({
                 left: newObjCenter.x - centerDiff.x,

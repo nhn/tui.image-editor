@@ -74,15 +74,6 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
     },
 
     /**
-     * Toggle properties of the image
-     * @param {Array.<string>} properties - Image property names
-     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
-     */
-    toggleImageProperties: function(properties, withRendering) {
-        this.getRoot().toggleImageProperties(properties, withRendering);
-    },
-
-    /**
      * Set canvas dimension - css only
      * @param {object} dimension - Canvas css dimension
      */
