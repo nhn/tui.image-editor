@@ -337,6 +337,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     startFreeDrawing: function(setting) {
         this.endAll();
         this._getComponent(compList.FREE_DRAWING).start(setting);
+        this.fire(events.START_FREE_DRAWING);
     },
 
     /**
@@ -352,6 +353,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     endFreeDrawing: function() {
         this._getComponent(compList.FREE_DRAWING).end();
+        this.fire(events.END_FREE_DRAWING);
     },
 
     /**

@@ -30,6 +30,8 @@ module.exports = {
         ROTATE_IMAGE: 'rotateImage',
         ADD_OBJECT: 'addObject',
         REMOVE_OBJECT: 'removeObject',
+        START_FREE_DRAWING: 'startFreeDrawing',
+        END_FREE_DRAWING: 'endFreeDrawing',
         EMPTY_REDO_STACK: 'emptyRedoStack',
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',

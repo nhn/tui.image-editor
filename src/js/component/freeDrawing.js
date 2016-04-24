@@ -6,6 +6,7 @@
 
 var Component = require('../interface/Component');
 var consts = require('../consts');
+// var rColorValues = /(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(0.\d+|1)/;
 
 /**
  * FreeDrawing

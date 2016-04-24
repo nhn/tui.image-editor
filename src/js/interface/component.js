@@ -118,10 +118,8 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
      * @returns {Component}
      */
     getRoot: function() {
-        var next = this.getParent(),
-        /* eslint-disable consistent-this */
-            current = this;
-        /* eslint-enable consistent-this */
+        var next = this.getParent();
+        var current = this; // eslint-disable-line consistent-this
 
         while (next) {
             current = next;
