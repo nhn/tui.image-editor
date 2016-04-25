@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Default</title>
-    <link href="css/colorpicker.css" rel="stylesheet" type="text/css">
+    <link href="css/colorpicker.min.css" rel="stylesheet" type="text/css">
     <link href="css/tui-image-editor.css" rel="stylesheet" type="text/css">
     <!--[If lt IE 9]>
         <script type="text/javascript" src="libs/html5shiv-printshiv.min.js"></script>
@@ -18,6 +18,7 @@
             Undo/Redo/ClearObjects
             <button id="btn-undo" class="tui-image-editor-button">Undo</button>
             <button id="btn-redo" disabled class="tui-image-editor-button">Redo</button>
+            <button id="btn-removeActiveObject" class="tui-image-editor-button">RemoveActiveObject</button>
             <button id="btn-clearObjects" class="tui-image-editor-button">ClearObjects</button>
         </div>
 
@@ -66,7 +67,7 @@
     <script type="text/javascript" src="libs/jquery.min.js"></script>
     <script type="text/javascript" src="libs/code-snippet.js"></script>
     <script type="text/javascript" src="libs/file-uploader.min.js"></script>
-    <script type="text/javascript" src="libs/colorpicker.js"></script>
+    <script type="text/javascript" src="libs/colorpicker.min.js"></script>
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
         // image editor
@@ -82,6 +83,7 @@
 
         var $undoBtn = $('#btn-undo');
         var $redoBtn = $('#btn-redo');
+        var $removeActiveObjectBtn = $('#btn-removeActiveObject');
         var $clearObjects = $('#btn-clearObjects');
 
         var $flipXBtn = $('#btn-flipX');
@@ -137,8 +139,8 @@
         }, $('#uploader'));
 
         uploader.on('success', function(data) {
-            var fileInfo = data.filelist[0],
-                    filename = fileInfo.name;
+            var fileInfo = data.filelist[0];
+            var filename = fileInfo.name;
 
             imageEditor.loadImageFromURL(filename, fileInfo.path);
         });
@@ -176,16 +178,6 @@
             $colorpickerContainer.hide();
         });
 
-//        imageEditor.on(eventNames.FLIP_IMAGE, function(flipSetting, angle) {
-//            console.log(flipSetting, angle);
-//        });
-//        imageEditor.on(eventNames.ADD_OBJECT, function(obj) {
-//            console.log(obj);
-//        });
-//        imageEditor.on(eventNames.REMOVE_OBJECT, function(obj) {
-//            console.log(obj);
-//        });
-
         /**
          * Set event listeners
          */
@@ -203,6 +195,9 @@
         });
         $redoBtn.on('click', function() {
             imageEditor.redo()
+        });
+        $removeActiveObjectBtn.on('click', function() {
+            imageEditor.removeActiveObject();
         });
         $clearObjects.on('click', function() {
             imageEditor.clear();
@@ -241,7 +236,6 @@
         $endFreeDrawingBtn.on('click', function() {
             imageEditor.endFreeDrawing();
         });
-
 
         $rotationRangeInput.on('mousedown', function() {
             var changeAngle = function() {

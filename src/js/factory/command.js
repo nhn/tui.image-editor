@@ -20,6 +20,7 @@ creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
 creators[commandNames.ROTATE_IMAGE] = createRotationImageCommand;
 creators[commandNames.CLEAR_OBJECTS] = createClearCommand;
 creators[commandNames.ADD_OBJECT] = createAddObjectCommand;
+creators[commandNames.REMOVE_OBJECT] = createRemoveCommand;
 
 /**
  * @param {fabric.Object} object - Fabric object
@@ -135,6 +136,7 @@ function createRotationImageCommand(type, angle) {
 }
 
 /**
+ * Clear command
  * @returns {Command}
  */
 function createClearCommand() {
@@ -158,6 +160,35 @@ function createClearCommand() {
             var canvas = compMap[MAIN].getCanvas();
 
             canvas.add.apply(canvas, this.store);
+        }
+    });
+}
+
+/**
+ * Remove command
+ * @param {fabric.Object} obj - Object to remove
+ * @returns {Command}
+ */
+function createRemoveCommand(obj) {
+    return new Command({
+        execute: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
+
+            if (canvas.contains(obj)) {
+                this.store = obj;
+                obj.remove();
+                jqDefer.resolve();
+            } else {
+                jqDefer.reject();
+            }
+
+            return jqDefer;
+        },
+        undo: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+
+            canvas.add(this.store);
         }
     });
 }

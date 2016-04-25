@@ -62,11 +62,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             'object:added': $.proxy(function(event) {
                 var obj = event.target;
                 var command;
+                command = commandFactory.create(commands.ADD_OBJECT, obj);
                 if (!tui.util.hasStamp(obj)) {
-                    command = commandFactory.create(commands.ADD_OBJECT, obj);
-                    this.fire(events.ADD_OBJECT, obj);
                     this._invoker.pushUndoStack(command);
                 }
+                this.fire(events.ADD_OBJECT, obj);
             }, this),
             'object:removed': $.proxy(function(event) {
                 this.fire(events.REMOVE_OBJECT, event.target);
@@ -362,6 +362,16 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     endFreeDrawing: function() {
         this._getComponent(compList.FREE_DRAWING).end();
         this.fire(events.END_FREE_DRAWING);
+    },
+
+    /**
+     * Remove active object
+     */
+    removeActiveObject: function() {
+        var obj = this._canvas.getActiveObject();
+        var command = commandFactory.create(commands.REMOVE_OBJECT, obj);
+
+        this.execute(command);
     },
 
     /**

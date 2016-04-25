@@ -17,7 +17,8 @@ module.exports = {
         'LOAD_IMAGE',
         'FLIP_IMAGE',
         'ROTATE_IMAGE',
-        'ADD_OBJECT'
+        'ADD_OBJECT',
+        'REMOVE_OBJECT'
     ),
 
     eventNames: {
