@@ -102,7 +102,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
         var boundingRect = canvasImage.getBoundingRect();
         var width = boundingRect.width;
         var height = boundingRect.height;
-        var maxDimension = this._getMaxDimension(width, height);
+        var maxDimension = this._calcMaxDimension(width, height);
 
         this.setCanvasCssDimension({
             width: '100%',
@@ -124,7 +124,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @returns {{width: number, height: number}} - Max width & Max height
      * @private
      */
-    _getMaxDimension: function(width, height) {
+    _calcMaxDimension: function(width, height) {
         var wScaleFactor = this.cssMaxWidth / width;
         var hScaleFactor = this.cssMaxHeight / height;
         var cssMaxWidth = Math.min(width, this.cssMaxWidth);

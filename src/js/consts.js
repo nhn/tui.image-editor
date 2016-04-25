@@ -37,7 +37,5 @@ module.exports = {
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',
         PUSH_REDO_STACK: 'pushRedoStack'
-    },
-
-    IS_SUPPORT_FILE_API: !!(window.File && window.FileList && window.FileReader)
+    }
 };
