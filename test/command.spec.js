@@ -46,7 +46,7 @@ describe('commandFactory', function() {
         });
     });
 
-    describe('createLoadImageCommand', function() {
+    describe('loadImageCommand', function() {
         var imageURL, command;
 
         beforeEach(function() {
@@ -96,6 +96,57 @@ describe('commandFactory', function() {
                 expect(mainComponent.getImageName()).toEqual('image');
                 expect(mainComponent.getCanvasImage().getSrc()).toContain(imageURL);
             }).done(done);
+        });
+    });
+
+    describe('flipImageCommand', function() {
+        it('flipX', function() {
+            var originFlipX = mockImage.flipX;
+            var command = commandFactory.create(commands.FLIP_IMAGE, 'flipX');
+
+            invoker.invoke(command);
+
+            expect(mockImage.flipX).toBe(!originFlipX);
+        });
+
+        it('flipY', function() {
+            var originFlipY = mockImage.flipY;
+            var command = commandFactory.create(commands.FLIP_IMAGE, 'flipY');
+
+            invoker.invoke(command);
+
+            expect(mockImage.flipY).toBe(!originFlipY);
+        });
+
+        it('resetFlip', function() {
+            var command = commandFactory.create(commands.FLIP_IMAGE, 'reset');
+            mockImage.flipX = true;
+            mockImage.flipY = true;
+
+            invoker.invoke(command);
+
+            expect(mockImage.flipX).toBe(false);
+            expect(mockImage.flipY).toBe(false);
+        });
+
+        it('"undo()" should restore flipXY', function() {
+            var originFlipX = mockImage.flipX;
+            var originFlipY = mockImage.flipY;
+            var command = commandFactory.create(commands.FLIP_IMAGE, 'flipX');
+
+            invoker.invoke(command);
+            invoker.undo();
+
+            expect(mockImage.flipX).toBe(originFlipX);
+            expect(mockImage.flipY).toBe(originFlipY);
+
+            command = commandFactory.create(commands.FLIP_IMAGE, 'flipY');
+
+            invoker.invoke(command);
+            invoker.undo();
+
+            expect(mockImage.flipX).toBe(originFlipX);
+            expect(mockImage.flipY).toBe(originFlipY);
         });
     });
 });
