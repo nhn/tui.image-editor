@@ -12,9 +12,11 @@ var compList = consts.componentNames;
  * Image editor
  * @class
  * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
+ * @param {{cssMaxWidth: number, cssMaxHeight: number}} [option] - Canvas max width & height
  */
 var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
-    init: function(canvasElement) {
+    init: function(canvasElement, option) {
+        option = option || {};
         /**
          * Invoker
          * @private
@@ -29,7 +31,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          */
         this._canvas = null;
 
-        this._setCanvas(canvasElement);
+        this._setCanvas(canvasElement, option.cssMaxWidth, option.cssMaxHeight);
         this._attachInvokerEvents();
         this._attachCanvasEvents();
     },
@@ -93,13 +95,19 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Set canvas element
      * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
+     * @param {number} cssMaxWidth - Canvas css max width
+     * @param {number} cssMaxHeight - Canvas css max height
      * @private
      */
-    _setCanvas: function(canvasElement) {
+    _setCanvas: function(canvasElement, cssMaxWidth, cssMaxHeight) {
         var mainComponent;
 
         mainComponent = this._getMainComponent();
         mainComponent.setCanvasElement(canvasElement);
+        mainComponent.setCssMaxDimension({
+            width: cssMaxWidth,
+            height: cssMaxHeight
+        });
         this._canvas = mainComponent.getCanvas();
     },
 

@@ -6,7 +6,6 @@
 
 var Component = require('../interface/Component');
 var consts = require('../consts');
-// var rColorValues = /(\d{1,3}),\s*(\d{1,3}),\s*(\d{1,3}),\s*(0.\d+|1)/;
 
 /**
  * FreeDrawing
@@ -25,10 +24,10 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         this.width = 12;
 
         /**
-         * Brush color
-         * @type {string} - RGBa
+         * fabric.Color instance for brush color
+         * @type {fabric.Color}
          */
-        this.color = 'rgba(0, 0, 0, 0.5)';
+        this.oColor = new fabric.Color('rgba(0, 0, 0, 0.5)');
     },
 
     /**
@@ -57,9 +56,11 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
 
         setting = setting || {};
         this.width = setting.width || this.width;
-        this.color = setting.color || this.color;
+        if (setting.color) {
+            this.oColor = new fabric.Color(setting.color);
+        }
         brush.width = this.width;
-        brush.color = this.color;
+        brush.color = this.oColor.toRgba();
     },
 
     /**

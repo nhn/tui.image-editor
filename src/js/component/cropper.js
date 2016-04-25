@@ -67,7 +67,10 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         if (this._cropzone) {
             return;
         }
-
+        canvas = this.getCanvas();
+        canvas.forEachObject(function(obj) { // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
+            obj.evented = false;
+        });
         this._cropzone = new Cropzone({
             left: -10,
             top: -10,
@@ -82,10 +85,10 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
             lockScalingFlip: true,
             lockRotation: true
         });
-        canvas = this.getCanvas();
         canvas.deactivateAll();
         canvas.add(this._cropzone);
         canvas.on('mouse:down', this._listeners.mousedown);
+        canvas.selection = false;
         canvas.defaultCursor = 'crosshair';
     },
 
@@ -102,12 +105,13 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         if (!cropzone) {
             return null;
         }
+        cropzone.remove();
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        canvas.discardActiveObject();
         canvas.off('mouse:down', this._listeners.mousedown);
-
-        cropzone.remove();
+        canvas.forEachObject(function(obj) {
+            obj.evented = true;
+        });
         if (isApplying) {
             data = this._getCroppedImageData();
         }

@@ -3,8 +3,8 @@
 var Component = require('../interface/component');
 var consts = require('../consts');
 
-var DEFAULT_MAX_WIDTH = 1000;
-var DEFAULT_MAX_HEIGHT = 800;
+var DEFAULT_CSS_MAX_WIDTH = 1000;
+var DEFAULT_CSS_MAX_HEIGHT = 800;
 
 var cssOnly = {cssOnly: true};
 var backstoreOnly = {backstoreOnly: true};
@@ -13,12 +13,9 @@ var backstoreOnly = {backstoreOnly: true};
  * Main component
  * @extends {Component}
  * @class
- * @param {{maxWidth: number, maxHeight: number}} option - Option
  */
 var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
-    init: function(option) {
-        option = option || {};
-
+    init: function() {
         /**
          * Fabric canvas instance
          * @type {fabric.Canvas}
@@ -29,19 +26,19 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
          * Fabric image instance
          * @type {fabric.Image}
          */
-        this.oImage = null;
+        this.canvasImage = null;
 
         /**
          * Max width of canvas elements
          * @type {number}
          */
-        this.maxWidth = DEFAULT_MAX_WIDTH || option.maxWidth;
+        this.cssMaxWidth = DEFAULT_CSS_MAX_WIDTH;
 
         /**
          * Max height of canvas elements
          * @type {number}
          */
-        this.maxHeight = DEFAULT_MAX_HEIGHT || option.maxHeight;
+        this.cssMaxHeight = DEFAULT_CSS_MAX_HEIGHT;
 
         /**
          * Image name
@@ -68,13 +65,22 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     /**
      * Save image(background) of canvas
      * @param {string} name - Name of image
-     * @param {fabric.Image} oImage - Fabric image instance
+     * @param {fabric.Image} canvasImage - Fabric image instance
      * @override
      */
-    setCanvasImage: function(name, oImage) {
-        tui.util.stamp(oImage);
+    setCanvasImage: function(name, canvasImage) {
+        tui.util.stamp(canvasImage);
         this.imageName = name;
-        this.oImage = oImage;
+        this.canvasImage = canvasImage;
+    },
+
+    /**
+     * Set css max dimension
+     * @param {{width: number, height: number}} maxDimension - Max width & Max height
+     */
+    setCssMaxDimension: function(maxDimension) {
+        this.cssMaxWidth = maxDimension.width || this.cssMaxWidth;
+        this.cssMaxHeight = maxDimension.height || this.cssMaxHeight;
     },
 
     /**
@@ -92,34 +98,50 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * Adjust canvas dimension with scaling image
      */
     adjustCanvasDimension: function() {
-        var canvasImage = this.getCanvasImage().scale(1);
+        var canvasImage = this.canvasImage.scale(1);
         var boundingRect = canvasImage.getBoundingRect();
         var width = boundingRect.width;
         var height = boundingRect.height;
-        var wScaleFactor = this.maxWidth / width;
-        var hScaleFactor = this.maxHeight / height;
-        var maxWidth = Math.min(width, this.maxWidth);
-        var maxHeight = Math.min(height, this.maxHeight);
-
-        if (wScaleFactor < 1 && wScaleFactor < hScaleFactor) {
-            maxWidth = width * wScaleFactor;
-            maxHeight = height * wScaleFactor;
-        } else if (hScaleFactor < 1 && hScaleFactor < wScaleFactor) {
-            maxWidth = width * hScaleFactor;
-            maxHeight = height * hScaleFactor;
-        }
+        var maxDimension = this._getMaxDimension(width, height);
 
         this.setCanvasCssDimension({
             width: '100%',
             height: '', // Set height '' for IE9
-            'max-width': Math.floor(maxWidth) + 'px',
-            'max-height': Math.floor(maxHeight) + 'px'
+            'max-width': maxDimension.width + 'px',
+            'max-height': maxDimension.height + 'px'
         });
         this.setCanvasBackstoreDimension({
             width: width,
             height: height
         });
-        this.getCanvas().centerObject(canvasImage);
+        this.canvas.centerObject(canvasImage);
+    },
+
+    /**
+     * Get max dimension of canvas
+     * @param {number} width - Canvas width
+     * @param {number} height - Canvas height
+     * @returns {{width: number, height: number}} - Max width & Max height
+     * @private
+     */
+    _getMaxDimension: function(width, height) {
+        var wScaleFactor = this.cssMaxWidth / width;
+        var hScaleFactor = this.cssMaxHeight / height;
+        var cssMaxWidth = Math.min(width, this.cssMaxWidth);
+        var cssMaxHeight = Math.min(height, this.cssMaxHeight);
+
+        if (wScaleFactor < 1 && wScaleFactor < hScaleFactor) {
+            cssMaxWidth = width * wScaleFactor;
+            cssMaxHeight = height * wScaleFactor;
+        } else if (hScaleFactor < 1 && hScaleFactor < wScaleFactor) {
+            cssMaxWidth = width * hScaleFactor;
+            cssMaxHeight = height * hScaleFactor;
+        }
+
+        return {
+            width: Math.floor(cssMaxWidth),
+            height: Math.floor(cssMaxHeight)
+        };
     },
 
     /**
@@ -150,13 +172,13 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @override
      */
     setImageProperties: function(setting, withRendering) {
-        var oImage = this.oImage;
+        var canvasImage = this.canvasImage;
 
-        if (!oImage) {
+        if (!canvasImage) {
             return;
         }
 
-        oImage.set(setting).setCoords();
+        canvasImage.set(setting).setCoords();
         if (withRendering) {
             this.canvas.renderAll();
         }
@@ -186,7 +208,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @returns {fabric.Image}
      */
     getCanvasImage: function() {
-        return this.oImage;
+        return this.canvasImage;
     },
 
     /**
