@@ -65,11 +65,13 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     /**
      * Save image(background) of canvas
      * @param {string} name - Name of image
-     * @param {fabric.Image} canvasImage - Fabric image instance
+     * @param {?fabric.Image} canvasImage - Fabric image instance
      * @override
      */
     setCanvasImage: function(name, canvasImage) {
-        tui.util.stamp(canvasImage);
+        if (canvasImage) {
+            tui.util.stamp(canvasImage);
+        }
         this.imageName = name;
         this.canvasImage = canvasImage;
     },

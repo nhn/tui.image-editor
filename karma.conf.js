@@ -12,7 +12,19 @@ module.exports = function(config) {
             'bower_components/tui-code-snippet/code-snippet.min.js',
             'bower_components/fabric.js/dist/fabric.js',
             'src/js/**/*.js',
-            'test/**/*.spec.js'
+            'test/**/*.spec.js',
+            {
+                pattern: 'test/fixtures/*.jpg',
+                watched: false,
+                included: false,
+                served: true
+            },
+            {
+                pattern: 'test/fixtures/*.png',
+                watched: false,
+                included: false,
+                served: true
+            }
         ],
 
         exclude: [

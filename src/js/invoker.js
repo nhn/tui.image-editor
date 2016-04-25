@@ -48,19 +48,6 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
          */
         this._isLocked = false;
 
-        /**
-         * Bound method to lock
-         * @type {Function}
-         */
-        this.lock = $.proxy(this.lock, this);
-
-        /**
-         * Bound method to unlock
-         * @type {Function}
-         */
-        this.unlock = $.proxy(this.unlock, this);
-
-
         this._createComponents();
     },
 
@@ -97,12 +84,16 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
     _invokeExecution: function(command) {
         var self = this;
 
-        return $.when(this.lock, command.execute(this._componentMap))
+        this.lock();
+
+        return $.when(command.execute(this._componentMap))
             .done(function() {
                 self.pushUndoStack(command);
             })
             .done(command.executeCallback)
-            .always(this.unlock);
+            .always(function() {
+                self.unlock();
+            });
     },
 
     /**
@@ -114,12 +105,16 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
     _invokeUndo: function(command) {
         var self = this;
 
-        return $.when(this.lock, command.undo(this._componentMap))
+        this.lock();
+
+        return $.when(command.undo(this._componentMap))
             .done(function() {
                 self.pushRedoStack(command);
             })
             .done(command.undoCallback)
-            .always(this.unlock);
+            .always(function() {
+                self.unlock();
+            });
     },
 
     /**

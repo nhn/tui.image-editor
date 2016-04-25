@@ -60,10 +60,10 @@ function createAddObjectCommand(object) {
 
 /**
  * @param {string} imageName - Image name
- * @param {string} url - Image url
+ * @param {string|fabric.Image} img - Image(or url)
  * @returns {Command}
  */
-function createLoadImageCommand(imageName, url) {
+function createLoadImageCommand(imageName, img) {
     return new Command({
         execute: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
@@ -77,7 +77,7 @@ function createLoadImageCommand(imageName, url) {
             };
             canvas.clear();
 
-            return loader.load(imageName, url);
+            return loader.load(imageName, img);
         },
         undo: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
