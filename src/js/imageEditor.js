@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Image-editor application class
+ */
 'use strict';
 
 var Invoker = require('./invoker');

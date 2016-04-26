@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Image crop module (start cropping, end cropping)
+ */
 'use strict';
 var Component = require('../interface/component');
 var Cropzone = require('../extension/cropzone');

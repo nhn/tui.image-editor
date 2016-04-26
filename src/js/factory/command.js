@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Command factory
+ */
 'use strict';
 
 var Command = require('../interface/command');

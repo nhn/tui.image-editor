@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Cropzone extending fabric.Rect
+ */
 'use strict';
 
 var clamp = require('../util').clamp;

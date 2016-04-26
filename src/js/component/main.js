@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Main component having canvas & image, set css-max-dimension of canvas
+ */
 'use strict';
 
 var Component = require('../interface/component');
