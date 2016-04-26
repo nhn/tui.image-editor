@@ -49,11 +49,12 @@ function createAddObjectCommand(object) {
 
             if (canvas.contains(object)) {
                 canvas.remove(object);
+                jqDefer.resolve(object);
             } else {
                 jqDefer.reject();
             }
 
-            return jqDefer.resolve(object);
+            return jqDefer;
         }
     });
 }

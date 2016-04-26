@@ -149,4 +149,95 @@ describe('commandFactory', function() {
             expect(mockImage.flipY).toBe(originFlipY);
         });
     });
+
+    describe('rotationImageCommand', function() {
+        it('"rotate()" should add angle', function() {
+            var originAngle = mockImage.angle;
+            var command = commandFactory.create(commands.ROTATE_IMAGE, 'rotate', 10);
+
+            invoker.invoke(command);
+
+            expect(mockImage.angle).toBe(originAngle + 10);
+        });
+
+        it('"setAngle()" should set angle', function() {
+            var command = commandFactory.create(commands.ROTATE_IMAGE, 'setAngle', 30);
+
+            mockImage.angle = 100;
+            invoker.invoke(command);
+
+            expect(mockImage.angle).toBe(30);
+        });
+
+        it('"undo()" should restore angle', function() {
+            var originalAngle = mockImage.angle;
+            var command = commandFactory.create(commands.ROTATE_IMAGE, 'setAngle', 100);
+
+            invoker.invoke(command);
+            invoker.undo();
+
+            expect(mockImage.angle).toBe(originalAngle);
+        });
+    });
+
+    describe('clearCommand', function() {
+        var command, objects;
+
+        beforeEach(function() {
+            command = commandFactory.create(commands.CLEAR_OBJECTS);
+            objects = [
+                new fabric.Object(),
+                new fabric.Object(),
+                new fabric.Object()
+            ];
+        });
+
+        it('should clear all objects', function() {
+            canvas.add.apply(canvas, objects);
+
+            expect(canvas.contains(objects[0])).toBe(true);
+            expect(canvas.contains(objects[1])).toBe(true);
+            expect(canvas.contains(objects[2])).toBe(true);
+
+            invoker.invoke(command);
+
+            expect(canvas.contains(objects[0])).toBe(false);
+            expect(canvas.contains(objects[1])).toBe(false);
+            expect(canvas.contains(objects[2])).toBe(false);
+        });
+
+        it('"undo()" restore all objects', function() {
+            canvas.add.apply(canvas, objects);
+            invoker.invoke(command);
+            invoker.undo();
+
+            expect(canvas.contains(objects[0])).toBe(true);
+            expect(canvas.contains(objects[1])).toBe(true);
+            expect(canvas.contains(objects[2])).toBe(true);
+        });
+    });
+
+    describe('removeCommand', function() {
+        var object, command;
+
+        beforeEach(function() {
+            object = new fabric.Object();
+            command = commandFactory.create(commands.REMOVE_OBJECT, object);
+        });
+
+        it('should remove an object', function() {
+            canvas.add(object);
+            invoker.invoke(command);
+
+            expect(canvas.contains(object)).toBe(false);
+        });
+
+        it('"undo()" should restore the removed object', function() {
+            canvas.add(object);
+            invoker.invoke(command);
+            invoker.undo();
+
+            expect(canvas.contains(object)).toBe(true);
+        });
+    });
 });
