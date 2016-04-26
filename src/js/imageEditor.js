@@ -116,14 +116,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * Return event names
-     * @returns {Object}
-     */
-    getEventNames: function() {
-        return tui.util.extend({}, events);
-    },
-
-    /**
      * Returns main component
      * @returns {Component} Main component
      * @private
@@ -144,6 +136,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Clear all objects
+     * @api
+     * @example
+     * imageEditor.clear();
      */
     clear: function() {
         var command = commandFactory.create(commands.CLEAR_OBJECTS);
@@ -154,7 +149,14 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * End current action
+     * End current action & Deactivate
+     * @api
+     * @example
+     * imageEditor.startFreeDrawing();
+     * imageEidtor.endAll(); // === imageEidtor.endFreeDrawing();
+     *
+     * imageEditor.startCropping();
+     * imageEditor.endAll(); // === imageEidtor.endCropping();
      */
     endAll: function() {
         this.endFreeDrawing();
@@ -164,6 +166,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Deactivate all objects
+     * @api
+     * @example
+     * imageEditor.deactivateAll();
      */
     deactivateAll: function() {
         this._canvas.deactivateAll();
@@ -180,6 +185,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Undo
+     * @api
+     * @example
+     * imageEditor.undo();
      */
     undo: function() {
         this.endAll();
@@ -188,6 +196,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Redo
+     * @api
+     * @example
+     * imageEditor.redo();
      */
     redo: function() {
         this.endAll();
@@ -196,7 +207,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Load image from file
+     * @api
      * @param {File} imgFile - Image file
+     * @example
+     * imageEditor.loadImageFromFile(file);
      */
     loadImageFromFile: function(imgFile) {
         if (!imgFile) {
@@ -211,8 +225,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Load image from url
+     * @api
      * @param {string} imageName - imageName
      * @param {string} url - File url
+     * @example
+     * imageEditor.loadImageFromURL('lena', 'http://url/testImage.png')
      */
     loadImageFromURL: function(imageName, url) {
         var self = this;
@@ -239,6 +256,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Callback after image loading
      * @param {?fabric.Image} oImage - Image instance
+     * @private
      */
     _callbackAfterImageLoading: function(oImage) {
         var mainComponent = this._getMainComponent();
@@ -254,6 +272,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Start cropping
+     * @api
+     * @example
+     * imageEditor.startCropping();
      */
     startCropping: function() {
         var cropper = this._getComponent(compList.CROPPER);
@@ -265,7 +286,14 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Apply cropping
+     * @api
      * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
+     * @example
+     * imageEditor.startCropping();
+     * imageEditor.endCropping(false); // cancel cropping
+     *
+     * imageEditor.startCropping();
+     * imageEditor.endCropping(true); // apply cropping
      */
     endCropping: function(isApplying) {
         var cropper = this._getComponent(compList.CROPPER);
@@ -293,6 +321,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Flip x
+     * @api
+     * @example
+     * imageEditor.flipX();
      */
     flipX: function() {
         this._flip('flipX');
@@ -300,6 +331,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Flip y
+     * @api
+     * @example
+     * imageEditor.flipY();
      */
     flipY: function() {
         this._flip('flipY');
@@ -307,6 +341,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Reset flip
+     * @api
+     * @example
+     * imageEditor.resetFlip();
      */
     resetFlip: function() {
         this._flip('reset');
@@ -328,7 +365,13 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Rotate image
+     * @api
      * @param {number} angle - Additional angle to rotate image
+     * @example
+     * imageEditor.setAngle(10); // angle = 10
+     * imageEditor.rotate(10); // angle = 20
+     * imageEidtor.setAngle(5); // angle = 5
+     * imageEidtor.rotate(-95); // angle = -90
      */
     rotate: function(angle) {
         this._rotate('rotate', angle);
@@ -336,7 +379,14 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Set angle
+     * @api
      * @param {number} angle - Angle of image
+     * @example
+     * imageEditor.setAngle(10); // angle = 10
+     * imageEditor.rotate(10); // angle = 20
+     * imageEidtor.setAngle(5); // angle = 5
+     * imageEidtor.rotate(50); // angle = 55
+     * imageEidtor.setAngle(-40); // angle = -40
      */
     setAngle: function(angle) {
         this._rotate('setAngle', angle);
@@ -344,7 +394,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Start free-drawing mode
-     * @param {{width: number, color: string}} setting - Brush width & color
+     * @param {{width: number, color: string}} [setting] - Brush width & color
+     * @api
+     * @example
+     * imageEditor.startFreeDrawing();
+     * imageEditor.endFreeDarwing();
+     * imageEidtor.startFreeDrawing({
+     *     width: 12,
+     *     color: 'rgba(0, 0, 0, 0.5)'
+     * });
      */
     startFreeDrawing: function(setting) {
         this.endAll();
@@ -355,6 +413,17 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Set drawing brush
      * @param {{width: number, color: string}} setting - Brush width & color
+     * @api
+     * @example
+     * imageEditor.startFreeDrawing();
+     * imageEditor.setBrush({
+     *     width: 12,
+     *     color: 'rgba(0, 0, 0, 0.5)'
+     * });
+     * imageEditor.setBrush({
+     *     width: 8,
+     *     color: 'FFFFFF'
+     * });
      */
     setBrush: function(setting) {
         this._getComponent(compList.FREE_DRAWING).setBrush(setting);
@@ -362,6 +431,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * End free-drawing mode
+     * @api
+     * @example
+     * imageEditor.startFreeDrawing();
+     * imageEditor.endFreeDrawing();
      */
     endFreeDrawing: function() {
         this._getComponent(compList.FREE_DRAWING).end();
@@ -370,6 +443,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Remove active object
+     * @api
+     * @example
+     * imageEditor.removeActiveObject();
      */
     removeActiveObject: function() {
         var obj = this._canvas.getActiveObject();
@@ -380,8 +456,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Get data url
+     * @api
      * @param {string} type - A DOMString indicating the image format. The default type is image/png.
-     * @returns {string} A DOMString containing the requested data URI.
+     * @returns {string} A DOMString containing the requested data URI
+     * @example
+     * imgEl.src = imageEditor.toDataURL();
      */
     toDataURL: function(type) {
         return this._getMainComponent().toDataURL(type);
@@ -389,7 +468,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Get image name
-     * @returns {string}
+     * @api
+     * @returns {string} image name
+     * @example
+     * console.log(imageEditor.getImageName());
      */
     getImageName: function() {
         return this._getMainComponent().getImageName();
@@ -397,6 +479,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Clear undoStack
+     * @api
+     * @example
+     * imageEditor.clearUndoStack();
      */
     clearUndoStack: function() {
         this._invoker.clearUndoStack();
@@ -404,6 +489,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Clear redoStack
+     * @api
+     * @example
+     * imageEditor.clearRedoStack();
      */
     clearRedoStack: function() {
         this._invoker.clearRedoStack();

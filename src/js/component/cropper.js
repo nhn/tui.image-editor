@@ -45,8 +45,8 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         this._startY = null;
 
         /**
-         * listeners
-         * @type {object.<string, function>} Handler hash for fabric canvas
+         * Listeners
+         * @type {object.<string, function>}
          * @private
          */
         this._listeners = {

@@ -72,7 +72,6 @@
     <script type="text/javascript">
         // image editor
         var imageEditor = new tui.component.ImageEditor('#editor canvas');
-        var eventNames = imageEditor.getEventNames();
 
         // inputs
         var $rotationRangeInput =$('#rotation-range-input');
@@ -150,31 +149,31 @@
          */
         imageEditor.loadImageFromURL('NHN Ent 01.png', './img/NHN Ent 01.png');
 
-        imageEditor.once(eventNames.LOAD_IMAGE, function() {
+        imageEditor.once('loadImage', function() {
             imageEditor.clearUndoStack();
         });
-        imageEditor.on(eventNames.START_CROPPING, function() {
+        imageEditor.on('startCropping', function() {
             $cropSubMenu.show();
         });
-        imageEditor.on(eventNames.END_CROPPING, function() {
+        imageEditor.on('endCropping', function() {
             $cropSubMenu.hide();
         });
-        imageEditor.on(eventNames.EMPTY_UNDO_STACK, function() {
+        imageEditor.on('emptyUndoStack', function() {
             $undoBtn.attr('disabled', true);
         });
-        imageEditor.on(eventNames.PUSH_UNDO_STACK, function() {
+        imageEditor.on('pushUndoStack', function() {
             $undoBtn.attr('disabled', false);
         });
-        imageEditor.on(eventNames.EMPTY_REDO_STACK, function() {
+        imageEditor.on('emptyRedoStack', function() {
             $redoBtn.attr('disabled', true);
         });
-        imageEditor.on(eventNames.PUSH_REDO_STACK, function() {
+        imageEditor.on('pushRedoStack', function() {
             $redoBtn.attr('disabled', false);
         });
-        imageEditor.on(eventNames.START_FREE_DRAWING, function() {
+        imageEditor.on('startFreeDrawing', function() {
             $colorpickerContainer.show();
         });
-        imageEditor.on(eventNames.END_FREE_DRAWING, function() {
+        imageEditor.on('endFreeDrawing', function() {
             $colorpickerContainer.hide();
         });
 
