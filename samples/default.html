@@ -5,12 +5,6 @@
     <title>Default</title>
     <link href="css/colorpicker.min.css" rel="stylesheet" type="text/css">
     <link href="css/tui-image-editor.css" rel="stylesheet" type="text/css">
-    <!--[If lt IE 9]>
-        <script type="text/javascript" src="libs/html5shiv-printshiv.min.js"></script>
-        <script type="text/javascript" src="libs/json2.js"></script>
-        <script type="text/javascript" src="libs/excanvas.js"></script>
-    <![endif]-->
-
 </head>
 <body>
     <div class="tui-image-editor-menu">
@@ -71,7 +65,10 @@
     <script type="text/javascript" src="js/image-editor.js"></script>
     <script type="text/javascript">
         // image editor
-        var imageEditor = new tui.component.ImageEditor('#editor canvas');
+        var imageEditor = new tui.component.ImageEditor('#editor canvas', {
+            cssMaxWidth: 600,
+            cssMaxHeight: 600
+        });
 
         // inputs
         var $rotationRangeInput =$('#rotation-range-input');

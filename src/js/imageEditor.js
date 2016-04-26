@@ -83,9 +83,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             'path:created': $.proxy(this._onPathCreated, this),
             'object:added': $.proxy(function(event) {
                 var obj = event.target;
-                var command = commandFactory.create(commands.ADD_OBJECT, obj);
+                var command;
 
                 if (!tui.util.hasStamp(obj)) {
+                    command = commandFactory.create(commands.ADD_OBJECT, obj);
                     this._invoker.pushUndoStack(command);
                 }
                 /**
@@ -105,7 +106,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  * @event ImageEditor#removeObject
                  * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
                  * @example
-                 * imageEditor.on('addObject', function(obj) {
+                 * imageEditor.on('removeObject', function(obj) {
                  *     console.log(obj);
                  * });
                  */
@@ -281,7 +282,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         callback = $.proxy(this._callbackAfterImageLoading, this);
         command = commandFactory.create(commands.LOAD_IMAGE, imageName, url);
-
         command.setExecuteCallback(callback)
             .setUndoCallback(function(oImage) {
                 if (oImage) {

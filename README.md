@@ -1,11 +1,28 @@
 # image-editor
 
-# Dependencies
+## Feature
+Load image to canvas
+* Crop
+* Flip
+* Rotation
+* Free Drawing
+
+## Documentation
+* API:
+* Tutorial:
+* Samples:
+
+## Dependency
 * jQuery: ~1.8.3
 * tui-code-snippet: ^1.0.7
-* fabric.js: ^1.5.0
+* fabric.js: ^1.6.0
 
-### To support IE 7, 8
-* ExplorerCanvas
-* json2
-* html5shiv
+## Test environment
+* IE9 ~
+* Chrome
+* Firefox
+
+## Download/Install
+
+## LICENSE
+* [MIT](LICENSE)
