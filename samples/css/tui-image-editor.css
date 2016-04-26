@@ -1,7 +1,7 @@
 * {font-family: "NanumGothic", "Gothic", "Helvetica Neue", Helvetica, Arial, sans-serif;}
-#editor {height: 600px;}
+#editor {height: 600px; width: 800px;}
 .tui-image-editor-menu {padding-bottom: 10px;}
-.tui-image-editor-menu .tui-image-editor-submenu {padding: 5px;}
+.tui-image-editor-menu .tui-image-editor-sub {padding: 5px;}
 .tui-image-editor-hiddenmenu {display:none; margin: 10px; padding: 10px;}
-.tui-imageEditor-canvasContainer {margin: 0 auto; top: 50%; transform: translateY(-50%); border: 1px dotted black;}
+.tui-imageEditor-canvasContainer {margin: 0 auto; top: 50%; transform: translateY(-50%); -ms-transform: translateY(-50%); border: 1px dotted black;}
 .tui-imageEditor-canvasContainer .lower-canvas {position: static !important;}

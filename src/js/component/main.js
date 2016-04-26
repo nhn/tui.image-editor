@@ -112,7 +112,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
 
         this.setCanvasCssDimension({
             width: '100%',
-            height: '', // Set height '' for IE9
+            height: '100%', // Set height '' for IE9
             'max-width': maxDimension.width + 'px',
             'max-height': maxDimension.height + 'px'
         });

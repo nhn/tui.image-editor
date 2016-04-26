@@ -1,4 +1,5 @@
-# image-editor
+# Image Editor
+Canvas image editor
 
 ## Feature
 Load image to canvas

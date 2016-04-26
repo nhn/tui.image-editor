@@ -9,14 +9,14 @@
 <body>
     <div class="tui-image-editor-menu">
         <div class="tui-image-editor-sub">
-            Undo/Redo/ClearObjects
+            Undo, Redo, RemoveActiveObject, ClearObjects
             <button id="btn-undo" class="tui-image-editor-button">Undo</button>
             <button id="btn-redo" disabled class="tui-image-editor-button">Redo</button>
             <button id="btn-removeActiveObject" class="tui-image-editor-button">RemoveActiveObject</button>
             <button id="btn-clearObjects" class="tui-image-editor-button">ClearObjects</button>
         </div>
 
-        <div class="tui-image-editor-submenu">
+        <div class="tui-image-editor-sub">
             Crop
             <button id="btn-crop" class="tui-image-editor-button">Crop</button>
             <div id="crop-submenu" class="tui-image-editor-hiddenmenu">
@@ -26,21 +26,21 @@
             </div>
         </div>
 
-        <div class="tui-image-editor-submenu">
+        <div class="tui-image-editor-sub">
             Flip
             <button id="btn-flipX" class="tui-image-editor-button">FlipX</button>
             <button id="btn-flipY" class="tui-image-editor-button">FlipY</button>
             <button id="btn-resetFlip" class="tui-image-editor-button">ResetFlip</button>
         </div>
 
-        <div class="tui-image-editor-submenu">
+        <div class="tui-image-editor-sub">
             Rotation
             <button id="btn-rotation-clockwise" class="tui-image-editor-button">Rotation-Clockwise (30)</button>
             <button id="btn-rotation-counter-clockwise" class="tui-image-editor-button">Rotation-Counter-Clockwise (30)</button>
             <label> Range input <input id="rotation-range-input" type="range" min="-360" max="360"></label> <br>
         </div>
 
-        <div class="tui-image-editor-submenu">
+        <div class="tui-image-editor-sub">
             Free drawing
             <button id="btn-start-freeDrawing" class="tui-image-editor-button">startFreeDrawing</button>
             <button id="btn-end-freeDrawing" class="tui-image-editor-button">endFreeDrawing</button>
@@ -66,7 +66,7 @@
     <script type="text/javascript">
         // image editor
         var imageEditor = new tui.component.ImageEditor('#editor canvas', {
-            cssMaxWidth: 600,
+            cssMaxWidth: 800,
             cssMaxHeight: 600
         });
 
