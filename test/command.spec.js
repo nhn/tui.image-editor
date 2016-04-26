@@ -82,7 +82,7 @@ describe('commandFactory', function() {
         });
 
         it('"undo()" should restore to prev image', function(done) {
-            var newImageURL = 'base/test/fixtures/imageEditorClasses.png';
+            var newImageURL = 'base/test/fixtures/NHN%20Ent%2001.png';
             var newCommand = commandFactory.create(commands.LOAD_IMAGE, 'newImage', newImageURL);
 
             invoker.invoke(command).then(function() {
