@@ -16,7 +16,9 @@ var compList = consts.componentNames;
  * Image editor
  * @class
  * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
- * @param {{cssMaxWidth: number, cssMaxHeight: number}} [option] - Canvas max width & height
+ * @param {object} [option] - Canvas max width & height of css
+ *  @param {number} option.cssMaxWidth - Canvas css-max-width
+ *  @param {number} option.cssMaxHeight - Canvas css-max-height
  */
 var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     init: function(canvasElement, option) {
@@ -50,9 +52,25 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var EMPTY_UNDO_STACK = events.EMPTY_UNDO_STACK;
         var EMPTY_REDO_STACK = events.EMPTY_REDO_STACK;
 
+        /**
+         * @api
+         * @event ImageEditor#pushUndoStack
+         */
         this._invoker.on(PUSH_UNDO_STACK, $.proxy(this.fire, this, PUSH_UNDO_STACK));
+        /**
+         * @api
+         * @event ImageEditor#pushRedoStack
+         */
         this._invoker.on(PUSH_REDO_STACK, $.proxy(this.fire, this, PUSH_REDO_STACK));
+        /**
+         * @api
+         * @event ImageEditor#emptyUndoStack
+         */
         this._invoker.on(EMPTY_UNDO_STACK, $.proxy(this.fire, this, EMPTY_UNDO_STACK));
+        /**
+         * @api
+         * @event ImageEditor#emptyRedoStack
+         */
         this._invoker.on(EMPTY_REDO_STACK, $.proxy(this.fire, this, EMPTY_REDO_STACK));
     },
 
@@ -65,14 +83,32 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             'path:created': $.proxy(this._onPathCreated, this),
             'object:added': $.proxy(function(event) {
                 var obj = event.target;
-                var command;
-                command = commandFactory.create(commands.ADD_OBJECT, obj);
+                var command = commandFactory.create(commands.ADD_OBJECT, obj);
+
                 if (!tui.util.hasStamp(obj)) {
                     this._invoker.pushUndoStack(command);
                 }
+                /**
+                 * @api
+                 * @event ImageEditor#addObject
+                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+                 * @example
+                 * imageEditor.on('addObject', function(obj) {
+                 *     console.log(obj);
+                 * });
+                 */
                 this.fire(events.ADD_OBJECT, obj);
             }, this),
             'object:removed': $.proxy(function(event) {
+                /**
+                 * @api
+                 * @event ImageEditor#removeObject
+                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+                 * @example
+                 * imageEditor.on('addObject', function(obj) {
+                 *     console.log(obj);
+                 * });
+                 */
                 this.fire(events.REMOVE_OBJECT, event.target);
             }, this)
         });
@@ -144,6 +180,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var command = commandFactory.create(commands.CLEAR_OBJECTS);
         var callback = $.proxy(this.fire, this, events.CLEAR_OBJECTS);
 
+        /**
+         * @api
+         * @event ImageEditor#clearObjects
+         */
         command.setExecuteCallback(callback);
         this.execute(command);
     },
@@ -247,6 +287,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 if (oImage) {
                     callback(oImage);
                 } else {
+                    /**
+                     * @api
+                     * @event ImageEditor#clearImage
+                     */
                     self.fire(events.CLEAR_IMAGE);
                 }
             });
@@ -262,6 +306,22 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var mainComponent = this._getMainComponent();
         var $canvasElement = $(mainComponent.getCanvasElement());
 
+        /**
+         * @api
+         * @event ImageEditor#loadImage
+         * @param {object} dimension
+         *  @param {number} dimension.originalWidth - original image width
+         *  @param {number} dimension.originalHeight - original image height
+         *  @param {number} dimension.currentWidth - current width (css)
+         *  @param {number} dimension.current - current height (css)
+         * @example
+         * imageEditor.on('loadImage', function(dimension) {
+         *     console.log(dimension.originalWidth);
+         *     console.log(dimension.originalHeight);
+         *     console.log(dimension.currentWidth);
+         *     console.log(dimension.currentHeight);
+         * });
+         */
         this.fire(events.LOAD_IMAGE, {
             originalWidth: oImage.width,
             originalHeight: oImage.height,
@@ -281,6 +341,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this.endAll();
         cropper.start();
+        /**
+         * @api
+         * @event ImageEditor#startCropping
+         */
         this.fire(events.START_CROPPING);
     },
 
@@ -299,6 +363,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var cropper = this._getComponent(compList.CROPPER);
         var data = cropper.end(isApplying);
 
+        /**
+         * @api
+         * @event ImageEditor#endCropping
+         */
         this.fire(events.END_CROPPING);
         if (data) {
             this.loadImageFromURL(data.imageName, data.url);
@@ -314,6 +382,20 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var callback = $.proxy(this.fire, this, events.FLIP_IMAGE);
         var command = commandFactory.create(commands.FLIP_IMAGE, type);
 
+        /**
+         * @api
+         * @event ImageEditor#flipImage
+         * @param {object} flipSetting
+         *  @param {boolean} flipSetting.flipX - image.flipX
+         *  @param {boolean} flipSetting.flipY - image.flipY
+         * @param {number} angle - image.angle
+         * @example
+         * imageEditor.on('flipImage', function(flipSetting, angle) {
+         *     console.log('flipX: ', setting.flipX);
+         *     console.log('flipY: ', setting.flipY);
+         *     console.log('angle: ', angle);
+         * });
+         */
         command.setExecuteCallback(callback)
             .setUndoCallback(callback);
         this.execute(command);
@@ -358,6 +440,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var callback = $.proxy(this.fire, this, events.ROTATE_IMAGE);
         var command = commandFactory.create(commands.ROTATE_IMAGE, type, angle);
 
+        /**
+         * @api
+         * @event ImageEditor#rotateImage
+         * @param {number} currentAngle - image.angle
+         * @example
+         * imageEditor.on('rotateImage', function(angle) {
+         *     console.log('angle: ', angle);
+         * });
+         */
         command.setExecuteCallback(callback)
             .setUndoCallback(callback);
         this.execute(command);
@@ -407,6 +498,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     startFreeDrawing: function(setting) {
         this.endAll();
         this._getComponent(compList.FREE_DRAWING).start(setting);
+
+        /**
+         * @api
+         * @event ImageEditor#startFreeDrawing
+         */
         this.fire(events.START_FREE_DRAWING);
     },
 
@@ -438,6 +534,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     endFreeDrawing: function() {
         this._getComponent(compList.FREE_DRAWING).end();
+
+        /**
+         * @api
+         * @event ImageEditor#endFreeDrawing
+         */
         this.fire(events.END_FREE_DRAWING);
     },
 

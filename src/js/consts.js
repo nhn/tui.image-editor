@@ -27,7 +27,7 @@ module.exports = {
 
     eventNames: {
         LOAD_IMAGE: 'loadImage',
-        CLEAR_OBJECTS: 'clear',
+        CLEAR_OBJECTS: 'clearObjects',
         CLEAR_IMAGE: 'clearImage',
         START_CROPPING: 'startCropping',
         END_CROPPING: 'endCropping',
