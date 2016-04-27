@@ -124,7 +124,9 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     },
 
     /**
-     * Get max dimension of canvas
+     * Calculate max dimension of canvas
+     * The css-max dimension is dynamically decided with maintaining image ratio
+     * The css-max dimension is lower than canvas dimension (attribute of canvas, not css)
      * @param {number} width - Canvas width
      * @param {number} height - Canvas height
      * @returns {{width: number, height: number}} - Max width & Max height
