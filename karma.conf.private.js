@@ -1,5 +1,7 @@
 'use strict';
 
+var istanbul = require('browserify-istanbul');
+
 module.exports = function(config) {
     var webdriverConfig = {
         hostname: 'fe.nhnent.com',
@@ -13,7 +15,6 @@ module.exports = function(config) {
         frameworks: ['browserify', 'jasmine'],
 
         files: [
-            'bower_components/json2/json2.js',
             'bower_components/jquery/jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
             'bower_components/fabric/dist/fabric.js',
@@ -37,12 +38,15 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            'src/**/*.js': ['browserify', 'coverage'],
+            'src/**/*.js': ['browserify'],
             'test/**/*.spec.js': ['browserify']
         },
 
         browserify: {
-            debug: true
+            debug: true,
+            transform: [istanbul({
+                ignore: ['bower_components/**', 'test/**/*']
+            })]
         },
 
         reporters: [

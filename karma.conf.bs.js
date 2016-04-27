@@ -1,5 +1,7 @@
 'use strict';
 
+var istanbul = require('browserify-istanbul');
+
 module.exports = function(config) {
     config.set({
         basePath: './',
@@ -30,12 +32,15 @@ module.exports = function(config) {
         ],
 
         preprocessors: {
-            'src/**/*.js': ['browserify', 'coverage'],
+            'src/**/*.js': ['browserify'],
             'test/**/*.spec.js': ['browserify']
         },
 
         browserify: {
-            debug: true
+            debug: true,
+            transform: [istanbul({
+                ignore: ['bower_components/**', 'test/**/*']
+            })]
         },
 
         reporters: [
