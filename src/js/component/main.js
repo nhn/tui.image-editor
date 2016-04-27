@@ -10,8 +10,12 @@ var consts = require('../consts');
 var DEFAULT_CSS_MAX_WIDTH = 1000;
 var DEFAULT_CSS_MAX_HEIGHT = 800;
 
-var cssOnly = {cssOnly: true};
-var backstoreOnly = {backstoreOnly: true};
+var cssOnly = {
+    cssOnly: true
+};
+var backstoreOnly = {
+    backstoreOnly: true
+};
 
 /**
  * Main component
