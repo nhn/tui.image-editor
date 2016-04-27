@@ -34,6 +34,10 @@ function createAddObjectCommand(object) {
     tui.util.stamp(object);
 
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
             var jqDefer = $.Deferred();
@@ -47,6 +51,10 @@ function createAddObjectCommand(object) {
 
             return jqDefer;
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
             var jqDefer = $.Deferred();
@@ -70,6 +78,10 @@ function createAddObjectCommand(object) {
  */
 function createLoadImageCommand(imageName, img) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
             var canvas = loader.getCanvas();
@@ -84,6 +96,10 @@ function createLoadImageCommand(imageName, img) {
 
             return loader.load(imageName, img);
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
             var canvas = loader.getCanvas();
@@ -103,6 +119,10 @@ function createLoadImageCommand(imageName, img) {
  */
 function createFlipImageCommand(type) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var flipComp = compMap[FLIP];
 
@@ -110,6 +130,10 @@ function createFlipImageCommand(type) {
 
             return flipComp[type]();
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var flipComp = compMap[FLIP];
 
@@ -125,6 +149,10 @@ function createFlipImageCommand(type) {
  */
 function createRotationImageCommand(type, angle) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var rotationComp = compMap[ROTATION];
 
@@ -132,6 +160,10 @@ function createRotationImageCommand(type, angle) {
 
             return rotationComp[type](angle);
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var rotationComp = compMap[ROTATION];
 
@@ -146,6 +178,10 @@ function createRotationImageCommand(type, angle) {
  */
 function createClearCommand() {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
             var jqDefer = $.Deferred();
@@ -161,10 +197,16 @@ function createClearCommand() {
 
             return jqDefer;
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
 
             canvas.add.apply(canvas, this.store);
+
+            return $.Deferred().resolve();
         }
     });
 }
@@ -176,6 +218,10 @@ function createClearCommand() {
  */
 function createRemoveCommand(obj) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
             var jqDefer = $.Deferred();
@@ -190,10 +236,22 @@ function createRemoveCommand(obj) {
 
             return jqDefer;
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
 
-            canvas.add(this.store);
+            if (canvas.contains(this.store)) {
+                jqDefer.reject();
+            } else {
+                canvas.add(this.store);
+                jqDefer.resolve();
+            }
+
+            return $.Deferred().resolve();
         }
     });
 }

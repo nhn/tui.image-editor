@@ -43,6 +43,7 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
 
     /**
      * Execute action
+     * @param {Object.<string, Component>} compMap - Components injection
      * @abstract
      */
     execute: function() {
@@ -51,6 +52,7 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
 
     /**
      * Undo action
+     * @param {Object.<string, Component>} compMap - Components injection
      * @abstract
      */
     undo: function() {
