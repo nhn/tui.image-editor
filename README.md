@@ -15,8 +15,8 @@ Load image to canvas
 
 ## Dependency
 * jQuery: ~1.8.3
-* tui-code-snippet: ^1.0.7
-* fabric.js: ^1.6.0
+* tui-code-snippet: ~1.0.7
+* fabric.js: ~1.6.0
 
 ## Test environment
 * IE9 ~
