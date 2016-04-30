@@ -1,12 +1,22 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Main component having canvas & image, set css-max-dimension of canvas
+ */
 'use strict';
 
 var Component = require('../interface/component');
 var consts = require('../consts');
 
-var DEFAULT_MAX_WIDTH = 1000;
+var DEFAULT_CSS_MAX_WIDTH = 1000;
+var DEFAULT_CSS_MAX_HEIGHT = 800;
 
-var cssOnly = {cssOnly: true};
-var backstoreOnly = {backstoreOnly: true};
+var cssOnly = {
+    cssOnly: true
+};
+var backstoreOnly = {
+    backstoreOnly: true
+};
+
 /**
  * Main component
  * @extends {Component}
@@ -24,7 +34,19 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
          * Fabric image instance
          * @type {fabric.Image}
          */
-        this.oImage = null;
+        this.canvasImage = null;
+
+        /**
+         * Max width of canvas elements
+         * @type {number}
+         */
+        this.cssMaxWidth = DEFAULT_CSS_MAX_WIDTH;
+
+        /**
+         * Max height of canvas elements
+         * @type {number}
+         */
+        this.cssMaxHeight = DEFAULT_CSS_MAX_HEIGHT;
 
         /**
          * Image name
@@ -51,12 +73,24 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     /**
      * Save image(background) of canvas
      * @param {string} name - Name of image
-     * @param {fabric.Image} oImage - Fabric image instance
+     * @param {?fabric.Image} canvasImage - Fabric image instance
      * @override
      */
-    setCanvasImage: function(name, oImage) {
+    setCanvasImage: function(name, canvasImage) {
+        if (canvasImage) {
+            tui.util.stamp(canvasImage);
+        }
         this.imageName = name;
-        this.oImage = oImage;
+        this.canvasImage = canvasImage;
+    },
+
+    /**
+     * Set css max dimension
+     * @param {{width: number, height: number}} maxDimension - Max width & Max height
+     */
+    setCssMaxDimension: function(maxDimension) {
+        this.cssMaxWidth = maxDimension.width || this.cssMaxWidth;
+        this.cssMaxHeight = maxDimension.height || this.cssMaxHeight;
     },
 
     /**
@@ -66,8 +100,60 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      */
     setCanvasElement: function(canvasElement) {
         this.canvas = new fabric.Canvas($(canvasElement)[0], {
-            containerClass: 'tui-imageEditor-canvasContainer'
+            containerClass: 'tui-image-editor-canvas-container'
         });
+    },
+
+    /**
+     * Adjust canvas dimension with scaling image
+     */
+    adjustCanvasDimension: function() {
+        var canvasImage = this.canvasImage.scale(1);
+        var boundingRect = canvasImage.getBoundingRect();
+        var width = boundingRect.width;
+        var height = boundingRect.height;
+        var maxDimension = this._calcMaxDimension(width, height);
+
+        this.setCanvasCssDimension({
+            width: '100%',
+            height: '100%', // Set height '' for IE9
+            'max-width': maxDimension.width + 'px',
+            'max-height': maxDimension.height + 'px'
+        });
+        this.setCanvasBackstoreDimension({
+            width: width,
+            height: height
+        });
+        this.canvas.centerObject(canvasImage);
+    },
+
+    /**
+     * Calculate max dimension of canvas
+     * The css-max dimension is dynamically decided with maintaining image ratio
+     * The css-max dimension is lower than canvas dimension (attribute of canvas, not css)
+     * @param {number} width - Canvas width
+     * @param {number} height - Canvas height
+     * @returns {{width: number, height: number}} - Max width & Max height
+     * @private
+     */
+    _calcMaxDimension: function(width, height) {
+        var wScaleFactor = this.cssMaxWidth / width;
+        var hScaleFactor = this.cssMaxHeight / height;
+        var cssMaxWidth = Math.min(width, this.cssMaxWidth);
+        var cssMaxHeight = Math.min(height, this.cssMaxHeight);
+
+        if (wScaleFactor < 1 && wScaleFactor < hScaleFactor) {
+            cssMaxWidth = width * wScaleFactor;
+            cssMaxHeight = height * wScaleFactor;
+        } else if (hScaleFactor < 1 && hScaleFactor < wScaleFactor) {
+            cssMaxWidth = width * hScaleFactor;
+            cssMaxHeight = height * hScaleFactor;
+        }
+
+        return {
+            width: Math.floor(cssMaxWidth),
+            height: Math.floor(cssMaxHeight)
+        };
     },
 
     /**
@@ -77,11 +163,6 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @override
      */
     setCanvasCssDimension: function(dimension) {
-        var maxWidth = parseInt(dimension['max-width'], 10);
-        if (maxWidth) {
-            dimension['max-width'] = Math.min(maxWidth, DEFAULT_MAX_WIDTH) + 'px';
-        }
-
         this.canvas.setDimensions(dimension, cssOnly);
     },
 
@@ -103,33 +184,13 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @override
      */
     setImageProperties: function(setting, withRendering) {
-        var oImage = this.oImage;
+        var canvasImage = this.canvasImage;
 
-        if (!oImage) {
+        if (!canvasImage) {
             return;
         }
 
-        oImage.set(setting).setCoords();
-        if (withRendering) {
-            this.canvas.renderAll();
-        }
-    },
-
-    /**
-     * Toggle properties of the image
-     * {@link http://fabricjs.com/docs/fabric.Image.html#toggle}
-     * @param {Array.<string>} properties - Image property names
-     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
-     * @override
-     */
-    toggleImageProperties: function(properties, withRendering) {
-        var oImage = this.oImage;
-
-        if (!oImage) {
-            return;
-        }
-
-        oImage.toggle.apply(oImage, properties);
+        canvasImage.set(setting).setCoords();
         if (withRendering) {
             this.canvas.renderAll();
         }
@@ -159,7 +220,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @returns {fabric.Image}
      */
     getCanvasImage: function() {
-        return this.oImage;
+        return this.canvasImage;
     },
 
     /**

@@ -34,7 +34,9 @@
         "hardwrap": true
     },
     "opts": {
+        "name": "Image Editor",
         "recurse": true,
-        "destination": "doc"
+        "destination": "doc",
+        "tutorials": "samples"
     }
 }

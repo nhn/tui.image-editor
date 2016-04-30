@@ -39,44 +39,73 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
 
     /**
      * Set flipX, flipY
-     * @param {{flipX: ?Boolean, flipY: ?Boolean}} newSetting - Flip setting
+     * @param {{flipX: Boolean, flipY: Boolean}} newSetting - Flip setting
      * @returns {jQuery.Deferred}
      */
     set: function(newSetting) {
         var setting = this.getCurrentSetting();
         var jqDefer = $.Deferred();
-        var isChangingFlipX = (setting.flipX !== !!newSetting.flipX);
-        var isChangingFlipY = (setting.flipY !== !!newSetting.flipY);
-        var angle;
+        var isChangingFlipX = (setting.flipX !== newSetting.flipX);
+        var isChangingFlipY = (setting.flipY !== newSetting.flipY);
 
         if (!isChangingFlipX && !isChangingFlipY) {
             return jqDefer.reject();
         }
 
-        if (isChangingFlipX) {
-            angle = this._negateAngle();
-        }
-        if (isChangingFlipY) {
-            angle = this._negateAngle();
-        }
         tui.util.extend(setting, newSetting);
         this.setImageProperties(setting, true);
+        this._invertAngle(isChangingFlipX, isChangingFlipY);
+        this._flipObjects(isChangingFlipX, isChangingFlipY);
 
-        return jqDefer.resolve(setting, angle);
+        return jqDefer.resolve(setting, this.getCanvasImage().angle);
     },
 
     /**
-     * Negate angle for flip
-     * @returns {number} Negated angle
+     * Invert image angle for flip
+     * @param {boolean} isChangingFlipX - Change flipX
+     * @param {boolean} isChangingFlipY - Change flipY
+     */
+    _invertAngle: function(isChangingFlipX, isChangingFlipY) {
+        var canvasImage = this.getCanvasImage();
+        var angle = canvasImage.angle;
+
+        if (isChangingFlipX) {
+            angle *= -1;
+        }
+        if (isChangingFlipY) {
+            angle *= -1;
+        }
+        canvasImage.setAngle(parseFloat(angle)).setCoords();// parseFloat for -0 to 0
+    },
+
+    /**
+     * Flip objects
+     * @param {boolean} isChangingFlipX - Change flipX
+     * @param {boolean} isChangingFlipY - Change flipY
      * @private
      */
-    _negateAngle: function() {
-        var canvasImage = this.getCanvasImage();
-        var angle = parseFloat(canvasImage.angle * -1); // parseFloat for -0 to 0
+    _flipObjects: function(isChangingFlipX, isChangingFlipY) {
+        var canvas = this.getCanvas();
 
-        canvasImage.setAngle(angle);
-
-        return angle;
+        if (isChangingFlipX) {
+            canvas.forEachObject(function(obj) {
+                obj.set({
+                    angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
+                    flipX: !obj.flipX,
+                    left: canvas.width - obj.left
+                }).setCoords();
+            });
+        }
+        if (isChangingFlipY) {
+            canvas.forEachObject(function(obj) {
+                obj.set({
+                    angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
+                    flipY: !obj.flipY,
+                    top: canvas.height - obj.top
+                }).setCoords();
+            });
+        }
+        canvas.renderAll();
     },
 
     /**
@@ -95,11 +124,12 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
      * @returns {jQuery.Deferred}
      */
     flipX: function() {
-        var angle = this._negateAngle();
+        var current = this.getCurrentSetting();
 
-        this.toggleImageProperties(['flipX'], true);
-
-        return $.Deferred().resolve(this.getCurrentSetting(), angle);
+        return this.set({
+            flipX: !current.flipX,
+            flipY: current.flipY
+        });
     },
 
     /**
@@ -107,11 +137,12 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
      * @returns {jQuery.Deferred}
      */
     flipY: function() {
-        var angle = this._negateAngle();
+        var current = this.getCurrentSetting();
 
-        this.toggleImageProperties(['flipY'], true);
-
-        return $.Deferred().resolve(this.getCurrentSetting(), angle);
+        return this.set({
+            flipX: current.flipX,
+            flipY: !current.flipY
+        });
     }
 });
 

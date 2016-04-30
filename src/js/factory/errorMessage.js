@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Error-message factory
+ */
 'use strict';
 
 var keyMirror = require('../util').keyMirror;

@@ -38,6 +38,20 @@ describe('Cropper', function() {
 
             expect(canvas.add).not.toHaveBeenCalled();
         });
+
+        it('should set "evented" of all objects to false', function() {
+            var objects = [
+                new fabric.Object({evented: true}),
+                new fabric.Object({evented: true}),
+                new fabric.Object({evented: true})
+            ];
+            canvas.add(objects[0], objects[1], objects[2]);
+
+            cropper.start();
+            expect(objects[0].evented).toBe(false);
+            expect(objects[1].evented).toBe(false);
+            expect(objects[2].evented).toBe(false);
+        });
     });
 
     describe('"onFabricMouseDown()"', function() {
@@ -197,6 +211,21 @@ describe('Cropper', function() {
             cropper.start();
             spyOn(cropper._cropzone, 'isValid').and.returnValue(false);
             expect(cropper.end(false)).toBeFalsy();
+        });
+
+        it('should set "evented" of all obejcts to true', function() {
+            var objects = [
+                new fabric.Object({evented: false}),
+                new fabric.Object({evented: false}),
+                new fabric.Object({evented: false})
+            ];
+            canvas.add(objects[0], objects[1], objects[2]);
+
+            cropper.start();
+            cropper.end();
+            expect(objects[0].evented).toBe(true);
+            expect(objects[1].evented).toBe(true);
+            expect(objects[2].evented).toBe(true);
         });
     });
 });

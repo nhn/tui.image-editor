@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Image loader
+ */
 'use strict';
 
 var Component = require('../interface/component');
@@ -45,8 +49,8 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
             }).resolve();
         } else {
             jqDefer = this._setBackgroundImage(img).done(function(oImage) {
-                self._onSuccessImageLoad(oImage);
                 self.setCanvasImage(imageName, oImage);
+                self.adjustCanvasDimension();
             });
         }
 
@@ -79,25 +83,6 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
         }, imageOption);
 
         return jqDefer;
-    },
-
-    /**
-     * onSuccess callback
-     * @param {fabric.Image} oImage - Fabric image instance
-     * @private
-     */
-    _onSuccessImageLoad: function(oImage) {
-        var boundingRect = oImage.getBoundingRect();
-
-        this.setCanvasCssDimension({
-            width: '100%',
-            height: '',  // No inline-css "height" for IE9
-            'max-width': boundingRect.width + 'px'
-        });
-        this.setCanvasBackstoreDimension({
-            width: boundingRect.width,
-            height: boundingRect.height
-        });
     }
 });
 

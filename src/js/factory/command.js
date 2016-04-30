@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Command factory
+ */
 'use strict';
 
 var Command = require('../interface/command');
@@ -7,6 +11,7 @@ var componentNames = consts.componentNames;
 var commandNames = consts.commandNames;
 var creators = {};
 
+var MAIN = componentNames.MAIN;
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
 var FLIP = componentNames.FLIP;
 var ROTATION = componentNames.ROTATION;
@@ -17,27 +22,91 @@ var ROTATION = componentNames.ROTATION;
 creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
 creators[commandNames.ROTATE_IMAGE] = createRotationImageCommand;
+creators[commandNames.CLEAR_OBJECTS] = createClearCommand;
+creators[commandNames.ADD_OBJECT] = createAddObjectCommand;
+creators[commandNames.REMOVE_OBJECT] = createRemoveCommand;
+
+/**
+ * @param {fabric.Object} object - Fabric object
+ * @returns {Command}
+ */
+function createAddObjectCommand(object) {
+    tui.util.stamp(object);
+
+    return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
+        execute: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
+
+            if (!canvas.contains(object)) {
+                canvas.add(object);
+                jqDefer.resolve(object);
+            } else {
+                jqDefer.reject();
+            }
+
+            return jqDefer;
+        },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
+        undo: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
+
+            if (canvas.contains(object)) {
+                canvas.remove(object);
+                jqDefer.resolve(object);
+            } else {
+                jqDefer.reject();
+            }
+
+            return jqDefer;
+        }
+    });
+}
 
 /**
  * @param {string} imageName - Image name
- * @param {string} url - Image url
+ * @param {string|fabric.Image} img - Image(or url)
  * @returns {Command}
  */
-function createLoadImageCommand(imageName, url) {
+function createLoadImageCommand(imageName, img) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
+            var canvas = loader.getCanvas();
 
             this.store = {
                 prevName: loader.getImageName(),
-                prevImage: loader.getCanvasImage()
+                prevImage: loader.getCanvasImage(),
+                // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
+                objects: canvas.getObjects().slice()
             };
+            canvas.clear();
 
-            return loader.load(imageName, url);
+            return loader.load(imageName, img);
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
+            var canvas = loader.getCanvas();
             var store = this.store;
+
+            canvas.clear();
+            canvas.add.apply(canvas, store.objects);
 
             return loader.load(store.prevName, store.prevImage);
         }
@@ -50,6 +119,10 @@ function createLoadImageCommand(imageName, url) {
  */
 function createFlipImageCommand(type) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var flipComp = compMap[FLIP];
 
@@ -57,6 +130,10 @@ function createFlipImageCommand(type) {
 
             return flipComp[type]();
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var flipComp = compMap[FLIP];
 
@@ -72,6 +149,10 @@ function createFlipImageCommand(type) {
  */
 function createRotationImageCommand(type, angle) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var rotationComp = compMap[ROTATION];
 
@@ -79,10 +160,98 @@ function createRotationImageCommand(type, angle) {
 
             return rotationComp[type](angle);
         },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var rotationComp = compMap[ROTATION];
 
             return rotationComp.setAngle(this.store);
+        }
+    });
+}
+
+/**
+ * Clear command
+ * @returns {Command}
+ */
+function createClearCommand() {
+    return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
+        execute: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
+
+            // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
+            this.store = canvas.getObjects().slice();
+            if (this.store.length) {
+                canvas.clear();
+                jqDefer.resolve();
+            } else {
+                jqDefer.reject();
+            }
+
+            return jqDefer;
+        },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
+        undo: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+
+            canvas.add.apply(canvas, this.store);
+
+            return $.Deferred().resolve();
+        }
+    });
+}
+
+/**
+ * Remove command
+ * @param {fabric.Object} obj - Object to remove
+ * @returns {Command}
+ */
+function createRemoveCommand(obj) {
+    return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
+        execute: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
+
+            if (canvas.contains(obj)) {
+                this.store = obj;
+                obj.remove();
+                jqDefer.resolve();
+            } else {
+                jqDefer.reject();
+            }
+
+            return jqDefer;
+        },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
+        undo: function(compMap) {
+            var canvas = compMap[MAIN].getCanvas();
+            var jqDefer = $.Deferred();
+
+            if (canvas.contains(this.store)) {
+                jqDefer.reject();
+            } else {
+                canvas.add(this.store);
+                jqDefer.resolve();
+            }
+
+            return $.Deferred().resolve();
         }
     });
 }

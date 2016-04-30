@@ -1,11 +1,34 @@
-# image-editor
+# Image Editor
+Canvas image editor
 
-# Dependencies
+## Feature
+* Load image to canvas
+* Undo/Redo
+* Crop
+* Flip
+* Rotation
+* Free Drawing
+
+## Documentation
+* API:
+* Tutorial:
+* Samples:
+
+## Dependency
 * jQuery: ~1.8.3
-* tui-code-snippet: ^1.0.7
-* fabric.js: ^1.5.0
+* tui-code-snippet: ~1.0.7
+* fabric.js: ~1.6.0
 
-### To support IE 7, 8
-* ExplorerCanvas
-* json2
-* html5shiv
+## Test environment
+* IE9 ~
+* Chrome
+* Firefox
+
+## Download/Install
+
+## LICENSE
+* [MIT](LICENSE)
+
+## Sponsor
+* <img src="https://cloud.githubusercontent.com/assets/12269563/12287774/8cf4d2c0-ba12-11e5-9fa8-0a9c452cca05.png" height="30"><br>
+ [BrowserStack](https://www.browserstack.com/) is a cloud based cross browser testing tool
