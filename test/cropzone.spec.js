@@ -161,6 +161,10 @@ describe('Cropzone', function() {
         expect(actual).toEqual(expected);
     });
 
+    it('should be "cropzone" type', function() {
+        expect(cropzone.isType('cropzone')).toBe(true);
+    });
+
     it('"_makeScalingSettings()" ' +
         'should return suitable position&dimension values from corner', function() {
 

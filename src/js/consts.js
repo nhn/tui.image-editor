@@ -7,6 +7,10 @@
 var util = require('./util');
 
 module.exports = {
+    /**
+     * Component names
+     * @type {Object.<string, string>}
+     */
     componentNames: util.keyMirror(
         'MAIN',
         'IMAGE_LOADER',
@@ -16,6 +20,10 @@ module.exports = {
         'FREE_DRAWING'
     ),
 
+    /**
+     * Command names
+     * @type {Object.<string, string>}
+     */
     commandNames: util.keyMirror(
         'CLEAR',
         'LOAD_IMAGE',
@@ -25,6 +33,10 @@ module.exports = {
         'REMOVE_OBJECT'
     ),
 
+    /**
+     * Event names
+     * @type {Object.<string, string>}
+     */
     eventNames: {
         LOAD_IMAGE: 'loadImage',
         CLEAR_OBJECTS: 'clearObjects',
@@ -41,5 +53,15 @@ module.exports = {
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',
         PUSH_REDO_STACK: 'pushRedoStack'
-    }
+    },
+
+    /**
+     * Editor states
+     * @type {Object.<string, string>}
+     */
+    states: util.keyMirror(
+        'NORMAL',
+        'CROP',
+        'FREE_DRAWING'
+    )
 };

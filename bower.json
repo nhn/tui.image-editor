@@ -19,7 +19,6 @@
     "fabric": "~1.6.0"
   },
   "devDependencies": {
-    "tui-component-colorpicker": "~1.0.1",
-    "tui-component-file-uploader": "~1.1.0"
+    "tui-component-colorpicker": "~1.0.1"
   }
 }

@@ -11,6 +11,7 @@ var consts = require('./consts');
 var events = consts.eventNames;
 var commands = consts.commandNames;
 var compList = consts.componentNames;
+var states = consts.states;
 
 /**
  * Image editor
@@ -36,6 +37,13 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          * @private
          */
         this._canvas = null;
+
+        /**
+         * Editor current state
+         * @private
+         * @type {string}
+         */
+        this._state = states.NORMAL;
 
         this._setCanvas(canvasElement, option.cssMaxWidth, option.cssMaxHeight);
         this._attachInvokerEvents();
@@ -84,6 +92,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             'object:added': $.proxy(function(event) {
                 var obj = event.target;
                 var command;
+
+                if (obj.isType('cropzone')) {
+                    return;
+                }
 
                 if (!tui.util.hasStamp(obj)) {
                     command = commandFactory.create(commands.ADD_OBJECT, obj);
@@ -172,12 +184,31 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
+     * Get current state
+     * @api
+     * @returns {string}
+     * @example
+     * // Image editor states
+     * //
+     * //    NORMAL: 'NORMAL'
+     * //    CROP: 'CROP'
+     * //    FREE_DRAWING: 'FREE_DRAWING'
+     * //
+     * if (imageEditor.getCurrentState() === 'FREE_DRAWING') {
+     *     imageEditor.endFreeDrawing();
+     * }
+     */
+    getCurrentState: function() {
+        return this._state;
+    },
+
+    /**
      * Clear all objects
      * @api
      * @example
-     * imageEditor.clear();
+     * imageEditor.clearObjects();
      */
-    clear: function() {
+    clearObjects: function() {
         var command = commandFactory.create(commands.CLEAR_OBJECTS);
         var callback = $.proxy(this.fire, this, events.CLEAR_OBJECTS);
 
@@ -203,6 +234,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this.endFreeDrawing();
         this.endCropping();
         this.deactivateAll();
+        this._state = states.NORMAL;
     },
 
     /**
@@ -337,9 +369,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.startCropping();
      */
     startCropping: function() {
-        var cropper = this._getComponent(compList.CROPPER);
+        var cropper;
+
+        if (this.getCurrentState() === states.CROP) {
+            return;
+        }
 
         this.endAll();
+        this._state = states.CROP;
+        cropper = this._getComponent(compList.CROPPER);
         cropper.start();
         /**
          * @api
@@ -360,9 +398,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.endCropping(true); // apply cropping
      */
     endCropping: function(isApplying) {
-        var cropper = this._getComponent(compList.CROPPER);
-        var data = cropper.end(isApplying);
+        var cropper, data;
 
+        if (this.getCurrentState() !== states.CROP) {
+            return;
+        }
+
+        cropper = this._getComponent(compList.CROPPER);
+        this._state = states.NORMAL;
+        data = cropper.end(isApplying);
         /**
          * @api
          * @event ImageEditor#endCropping
@@ -496,8 +540,13 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * });
      */
     startFreeDrawing: function(setting) {
+        if (this.getCurrentState() === states.FREE_DRAWING) {
+            return;
+        }
+
         this.endAll();
         this._getComponent(compList.FREE_DRAWING).start(setting);
+        this._state = states.FREE_DRAWING;
 
         /**
          * @api
@@ -533,7 +582,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.endFreeDrawing();
      */
     endFreeDrawing: function() {
+        if (this.getCurrentState() !== states.FREE_DRAWING) {
+            return;
+        }
         this._getComponent(compList.FREE_DRAWING).end();
+        this._state = states.NORMAL;
 
         /**
          * @api

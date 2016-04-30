@@ -2,7 +2,8 @@
 Canvas image editor
 
 ## Feature
-Load image to canvas
+* Load image to canvas
+* Undo/Redo
 * Crop
 * Flip
 * Rotation

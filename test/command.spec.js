@@ -51,7 +51,7 @@ describe('commandFactory', function() {
 
         beforeEach(function() {
             mainComponent.setCanvasImage('', null);
-            imageURL = 'base/test/fixtures/lena_std.jpg';
+            imageURL = 'base/test/fixtures/sampleImage.jpg';
             command = commandFactory.create(commands.LOAD_IMAGE, 'image', imageURL);
         });
 
@@ -82,7 +82,7 @@ describe('commandFactory', function() {
         });
 
         it('"undo()" should restore to prev image', function(done) {
-            var newImageURL = 'base/test/fixtures/NHN%20Ent%2001.png';
+            var newImageURL = 'base/test/fixtures/TOAST%20UI%20Component.png';
             var newCommand = commandFactory.create(commands.LOAD_IMAGE, 'newImage', newImageURL);
 
             invoker.invoke(command).then(function() {
