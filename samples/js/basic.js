@@ -137,6 +137,7 @@ $btnRotation.on('click', function() {
 
 $btnFreeDrawing.on('click', function() {
     if (imageEditor.getCurrentState() === 'FREE_DRAWING') {
+        $(this).removeClass('active');
         imageEditor.endFreeDrawing();
     } else {
         imageEditor.startFreeDrawing();
