@@ -141,7 +141,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             borderColor: 'red',
             transparentCorners: false,
             cornerColor: 'green',
-            cornerSize: 6
+            cornerSize: 10
         });
     },
 
@@ -282,29 +282,30 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * Load image from file
      * @api
      * @param {File} imgFile - Image file
+     * @param {string} [imageName] - imageName
      * @example
      * imageEditor.loadImageFromFile(file);
      */
-    loadImageFromFile: function(imgFile) {
+    loadImageFromFile: function(imgFile, imageName) {
         if (!imgFile) {
             return;
         }
 
         this.loadImageFromURL(
-            imgFile.name,
-            URL.createObjectURL(imgFile)
+            URL.createObjectURL(imgFile),
+            imageName || imgFile.name
         );
     },
 
     /**
      * Load image from url
      * @api
-     * @param {string} imageName - imageName
      * @param {string} url - File url
+     * @param {string} imageName - imageName
      * @example
-     * imageEditor.loadImageFromURL('lena', 'http://url/testImage.png')
+     * imageEditor.loadImageFromURL('http://url/testImage.png', 'lena')
      */
-    loadImageFromURL: function(imageName, url) {
+    loadImageFromURL: function(url, imageName) {
         var self = this;
         var callback, command;
 
@@ -413,7 +414,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          */
         this.fire(events.END_CROPPING);
         if (data) {
-            this.loadImageFromURL(data.imageName, data.url);
+            this.loadImageFromURL(data.url, data.imageName);
         }
     },
 

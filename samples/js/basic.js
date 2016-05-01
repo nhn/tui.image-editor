@@ -3,11 +3,46 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview
  */
+/* eslint-disable vars-on-top */
 'use strict';
+
+var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
+var rImageType = /data:(image\/.+);base64,/;
+// Functions
+// HEX to RGBA
+function hexToRGBa(hex, alpha) {
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    var a = alpha || 1;
+
+    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+}
+function base64ToBlob(data) {
+    var mimeString = '';
+    var raw, uInt8Array, i, rawLength;
+
+    raw = data.replace(rImageType, function(header, imageType) {
+        mimeString = imageType;
+
+        return '';
+    });
+
+    raw = atob(raw);
+    rawLength = raw.length;
+    uInt8Array = new Uint8Array(rawLength); // eslint-disable-line
+
+    for (i = 0; i < rawLength; i += 1) {
+        uInt8Array[i] = raw.charCodeAt(i);
+    }
+
+    return new Blob([uInt8Array], {type: mimeString});
+}
+
 // Buttons
 var $btns = $('.menu-item');
 var $btnsActivatable = $btns.filter('.activatable');
-var $btnLoadImage = $('#btn-load-image');
+var $inputImage = $('#input-image-file');
 var $btnDownload = $('#btn-download');
 
 var $btnUndo = $('#btn-undo');
@@ -45,15 +80,6 @@ var colorpicker = tui.component.colorpicker.create({
     container: $('#tui-color-picker')[0]
 });
 
-function hexToRGBa(hex, alpha) {
-    var r = parseInt(hex.slice(1, 3), 16);
-    var g = parseInt(hex.slice(3, 5), 16);
-    var b = parseInt(hex.slice(5, 7), 16);
-    var a = alpha || 1;
-
-    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
-}
-
 colorpicker.on('selectColor', function(event) {
     imageEditor.setBrush({
         color: hexToRGBa(event.color, 0.5)
@@ -84,9 +110,6 @@ imageEditor.on({
         $btnRedo.removeClass('disabled');
     }
 });
-
-// Load sample image
-imageEditor.loadImageFromURL('Sample image', 'img/sampleImage.jpg');
 
 // Attach button click event listeners
 $btns.on('click', function() {
@@ -176,4 +199,46 @@ $btnRotateClockwise.on('click', function() {
 
 $btnRotateCounterClockWise.on('click', function() {
     imageEditor.rotate(-30);
+});
+
+$inputImage.on('change', function(event) {
+    var file;
+
+    if (!supportingFileAPI) {
+        alert('This browser does not support file-api');
+    }
+
+    file = event.target.files[0];
+    imageEditor.loadImageFromFile(file);
+});
+
+$btnDownload.on('click', function() {
+    var imageName = imageEditor.getImageName();
+    var dataURL = imageEditor.toDataURL();
+    var blob, type, w;
+
+    if (supportingFileAPI) {
+        blob = base64ToBlob(dataURL);
+        type = blob.type.split('/')[1];
+        if (imageName.split('.').pop() !== type) {
+            imageName += '.' + type;
+        }
+
+        // Library: FileSaver - saveAs
+        saveAs(blob, imageName); // eslint-disable-line
+    } else {
+        alert('This browser needs a file-server');
+        w = window.open();
+        w.document.body.innerHTML = '<img src=' + dataURL + '>';
+    }
+});
+
+// Etc..
+
+// Load sample image
+imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
+
+// IE9 Unselectable
+$('.menu').on('selectstart', function() {
+    return false;
 });

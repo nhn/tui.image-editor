@@ -11,9 +11,12 @@
     <div class="tui-image-editor-controls">
         <div class="header">
             <img class="logo" src="img/TOAST UI Component.png">
-            <span> Image Editor</span>
+            <span class="name"> Image Editor</span>
             <ul class="menu">
-                <li class="menu-item border" id="btn-load-image">Load</li>
+                <li class="menu-item border input-wrapper">
+                    Load
+                    <input type="file" accept="image/*" id="input-image-file">
+                </li>
                 <li class="menu-item border" id="btn-download">Download</li>
             </ul>
         </div>
@@ -64,6 +67,7 @@
 <script src="libs/jquery.min.js"></script>
 <script src="libs/fabric.min.js"></script>
 <script src="libs/colorpicker.min.js"></script>
+<script src="libs/FileSaver.min.js"></script>
 <script src="js/image-editor.js"></script>
 <script src="js/basic.js"></script>
 </body>
