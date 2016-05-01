@@ -14,14 +14,12 @@
     "tests"
   ],
   "dependencies": {
-    "tui-code-snippet": "^1.0.7",
-    "jquery": "1.8.3",
-    "fabric.js": "fabric#^1.5.0",
-    "component-file-uploader": "tui-component-file-uploader#^1.1.0"
+    "tui-code-snippet": "~1.0.8",
+    "jquery": "~1.8.3",
+    "fabric": "~1.6.0"
   },
   "devDependencies": {
-    "json2": "*",
-    "html5shiv": "^3.7.3",
-    "ExplorerCanvas": "https://github.com/GerHobbelt/excanvas.git"
+    "tui-component-colorpicker": "~1.0.1",
+    "filesaver": "*"
   }
 }

@@ -34,50 +34,61 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
 
     /**
      * Set angle of the image
+     *
+     *  Do not call "this.setImageProperties" for setting angle directly.
+     *  Before setting angle, The originX,Y of image should be set to center.
+     *      See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
+     *
      * @param {number} angle - Angle value
      * @returns {jQuery.Deferred}
      */
     setAngle: function(angle) {
-        var current = this.getCurrentAngle();
+        var oldAngle = this.getCurrentAngle() % 360; //The angle is lower than 2*PI(===360 degrees)
         var jqDefer = $.Deferred();
-        var canvasImage;
+        var oldImageCenter, newImageCenter, canvasImage;
 
-        if (angle === current) {
+        angle %= 360;
+        if (angle === oldAngle) {
             return jqDefer.reject();
         }
-
-        /**
-         * Do not call "this.setImageProperties" for setting angle directly.
-         * Before setting angle, The originX,Y of image should be set to center.
-         *  See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
-         */
         canvasImage = this.getCanvasImage();
+
+        oldImageCenter = canvasImage.getCenterPoint();
         canvasImage.setAngle(angle).setCoords();
-        this._adjustCanvasDimension();
+        this.adjustCanvasDimension();
+        newImageCenter = canvasImage.getCenterPoint();
+        this._rotateForEachObject(oldImageCenter, newImageCenter, angle - oldAngle);
 
         return jqDefer.resolve(angle);
     },
 
     /**
-     * Adjust canvas dimension from image-rotation
+     * Rotate for each object
+     * @param {fabric.Point} oldImageCenter - Image center point before rotation
+     * @param {fabric.Point} newImageCenter - Image center point after rotation
+     * @param {number} angleDiff - Image angle difference after rotation
      * @private
      */
-    _adjustCanvasDimension: function() {
-        var canvasImage = this.getCanvasImage(),
-            boundingRect = canvasImage.getBoundingRect();
+    _rotateForEachObject: function(oldImageCenter, newImageCenter, angleDiff) {
+        var canvas = this.getCanvas();
+        var centerDiff = {
+            x: oldImageCenter.x - newImageCenter.x,
+            y: oldImageCenter.y - newImageCenter.y
+        };
 
-        // BoundingRect dimensions +1, so that don't get blurry image.
-        boundingRect.width = Math.floor(boundingRect.width) + 1;
-        boundingRect.height = Math.floor(boundingRect.height) + 1;
+        canvas.forEachObject(function(obj) {
+            var objCenter = obj.getCenterPoint();
+            var radian = fabric.util.degreesToRadians(angleDiff);
+            var newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
 
-        this.setCanvasCssDimension({
-            'max-width': boundingRect.width + 'px'
+            obj.set({
+                left: newObjCenter.x - centerDiff.x,
+                top: newObjCenter.y - centerDiff.y,
+                angle: (obj.angle + angleDiff) % 360
+            });
+            obj.setCoords();
         });
-        this.setCanvasBackstoreDimension({
-            width: boundingRect.width,
-            height: boundingRect.height
-        });
-        this.getCanvas().centerObject(canvasImage);
+        canvas.renderAll();
     },
 
     /**
@@ -86,10 +97,9 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      * @returns {jQuery.Deferred}
      */
     rotate: function(additionalAngle) {
-        var current = this.getCanvasImage().angle;
+        var current = this.getCurrentAngle();
 
-        // The angle is lower than 2*PI(===360 degrees)
-        return this.setAngle((current + additionalAngle) % 360);
+        return this.setAngle(current + additionalAngle);
     }
 });
 

@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Component interface
+ */
 'use strict';
 
 /**
@@ -74,15 +78,6 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
     },
 
     /**
-     * Toggle properties of the image
-     * @param {Array.<string>} properties - Image property names
-     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
-     */
-    toggleImageProperties: function(properties, withRendering) {
-        this.getRoot().toggleImageProperties(properties, withRendering);
-    },
-
-    /**
      * Set canvas dimension - css only
      * @param {object} dimension - Canvas css dimension
      */
@@ -107,6 +102,13 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
     },
 
     /**
+     * Adjust canvas dimension with scaling image
+     */
+    adjustCanvasDimension: function() {
+        this.getRoot().adjustCanvasDimension();
+    },
+
+    /**
      * Return parent.
      * If the view is root, return null
      * @returns {Component|null}
@@ -120,10 +122,8 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
      * @returns {Component}
      */
     getRoot: function() {
-        var next = this.getParent(),
-        /* eslint-disable consistent-this */
-            current = this;
-        /* eslint-enable consistent-this */
+        var next = this.getParent();
+        var current = this; // eslint-disable-line consistent-this
 
         while (next) {
             current = next;

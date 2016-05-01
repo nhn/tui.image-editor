@@ -16,6 +16,7 @@ describe('Cropzone', function() {
             width: 100,
             height: 100,
             cornerSize: 10,
+            strokeWidth: 0,
             cornerColor: 'black',
             fill: 'transparent',
             hasRotatingPoint: false,
@@ -158,6 +159,10 @@ describe('Cropzone', function() {
         };
         actual = cropzone._calcBottomRightScalingSizeFromPointer(mousePointerX, mousePointerY);
         expect(actual).toEqual(expected);
+    });
+
+    it('should be "cropzone" type', function() {
+        expect(cropzone.isType('cropzone')).toBe(true);
     });
 
     it('"_makeScalingSettings()" ' +

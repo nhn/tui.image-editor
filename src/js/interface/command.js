@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Command interface
+ */
 'use strict';
 
 var errorMessage = require('../factory/errorMessage');
@@ -39,6 +43,7 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
 
     /**
      * Execute action
+     * @param {Object.<string, Component>} compMap - Components injection
      * @abstract
      */
     execute: function() {
@@ -47,6 +52,7 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
 
     /**
      * Undo action
+     * @param {Object.<string, Component>} compMap - Components injection
      * @abstract
      */
     undo: function() {

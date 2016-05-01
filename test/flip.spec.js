@@ -93,4 +93,36 @@ describe('Flip', function() {
             flipY: false
         });
     });
+
+    it('flipX(), flipY(), set(), reset() should resolve with angle', function() {
+        var spy = jasmine.createSpy();
+        mockImage.setAngle(10);
+
+        flipModule.flipX().done(spy);
+        expect(spy).toHaveBeenCalledWith({
+            flipX: true,
+            flipY: false
+        }, -10);
+
+        spy.calls.reset();
+        flipModule.flipY().done(spy);
+        expect(spy).toHaveBeenCalledWith({
+            flipX: true,
+            flipY: true
+        }, 10);
+
+        spy.calls.reset();
+        flipModule.set({flipX: true, flipY: false}).done(spy);
+        expect(spy).toHaveBeenCalledWith({
+            flipX: true,
+            flipY: false
+        }, -10);
+
+        spy.calls.reset();
+        flipModule.set({flipX: false, flipY: false}).done(spy);
+        expect(spy).toHaveBeenCalledWith({
+            flipX: false,
+            flipY: false
+        }, 10);
+    });
 });

@@ -41,17 +41,6 @@ describe('Rotation', function() {
         expect(spy).toHaveBeenCalled();
     });
 
-    it('"_adjustCanvasDimension()" should set canvas dimension from image-rect', function() {
-        spyOn(mockImage, 'getBoundingRect').and.returnValue({
-            width: 100,
-            height: 110
-        });
-
-        rotationModule._adjustCanvasDimension();
-        expect(main.canvas.getWidth()).toEqual(101);
-        expect(main.canvas.getHeight()).toEqual(111);
-    });
-
     it('"rotate()" should add angle value', function() {
         var current = rotationModule.getCurrentAngle();
 
@@ -68,5 +57,17 @@ describe('Rotation', function() {
 
         rotationModule.rotate(370);
         expect(rotationModule.getCurrentAngle()).toBe(10);
+    });
+
+    //@todo Move this tc to main.spec.js
+    it('"adjustCanvasDimension()" should set canvas dimension from image-rect', function() {
+        spyOn(mockImage, 'getBoundingRect').and.returnValue({
+            width: 100,
+            height: 110
+        });
+
+        rotationModule.adjustCanvasDimension();
+        expect(main.canvas.getWidth()).toEqual(100);
+        expect(main.canvas.getHeight()).toEqual(110);
     });
 });

@@ -1,3 +1,7 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Cropzone extending fabric.Rect
+ */
 'use strict';
 
 var clamp = require('../util').clamp;
@@ -21,10 +25,11 @@ var CORNER_TYPE_BOTTOM_RIGHT = 'br';
 var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
     /**
      * Constructor
-     * @param {Object} [options] Options object
+     * @param {Object} options Options object
      * @override
      */
     initialize: function(options) {
+        options.type = 'cropzone';
         this.callSuper('initialize', options);
         this.on({
             'moving': this._onMoving,
