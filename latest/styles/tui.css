@@ -1,0 +1,24 @@
+* {
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+}
+
+ol, ul, li {
+    list-style: none;
+}
+
+pre {
+    display: block;
+    padding: 8px;
+    margin: 0 0 8.5px;
+    font-size: 11px;
+    line-height: 1.42857143;
+    word-break: break-all;
+    word-wrap: break-word;
+    color: #333;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+}
