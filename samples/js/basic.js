@@ -62,6 +62,10 @@ var $btnRotateClockwise = $('#btn-rotate-clockwise');
 var $btnRotateCounterClockWise = $('#btn-rotate-counter-clockwise');
 var $btnClose = $('.close');
 
+// Range Input
+var $inputRotationRange = $('#input-rotation-range');
+var $inputBrushWidthRange = $('#input-brush-width-range');
+
 // Sub menus
 var $displayingSubMenu = $();
 var $cropSubMenu = $('#crop-sub-menu');
@@ -71,7 +75,7 @@ var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
 
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
-    cssMaxWidth: 800,
+    cssMaxWidth: 700,
     cssMaxHeight: 600
 });
 
@@ -199,6 +203,21 @@ $btnRotateClockwise.on('click', function() {
 
 $btnRotateCounterClockWise.on('click', function() {
     imageEditor.rotate(-30);
+});
+
+$inputRotationRange.on('mousedown', function() {
+    var changeAngle = function() {
+        imageEditor.setAngle(parseInt($inputRotationRange.val(), 10));
+    };
+    $(document).on('mousemove', changeAngle);
+    $(document).on('mouseup', function stopChangingAngle() {
+        $(document).off('mousemove', changeAngle);
+        $(document).off('mouseup', stopChangingAngle);
+    });
+});
+
+$inputBrushWidthRange.on('change', function() {
+    imageEditor.setBrush({width: parseInt(this.value, 10)});
 });
 
 $inputImage.on('change', function(event) {

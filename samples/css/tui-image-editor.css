@@ -38,6 +38,9 @@
 .menu-item a {
     text-decoration: none;
 }
+.menu-item.no-pointer {
+    cursor: default;
+}
 .menu-item.active,
 .menu-item:hover {
     background-color:#f3f3f3;
@@ -67,7 +70,7 @@
     border: 1px dashed black;
 }
 .tui-colorpicker-container {
-    margin: 0 auto;
+    margin: 5px auto 0;
 }
 .input-wrapper{
     position: relative;
