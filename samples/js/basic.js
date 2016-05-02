@@ -76,7 +76,7 @@ var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
     cssMaxWidth: 700,
-    cssMaxHeight: 600
+    cssMaxHeight: 500
 });
 
 // Color picker
