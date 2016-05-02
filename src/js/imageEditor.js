@@ -597,14 +597,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * Remove active object
+     * Remove active object or group
      * @api
      * @example
      * imageEditor.removeActiveObject();
      */
     removeActiveObject: function() {
-        var obj = this._canvas.getActiveObject();
-        var command = commandFactory.create(commands.REMOVE_OBJECT, obj);
+        var canvas = this._canvas;
+        var target = canvas.getActiveObject() || canvas.getActiveGroup();
+        var command = commandFactory.create(commands.REMOVE_OBJECT, target);
 
         this.execute(command);
     },

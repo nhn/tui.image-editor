@@ -218,26 +218,49 @@ describe('commandFactory', function() {
     });
 
     describe('removeCommand', function() {
-        var object, command;
+        var object, object2, group, command;
 
         beforeEach(function() {
             object = new fabric.Object();
-            command = commandFactory.create(commands.REMOVE_OBJECT, object);
+            object2 = new fabric.Object();
+            group = new fabric.Group();
+
+            canvas.add(object);
+            canvas.add(object2);
+            canvas.add(group);
+            group.add(object, object2);
         });
 
         it('should remove an object', function() {
-            canvas.add(object);
+            command = commandFactory.create(commands.REMOVE_OBJECT, object);
             invoker.invoke(command);
 
             expect(canvas.contains(object)).toBe(false);
         });
 
+        it('should remove objects group', function() {
+            command = commandFactory.create(commands.REMOVE_OBJECT, group);
+            invoker.invoke(command);
+
+            expect(canvas.contains(object)).toBe(false);
+            expect(canvas.contains(object2)).toBe(false);
+        });
+
         it('"undo()" should restore the removed object', function() {
-            canvas.add(object);
+            command = commandFactory.create(commands.REMOVE_OBJECT, object);
             invoker.invoke(command);
             invoker.undo();
 
             expect(canvas.contains(object)).toBe(true);
+        });
+
+        it ('"undo()" should restore the removed objects (group)', function() {
+            command = commandFactory.create(commands.REMOVE_OBJECT, group);
+            invoker.invoke(command);
+            invoker.undo();
+
+            expect(canvas.contains(object)).toBe(true);
+            expect(canvas.contains(object2)).toBe(true);
         });
     });
 });

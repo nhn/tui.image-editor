@@ -213,10 +213,10 @@ function createClearCommand() {
 
 /**
  * Remove command
- * @param {fabric.Object} obj - Object to remove
+ * @param {fabric.Object|fabric.Group} target - Object(s) to remove
  * @returns {Command}
  */
-function createRemoveCommand(obj) {
+function createRemoveCommand(target) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
@@ -225,10 +225,18 @@ function createRemoveCommand(obj) {
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
             var jqDefer = $.Deferred();
+            var isValidGroup = target && target.isType('group') && !target.isEmpty();
 
-            if (canvas.contains(obj)) {
-                this.store = obj;
-                obj.remove();
+            if (isValidGroup) {
+                canvas.discardActiveGroup(); // restore states for each objects
+                this.store = target.getObjects();
+                target.forEachObject(function(obj) {
+                    obj.remove();
+                });
+                jqDefer.resolve();
+            } else if (canvas.contains(target)) {
+                this.store = [target];
+                target.remove();
                 jqDefer.resolve();
             } else {
                 jqDefer.reject();
@@ -242,14 +250,8 @@ function createRemoveCommand(obj) {
          */
         undo: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
-            var jqDefer = $.Deferred();
 
-            if (canvas.contains(this.store)) {
-                jqDefer.reject();
-            } else {
-                canvas.add(this.store);
-                jqDefer.resolve();
-            }
+            canvas.add.apply(canvas, this.store);
 
             return $.Deferred().resolve();
         }
