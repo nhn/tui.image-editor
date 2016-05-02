@@ -10,9 +10,9 @@ Canvas image editor
 * Free Drawing
 
 ## Documentation
-* API:
-* Tutorial:
-* Samples:
+* API: http://nhnent.github.io/tui.component.image-editor/latest/
+* Tutorial: https://github.com/nhnent/tui.component.image-editor/wiki/Tutorial
+* Samples: http://nhnent.github.io/tui.component.image-editor/latest/tutorial.html
 
 ## Dependency
 * jQuery: ~1.8.3
