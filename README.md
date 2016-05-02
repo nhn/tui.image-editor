@@ -16,7 +16,7 @@ Canvas image editor
 
 ## Dependency
 * jQuery: ~1.8.3
-* tui-code-snippet: ~1.0.7
+* tui.code-snippet: ~1.0.7
 * fabric.js: ~1.6.0
 
 ## Test environment
@@ -25,6 +25,15 @@ Canvas image editor
 * Firefox
 
 ## Download/Install
+* Bower
+  * Latest: `bower install tui-component-image-editor`
+  * Each version: `bower install tui-component-image-editor[#tag]`
+* Download
+  * `image-editor.js` or `image-editor.min.js` 
+  * Download dependencies
+    * jQuery: https://github.com/jquery/jquery
+    * tui.code-snippet: https://github.com/nhnent/tui.code-snippet
+    * fabric.js: https://github.com/kangax/fabric.js
 
 ## LICENSE
 * [MIT](LICENSE)
