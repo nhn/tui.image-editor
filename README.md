@@ -1,6 +1,8 @@
 # Image Editor
 Canvas image editor
 
+![image](https://cloud.githubusercontent.com/assets/12269563/14948542/7b400b60-107c-11e6-8774-cc9ccf305846.png)
+
 ## Feature
 * Load image to canvas
 * Undo/Redo
