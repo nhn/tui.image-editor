@@ -4,8 +4,12 @@
 .body-container {
     width: 800px;
 }
+.tui-image-editor-controls {
+    height: 210px;
+}
 .menu {
     padding: 0;
+    margin-bottom: 5px;
     text-align: center;
     color:#544B61;
     font-weight: 400;
@@ -38,6 +42,9 @@
 .menu-item a {
     text-decoration: none;
 }
+.menu-item.no-pointer {
+    cursor: default;
+}
 .menu-item.active,
 .menu-item:hover {
     background-color:#f3f3f3;
@@ -48,14 +55,12 @@
     background-color: white;
 }
 .sub-menu-container {
+    font-size: 14px;
     margin-bottom: 1em;
     display: none;
 }
-.sub-menu-container .menu {
-    font-size: 14px;
-}
 .tui-image-editor {
-    height: 600px;
+    height: 500px;
 }
 .tui-image-editor-canvas-container {
     margin: 0 auto;
@@ -66,8 +71,15 @@
     -webkit-transform: translateY(-50%);
     border: 1px dashed black;
 }
+#tui-color-picker {
+    display: inline-block;
+    vertical-align: middle;
+}
 .tui-colorpicker-container {
-    margin: 0 auto;
+    margin: 5px auto 0;
+}
+.tui-colorpicker-palette-toggle-slider {
+    display: none;
 }
 .input-wrapper{
     position: relative;
