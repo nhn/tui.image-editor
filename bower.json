@@ -8,6 +8,13 @@
   "license": "MIT",
   "ignore": [
     "**/.*",
+    "samples",
+    "src",
+    "index.js",
+    "karma.*",
+    "gulpfile.js",
+    "jsdoc-conf.json",
+    "package.json",
     "node_modules",
     "bower_components",
     "test",
