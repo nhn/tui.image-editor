@@ -49,15 +49,18 @@
             <ul class="menu">
                 <li class="menu-item" id="btn-rotate-clockwise">Clockwise(30)</li>
                 <li class="menu-item" id="btn-rotate-counter-clockwise">Counter-Clockwise(-30)</li>
+                <li class="menu-item no-pointer"><label>Range input<input id="input-rotation-range" type="range" min="-360" value="0" max="360"></label></li>
                 <li class="menu-item close">Close</li>
             </ul>
         </div>
         <div class="sub-menu-container" id="free-drawing-sub-menu">
-            <div id="tui-color-picker"></div>
+            <div class="menu" id="tui-color-picker">
+                <label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label>
+            </div>
         </div>
     </div>
     <div class="tui-image-editor">
-        <canvas width="800" height="600"></canvas>
+        <canvas></canvas>
     </div>
 </div>
 <script src="libs/code-snippet.min.js"></script>
