@@ -60,7 +60,7 @@
     display: none;
 }
 .tui-image-editor {
-    height: 550px;
+    height: 500px;
 }
 .tui-image-editor-canvas-container {
     margin: 0 auto;
@@ -77,6 +77,9 @@
 }
 .tui-colorpicker-container {
     margin: 5px auto 0;
+}
+.tui-colorpicker-palette-toggle-slider {
+    display: none;
 }
 .input-wrapper{
     position: relative;

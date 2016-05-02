@@ -81,7 +81,8 @@ var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
 
 // Color picker
 var colorpicker = tui.component.colorpicker.create({
-    container: $('#tui-color-picker')[0]
+    container: $('#tui-color-picker')[0],
+    color: '#000000'
 });
 
 colorpicker.on('selectColor', function(event) {
