@@ -1,6 +1,6 @@
 {
   "name": "tui-image-editor",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "authors": [
     "NHNEnt FE Development Team <dl_javascript@nhnent.com>"
   ],
@@ -21,7 +21,7 @@
     "tests"
   ],
   "dependencies": {
-    "tui-code-snippet": "~1.0.8",
+    "tui-code-snippet": "~1.2.0",
     "jquery": "~1.8.3",
     "fabric": "~1.6.0"
   },
