@@ -599,7 +599,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * Start text mode
+     * Start text input mode
      * @api
      * @example
      * imageEditor.endTextMode();
@@ -614,43 +614,44 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this._state = states.TEXT;
 
-        this._listener = $.proxy(this._onFabricMouseDown, this);
-
         this._canvas.defaultCursor = 'text';
-        this._canvas.on('mouse:down', this._listener);
+        this._canvas.on('mouse:down', $.proxy(this._onFabricMouseDown, this));
     },
 
     /**
      * Add text on image
-     * @param {object} [setting] Options for generating text
-     *     @param {string} [setting.text] Initial text
-     *     @param {object} [setting.styles] Initial styles
-     *         @param {string} [setting.styles.fill] Color
-     *         @param {string} [setting.styles.fontFamily] Font type for text
-     *         @param {number} [setting.styles.fontSize] Size
-     *         @param {string} [setting.styles.fontStyle] Type of inclination (normal / italic)
-     *         @param {string} [setting.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
-     *         @param {string} [setting.styles.textAlign] Type of text align (left / center / right)
-     *         @param {string} [setting.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+     * @param {string} text - Initial input text
+     * @param {object} [settings] Options for generating text
+     *     @param {object} [settings.styles] Initial styles
+     *         @param {string} [settings.styles.fill] Color
+     *         @param {string} [settings.styles.fontFamily] Font type for text
+     *         @param {number} [settings.styles.fontSize] Size
+     *         @param {string} [settings.styles.fontStyle] Type of inclination (normal / italic)
+     *         @param {string} [settings.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
+     *         @param {string} [settings.styles.textAlign] Type of text align (left / center / right)
+     *         @param {string} [settings.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
      *     @param {{x: number, y: number}} [setting.position] - Initial position
      * @api
      * @example
      * 	imageEditor.addText();
-     * 	imageEditor.addText({
-     * 		text: 'init text',
+     * 	imageEditor.addText('init text', {
      * 		styles: {
      * 			fill: '#000',
      * 			fontSize: '20',
      * 			fontWeight: 'bold'
+     * 		},
+     * 		position: {
+     * 			x: 10,
+     * 			y: 10
      * 		}
      * 	});
      */
-    addText: function(setting) {
+    addText: function(text, settings) {
         if (this.getCurrentState() !== states.TEXT) {
             this._state = states.TEXT;
         }
 
-        this._getComponent(compList.TEXT).add(setting);
+        this._getComponent(compList.TEXT).add(text || '', settings || {});
     },
 
     /**
@@ -661,11 +662,14 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * 	imageEditor.changeText('change text');
      */
     changeText: function(text) {
-        if (this.getCurrentState() !== states.TEXT) {
+        var activeObj = this._canvas.getActiveObject();
+
+        if (this.getCurrentState() !== states.TEXT ||
+            !activeObj) {
             return;
         }
 
-        this._getComponent(compList.TEXT).change(text);
+        this._getComponent(compList.TEXT).change(activeObj, text);
     },
 
     /**
@@ -685,15 +689,18 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * 	});
      */
     changeTextStyle: function(styleObj) {
-        if (this.getCurrentState() !== states.TEXT) {
+        var activeObj = this._canvas.getActiveObject();
+
+        if (this.getCurrentState() !== states.TEXT ||
+            !activeObj) {
             return;
         }
 
-        this._getComponent(compList.TEXT).setStyle(styleObj);
+        this._getComponent(compList.TEXT).setStyle(activeObj, styleObj);
     },
 
     /**
-     * End text mode
+     * End text input mode
      * @api
      * @example
      * imageEditor.startTextMode();
@@ -704,10 +711,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             this._state = states.NORMAL;
         }
 
-        this._listener = null;
-
         this._canvas.defaultCursor = 'default';
-        this._canvas.off('mouse:down', this._listener);
+        this._canvas.off('mouse:down', this._onFabricMouseDown);
     },
 
      /**

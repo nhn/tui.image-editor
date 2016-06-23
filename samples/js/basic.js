@@ -91,19 +91,19 @@ var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
     cssMaxHeight: 500
 });
 
-// Color picker
-var colorpicker = tui.component.colorpicker.create({
+// Color picker for free drawing
+var brushColorpicker = tui.component.colorpicker.create({
     container: $('#tui-color-picker')[0],
     color: '#000000'
 });
 
-// Color picker 2 (for text palette)
-var colorpicker2 = tui.component.colorpicker.create({
+// Color picker for text palette
+var textPaletteColorpicker = tui.component.colorpicker.create({
     container: $('#tui-color-picker2')[0],
     color: '#000000'
 });
 
-colorpicker.on('selectColor', function(event) {
+brushColorpicker.on('selectColor', function(event) {
     imageEditor.setBrush({
         color: hexToRGBa(event.color, 0.5)
     });
@@ -135,7 +135,7 @@ imageEditor.on({
     },
     activateText: function(e) {
         if (e.isNew) {
-            imageEditor.addText({
+            imageEditor.addText('', {
                 position: e.originPosition
             });
         }
@@ -147,7 +147,7 @@ imageEditor.on({
 
         $inputText.val(e.text);
         $inputFontSizeRange.val(e.styles.fontSize || 40);
-        colorpicker2.setColor(e.styles.fill || '#000000');
+        textPaletteColorpicker.setColor(e.styles.fill || '#000000');
     }
 });
 
@@ -312,9 +312,11 @@ $inputFontSizeRange.on('change', function() {
     });
 });
 
-$btnTextStyle.on('click', function() { // eslint-disable-line
+$btnTextStyle.on('click', function(e) { // eslint-disable-line
     var styleType = $(this).attr('data-style-type');
     var styleObj;
+
+    e.stopPropagation();
 
     switch (styleType) {
         case 'b':
@@ -347,7 +349,7 @@ $btnClosePalette.on('click', function() {
     $textPalette.hide();
 });
 
-colorpicker2.on('selectColor', function(event) {
+textPaletteColorpicker.on('selectColor', function(event) {
     imageEditor.changeTextStyle({
         'fill': event.color
     });

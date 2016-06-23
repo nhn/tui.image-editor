@@ -32,12 +32,12 @@ describe('Text', function() {
         var activeObj;
 
         beforeEach(function() {
-            text.add();
+            text.add('', {});
 
             activeObj = canvas.getActiveObject();
         });
 
-        it('should make the blank text object when parameter is null.', function() {
+        it('should make the blank text object when text parameter is empty string.', function() {
             var newText = activeObj.getText();
 
             expect(newText).toEqual('');
@@ -57,80 +57,47 @@ describe('Text', function() {
         });
     });
 
-    describe('change()', function() {
-        var changingText;
+    it('change() should change contents in the text object as input.', function() {
+        var activeObj;
 
-        beforeEach(function() {
-            changingText = '변경할 텍스트';
+        text.add('text123', {});
 
-            text.add({
-                text: 'test123'
-            });
-        });
+        activeObj = canvas.getActiveObject();
 
-        it('should not change contents when the atcivated text object is not on canvas.', function() {
-            canvas.deactivateAll();
+        text.change(activeObj, 'abc');
 
-            text.change(changingText);
+        expect(activeObj.getText()).toEqual('abc');
 
-            canvas.forEachObject(function(obj) {
-                expect(obj.getText()).not.toEqual(changingText);
-            });
-        });
+        text.change(activeObj, 'def');
 
-        it('should change contents in the text object as input.', function() {
-            var originText;
-
-            text.change(changingText);
-
-            originText = canvas.getActiveObject().getText();
-
-            expect(originText).toEqual(changingText);
-        });
+        expect(activeObj.getText()).toEqual('def');
     });
 
     describe('setStyle()', function() {
         beforeEach(function() {
-            text.add({
-                text: 'test12345',
+            text.add('new text', {
                 styles: {
                     fontWeight: 'bold'
                 }
             });
         });
 
-        it('should not change styles when the activated text object is not on canvas.', function() {
-            canvas.deactivateAll();
-
-            text.setStyle({
-                fontWeight: 'normal'
-            });
-
-            canvas.forEachObject(function(obj) {
-                expect(obj.fontWeight).toEqual('bold');
-            });
-        });
-
         it('should unlock style when a selected style already apply on the activated text object.', function() {
-            var activeObj;
+            var activeObj = canvas.getActiveObject();
 
-            text.setStyle({
+            text.setStyle(activeObj, {
                 fontWeight: 'bold'
             });
-
-            activeObj = canvas.getActiveObject();
 
             expect(activeObj.fontWeight).not.toEqual('bold');
         });
 
         it('should apply style when the activated text object has not a selected style.', function() {
-            var activeObj;
+            var activeObj = canvas.getActiveObject();
 
-            text.setStyle({
+            text.setStyle(activeObj, {
                 fontStyle: 'italic'
             });
-
-            activeObj = canvas.getActiveObject();
 
             expect(activeObj.fontStyle).toEqual('italic');
         });
