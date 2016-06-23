@@ -17,7 +17,8 @@ module.exports = {
         'CROPPER',
         'FLIP',
         'ROTATION',
-        'FREE_DRAWING'
+        'FREE_DRAWING',
+        'TEXT'
     ),
 
     /**
@@ -52,7 +53,8 @@ module.exports = {
         EMPTY_REDO_STACK: 'emptyRedoStack',
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',
-        PUSH_REDO_STACK: 'pushRedoStack'
+        PUSH_REDO_STACK: 'pushRedoStack',
+        ACTIVATE_TEXT: 'activateText'
     },
 
     /**
@@ -62,6 +64,7 @@ module.exports = {
     states: util.keyMirror(
         'NORMAL',
         'CROP',
-        'FREE_DRAWING'
+        'FREE_DRAWING',
+        'TEXT'
     )
 };

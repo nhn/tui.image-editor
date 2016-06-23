@@ -135,7 +135,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     _onPathCreated: function(obj) {
         var path = obj.path;
-
         path.set({
             rotatingPointOffset: 30,
             borderColor: 'red',
@@ -193,6 +192,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * //    NORMAL: 'NORMAL'
      * //    CROP: 'CROP'
      * //    FREE_DRAWING: 'FREE_DRAWING'
+     * //    TEXT: 'TEXT'
      * //
      * if (imageEditor.getCurrentState() === 'FREE_DRAWING') {
      *     imageEditor.endFreeDrawing();
@@ -231,6 +231,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.endAll(); // === imageEidtor.endCropping();
      */
     endAll: function() {
+        this.endTextMode();
         this.endFreeDrawing();
         this.endCropping();
         this.deactivateAll();
@@ -245,6 +246,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     deactivateAll: function() {
         this._canvas.deactivateAll();
+        this._canvas.renderAll();
     },
 
     /**
@@ -594,6 +596,170 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          * @event ImageEditor#endFreeDrawing
          */
         this.fire(events.END_FREE_DRAWING);
+    },
+
+    /**
+     * Start text mode
+     * @api
+     * @example
+     * imageEditor.endTextMode();
+     * imageEditor.startTextMode();
+     */
+    startTextMode: function() {
+        this.endAll();
+
+        if (this.getCurrentState() === states.TEXT) {
+            return;
+        }
+
+        this._state = states.TEXT;
+
+        this._listener = $.proxy(this._onFabricMouseDown, this);
+
+        this._canvas.defaultCursor = 'text';
+        this._canvas.on('mouse:down', this._listener);
+    },
+
+    /**
+     * Add text on image
+     * @param {object} [setting] Options for generating text
+     *     @param {string} [setting.text] Initial text
+     *     @param {object} [setting.styles] Initial styles
+     *         @param {string} [setting.styles.fill] Color
+     *         @param {string} [setting.styles.fontFamily] Font type for text
+     *         @param {number} [setting.styles.fontSize] Size
+     *         @param {string} [setting.styles.fontStyle] Type of inclination (normal / italic)
+     *         @param {string} [setting.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
+     *         @param {string} [setting.styles.textAlign] Type of text align (left / center / right)
+     *         @param {string} [setting.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *     @param {{x: number, y: number}} [setting.position] - Initial position
+     * @api
+     * @example
+     * 	imageEditor.addText();
+     * 	imageEditor.addText({
+     * 		text: 'init text',
+     * 		styles: {
+     * 			fill: '#000',
+     * 			fontSize: '20',
+     * 			fontWeight: 'bold'
+     * 		}
+     * 	});
+     */
+    addText: function(setting) {
+        if (this.getCurrentState() !== states.TEXT) {
+            this._state = states.TEXT;
+        }
+
+        this._getComponent(compList.TEXT).add(setting);
+    },
+
+    /**
+     * Change contents of selected text object on image
+     * @param {string} text - Changing text
+     * @api
+     * @example
+     * 	imageEditor.changeText('change text');
+     */
+    changeText: function(text) {
+        if (this.getCurrentState() !== states.TEXT) {
+            return;
+        }
+
+        this._getComponent(compList.TEXT).change(text);
+    },
+
+    /**
+     * Set style
+     * @param {object} styleObj - Initial styles
+     *     @param {string} [styleObj.fill] Color
+     *     @param {string} [styleObj.fontFamily] Font type for text
+     *     @param {number} [styleObj.fontSize] Size
+     *     @param {string} [styleObj.fontStyle] Type of inclination (normal / italic)
+     *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
+     *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
+     *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
+     * @api
+     * @example
+     * 	imageEditor.changeTextStyle({
+     * 		'fontStyle': 'italic'
+     * 	});
+     */
+    changeTextStyle: function(styleObj) {
+        if (this.getCurrentState() !== states.TEXT) {
+            return;
+        }
+
+        this._getComponent(compList.TEXT).setStyle(styleObj);
+    },
+
+    /**
+     * End text mode
+     * @api
+     * @example
+     * imageEditor.startTextMode();
+     * imageEditor.endTextMode();
+     */
+    endTextMode: function() {
+        if (this.getCurrentState() === states.TEXT) {
+            this._state = states.NORMAL;
+        }
+
+        this._listener = null;
+
+        this._canvas.defaultCursor = 'default';
+        this._canvas.off('mouse:down', this._listener);
+    },
+
+     /**
+      * Mousedown event handler
+      * @param {fabric.Event} event - Current mousedown event object
+      */
+    _onFabricMouseDown: function(event) {
+        var obj = event.target;
+        var e = event.e;
+        var originPointer = this._canvas.getPointer(e);
+
+        if (obj && !obj.isType('text')) {
+            return;
+        }
+
+        /**
+         * @api
+         * @event ImageEditor#selectText
+         * @param {object} setting
+         *     @param {boolean} setting.isNew - Whether the new input text or not
+         *     @param {string} setting.text - Current text
+         *     @param {object} setting.styles - Current styles
+         *         @param {string} setting.styles.fill - Color
+         *         @param {string} setting.styles.fontFamily - Font type for text
+         *         @param {number} setting.styles.fontSize - Size
+         *         @param {string} setting.styles.fontStyle - Type of inclination (normal / italic)
+         *         @param {string} setting.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
+         *         @param {string} setting.styles.textAlign - Type of text align (left / center / right)
+         *         @param {string} setting.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
+         *     @param {{x: number, y: number}} setting.originPosition - Current position on origin canvas
+         *     @param {{x: number, y: number}} setting.clientPosition - Current position on client area
+         */
+        this.fire(events.ACTIVATE_TEXT, {
+            isNew: !(obj),
+            text: obj ? obj.text : '',
+            styles: obj ? {
+                fill: obj.fill,
+                fontFamily: obj.fontFamily,
+                fontSize: obj.fontSize,
+                fontStyle: obj.fontStyle,
+                textAlign: obj.textAlign,
+                textDecoration: obj.textDecoration
+            } : {},
+            originPosition: {
+                x: originPointer.x,
+                y: originPointer.y
+            },
+            clientPosition: {
+                x: e.clientX,
+                y: e.clientY
+            }
+        });
     },
 
     /**

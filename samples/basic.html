@@ -29,6 +29,7 @@
             <li class="menu-item activatable" id="btn-flip">Flip</li>
             <li class="menu-item activatable" id="btn-rotation">Rotation</li>
             <li class="menu-item activatable" id="btn-free-drawing">FreeDrawing</li>
+            <li class="menu-item activatable" id="btn-text">Text</li>
         </ul>
 
         <div class="sub-menu-container" id="crop-sub-menu">
@@ -57,10 +58,31 @@
             <div id="tui-color-picker">Brush color</div>
             <label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label>
         </div>
+        <div class="sub-menu-container menu" id="text-sub-menu">
+            <div id="text-palette">
+                <textarea id="input-text"></textarea>
+                <div>
+                    <label class="no-pointer"><input id="input-font-size-range" type="range" min="10" max="100" value="10"></label>
+                </div>
+                <div>
+                    <button class="btn-text-style" data-style-type="b">Bold</button>
+                    <button class="btn-text-style" data-style-type="i">Italic</button>
+                    <button class="btn-text-style" data-style-type="u">Underline</button>
+                </div>
+                <div>
+                    <button class="btn-text-style" data-style-type="l">Left</button>
+                    <button class="btn-text-style" data-style-type="c">Center</button>
+                    <button class="btn-text-style" data-style-type="r">Right</button>
+                </div>
+                <div id="tui-color-picker2"></div>
+                <button id="btn-close-palette">Close</button>
+            </div>
+        </div>
     </div>
     <div class="tui-image-editor">
         <canvas></canvas>
     </div>
+    <div id="tui-flotinglayer"></div>
 </div>
 <script src="libs/code-snippet.min.js"></script>
 <script src="libs/jquery.min.js"></script>

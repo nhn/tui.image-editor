@@ -8,6 +8,7 @@
 
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
+
 // Functions
 // HEX to RGBA
 function hexToRGBa(hex, alpha) {
@@ -60,11 +61,15 @@ var $btnFlipY = $('#btn-flip-y');
 var $btnResetFlip = $('#btn-reset-flip');
 var $btnRotateClockwise = $('#btn-rotate-clockwise');
 var $btnRotateCounterClockWise = $('#btn-rotate-counter-clockwise');
+var $btnText = $('#btn-text');
+var $btnClosePalette = $('#btn-close-palette');
+var $btnTextStyle = $('.btn-text-style');
 var $btnClose = $('.close');
 
 // Range Input
 var $inputRotationRange = $('#input-rotation-range');
 var $inputBrushWidthRange = $('#input-brush-width-range');
+var $inputFontSizeRange = $('#input-font-size-range');
 
 // Sub menus
 var $displayingSubMenu = $();
@@ -72,6 +77,13 @@ var $cropSubMenu = $('#crop-sub-menu');
 var $flipSubMenu = $('#flip-sub-menu');
 var $rotationSubMenu = $('#rotation-sub-menu');
 var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
+var $textSubMenu = $('#text-sub-menu');
+
+// Text input
+var $inputText = $('#input-text');
+
+// Text palette
+var $textPalette = $('#text-palette');
 
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
@@ -85,6 +97,12 @@ var colorpicker = tui.component.colorpicker.create({
     color: '#000000'
 });
 
+// Color picker 2 (for text palette)
+var colorpicker2 = tui.component.colorpicker.create({
+    container: $('#tui-color-picker2')[0],
+    color: '#000000'
+});
+
 colorpicker.on('selectColor', function(event) {
     imageEditor.setBrush({
         color: hexToRGBa(event.color, 0.5)
@@ -95,6 +113,7 @@ colorpicker.on('selectColor', function(event) {
 imageEditor.once('loadImage', function() {
     imageEditor.clearUndoStack();
 });
+
 imageEditor.on({
     endCropping: function() {
         $cropSubMenu.hide();
@@ -113,6 +132,22 @@ imageEditor.on({
     },
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
+    },
+    activateText: function(e) {
+        if (e.isNew) {
+            imageEditor.addText({
+                position: e.originPosition
+            });
+        }
+
+        $textPalette.show().offset({
+            left: e.clientPosition.x,
+            top: e.clientPosition.y + 10
+        });
+
+        $inputText.val(e.text);
+        $inputFontSizeRange.val(e.styles.fontSize || 40);
+        colorpicker2.setColor(e.styles.fill || '#000000');
     }
 });
 
@@ -251,6 +286,71 @@ $btnDownload.on('click', function() {
         w = window.open();
         w.document.body.innerHTML = '<img src=' + dataURL + '>';
     }
+});
+
+// control text mode
+$btnText.on('click', function() {
+    if (imageEditor.getCurrentState() === 'TEXT') {
+        $(this).removeClass('active');
+        imageEditor.endTextMode();
+    } else {
+        $displayingSubMenu.hide();
+        $displayingSubMenu = $textSubMenu.show();
+        imageEditor.startTextMode();
+        $textPalette.hide();
+    }
+});
+
+$inputText.on('keyup', function() {
+    var text = $(this).val();
+    imageEditor.changeText(text);
+});
+
+$inputFontSizeRange.on('change', function() {
+    imageEditor.changeTextStyle({
+        fontSize: parseInt(this.value, 10)
+    });
+});
+
+$btnTextStyle.on('click', function() { // eslint-disable-line
+    var styleType = $(this).attr('data-style-type');
+    var styleObj;
+
+    switch (styleType) {
+        case 'b':
+            styleObj = {'fontWeight': 'bold'};
+            break;
+        case 'i':
+            styleObj = {'fontStyle': 'italic'};
+            break;
+        case 'u':
+            styleObj = {'textDecoration': 'underline'};
+            break;
+        case 'l':
+            styleObj = {'textAlign': 'left'};
+            break;
+        case 'c':
+            styleObj = {'textAlign': 'center'};
+            break;
+        case 'r':
+            styleObj = {'textAlign': 'right'};
+            break;
+        default:
+            styleObj = {};
+    }
+
+    imageEditor.changeTextStyle(styleObj);
+});
+
+$btnClosePalette.on('click', function() {
+    imageEditor.deactivateAll();
+    $textPalette.hide();
+});
+
+colorpicker2.on('selectColor', function(event) {
+    imageEditor.changeTextStyle({
+        'fill': event.color
+    });
 });
 
 // Etc..
