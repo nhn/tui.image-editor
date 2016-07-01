@@ -229,16 +229,10 @@ function createRemoveCommand(target) {
 
             if (isValidGroup) {
                 canvas.discardActiveGroup(); // restore states for each objects
-                this.store = (target.active) ? target.getObjects() : [target];
-
-                target.forEachObject(function(obj) { // each object in group or each group in selection
-                    canvas.remove(obj);
+                this.store = target.getObjects();
+                target.forEachObject(function(obj) {
+                    obj.remove();
                 });
-
-                if (!target.active) {
-                    canvas.remove(target); // remove action for only selecting the grouping object
-                }
-
                 jqDefer.resolve();
             } else if (canvas.contains(target)) {
                 this.store = [target];
