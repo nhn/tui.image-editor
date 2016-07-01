@@ -64,6 +64,9 @@ var $btnRotateCounterClockWise = $('#btn-rotate-counter-clockwise');
 var $btnText = $('#btn-text');
 var $btnClosePalette = $('#btn-close-palette');
 var $btnTextStyle = $('.btn-text-style');
+var $btnAddIcon = $('#btn-add-icon');
+var $btnArrowIcon = $('#btn-arrow-icon');
+var $btnCancelIcon = $('#btn-cancel-icon');
 var $btnClose = $('.close');
 
 // Range Input
@@ -78,6 +81,7 @@ var $flipSubMenu = $('#flip-sub-menu');
 var $rotationSubMenu = $('#rotation-sub-menu');
 var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
 var $textSubMenu = $('#text-sub-menu');
+var $iconSubMenu = $('#icon-sub-menu');
 
 // Text input
 var $inputText = $('#input-text');
@@ -99,7 +103,13 @@ var brushColorpicker = tui.component.colorpicker.create({
 
 // Color picker for text palette
 var textPaletteColorpicker = tui.component.colorpicker.create({
-    container: $('#tui-color-picker2')[0],
+    container: $('#tui-text-color-picker')[0],
+    color: '#000000'
+});
+
+// Color picker for icon
+var iconColorpicker = tui.component.colorpicker.create({
+    container: $('#tui-icon-color-picker')[0],
     color: '#000000'
 });
 
@@ -140,14 +150,15 @@ imageEditor.on({
             });
         }
 
-        $textPalette.show().offset({
+        $textPalette.hide().show(function() { // customize
+            $inputText.focus();
+            $inputText.val(e.text);
+            $inputFontSizeRange.val(e.styles.fontSize || 40);
+            textPaletteColorpicker.setColor(e.styles.fill || '#000000');
+        }).offset({
             left: e.clientPosition.x,
             top: e.clientPosition.y + 10
         });
-
-        $inputText.val(e.text);
-        $inputFontSizeRange.val(e.styles.fontSize || 40);
-        textPaletteColorpicker.setColor(e.styles.fill || '#000000');
     }
 });
 
@@ -210,6 +221,7 @@ $btnFreeDrawing.on('click', function() {
 });
 
 $btnClose.on('click', function() {
+    imageEditor.endAll();
     $displayingSubMenu.hide();
 });
 
@@ -353,6 +365,25 @@ textPaletteColorpicker.on('selectColor', function(event) {
     imageEditor.changeTextStyle({
         'fill': event.color
     });
+});
+
+// control icon mode
+$btnAddIcon.on('click', function() {
+    imageEditor.endAll();
+    $displayingSubMenu.hide();
+    $displayingSubMenu = $iconSubMenu.show();
+});
+
+$btnArrowIcon.on('click', function() {
+    imageEditor.addIcon('arrow');
+});
+
+$btnCancelIcon.on('click', function() {
+    imageEditor.addIcon('cancel');
+});
+
+iconColorpicker.on('selectColor', function(event) {
+    imageEditor.changeIconColor(event.color);
 });
 
 // Etc..

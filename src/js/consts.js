@@ -18,7 +18,8 @@ module.exports = {
         'FLIP',
         'ROTATION',
         'FREE_DRAWING',
-        'TEXT'
+        'TEXT',
+        'ICON'
     ),
 
     /**
@@ -66,5 +67,15 @@ module.exports = {
         'CROP',
         'FREE_DRAWING',
         'TEXT'
-    )
+    ),
+
+    /**
+     * Shortcut key values
+     * @type {Object.<string, number>}
+     */
+    keyCodes: {
+        Z: 90,
+        Y: 89,
+        SHIFT: 16
+    }
 };

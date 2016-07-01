@@ -30,6 +30,7 @@
             <li class="menu-item activatable" id="btn-rotation">Rotation</li>
             <li class="menu-item activatable" id="btn-free-drawing">FreeDrawing</li>
             <li class="menu-item activatable" id="btn-text">Text</li>
+            <li class="menu-item activatable" id="btn-add-icon">Icon</li>
         </ul>
 
         <div class="sub-menu-container" id="crop-sub-menu">
@@ -74,9 +75,19 @@
                     <button class="btn-text-style" data-style-type="c">Center</button>
                     <button class="btn-text-style" data-style-type="r">Right</button>
                 </div>
-                <div id="tui-color-picker2"></div>
+                <div id="tui-text-color-picker"></div>
                 <button id="btn-close-palette">Close</button>
             </div>
+        </div>
+        <div class="sub-menu-container" id="icon-sub-menu">
+            <ul class="menu">
+                <li class="menu-item">
+                    <div id="tui-icon-color-picker"></div>
+                </li>
+                <li class="menu-item icon-text" id="btn-arrow-icon">➔</li>
+                <li class="menu-item icon-text" id="btn-cancel-icon">✖</li>
+                <li class="menu-item close">Close</li>
+            </ul>
         </div>
     </div>
     <div class="tui-image-editor">

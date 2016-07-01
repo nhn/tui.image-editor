@@ -1,8 +1,16 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Text module
+ */
 'use strict';
 
-var Component = require('../interface/Component');
+var Component = require('../interface/component');
 var consts = require('../consts');
 var defaultStyles = {
+    borderColor: 'red',
+    cornerColor: 'green',
+    cornerSize: 10,
+    transparentCorners: false,
     fill: '#000000',
     left: 0,
     top: 0,
@@ -10,7 +18,7 @@ var defaultStyles = {
     originX: 'center',
     originY: 'center'
 };
-var baseStyles = {
+var RESET_STYLES = {
     fill: '#000000',
     fontStyle: 'normal',
     fontWeight: 'normal',
@@ -61,7 +69,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         var newText;
 
         if (settings.styles) {
-            styles = tui.util.extend(styles, settings.styles);
+            styles = tui.util.extend(settings.styles, styles);
         }
 
         this._setInitPos(settings.position);
@@ -101,7 +109,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     setStyle: function(activeObj, styleObj) {
         tui.util.forEach(styleObj, function(val, key) {
             if (activeObj[key] === val) {
-                styleObj[key] = baseStyles[key] || '';
+                styleObj[key] = RESET_STYLES[key] || '';
             }
         }, this);
 

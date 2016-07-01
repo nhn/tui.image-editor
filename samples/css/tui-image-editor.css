@@ -100,6 +100,9 @@
     background-color: #eee;
     cursor: pointer;
 }
+.icon-text{
+    font-size: 20px;
+}
 #tui-color-picker{
     display: inline-block;
     vertical-align: middle;

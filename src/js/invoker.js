@@ -11,6 +11,7 @@ var Flip = require('./component/flip');
 var Rotation = require('./component/rotation');
 var FreeDrawing = require('./component/freeDrawing');
 var Text = require('./component/text');
+var Icon = require('./component/icon');
 var eventNames = require('./consts').eventNames;
 
 /**
@@ -70,6 +71,7 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         this._register(new Rotation(main));
         this._register(new FreeDrawing(main));
         this._register(new Text(main));
+        this._register(new Icon(main));
     },
 
     /**

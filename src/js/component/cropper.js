@@ -12,6 +12,7 @@ var MOUSE_MOVE_THRESHOLD = 10;
 
 var abs = Math.abs;
 var clamp = util.clamp;
+var keyCodes = consts.keyCodes;
 
 /**
  * Cropper components
@@ -45,11 +46,20 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         this._startY = null;
 
         /**
+         * State whether shortcut key is pressed or not
+         * @type {boolean}
+         * @private
+         */
+        this._isShortcut = false;
+
+        /**
          * Listeners
          * @type {object.<string, function>}
          * @private
          */
         this._listeners = {
+            keydown: $.proxy(this._onKeyDown, this),
+            keyup: $.proxy(this._onKeyUp, this),
             mousedown: $.proxy(this._onFabricMouseDown, this),
             mousemove: $.proxy(this._onFabricMouseMove, this),
             mouseup: $.proxy(this._onFabricMouseUp, this)
@@ -94,6 +104,9 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         canvas.on('mouse:down', this._listeners.mousedown);
         canvas.selection = false;
         canvas.defaultCursor = 'crosshair';
+
+        fabric.util.addListener(document, 'keydown', this._listeners.keydown);
+        fabric.util.addListener(document, 'keyup', this._listeners.keyup);
     },
 
     /**
@@ -120,6 +133,9 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
             data = this._getCroppedImageData();
         }
         this._cropzone = null;
+
+        fabric.util.removeListener(document, 'keydown', this._listeners.keydown);
+        fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
 
         return data;
     },
@@ -185,11 +201,32 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         var left = clamp(x, 0, startX);
         var top = clamp(y, 0, startY);
 
+        width = clamp(x, startX, width) - left; // (startX <= x(mouse) <= canvasWidth) - left
+        height = clamp(y, startY, height) - top; // (startY <= y(mouse) <= canvasHeight) - top
+
+        if (this._isShortcut) { // fix ratio
+            if (width > height) {
+                height = width;
+            }
+
+            if (height > width) {
+                width = height;
+            }
+
+            if (startX >= x) {
+                left = startX - width;
+            }
+
+            if (startY >= y) {
+                top = startY - height;
+            }
+        }
+
         return {
             left: left,
             top: top,
-            width: clamp(x, startX, width) - left, // (startX <= x(mouse) <= canvasWidth) - left,
-            height: clamp(y, startY, height) - top // (startY <= y(mouse) <= canvasHeight) - top
+            width: width,
+            height: height
         };
     },
 
@@ -233,6 +270,28 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
             imageName: this.getImageName(),
             url: this.getCanvas().toDataURL(cropInfo)
         };
+    },
+
+    /**
+     * Keydown event handler
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+    _onKeyDown: function(e) {
+        if (e.keyCode === keyCodes.SHIFT) {
+            this._isShortcut = true;
+        }
+    },
+
+    /**
+     * Keyup event handler
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+    _onKeyUp: function(e) {
+        if (e.keyCode === keyCodes.SHIFT) {
+            this._isShortcut = false;
+        }
     }
 });
 
