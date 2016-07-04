@@ -111,7 +111,6 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
             obj.set({
                 borderColor: 'red',
                 cornerColor: 'green',
-                rotatingPointOffset: 30,
                 transparentCorners: false,
                 selectable: true,
                 hasBorders: true,
@@ -181,7 +180,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         canvas.defaultCursor = 'crosshair';
         canvas.isDrawingMode = false;
 
-        this.line = new fabric.Line(points, {
+        this._line = new fabric.Line(points, {
             stroke: this._oColor.toRgba(),
             strokeWidth: this._width,
             originX: 'center',
@@ -192,7 +191,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
             hasRotatingPoint: false
         });
 
-        canvas.add(this.line);
+        canvas.add(this._line);
 
         canvas.on({
             'mouse:move': this._listeners.mousemove,
@@ -209,16 +208,16 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         var canvas = this.getCanvas();
         var pointer = canvas.getPointer(fEvent.e);
 
-        if (!this._isShortcut || !this.line) {
+        if (!this._isShortcut || !this._line) {
             return;
         }
 
-        this.line.set({
+        this._line.set({
             x2: pointer.x,
             y2: pointer.y
         });
 
-        this.line.setCoords();
+        this._line.setCoords();
 
         canvas.renderAll();
     },
@@ -231,8 +230,8 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
     _onFabricMouseUp: function() {
         var canvas = this.getCanvas();
 
-        this.line = null;
-        this.isShortcut = false;
+        this._line = null;
+        this._isShortcut = false;
 
         canvas.defaultCursor = 'default';
         canvas.isDrawingMode = true;

@@ -6,6 +6,7 @@
 
 var Component = require('../interface/component');
 var consts = require('../consts');
+
 var defaultStyles = {
     borderColor: 'red',
     cornerColor: 'green',
@@ -18,7 +19,7 @@ var defaultStyles = {
     originX: 'center',
     originY: 'center'
 };
-var RESET_STYLES = {
+var resetStyles = {
     fill: '#000000',
     fontStyle: 'normal',
     fontWeight: 'normal',
@@ -109,7 +110,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     setStyle: function(activeObj, styleObj) {
         tui.util.forEach(styleObj, function(val, key) {
             if (activeObj[key] === val) {
-                styleObj[key] = RESET_STYLES[key] || '';
+                styleObj[key] = resetStyles[key] || '';
             }
         }, this);
 

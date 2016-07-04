@@ -231,7 +231,7 @@ function createRemoveCommand(target) {
                 canvas.discardActiveGroup(); // restore states for each objects
                 this.store = target.getObjects();
                 target.forEachObject(function(obj) {
-                    obj.remove();
+                    canvas.remove(obj);
                 });
                 jqDefer.resolve();
             } else if (canvas.contains(target)) {

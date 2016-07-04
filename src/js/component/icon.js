@@ -6,6 +6,7 @@
 
 var Component = require('../interface/component');
 var consts = require('../consts');
+
 var defaultOptions = {
     borderColor: 'red',
     cornerColor: 'green',
@@ -16,9 +17,40 @@ var defaultOptions = {
     originX: 'center',
     originY: 'center'
 };
-var FUNCNAME_MAP = {
-    'arrow': '_createArrowIcon',
-    'cancel': '_createCancelIcon'
+var arrowIconOptions = {
+    head: {
+        width: 40,
+        height: 20,
+        left: 60,
+        top: -10,
+        angle: 90
+    },
+    body: {
+        width: 40,
+        height: 20,
+        left: 0,
+        top: 0
+    }
+};
+var cancelIconOptions = {
+    leftBar: {
+        width: 10,
+        height: 50,
+        angle: 45,
+        originX: 'center',
+        originY: 'center'
+    },
+    rightBar: {
+        width: 10,
+        height: 50,
+        angle: -45,
+        originX: 'center',
+        originY: 'center'
+    }
+};
+var renderIconFuctionMap = {
+    arrow: '_createArrowIcon',
+    cancel: '_createCancelIcon'
 };
 
 /**
@@ -35,7 +67,7 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
          * Default icon color
          * @type {string}
          */
-        this.oColor = '#000000';
+        this._oColor = '#000000';
     },
 
     /**
@@ -44,14 +76,19 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
      */
     name: consts.componentNames.ICON,
 
+    /**
+     * Add icon
+     * @param {string} type - Icon type
+     * @param {number} [angle] - Icon render angle
+     */
     add: function(type, angle) {
         var canvas = this.getCanvas();
         var centerPos = this.getCanvasImage().getCenterPoint();
-        var icon = this[FUNCNAME_MAP[type]]();
+        var icon = this[renderIconFuctionMap[type]]();
 
         icon.set(tui.util.extend(defaultOptions, {
             angle: angle || 0,
-            fill: this.oColor,
+            fill: this._oColor,
             left: centerPos.x,
             top: centerPos.y
         }));
@@ -64,7 +101,7 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
      * @param {string} color - Selected color
      */
     setColor: function(color) {
-        this.oColor = color;
+        this._oColor = color;
     },
 
     /**
@@ -72,19 +109,8 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
      * @returns {fabric.Group} Grouping object
      */
     _createArrowIcon: function() {
-        var head = new fabric.Triangle({
-            width: 40,
-            height: 20,
-            left: 60,
-            top: -10,
-            angle: 90
-        });
-        var body = new fabric.Rect({
-            width: 40,
-            height: 20,
-            left: 0,
-            top: 0
-        });
+        var head = new fabric.Triangle(arrowIconOptions.head);
+        var body = new fabric.Rect(arrowIconOptions.body);
 
         return new fabric.Group([head, body]);
     },
@@ -94,20 +120,8 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
      * @returns {fabric.Group} Grouping object
      */
     _createCancelIcon: function() {
-        var leftBar = new fabric.Rect({
-            width: 10,
-            height: 50,
-            angle: 45,
-            originX: 'center',
-            originY: 'center'
-        });
-        var rightBar = new fabric.Rect({
-            width: 10,
-            height: 50,
-            angle: -45,
-            originX: 'center',
-            originY: 'center'
-        });
+        var leftBar = new fabric.Rect(cancelIconOptions.leftBar);
+        var rightBar = new fabric.Rect(cancelIconOptions.rightBar);
 
         return new fabric.Group([leftBar, rightBar]);
     }

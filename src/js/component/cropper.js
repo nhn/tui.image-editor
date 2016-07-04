@@ -204,7 +204,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         width = clamp(x, startX, width) - left; // (startX <= x(mouse) <= canvasWidth) - left
         height = clamp(y, startY, height) - top; // (startY <= y(mouse) <= canvasHeight) - top
 
-        if (this._isShortcut) { // fix ratio
+        if (this._isShortcut) { // make fixed ratio cropzone
             if (width > height) {
                 height = width;
             }

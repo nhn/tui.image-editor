@@ -175,6 +175,47 @@ describe('Cropper', function() {
             actual = cropper._calcRectDimensionFromPoint(x, y);
             expect(actual).toEqual(expected);
         });
+
+
+        it('should create cropzone that has fixed ratio during shift key is pressed.', function() {
+            var x, y, expected, actual;
+
+            x = 100;
+            y = 200;
+
+            expected = {
+                left: 10,
+                top: 20,
+                width: 180,
+                height: 180
+            };
+
+            cropper._isShortcut = true;
+
+            actual = cropper._calcRectDimensionFromPoint(x, y);
+
+            expect(actual).toEqual(expected);
+        });
+
+        it('should create cropzone that inverted current mouse position during shift key is pressed.', function() {
+            var x, y, expected, actual;
+
+            x = -10;
+            y = -20;
+
+            expected = {
+                left: -10,
+                top: 0,
+                width: 20,
+                height: 20
+            };
+
+            cropper._isShortcut = true;
+
+            actual = cropper._calcRectDimensionFromPoint(x, y);
+
+            expect(actual).toEqual(expected);
+        });
     });
 
     it('"onFabricMouseUp()" should activate cropzone', function() {

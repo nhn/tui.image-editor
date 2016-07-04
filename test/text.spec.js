@@ -24,7 +24,7 @@ describe('Text', function() {
 
     afterEach(function() {
         canvas.forEachObject(function(obj) {
-            obj.remove();
+            canvas.remove(obj);
         });
     });
 
