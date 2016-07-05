@@ -12,6 +12,7 @@ var events = consts.eventNames;
 var commands = consts.commandNames;
 var compList = consts.componentNames;
 var states = consts.states;
+var keyCodes = consts.keyCodes;
 
 /**
  * Image editor
@@ -48,6 +49,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._setCanvas(canvasElement, option.cssMaxWidth, option.cssMaxHeight);
         this._attachInvokerEvents();
         this._attachCanvasEvents();
+        this._attachDomEvents();
     },
 
     /**
@@ -100,6 +102,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 if (!tui.util.hasStamp(obj)) {
                     command = commandFactory.create(commands.ADD_OBJECT, obj);
                     this._invoker.pushUndoStack(command);
+                    this._invoker.clearRedoStack();
                 }
                 /**
                  * @api
@@ -125,6 +128,29 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 this.fire(events.REMOVE_OBJECT, event.target);
             }, this)
         });
+    },
+
+    /**
+     * Attach dom events
+     * @private
+     */
+    _attachDomEvents: function() {
+        fabric.util.addListener(document, 'keydown', $.proxy(this._onKeyDown, this));
+    },
+
+    /**
+     * Keydown event handler
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+    _onKeyDown: function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
+            this.undo();
+        }
+
+        if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
+            this.redo();
+        }
     },
 
     /**
@@ -614,8 +640,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this._state = states.TEXT;
 
+        this._listener = $.proxy(this._onFabricMouseDown, this);
+
+        this._canvas.selection = false;
         this._canvas.defaultCursor = 'text';
-        this._canvas.on('mouse:down', $.proxy(this._onFabricMouseDown, this));
+        this._canvas.on('mouse:down', this._listener);
     },
 
     /**
@@ -685,7 +714,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @api
      * @example
      * 	imageEditor.changeTextStyle({
-     * 		'fontStyle': 'italic'
+     * 		fontStyle: 'italic'
      * 	});
      */
     changeTextStyle: function(styleObj) {
@@ -711,8 +740,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             this._state = states.NORMAL;
         }
 
+        this._canvas.forEachObject(function(obj) {
+            if (obj.isType('text') && obj.text === '') {
+                obj.remove();
+            }
+        });
+
+        this._canvas.selection = true;
         this._canvas.defaultCursor = 'default';
-        this._canvas.off('mouse:down', this._onFabricMouseDown);
+        this._canvas.off('mouse:down', this._listener);
     },
 
      /**
@@ -731,19 +767,19 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         /**
          * @api
          * @event ImageEditor#selectText
-         * @param {object} setting
-         *     @param {boolean} setting.isNew - Whether the new input text or not
-         *     @param {string} setting.text - Current text
-         *     @param {object} setting.styles - Current styles
-         *         @param {string} setting.styles.fill - Color
-         *         @param {string} setting.styles.fontFamily - Font type for text
-         *         @param {number} setting.styles.fontSize - Size
-         *         @param {string} setting.styles.fontStyle - Type of inclination (normal / italic)
-         *         @param {string} setting.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
-         *         @param {string} setting.styles.textAlign - Type of text align (left / center / right)
-         *         @param {string} setting.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
-         *     @param {{x: number, y: number}} setting.originPosition - Current position on origin canvas
-         *     @param {{x: number, y: number}} setting.clientPosition - Current position on client area
+         * @param {object} settings
+         *     @param {boolean} settings.isNew - Whether the new input text or not
+         *     @param {string} settings.text - Current text
+         *     @param {object} settings.styles - Current styles
+         *         @param {string} settings.styles.fill - Color
+         *         @param {string} settings.styles.fontFamily - Font type for text
+         *         @param {number} settings.styles.fontSize - Size
+         *         @param {string} settings.styles.fontStyle - Type of inclination (normal / italic)
+         *         @param {string} settings.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
+         *         @param {string} settings.styles.textAlign - Type of text align (left / center / right)
+         *         @param {string} settings.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
+         *     @param {{x: number, y: number}} settings.originPosition - Current position on origin canvas
+         *     @param {{x: number, y: number}} settings.clientPosition - Current position on client area
          */
         this.fire(events.ACTIVATE_TEXT, {
             isNew: !(obj),
@@ -765,6 +801,30 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 y: e.clientY
             }
         });
+    },
+
+    /**
+     * Add icon on canvas
+     * @param {string} type - Icon type (arrow / cancel)
+     * @param {number} [angle] - Icon render angle
+     * @api
+     * @example
+     * imageEditor.addIcon('arrow');
+     * imageEditor.addIcon('arrow', 90);
+     */
+    addIcon: function(type, angle) {
+        this._getComponent(compList.ICON).add(type, angle);
+    },
+
+    /**
+     * Change icon color
+     * @param {string} color - Color for icon
+     * @api
+     * @example
+     * imageEditor.changeIconColor('#000000');
+     */
+    changeIconColor: function(color) {
+        this._getComponent(compList.ICON).setColor(color);
     },
 
     /**

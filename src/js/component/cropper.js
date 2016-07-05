@@ -50,7 +50,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
          * @type {boolean}
          * @private
          */
-        this._isShortcut = false;
+        this._withShiftKey = false;
 
         /**
          * Listeners
@@ -204,20 +204,16 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         width = clamp(x, startX, width) - left; // (startX <= x(mouse) <= canvasWidth) - left
         height = clamp(y, startY, height) - top; // (startY <= y(mouse) <= canvasHeight) - top
 
-        if (this._isShortcut) { // make fixed ratio cropzone
+        if (this._withShiftKey) { // make fixed ratio cropzone
             if (width > height) {
                 height = width;
-            }
-
-            if (height > width) {
+            } else if (height > width) {
                 width = height;
             }
 
             if (startX >= x) {
                 left = startX - width;
-            }
-
-            if (startY >= y) {
+            } else if (startY >= y) {
                 top = startY - height;
             }
         }
@@ -279,7 +275,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
      */
     _onKeyDown: function(e) {
         if (e.keyCode === keyCodes.SHIFT) {
-            this._isShortcut = true;
+            this._withShiftKey = true;
         }
     },
 
@@ -290,7 +286,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
      */
     _onKeyUp: function(e) {
         if (e.keyCode === keyCodes.SHIFT) {
-            this._isShortcut = false;
+            this._withShiftKey = false;
         }
     }
 });

@@ -38,7 +38,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
          * @type {boolean}
          * @private
          */
-        this._isShortcut = false;
+        this._withShiftKey = false;
 
         /**
          * Listeners
@@ -132,7 +132,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
      */
     _onKeyDown: function(e) {
         if (e.keyCode === keyCodes.SHIFT) {
-            this._isShortcut = true;
+            this._withShiftKey = true;
             this.getCanvas().isDrawingMode = false;
         }
     },
@@ -144,7 +144,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
      */
     _onKeyUp: function(e) {
         if (e.keyCode === keyCodes.SHIFT) {
-            this._isShortcut = false;
+            this._withShiftKey = false;
             this.getCanvas().isDrawingMode = true;
         }
     },
@@ -173,7 +173,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         var pointer = canvas.getPointer(fEvent.e);
         var points = [pointer.x, pointer.y, pointer.x, pointer.y];
 
-        if (!this._isShortcut) {
+        if (!this._withShiftKey) {
             return;
         }
 
@@ -208,7 +208,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         var canvas = this.getCanvas();
         var pointer = canvas.getPointer(fEvent.e);
 
-        if (!this._isShortcut || !this._line) {
+        if (!this._withShiftKey || !this._line) {
             return;
         }
 
@@ -231,7 +231,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         var canvas = this.getCanvas();
 
         this._line = null;
-        this._isShortcut = false;
+        this._withShiftKey = false;
 
         canvas.defaultCursor = 'default';
         canvas.isDrawingMode = true;

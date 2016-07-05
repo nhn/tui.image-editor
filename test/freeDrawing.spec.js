@@ -33,7 +33,7 @@ describe('FreeDrawing', function() {
     });
 
     it('_onFabricMouseDown() should insert the straight line during shift key is pressed.', function() {
-        freeDrawing._isShortcut = true;
+        freeDrawing._withShiftKey = true;
 
         freeDrawing._onFabricMouseDown(fEvent);
 
@@ -50,7 +50,7 @@ describe('FreeDrawing', function() {
             y: 60
         });
 
-        freeDrawing._isShortcut = true;
+        freeDrawing._withShiftKey = true;
 
         expect(canvas.getObjects()[0].get('x2')).toEqual(10);
         expect(canvas.getObjects()[0].get('y2')).toEqual(20);

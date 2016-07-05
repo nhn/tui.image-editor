@@ -190,7 +190,7 @@ describe('Cropper', function() {
                 height: 180
             };
 
-            cropper._isShortcut = true;
+            cropper._withShiftKey = true;
 
             actual = cropper._calcRectDimensionFromPoint(x, y);
 
@@ -210,7 +210,7 @@ describe('Cropper', function() {
                 height: 20
             };
 
-            cropper._isShortcut = true;
+            cropper._withShiftKey = true;
 
             actual = cropper._calcRectDimensionFromPoint(x, y);
 
