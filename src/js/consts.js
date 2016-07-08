@@ -19,7 +19,8 @@ module.exports = {
         'ROTATION',
         'FREE_DRAWING',
         'TEXT',
-        'ICON'
+        'ICON',
+        'FILTER'
     ),
 
     /**
@@ -32,7 +33,8 @@ module.exports = {
         'FLIP_IMAGE',
         'ROTATE_IMAGE',
         'ADD_OBJECT',
-        'REMOVE_OBJECT'
+        'REMOVE_OBJECT',
+        'APPLY_FILTER'
     ),
 
     /**
@@ -55,7 +57,8 @@ module.exports = {
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',
         PUSH_REDO_STACK: 'pushRedoStack',
-        ACTIVATE_TEXT: 'activateText'
+        ACTIVATE_TEXT: 'activateText',
+        APPLY_FILTER: 'applyFilter'
     },
 
     /**
@@ -77,5 +80,18 @@ module.exports = {
         Z: 90,
         Y: 89,
         SHIFT: 16
+    },
+
+    /**
+     * Fabric object options
+     * @type {Object.<string, Object>}
+     */
+    fObjectOptions: {
+        SELECTION_STYLE: {
+            borderColor: 'red',
+            cornerColor: 'green',
+            cornerSize: 10,
+            transparentCorners: false
+        }
     }
 };

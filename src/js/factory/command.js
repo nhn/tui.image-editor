@@ -15,6 +15,7 @@ var MAIN = componentNames.MAIN;
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
 var FLIP = componentNames.FLIP;
 var ROTATION = componentNames.ROTATION;
+var FILTER = componentNames.FILTER;
 
 /**
  * Set mapping creators
@@ -25,6 +26,7 @@ creators[commandNames.ROTATE_IMAGE] = createRotationImageCommand;
 creators[commandNames.CLEAR_OBJECTS] = createClearCommand;
 creators[commandNames.ADD_OBJECT] = createAddObjectCommand;
 creators[commandNames.REMOVE_OBJECT] = createRemoveCommand;
+creators[commandNames.APPLY_FILTER] = createFilterCommand;
 
 /**
  * @param {fabric.Object} object - Fabric object
@@ -231,7 +233,7 @@ function createRemoveCommand(target) {
                 canvas.discardActiveGroup(); // restore states for each objects
                 this.store = target.getObjects();
                 target.forEachObject(function(obj) {
-                    canvas.remove(obj);
+                    obj.remove();
                 });
                 jqDefer.resolve();
             } else if (canvas.contains(target)) {
@@ -258,6 +260,32 @@ function createRemoveCommand(target) {
     });
 }
 
+
+function createFilterCommand(type, options) {
+    return new Command({
+        execute: function(compMap) {
+            var filterComp = compMap[FILTER];
+
+            if (type === 'mask') {
+                this.store = options.mask;
+                options.mask.remove();
+            }
+
+            return filterComp.add(type, options);
+        },
+
+        undo: function(compMap) {
+            var filterComp = compMap[FILTER];
+
+            if (type === 'mask') {
+                filterComp.getCanvas().add(this.store);
+            }
+
+            return filterComp.remove(type);
+        }
+    });
+}
+
 /**
  * Create command
  * @param {string} name - Command name
@@ -266,7 +294,6 @@ function createRemoveCommand(target) {
  */
 function create(name, args) {
     args = Array.prototype.slice.call(arguments, 1);
-
     return creators[name].apply(null, args);
 }
 

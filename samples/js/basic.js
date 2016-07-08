@@ -8,6 +8,7 @@
 
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
+var mask;
 
 // Functions
 // HEX to RGBA
@@ -67,6 +68,8 @@ var $btnTextStyle = $('.btn-text-style');
 var $btnAddIcon = $('#btn-add-icon');
 var $btnArrowIcon = $('#btn-arrow-icon');
 var $btnCancelIcon = $('#btn-cancel-icon');
+var $btnMaskFilter = $('#btn-mask-filter');
+var $btnApplyMask = $('#btn-apply-mask');
 var $btnClose = $('.close');
 
 // Range Input
@@ -82,12 +85,16 @@ var $rotationSubMenu = $('#rotation-sub-menu');
 var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
 var $textSubMenu = $('#text-sub-menu');
 var $iconSubMenu = $('#icon-sub-menu');
+var $filterSubMenu = $('#filter-sub-menu');
 
 // Text input
 var $inputText = $('#input-text');
 
 // Text palette
 var $textPalette = $('#text-palette');
+
+// Load mask input
+var $inputMask = $('#input-mask-file');
 
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
@@ -159,6 +166,10 @@ imageEditor.on({
             left: e.clientPosition.x,
             top: e.clientPosition.y + 10
         });
+    },
+    applyFilter: function(filterType, actType) {
+        console.log(filterType);
+        console.log(actType);
     }
 });
 
@@ -386,10 +397,44 @@ iconColorpicker.on('selectColor', function(event) {
     imageEditor.changeIconColor(event.color);
 });
 
+// control filter
+$btnMaskFilter.on('click', function() {
+    imageEditor.endAll();
+    $displayingSubMenu.hide();
+    $displayingSubMenu = $filterSubMenu.show();
+});
+
+$inputMask.on('change', function(event) {
+    var file;
+    var imgUrl;
+
+    // if (!supportingFileAPI) {
+    //     alert('This browser does not support file-api');
+    // }
+    //
+    // file = event.target.files[0];
+    //
+    // if (file) { // confirm button
+    //     imgUrl = URL.createObjectURL(file);
+    // } else { // cancel button - load external image file (support CORS)
+        //imgUrl = 'http://i.imgur.com/ejVcyMP.png';
+    //}
+    //imgUrl = 'img/dd.jpg';
+    imgUrl = 'http://i.imgur.com/ejVcyMP.png';
+    imageEditor.addImageObject(imgUrl);
+});
+
+$btnApplyMask.on('click', function() {
+    imageEditor.applyFilter('mask');
+});
+
+
+
 // Etc..
 
 // Load sample image
-imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
+//imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
+imageEditor.loadImageFromURL('http://i.imgur.com/ejVcyMP.png', 'SampleImage');
 
 // IE9 Unselectable
 $('.menu').on('selectstart', function() {
