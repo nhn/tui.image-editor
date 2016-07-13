@@ -51,19 +51,23 @@ describe('Icon', function() {
     });
 
     it('add() should create the arrow icon when parameter value is "arrow".', function() {
-        spyOn(icon, '_createArrowIcon').and.returnValue(new fabric.Object({}));
+        var path = icon._pathMap.arrow;
+
+        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
 
         icon.add('arrow');
 
-        expect(icon._createArrowIcon).toHaveBeenCalled();
+        expect(icon._createIcon).toHaveBeenCalledWith(path);
     });
 
     it('add() should create the cancel icon when parameter value is "cancel".', function() {
-        spyOn(icon, '_createCancelIcon').and.returnValue(new fabric.Object({}));
+        var path = icon._pathMap.cancel;
+
+        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
 
         icon.add('cancel');
 
-        expect(icon._createCancelIcon).toHaveBeenCalled();
+        expect(icon._createIcon).toHaveBeenCalledWith(path);
     });
 
     it('setColor() should change color of next inserted icon.', function() {

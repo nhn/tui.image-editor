@@ -72,6 +72,12 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
 
         this.setBrush(setting);
 
+        canvas.forEachObject(function(obj) {
+            obj.set({
+                evented: false
+            });
+        });
+
         fabric.util.addListener(document, 'keydown', this._listeners.keydown);
         fabric.util.addListener(document, 'keyup', this._listeners.keyup);
 
@@ -109,13 +115,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
 
         canvas.forEachObject(function(obj) {
             obj.set({
-                borderColor: 'red',
-                cornerColor: 'green',
-                transparentCorners: false,
-                selectable: true,
-                hasBorders: true,
-                hasControls: true,
-                hasRotatingPoint: true
+                evented: true
             });
         });
 
@@ -156,10 +156,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
      */
     _onPathCreated: function(obj) {
         obj.path.set({
-            selectable: false,
-            hasBorders: false,
-            hasControls: false,
-            hasRotatingPoint: false
+            evented: false
         });
     },
 
@@ -183,13 +180,10 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         this._line = new fabric.Line(points, {
             stroke: this._oColor.toRgba(),
             strokeWidth: this._width,
-            originX: 'center',
-            originY: 'center',
-            selectable: false,
-            hasBorders: false,
-            hasControls: false,
-            hasRotatingPoint: false
+            evented: false
         });
+
+        this._line.set(consts.fObjectOptions.SELECTION_STYLE);
 
         canvas.add(this._line);
 

@@ -51,6 +51,7 @@ module.exports = {
         ROTATE_IMAGE: 'rotateImage',
         ADD_OBJECT: 'addObject',
         REMOVE_OBJECT: 'removeObject',
+        ADJUST_OBJECT: 'adjustObject',
         START_FREE_DRAWING: 'startFreeDrawing',
         END_FREE_DRAWING: 'endFreeDrawing',
         EMPTY_REDO_STACK: 'emptyRedoStack',
@@ -91,7 +92,10 @@ module.exports = {
             borderColor: 'red',
             cornerColor: 'green',
             cornerSize: 10,
-            transparentCorners: false
+            originX: 'center',
+            originY: 'center',
+            transparentCorners: false,
+            rotatingPointOffset: 30
         }
     }
 };

@@ -29,9 +29,9 @@
             <li class="menu-item activatable" id="btn-flip">Flip</li>
             <li class="menu-item activatable" id="btn-rotation">Rotation</li>
             <li class="menu-item activatable" id="btn-free-drawing">FreeDrawing</li>
-            <li class="menu-item activatable" id="btn-text">Text</li>
             <li class="menu-item activatable" id="btn-add-icon">Icon</li>
             <li class="menu-item activatable" id="btn-mask-filter">Mask</li>
+            <li class="menu-item activatable" id="btn-text">Text</li>
         </ul>
 
         <div class="sub-menu-container" id="crop-sub-menu">
@@ -57,8 +57,12 @@
             </ul>
         </div>
         <div class="sub-menu-container menu" id="free-drawing-sub-menu">
-            <div id="tui-color-picker">Brush color</div>
-            <label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label>
+            <ul class="menu">
+                <li class="menu-item">
+                    <div id="tui-color-picker">Brush color</div>
+                </li>
+                <li class="menu-item"><label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label></li>
+            </ul>
         </div>
         <div class="sub-menu-container menu" id="text-sub-menu">
             <div id="text-palette">
@@ -83,20 +87,17 @@
         <div class="sub-menu-container" id="icon-sub-menu">
             <ul class="menu">
                 <li class="menu-item">
-                    <div id="tui-icon-color-picker"></div>
+                    <div id="tui-icon-color-picker">Icon color</div>
                 </li>
-                <li class="menu-item icon-text" id="btn-arrow-icon">➔</li>
-                <li class="menu-item icon-text" id="btn-cancel-icon">✖</li>
-                <li class="menu-item close">Close</li>
+                <li class="menu-item border" id="btn-register-icon">Register custom icon</li>
+                <li class="menu-item icon-text" data-icon-type="arrow">➡</li>
+                <li class="menu-item icon-text" data-icon-type="cancel">✖</li>
             </ul>
         </div>
         <div class="sub-menu-container" id="filter-sub-menu">
             <ul class="menu">
-                <li class="menu-item border input-wrapper">
-                    Load Mask
-                    <input type="file" accept="image/*" id="input-mask-file">
-                </li>
-                <li class="menu-item" id="btn-apply-mask">Apply mask</li>
+                <li class="menu-item border" id="btn-load-mask-image">Load mask image</li>
+                <li class="menu-item" id="btn-apply-mask">Apply mask filter</li>
             </ul>
         </div>
     </div>

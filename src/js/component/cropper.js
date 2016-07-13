@@ -200,29 +200,30 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         var startY = this._startY;
         var left = clamp(x, 0, startX);
         var top = clamp(y, 0, startY);
-
-        width = clamp(x, startX, width) - left; // (startX <= x(mouse) <= canvasWidth) - left
-        height = clamp(y, startY, height) - top; // (startY <= y(mouse) <= canvasHeight) - top
+        var cropzoneWidth = clamp(x, startX, width) - left; // (startX <= x(mouse) <= canvasWidth) - left
+        var cropzoneHeight = clamp(y, startY, height) - top; // (startY <= y(mouse) <= canvasHeight) - top
 
         if (this._withShiftKey) { // make fixed ratio cropzone
-            if (width > height) {
-                height = width;
-            } else if (height > width) {
-                width = height;
+            if (cropzoneWidth > cropzoneHeight) {
+                cropzoneHeight = cropzoneWidth;
+            } else if (cropzoneHeight > cropzoneWidth) {
+                cropzoneWidth = cropzoneHeight;
             }
 
             if (startX >= x) {
-                left = startX - width;
-            } else if (startY >= y) {
-                top = startY - height;
+                left = startX - cropzoneWidth;
+            }
+
+            if (startY >= y) {
+                top = startY - cropzoneHeight;
             }
         }
 
         return {
             left: left,
             top: top,
-            width: width,
-            height: height
+            width: cropzoneWidth,
+            height: cropzoneHeight
         };
     },
 

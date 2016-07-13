@@ -73,14 +73,12 @@ describe('FreeDrawing', function() {
 
         canvas.add(path);
 
-        path.set({
-            selectable: false
-        });
+        freeDrawing.start();
 
-        expect(canvas.getObjects()[0].get('selectable')).toEqual(false);
+        expect(canvas.getObjects()[0].get('evented')).toEqual(false);
 
         freeDrawing.end();
 
-        expect(canvas.getObjects()[0].get('selectable')).toEqual(true);
+        expect(canvas.getObjects()[0].get('evented')).toEqual(true);
     });
 });

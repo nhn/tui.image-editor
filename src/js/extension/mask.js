@@ -9,54 +9,87 @@
  * @class Mask
  * @extends {fabric.Image.filters.Mask}
  */
-var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Cropzone.prototype */{
+var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.prototype */{
     /**
-     * Applies filter to canvas element
-     * @param {Object} canvasEl - Canvas element to apply filter to
+     * Apply filter to canvas element
+     * @param {object} canvasEl - Canvas element to apply filter
      * @override
      */
     applyTo: function(canvasEl) {
-        var ctx, imageData, data, maskEl, maskCanvasEl;
-        var mask, channel, i, len;
-        var left, top, width, height;
-        var maskCtx, maskData;
+        var maskCanvasEl, ctx, maskCtx, imageData;
+        var width, height;
 
         if (!this.mask) {
             return;
         }
 
+        width = canvasEl.width;
+        height = canvasEl.height;
+
+        maskCanvasEl = this._createCanvasOfMask(width, height);
+
         ctx = canvasEl.getContext('2d');
-        imageData = ctx.getImageData(0, 0, canvasEl.width, canvasEl.height);
-        data = imageData.data;
-        maskEl = this.mask.getElement();
-        maskCanvasEl = fabric.util.createCanvasElement();
         maskCtx = maskCanvasEl.getContext('2d');
 
-        mask = this.mask;
-        channel = this.channel;
+        imageData = ctx.getImageData(0, 0, width, height);
 
-        i = 0;
-        len = imageData.width * imageData.height * 4;
+        this._drawMask(maskCtx);
+        this._mapData(maskCtx, imageData, width, height);
 
-        maskCanvasEl.width = canvasEl.width;
-        maskCanvasEl.height = canvasEl.height;
+        ctx.putImageData(imageData, 0, 0);
+    },
+
+    /**
+     * Create canvas of mask image
+     * @param {number} width - Width of main canvas
+     * @param {number} height - Height of main canvas
+     * @returns {HTMLElement} Canvas element
+     * @private
+     */
+    _createCanvasOfMask: function(width, height) {
+        var maskCanvasEl = fabric.util.createCanvasElement();
+
+        maskCanvasEl.width = width;
+        maskCanvasEl.height = height;
+
+        return maskCanvasEl;
+    },
+
+    /**
+     * Draw mask image on canvas element
+     * @param {object} maskCtx - Context of mask canvas
+     * @private
+     */
+    _drawMask: function(maskCtx) {
+        var width, height, left, top;
+        var mask = this.mask;
 
         width = mask.getWidth();
         height = mask.getHeight();
-        left = mask.getLeft() - width / 2;
-        top = mask.getTop() - height / 2;
+        left = mask.getLeft() - (width / 2);
+        top = mask.getTop() - (height / 2);
 
-        maskCtx.drawImage(maskEl, left, top, width, height);
+        maskCtx.drawImage(mask.getElement(), left, top, width, height);
+    },
 
-        maskData = maskCtx.getImageData(0, 0, canvasEl.width, canvasEl.height).data;
+    /**
+     * Map mask image data to source image data
+     * @param {object} maskCtx - Context of mask canvas
+     * @param {object} imageData - Data of source image
+     * @param {number} width - Width of main canvas
+     * @param {number} height - Height of main canvas
+     * @private
+     */
+    _mapData: function(maskCtx, imageData, width, height) {
+        var sourceData = imageData.data;
+        var maskData = maskCtx.getImageData(0, 0, width, height).data;
+        var channel = this.channel;
+        var i = 0;
+        var len = imageData.width * imageData.height * 4;
 
         for (; i < len; i += 4) {
-            if (maskData[i + channel] !== 0) {
-                data[i + 3] = maskData[i + channel];
-            }
+            sourceData[i + 3] = maskData[i + channel]; // adjust value of alpha data
         }
-
-        ctx.putImageData(imageData, 0, 0);
     }
 });
 

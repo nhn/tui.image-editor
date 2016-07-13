@@ -25,6 +25,12 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
      */
     name: consts.componentNames.FILTER,
 
+    /**
+     * Add filter to source image (a specific filter is added on fabric.js)
+     * @param {string} type - Filter type
+     * @param {object} [options] - Options of filter
+     * @returns {jQuery.Deferred}
+     */
     add: function(type, options) {
         var jqDefer = $.Deferred();
         var filter = this._createFilter(type, options);
@@ -37,7 +43,7 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
 
         sourceImg.filters.push(filter);
 
-        this.apply(function() {
+        this._apply(sourceImg, function() {
             canvas.renderAll();
             jqDefer.resolve(type, 'add');
         });
@@ -45,6 +51,11 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
         return jqDefer;
     },
 
+    /**
+     * Remove filter to source image
+     * @param {string} type - Filter type
+     * @returns {jQuery.Deferred}
+     */
     remove: function(type) {
         var jqDefer = $.Deferred();
         var sourceImg = this._getSourceImage();
@@ -56,7 +67,7 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
 
         sourceImg.filters.pop();
 
-        this.apply(function() {
+        this._apply(sourceImg, function() {
             canvas.renderAll();
             jqDefer.resolve(type, 'remove');
         });
@@ -64,23 +75,38 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
         return jqDefer;
     },
 
-    apply: function(callback) {
-        this._getSourceImage().applyFilters(callback);
+    /**
+     * Apply filter
+     * @param {fabric.Image} sourceImg - Source image to apply filter
+     * @param {function} callback - Executed function after applying filter
+     * @private
+     */
+    _apply: function(sourceImg, callback) {
+        sourceImg.applyFilters(callback);
     },
 
+    /**
+     * Get source image on canvas
+     * @returns {fabric.Image} Current source image on canvas
+     * @private
+     */
     _getSourceImage: function() {
         return this.getCanvasImage();
     },
 
+    /**
+     * Create filter instance
+     * @param {string} type - Filter type
+     * @param {object} [options] - Options of filter
+     * @returns {object} Fabric object of filter
+     * @private
+     */
     _createFilter: function(type, options) {
         var filterObj;
 
         switch (type) {
             case 'mask':
                 filterObj = new Mask(options);
-                break;
-            case 'grayscale':
-                filterObj = new fabric.Image.filters.Grayscale();
                 break;
             default:
                 filterObj = null;

@@ -66,9 +66,9 @@ var $btnText = $('#btn-text');
 var $btnClosePalette = $('#btn-close-palette');
 var $btnTextStyle = $('.btn-text-style');
 var $btnAddIcon = $('#btn-add-icon');
-var $btnArrowIcon = $('#btn-arrow-icon');
-var $btnCancelIcon = $('#btn-cancel-icon');
+var $btnRegisterIcon = $('#btn-register-icon');
 var $btnMaskFilter = $('#btn-mask-filter');
+var $btnLoadMaskImage = $('#btn-load-mask-image');
 var $btnApplyMask = $('#btn-apply-mask');
 var $btnClose = $('.close');
 
@@ -92,9 +92,6 @@ var $inputText = $('#input-text');
 
 // Text palette
 var $textPalette = $('#text-palette');
-
-// Load mask input
-var $inputMask = $('#input-mask-file');
 
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
@@ -150,26 +147,33 @@ imageEditor.on({
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
     },
-    activateText: function(e) {
-        if (e.isNew) {
+    activateText: function(obj) {
+        if (obj.type === 'new') {
+            if ($textPalette.css('display') !== 'none') {
+                $textPalette.hide();
+                return;
+            }
+
             imageEditor.addText('', {
-                position: e.originPosition
+                position: obj.originPosition
             });
         }
 
         $textPalette.hide().show(function() { // customize
             $inputText.focus();
-            $inputText.val(e.text);
-            $inputFontSizeRange.val(e.styles.fontSize || 40);
-            textPaletteColorpicker.setColor(e.styles.fill || '#000000');
+            $inputText.val(obj.text);
+            $inputFontSizeRange.val(obj.styles.fontSize || 40);
+            textPaletteColorpicker.setColor(obj.styles.fill || '#000000');
         }).offset({
-            left: e.clientPosition.x,
-            top: e.clientPosition.y + 10
+            left: obj.clientPosition.x,
+            top: obj.clientPosition.y + 10
         });
     },
-    applyFilter: function(filterType, actType) {
-        console.log(filterType);
-        console.log(actType);
+    adjustObject: function(obj) {
+        if (obj.type === 'text' &&
+            $textPalette.css('display') !== 'none') {
+            $textPalette.hide();
+        }
     }
 });
 
@@ -343,22 +347,22 @@ $btnTextStyle.on('click', function(e) { // eslint-disable-line
 
     switch (styleType) {
         case 'b':
-            styleObj = {'fontWeight': 'bold'};
+            styleObj = {fontWeight: 'bold'};
             break;
         case 'i':
-            styleObj = {'fontStyle': 'italic'};
+            styleObj = {fontStyle: 'italic'};
             break;
         case 'u':
-            styleObj = {'textDecoration': 'underline'};
+            styleObj = {textDecoration: 'underline'};
             break;
         case 'l':
-            styleObj = {'textAlign': 'left'};
+            styleObj = {textAlign: 'left'};
             break;
         case 'c':
-            styleObj = {'textAlign': 'center'};
+            styleObj = {textAlign: 'center'};
             break;
         case 'r':
-            styleObj = {'textAlign': 'right'};
+            styleObj = {textAlign: 'right'};
             break;
         default:
             styleObj = {};
@@ -378,49 +382,65 @@ textPaletteColorpicker.on('selectColor', function(event) {
     });
 });
 
-// control icon mode
+// control icon
 $btnAddIcon.on('click', function() {
     imageEditor.endAll();
     $displayingSubMenu.hide();
     $displayingSubMenu = $iconSubMenu.show();
 });
 
-$btnArrowIcon.on('click', function() {
-    imageEditor.addIcon('arrow');
+$btnRegisterIcon.on('click', function() {
+    $iconSubMenu.find('.menu').append(
+        '<li class="menu-item icon-text" data-icon-type="customArrow">↑</li>'
+    );
+
+    imageEditor.registerIcons({
+        customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
+    });
+
+    $btnRegisterIcon.off('click');
 });
 
-$btnCancelIcon.on('click', function() {
-    imageEditor.addIcon('cancel');
+$iconSubMenu.on('click', '.menu-item', function() {
+    var iconType = $(this).attr('data-icon-type');
+
+    imageEditor.addIcon(iconType);
 });
 
 iconColorpicker.on('selectColor', function(event) {
     imageEditor.changeIconColor(event.color);
 });
 
-// control filter
+// $inputMask.on('change', function(event) {
+//     var file;
+//     var imgUrl;
+//
+//     // if (!supportingFileAPI) {
+//     //     alert('This browser does not support file-api');
+//     // }
+//     //
+//     // file = event.target.files[0];
+//     //
+//     // if (file) { // confirm button
+//     //     imgUrl = URL.createObjectURL(file);
+//     // } else { // cancel button - load external image file (support CORS)
+//         //imgUrl = 'http://i.imgur.com/ejVcyMP.png';
+//     //}
+//     //imgUrl = 'img/dd.jpg';
+//     imgUrl = 'http://i.imgur.com/ejVcyMP.png';
+//     imageEditor.addImageObject(imgUrl);
+// });
+
+
+// control mask filter
 $btnMaskFilter.on('click', function() {
     imageEditor.endAll();
     $displayingSubMenu.hide();
     $displayingSubMenu = $filterSubMenu.show();
 });
 
-$inputMask.on('change', function(event) {
-    var file;
-    var imgUrl;
-
-    // if (!supportingFileAPI) {
-    //     alert('This browser does not support file-api');
-    // }
-    //
-    // file = event.target.files[0];
-    //
-    // if (file) { // confirm button
-    //     imgUrl = URL.createObjectURL(file);
-    // } else { // cancel button - load external image file (support CORS)
-        //imgUrl = 'http://i.imgur.com/ejVcyMP.png';
-    //}
-    //imgUrl = 'img/dd.jpg';
-    imgUrl = 'http://i.imgur.com/ejVcyMP.png';
+$btnLoadMaskImage.on('click', function() {
+    var imgUrl = 'img/mask.png';
     imageEditor.addImageObject(imgUrl);
 });
 
@@ -428,13 +448,10 @@ $btnApplyMask.on('click', function() {
     imageEditor.applyFilter('mask');
 });
 
-
-
 // Etc..
 
 // Load sample image
-//imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
-imageEditor.loadImageFromURL('http://i.imgur.com/ejVcyMP.png', 'SampleImage');
+imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
 
 // IE9 Unselectable
 $('.menu').on('selectstart', function() {
