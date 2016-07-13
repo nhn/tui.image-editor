@@ -263,6 +263,10 @@ function createRemoveCommand(target) {
 
 function createFilterCommand(type, options) {
     return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         execute: function(compMap) {
             var filterComp = compMap[FILTER];
 
@@ -273,7 +277,10 @@ function createFilterCommand(type, options) {
 
             return filterComp.add(type, options);
         },
-
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {jQuery.Deferred}
+         */
         undo: function(compMap) {
             var filterComp = compMap[FILTER];
 
