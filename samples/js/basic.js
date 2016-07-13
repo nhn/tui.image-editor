@@ -91,7 +91,7 @@ var $filterSubMenu = $('#filter-sub-menu');
 var $inputText = $('#input-text');
 
 // Text palette
-var $textPalette = $('#text-palette');
+var $textPalette = $('#tui-text-palette');
 
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {

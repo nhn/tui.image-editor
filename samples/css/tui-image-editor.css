@@ -107,7 +107,7 @@
     display: inline-block;
     vertical-align: middle;
 }
-#text-palette{
+#tui-text-palette{
     display: none;
     position: absolute;
     padding: 10px;
