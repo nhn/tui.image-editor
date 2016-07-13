@@ -411,27 +411,6 @@ iconColorpicker.on('selectColor', function(event) {
     imageEditor.changeIconColor(event.color);
 });
 
-// $inputMask.on('change', function(event) {
-//     var file;
-//     var imgUrl;
-//
-//     // if (!supportingFileAPI) {
-//     //     alert('This browser does not support file-api');
-//     // }
-//     //
-//     // file = event.target.files[0];
-//     //
-//     // if (file) { // confirm button
-//     //     imgUrl = URL.createObjectURL(file);
-//     // } else { // cancel button - load external image file (support CORS)
-//         //imgUrl = 'http://i.imgur.com/ejVcyMP.png';
-//     //}
-//     //imgUrl = 'img/dd.jpg';
-//     imgUrl = 'http://i.imgur.com/ejVcyMP.png';
-//     imageEditor.addImageObject(imgUrl);
-// });
-
-
 // control mask filter
 $btnMaskFilter.on('click', function() {
     imageEditor.endAll();
