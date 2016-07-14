@@ -1,15 +1,19 @@
 # Image Editor
 Canvas image editor
 
-![image](https://cloud.githubusercontent.com/assets/12269563/14948542/7b400b60-107c-11e6-8774-cc9ccf305846.png)
+![image](https://cloud.githubusercontent.com/assets/18183560/16831336/5dd28d18-49df-11e6-9adf-25099df4cdec.png)
 
 ## Feature
 * Load image to canvas
-* Undo/Redo
+* Undo/Redo (With shortcut)
 * Crop
 * Flip
 * Rotation
 * Free Drawing
+* Line drawing
+* Icon
+* Mask Filter
+* Text
 
 ## Documentation
 * API: http://nhnent.github.io/tui.component.image-editor/latest/
@@ -18,8 +22,8 @@ Canvas image editor
 
 ## Dependency
 * jQuery: ~1.8.3
-* tui.code-snippet: ~1.0.7
-* fabric.js: ~1.6.0
+* tui.code-snippet: ~1.2.0
+* fabric.js: ~1.6.3
 
 ## Test environment
 * IE9 ~
@@ -31,7 +35,7 @@ Canvas image editor
   * Latest: `bower install tui-component-image-editor`
   * Each version: `bower install tui-component-image-editor[#tag]`
 * Download
-  * `image-editor.js` or `image-editor.min.js` 
+  * `image-editor.js` or `image-editor.min.js`
   * Download dependencies
     * jQuery: https://github.com/jquery/jquery
     * tui.code-snippet: https://github.com/nhnent/tui.code-snippet

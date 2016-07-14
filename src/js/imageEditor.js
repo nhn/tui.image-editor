@@ -135,7 +135,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  * @api
                  * @event ImageEditor#adjustObject
                  * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @param {string} Action type (move)
+                 * @param {string} Action type (move / scale)
                  * @example
                  * imageEditor.on('adjustObject', function(obj, type) {
                  *     console.log(obj);
@@ -148,10 +148,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 this._invoker.clearRedoStack();
 
                 /**
-                 * @api
                  * @event ImageEditor#adjustObject
                  * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @param {string} Action type (scale)
+                 * @param {string} Action type (scale / scale)
                  * @example
                  * imageEditor.on('adjustObject', function(obj, type) {
                  *     console.log(obj);
@@ -783,36 +782,36 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * Add text on image
      * @api
      * @param {string} text - Initial input text
-     * @param {object} [settings] Options for generating text
-     *     @param {object} [settings.styles] Initial styles
-     *         @param {string} [settings.styles.fill] Color
-     *         @param {string} [settings.styles.fontFamily] Font type for text
-     *         @param {number} [settings.styles.fontSize] Size
-     *         @param {string} [settings.styles.fontStyle] Type of inclination (normal / italic)
-     *         @param {string} [settings.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
-     *         @param {string} [settings.styles.textAlign] Type of text align (left / center / right)
-     *         @param {string} [settings.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
-     *     @param {{x: number, y: number}} [setting.position] - Initial position
+     * @param {object} [options] Options for generating text
+     *     @param {object} [options.styles] Initial styles
+     *         @param {string} [options.styles.fill] Color
+     *         @param {string} [options.styles.fontFamily] Font type for text
+     *         @param {number} [options.styles.fontSize] Size
+     *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
+     *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
+     *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
+     *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *     @param {{x: number, y: number}} [options.position] - Initial position
      * @example
      * imageEditor.addText();
      * imageEditor.addText('init text', {
-     * 		styles: {
-     * 			fill: '#000',
-     * 			fontSize: '20',
-     * 			fontWeight: 'bold'
-     * 		},
-     * 		position: {
-     * 			x: 10,
-     * 			y: 10
-     * 		}
+     *     styles: {
+     *     fill: '#000',
+     *         fontSize: '20',
+     *         fontWeight: 'bold'
+     *     },
+     *     position: {
+     *         x: 10,
+     *         y: 10
+     *     }
      * });
      */
-    addText: function(text, settings) {
+    addText: function(text, options) {
         if (this.getCurrentState() !== states.TEXT) {
             this._state = states.TEXT;
         }
 
-        this._getComponent(compList.TEXT).add(text || '', settings || {});
+        this._getComponent(compList.TEXT).add(text || '', options || {});
     },
 
     /**
@@ -846,7 +845,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
      * @example
      * imageEditor.changeTextStyle({
-     * 		fontStyle: 'italic'
+     *     fontStyle: 'italic'
      * });
      */
     changeTextStyle: function(styleObj) {
@@ -901,26 +900,26 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         /**
          * @api
          * @event ImageEditor#activateText
-         * @param {object} settings
-         *     @param {boolean} settings.type - Type of text object (new / select)
-         *     @param {string} settings.text - Current text
-         *     @param {object} settings.styles - Current styles
-         *         @param {string} settings.styles.fill - Color
-         *         @param {string} settings.styles.fontFamily - Font type for text
-         *         @param {number} settings.styles.fontSize - Size
-         *         @param {string} settings.styles.fontStyle - Type of inclination (normal / italic)
-         *         @param {string} settings.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
-         *         @param {string} settings.styles.textAlign - Type of text align (left / center / right)
-         *         @param {string} settings.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
-         *     @param {{x: number, y: number}} settings.originPosition - Current position on origin canvas
-         *     @param {{x: number, y: number}} settings.clientPosition - Current position on client area
+         * @param {object} options
+         *     @param {boolean} options.type - Type of text object (new / select)
+         *     @param {string} options.text - Current text
+         *     @param {object} options.styles - Current styles
+         *         @param {string} options.styles.fill - Color
+         *         @param {string} options.styles.fontFamily - Font type for text
+         *         @param {number} options.styles.fontSize - Size
+         *         @param {string} options.styles.fontStyle - Type of inclination (normal / italic)
+         *         @param {string} options.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
+         *         @param {string} options.styles.textAlign - Type of text align (left / center / right)
+         *         @param {string} options.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
+         *     @param {{x: number, y: number}} options.originPosition - Current position on origin canvas
+         *     @param {{x: number, y: number}} options.clientPosition - Current position on client area
          * @example
          * imageEditor.on('activateText', function(obj) {
-         * 		console.log('text object type: ' + obj.type);
-         * 		console.log('text contents: ' + obj.text);
-         * 		console.log('text styles: ' + obj.styles);
-         * 		console.log('text position on canvas: ' + obj.originPosition);
-         * 		console.log('text position on brwoser: ' + obj.clientPosition);
+         *     console.log('text object type: ' + obj.type);
+         *     console.log('text contents: ' + obj.text);
+         *     console.log('text styles: ' + obj.styles);
+         *     console.log('text position on canvas: ' + obj.originPosition);
+         *     console.log('text position on brwoser: ' + obj.clientPosition);
          * });
          */
         this.fire(events.ACTIVATE_TEXT, {
@@ -951,8 +950,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
      * @example
      * imageEditor.registerIcons({
-     * 		customIcon: 'M 0 0 L 20 20 L 10 10 Z',
-     * 		customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
+     *     customIcon: 'M 0 0 L 20 20 L 10 10 Z',
+     *     customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
      * });
      */
     registerIcons: function(infos) {
@@ -1004,7 +1003,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @example
      * imageEditor.applyFilter('mask');
      * imageEditor.applyFilter('mask', {
-     * 		mask: fabricImgObj
+     *     mask: fabricImgObj
      * });
      */
     applyFilter: function(type, options) {
@@ -1029,7 +1028,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          * @api
          * @event ImageEditor#applyFilter
          * @param {string} filterType - Applied filter
-         * @param {string} actType - Action type ("add" or "remove" filter)
+         * @param {string} actType - Action type (add / remove)
          * @example
          * imageEditor.on('applyFilter', function(filterType, actType) {
          *     console.log('filterType: ', filterType);

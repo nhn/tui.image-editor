@@ -4,7 +4,6 @@
  */
 'use strict';
 
-var consts = require('../consts');
 var clamp = require('../util').clamp;
 
 var CORNER_TYPE_TOP_LEFT = 'tl';

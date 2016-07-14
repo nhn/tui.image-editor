@@ -260,7 +260,12 @@ function createRemoveCommand(target) {
     });
 }
 
-
+/**
+ * Filter command
+ * @param {string} type - Filter type
+ * @param {object} options - Filter options
+ * @returns {Command}
+ */
 function createFilterCommand(type, options) {
     return new Command({
         /**
@@ -301,6 +306,7 @@ function createFilterCommand(type, options) {
  */
 function create(name, args) {
     args = Array.prototype.slice.call(arguments, 1);
+
     return creators[name].apply(null, args);
 }
 

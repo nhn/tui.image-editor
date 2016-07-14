@@ -47,27 +47,27 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     /**
      * Add new text on canvas image
      * @param {string} text - Initial input text
-     * @param {object} settings - Options for generating text
-     *     @param {object} [settings.styles] Initial styles
-     *         @param {string} [settings.styles.fill] Color
-     *         @param {string} [settings.styles.fontFamily] Font type for text
-     *         @param {number} [settings.styles.fontSize] Size
-     *         @param {string} [settings.styles.fontStyle] Type of inclination (normal / italic)
-     *         @param {string} [settings.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
-     *         @param {string} [settings.styles.textAlign] Type of text align (left / center / right)
-     *         @param {string} [settings.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
-     *     @param {{x: number, y: number}} [setting.position] - Initial position
+     * @param {object} options - Options for generating text
+     *     @param {object} [options.styles] Initial styles
+     *         @param {string} [options.styles.fill] Color
+     *         @param {string} [options.styles.fontFamily] Font type for text
+     *         @param {number} [options.styles.fontSize] Size
+     *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
+     *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
+     *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
+     *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *     @param {{x: number, y: number}} [options.position] - Initial position
      */
-    add: function(text, settings) {
+    add: function(text, options) {
         var canvas = this.getCanvas();
         var styles = this._defaultStyles;
         var newText;
 
-        if (settings.styles) {
-            styles = tui.util.extend(settings.styles, styles);
+        if (options.styles) {
+            styles = tui.util.extend(options.styles, styles);
         }
 
-        this._setInitPos(settings.position);
+        this._setInitPos(options.position);
 
         newText = new fabric.Text(text, styles);
 
