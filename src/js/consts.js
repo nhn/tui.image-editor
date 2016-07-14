@@ -18,6 +18,7 @@ module.exports = {
         'FLIP',
         'ROTATION',
         'FREE_DRAWING',
+        'LINE',
         'TEXT',
         'ICON',
         'FILTER'
@@ -54,6 +55,8 @@ module.exports = {
         ADJUST_OBJECT: 'adjustObject',
         START_FREE_DRAWING: 'startFreeDrawing',
         END_FREE_DRAWING: 'endFreeDrawing',
+        START_LINE_DRAWING: 'startLineDrawing',
+        END_LINE_DRAWING: 'endLineDrawing',
         EMPTY_REDO_STACK: 'emptyRedoStack',
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',
@@ -70,6 +73,7 @@ module.exports = {
         'NORMAL',
         'CROP',
         'FREE_DRAWING',
+        'LINE',
         'TEXT'
     ),
 

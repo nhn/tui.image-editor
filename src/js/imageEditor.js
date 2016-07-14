@@ -285,6 +285,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     endAll: function() {
         this.endTextMode();
         this.endFreeDrawing();
+        this.endLineDrawing();
         this.endCropping();
         this.deactivateAll();
         this._state = states.NORMAL;
@@ -440,6 +441,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Callback function after loading image
      * @param {fabric.Image} obj - Fabric image object
+     * @private
      */
     _callbackAfterLoadingImageObject: function(obj) {
         var mainComp = this._getMainComponent();
@@ -626,7 +628,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @api
      * @example
      * imageEditor.startFreeDrawing();
-     * imageEditor.endFreeDarwing();
+     * imageEditor.endFreeDrawing();
      * imageEidtor.startFreeDrawing({
      *     width: 12,
      *     color: 'rgba(0, 0, 0, 0.5)'
@@ -664,7 +666,18 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * });
      */
     setBrush: function(setting) {
-        this._getComponent(compList.FREE_DRAWING).setBrush(setting);
+        var state = this._state;
+        var compName;
+
+        switch (state) {
+            case states.LINE:
+                compName = compList.LINE;
+                break;
+            default:
+                compName = compList.FREE_DRAWING;
+        }
+
+        this._getComponent(compName).setBrush(setting);
     },
 
     /**
@@ -686,6 +699,55 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          * @event ImageEditor#endFreeDrawing
          */
         this.fire(events.END_FREE_DRAWING);
+    },
+
+    /**
+     * Start line-drawing mode
+     * @param {{width: number, color: string}} [setting] - Brush width & color
+     * @api
+     * @example
+     * imageEditor.startLineDrawing();
+     * imageEditor.endLineDrawing();
+     * imageEidtor.startLineDrawing({
+     *     width: 12,
+     *     color: 'rgba(0, 0, 0, 0.5)'
+     * });
+     */
+    startLineDrawing: function(setting) {
+        if (this.getCurrentState() === states.LINE) {
+            return;
+        }
+
+        this.endAll();
+        this._getComponent(compList.LINE).start(setting);
+        this._state = states.LINE;
+
+        /**
+         * @api
+         * @event ImageEditor#startLineDrawing
+         */
+        this.fire(events.START_LINE_DRAWING);
+    },
+
+    /**
+     * End line-drawing mode
+     * @api
+     * @example
+     * imageEditor.startLineDrawing();
+     * imageEditor.endLineDrawing();
+     */
+    endLineDrawing: function() {
+        if (this.getCurrentState() !== states.LINE) {
+            return;
+        }
+        this._getComponent(compList.LINE).end();
+        this._state = states.NORMAL;
+
+        /**
+         * @api
+         * @event ImageEditor#endLineDrawing
+         */
+        this.fire(events.END_LINE_DRAWING);
     },
 
     /**

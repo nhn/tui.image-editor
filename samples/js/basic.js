@@ -40,6 +40,15 @@ function base64ToBlob(data) {
 
     return new Blob([uInt8Array], {type: mimeString});
 }
+function getBrushSettings() {
+    var brushWidth = $inputBrushWidthRange.val();
+    var brushColor = brushColorpicker.getColor();
+
+    return {
+        width: brushWidth,
+        color: hexToRGBa(brushColor, 0.5)
+    };
+}
 
 // Buttons
 var $btns = $('.menu-item');
@@ -54,7 +63,7 @@ var $btnRemoveActiveObject = $('#btn-remove-active-object');
 var $btnCrop = $('#btn-crop');
 var $btnFlip = $('#btn-flip');
 var $btnRotation = $('#btn-rotation');
-var $btnFreeDrawing = $('#btn-free-drawing');
+var $btnDrawLine = $('#btn-draw-line');
 var $btnApplyCrop = $('#btn-apply-crop');
 var $btnCancelCrop = $('#btn-cancel-crop');
 var $btnFlipX = $('#btn-flip-x');
@@ -83,9 +92,13 @@ var $cropSubMenu = $('#crop-sub-menu');
 var $flipSubMenu = $('#flip-sub-menu');
 var $rotationSubMenu = $('#rotation-sub-menu');
 var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
+var $drawLineSubMenu = $('#draw-line-sub-menu');
 var $textSubMenu = $('#text-sub-menu');
 var $iconSubMenu = $('#icon-sub-menu');
 var $filterSubMenu = $('#filter-sub-menu');
+
+// Select line type
+var $selectMode = $('[name="select-line-type"]');
 
 // Text input
 var $inputText = $('#input-text');
@@ -101,7 +114,7 @@ var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
 
 // Color picker for free drawing
 var brushColorpicker = tui.component.colorpicker.create({
-    container: $('#tui-color-picker')[0],
+    container: $('#tui-brush-color-picker')[0],
     color: '#000000'
 });
 
@@ -159,7 +172,7 @@ imageEditor.on({
             });
         }
 
-        $textPalette.hide().show(function() { // customize
+        $textPalette.hide().show(1, function() {
             $inputText.focus();
             $inputText.val(obj.text);
             $inputFontSizeRange.val(obj.styles.fontSize || 40);
@@ -222,17 +235,6 @@ $btnRotation.on('click', function() {
     imageEditor.endAll();
     $displayingSubMenu.hide();
     $displayingSubMenu = $rotationSubMenu.show();
-});
-
-$btnFreeDrawing.on('click', function() {
-    if (imageEditor.getCurrentState() === 'FREE_DRAWING') {
-        $(this).removeClass('active');
-        imageEditor.endFreeDrawing();
-    } else {
-        imageEditor.startFreeDrawing();
-        $displayingSubMenu.hide();
-        $displayingSubMenu = $freeDrawingSubMenu.show();
-    }
 });
 
 $btnClose.on('click', function() {
@@ -315,6 +317,32 @@ $btnDownload.on('click', function() {
     }
 });
 
+// control draw mode
+$btnDrawLine.on('click', function() {
+    imageEditor.endAll();
+    $displayingSubMenu.hide();
+    $displayingSubMenu = $drawLineSubMenu.show();
+    $selectMode.removeAttr('checked');
+});
+
+$selectMode.on('change', function() {
+    var mode = $(this).val();
+    var settings = getBrushSettings();
+    var state = imageEditor.getCurrentState();
+
+    if (mode === 'freeDrawing') {
+        if (state === 'FREE_DRAWING') {
+            imageEditor.endFreeDrawing();
+        }
+        imageEditor.startFreeDrawing(settings);
+    } else {
+        if (state === 'LINE') {
+            imageEditor.endLineDrawing();
+        }
+        imageEditor.startLineDrawing(settings);
+    }
+});
+
 // control text mode
 $btnText.on('click', function() {
     if (imageEditor.getCurrentState() === 'TEXT') {
@@ -371,15 +399,15 @@ $btnTextStyle.on('click', function(e) { // eslint-disable-line
     imageEditor.changeTextStyle(styleObj);
 });
 
-$btnClosePalette.on('click', function() {
-    imageEditor.deactivateAll();
-    $textPalette.hide();
-});
-
 textPaletteColorpicker.on('selectColor', function(event) {
     imageEditor.changeTextStyle({
         'fill': event.color
     });
+});
+
+$btnClosePalette.on('click', function() {
+    imageEditor.deactivateAll();
+    $textPalette.hide();
 });
 
 // control icon
