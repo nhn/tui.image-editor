@@ -90,7 +90,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     _attachCanvasEvents: function() {
         this._canvas.on({
-            'path:created': $.proxy(this._onPathCreated, this),
+            'path:created': this._onPathCreated,
             'object:added': $.proxy(function(event) {
                 var obj = event.target;
                 var command;
@@ -104,6 +104,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                     this._invoker.pushUndoStack(command);
                     this._invoker.clearRedoStack();
                 }
+
                 /**
                  * @api
                  * @event ImageEditor#addObject
@@ -126,6 +127,38 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  * });
                  */
                 this.fire(events.REMOVE_OBJECT, event.target);
+            }, this),
+            'object:moving': $.proxy(function(event) {
+                this._invoker.clearRedoStack();
+
+                /**
+                 * @api
+                 * @event ImageEditor#adjustObject
+                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+                 * @param {string} Action type (move)
+                 * @example
+                 * imageEditor.on('adjustObject', function(obj, type) {
+                 *     console.log(obj);
+                 *     console.log(type);
+                 * });
+                 */
+                this.fire(events.ADJUST_OBJECT, event.target, 'move');
+            }, this),
+            'object:scaling': $.proxy(function(event) {
+                this._invoker.clearRedoStack();
+
+                /**
+                 * @api
+                 * @event ImageEditor#adjustObject
+                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+                 * @param {string} Action type (scale)
+                 * @example
+                 * imageEditor.on('adjustObject', function(obj, type) {
+                 *     console.log(obj);
+                 *     console.log(type);
+                 * });
+                 */
+                this.fire(events.ADJUST_OBJECT, event.target, 'scale');
             }, this)
         });
     },
@@ -160,14 +193,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _onPathCreated: function(obj) {
-        var path = obj.path;
-        path.set({
-            rotatingPointOffset: 30,
-            borderColor: 'red',
-            transparentCorners: false,
-            cornerColor: 'green',
-            cornerSize: 10
-        });
+        obj.path.set(consts.fObjectOptions.SELECTION_STYLE);
     },
 
     /**
@@ -259,6 +285,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     endAll: function() {
         this.endTextMode();
         this.endFreeDrawing();
+        this.endLineDrawing();
         this.endCropping();
         this.deactivateAll();
         this._state = states.NORMAL;
@@ -389,6 +416,45 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             currentWidth: $canvasElement.width(),
             currentHeight: $canvasElement.height()
         });
+    },
+
+    /**
+     * Add image object on canvas
+     * @param {string} imgUrl - Image url to make object
+     * @api
+     * @example
+     * imageEditor.addImageObject('path/fileName.jpg');
+     */
+    addImageObject: function(imgUrl) {
+        if (!imgUrl) {
+            return;
+        }
+
+        fabric.Image.fromURL(imgUrl,
+            $.proxy(this._callbackAfterLoadingImageObject, this),
+            {
+                crossOrigin: 'Anonymous'
+            }
+        );
+    },
+
+    /**
+     * Callback function after loading image
+     * @param {fabric.Image} obj - Fabric image object
+     * @private
+     */
+    _callbackAfterLoadingImageObject: function(obj) {
+        var mainComp = this._getMainComponent();
+        var centerPos = mainComp.getCanvasImage().getCenterPoint();
+
+        obj.set(consts.fObjectOptions.SELECTION_STYLE);
+        obj.set({
+            left: centerPos.x,
+            top: centerPos.y,
+            crossOrigin: 'anonymous'
+        });
+
+        this._canvas.add(obj).setActiveObject(obj);
     },
 
     /**
@@ -562,7 +628,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @api
      * @example
      * imageEditor.startFreeDrawing();
-     * imageEditor.endFreeDarwing();
+     * imageEditor.endFreeDrawing();
      * imageEidtor.startFreeDrawing({
      *     width: 12,
      *     color: 'rgba(0, 0, 0, 0.5)'
@@ -600,7 +666,18 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * });
      */
     setBrush: function(setting) {
-        this._getComponent(compList.FREE_DRAWING).setBrush(setting);
+        var state = this._state;
+        var compName;
+
+        switch (state) {
+            case states.LINE:
+                compName = compList.LINE;
+                break;
+            default:
+                compName = compList.FREE_DRAWING;
+        }
+
+        this._getComponent(compName).setBrush(setting);
     },
 
     /**
@@ -625,6 +702,55 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
+     * Start line-drawing mode
+     * @param {{width: number, color: string}} [setting] - Brush width & color
+     * @api
+     * @example
+     * imageEditor.startLineDrawing();
+     * imageEditor.endLineDrawing();
+     * imageEidtor.startLineDrawing({
+     *     width: 12,
+     *     color: 'rgba(0, 0, 0, 0.5)'
+     * });
+     */
+    startLineDrawing: function(setting) {
+        if (this.getCurrentState() === states.LINE) {
+            return;
+        }
+
+        this.endAll();
+        this._getComponent(compList.LINE).start(setting);
+        this._state = states.LINE;
+
+        /**
+         * @api
+         * @event ImageEditor#startLineDrawing
+         */
+        this.fire(events.START_LINE_DRAWING);
+    },
+
+    /**
+     * End line-drawing mode
+     * @api
+     * @example
+     * imageEditor.startLineDrawing();
+     * imageEditor.endLineDrawing();
+     */
+    endLineDrawing: function() {
+        if (this.getCurrentState() !== states.LINE) {
+            return;
+        }
+        this._getComponent(compList.LINE).end();
+        this._state = states.NORMAL;
+
+        /**
+         * @api
+         * @event ImageEditor#endLineDrawing
+         */
+        this.fire(events.END_LINE_DRAWING);
+    },
+
+    /**
      * Start text input mode
      * @api
      * @example
@@ -642,6 +768,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this._listener = $.proxy(this._onFabricMouseDown, this);
 
+        this._canvas.forEachObject(function(obj) {
+            if (!obj.isType('text')) {
+                obj.evented = false;
+            }
+        });
+
         this._canvas.selection = false;
         this._canvas.defaultCursor = 'text';
         this._canvas.on('mouse:down', this._listener);
@@ -649,6 +781,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Add text on image
+     * @api
      * @param {string} text - Initial input text
      * @param {object} [settings] Options for generating text
      *     @param {object} [settings.styles] Initial styles
@@ -660,10 +793,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *         @param {string} [settings.styles.textAlign] Type of text align (left / center / right)
      *         @param {string} [settings.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
      *     @param {{x: number, y: number}} [setting.position] - Initial position
-     * @api
      * @example
-     * 	imageEditor.addText();
-     * 	imageEditor.addText('init text', {
+     * imageEditor.addText();
+     * imageEditor.addText('init text', {
      * 		styles: {
      * 			fill: '#000',
      * 			fontSize: '20',
@@ -673,7 +805,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * 			x: 10,
      * 			y: 10
      * 		}
-     * 	});
+     * });
      */
     addText: function(text, settings) {
         if (this.getCurrentState() !== states.TEXT) {
@@ -685,10 +817,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Change contents of selected text object on image
-     * @param {string} text - Changing text
      * @api
+     * @param {string} text - Changing text
      * @example
-     * 	imageEditor.changeText('change text');
+     * imageEditor.changeText('change text');
      */
     changeText: function(text) {
         var activeObj = this._canvas.getActiveObject();
@@ -703,6 +835,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Set style
+     * @api
      * @param {object} styleObj - Initial styles
      *     @param {string} [styleObj.fill] Color
      *     @param {string} [styleObj.fontFamily] Font type for text
@@ -711,11 +844,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
      *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
-     * @api
      * @example
-     * 	imageEditor.changeTextStyle({
+     * imageEditor.changeTextStyle({
      * 		fontStyle: 'italic'
-     * 	});
+     * });
      */
     changeTextStyle: function(styleObj) {
         var activeObj = this._canvas.getActiveObject();
@@ -743,6 +875,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._canvas.forEachObject(function(obj) {
             if (obj.isType('text') && obj.text === '') {
                 obj.remove();
+            } else {
+                obj.evented = true;
             }
         });
 
@@ -766,9 +900,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         /**
          * @api
-         * @event ImageEditor#selectText
+         * @event ImageEditor#activateText
          * @param {object} settings
-         *     @param {boolean} settings.isNew - Whether the new input text or not
+         *     @param {boolean} settings.type - Type of text object (new / select)
          *     @param {string} settings.text - Current text
          *     @param {object} settings.styles - Current styles
          *         @param {string} settings.styles.fill - Color
@@ -780,9 +914,17 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          *         @param {string} settings.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
          *     @param {{x: number, y: number}} settings.originPosition - Current position on origin canvas
          *     @param {{x: number, y: number}} settings.clientPosition - Current position on client area
+         * @example
+         * imageEditor.on('activateText', function(obj) {
+         * 		console.log('text object type: ' + obj.type);
+         * 		console.log('text contents: ' + obj.text);
+         * 		console.log('text styles: ' + obj.styles);
+         * 		console.log('text position on canvas: ' + obj.originPosition);
+         * 		console.log('text position on brwoser: ' + obj.clientPosition);
+         * });
          */
         this.fire(events.ACTIVATE_TEXT, {
-            isNew: !(obj),
+            type: obj ? 'select' : 'new',
             text: obj ? obj.text : '',
             styles: obj ? {
                 fill: obj.fill,
@@ -804,27 +946,41 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * Add icon on canvas
-     * @param {string} type - Icon type (arrow / cancel)
-     * @param {number} [angle] - Icon render angle
+     * Register custom icons
      * @api
+     * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
+     * @example
+     * imageEditor.registerIcons({
+     * 		customIcon: 'M 0 0 L 20 20 L 10 10 Z',
+     * 		customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
+     * });
+     */
+    registerIcons: function(infos) {
+        this._getComponent(compList.ICON).registerPaths(infos);
+    },
+
+    /**
+     * Add icon on canvas
+     * @api
+     * @param {string} type - Icon type (arrow / cancel)
      * @example
      * imageEditor.addIcon('arrow');
-     * imageEditor.addIcon('arrow', 90);
      */
-    addIcon: function(type, angle) {
-        this._getComponent(compList.ICON).add(type, angle);
+    addIcon: function(type) {
+        this._getComponent(compList.ICON).add(type);
     },
 
     /**
      * Change icon color
-     * @param {string} color - Color for icon
      * @api
+     * @param {string} color - Color for icon
      * @example
      * imageEditor.changeIconColor('#000000');
      */
     changeIconColor: function(color) {
-        this._getComponent(compList.ICON).setColor(color);
+        var activeObj = this._canvas.getActiveObject();
+
+        this._getComponent(compList.ICON).setColor(color, activeObj);
     },
 
     /**
@@ -837,6 +993,51 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var canvas = this._canvas;
         var target = canvas.getActiveObject() || canvas.getActiveGroup();
         var command = commandFactory.create(commands.REMOVE_OBJECT, target);
+        this.execute(command);
+    },
+
+    /**
+     * Apply filter on canvas image
+     * @api
+     * @param {string} type - Filter type (current filter type is only 'mask')
+     * @param {options} options - Options to apply filter
+     * @example
+     * imageEditor.applyFilter('mask');
+     * imageEditor.applyFilter('mask', {
+     * 		mask: fabricImgObj
+     * });
+     */
+    applyFilter: function(type, options) {
+        var command, callback, activeObj;
+
+        if (type === 'mask' && !options) {
+            activeObj = this._canvas.getActiveObject();
+
+            if (!(activeObj && activeObj.isType('image'))) {
+                return;
+            }
+
+            options = {
+                mask: activeObj
+            };
+        }
+
+        callback = $.proxy(this.fire, this, events.APPLY_FILTER);
+        command = commandFactory.create(commands.APPLY_FILTER, type, options);
+
+        /**
+         * @api
+         * @event ImageEditor#applyFilter
+         * @param {string} filterType - Applied filter
+         * @param {string} actType - Action type ("add" or "remove" filter)
+         * @example
+         * imageEditor.on('applyFilter', function(filterType, actType) {
+         *     console.log('filterType: ', filterType);
+         *     console.log('actType: ', actType);
+         * });
+         */
+        command.setExecuteCallback(callback)
+            .setUndoCallback(callback);
 
         this.execute(command);
     },

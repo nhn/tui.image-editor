@@ -2,10 +2,10 @@
     border: 1px solid black;
 }
 .body-container {
-    width: 800px;
+    width: 900px;
 }
 .tui-image-editor-controls {
-    height: 210px;
+    height: 230px;
 }
 .menu {
     padding: 0;
@@ -103,11 +103,15 @@
 .icon-text{
     font-size: 20px;
 }
+.select-line-type{
+    outline: 0;
+    vertical-align: middle;
+}
 #tui-color-picker{
     display: inline-block;
     vertical-align: middle;
 }
-#text-palette{
+#tui-text-palette{
     display: none;
     position: absolute;
     padding: 10px;

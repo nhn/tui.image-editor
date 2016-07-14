@@ -25,12 +25,13 @@
             <li class="menu-item disabled" id="btn-redo">Redo</li>
             <li class="menu-item" id="btn-clear-objects">ClearObjects</li>
             <li class="menu-item" id="btn-remove-active-object">RemoveActiveObject</li>
-            <li class="menu-item activatable" id="btn-crop">Crop</li>
-            <li class="menu-item activatable" id="btn-flip">Flip</li>
-            <li class="menu-item activatable" id="btn-rotation">Rotation</li>
-            <li class="menu-item activatable" id="btn-free-drawing">FreeDrawing</li>
-            <li class="menu-item activatable" id="btn-text">Text</li>
-            <li class="menu-item activatable" id="btn-add-icon">Icon</li>
+            <li class="menu-item" id="btn-crop">Crop</li>
+            <li class="menu-item" id="btn-flip">Flip</li>
+            <li class="menu-item" id="btn-rotation">Rotation</li>
+            <li class="menu-item" id="btn-draw-line">DrawLine</li>
+            <li class="menu-item" id="btn-add-icon">Icon</li>
+            <li class="menu-item" id="btn-mask-filter">Mask</li>
+            <li class="menu-item" id="btn-text">Text</li>
         </ul>
 
         <div class="sub-menu-container" id="crop-sub-menu">
@@ -55,12 +56,22 @@
                 <li class="menu-item close">Close</li>
             </ul>
         </div>
-        <div class="sub-menu-container menu" id="free-drawing-sub-menu">
-            <div id="tui-color-picker">Brush color</div>
-            <label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label>
+        <div class="sub-menu-container menu" id="draw-line-sub-menu">
+            <ul class="menu">
+                <li class="menu-item">
+                    <label><input type="radio" class="select-line-type" name="select-line-type" value="freeDrawing"> Free drawing</label>
+                </li>
+                <li class="menu-item">
+                    <label><input type="radio" class="select-line-type" name="select-line-type" value="lineDrawing"> Straight line</label>
+                </li>
+                <li class="menu-item">
+                    <div id="tui-brush-color-picker">Brush color</div>
+                </li>
+                <li class="menu-item"><label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label></li>
+            </ul>
         </div>
         <div class="sub-menu-container menu" id="text-sub-menu">
-            <div id="text-palette">
+            <div id="tui-text-palette">
                 <textarea id="input-text"></textarea>
                 <div>
                     <label class="no-pointer"><input id="input-font-size-range" type="range" min="10" max="100" value="10"></label>
@@ -82,11 +93,17 @@
         <div class="sub-menu-container" id="icon-sub-menu">
             <ul class="menu">
                 <li class="menu-item">
-                    <div id="tui-icon-color-picker"></div>
+                    <div id="tui-icon-color-picker">Icon color</div>
                 </li>
-                <li class="menu-item icon-text" id="btn-arrow-icon">➔</li>
-                <li class="menu-item icon-text" id="btn-cancel-icon">✖</li>
-                <li class="menu-item close">Close</li>
+                <li class="menu-item border" id="btn-register-icon">Register custom icon</li>
+                <li class="menu-item icon-text" data-icon-type="arrow">➡</li>
+                <li class="menu-item icon-text" data-icon-type="cancel">✖</li>
+            </ul>
+        </div>
+        <div class="sub-menu-container" id="filter-sub-menu">
+            <ul class="menu">
+                <li class="menu-item border" id="btn-load-mask-image">Load mask image</li>
+                <li class="menu-item" id="btn-apply-mask">Apply mask filter</li>
             </ul>
         </div>
     </div>

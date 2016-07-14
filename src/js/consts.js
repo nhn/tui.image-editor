@@ -18,8 +18,10 @@ module.exports = {
         'FLIP',
         'ROTATION',
         'FREE_DRAWING',
+        'LINE',
         'TEXT',
-        'ICON'
+        'ICON',
+        'FILTER'
     ),
 
     /**
@@ -32,7 +34,8 @@ module.exports = {
         'FLIP_IMAGE',
         'ROTATE_IMAGE',
         'ADD_OBJECT',
-        'REMOVE_OBJECT'
+        'REMOVE_OBJECT',
+        'APPLY_FILTER'
     ),
 
     /**
@@ -49,13 +52,17 @@ module.exports = {
         ROTATE_IMAGE: 'rotateImage',
         ADD_OBJECT: 'addObject',
         REMOVE_OBJECT: 'removeObject',
+        ADJUST_OBJECT: 'adjustObject',
         START_FREE_DRAWING: 'startFreeDrawing',
         END_FREE_DRAWING: 'endFreeDrawing',
+        START_LINE_DRAWING: 'startLineDrawing',
+        END_LINE_DRAWING: 'endLineDrawing',
         EMPTY_REDO_STACK: 'emptyRedoStack',
         EMPTY_UNDO_STACK: 'emptyUndoStack',
         PUSH_UNDO_STACK: 'pushUndoStack',
         PUSH_REDO_STACK: 'pushRedoStack',
-        ACTIVATE_TEXT: 'activateText'
+        ACTIVATE_TEXT: 'activateText',
+        APPLY_FILTER: 'applyFilter'
     },
 
     /**
@@ -66,6 +73,7 @@ module.exports = {
         'NORMAL',
         'CROP',
         'FREE_DRAWING',
+        'LINE',
         'TEXT'
     ),
 
@@ -77,5 +85,21 @@ module.exports = {
         Z: 90,
         Y: 89,
         SHIFT: 16
+    },
+
+    /**
+     * Fabric object options
+     * @type {Object.<string, Object>}
+     */
+    fObjectOptions: {
+        SELECTION_STYLE: {
+            borderColor: 'red',
+            cornerColor: 'green',
+            cornerSize: 10,
+            originX: 'center',
+            originY: 'center',
+            transparentCorners: false,
+            rotatingPointOffset: 30
+        }
     }
 };

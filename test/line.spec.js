@@ -1,20 +1,20 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview Test cases of "src/js/component/freeDrawing.js"
+ * @fileoverview Test cases of "src/js/component/line.js"
  */
 'use strict';
 
 var Main = require('../src/js/component/main');
-var FreeDrawing = require('../src/js/component/freeDrawing');
+var Line = require('../src/js/component/line');
 
-describe('FreeDrawing', function() {
-    var canvas, main, mockImage, freeDrawing, fEvent;
+describe('Line', function() {
+    var canvas, main, mockImage, line, fEvent;
 
     beforeAll(function() {
         canvas = new fabric.Canvas($('<canvas>')[0]);
         main = new Main();
         main.canvas = canvas;
-        freeDrawing = new FreeDrawing(main);
+        line = new Line(main);
     });
 
     beforeEach(function() {
@@ -32,40 +32,29 @@ describe('FreeDrawing', function() {
         });
     });
 
-    it('_onFabricMouseDown() should insert the straight line during shift key is pressed.', function() {
-        freeDrawing._withShiftKey = true;
-
-        freeDrawing._onFabricMouseDown(fEvent);
+    it('_onFabricMouseDown() should insert the line.', function() {
+        line._onFabricMouseDown(fEvent);
 
         expect(canvas.getObjects().length).toEqual(1);
     });
 
     it('_onFabricMouseMove() should draw line located by mouse pointer.', function() {
-        freeDrawing._line = new fabric.Line([10, 20, 10, 20]);
+        line._line = new fabric.Line([10, 20, 10, 20]);
 
-        canvas.add(freeDrawing._line);
+        canvas.add(line._line);
 
         spyOn(canvas, 'getPointer').and.returnValue({
             x: 30,
             y: 60
         });
 
-        freeDrawing._withShiftKey = true;
-
         expect(canvas.getObjects()[0].get('x2')).toEqual(10);
         expect(canvas.getObjects()[0].get('y2')).toEqual(20);
 
-        freeDrawing._onFabricMouseMove(fEvent);
+        line._onFabricMouseMove(fEvent);
 
         expect(canvas.getObjects()[0].get('x2')).toEqual(30);
         expect(canvas.getObjects()[0].get('y2')).toEqual(60);
-    });
-
-    it('_onFabricMouseUp() should restore drawing mode if shift key is not pressed.', function() {
-        freeDrawing._onFabricMouseUp();
-        freeDrawing._onFabricMouseDown(fEvent);
-
-        expect(canvas.getObjects().length).toEqual(0);
     });
 
     it('end() should restore all drawing objects activated.', function() {
@@ -73,14 +62,12 @@ describe('FreeDrawing', function() {
 
         canvas.add(path);
 
-        path.set({
-            selectable: false
-        });
+        line.start();
 
-        expect(canvas.getObjects()[0].get('selectable')).toEqual(false);
+        expect(canvas.getObjects()[0].get('evented')).toEqual(false);
 
-        freeDrawing.end();
+        line.end();
 
-        expect(canvas.getObjects()[0].get('selectable')).toEqual(true);
+        expect(canvas.getObjects()[0].get('evented')).toEqual(true);
     });
 });

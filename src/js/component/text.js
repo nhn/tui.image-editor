@@ -8,16 +8,10 @@ var Component = require('../interface/component');
 var consts = require('../consts');
 
 var defaultStyles = {
-    borderColor: 'red',
-    cornerColor: 'green',
-    cornerSize: 10,
-    transparentCorners: false,
     fill: '#000000',
     left: 0,
     top: 0,
-    padding: 20,
-    originX: 'center',
-    originY: 'center'
+    padding: 20
 };
 var resetStyles = {
     fill: '#000000',
@@ -76,6 +70,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         this._setInitPos(settings.position);
 
         newText = new fabric.Text(text, styles);
+
+        newText.set(consts.fObjectOptions.SELECTION_STYLE);
 
         canvas.add(newText);
 
