@@ -95,7 +95,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 var obj = event.target;
                 var command;
 
-                if (obj.isType('cropzone')) {
+                if (obj.isType('cropzone') ||
+                    obj.isType('text')) {
                     return;
                 }
 
@@ -183,6 +184,47 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
             this.redo();
         }
+    },
+
+    /**
+     * onSelectClear handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     */
+    _onFabricSelectClear: function(fEvent) {
+        var textComp = this._getComponent(compList.TEXT);
+        var obj = textComp.getSelectedObj();
+        var command;
+
+        textComp.setSelectedInfo(fEvent.target, false);
+
+        if (!tui.util.hasStamp(obj) && obj.text !== '') {
+            command = commandFactory.create(commands.ADD_OBJECT, obj);
+            this._invoker.pushUndoStack(command);
+            this._invoker.clearRedoStack();
+        } else if (obj.text === '') {
+            obj.remove();
+        }
+    },
+
+    /**
+     * onSelect handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     */
+    _onFabricSelect: function(fEvent) {
+        var textComp = this._getComponent(compList.TEXT);
+        var obj = textComp.getSelectedObj();
+        var command;
+
+        if (!tui.util.hasStamp(obj) &&
+            !textComp.isBeforeDeselect() && obj.text !== '') {
+            command = commandFactory.create(commands.ADD_OBJECT, obj);
+            this._invoker.pushUndoStack(command);
+            this._invoker.clearRedoStack();
+        } else if (obj.text === '') {
+            obj.remove();
+        }
+
+        textComp.setSelectedInfo(fEvent.target, true);
     },
 
     /**
@@ -637,7 +679,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if (this.getCurrentState() === states.FREE_DRAWING) {
             return;
         }
-
         this.endAll();
         this._getComponent(compList.FREE_DRAWING).start(setting);
         this._state = states.FREE_DRAWING;
@@ -763,19 +804,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
-        this._state = states.TEXT;
-
-        this._listener = $.proxy(this._onFabricMouseDown, this);
-
-        this._canvas.forEachObject(function(obj) {
-            if (!obj.isType('text')) {
-                obj.evented = false;
-            }
+        this._getComponent(compList.TEXT).start({
+            mousedown: $.proxy(this._onFabricMouseDown, this),
+            select: $.proxy(this._onFabricSelect, this),
+            selectClear: $.proxy(this._onFabricSelectClear, this)
         });
-
-        this._canvas.selection = false;
-        this._canvas.defaultCursor = 'text';
-        this._canvas.on('mouse:down', this._listener);
     },
 
     /**
@@ -867,21 +900,13 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.endTextMode();
      */
     endTextMode: function() {
-        if (this.getCurrentState() === states.TEXT) {
-            this._state = states.NORMAL;
+        if (this.getCurrentState() !== states.TEXT) {
+            return;
         }
 
-        this._canvas.forEachObject(function(obj) {
-            if (obj.isType('text') && obj.text === '') {
-                obj.remove();
-            } else {
-                obj.evented = true;
-            }
-        });
+        this._state = states.NORMAL;
 
-        this._canvas.selection = true;
-        this._canvas.defaultCursor = 'default';
-        this._canvas.off('mouse:down', this._listener);
+        this._getComponent(compList.TEXT).end();
     },
 
      /**

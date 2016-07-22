@@ -28,6 +28,39 @@ describe('Text', function() {
         });
     });
 
+    it('start() should deactivate "evented" of other objects except text objects.', function() {
+        var objects = [
+            new fabric.Object({evented: true}),
+            new fabric.Circle({evented: true}),
+            new fabric.Text('', {evented: true})
+        ];
+
+        canvas.add(objects[0], objects[1], objects[2]);
+
+        text.start({});
+
+        expect(objects[0].evented).toBe(false);
+        expect(objects[1].evented).toBe(false);
+        expect(objects[2].evented).toBe(true);
+    });
+
+    it('end() should activate "evented" of other objects except text objects.', function() {
+        var objects = [
+            new fabric.Object({evented: true}),
+            new fabric.Circle({evented: true}),
+            new fabric.Text('', {evented: true})
+        ];
+
+        canvas.add(objects[0], objects[1], objects[2]);
+
+        text.start({});
+        text.end();
+
+        expect(objects[0].evented).toBe(true);
+        expect(objects[1].evented).toBe(true);
+        expect(objects[2].evented).toBe(true);
+    });
+
     describe('add()', function() {
         var activeObj;
 

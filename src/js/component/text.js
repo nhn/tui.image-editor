@@ -36,6 +36,24 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
          * @type {object}
          */
         this._defaultStyles = defaultStyles;
+
+        /**
+         * Selected state
+         * @type {boolean}
+         */
+        this._isSelected = false;
+
+        /**
+         * Selected text object
+         * @type {object}
+         */
+        this._selectedObj = {};
+
+        /**
+         * Listeners for fabric event
+         * @type {object}
+         */
+        this._listeners = null;
     },
 
     /**
@@ -43,6 +61,55 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * @type {string}
      */
     name: consts.componentNames.TEXT,
+
+    /**
+     * Start input text mode
+     * @param {object} listeners - Callback functions of fabric event
+     */
+    start: function(listeners) {
+        var canvas = this.getCanvas();
+
+        this._listeners = listeners;
+
+        canvas.selection = false;
+        canvas.defaultCursor = 'text';
+
+        canvas.forEachObject(function(obj) {
+            if (!obj.isType('text')) {
+                obj.evented = false;
+            }
+        });
+
+        canvas.on({
+            'mouse:down': this._listeners.mousedown,
+            'object:selected': this._listeners.select,
+            'before:selection:cleared': this._listeners.selectClear
+        });
+    },
+
+    /**
+     * End input text mode
+     */
+    end: function() {
+        var canvas = this.getCanvas();
+
+        canvas.selection = true;
+        canvas.defaultCursor = 'default';
+
+        canvas.forEachObject(function(obj) {
+            if (!obj.isType('text')) {
+                obj.evented = true;
+            }
+        });
+
+        canvas.deactivateAllWithDispatch(); // action for undo stack
+
+        canvas.off({
+            'mouse:down': this._listeners.mousedown,
+            'object:selected': this._listeners.select,
+            'before:selection:cleared': this._listeners.selectClear
+        });
+    },
 
     /**
      * Add new text on canvas image
@@ -116,8 +183,35 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     },
 
     /**
+     * Set infos of the current selected object
+     * @param {fabric.Text} obj - Current selected text object
+     * @param {boolean} state - State of selecting
+     */
+    setSelectedInfo: function(obj, state) {
+        this._selectedObj = obj;
+        this._isSelected = state;
+    },
+
+    /**
+     * Whether before selected object is deselected or not
+     * @returns {boolean} State of selecting
+     */
+    isBeforeDeselect: function() {
+        return !this._isSelected;
+    },
+
+    /**
+     * Get current selected text object
+     * @returns {fabric.Text} Current selected text object
+     */
+    getSelectedObj: function() {
+        return this._selectedObj;
+    },
+
+    /**
      * Set initial position on canvas image
      * @param {{x: number, y: number}} [position] - Selected position
+     * @private
      */
     _setInitPos: function(position) {
         position = position || this.getCanvasImage().getCenterPoint();
