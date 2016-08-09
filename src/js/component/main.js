@@ -66,8 +66,8 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @param {string} type - A DOMString indicating the image format. The default type is image/png.
      * @returns {string} A DOMString containing the requested data URI.
      */
-    toDataURL: function(type) {
-        return this.canvas && this.canvas.toDataURL(type);
+    toDataURL: function() {
+        return this.canvas && this.canvas.toDataURL();
     },
 
     /**
@@ -100,7 +100,8 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      */
     setCanvasElement: function(canvasElement) {
         this.canvas = new fabric.Canvas($(canvasElement)[0], {
-            containerClass: 'tui-image-editor-canvas-container'
+            containerClass: 'tui-image-editor-canvas-container',
+            enableRetinaScaling: false
         });
     },
 
@@ -120,6 +121,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
             'max-width': maxDimension.width + 'px',
             'max-height': maxDimension.height + 'px'
         });
+
         this.setCanvasBackstoreDimension({
             width: width,
             height: height

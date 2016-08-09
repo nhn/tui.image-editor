@@ -77,7 +77,7 @@ var $btnTextStyle = $('.btn-text-style');
 var $btnAddIcon = $('#btn-add-icon');
 var $btnRegisterIcon = $('#btn-register-icon');
 var $btnMaskFilter = $('#btn-mask-filter');
-var $btnLoadMaskImage = $('#btn-load-mask-image');
+var $btnLoadMaskImage = $('#input-mask-image-file');
 var $btnApplyMask = $('#btn-apply-mask');
 var $btnClose = $('.close');
 
@@ -446,9 +446,22 @@ $btnMaskFilter.on('click', function() {
     $displayingSubMenu = $filterSubMenu.show();
 });
 
-$btnLoadMaskImage.on('click', function() {
-    var imgUrl = 'img/mask.png';
-    imageEditor.addImageObject(imgUrl);
+$btnLoadMaskImage.on('change', function() {
+    var file;
+    var imgUrl;
+
+    if (!supportingFileAPI) {
+        alert('This browser does not support file-api');
+    }
+
+    file = event.target.files[0];
+
+    if (file) {
+        imgUrl = URL.createObjectURL(file);
+
+        imageEditor.addImageObject(imgUrl);
+
+    }
 });
 
 $btnApplyMask.on('click', function() {

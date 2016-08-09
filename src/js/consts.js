@@ -51,6 +51,7 @@ module.exports = {
         FLIP_IMAGE: 'flipImage',
         ROTATE_IMAGE: 'rotateImage',
         ADD_OBJECT: 'addObject',
+        SELECT_OBJECT: 'selectObject',
         REMOVE_OBJECT: 'removeObject',
         ADJUST_OBJECT: 'adjustObject',
         START_FREE_DRAWING: 'startFreeDrawing',
@@ -98,8 +99,7 @@ module.exports = {
             cornerSize: 10,
             originX: 'center',
             originY: 'center',
-            transparentCorners: false,
-            rotatingPointOffset: 30
+            transparentCorners: false
         }
     }
 };

@@ -130,11 +130,11 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         var styles = this._defaultStyles;
         var newText;
 
+        this._setInitPos(options.position);
+
         if (options.styles) {
             styles = tui.util.extend(options.styles, styles);
         }
-
-        this._setInitPos(options.position);
 
         newText = new fabric.Text(text, styles);
 

@@ -13,6 +13,7 @@ var commands = consts.commandNames;
 var compList = consts.componentNames;
 var states = consts.states;
 var keyCodes = consts.keyCodes;
+var fObjectOptions = consts.fObjectOptions;
 
 /**
  * Image editor
@@ -50,6 +51,21 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._attachInvokerEvents();
         this._attachCanvasEvents();
         this._attachDomEvents();
+
+        if (option.selectionStyle) {
+            this._setSelectionStyle(option.selectionStyle);
+        }
+    },
+
+    /**
+     * Set selection style of fabric object by init option
+     * @param {object} styles - Selection styles
+     * @private
+     */
+    _setSelectionStyle: function(styles) {
+        tui.util.forEach(styles, function(style, key) {
+            fObjectOptions.SELECTION_STYLE[key] = style;
+        });
     },
 
     /**
@@ -159,6 +175,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  * });
                  */
                 this.fire(events.ADJUST_OBJECT, event.target, 'scale');
+            }, this),
+            'object:selected': $.proxy(function(event) {
+                if (event.target.type === 'text' &&
+                    this.getCurrentState() !== 'TEXT') {
+                    this.startTextMode();
+                }
             }, this)
         });
     },
@@ -543,11 +565,13 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         cropper = this._getComponent(compList.CROPPER);
         this._state = states.NORMAL;
         data = cropper.end(isApplying);
+
         /**
          * @api
          * @event ImageEditor#endCropping
          */
         this.fire(events.END_CROPPING);
+
         if (data) {
             this.loadImageFromURL(data.url, data.imageName);
         }
@@ -798,11 +822,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.startTextMode();
      */
     startTextMode: function() {
-        this.endAll();
-
         if (this.getCurrentState() === states.TEXT) {
             return;
         }
+
+        this._state = states.TEXT;
 
         this._getComponent(compList.TEXT).start({
             mousedown: $.proxy(this._onFabricMouseDown, this),
@@ -915,7 +939,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
       */
     _onFabricMouseDown: function(event) {
         var obj = event.target;
-        var e = event.e;
+        var e = event.e || {};
         var originPointer = this._canvas.getPointer(e);
 
         if (obj && !obj.isType('text')) {
@@ -963,8 +987,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 y: originPointer.y
             },
             clientPosition: {
-                x: e.clientX,
-                y: e.clientY
+                x: e.clientX || 0,
+                y: e.clientY || 0
             }
         });
     },
