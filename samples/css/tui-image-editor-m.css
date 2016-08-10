@@ -34,6 +34,7 @@ input[type=file] {
     width: 100%;
     background-color: #fff;
     text-align: center;
+    z-index: 9999;
 }
 .header .logo {
     margin: 10px 5px;
