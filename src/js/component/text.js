@@ -6,6 +6,7 @@
 
 var Component = require('../interface/component');
 var consts = require('../consts');
+var util = require('../util');
 
 var defaultStyles = {
     fill: '#000000',
@@ -20,6 +21,28 @@ var resetStyles = {
     textAlign: 'left',
     textDecoraiton: ''
 };
+
+var TEXTAREA_CLASSNAME = 'tui-image-eidtor-textarea';
+var TEXTAREA_STYLES = util.makeStyleText({
+    position: 'absolute',
+    display: 'none',
+    padding: 0,
+    border: '1px dashed red',
+    overflow: 'hidden',
+    resize: 'none',
+    outline: 'none',
+    'border-radius': 0,
+    'background-color': 'transparent',
+    'vertical-align': 'middle',
+    '-webkit-appearance': 'none',
+    'z-index': 99999
+});
+var EXTRA_PIXEL = {
+    width: 25,
+    height: 10
+};
+var KEYUP_CODE = 13;
+var DBCLICK_TIME = 300;
 
 /**
  * Text
@@ -54,6 +77,24 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
          * @type {object}
          */
         this._listeners = null;
+
+        /**
+         * Textarea element for editing
+         * @type {HTMLElement}
+         */
+        this._textarea = null;
+
+        /**
+         * Ratio of current canvas
+         * @type {number}
+         */
+        this._ratio = 1;
+
+        /**
+         * Double click event timer
+         * @type {number}
+         */
+        this._timer = 0;
     },
 
     /**
@@ -83,8 +124,13 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         canvas.on({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
-            'before:selection:cleared': this._listeners.selectClear
+            'before:selection:cleared': this._listeners.selectClear,
+            'object:scaling': this._onFabricScaling
         });
+
+        this._createTextarea();
+
+        this._setCanvasRatio();
     },
 
     /**
@@ -107,8 +153,11 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         canvas.off({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
-            'before:selection:cleared': this._listeners.selectClear
+            'before:selection:cleared': this._listeners.selectClear,
+            'object:scaling': this._onFabricScaling
         });
+
+        this._removeTextarea();
     },
 
     /**
@@ -140,6 +189,11 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         newText.set(consts.fObjectOptions.SELECTION_STYLE);
 
+        newText.on({
+            mouseup: tui.util.bind(this._onFabricMouseUp, this),
+            mousedown: tui.util.bind(this._onFabircMouseDown, this)
+        });
+
         canvas.add(newText);
 
         if (!canvas.getActiveObject()) {
@@ -150,7 +204,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     /**
      * Change text of activate object on canvas image
      * @param {object} activeObj - Current selected text object
-     * @param {string} text - Chaging text
+     * @param {string} text - Changed text
      */
     change: function(activeObj, text) {
         activeObj.set('text', text);
@@ -218,6 +272,148 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this._defaultStyles.left = position.x;
         this._defaultStyles.top = position.y;
+    },
+
+    /**
+     * Set ratio value of canvas
+     */
+    _setCanvasRatio: function() {
+        var canvasElement = this.getCanvasElement();
+        var cssWidth = canvasElement.getBoundingClientRect().width;
+        var originWidth = canvasElement.width;
+        var ratio = originWidth / cssWidth;
+
+        this._ratio = ratio;
+    },
+
+    /**
+     * Get ratio value of canvas
+     * @returns {number} Ratio value
+     */
+    _getCanvasRatio: function() {
+        return this._ratio;
+    },
+
+    /**
+     * Create textarea element on canvas container
+     */
+    _createTextarea: function() {
+        var container = this.getCanvasElement().parentNode;
+        var textarea = document.createElement('textarea');
+
+        textarea.className = TEXTAREA_CLASSNAME;
+        textarea.setAttribute('style', TEXTAREA_STYLES);
+
+        container.appendChild(textarea);
+
+        this._textarea = textarea;
+
+        fabric.util.addListener(textarea, 'keyup', tui.util.bind(this._onKeyUp, this));
+        fabric.util.addListener(textarea, 'blur', tui.util.bind(this._onBlur, this));
+    },
+
+    /**
+     * Remove textarea element on canvas container
+     */
+    _removeTextarea: function() {
+        var container = this.getCanvasElement().parentNode;
+        var textarea = container.querySelector('textarea');
+
+        container.removeChild(textarea);
+
+        this._textarea = null;
+
+        fabric.util.removeListener(textarea, 'keyup', this._onKeyUp);
+        fabric.util.removeListener(textarea, 'blur', this._onBlur);
+    },
+
+    /**
+     * Keyup event handler
+     * @param {KeyEvent} event - Keyup event on element
+     */
+    _onKeyUp: function(event) {
+        var ratio = this._getCanvasRatio();
+        var textareaStyle = this._textarea.style;
+        var originPos = this._selectedObj.oCoords.tl;
+
+        this._selectedObj.setText(this._textarea.value);
+
+        if (event.keyCode === KEYUP_CODE) {
+            textareaStyle.height = (this._selectedObj.getHeight() + EXTRA_PIXEL.height) / ratio + 'px';
+        } else {
+            textareaStyle.width = (this._selectedObj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
+        }
+
+        textareaStyle.left = originPos.x / ratio + 'px';
+        textareaStyle.top = originPos.y / ratio + 'px';
+    },
+
+    /**
+     * Blur event handler
+     */
+    _onBlur: function() {
+        this._textarea.style.display = 'none';
+
+        this.getCanvas().add(this._selectedObj);
+    },
+
+    /**
+     * Fabric mousedown event handler
+     * @param {fabric.Event} fEvent - Current mousedown event on selected object
+     */
+    _onFabircMouseDown: function(fEvent) {
+        var obj, ratio;
+        var textareaStyle;
+
+        if (new Date().getTime() - this._timer < DBCLICK_TIME) {
+            obj = fEvent.target;
+            ratio = this._getCanvasRatio();
+            textareaStyle = this._textarea.style;
+
+            obj.remove();
+
+            this._selectedObj = obj;
+
+            this._textarea.value = obj.getText();
+
+            textareaStyle.display = 'block';
+            textareaStyle.left = obj.oCoords.tl.x / ratio + 'px';
+            textareaStyle.top = obj.oCoords.tl.y / ratio + 'px';
+            textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
+            textareaStyle.height = obj.getHeight() / ratio + 'px';
+            textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
+
+            textareaStyle['font-size'] = obj.getFontSize() / ratio + 'px';
+            textareaStyle['font-family'] = obj.getFontFamily();
+            textareaStyle['font-style'] = obj.getFontStyle();
+            textareaStyle['font-weight'] = obj.getFontWeight();
+            textareaStyle['text-align'] = obj.getTextAlign();
+            textareaStyle['line-height'] = obj.getLineHeight();
+            textareaStyle['transform-origin'] = 'left top';
+
+            this._listeners.dbclick(); // fire dbclick event
+        }
+    },
+
+    /**
+     * Fabric mouseup event handler
+     * @param {fabric.Event} fEvent - Current mousedown event on selected object
+     */
+    _onFabricMouseUp: function() {
+        this._timer = new Date().getTime();
+    },
+
+    /**
+     * Fabric scaling event handler
+     * @param {fabric.Event} fEvent - Current scaling event on selected object
+     */
+    _onFabricScaling: function(fEvent) {
+        var obj = fEvent.target;
+        var scalingSize = obj.getFontSize() * obj.getScaleY();
+
+        obj.setFontSize(scalingSize);
+        obj.setScaleX(1);
+        obj.setScaleY(1);
     }
 });
 

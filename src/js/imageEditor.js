@@ -831,7 +831,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._getComponent(compList.TEXT).start({
             mousedown: $.proxy(this._onFabricMouseDown, this),
             select: $.proxy(this._onFabricSelect, this),
-            selectClear: $.proxy(this._onFabricSelectClear, this)
+            selectClear: $.proxy(this._onFabricSelectClear, this),
+            dbclick: $.proxy(this._onDBClick, this)
         });
     },
 
@@ -933,9 +934,25 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._getComponent(compList.TEXT).end();
     },
 
+    /**
+     * Double click event handler
+     * @private
+     */
+    _onDBClick: function() {
+        /**
+         * @api
+         * @event imageEditor#editText
+         * imageEditor.on('editText', function(obj) {
+         *     console.log('text object: ' + obj);
+         * });
+         */
+        this.fire(events.EDIT_TEXT);
+    },
+
      /**
       * Mousedown event handler
       * @param {fabric.Event} event - Current mousedown event object
+      * @private
       */
     _onFabricMouseDown: function(event) {
         var obj = event.target;

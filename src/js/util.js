@@ -38,5 +38,20 @@ module.exports = {
         });
 
         return obj;
+    },
+
+    /**
+     * Make CSSText
+     * @param {object} styleObj - Style info object
+     * @returns {string} Connected string of style
+     */
+    makeStyleText: function(styleObj) {
+        var styleStr = '';
+
+        tui.util.forEach(styleObj, function(value, prop) {
+            styleStr += prop + ': ' + value + ';';
+        });
+
+        return styleStr;
     }
 };
