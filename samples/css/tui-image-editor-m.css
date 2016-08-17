@@ -14,6 +14,7 @@ ul, li {
 input[type=button], button {
     -webkit-appearance: none;
     -moz-appearance: none;
+    background-color: #fff;
 }
 input[type=file] {
     position: absolute;
@@ -82,6 +83,7 @@ input[type=file] {
     -ms-transform: translateY(-50%);
     -moz-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
+    overflow: hidden;
 }
 .tui-image-editor-controls {
     position: fixed;
@@ -107,7 +109,7 @@ input[type=file] {
     display: inline-block;
     height: 80px;
     border-right: 1px solid #383838;
-    background-color: #fff;
+    background-color: #ddd;
     vertical-align: middle;
 }
 .tui-image-editor-controls .menu-button {
@@ -124,14 +126,15 @@ input[type=file] {
     width: 80px;
     height: 80px;
     border: none;
+    background-color: #ddd;
     vertical-align: middle;
-    background-color: #fff;
 }
 .tui-image-editor-controls .hiddenmenu-button {
     margin: 0 10px;
     padding: 5px;
     border: none;
-    background-color: #fff;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0);
 }
 .tui-image-editor-controls .submenu {
     display: none;
@@ -154,7 +157,7 @@ input[type=file] {
     width: 100%;
     left: 0;
     bottom: 81px;
-    background-color: #fff;
+    background-color: rgba(0, 0, 0, 0.4);
     text-align: center;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -176,7 +179,7 @@ input[type=file] {
 .tui-image-editor-controls .tui-colorpicker-container {
     display: inline-block;
 }
-.tui-image-editor-controls .msg{
+.tui-image-editor-controls .msg {
     position: absolute;
     margin-left: 50%;
     padding: 5px 10px;
@@ -186,9 +189,17 @@ input[type=file] {
     background-color: rgba(255, 255, 255, 0.5);
     font-size: 12px;
 }
+.tui-image-editor-controls .msg.hide {
+    display: none;
+}
 #input-text {
+    position: absolute;
+    left: 0;
+    bottom: -100px;
+    display: block;
     margin: 10px;
     padding: 0;
     height: 58px;
     resize: none;
+    outline: 0;
 }

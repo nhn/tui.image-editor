@@ -72,6 +72,12 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         this._selectedObj = {};
 
         /**
+         * Editing text object
+         * @type {object}
+         */
+        this._editingObj = {};
+
+        /**
          * Listeners for fabric event
          * @type {object}
          */
@@ -332,7 +338,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     _onKeyUp: function(event) {
         var ratio = this._getCanvasRatio();
         var textareaStyle = this._textarea.style;
-        var obj = this.getSelectedObj();
+        var obj = this._editingObj;
         var originPos = obj.oCoords.tl;
 
         obj.setText(this._textarea.value);
@@ -351,11 +357,9 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * Blur event handler
      */
     _onBlur: function() {
-        var obj = this.getSelectedObj();
-
         this._textarea.style.display = 'none';
 
-        this.getCanvas().add(obj);
+        this.getCanvas().add(this._editingObj);
     },
 
     /**
@@ -405,7 +409,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         obj.remove();
 
-        this._selectedObj = obj;
+        this._editingObj = obj;
 
         this._textarea.value = obj.getText();
 

@@ -190,7 +190,8 @@ describe('Text', function() {
             canvas.add(obj);
 
             spyOn(text, '_getCanvasRatio').and.returnValue(10);
-            spyOn(text, 'getSelectedObj').and.returnValue(obj);
+
+            text._editingObj = obj;
 
             textarea = $(text.getCanvasElement().parentNode).find('textarea');
         });
@@ -260,11 +261,11 @@ describe('Text', function() {
         });
 
         it('should add updated text object on canvas.', function() {
-            text._selectedObj = new fabric.Text('test');
+            text._editingObj = new fabric.Text('test');
 
-            canvas.remove(text.getSelectedObj());
+            canvas.remove(text._editingObj);
 
-            text.getSelectedObj().setText('');
+            text._editingObj.setText('');
 
             text._onBlur();
 

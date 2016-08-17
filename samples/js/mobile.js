@@ -149,6 +149,9 @@ imageEditor.on({
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
     },
+    activateText: function() {
+        $subMenus.eq(3).addClass('show');
+    },
     editText: function() {
         $hiddenMenus.removeClass('show');
     },
