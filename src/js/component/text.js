@@ -11,8 +11,7 @@ var util = require('../util');
 var defaultStyles = {
     fill: '#000000',
     left: 0,
-    top: 0,
-    padding: 20
+    top: 0
 };
 var resetStyles = {
     fill: '#000000',
@@ -33,7 +32,7 @@ var TEXTAREA_STYLES = util.makeStyleText({
     outline: 'none',
     'border-radius': 0,
     'background-color': 'transparent',
-    'vertical-align': 'middle',
+    'vertical-align': 'baseline',
     '-webkit-appearance': 'none',
     'z-index': 99999
 });
@@ -42,7 +41,7 @@ var EXTRA_PIXEL = {
     height: 10
 };
 var KEYUP_CODE = 13;
-var DBCLICK_TIME = 300;
+var DBCLICK_TIME = 500;
 
 /**
  * Text
@@ -91,10 +90,10 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         this._ratio = 1;
 
         /**
-         * Double click event timer
-         * @type {number}
+         * Last click time
+         * @type {Date}
          */
-        this._timer = 0;
+        this._lastClickTime = new Date().getTime();
     },
 
     /**
@@ -190,8 +189,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         newText.set(consts.fObjectOptions.SELECTION_STYLE);
 
         newText.on({
-            mouseup: tui.util.bind(this._onFabricMouseUp, this),
-            mousedown: tui.util.bind(this._onFabircMouseDown, this)
+            mouseup: tui.util.bind(this._onFabricMouseUp, this)
         });
 
         canvas.add(newText);
@@ -334,14 +332,15 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     _onKeyUp: function(event) {
         var ratio = this._getCanvasRatio();
         var textareaStyle = this._textarea.style;
-        var originPos = this._selectedObj.oCoords.tl;
+        var obj = this.getSelectedObj();
+        var originPos = obj.oCoords.tl;
 
-        this._selectedObj.setText(this._textarea.value);
+        obj.setText(this._textarea.value);
 
         if (event.keyCode === KEYUP_CODE) {
-            textareaStyle.height = (this._selectedObj.getHeight() + EXTRA_PIXEL.height) / ratio + 'px';
+            textareaStyle.height = (obj.getHeight() + EXTRA_PIXEL.height) / ratio + 'px';
         } else {
-            textareaStyle.width = (this._selectedObj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
+            textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
         }
 
         textareaStyle.left = originPos.x / ratio + 'px';
@@ -352,55 +351,11 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * Blur event handler
      */
     _onBlur: function() {
+        var obj = this.getSelectedObj();
+
         this._textarea.style.display = 'none';
 
-        this.getCanvas().add(this._selectedObj);
-    },
-
-    /**
-     * Fabric mousedown event handler
-     * @param {fabric.Event} fEvent - Current mousedown event on selected object
-     */
-    _onFabircMouseDown: function(fEvent) {
-        var obj, ratio;
-        var textareaStyle;
-
-        if (new Date().getTime() - this._timer < DBCLICK_TIME) {
-            obj = fEvent.target;
-            ratio = this._getCanvasRatio();
-            textareaStyle = this._textarea.style;
-
-            obj.remove();
-
-            this._selectedObj = obj;
-
-            this._textarea.value = obj.getText();
-
-            textareaStyle.display = 'block';
-            textareaStyle.left = obj.oCoords.tl.x / ratio + 'px';
-            textareaStyle.top = obj.oCoords.tl.y / ratio + 'px';
-            textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
-            textareaStyle.height = obj.getHeight() / ratio + 'px';
-            textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
-
-            textareaStyle['font-size'] = obj.getFontSize() / ratio + 'px';
-            textareaStyle['font-family'] = obj.getFontFamily();
-            textareaStyle['font-style'] = obj.getFontStyle();
-            textareaStyle['font-weight'] = obj.getFontWeight();
-            textareaStyle['text-align'] = obj.getTextAlign();
-            textareaStyle['line-height'] = obj.getLineHeight();
-            textareaStyle['transform-origin'] = 'left top';
-
-            this._listeners.dbclick(); // fire dbclick event
-        }
-    },
-
-    /**
-     * Fabric mouseup event handler
-     * @param {fabric.Event} fEvent - Current mousedown event on selected object
-     */
-    _onFabricMouseUp: function() {
-        this._timer = new Date().getTime();
+        this.getCanvas().add(obj);
     },
 
     /**
@@ -414,6 +369,62 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         obj.setFontSize(scalingSize);
         obj.setScaleX(1);
         obj.setScaleY(1);
+    },
+
+    /**
+     * Fabric mouseup event handler
+     * @param {fabric.Event} fEvent - Current mousedown event on selected object
+     */
+    _onFabricMouseUp: function(fEvent) {
+        var newClickTime = new Date().getTime();
+
+        if (this._isDoubleClick(newClickTime)) {
+            //this._changeToEditingMode(fEvent.target);
+            //this._listeners.dbclick(); // fire dbclick event
+        }
+
+        this._lastClickTime = newClickTime;
+    },
+
+    /**
+     * Get state of firing double click event
+     * @param {Date} newClickTime - Current clicked time
+     * @returns {boolean} Whether double clicked or not
+     */
+    _isDoubleClick: function(newClickTime) {
+        return (newClickTime - this._lastClickTime < DBCLICK_TIME);
+    },
+
+    /**
+     * Change state of text object for editing
+     * @param {fabric.Text} obj - Text object fired event
+     */
+    _changeToEditingMode: function(obj) {
+        var ratio = this._getCanvasRatio();
+        var textareaStyle = this._textarea.style;
+
+        obj.remove();
+
+        this._selectedObj = obj;
+
+        this._textarea.value = obj.getText();
+
+        textareaStyle.display = 'block';
+        textareaStyle.left = obj.oCoords.tl.x / ratio + 'px';
+        textareaStyle.top = obj.oCoords.tl.y / ratio + 'px';
+        textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
+        textareaStyle.height = obj.getHeight() / ratio + 'px';
+        textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
+
+        textareaStyle['font-size'] = obj.getFontSize() / ratio + 'px';
+        textareaStyle['font-family'] = obj.getFontFamily();
+        textareaStyle['font-style'] = obj.getFontStyle();
+        textareaStyle['font-weight'] = obj.getFontWeight();
+        textareaStyle['text-align'] = obj.getTextAlign();
+        textareaStyle['line-height'] = obj.getLineHeight();
+        textareaStyle['transform-origin'] = 'left top';
+
+        this._textarea.focus();
     }
 });
 

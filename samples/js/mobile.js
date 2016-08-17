@@ -20,6 +20,7 @@ var $controls = $('.tui-image-editor-controls');
 var $menuButtons = $controls.find('.menu-button');
 var $submenuButtons = $controls.find('.submenu-button');
 var $btnShowMenu = $controls.find('.btn-prev');
+var $msg = $controls.find('.msg');
 
 var $subMenus = $controls.find(submenuClass);
 var $hiddenMenus = $controls.find(hiddenmenuClass);
@@ -52,7 +53,6 @@ var $btnChangeTextStyle = $('.btn-change-text-style');
 // Image editor controls - etc.
 var $inputTextSizeRange = $('#input-text-size-range');
 var $inputBrushWidthRange = $('#input-brush-range');
-var $inputText = $('#input-text');
 
 // Colorpicker
 var iconColorpicker = tui.component.colorpicker.create({
@@ -75,8 +75,8 @@ var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
     cssMaxWidth: demension.w,
     cssMaxHeight: demension.w,
     selectionStyle: {
-        cornerSize: 50,
-        rotatingPointOffset: 100
+        cornerSize: 70,
+        rotatingPointOffset: 150
     }
 });
 
@@ -135,6 +135,7 @@ imageEditor.on({
     endCropping: function() {
         $subMenus.removeClass('show');
         $hiddenMenus.removeClass('show');
+        $('#test').focus();
     },
     emptyUndoStack: function() {
         $btnUndo.addClass('disabled');
@@ -148,11 +149,12 @@ imageEditor.on({
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
     },
-    activateText: function(obj) {
-        $subMenus.eq(3).addClass('show');
-
-        if (obj.type === 'select') {
-            $inputText.val(obj.text);
+    editText: function() {
+        $hiddenMenus.removeClass('show');
+    },
+    adjustObject: function(obj, type) {
+        if (obj.type === 'text' && type === 'scale') {
+            $inputTextSizeRange.val(obj.getFontSize());
         }
     }
 });
@@ -174,12 +176,14 @@ $submenuButtons.on('click', function() {
 
     if ($hiddenMenu.length) {
         $hiddenMenu.addClass('show');
+        $msg.addClass('hide');
     }
 });
 
 $btnShowMenu.on('click', function() {
     $subMenus.removeClass('show');
     $hiddenMenus.removeClass('show');
+    $msg.removeClass('hide');
 
     imageEditor.endAll();
 });
@@ -297,7 +301,7 @@ iconColorpicker.on('selectColor', function(event) {
 
 // Text menu action
 $btnAddText.on('click', function() {
-    var initText = 'Text';
+    var initText = 'Double Click';
 
     imageEditor.startTextMode();
     imageEditor.addText(initText, {
@@ -305,8 +309,6 @@ $btnAddText.on('click', function() {
             fontSize: parseInt($inputTextSizeRange.val(), 10)
         }
     });
-
-    $inputText.focus().val(initText);
 });
 
 $btnChangeTextStyle.on('click', function() {
@@ -340,11 +342,6 @@ $btnChangeTextStyle.on('click', function() {
     styleObj[styleObjKey] = styleType;
 
     imageEditor.changeTextStyle(styleObj);
-});
-
-$inputText.on('keyup', function() {
-    var currentText = $(this).val();
-    imageEditor.changeText(currentText);
 });
 
 $inputTextSizeRange.on('change', function() {
