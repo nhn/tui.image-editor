@@ -132,11 +132,6 @@ function getClientDimension() {
 
 // Bind custom event of image editor
 imageEditor.on({
-    endCropping: function() {
-        $subMenus.removeClass('show');
-        $hiddenMenus.removeClass('show');
-        $('#test').focus();
-    },
     emptyUndoStack: function() {
         $btnUndo.addClass('disabled');
     },
@@ -148,6 +143,16 @@ imageEditor.on({
     },
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
+    },
+    removeObject: function() {
+        imageEditor.endAll();
+
+        $subMenus.removeClass('show');
+        $hiddenMenus.removeClass('show');
+    },
+    endCropping: function() {
+        $subMenus.removeClass('show');
+        $hiddenMenus.removeClass('show');
     },
     activateText: function() {
         $subMenus.eq(3).addClass('show');
