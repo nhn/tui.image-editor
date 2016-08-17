@@ -313,9 +313,6 @@ describe('Text', function() {
         var obj, textarea;
         var ratio = 10;
         var expected = {
-            width: 10,
-            height: 10,
-            angle: 45,
             fontSize: 12,
             fontFamily: 'Comic Sans',
             fontStyle: 'italic',

@@ -379,8 +379,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         var newClickTime = new Date().getTime();
 
         if (this._isDoubleClick(newClickTime)) {
-            //this._changeToEditingMode(fEvent.target);
-            //this._listeners.dbclick(); // fire dbclick event
+            this._changeToEditingMode(fEvent.target);
+            this._listeners.dbclick(); // fire dbclick event
         }
 
         this._lastClickTime = newClickTime;
