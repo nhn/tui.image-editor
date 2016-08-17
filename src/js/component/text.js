@@ -39,7 +39,6 @@ var EXTRA_PIXEL = {
     width: 25,
     height: 10
 };
-var KEYUP_CODE = 13;
 var DBCLICK_TIME = 500;
 
 /**
