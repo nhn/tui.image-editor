@@ -32,7 +32,6 @@ var TEXTAREA_STYLES = util.makeStyleText({
     outline: 'none',
     'border-radius': 0,
     'background-color': 'transparent',
-    'vertical-align': 'baseline',
     '-webkit-appearance': 'none',
     'z-index': 99999
 });
@@ -333,9 +332,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
     /**
      * Keyup event handler
-     * @param {KeyEvent} event - Keyup event on element
      */
-    _onKeyUp: function(event) {
+    _onKeyUp: function() {
         var ratio = this._getCanvasRatio();
         var textareaStyle = this._textarea.style;
         var obj = this._editingObj;
@@ -343,11 +341,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         obj.setText(this._textarea.value);
 
-        if (event.keyCode === KEYUP_CODE) {
-            textareaStyle.height = (obj.getHeight() + EXTRA_PIXEL.height) / ratio + 'px';
-        } else {
-            textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
-        }
+        textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
+        textareaStyle.height = (obj.getHeight() + EXTRA_PIXEL.height) / ratio + 'px';
 
         textareaStyle.left = originPos.x / ratio + 'px';
         textareaStyle.top = originPos.y / ratio + 'px';

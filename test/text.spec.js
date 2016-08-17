@@ -212,7 +212,7 @@ describe('Text', function() {
             expect(originTop).not.toEqual(textarea.css('top'));
         });
 
-        it('should update height value when pressed key is "enter".', function() {
+        it('should update size value when key is pressed.', function() {
             var originWidth = textarea.css('width');
             var originHeight = textarea.css('height');
 
@@ -220,20 +220,8 @@ describe('Text', function() {
                 keyCode: 13
             });
 
-            expect(originWidth).toEqual(textarea.css('width'));
-            expect(originHeight).not.toEqual(textarea.css('height'));
-        });
-
-        it('should update width value when pressed key is not "enter".', function() {
-            var originWidth = textarea.css('width');
-            var originHeight = textarea.css('height');
-
-            text._onKeyUp({
-                keyCode: 15
-            });
-
             expect(originWidth).not.toEqual(textarea.css('width'));
-            expect(originHeight).toEqual(textarea.css('height'));
+            expect(originHeight).not.toEqual(textarea.css('height'));
         });
     });
 
