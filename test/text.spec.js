@@ -189,7 +189,7 @@ describe('Text', function() {
 
             canvas.add(obj);
 
-            spyOn(text, '_getCanvasRatio').and.returnValue(10);
+            spyOn(text, 'getCanvasRatio').and.returnValue(10);
 
             text._editingObj = obj;
 
@@ -232,6 +232,8 @@ describe('Text', function() {
             text._createTextarea();
 
             textarea = $(text.getCanvasElement().parentNode).find('textarea');
+
+            this._editingObj = new fabric.Text('test');
         });
 
         afterEach(function() {
@@ -239,29 +241,21 @@ describe('Text', function() {
         });
 
         it('should hide the "textarea" element.', function() {
-            var mock = jasmine.createSpy();
-
-            spyOn(canvas, 'add').and.callFake(mock);
-
             text._onBlur();
 
             expect(textarea.css('display')).toEqual('none');
         });
 
-        it('should add updated text object on canvas.', function() {
-            text._editingObj = new fabric.Text('test');
-
-            canvas.remove(text._editingObj);
-
-            text._editingObj.setText('');
+        it('should add removed object on canvas.', function() {
+            expect(canvas.getObjects().length).toEqual(0);
 
             text._onBlur();
 
-            expect(canvas.getObjects()[0].getText()).not.toEqual('test');
+            expect(canvas.getObjects().length).toEqual(1);
         });
     });
 
-    it('_getCanvasRatio() should return ratio of current selected text object on canvas.', function() {
+    it('getCanvasRatio() should return ratio of current selected text object on canvas.', function() {
         var ratio;
         var cssWidth = 100;
         var originWith = 1000;
@@ -275,9 +269,9 @@ describe('Text', function() {
             width: originWith
         });
 
-        text._setCanvasRatio();
+        text.setCanvasRatio();
 
-        ratio = text._getCanvasRatio();
+        ratio = text.getCanvasRatio();
 
         expect(ratio).toEqual(originWith / cssWidth);
     });
@@ -318,7 +312,7 @@ describe('Text', function() {
 
             canvas.add(obj);
 
-            spyOn(text, '_getCanvasRatio').and.returnValue(ratio);
+            spyOn(text, 'getCanvasRatio').and.returnValue(ratio);
 
             text._changeToEditingMode(obj);
         });

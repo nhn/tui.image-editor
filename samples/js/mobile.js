@@ -144,11 +144,11 @@ imageEditor.on({
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
     },
-    removeObject: function() {
-        imageEditor.endAll();
-
-        $subMenus.removeClass('show');
-        $hiddenMenus.removeClass('show');
+    removeObject: function(obj) {
+        if (!obj.isType('cropzone')) {
+            $subMenus.removeClass('show');
+            $hiddenMenus.removeClass('show');
+        }
     },
     endCropping: function() {
         $subMenus.removeClass('show');
@@ -156,9 +156,6 @@ imageEditor.on({
     },
     activateText: function() {
         $subMenus.eq(3).addClass('show');
-    },
-    editText: function() {
-        $hiddenMenus.removeClass('show');
     },
     adjustObject: function(obj, type) {
         if (obj.type === 'text' && type === 'scale') {

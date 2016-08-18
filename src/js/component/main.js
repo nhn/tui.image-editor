@@ -66,8 +66,8 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @param {string} type - A DOMString indicating the image format. The default type is image/png.
      * @returns {string} A DOMString containing the requested data URI.
      */
-    toDataURL: function() {
-        return this.canvas && this.canvas.toDataURL();
+    toDataURL: function(type) {
+        return this.canvas && this.canvas.toDataURL(type);
     },
 
     /**

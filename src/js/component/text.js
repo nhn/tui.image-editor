@@ -133,7 +133,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this._createTextarea();
 
-        this._setCanvasRatio();
+        this.setCanvasRatio();
     },
 
     /**
@@ -265,21 +265,9 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     },
 
     /**
-     * Set initial position on canvas image
-     * @param {{x: number, y: number}} [position] - Selected position
-     * @private
-     */
-    _setInitPos: function(position) {
-        position = position || this.getCanvasImage().getCenterPoint();
-
-        this._defaultStyles.left = position.x;
-        this._defaultStyles.top = position.y;
-    },
-
-    /**
      * Set ratio value of canvas
      */
-    _setCanvasRatio: function() {
+    setCanvasRatio: function() {
         var canvasElement = this.getCanvasElement();
         var cssWidth = canvasElement.getBoundingClientRect().width;
         var originWidth = canvasElement.width;
@@ -292,12 +280,25 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * Get ratio value of canvas
      * @returns {number} Ratio value
      */
-    _getCanvasRatio: function() {
+    getCanvasRatio: function() {
         return this._ratio;
     },
 
     /**
+     * Set initial position on canvas image
+     * @param {{x: number, y: number}} [position] - Selected position
+     * @private
+     */
+    _setInitPos: function(position) {
+        position = position || this.getCanvasImage().getCenterPoint();
+
+        this._defaultStyles.left = position.x;
+        this._defaultStyles.top = position.y;
+    },
+
+    /**
      * Create textarea element on canvas container
+     * @private
      */
     _createTextarea: function() {
         var container = this.getCanvasElement().parentNode;
@@ -316,6 +317,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
     /**
      * Remove textarea element on canvas container
+     * @private
      */
     _removeTextarea: function() {
         var container = this.getCanvasElement().parentNode;
@@ -331,9 +333,10 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
     /**
      * Keyup event handler
+     * @private
      */
     _onKeyUp: function() {
-        var ratio = this._getCanvasRatio();
+        var ratio = this.getCanvasRatio();
         var textareaStyle = this._textarea.style;
         var obj = this._editingObj;
         var originPos = obj.oCoords.tl;
@@ -349,6 +352,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
     /**
      * Blur event handler
+     * @private
      */
     _onBlur: function() {
         this._textarea.style.display = 'none';
@@ -359,6 +363,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     /**
      * Fabric scaling event handler
      * @param {fabric.Event} fEvent - Current scaling event on selected object
+     * @private
      */
     _onFabricScaling: function(fEvent) {
         var obj = fEvent.target;
@@ -372,6 +377,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     /**
      * Fabric mouseup event handler
      * @param {fabric.Event} fEvent - Current mousedown event on selected object
+     * @private
      */
     _onFabricMouseUp: function(fEvent) {
         var newClickTime = new Date().getTime();
@@ -388,6 +394,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * Get state of firing double click event
      * @param {Date} newClickTime - Current clicked time
      * @returns {boolean} Whether double clicked or not
+     * @private
      */
     _isDoubleClick: function(newClickTime) {
         return (newClickTime - this._lastClickTime < DBCLICK_TIME);
@@ -396,9 +403,10 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     /**
      * Change state of text object for editing
      * @param {fabric.Text} obj - Text object fired event
+     * @private
      */
     _changeToEditingMode: function(obj) {
-        var ratio = this._getCanvasRatio();
+        var ratio = this.getCanvasRatio();
         var textareaStyle = this._textarea.style;
 
         obj.remove();
