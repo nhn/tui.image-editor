@@ -79,7 +79,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
          * Listeners for fabric event
          * @type {object}
          */
-        this._listeners = null;
+        this._listeners = {};
 
         /**
          * Textarea element for editing
@@ -97,7 +97,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
          * Last click time
          * @type {Date}
          */
-        this._lastClickTime = new Date().getTime();
+        this._lastClickTime = (new Date()).getTime();
     },
 
     /**
@@ -118,11 +118,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         canvas.selection = false;
         canvas.defaultCursor = 'text';
 
-        canvas.forEachObject(function(obj) {
-            if (!obj.isType('text')) {
-                obj.evented = false;
-            }
-        });
+        this._setEventEachObject(false);
 
         canvas.on({
             'mouse:down': this._listeners.mousedown,
@@ -145,11 +141,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         canvas.selection = true;
         canvas.defaultCursor = 'default';
 
-        canvas.forEachObject(function(obj) {
-            if (!obj.isType('text')) {
-                obj.evented = true;
-            }
-        });
+        this._setEventEachObject(true);
 
         canvas.deactivateAllWithDispatch(); // action for undo stack
 
@@ -161,6 +153,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         });
 
         this._removeTextarea();
+
+        this._listeners = {};
     },
 
     /**
@@ -193,7 +187,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         newText.set(consts.fObjectOptions.SELECTION_STYLE);
 
         newText.on({
-            mouseup: tui.util.bind(this._onFabricMouseUp, this)
+            mouseup: $.proxy(this._onFabricMouseUp, this)
         });
 
         canvas.add(newText);
@@ -249,11 +243,11 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     },
 
     /**
-     * Whether before selected object is deselected or not
+     * Whether object is selected or not
      * @returns {boolean} State of selecting
      */
-    isBeforeDeselect: function() {
-        return !this._isSelected;
+    isSelected: function() {
+        return this._isSelected;
     },
 
     /**
@@ -311,8 +305,13 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this._textarea = textarea;
 
-        fabric.util.addListener(textarea, 'keyup', tui.util.bind(this._onKeyUp, this));
-        fabric.util.addListener(textarea, 'blur', tui.util.bind(this._onBlur, this));
+        this._listeners = tui.util.extend(this._listeners, {
+            keyup: tui.util.bind(this._onKeyUp, this),
+            blur: tui.util.bind(this._onBlur, this)
+        });
+
+        fabric.util.addListener(textarea, 'keyup', this._listeners.keyup);
+        fabric.util.addListener(textarea, 'blur', this._listeners.blur);
     },
 
     /**
@@ -327,8 +326,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this._textarea = null;
 
-        fabric.util.removeListener(textarea, 'keyup', this._onKeyUp);
-        fabric.util.removeListener(textarea, 'blur', this._onBlur);
+        fabric.util.removeListener(textarea, 'keyup', this._listeners.keyup);
+        fabric.util.removeListener(textarea, 'blur', this._listeners.blur);
     },
 
     /**
@@ -343,11 +342,11 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         obj.setText(this._textarea.value);
 
-        textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
-        textareaStyle.height = (obj.getHeight() + EXTRA_PIXEL.height) / ratio + 'px';
+        textareaStyle.width = ((obj.getWidth() + EXTRA_PIXEL.width) / ratio) + 'px';
+        textareaStyle.height = ((obj.getHeight() + EXTRA_PIXEL.height) / ratio) + 'px';
 
-        textareaStyle.left = originPos.x / ratio + 'px';
-        textareaStyle.top = originPos.y / ratio + 'px';
+        textareaStyle.left = (originPos.x / ratio) + 'px';
+        textareaStyle.top = (originPos.y / ratio) + 'px';
     },
 
     /**
@@ -380,7 +379,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * @private
      */
     _onFabricMouseUp: function(fEvent) {
-        var newClickTime = new Date().getTime();
+        var newClickTime = (new Date()).getTime();
 
         if (this._isDoubleClick(newClickTime)) {
             this._changeToEditingMode(fEvent.target);
@@ -388,6 +387,18 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         }
 
         this._lastClickTime = newClickTime;
+    },
+
+    /**
+     * Set event each object
+     * @param {boolean} state - Whether event state is true or false
+     */
+    _setEventEachObject: function(state) {
+        this.getCanvas().forEachObject(function(obj) {
+            if (!obj.isType('text')) {
+                obj.evented = state;
+            }
+        });
     },
 
     /**
@@ -412,17 +423,16 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         obj.remove();
 
         this._editingObj = obj;
-
         this._textarea.value = obj.getText();
 
         textareaStyle.display = 'block';
-        textareaStyle.left = obj.oCoords.tl.x / ratio + 'px';
-        textareaStyle.top = obj.oCoords.tl.y / ratio + 'px';
-        textareaStyle.width = (obj.getWidth() + EXTRA_PIXEL.width) / ratio + 'px';
-        textareaStyle.height = obj.getHeight() / ratio + 'px';
+        textareaStyle.left = (obj.oCoords.tl.x / ratio) + 'px';
+        textareaStyle.top = (obj.oCoords.tl.y / ratio) + 'px';
+        textareaStyle.width = ((obj.getWidth() + EXTRA_PIXEL.width) / ratio) + 'px';
+        textareaStyle.height = (obj.getHeight() / ratio) + 'px';
         textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
 
-        textareaStyle['font-size'] = obj.getFontSize() / ratio + 'px';
+        textareaStyle['font-size'] = (obj.getFontSize() / ratio) + 'px';
         textareaStyle['font-family'] = obj.getFontFamily();
         textareaStyle['font-style'] = obj.getFontStyle();
         textareaStyle['font-weight'] = obj.getFontWeight();

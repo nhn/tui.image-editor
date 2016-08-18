@@ -6,11 +6,10 @@
 /* eslint-disable vars-on-top */
 'use strict';
 
-var MAX_RESOLUTION = 1024 * 1024 * 4; // 4MP (Mega Pixel)
+var MAX_RESOLUTION = 3264 * 2448; // 8MP (Mega Pixel)
 
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
-var demension = getClientDimension();
 
 // Selector of image editor controls
 var submenuClass = '.submenu';
@@ -72,11 +71,11 @@ var brushColorpicker = tui.component.colorpicker.create({
 
 // Create image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
-    cssMaxWidth: demension.w,
-    cssMaxHeight: demension.w,
+    cssMaxWidth: document.documentElement.clientWidth,
+    cssMaxHeight: document.documentElement.clientHeight,
     selectionStyle: {
-        cornerSize: 70,
-        rotatingPointOffset: 150
+        cornerSize: 50,
+        rotatingPointOffset: 100
     }
 });
 
@@ -117,16 +116,6 @@ function getBrushSettings() {
     return {
         width: brushWidth,
         color: hexToRGBa(brushColor, 0.5)
-    };
-}
-
-function getClientDimension() {
-    var width = document.documentElement.clientWidth;
-    var height = document.documentElement.clientHeight;
-
-    return {
-        w: width,
-        h: height
     };
 }
 
@@ -193,7 +182,7 @@ $btnShowMenu.on('click', function() {
     imageEditor.endAll();
 });
 
-// Image load action
+//Image load action
 $inputImage.on('change', function(event) {
     var file;
     var img;
@@ -209,12 +198,12 @@ $inputImage.on('change', function(event) {
         img = new Image();
 
         img.onload = function() {
-            resolution = this.width * this.height * 4;
+            resolution = this.width * this.height;
 
-            if (resolution < MAX_RESOLUTION) {
+            if (resolution <= MAX_RESOLUTION) {
                 imageEditor.loadImageFromFile(file);
             } else {
-                alert('Loaded image\'s resolution is too large!\nIt can\'t be loaded!');
+                alert('Loaded image\'s resolution is too large!\nRecommended resolution is 3264 * 2448!');
             }
 
             URL.revokeObjectURL(file);
@@ -390,8 +379,3 @@ brushColorpicker.on('selectColor', function(event) {
 
 // Load sample image
 imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
-
-// Add custom icon
-imageEditor.registerIcons({
-    customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
-});

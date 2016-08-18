@@ -219,12 +219,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         textComp.setSelectedInfo(fEvent.target, false);
 
-        if (!tui.util.hasStamp(obj) && obj.text !== '') {
+        if (obj.text === '') {
+            obj.remove();
+        } else if (!tui.util.hasStamp(obj)) {
             command = commandFactory.create(commands.ADD_OBJECT, obj);
             this._invoker.pushUndoStack(command);
             this._invoker.clearRedoStack();
-        } else if (obj.text === '') {
-            obj.remove();
         }
     },
 
@@ -237,13 +237,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var obj = textComp.getSelectedObj();
         var command;
 
-        if (!tui.util.hasStamp(obj) &&
-            !textComp.isBeforeDeselect() && obj.text !== '') {
+        if (obj.text === '') {
+            obj.remove();
+        } else if (!tui.util.hasStamp(obj) && textComp.isSelected()) {
             command = commandFactory.create(commands.ADD_OBJECT, obj);
             this._invoker.pushUndoStack(command);
             this._invoker.clearRedoStack();
-        } else if (obj.text === '') {
-            obj.remove();
         }
 
         textComp.setSelectedInfo(fEvent.target, true);
@@ -954,7 +953,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
       * @param {fabric.Event} event - Current mousedown event object
       * @private
       */
-    _onFabricMouseDown: function(event) {
+    _onFabricMouseDown: function(event) { // eslint-disable-line
         var obj = event.target;
         var e = event.e || {};
         var originPointer = this._canvas.getPointer(e);

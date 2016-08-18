@@ -272,7 +272,7 @@ function createFilterCommand(type, options) {
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
          */
-        execute: function(compMap) {
+        execute: function(compMap) { // eslint-disable-line
             var filterComp = compMap[FILTER];
 
             if (type === 'mask') {

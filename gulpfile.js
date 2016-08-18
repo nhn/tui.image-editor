@@ -28,12 +28,11 @@ var SOURCE_DIR = './src/**/*',
 //
 var config = {
     browserify: {
-        entries: ENTRY,
-        debug: true
+        entries: ENTRY
     },
     browserSync: {
         server: {
-            index: './basic.html',
+            index: './mobile.html',
             baseDir: './samples'
         },
         port: 3000,

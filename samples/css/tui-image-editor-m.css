@@ -4,7 +4,7 @@ html, body {
     height: 100%;
     overflow: hidden;
     background-color: #383838;
-    font-family: helvetica;
+    font-family: Sans-Serif;
 }
 ul, li {
     list-style: none;

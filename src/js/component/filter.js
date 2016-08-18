@@ -108,6 +108,9 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
             case 'mask':
                 filterObj = new Mask(options);
                 break;
+            case 'removeWhite':
+                filterObj = new fabric.Image.filters.RemoveWhite(options);
+                break;
             default:
                 filterObj = null;
         }

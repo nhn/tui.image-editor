@@ -63,7 +63,8 @@ module.exports = {
         PUSH_UNDO_STACK: 'pushUndoStack',
         PUSH_REDO_STACK: 'pushRedoStack',
         ACTIVATE_TEXT: 'activateText',
-        APPLY_FILTER: 'applyFilter'
+        APPLY_FILTER: 'applyFilter',
+        EDIT_TEXT: 'editText'
     },
 
     /**

@@ -33,7 +33,8 @@ var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.pr
 
         imageData = ctx.getImageData(0, 0, width, height);
 
-        this._drawMask(maskCtx);
+        this._drawMask(maskCtx, canvasEl, ctx);
+
         this._mapData(maskCtx, imageData, width, height);
 
         ctx.putImageData(imageData, 0, 0);
@@ -61,15 +62,20 @@ var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.pr
      * @private
      */
     _drawMask: function(maskCtx) {
-        var width, height, left, top;
+        var left, top, angle;
         var mask = this.mask;
+        var maskImg = mask.getElement();
 
-        width = mask.getWidth();
-        height = mask.getHeight();
-        left = mask.getLeft() - (width / 2);
-        top = mask.getTop() - (height / 2);
+        left = mask.getLeft();
+        top = mask.getTop();
+        angle = mask.getAngle();
 
-        maskCtx.drawImage(mask.getElement(), left, top, width, height);
+        maskCtx.save();
+        maskCtx.translate(left, top);
+        maskCtx.rotate(angle * Math.PI / 180);
+        maskCtx.scale(mask.scaleX, mask.scaleY);
+        maskCtx.drawImage(maskImg, -maskImg.width / 2, -maskImg.height / 2);
+        maskCtx.restore();
     },
 
     /**

@@ -28,44 +28,6 @@ describe('Text', function() {
         });
     });
 
-    it('start() should deactivate "evented" of other objects except text objects.', function() {
-        var objects = [
-            new fabric.Object({evented: true}),
-            new fabric.Circle({evented: true}),
-            new fabric.Text('', {evented: true})
-        ];
-
-        canvas.add(objects[0], objects[1], objects[2]);
-
-        spyOn(text, '_createTextarea').and.callFake(function() {});
-
-        text.start({});
-
-        expect(objects[0].evented).toBe(false);
-        expect(objects[1].evented).toBe(false);
-        expect(objects[2].evented).toBe(true);
-    });
-
-    it('end() should activate "evented" of other objects except text objects.', function() {
-        var objects = [
-            new fabric.Object({evented: true}),
-            new fabric.Circle({evented: true}),
-            new fabric.Text('', {evented: true})
-        ];
-
-        spyOn(text, '_createTextarea').and.callFake(function() {});
-        spyOn(text, '_removeTextarea').and.callFake(function() {});
-
-        canvas.add(objects[0], objects[1], objects[2]);
-
-        text.start({});
-        text.end();
-
-        expect(objects[0].evented).toBe(true);
-        expect(objects[1].evented).toBe(true);
-        expect(objects[2].evented).toBe(true);
-    });
-
     describe('add()', function() {
         var activeObj;
 
@@ -142,12 +104,12 @@ describe('Text', function() {
     });
 
     describe('_createTextarea()', function() {
-        var textarea;
+        var $textarea;
 
         beforeEach(function() {
             text._createTextarea();
 
-            textarea = $(text.getCanvasElement().parentNode).find('textarea');
+            $textarea = $(text.getCanvasElement().parentNode).find('textarea');
         });
 
         afterEach(function() {
@@ -155,29 +117,29 @@ describe('Text', function() {
         });
 
         it('should attach the created "textarea" element on canvas container.', function() {
-            expect(textarea.length).toEqual(1);
+            expect($textarea.length).toEqual(1);
         });
 
         it('should have class name.', function() {
             var expected = 'tui-image-eidtor-textarea';
 
-            expect(textarea.attr('class')).toEqual(expected);
+            expect($textarea.attr('class')).toEqual(expected);
         });
 
         it('should add inline style on "textarea" element.', function() {
-            expect(textarea.attr('style')).not.toEqual(null);
+            expect($textarea.attr('style')).not.toEqual(null);
         });
     });
 
     it('_removeTextarea() should remove "textarea" element on canvas container.', function() {
-        var textarea;
+        var $textarea;
 
         text._createTextarea();
         text._removeTextarea();
 
-        textarea = $(text.getCanvasElement().parentNode).find('textarea');
+        $textarea = $(text.getCanvasElement().parentNode).find('textarea');
 
-        expect(textarea.length).toEqual(0);
+        expect($textarea.length).toEqual(0);
     });
 
     describe('_onKeyUp()', function() {
@@ -226,14 +188,19 @@ describe('Text', function() {
     });
 
     describe('_onBlur()', function() {
-        var textarea;
+        var $textarea;
+        var obj = new fabric.Text('test');
 
         beforeEach(function() {
             text._createTextarea();
 
-            textarea = $(text.getCanvasElement().parentNode).find('textarea');
+            $textarea = $(text.getCanvasElement().parentNode).find('textarea');
 
-            this._editingObj = new fabric.Text('test');
+            this._editingObj = obj;
+
+            canvas.add(obj);
+
+            text._onBlur();
         });
 
         afterEach(function() {
@@ -241,17 +208,11 @@ describe('Text', function() {
         });
 
         it('should hide the "textarea" element.', function() {
-            text._onBlur();
-
-            expect(textarea.css('display')).toEqual('none');
+            expect($textarea.css('display')).toEqual('none');
         });
 
         it('should add removed object on canvas.', function() {
-            expect(canvas.getObjects().length).toEqual(0);
-
-            text._onBlur();
-
-            expect(canvas.getObjects().length).toEqual(1);
+            expect(canvas.getObjects()[0]).toBe(this._editingObj);
         });
     });
 
@@ -284,6 +245,8 @@ describe('Text', function() {
         var scale = 10;
         var originSize = obj.getFontSize();
 
+        text.start({});
+
         canvas.add(obj);
         obj.setScaleY(scale);
 
@@ -293,7 +256,7 @@ describe('Text', function() {
     });
 
     describe('_changeToEditingMode()', function() {
-        var obj, textarea;
+        var textarea;
         var ratio = 10;
         var expected = {
             fontSize: 12,
@@ -303,11 +266,11 @@ describe('Text', function() {
             textAlign: 'right',
             lineHeight: '3'
         };
+        var obj = new fabric.Text('test', expected);
 
         beforeEach(function() {
             text._createTextarea();
 
-            obj = new fabric.Text('test', expected);
             textarea = text._textarea;
 
             canvas.add(obj);
@@ -334,6 +297,37 @@ describe('Text', function() {
             expect(textareaStyles['font-weight']).toEqual(expected.fontWeight);
             expect(textareaStyles['font-align']).toEqual(expected.fontAlign);
             expect(textareaStyles['line-height']).toEqual(obj.getLineHeight());
+        });
+    });
+
+    describe('_setEventEachObject()', function() {
+        var objects;
+
+        beforeEach(function() {
+            objects = [
+                new fabric.Object({evented: true}),
+                new fabric.Circle({evented: true}),
+                new fabric.Text('', {evented: true})
+            ];
+
+            canvas.add(objects[0], objects[1], objects[2]);
+        });
+
+        it('should deactivate event on each object except text when the parameter is false.', function() {
+            text._setEventEachObject(false);
+
+            expect(objects[0].evented).toBe(false);
+            expect(objects[1].evented).toBe(false);
+            expect(objects[2].evented).toBe(true);
+        });
+
+        it('should activate event on each object except text when the parameter is true.', function() {
+            text._setEventEachObject(false);
+            text._setEventEachObject(true);
+
+            expect(objects[0].evented).toBe(true);
+            expect(objects[1].evented).toBe(true);
+            expect(objects[2].evented).toBe(true);
         });
     });
 });

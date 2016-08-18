@@ -443,6 +443,8 @@ iconColorpicker.on('selectColor', function(event) {
 $btnMaskFilter.on('click', function() {
     imageEditor.endAll();
     $displayingSubMenu.hide();
+
+
     $displayingSubMenu = $filterSubMenu.show();
 });
 
@@ -459,8 +461,9 @@ $btnLoadMaskImage.on('change', function() {
     if (file) {
         imgUrl = URL.createObjectURL(file);
 
-        imageEditor.addImageObject(imgUrl);
+        imageEditor.loadImageFromURL(imageEditor.toDataURL(), 'FilterImage');
 
+        imageEditor.addImageObject(imgUrl);
     }
 });
 
