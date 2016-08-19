@@ -1,5 +1,8 @@
 {
   "basic": {
-    "title": "Editor Basic Example"
+    "title": "Basic Example"
+  },
+  "mobile": {
+    "title": "Mobile Example"
   }
 }

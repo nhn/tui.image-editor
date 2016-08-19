@@ -3706,6 +3706,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         /**
          * @api
          * @event imageEditor#editText
+         * @example
          * imageEditor.on('editText', function(obj) {
          *     console.log('text object: ' + obj);
          * });
