@@ -30,6 +30,10 @@ Canvas image editor
 * Chrome
 * Firefox
 
+## Mobile test environment
+* iOS 9.3.x
+* Android 4.4.x
+
 ## Download/Install
 * Bower
   * Latest: `bower install tui-component-image-editor`
