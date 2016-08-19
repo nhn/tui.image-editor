@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no">
+        <title>Image editor mobile</title>
+        <link type="text/css" href="css/colorpicker.min.css" rel="stylesheet">
+        <link type="text/css" href="css/tui-image-editor-m.css" rel="stylesheet">
+    </head>
+    <body>
+        <!-- Image editor controls - top area -->
+        <div class="header">
+            <div>
+                <img class="logo" src="img/TOAST UI Component.png"> <span class="name">Image Editor</span>
+            </div>
+            <div class="menu">
+                <span class="button">
+                    <img src="img/openImage.png" style="margin-top: 5px;" />
+                    <input type="file" accept="image/*" id="input-image-file">
+                </span>
+                <button class="button disabled" id="btn-undo"><img src="img/undo.png" /></button>
+                <button class="button disabled" id="btn-redo"><img src="img/redo.png" /></button>
+                <button class="button" id="btn-remove-active-object"><img src="img/remove.png" /></button>
+                <button class="button" id="btn-download"><img src="img/download.png" /></button>
+            </div>
+        </div>
+        <!-- Image editor area -->
+        <div class="tui-image-editor">
+            <canvas></canvas>
+        </div>
+        <!-- Image editor controls - bottom area -->
+        <div class="tui-image-editor-controls">
+            <ul class="scrollable">
+                <li class="menu-item">
+                    <button class="menu-button" id="btn-crop">Crop</button>
+                    <div class="submenu">
+                        <button class="btn-prev">&lt;</button>
+                        <ul class="scrollable">
+                            <li class="menu-item"><button class="submenu-button" id="btn-apply-crop">Apply</button></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <button class="menu-button">Orientation</button>
+                    <div class="submenu">
+                        <button class="btn-prev">&lt;</button>
+                        <ul class="scrollable">
+                            <li class="menu-item"><button class="submenu-button" id="btn-rotate-clockwise">Rotate +90</button></li>
+                            <li class="menu-item"><button class="submenu-button" id="btn-rotate-counter-clockwise">Rotate -90</button></li>
+                            <li class="menu-item"><button class="submenu-button" id="btn-flip-x">FilpX</button></li>
+                            <li class="menu-item"><button class="submenu-button" id="btn-flip-y">FilpY</button></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <button class="menu-button">Icon</button>
+                    <div class="submenu">
+                        <button class="btn-prev">&lt;</button>
+                        <ul class="scrollable">
+                            <li class="menu-item"><button class="submenu-button" id="btn-add-arrow-icon">Arrow<br>Icon</button></li>
+                            <li class="menu-item"><button class="submenu-button" id="btn-add-cancel-icon">Cancel<br>Icon</button></li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-icon-color">Color</button>
+                                <div class="hiddenmenu">
+                                    <div id="tui-icon-color-picker">Icon Color</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <button class="menu-button" id="btn-add-text">Text</button>
+                    <div class="submenu">
+                        <button class="btn-prev">&lt;</button>
+                        <ul class="scrollable">
+                            <li class="menu-item">
+                                <!--textarea id="input-text"></textarea-->
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-size">Size</button>
+                                <div class="hiddenmenu">
+                                    <label class="no-pointer">Text Size<input id="input-text-size-range" type="range" min="10" max="240" value="120"></label>
+                                </div>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-style">Style</button>
+                                <div class="hiddenmenu">
+                                    <button class="hiddenmenu-button btn-change-text-style" data-style-type="bold"><b>Bold</b></button>
+                                    <button class="hiddenmenu-button btn-change-text-style" data-style-type="italic"><i>Italic</i></button>
+                                    <button class="hiddenmenu-button btn-change-text-style" data-style-type="underline"><u>Underline</u></button>
+                                </div>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-align">Align</button>
+                                <div class="hiddenmenu">
+                                    <button class="hiddenmenu-button btn-change-text-style" data-style-type="left">Left</button>
+                                    <button class="hiddenmenu-button btn-change-text-style" data-style-type="center">Center</button>
+                                    <button class="hiddenmenu-button btn-change-text-style" data-style-type="right">Right</button>
+                                </div>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-text-color">Color</button>
+                                <div class="hiddenmenu">
+                                    <div id="tui-text-color-picker">Text Color</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <button class="menu-button" id="btn-draw-line">Drawing</button>
+                    <div class="submenu">
+                        <button class="btn-prev">&lt;</button>
+                        <ul class="scrollable">
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-free-drawing">Free<br>Drawing</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-line-drawing">Line<br>Drawing</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-size">Brush<br>Size</button>
+                                <div class="hiddenmenu">
+                                    <label class="no-pointer">Brush Size<input id="input-brush-range" type="range" min="10" max="100" value="50"></label>
+                                </div>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-text-color">Brush<br>Color</button>
+                                <div class="hiddenmenu">
+                                    <div id="tui-brush-color-picker">Brush Color</div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <p class="msg">Menu Scrolling <b>Left ⇔ Right</b></p>
+        </div>
+        <script src="libs/code-snippet.min.js"></script>
+        <script src="libs/jquery.min.js"></script>
+        <script src="libs/fabric.min.js"></script>
+        <script src="libs/colorpicker.min.js"></script>
+        <script src="libs/FileSaver.min.js"></script>
+        <script src="js/image-editor.js"></script>
+        <script src="js/mobile.js"></script>
+    </body>
+</html>
