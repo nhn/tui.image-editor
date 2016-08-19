@@ -2,8 +2,89 @@
 <html>
 <head>
 <title>Mobile Example</title>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/code-snippet.js"></script>
+<script type="text/javascript" src="js/list.js"></script>
+<link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css" />
+<link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+<link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+<link type="text/css" rel="stylesheet" href="styles/layout.css">
+<style>
+    html, body {height:100%;}
+</style>
 </head>
 <body class="sampleWrap tutorialDetail">
-    <iframe id="exampleFrame" width="100%" height="100%" frameborder="0" scrolling="auto" src="tutorials/mobile.html"></iframe>
+<section>
+<header>
+    <h2 class="sampleHeader">Mobile Example</h2>
+    <a href="" target="_blank" class="newWindow">Open this sample in New Tab</a>
+</header>
+<div class="buttons">
+<a href="tutorial.html" class="back">Return to list</a>
+</div>
+<article class="frame">
+
+
+    <iframe id="exampleFrame" width="100%" height="100%" frameborder="0" scrolling="auto" src=tutorials/mobile.html onload="onIframeLoad()"></iframe>
+    <br/>
+    <div id='codeArea'></div>
+</article>
+<script>
+//  prettify
+/**
+ * iframe load 이벤트 핸들러
+ */
+function onIframeLoad() {
+//    generateCode();
+    autoResize();
+}
+
+
+/**
+ * iframe 의 너비/높이를 resize 한다.
+ */
+function autoResize() {
+    var ef = document.getElementById('exampleFrame');
+    ef.width = document.body.clientWidth - 80;
+    ef.height = document.body.clientHeight - 250;
+}
+
+/**
+ * iframe 의 document 를 반환한다.
+ * @returns {HTMLDocument|Document}
+ */
+function getIframeDocument() {
+    var ef = document.getElementById('exampleFrame');
+    return ef.contentDocument || ef.contentWindow.document;
+}
+
+/**
+ * iframe 마지막 script code 를 div 에 할당한다.
+ */
+function generateCode() {
+    var codeArea = document.getElementById('codeArea'),
+        doc = getIframeDocument(),
+        scripts;
+
+    if (doc) {
+        scripts = doc.getElementsByTagName('script');
+        codeArea.innerHTML = '<pre>' + encodeHTMLEntity(scripts[scripts.length-1].innerHTML) + '</pre>';
+    }
+}
+
+/**
+ * html entity 로 인코딩한다.
+ * @param html
+ * @returns {XML|string|void}
+ */
+function encodeHTMLEntity(html) {
+    var entities = {'"': 'quot', '&': 'amp', '<': 'lt', '>': 'gt', '\'': '#39'};
+    return html.replace(/[<>&"']/g, function(m0) {
+        return entities[m0] ? '&' + entities[m0] + ';' : m0;
+    });
+}
+</script>
+
+</section>
 </body>
 </html>
