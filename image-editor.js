@@ -2592,11 +2592,14 @@ function createClearCommand() {
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
             var jqDefer = $.Deferred();
+            var objs = canvas.getObjects();
 
             // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
-            this.store = canvas.getObjects().slice();
+            this.store = objs.slice();
             if (this.store.length) {
-                canvas.clear();
+                tui.util.forEach(objs.slice(), function(obj) {
+                    obj.remove();
+                });
                 jqDefer.resolve();
             } else {
                 jqDefer.reject();

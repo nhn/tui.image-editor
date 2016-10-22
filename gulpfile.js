@@ -32,7 +32,7 @@ var config = {
     },
     browserSync: {
         server: {
-            index: './mobile.html',
+            index: './basic.html',
             baseDir: './samples'
         },
         port: 3000,

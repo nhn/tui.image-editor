@@ -187,33 +187,21 @@ describe('Text', function() {
         });
     });
 
-    describe('_onBlur()', function() {
+    it('_onBlur() should hide the "textarea" element.', function() {
         var $textarea;
         var obj = new fabric.Text('test');
 
-        beforeEach(function() {
-            text._createTextarea();
+        text._createTextarea();
 
-            $textarea = $(text.getCanvasElement().parentNode).find('textarea');
+        $textarea = $(text.getCanvasElement().parentNode).find('textarea');
 
-            this._editingObj = obj;
+        this._editingObj = obj;
 
-            canvas.add(obj);
+        canvas.add(obj);
 
-            text._onBlur();
-        });
+        text._onBlur();
 
-        afterEach(function() {
-            text._removeTextarea();
-        });
-
-        it('should hide the "textarea" element.', function() {
-            expect($textarea.css('display')).toEqual('none');
-        });
-
-        it('should add removed object on canvas.', function() {
-            expect(canvas.getObjects()[0]).toBe(this._editingObj);
-        });
+        expect($textarea.css('display')).toEqual('none');
     });
 
     it('getCanvasRatio() should return ratio of current selected text object on canvas.', function() {
