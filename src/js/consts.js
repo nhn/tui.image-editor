@@ -86,7 +86,9 @@ module.exports = {
     keyCodes: {
         Z: 90,
         Y: 89,
-        SHIFT: 16
+        SHIFT: 16,
+        BACKSPACE: 8,
+        DEL: 46
     },
 
     /**

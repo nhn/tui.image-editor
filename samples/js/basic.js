@@ -100,9 +100,6 @@ var $filterSubMenu = $('#filter-sub-menu');
 // Select line type
 var $selectMode = $('[name="select-line-type"]');
 
-// Text input
-var $inputText = $('#input-text');
-
 // Text palette
 var $textPalette = $('#tui-text-palette');
 
@@ -141,52 +138,57 @@ imageEditor.once('loadImage', function() {
     imageEditor.clearUndoStack();
 });
 
+var resizeEditor = function() {
+    var $editor = $('.tui-image-editor');
+    var $container = $('.tui-image-editor-canvas-container');
+    var height = parseFloat($container.css('max-height'));
+
+    $editor.height(height);
+};
+
 imageEditor.on({
     endCropping: function() {
         $cropSubMenu.hide();
+        resizeEditor();
     },
     endFreeDrawing: function() {
         $freeDrawingSubMenu.hide();
     },
     emptyUndoStack: function() {
         $btnUndo.addClass('disabled');
+        resizeEditor();
     },
     emptyRedoStack: function() {
         $btnRedo.addClass('disabled');
+        resizeEditor();
     },
     pushUndoStack: function() {
         $btnUndo.removeClass('disabled');
+        resizeEditor();
     },
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
+        resizeEditor();
     },
     activateText: function(obj) {
-        if (obj.type === 'new') {
-            if ($textPalette.css('display') !== 'none') {
-                $textPalette.hide();
-                return;
-            }
+        $displayingSubMenu.hide();
+        $displayingSubMenu = $textSubMenu.show();
 
-            imageEditor.addText('', {
+        if (obj.type === 'new') { // add new text on cavas
+            imageEditor.addText('Double Click', {
                 position: obj.originPosition
             });
         }
-
-        $textPalette.hide().show(1, function() {
-            $inputText.focus();
-            $inputText.val(obj.text);
-            $inputFontSizeRange.val(obj.styles.fontSize || 40);
-            textPaletteColorpicker.setColor(obj.styles.fill || '#000000');
-        }).offset({
-            left: obj.clientPosition.x,
-            top: obj.clientPosition.y + 10
-        });
     },
-    adjustObject: function(obj) {
-        if (obj.type === 'text' &&
-            $textPalette.css('display') !== 'none') {
-            $textPalette.hide();
+    adjustObject: function(obj, type) {
+        if (obj.type === 'text' && type === 'scale') {
+            $inputFontSizeRange.val(obj.getFontSize());
         }
+    },
+    removeObject: function(obj) {
+        // if (obj.type === 'text') {
+        //     imageEditor.startTextMode();
+        // }
     }
 });
 
@@ -354,11 +356,6 @@ $btnText.on('click', function() {
         imageEditor.startTextMode();
         $textPalette.hide();
     }
-});
-
-$inputText.on('keyup', function() {
-    var text = $(this).val();
-    imageEditor.changeText(text);
 });
 
 $inputFontSizeRange.on('change', function() {
