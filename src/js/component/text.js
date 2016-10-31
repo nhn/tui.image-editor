@@ -24,21 +24,20 @@ var resetStyles = {
 var TEXTAREA_CLASSNAME = 'tui-image-eidtor-textarea';
 var TEXTAREA_STYLES = util.makeStyleText({
     position: 'absolute',
-    display: 'none',
     padding: 0,
-    border: '1px dashed red',
+    display: 'none',
+    border: '1px dotted red',
     overflow: 'hidden',
     resize: 'none',
     outline: 'none',
     'border-radius': 0,
     'background-color': 'transparent',
     '-webkit-appearance': 'none',
-    'z-index': 99999
+    'z-index': 99999,
+    'white-space': 'pre'
 });
-var EXTRA_PIXEL = {
-    width: 25,
-    height: 10
-};
+var EXTRA_PIXEL_HEIGHT = 50;
+var EXTRA_PIXEL_LINEHEIGHT = 0.1;
 var DBCLICK_TIME = 500;
 
 /**
@@ -98,6 +97,18 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
          * @type {Date}
          */
         this._lastClickTime = (new Date()).getTime();
+
+        /**
+         * Text object infos before editing
+         * @type {Object}
+         */
+        this._editingObjInfos = {};
+
+        /**
+         * Previous state of editing
+         * @type {boolean}
+         */
+        this.isPrevEditing = false;
     },
 
     /**
@@ -195,6 +206,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         if (!canvas.getActiveObject()) {
             canvas.setActiveObject(newText);
         }
+
+        this.isPrevEditing = true;
     },
 
     /**
@@ -263,7 +276,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      */
     setCanvasRatio: function() {
         var canvasElement = this.getCanvasElement();
-        var cssWidth = canvasElement.getBoundingClientRect().width;
+        var cssWidth = parseInt(canvasElement.style.maxWidth, 10);
         var originWidth = canvasElement.width;
         var ratio = originWidth / cssWidth;
 
@@ -300,16 +313,19 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         textarea.className = TEXTAREA_CLASSNAME;
         textarea.setAttribute('style', TEXTAREA_STYLES);
+        textarea.setAttribute('wrap', 'off');
 
         container.appendChild(textarea);
 
         this._textarea = textarea;
 
         this._listeners = tui.util.extend(this._listeners, {
+            keydown: tui.util.bind(this._onKeyDown, this),
             keyup: tui.util.bind(this._onKeyUp, this),
             blur: tui.util.bind(this._onBlur, this)
         });
 
+        fabric.util.addListener(textarea, 'keydown', this._listeners.keydown);
         fabric.util.addListener(textarea, 'keyup', this._listeners.keyup);
         fabric.util.addListener(textarea, 'blur', this._listeners.blur);
     },
@@ -326,8 +342,24 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this._textarea = null;
 
+        fabric.util.removeListener(textarea, 'keydown', this._listeners.keydown);
         fabric.util.removeListener(textarea, 'keyup', this._listeners.keyup);
         fabric.util.removeListener(textarea, 'blur', this._listeners.blur);
+    },
+
+    /**
+     * Keydown event handler
+     * @param {event} e - Keydown event
+     * @private
+     */
+    _onKeyDown: function(e) {
+        var ratio = this.getCanvasRatio();
+        var obj = this._editingObj;
+        var textareaStyle = this._textarea.style;
+
+        if (e.keyCode === 13) {
+            textareaStyle.height = (obj.getHeight() / ratio) + EXTRA_PIXEL_HEIGHT + 'px';
+        }
     },
 
     /**
@@ -338,15 +370,11 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         var ratio = this.getCanvasRatio();
         var textareaStyle = this._textarea.style;
         var obj = this._editingObj;
-        var originPos = obj.oCoords.tl;
 
         obj.setText(this._textarea.value);
 
-        textareaStyle.width = ((obj.getWidth() + EXTRA_PIXEL.width) / ratio) + 'px';
-        textareaStyle.height = ((obj.getHeight() + EXTRA_PIXEL.height) / ratio) + 'px';
-
-        textareaStyle.left = (originPos.x / ratio) + 'px';
-        textareaStyle.top = (originPos.y / ratio) + 'px';
+        textareaStyle.width = (obj.getWidth() / ratio) + 'px';
+        textareaStyle.height = parseInt(obj.getHeight() / ratio, 10) + 'px';
     },
 
     /**
@@ -354,7 +382,23 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * @private
      */
     _onBlur: function() {
+        var ratio = this.getCanvasRatio();
+        var editingObj = this._editingObj;
+        var editingObjInfos = this._editingObjInfos;
+        var transWidth = (editingObj.getWidth() - editingObjInfos.width) / ratio;
+        var transHeight = (editingObj.getHeight() - editingObjInfos.height) / ratio;
+
+        if (ratio === 1) {
+            transWidth /= 2;
+            transHeight /= 2;
+        }
+
         this._textarea.style.display = 'none';
+
+        this._editingObj.set({
+            left: editingObjInfos.left + transWidth,
+            top: editingObjInfos.top + transHeight
+        });
 
         this.getCanvas().add(this._editingObj);
     },
@@ -420,15 +464,24 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         var ratio = this.getCanvasRatio();
         var textareaStyle = this._textarea.style;
 
+        this.isPrevEditing = true;
+
         obj.remove();
 
         this._editingObj = obj;
         this._textarea.value = obj.getText();
 
+        this._editingObjInfos = {
+            left: this._editingObj.getLeft(),
+            top: this._editingObj.getTop(),
+            width: this._editingObj.getWidth(),
+            height: this._editingObj.getHeight()
+        };
+
         textareaStyle.display = 'block';
         textareaStyle.left = (obj.oCoords.tl.x / ratio) + 'px';
         textareaStyle.top = (obj.oCoords.tl.y / ratio) + 'px';
-        textareaStyle.width = ((obj.getWidth() + EXTRA_PIXEL.width) / ratio) + 'px';
+        textareaStyle.width = (obj.getWidth() / ratio) + 'px';
         textareaStyle.height = (obj.getHeight() / ratio) + 'px';
         textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
 
@@ -437,7 +490,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         textareaStyle['font-style'] = obj.getFontStyle();
         textareaStyle['font-weight'] = obj.getFontWeight();
         textareaStyle['text-align'] = obj.getTextAlign();
-        textareaStyle['line-height'] = obj.getLineHeight();
+        textareaStyle['line-height'] = obj.getLineHeight() + EXTRA_PIXEL_LINEHEIGHT;
         textareaStyle['transform-origin'] = 'left top';
 
         this._textarea.focus();

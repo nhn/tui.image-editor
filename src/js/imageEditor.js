@@ -175,12 +175,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  * });
                  */
                 this.fire(events.ADJUST_OBJECT, event.target, 'scale');
-            }, this),
-            'object:selected': $.proxy(function(event) {
-                if (event.target.type === 'text' &&
-                    this.getCurrentState() !== 'TEXT') {
-                    this.startTextMode();
-                }
             }, this)
         });
     },
@@ -206,6 +200,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
             this.redo();
         }
+
+        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
+            this._canvas.getActiveObject()) {
+            e.preventDefault();
+            this.removeActiveObject();
+        }
     },
 
     /**
@@ -216,6 +216,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var textComp = this._getComponent(compList.TEXT);
         var obj = textComp.getSelectedObj();
         var command;
+
+        textComp.isPrevEditing = true;
 
         textComp.setSelectedInfo(fEvent.target, false);
 
@@ -236,6 +238,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var textComp = this._getComponent(compList.TEXT);
         var obj = textComp.getSelectedObj();
         var command;
+
+        textComp.isPrevEditing = true;
 
         if (obj.text === '') {
             obj.remove();
@@ -556,6 +560,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     endCropping: function(isApplying) {
         var cropper, data;
+        var eventHandler;
 
         if (this.getCurrentState() !== states.CROP) {
             return;
@@ -565,11 +570,16 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._state = states.NORMAL;
         data = cropper.end(isApplying);
 
-        /**
-         * @api
-         * @event ImageEditor#endCropping
-         */
-        this.fire(events.END_CROPPING);
+        eventHandler = tui.util.bind(function() {
+            /**
+             * @api
+             * @event ImageEditor#endCropping
+             */
+            this.fire(events.END_CROPPING);
+            this.off('loadImage', eventHandler);
+        }, this);
+
+        this.on('loadImage', eventHandler);
 
         if (data) {
             this.loadImageFromURL(data.url, data.imageName);
@@ -835,6 +845,16 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         });
     },
 
+    changeTextEditingMode: function() {
+        var activeObj = this._canvas.getActiveObject();
+
+        if (!activeObj) {
+            return;
+        }
+
+        this._getComponent(compList.TEXT)._changeToEditingMode(activeObj);
+    },
+
     /**
      * Add text on image
      * @api
@@ -958,8 +978,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var obj = event.target;
         var e = event.e || {};
         var originPointer = this._canvas.getPointer(e);
+        var textComp = this._getComponent(compList.TEXT);
 
         if (obj && !obj.isType('text')) {
+            return;
+        }
+
+        if (textComp.isPrevEditing) {
+            textComp.isPrevEditing = false;
+
             return;
         }
 
@@ -1148,6 +1175,21 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     clearRedoStack: function() {
         this._invoker.clearRedoStack();
+    },
+
+    /**
+     * Resize canvas dimension
+     * @param {{width: number, height: number}} dimension - Max width & height
+     */
+    resizeCanvasDimension: function(dimension) {
+        var mainComponent = this._getMainComponent();
+
+        if (!dimension) {
+            return;
+        }
+
+        mainComponent.setCssMaxDimension(dimension);
+        mainComponent.adjustCanvasDimension();
     }
 });
 
