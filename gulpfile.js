@@ -13,14 +13,25 @@ var gulpif = require('gulp-if');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
 var watchify = require('watchify');
-var filename = require('./package.json').name.replace('component-', '').replace('tui-', '');
+var header = require('gulp-header');
+
+var pkg = require('./package.json');
+var filename = pkg.name.replace('tui-', '');
+var banner = ['/**',
+    ' * <%= pkg.name %>',
+    ' * @author <%= pkg.author %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''].join('\n');
+
 
 //
 // Constants
 //
 var SOURCE_DIR = './src/**/*',
     ENTRY = 'index.js',
-    DIST = './',
+    DIST = './dist',
     SAMPLE_DIST = './samples/js';
 
 //
@@ -58,6 +69,7 @@ function bundle(bundler) {
         })
         .pipe(source(filename + '.js'))
         .pipe(buffer())
+        .pipe(header(banner, {pkg: pkg}))
         .pipe(gulp.dest(DIST))
         .pipe(gulp.dest(SAMPLE_DIST))
         .pipe(
@@ -96,7 +108,7 @@ gulp.task('liveBundle', function() {
 //
 gulp.task('karma', ['eslint'], function(done) {
     new KarmaServer({
-        configFile: path.join(__dirname, 'karma.conf.private.js'),
+        configFile: path.join(__dirname, 'karma.conf.js'),
         singleRun: true,
         logLevel: 'error'
     }, done).start();
@@ -117,8 +129,9 @@ gulp.task('bundle', ['karma'], function() {
 gulp.task('compress', ['bundle'], function() {
     gulp.src(filename + '.js')
         .pipe(uglify())
+        .pipe(header(banner, {pkg: pkg}))
         .pipe(concat(filename + '.min.js'))
-        .pipe(gulp.dest('./'));
+        .pipe(gulp.dest(DIST));
 });
 
 //

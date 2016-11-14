@@ -142,51 +142,6 @@ describe('Text', function() {
         expect($textarea.length).toEqual(0);
     });
 
-    describe('_onKeyUp()', function() {
-        var obj = new fabric.Text('test');
-        var textarea;
-
-        beforeEach(function() {
-            text._createTextarea();
-
-            canvas.add(obj);
-
-            spyOn(text, 'getCanvasRatio').and.returnValue(10);
-
-            text._editingObj = obj;
-
-            textarea = $(text.getCanvasElement().parentNode).find('textarea');
-        });
-
-        afterEach(function() {
-            text._removeTextarea();
-        });
-
-        it('should update position of "textarea" element.', function() {
-            var originLeft = textarea.css('left');
-            var originTop = textarea.css('top');
-
-            text._onKeyUp({
-                keyCode: 13
-            });
-
-            expect(originLeft).not.toEqual(textarea.css('left'));
-            expect(originTop).not.toEqual(textarea.css('top'));
-        });
-
-        it('should update size value when key is pressed.', function() {
-            var originWidth = textarea.css('width');
-            var originHeight = textarea.css('height');
-
-            text._onKeyUp({
-                keyCode: 13
-            });
-
-            expect(originWidth).not.toEqual(textarea.css('width'));
-            expect(originHeight).not.toEqual(textarea.css('height'));
-        });
-    });
-
     it('_onBlur() should hide the "textarea" element.', function() {
         var $textarea;
         var obj = new fabric.Text('test');
@@ -195,34 +150,13 @@ describe('Text', function() {
 
         $textarea = $(text.getCanvasElement().parentNode).find('textarea');
 
-        this._editingObj = obj;
+        text._editingObj = obj;
 
         canvas.add(obj);
 
         text._onBlur();
 
         expect($textarea.css('display')).toEqual('none');
-    });
-
-    it('getCanvasRatio() should return ratio of current selected text object on canvas.', function() {
-        var ratio;
-        var cssWidth = 100;
-        var originWith = 1000;
-        var canvasElement = text.getCanvasElement();
-
-        spyOn(canvasElement, 'getBoundingClientRect').and.returnValue({
-            width: cssWidth
-        });
-
-        text.setCanvasBackstoreDimension({
-            width: originWith
-        });
-
-        text.setCanvasRatio();
-
-        ratio = text.getCanvasRatio();
-
-        expect(ratio).toEqual(originWith / cssWidth);
     });
 
     it('_onFabricScaling() should change size of selected text object.', function() {
@@ -274,17 +208,16 @@ describe('Text', function() {
 
         it('should change selected text object into textarea.', function() {
             expect(textarea.style.display).not.toEqual('none');
-            expect(canvas.getObjects().length).toEqual(0);
         });
 
         it('should set style of textarea by selected text object.', function() {
             var textareaStyles = textarea.style;
 
             expect(textareaStyles['font-size']).toEqual(expected.fontSize / ratio + 'px');
-            expect(textareaStyles['font-family'].replace(/"/g, '')).toEqual(expected.fontFamily);
+            expect(textareaStyles['font-family'].replace(/'|"/g, '')).toEqual(expected.fontFamily);
             expect(textareaStyles['font-weight']).toEqual(expected.fontWeight);
             expect(textareaStyles['font-align']).toEqual(expected.fontAlign);
-            expect(textareaStyles['line-height']).toEqual(obj.getLineHeight());
+            expect(textareaStyles['line-height']).toEqual(obj.getLineHeight() + 0.1);
         });
     });
 

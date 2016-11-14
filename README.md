@@ -23,7 +23,7 @@ Canvas image editor
 ## Dependency
 * jQuery: ~1.8.3
 * tui.code-snippet: ~1.2.0
-* fabric.js: ~1.6.3
+* fabric.js: ~1.6.6
 
 ## Test environment
 * IE9 ~

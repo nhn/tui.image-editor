@@ -186,9 +186,7 @@ imageEditor.on({
         }
     },
     removeObject: function(obj) {
-        // if (obj.type === 'text') {
-        //     imageEditor.startTextMode();
-        // }
+        console.log(obj);
     }
 });
 

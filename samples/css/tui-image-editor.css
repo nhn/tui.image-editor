@@ -70,6 +70,7 @@
     -moz-transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
     border: 1px dashed black;
+    overflow: hidden;
 }
 .tui-colorpicker-container {
     margin: 5px auto 0;

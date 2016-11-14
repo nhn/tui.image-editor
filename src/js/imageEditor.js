@@ -105,6 +105,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _attachCanvasEvents: function() {
+        this._removeEventHandler = $.proxy(this._onFabricRemoved, this);
+
         this._canvas.on({
             'path:created': this._onPathCreated,
             'object:added': $.proxy(function(event) {
@@ -133,18 +135,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  */
                 this.fire(events.ADD_OBJECT, obj);
             }, this),
-            'object:removed': $.proxy(function(event) {
-                /**
-                 * @api
-                 * @event ImageEditor#removeObject
-                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @example
-                 * imageEditor.on('removeObject', function(obj) {
-                 *     console.log(obj);
-                 * });
-                 */
-                this.fire(events.REMOVE_OBJECT, event.target);
-            }, this),
+            'object:removed': this._removeEventHandler,
             'object:moving': $.proxy(function(event) {
                 this._invoker.clearRedoStack();
 
@@ -175,6 +166,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  * });
                  */
                 this.fire(events.ADJUST_OBJECT, event.target, 'scale');
+            }, this),
+            'object:selected': $.proxy(function(event) {
+                if (event.target.type === 'text' &&
+                    this.getCurrentState() !== 'TEXT') {
+                    this.startTextMode();
+                }
             }, this)
         });
     },
@@ -192,6 +189,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {KeyboardEvent} e - Event object
      * @private
      */
+     /*eslint-disable complexity*/
     _onKeyDown: function(e) {
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             this.undo();
@@ -250,6 +248,23 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         }
 
         textComp.setSelectedInfo(fEvent.target, true);
+    },
+
+    /**
+     * onRemoved handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     */
+    _onFabricRemoved: function(fEvent) {
+        /**
+         * @api
+         * @event ImageEditor#removeObject
+         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * @example
+         * imageEditor.on('removeObject', function(obj) {
+         *     console.log(obj);
+         * });
+         */
+        this.fire(events.REMOVE_OBJECT, fEvent.target);
     },
 
     /**
@@ -841,18 +856,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             mousedown: $.proxy(this._onFabricMouseDown, this),
             select: $.proxy(this._onFabricSelect, this),
             selectClear: $.proxy(this._onFabricSelectClear, this),
-            dbclick: $.proxy(this._onDBClick, this)
+            dbclick: $.proxy(this._onDBClick, this),
+            remove: this._removeEventHandler
         });
-    },
-
-    changeTextEditingMode: function() {
-        var activeObj = this._canvas.getActiveObject();
-
-        if (!activeObj) {
-            return;
-        }
-
-        this._getComponent(compList.TEXT)._changeToEditingMode(activeObj);
     },
 
     /**

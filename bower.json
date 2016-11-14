@@ -5,6 +5,9 @@
   ],
   "description": "",
   "license": "MIT",
+  "main": [
+      "dist/image-editor.js"
+  ],
   "ignore": [
     "**/.*",
     "samples",

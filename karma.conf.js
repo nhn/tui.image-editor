@@ -12,6 +12,7 @@ module.exports = function(config) {
             'bower_components/jquery/jquery.js',
             'bower_components/tui-code-snippet/code-snippet.min.js',
             'bower_components/fabric/dist/fabric.js',
+            'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
             'src/js/**/*.js',
             'test/**/*.spec.js',
             {
@@ -25,6 +26,10 @@ module.exports = function(config) {
                 watched: false,
                 included: false,
                 served: true
+            },
+            {
+                pattern: 'test/fixtures/**/*.html',
+                included: false
             }
         ],
 

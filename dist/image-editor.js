@@ -1,3 +1,9 @@
+/**
+ * tui-image-editor
+ * @author NHNEnt FE Development Team <dl_javascript@nhnent.com>
+ * @version v1.3.0
+ * @license MIT
+ */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 tui.util.defineNamespace('tui.component.ImageEditor', require('./src/js/imageEditor'), true);
 
@@ -1395,25 +1401,24 @@ var resetStyles = {
     textAlign: 'left',
     textDecoraiton: ''
 };
+var browser = tui.util.browser;
 
 var TEXTAREA_CLASSNAME = 'tui-image-eidtor-textarea';
 var TEXTAREA_STYLES = util.makeStyleText({
     position: 'absolute',
-    display: 'none',
     padding: 0,
-    border: '1px dashed red',
+    display: 'none',
+    border: '1px dotted red',
     overflow: 'hidden',
     resize: 'none',
     outline: 'none',
     'border-radius': 0,
     'background-color': 'transparent',
     '-webkit-appearance': 'none',
-    'z-index': 99999
+    'z-index': 9999,
+    'white-space': 'pre'
 });
-var EXTRA_PIXEL = {
-    width: 25,
-    height: 10
-};
+var EXTRA_PIXEL_LINEHEIGHT = 0.1;
 var DBCLICK_TIME = 500;
 
 /**
@@ -1473,6 +1478,18 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
          * @type {Date}
          */
         this._lastClickTime = (new Date()).getTime();
+
+        /**
+         * Text object infos before editing
+         * @type {Object}
+         */
+        this._editingObjInfos = {};
+
+        /**
+         * Previous state of editing
+         * @type {boolean}
+         */
+        this.isPrevEditing = false;
     },
 
     /**
@@ -1570,6 +1587,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         if (!canvas.getActiveObject()) {
             canvas.setActiveObject(newText);
         }
+
+        this.isPrevEditing = true;
     },
 
     /**
@@ -1638,7 +1657,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      */
     setCanvasRatio: function() {
         var canvasElement = this.getCanvasElement();
-        var cssWidth = canvasElement.getBoundingClientRect().width;
+        var cssWidth = parseInt(canvasElement.style.maxWidth, 10);
         var originWidth = canvasElement.width;
         var ratio = originWidth / cssWidth;
 
@@ -1675,18 +1694,26 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         textarea.className = TEXTAREA_CLASSNAME;
         textarea.setAttribute('style', TEXTAREA_STYLES);
+        textarea.setAttribute('wrap', 'off');
 
         container.appendChild(textarea);
 
         this._textarea = textarea;
 
         this._listeners = tui.util.extend(this._listeners, {
-            keyup: tui.util.bind(this._onKeyUp, this),
-            blur: tui.util.bind(this._onBlur, this)
+            input: tui.util.bind(this._onInput, this),
+            keydown: tui.util.bind(this._onKeyDown, this),
+            blur: tui.util.bind(this._onBlur, this),
+            scroll: tui.util.bind(this._onScroll, this)
         });
 
-        fabric.util.addListener(textarea, 'keyup', this._listeners.keyup);
+        if (browser.msie && browser.version === 9) {
+            fabric.util.addListener(textarea, 'keydown', this._listeners.keydown);
+        } else {
+            fabric.util.addListener(textarea, 'input', this._listeners.input);
+        }
         fabric.util.addListener(textarea, 'blur', this._listeners.blur);
+        fabric.util.addListener(textarea, 'scroll', this._listeners.scroll);
     },
 
     /**
@@ -1701,27 +1728,46 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this._textarea = null;
 
-        fabric.util.removeListener(textarea, 'keyup', this._listeners.keyup);
+        if (browser.msie && browser.version < 10) {
+            fabric.util.removeListener(textarea, 'keydown', this._listeners.keydown);
+        } else {
+            fabric.util.removeListener(textarea, 'input', this._listeners.input);
+        }
         fabric.util.removeListener(textarea, 'blur', this._listeners.blur);
+        fabric.util.removeListener(textarea, 'scroll', this._listeners.scroll);
     },
 
     /**
-     * Keyup event handler
+     * Input event handler
      * @private
      */
-    _onKeyUp: function() {
+    _onInput: function() {
         var ratio = this.getCanvasRatio();
-        var textareaStyle = this._textarea.style;
         var obj = this._editingObj;
-        var originPos = obj.oCoords.tl;
+        var textareaStyle = this._textarea.style;
 
         obj.setText(this._textarea.value);
 
-        textareaStyle.width = ((obj.getWidth() + EXTRA_PIXEL.width) / ratio) + 'px';
-        textareaStyle.height = ((obj.getHeight() + EXTRA_PIXEL.height) / ratio) + 'px';
+        textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+        textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
+    },
 
-        textareaStyle.left = (originPos.x / ratio) + 'px';
-        textareaStyle.top = (originPos.y / ratio) + 'px';
+    /**
+     * Keydown event handler
+     * @private
+     */
+    _onKeyDown: function() {
+        var ratio = this.getCanvasRatio();
+        var obj = this._editingObj;
+        var textareaStyle = this._textarea.style;
+        var self = this;
+
+        setTimeout(function() {
+            obj.setText(self._textarea.value);
+
+            textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+            textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
+        }, 0);
     },
 
     /**
@@ -1729,9 +1775,36 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
      * @private
      */
     _onBlur: function() {
+        var ratio = this.getCanvasRatio();
+        var editingObj = this._editingObj;
+        var editingObjInfos = this._editingObjInfos;
+        var transWidth = (editingObj.getWidth() / ratio) - (editingObjInfos.width / ratio);
+        var transHeight = (editingObj.getHeight() / ratio) - (editingObjInfos.height / ratio);
+
+        if (ratio === 1) {
+            transWidth /= 2;
+            transHeight /= 2;
+        }
+
         this._textarea.style.display = 'none';
 
+        this._editingObj.set({
+            left: editingObjInfos.left + transWidth,
+            top: editingObjInfos.top + transHeight
+        });
+
         this.getCanvas().add(this._editingObj);
+
+        this.getCanvas().on('object:removed', this._listeners.remove);
+    },
+
+    /**
+     * Scroll event handler
+     * @private
+     */
+    _onScroll: function() {
+        this._textarea.scrollLeft = 0;
+        this._textarea.scrollTop = 0;
     },
 
     /**
@@ -1795,24 +1868,36 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         var ratio = this.getCanvasRatio();
         var textareaStyle = this._textarea.style;
 
+        this.isPrevEditing = true;
+
+        this.getCanvas().off('object:removed', this._listeners.remove);
+
         obj.remove();
 
         this._editingObj = obj;
         this._textarea.value = obj.getText();
 
+        this._editingObjInfos = {
+            left: this._editingObj.getLeft(),
+            top: this._editingObj.getTop(),
+            width: this._editingObj.getWidth(),
+            height: this._editingObj.getHeight()
+        };
+
         textareaStyle.display = 'block';
         textareaStyle.left = (obj.oCoords.tl.x / ratio) + 'px';
         textareaStyle.top = (obj.oCoords.tl.y / ratio) + 'px';
-        textareaStyle.width = ((obj.getWidth() + EXTRA_PIXEL.width) / ratio) + 'px';
-        textareaStyle.height = (obj.getHeight() / ratio) + 'px';
+        textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+        textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
         textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
+        textareaStyle.color = obj.getFill();
 
         textareaStyle['font-size'] = (obj.getFontSize() / ratio) + 'px';
         textareaStyle['font-family'] = obj.getFontFamily();
         textareaStyle['font-style'] = obj.getFontStyle();
         textareaStyle['font-weight'] = obj.getFontWeight();
         textareaStyle['text-align'] = obj.getTextAlign();
-        textareaStyle['line-height'] = obj.getLineHeight();
+        textareaStyle['line-height'] = obj.getLineHeight() + EXTRA_PIXEL_LINEHEIGHT;
         textareaStyle['transform-origin'] = 'left top';
 
         this._textarea.focus();
@@ -1910,7 +1995,9 @@ module.exports = {
     keyCodes: {
         Z: 90,
         Y: 89,
-        SHIFT: 16
+        SHIFT: 16,
+        BACKSPACE: 8,
+        DEL: 46
     },
 
     /**
@@ -2873,6 +2960,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _attachCanvasEvents: function() {
+        this._removeEventHandler = $.proxy(this._onFabricRemoved, this);
+
         this._canvas.on({
             'path:created': this._onPathCreated,
             'object:added': $.proxy(function(event) {
@@ -2901,18 +2990,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                  */
                 this.fire(events.ADD_OBJECT, obj);
             }, this),
-            'object:removed': $.proxy(function(event) {
-                /**
-                 * @api
-                 * @event ImageEditor#removeObject
-                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @example
-                 * imageEditor.on('removeObject', function(obj) {
-                 *     console.log(obj);
-                 * });
-                 */
-                this.fire(events.REMOVE_OBJECT, event.target);
-            }, this),
+            'object:removed': this._removeEventHandler,
             'object:moving': $.proxy(function(event) {
                 this._invoker.clearRedoStack();
 
@@ -2966,6 +3044,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {KeyboardEvent} e - Event object
      * @private
      */
+     /*eslint-disable complexity*/
     _onKeyDown: function(e) {
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             this.undo();
@@ -2973,6 +3052,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
             this.redo();
+        }
+
+        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
+            this._canvas.getActiveObject()) {
+            e.preventDefault();
+            this.removeActiveObject();
         }
     },
 
@@ -2984,6 +3069,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var textComp = this._getComponent(compList.TEXT);
         var obj = textComp.getSelectedObj();
         var command;
+
+        textComp.isPrevEditing = true;
 
         textComp.setSelectedInfo(fEvent.target, false);
 
@@ -3005,6 +3092,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var obj = textComp.getSelectedObj();
         var command;
 
+        textComp.isPrevEditing = true;
+
         if (obj.text === '') {
             obj.remove();
         } else if (!tui.util.hasStamp(obj) && textComp.isSelected()) {
@@ -3014,6 +3103,23 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         }
 
         textComp.setSelectedInfo(fEvent.target, true);
+    },
+
+    /**
+     * onRemoved handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     */
+    _onFabricRemoved: function(fEvent) {
+        /**
+         * @api
+         * @event ImageEditor#removeObject
+         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * @example
+         * imageEditor.on('removeObject', function(obj) {
+         *     console.log(obj);
+         * });
+         */
+        this.fire(events.REMOVE_OBJECT, fEvent.target);
     },
 
     /**
@@ -3324,6 +3430,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     endCropping: function(isApplying) {
         var cropper, data;
+        var eventHandler;
 
         if (this.getCurrentState() !== states.CROP) {
             return;
@@ -3333,11 +3440,16 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._state = states.NORMAL;
         data = cropper.end(isApplying);
 
-        /**
-         * @api
-         * @event ImageEditor#endCropping
-         */
-        this.fire(events.END_CROPPING);
+        eventHandler = tui.util.bind(function() {
+            /**
+             * @api
+             * @event ImageEditor#endCropping
+             */
+            this.fire(events.END_CROPPING);
+            this.off('loadImage', eventHandler);
+        }, this);
+
+        this.on('loadImage', eventHandler);
 
         if (data) {
             this.loadImageFromURL(data.url, data.imageName);
@@ -3599,7 +3711,8 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             mousedown: $.proxy(this._onFabricMouseDown, this),
             select: $.proxy(this._onFabricSelect, this),
             selectClear: $.proxy(this._onFabricSelectClear, this),
-            dbclick: $.proxy(this._onDBClick, this)
+            dbclick: $.proxy(this._onDBClick, this),
+            remove: this._removeEventHandler
         });
     },
 
@@ -3726,8 +3839,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var obj = event.target;
         var e = event.e || {};
         var originPointer = this._canvas.getPointer(e);
+        var textComp = this._getComponent(compList.TEXT);
 
         if (obj && !obj.isType('text')) {
+            return;
+        }
+
+        if (textComp.isPrevEditing) {
+            textComp.isPrevEditing = false;
+
             return;
         }
 
@@ -3916,6 +4036,21 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     clearRedoStack: function() {
         this._invoker.clearRedoStack();
+    },
+
+    /**
+     * Resize canvas dimension
+     * @param {{width: number, height: number}} dimension - Max width & height
+     */
+    resizeCanvasDimension: function(dimension) {
+        var mainComponent = this._getMainComponent();
+
+        if (!dimension) {
+            return;
+        }
+
+        mainComponent.setCssMaxDimension(dimension);
+        mainComponent.adjustCanvasDimension();
     }
 });
 

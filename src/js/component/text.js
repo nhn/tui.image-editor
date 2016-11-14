@@ -20,6 +20,7 @@ var resetStyles = {
     textAlign: 'left',
     textDecoraiton: ''
 };
+var browser = tui.util.browser;
 
 var TEXTAREA_CLASSNAME = 'tui-image-eidtor-textarea';
 var TEXTAREA_STYLES = util.makeStyleText({
@@ -33,10 +34,9 @@ var TEXTAREA_STYLES = util.makeStyleText({
     'border-radius': 0,
     'background-color': 'transparent',
     '-webkit-appearance': 'none',
-    'z-index': 99999,
+    'z-index': 9999,
     'white-space': 'pre'
 });
-var EXTRA_PIXEL_HEIGHT = 50;
 var EXTRA_PIXEL_LINEHEIGHT = 0.1;
 var DBCLICK_TIME = 500;
 
@@ -320,14 +320,19 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         this._textarea = textarea;
 
         this._listeners = tui.util.extend(this._listeners, {
+            input: tui.util.bind(this._onInput, this),
             keydown: tui.util.bind(this._onKeyDown, this),
-            keyup: tui.util.bind(this._onKeyUp, this),
-            blur: tui.util.bind(this._onBlur, this)
+            blur: tui.util.bind(this._onBlur, this),
+            scroll: tui.util.bind(this._onScroll, this)
         });
 
-        fabric.util.addListener(textarea, 'keydown', this._listeners.keydown);
-        fabric.util.addListener(textarea, 'keyup', this._listeners.keyup);
+        if (browser.msie && browser.version === 9) {
+            fabric.util.addListener(textarea, 'keydown', this._listeners.keydown);
+        } else {
+            fabric.util.addListener(textarea, 'input', this._listeners.input);
+        }
         fabric.util.addListener(textarea, 'blur', this._listeners.blur);
+        fabric.util.addListener(textarea, 'scroll', this._listeners.scroll);
     },
 
     /**
@@ -342,39 +347,46 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this._textarea = null;
 
-        fabric.util.removeListener(textarea, 'keydown', this._listeners.keydown);
-        fabric.util.removeListener(textarea, 'keyup', this._listeners.keyup);
+        if (browser.msie && browser.version < 10) {
+            fabric.util.removeListener(textarea, 'keydown', this._listeners.keydown);
+        } else {
+            fabric.util.removeListener(textarea, 'input', this._listeners.input);
+        }
         fabric.util.removeListener(textarea, 'blur', this._listeners.blur);
+        fabric.util.removeListener(textarea, 'scroll', this._listeners.scroll);
+    },
+
+    /**
+     * Input event handler
+     * @private
+     */
+    _onInput: function() {
+        var ratio = this.getCanvasRatio();
+        var obj = this._editingObj;
+        var textareaStyle = this._textarea.style;
+
+        obj.setText(this._textarea.value);
+
+        textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+        textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
     },
 
     /**
      * Keydown event handler
-     * @param {event} e - Keydown event
      * @private
      */
-    _onKeyDown: function(e) {
+    _onKeyDown: function() {
         var ratio = this.getCanvasRatio();
         var obj = this._editingObj;
         var textareaStyle = this._textarea.style;
+        var self = this;
 
-        if (e.keyCode === 13) {
-            textareaStyle.height = (obj.getHeight() / ratio) + EXTRA_PIXEL_HEIGHT + 'px';
-        }
-    },
+        setTimeout(function() {
+            obj.setText(self._textarea.value);
 
-    /**
-     * Keyup event handler
-     * @private
-     */
-    _onKeyUp: function() {
-        var ratio = this.getCanvasRatio();
-        var textareaStyle = this._textarea.style;
-        var obj = this._editingObj;
-
-        obj.setText(this._textarea.value);
-
-        textareaStyle.width = (obj.getWidth() / ratio) + 'px';
-        textareaStyle.height = parseInt(obj.getHeight() / ratio, 10) + 'px';
+            textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+            textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
+        }, 0);
     },
 
     /**
@@ -385,8 +397,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         var ratio = this.getCanvasRatio();
         var editingObj = this._editingObj;
         var editingObjInfos = this._editingObjInfos;
-        var transWidth = (editingObj.getWidth() - editingObjInfos.width) / ratio;
-        var transHeight = (editingObj.getHeight() - editingObjInfos.height) / ratio;
+        var transWidth = (editingObj.getWidth() / ratio) - (editingObjInfos.width / ratio);
+        var transHeight = (editingObj.getHeight() / ratio) - (editingObjInfos.height / ratio);
 
         if (ratio === 1) {
             transWidth /= 2;
@@ -401,6 +413,17 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         });
 
         this.getCanvas().add(this._editingObj);
+
+        this.getCanvas().on('object:removed', this._listeners.remove);
+    },
+
+    /**
+     * Scroll event handler
+     * @private
+     */
+    _onScroll: function() {
+        this._textarea.scrollLeft = 0;
+        this._textarea.scrollTop = 0;
     },
 
     /**
@@ -466,6 +489,8 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         this.isPrevEditing = true;
 
+        this.getCanvas().off('object:removed', this._listeners.remove);
+
         obj.remove();
 
         this._editingObj = obj;
@@ -481,9 +506,10 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         textareaStyle.display = 'block';
         textareaStyle.left = (obj.oCoords.tl.x / ratio) + 'px';
         textareaStyle.top = (obj.oCoords.tl.y / ratio) + 'px';
-        textareaStyle.width = (obj.getWidth() / ratio) + 'px';
-        textareaStyle.height = (obj.getHeight() / ratio) + 'px';
+        textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+        textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
         textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
+        textareaStyle.color = obj.getFill();
 
         textareaStyle['font-size'] = (obj.getFontSize() / ratio) + 'px';
         textareaStyle['font-family'] = obj.getFontFamily();
