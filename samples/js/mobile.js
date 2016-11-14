@@ -10,6 +10,11 @@ var MAX_RESOLUTION = 3264 * 2448; // 8MP (Mega Pixel)
 
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
+var shapeOpt = {
+    fill: '#fff',
+    stroke: '#000',
+    strokeWidth: 10
+};
 
 // Selector of image editor controls
 var submenuClass = '.submenu';
@@ -34,6 +39,7 @@ var $btnRemoveActiveObject = $('#btn-remove-active-object');
 // Image editor controls - bottom menu buttons
 var $btnCrop = $('#btn-crop');
 var $btnAddText = $('#btn-add-text');
+var $btnDrawShape = $('#btn-draw-shape');
 
 // Image editor controls - bottom submenu buttons
 var $btnApplyCrop = $('#btn-apply-crop');
@@ -46,12 +52,17 @@ var $btnAddCancelIcon = $('#btn-add-cancel-icon');
 var $btnAddCustomIcon = $('#btn-add-custom-icon');
 var $btnFreeDrawing = $('#btn-free-drawing');
 var $btnLineDrawing = $('#btn-line-drawing');
-
+var $btnDrawRect = $('#btn-draw-rect');
+var $btnDrawSquare = $('#btn-draw-square');
+var $btnDrawEllipse = $('#btn-draw-ellipse');
+var $btnDrawCircle = $('#btn-draw-circle');
 var $btnChangeTextStyle = $('.btn-change-text-style');
 
 // Image editor controls - etc.
 var $inputTextSizeRange = $('#input-text-size-range');
 var $inputBrushWidthRange = $('#input-brush-range');
+var $inputStrokeWidthRange = $('#input-stroke-range');
+var $selectColorType = $('input[name="select-color-type"]');
 
 // Colorpicker
 var iconColorpicker = tui.component.colorpicker.create({
@@ -68,6 +79,12 @@ var brushColorpicker = tui.component.colorpicker.create({
     container: $('#tui-brush-color-picker')[0],
     color: '#000000'
 });
+
+var shapeColorpicker = tui.component.colorpicker.create({
+    container: $('#tui-shape-color-picker')[0],
+    color: '#000000'
+});
+
 
 // Create image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
@@ -149,6 +166,21 @@ imageEditor.on({
     adjustObject: function(obj, type) {
         if (obj.type === 'text' && type === 'scale') {
             $inputTextSizeRange.val(obj.getFontSize());
+        }
+    },
+    selectObject: function(obj) {
+        var colorType;
+
+        if (obj.type === 'rect' || obj.type === 'circle') {
+            colorType = $selectColorType.val();
+
+            if (colorType === 'line') {
+                shapeColorpicker.setColor(obj.getStroke());
+            } else if (colorType === 'bg') {
+                shapeColorpicker.setColor(obj.getFill());
+            }
+
+            $inputStrokeWidthRange.val(obj.getStrokeWidth());
         }
     }
 });
@@ -375,6 +407,63 @@ brushColorpicker.on('selectColor', function(event) {
     imageEditor.setBrush({
         color: hexToRGBa(event.color, 0.5)
     });
+});
+
+// Draw shpae menu action
+$btnDrawRect.on('click', function() {
+    imageEditor.addShape('rect', tui.util.extend({
+        width: 500,
+        height: 300
+    }, shapeOpt));
+});
+
+$btnDrawSquare.on('click', function() {
+    imageEditor.addShape('rect', tui.util.extend({
+        width: 400,
+        height: 400
+    }, shapeOpt));
+});
+
+$btnDrawEllipse.on('click', function() {
+    imageEditor.addShape('circle', tui.util.extend({
+        rx: 300,
+        ry: 200
+    }, shapeOpt));
+});
+
+$btnDrawCircle.on('click', function() {
+    imageEditor.addShape('circle', tui.util.extend({
+        rx: 200,
+        ry: 200
+    }, shapeOpt));
+});
+
+$selectColorType.on('change', function() {
+    var colorType = this.value;
+
+    if (colorType === 'stroke') {
+        shapeOpt.stroke = shapeColorpicker.getColor();
+    } else if (colorType === 'stroke') {
+        shapeOpt.fill = shapeColorpicker.getColor();
+    }
+});
+
+$inputStrokeWidthRange.on('change', function() {
+    shapeOpt.strokeWidth = Number(this.value);
+    imageEditor.changeShape(shapeOpt);
+});
+
+shapeColorpicker.on('selectColor', function(event) {
+    var colorType = $('[name="select-color-type"]:checked').val();
+    var color = event.color;
+
+    if (colorType === 'stroke') {
+        shapeOpt.stroke = color;
+    } else if (colorType === 'fill') {
+        shapeOpt.fill = color;
+    }
+
+    imageEditor.changeShape(shapeOpt);
 });
 
 // Load sample image

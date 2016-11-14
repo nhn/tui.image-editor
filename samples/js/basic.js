@@ -197,9 +197,9 @@ imageEditor.on({
         if (obj.type === 'rect' || obj.type === 'circle') {
             colorType = $selectShapeColor.val();
 
-            if (colorType === 'line') {
+            if (colorType === 'stroke') {
                 shapeColorpicker.setColor(obj.getStroke());
-            } else if (colorType === 'bg') {
+            } else if (colorType === 'fill') {
                 shapeColorpicker.setColor(obj.getFill());
             }
 
@@ -405,9 +405,9 @@ shapeColorpicker.on('selectColor', function(event) {
     var selecColorType = $selectShapeColor.val();
     var color = event.color;
 
-    if (selecColorType === 'line') {
+    if (selecColorType === 'stroke') {
         shapeOptions.stroke = color;
-    } else if (selecColorType === 'bg') {
+    } else if (selecColorType === 'fill') {
         shapeOptions.fill = color;
     }
 
