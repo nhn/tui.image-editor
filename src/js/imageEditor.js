@@ -10,7 +10,7 @@ var consts = require('./consts');
 
 var events = consts.eventNames;
 var commands = consts.commandNames;
-var compList = consts.componentNames;
+var components = consts.componentNames;
 var states = consts.states;
 var keyCodes = consts.keyCodes;
 var fObjectOptions = consts.fObjectOptions;
@@ -172,6 +172,18 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                     this.getCurrentState() !== 'TEXT') {
                     this.startTextMode();
                 }
+
+                /**
+                 * @event ImageEditor#selectObject
+                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+                 * @example
+                 * imageEditor.on('selectObject', function(obj) {
+                 *     console.log(obj);
+                 *     console.log(obj.type);
+                 *     console.log(obj.getType());
+                 * });
+                 */
+                this.fire(events.SELECT_OBJECT, event.target);
             }, this)
         });
     },
@@ -211,7 +223,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      */
     _onFabricSelectClear: function(fEvent) {
-        var textComp = this._getComponent(compList.TEXT);
+        var textComp = this._getComponent(components.TEXT);
         var obj = textComp.getSelectedObj();
         var command;
 
@@ -233,7 +245,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      */
     _onFabricSelect: function(fEvent) {
-        var textComp = this._getComponent(compList.TEXT);
+        var textComp = this._getComponent(components.TEXT);
         var obj = textComp.getSelectedObj();
         var command;
 
@@ -302,7 +314,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _getMainComponent: function() {
-        return this._getComponent(compList.MAIN);
+        return this._getComponent(components.MAIN);
     },
 
     /**
@@ -368,6 +380,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this.endFreeDrawing();
         this.endLineDrawing();
         this.endCropping();
+        this.endShapeDrawing();
         this.deactivateAll();
         this._state = states.NORMAL;
     },
@@ -553,7 +566,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this.endAll();
         this._state = states.CROP;
-        cropper = this._getComponent(compList.CROPPER);
+        cropper = this._getComponent(components.CROPPER);
         cropper.start();
         /**
          * @api
@@ -581,7 +594,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
-        cropper = this._getComponent(compList.CROPPER);
+        cropper = this._getComponent(components.CROPPER);
         this._state = states.NORMAL;
         data = cropper.end(isApplying);
 
@@ -728,7 +741,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
         this.endAll();
-        this._getComponent(compList.FREE_DRAWING).start(setting);
+        this._getComponent(components.FREE_DRAWING).start(setting);
         this._state = states.FREE_DRAWING;
 
         /**
@@ -759,10 +772,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         switch (state) {
             case states.LINE:
-                compName = compList.LINE;
+                compName = components.LINE;
                 break;
             default:
-                compName = compList.FREE_DRAWING;
+                compName = components.FREE_DRAWING;
         }
 
         this._getComponent(compName).setBrush(setting);
@@ -779,7 +792,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if (this.getCurrentState() !== states.FREE_DRAWING) {
             return;
         }
-        this._getComponent(compList.FREE_DRAWING).end();
+        this._getComponent(components.FREE_DRAWING).end();
         this._state = states.NORMAL;
 
         /**
@@ -807,7 +820,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         }
 
         this.endAll();
-        this._getComponent(compList.LINE).start(setting);
+        this._getComponent(components.LINE).start(setting);
         this._state = states.LINE;
 
         /**
@@ -828,7 +841,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if (this.getCurrentState() !== states.LINE) {
             return;
         }
-        this._getComponent(compList.LINE).end();
+        this._getComponent(components.LINE).end();
         this._state = states.NORMAL;
 
         /**
@@ -836,6 +849,161 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          * @event ImageEditor#endLineDrawing
          */
         this.fire(events.END_LINE_DRAWING);
+    },
+
+    /**
+     * Start shape-drawing mode (bind event on canvas)
+     * @api
+     * @example
+     * imageEditor.startShapeDrawing();
+     */
+    startShapeDrawing: function() {
+        if (this.getCurrentState() === states.SHAPE) {
+            return;
+        }
+
+        this.endAll();
+
+        this._getComponent(components.SHAPE).start();
+        this._state = states.SHAPE;
+    },
+
+    /**
+     * Set states of current drawing shape
+     * @param {string} type - Shape type (ex: 'rect', 'circle')
+     * @param {object} [options] - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     * @api
+     * @example
+     * imageEditor.setShape('rect', {
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     width: 100,
+     *     height: 200
+     * });
+     * imageEditor.setShape('circle', {
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100
+     * });
+     * imageEditor.setShape('rect', { // draw rectangle having 1:1 ratio
+     *     width: 1,
+     *     height: 1
+     * });
+     * imageEditor.setShape('circle', { // draw circle having 1:1 ratio
+     *     rx: 10,
+     *     ry: 10
+     * });
+     */
+    setShape: function(type, options) {
+        var width, height, isOneRatio;
+
+        options = options || {};
+        width = options.width || 0;
+        height = options.height || 0;
+
+        isOneRatio = !!(width && height && (width === height));
+
+        this._getComponent(components.SHAPE).setStates(type, options, isOneRatio);
+    },
+
+    /**
+     * Add shape
+     * @param {string} type - Shape type (ex: 'rect', 'circle')
+     * @param {object} options - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     * @api
+     * @example
+     * imageEditor.addShape('rect', {
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     width: 100,
+     *     height: 200,
+     *     left: 10,
+     *     top: 10
+     * });
+     * imageEditor.addShape('circle', {
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100
+     * });
+     */
+    addShape: function(type, options) {
+        this._getComponent(components.SHAPE).add(type, options);
+    },
+
+    /**
+     * Change shape
+     * @param {object} options - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     * @api
+     * @example
+     * // call after selecting shape object on canvas
+     * imageEditor.changeShape({ // change rectagle
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     width: 100,
+     *     height: 200
+     * });
+     * imageEditor.changeShape({ // change circle
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100
+     * });
+     */
+    changeShape: function(options) {
+        var activeObj = this._canvas.getActiveObject();
+        var shapeComponent = this._getComponent(components.SHAPE);
+
+        if (!activeObj ||
+            (activeObj.type !== 'rect' && activeObj.type !== 'circle')) {
+            return;
+        }
+
+        shapeComponent.change(activeObj, options);
+    },
+
+    /**
+     * End shape-drawing mode (unbind event on canvas)
+     * @api
+     * @example
+     * imageEditor.startShapeDrawing();
+     * imageEditor.endShapeDrawing();
+     */
+    endShapeDrawing: function() {
+        if (this.getCurrentState() !== states.SHAPE) {
+            return;
+        }
+
+        this._getComponent(components.SHAPE).end();
+        this._state = states.NORMAL;
     },
 
     /**
@@ -852,7 +1020,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this._state = states.TEXT;
 
-        this._getComponent(compList.TEXT).start({
+        this._getComponent(components.TEXT).start({
             mousedown: $.proxy(this._onFabricMouseDown, this),
             select: $.proxy(this._onFabricSelect, this),
             selectClear: $.proxy(this._onFabricSelectClear, this),
@@ -894,7 +1062,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             this._state = states.TEXT;
         }
 
-        this._getComponent(compList.TEXT).add(text || '', options || {});
+        this._getComponent(components.TEXT).add(text || '', options || {});
     },
 
     /**
@@ -912,7 +1080,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
-        this._getComponent(compList.TEXT).change(activeObj, text);
+        this._getComponent(components.TEXT).change(activeObj, text);
     },
 
     /**
@@ -939,7 +1107,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
-        this._getComponent(compList.TEXT).setStyle(activeObj, styleObj);
+        this._getComponent(components.TEXT).setStyle(activeObj, styleObj);
     },
 
     /**
@@ -956,7 +1124,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this._state = states.NORMAL;
 
-        this._getComponent(compList.TEXT).end();
+        this._getComponent(components.TEXT).end();
     },
 
     /**
@@ -984,7 +1152,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var obj = event.target;
         var e = event.e || {};
         var originPointer = this._canvas.getPointer(e);
-        var textComp = this._getComponent(compList.TEXT);
+        var textComp = this._getComponent(components.TEXT);
 
         if (obj && !obj.isType('text')) {
             return;
@@ -1054,7 +1222,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * });
      */
     registerIcons: function(infos) {
-        this._getComponent(compList.ICON).registerPaths(infos);
+        this._getComponent(components.ICON).registerPaths(infos);
     },
 
     /**
@@ -1065,7 +1233,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.addIcon('arrow');
      */
     addIcon: function(type) {
-        this._getComponent(compList.ICON).add(type);
+        this._getComponent(components.ICON).add(type);
     },
 
     /**
@@ -1078,7 +1246,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     changeIconColor: function(color) {
         var activeObj = this._canvas.getActiveObject();
 
-        this._getComponent(compList.ICON).setColor(color, activeObj);
+        this._getComponent(components.ICON).setColor(color, activeObj);
     },
 
     /**

@@ -29,6 +29,7 @@
             <li class="menu-item" id="btn-flip">Flip</li>
             <li class="menu-item" id="btn-rotation">Rotation</li>
             <li class="menu-item" id="btn-draw-line">DrawLine</li>
+            <li class="menu-item" id="btn-draw-shape">Shape</li>
             <li class="menu-item" id="btn-add-icon">Icon</li>
             <li class="menu-item" id="btn-text">Text</li>
             <li class="menu-item" id="btn-mask-filter">Mask</li>
@@ -68,6 +69,25 @@
                     <div id="tui-brush-color-picker">Brush color</div>
                 </li>
                 <li class="menu-item"><label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label></li>
+                <li class="menu-item close">Close</li>
+            </ul>
+        </div>
+        <div class="sub-menu-container" id="draw-shape-sub-menu">
+            <ul class="menu">
+                <li class="menu-item">
+                    <label><input type="radio" name="select-shape-type" value="rect" checked="checked"> Draw rect</label>
+                </li>
+                <li class="menu-item">
+                    <label><input type="radio" name="select-shape-type" value="circle"> Draw circle</label>
+                </li>
+                <li class="menu-item">
+                    <select name="select-shape-color">
+                        <option value="line">line</option>
+                        <option value="bg">background</option>
+                    </select>
+                    <div id="tui-shape-color-picker"></div>
+                </li>
+                <li class="menu-item"><label class="menu-item no-pointer">Line width<input id="input-stroke-width-range" type="range" min="5" max="30" value="12"></label></li>
                 <li class="menu-item close">Close</li>
             </ul>
         </div>
