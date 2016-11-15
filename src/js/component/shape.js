@@ -379,11 +379,11 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
         }
 
         if (width > currentShape.strokeWidth) {
-            width -= currentShape.strokeWidth * 2;
+            width -= currentShape.strokeWidth;
         }
 
         if (height > currentShape.strokeWidth) {
-            height -= currentShape.strokeWidth * 2;
+            height -= currentShape.strokeWidth;
         }
 
         currentShape.set({
