@@ -320,21 +320,21 @@ describe('Shape', function() {
         });
     });
 
-    describe('When drawing the shape with mouse and the "isOneRatio" option set to true,', function() {
-        it('the created rectangle shape has the same "width" and "height" values.', function() {
-            shape.setStates('rect', null, true);
+    it('When drawing the shape with mouse and the "isRegularRatio" option set to true,' +
+        'the created rectangle shape has the same "width" and "height" values.', function() {
+        shape.setStates('rect', null, true);
 
-            shape._shapeObj = shape.add('rect', {left: 0, top: 0, strokeWidth: 0});
-            shape._startPoint = {x: 0, y: 0};
+        shape._shapeObj = shape.add('rect', {left: 0, top: 0, strokeWidth: 0});
+        shape._startPoint = {x: 0, y: 0};
 
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 200, y: 100});
+        spyOn(main.canvas, 'getPointer').and.returnValue({x: 200, y: 100});
 
-            shape._onFabricMouseMove(fEvent);
-            shape._onFabricMouseUp();
+        shape._onFabricMouseMove(fEvent);
+        shape._onFabricMouseUp();
 
-            shapeObj = main.canvas.getObjects()[0];
+        shapeObj = main.canvas.getObjects()[0];
 
-            expect(shapeObj.getHeight()).toBe(shapeObj.getWidth());
-        });
+        expect(shapeObj.getHeight()).toBe(200);
+        expect(shapeObj.getWidth()).toBe(200);
     });
 });

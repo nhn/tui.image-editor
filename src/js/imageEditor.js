@@ -905,15 +905,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * });
      */
     setShape: function(type, options) {
-        var width, height, isOneRatio;
+        var width, height, isRegularRatio;
 
         options = options || {};
         width = options.width || 0;
         height = options.height || 0;
 
-        isOneRatio = !!(width && height && (width === height));
+        isRegularRatio = !!(width && height && (width === height));
 
-        this._getComponent(components.SHAPE).setStates(type, options, isOneRatio);
+        this._getComponent(components.SHAPE).setStates(type, options, isRegularRatio);
     },
 
     /**
@@ -998,12 +998,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.endShapeDrawing();
      */
     endShapeDrawing: function() {
-        if (this.getCurrentState() !== states.SHAPE) {
-            return;
+        if (this.getCurrentState() === states.SHAPE) {
+            this._getComponent(components.SHAPE).end();
+            this._state = states.NORMAL;
         }
-
-        this._getComponent(components.SHAPE).end();
-        this._state = states.NORMAL;
     },
 
     /**
