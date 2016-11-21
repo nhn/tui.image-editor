@@ -385,7 +385,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this.endFreeDrawing();
         this.endLineDrawing();
         this.endCropping();
-        this.endDrawingShape();
+        this.endDrawingShapeMode();
         this.deactivateAll();
         this._state = states.NORMAL;
     },
@@ -860,9 +860,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * Start to draw shape on canvas (bind event on canvas)
      * @api
      * @example
-     * imageEditor.startDrawingShape();
+     * imageEditor.startDrawingShapeMode();
      */
-    startDrawingShape: function() {
+    startDrawingShapeMode: function() {
         if (this.getCurrentState() !== states.SHAPE) {
             this.endAll();
             this._state = states.SHAPE;
@@ -996,10 +996,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * End to draw shape on canvas (unbind event on canvas)
      * @api
      * @example
-     * imageEditor.startDrawingShape();
-     * imageEditor.endDrawingShape();
+     * imageEditor.startDrawingShapeMode();
+     * imageEditor.endDrawingShapeMode();
      */
-    endDrawingShape: function() {
+    endDrawingShapeMode: function() {
         if (this.getCurrentState() === states.SHAPE) {
             this._getComponent(components.SHAPE).endDrawingMode();
             this._state = states.NORMAL;
