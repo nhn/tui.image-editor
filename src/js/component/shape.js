@@ -1,18 +1,33 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview Shape module
+ * @fileoverview Shape component
  */
 'use strict';
 
 var Component = require('../interface/component');
 var consts = require('../consts');
+var resizeHelper = require('../factory/shapeResizeHelper');
 
 var util = tui.util;
 var extend = util.extend;
 var bind = util.bind;
 
 var KEY_CODES = consts.keyCodes;
-var SELECTION_STYLE = consts.fObjectOptions.SELECTION_STYLE;
+var DEFAULT_TYPE = 'rect';
+var DEFAULT_OPTIONS = {
+    strokeWidth: 1,
+    stroke: '#000000',
+    fill: '#ffffff',
+    width: 1,
+    height: 1,
+    rx: 0,
+    ry: 0,
+    lockSkewingX: true,
+    lockSkewingY: true,
+    lockUniScaling: false,
+    bringForward: true,
+    isRegular: false
+};
 
 /**
  * Shape
@@ -25,46 +40,31 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
         this.setParent(parent);
 
         /**
-         * Object of current drawing shape
+         * Object of The drawing shape
          * @type {fabric.Object}
          * @private
          */
         this._shapeObj = null;
 
         /**
-         * Type for drawing shape
+         * Type of the drawing shape
          * @type {string}
          * @private
          */
-        this._type = 'rect';
+        this._type = DEFAULT_TYPE;
 
         /**
-         * Options for drawing shape
+         * Options to draw the shape
          * @type {object}
          * @private
          */
-        this._options = {};
+        this._options = DEFAULT_OPTIONS;
 
         /**
-         * Whether drawing shpae is to be 1:1 ratio or not
+         * Whether the shape object is selected or not
          * @type {boolean}
-         * @private
          */
-        this._isRegularRatio = false;
-
-        /**
-         * Pointer for drawing shape (x, y)
-         * @type {object}
-         * @private
-         */
-        this._startPoint = {};
-
-        /**
-         * Using shortcut
-         * @type {boolean}
-         * @private
-         */
-        this._withShiftKey = false;
+        this._isSelected = false;
 
         /**
          * Event handler list
@@ -72,8 +72,6 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
          * @private
          */
         this._handlers = {
-            select: bind(this._onFabricSelect, this),
-            deselect: bind(this._onFabricDeselect, this),
             mousedown: bind(this._onFabricMouseDown, this),
             mousemove: bind(this._onFabricMouseMove, this),
             mouseup: bind(this._onFabricMouseUp, this),
@@ -89,12 +87,15 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
     name: consts.componentNames.SHAPE,
 
     /**
-     * Start drawing shape on canvas
+     * Start to draw the shape on canvas
      */
-    start: function() {
+    startDrawingMode: function() {
         var canvas = this.getCanvas();
 
+        this._isSelected = false;
+
         canvas.defaultCursor = 'crosshair';
+        canvas.selection = false;
         canvas.on({
             'mouse:down': this._handlers.mousedown
         });
@@ -104,12 +105,15 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
     },
 
     /**
-     * End drawing shape on canvas
+     * End to draw the shape on canvas
      */
-    end: function() {
+    endDrawingMode: function() {
         var canvas = this.getCanvas();
 
+        this._isSelected = false;
+
         canvas.defaultCursor = 'default';
+        canvas.selection = true;
         canvas.off({
             'mouse:down': this._handlers.mousedown
         });
@@ -119,7 +123,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
     },
 
     /**
-     * Set states of current drawing shape
+     * Set states of the current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {object} [options] - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
@@ -129,22 +133,17 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-     * @param {boolean} isRegularRatio - Whether drawing shape is to be 1:1 ratio or not
      */
-    setStates: function(type, options, isRegularRatio) {
+    setStates: function(type, options) {
         this._type = type;
 
         if (options) {
-            this._options = options;
-        }
-
-        if (isRegularRatio) {
-            this._isRegularRatio = isRegularRatio;
+            this._options = extend(this._options, options);
         }
     },
 
     /**
-     * Add shape
+     * Add the shape
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
@@ -154,32 +153,23 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-     * @returns {fabric.Object} New shape object
+     *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
      */
     add: function(type, options) {
         var canvas = this.getCanvas();
-        var newShape;
+        var shapeObj;
 
-        options = extend({}, SELECTION_STYLE, (options || this._options));
+        options = this._getOptions(options);
+        shapeObj = this._getInstance(type, options);
 
-        this._setPosition(options);
+        this._bindEventOnShape(shapeObj);
 
-        newShape = this._getShapeInstance(type, options);
-
-        newShape.on({
-            'selected': this._handlers.select,
-            'deselected': this._handlers.deselect,
-            'scaling': this._onFabricScaling
-        });
-
-        canvas.add(newShape);
-
-        return newShape;
+        canvas.add(shapeObj);
     },
 
     /**
-     * Change shape
-     * @param {fabric.Object} activeObj - Selected object on canvas
+     * Change the shape
+     * @param {fabric.Object} shapeObj - Selected shape object on canvas
      * @param {object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
@@ -188,76 +178,120 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
      */
-    change: function(activeObj, options) {
-        activeObj.set(options);
-
+    change: function(shapeObj, options) {
+        shapeObj.set(options);
         this.getCanvas().renderAll();
     },
 
     /**
-     * Scaling object event handler on canvas
+     * Get the instance of shape
+     * @param {string} type - Shape type
+     * @param {object} options - Options to creat the shape
+     * @returns {fabric.Object} Shape instance
      * @private
      */
-    _onFabricScaling: function() {
-        var type = this.type;
-        var scaleX = this.scaleX;
-        var scaleY = this.scaleY;
-        var options = {
-            scaleX: 1,
-            scaleY: 1
-        };
+    _getInstance: function(type, options) {
+        var instance;
 
-        if (type === 'rect') {
-            options = extend(options, {
-                width: this.width * scaleX,
-                height: this.height * scaleY
-            });
-        } else if (type === 'circle') {
-            options = extend(options, {
-                rx: this.rx * scaleX,
-                ry: this.ry * scaleY
-            });
+        switch (type) {
+            case 'rect':
+                instance = new fabric.Rect(options);
+                break;
+            case 'circle':
+                instance = new fabric.Ellipse(extend({
+                    type: 'circle'
+                }, options));
+                break;
+            case 'triangle':
+                instance = new fabric.Triangle(options);
+                break;
+            default:
+                instance = {};
         }
 
-        this.set(options);
+        return instance;
     },
 
     /**
-     * Select object event handler on canvas
+     * Get the options to create the shape
+     * @param {object} options - Options to creat the shape
+     * @returns {object} Shape options
      * @private
      */
-    _onFabricSelect: function() {
-        this._isSelected = true;
+    _getOptions: function(options) {
+        var centerPoint = this.getCanvas().getCenter();
+        var selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
+
+        options = extend({}, DEFAULT_OPTIONS, selectionStyles, centerPoint, options);
+
+        if (options.isRegular) {
+            options.lockUniScaling = true;
+        }
+
+        return options;
     },
 
     /**
-     * Deselect object event handler on canvas
+     * Bind fabric events on the creating shape object
+     * @param {fabric.Object} shapeObj - Shape object
      * @private
      */
-    _onFabricDeselect: function() {
-        this._isSelected = false;
+    _bindEventOnShape: function(shapeObj) {
+        var self = this;
+        var canvas = this.getCanvas();
+
+        shapeObj.on({
+            added: function() {
+                self._shapeObj = this;
+                resizeHelper.setOrigins(self._shapeObj);
+            },
+            selected: function() {
+                self._isSelected = true;
+                self._shapeObj = this;
+                canvas.uniScaleTransform = true;
+                resizeHelper.setOrigins(self._shapeObj);
+            },
+            deselected: function() {
+                self._isSelected = false;
+                canvas.uniScaleTransform = false;
+            },
+            modified: function() {
+                var currentObj = self._shapeObj;
+
+                resizeHelper.adjustOriginToCenter(currentObj);
+                resizeHelper.setOrigins(currentObj);
+            },
+            scaling: function(fEvent) {
+                var pointer = canvas.getPointer(fEvent.e);
+                var currentObj = self._shapeObj;
+
+                canvas.setCursor('crosshair');
+
+                resizeHelper.resize(currentObj, pointer, true);
+            }
+        });
     },
 
     /**
      * MouseDown event handler on canvas
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
      * @private
      */
     _onFabricMouseDown: function(fEvent) {
-        var canvas = this.getCanvas();
-        var currentPointer = canvas.getPointer(fEvent.e);
-        var shapeType = this._type;
-        var options;
+        var canvas, pointer;
 
         if (!this._isSelected) {
-            this._startPoint = currentPointer;
+            canvas = this.getCanvas();
+            pointer = canvas.getPointer(fEvent.e);
 
-            options = this._getInitOptions(shapeType, currentPointer);
+            this.add(this._type, {
+                left: pointer.x,
+                top: pointer.y,
+                isTemp: true
+            });
 
-            this._shapeObj = this.add(shapeType, options);
-
-            canvas.selection = false;
             canvas.on({
                 'mouse:move': this._handlers.mousemove,
                 'mouse:up': this._handlers.mouseup
@@ -267,23 +301,15 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
 
     /**
      * MouseDown event handler on canvas
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
      * @private
      */
     _onFabricMouseMove: function(fEvent) {
         var canvas = this.getCanvas();
         var pointer = canvas.getPointer(fEvent.e);
-        var shapeType = this._type;
+        var shape = this._shapeObj;
 
-        if (shapeType === 'rect') {
-            this._setRectOptions(pointer);
-        } else if (shapeType === 'circle') {
-            this._setCircleOptions(pointer);
-        }
-
-        this._adjustOrigins(pointer);
-
-        this._shapeObj.setCoords();
+        resizeHelper.resize(shape, pointer);
 
         canvas.renderAll();
     },
@@ -295,180 +321,12 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
     _onFabricMouseUp: function() {
         var canvas = this.getCanvas();
 
-        this._adjustPosition(); // set origin position
+        this._controlAddedObject();
 
-        this._shapeObj = null;
-
-        canvas.renderAll();
         canvas.off({
             'mouse:move': this._handlers.mousemove,
             'mouse:up': this._handlers.mouseup
         });
-    },
-
-    /**
-     * Get options for drawing shape
-     * @param {string} type - Shape type
-     * @param {object} pointer - Current mouse pointer
-     * @returns {object} Options
-     * @private
-     */
-    _getInitOptions: function(type, pointer) {
-        var initX = pointer.x - this._startPoint.x;
-        var initY = pointer.y - this._startPoint.y;
-        var options = extend({
-            originX: 'left',
-            originY: 'top',
-            left: pointer.x,
-            top: pointer.y
-        }, this._options);
-
-        if (type === 'rect') {
-            options.width = initX;
-            options.height = initY;
-        } else if (type === 'circle') {
-            options.rx = initX;
-            options.ry = initY;
-        }
-
-        return options;
-    },
-
-    /**
-     * Set circle options while drawing shape
-     * @param {{x: number, y: number}} pointer - Current pointer
-     * @private
-     */
-    _setCircleOptions: function(pointer) {
-        var currentShape = this._shapeObj;
-        var startPoint = this._startPoint;
-        var radiusX = Math.abs(startPoint.x - pointer.x) / 2;
-        var radiusY = Math.abs(startPoint.y - pointer.y) / 2;
-
-        if (this._withShiftKey || this._isRegularRatio) {
-            radiusX = radiusY = Math.max(radiusX, radiusY);
-        }
-
-        if (radiusX > currentShape.strokeWidth) {
-            radiusX -= currentShape.strokeWidth / 2;
-        }
-
-        if (radiusY > currentShape.strokeWidth) {
-            radiusY -= currentShape.strokeWidth / 2;
-        }
-
-        currentShape.set({
-            rx: radiusX,
-            ry: radiusY
-        });
-    },
-
-    /**
-     * Set rectangle options while drawing shape
-     * @param {{x: number, y: number}} pointer - Current pointer
-     * @private
-     */
-    _setRectOptions: function(pointer) {
-        var currentShape = this._shapeObj;
-        var startPoint = this._startPoint;
-        var width = Math.abs(startPoint.x - pointer.x);
-        var height = Math.abs(startPoint.y - pointer.y);
-
-        if (this._withShiftKey || this._isRegularRatio) {
-            width = height = Math.max(width, height);
-        }
-
-        if (width > currentShape.strokeWidth) {
-            width -= currentShape.strokeWidth;
-        }
-
-        if (height > currentShape.strokeWidth) {
-            height -= currentShape.strokeWidth;
-        }
-
-        currentShape.set({
-            width: width,
-            height: height
-        });
-    },
-
-    /**
-     * Adjust "originX" or "originY" value on shape
-     * @param {{x: number, y: number}} pointer - Current pointer
-     * @private
-     */
-    _adjustOrigins: function(pointer) {
-        var currentShape = this._shapeObj;
-        var startPoint = this._startPoint;
-
-        if (startPoint.x > pointer.x) {
-            currentShape.set({originX: 'right'});
-        } else {
-            currentShape.set({originX: 'left'});
-        }
-
-        if (startPoint.y > pointer.y) {
-            currentShape.set({originY: 'bottom'});
-        } else {
-            currentShape.set({originY: 'top'});
-        }
-    },
-
-    /**
-     * Adjust position of shape
-     * @private
-     */
-    _adjustPosition: function() {
-        var currentShape = this._shapeObj;
-        var originX = currentShape.getOriginX();
-        var originY = currentShape.getOriginY();
-        var currentPoint = currentShape.getPointByOrigin(originX, originY);
-        var nextPoint = currentShape.getPointByOrigin('center', 'center');
-        var left = nextPoint.x - currentPoint.x;
-        var top = nextPoint.y - currentPoint.y;
-
-        currentShape.set({
-            originX: 'center',
-            originY: 'center',
-            left: currentShape.getLeft() + left,
-            top: currentShape.getTop() + top
-        });
-    },
-
-    /**
-     * Get instance of creating shape
-     * @param {string} type - Shape type
-     * @param {object} options - Shape options
-     * @returns {fabric.Object} Instance of shape
-     * @private
-     */
-    _getShapeInstance: function(type, options) {
-        var instance;
-
-        if (type === 'rect') {
-            instance = new fabric.Rect(options);
-        } else if (type === 'circle') {
-            instance = new fabric.Ellipse(extend({type: 'circle'}, options));
-        }
-
-        return instance;
-    },
-
-    /**
-     * Set position of shape
-     * @param {object} options - Shape
-     * @private
-     */
-    _setPosition: function(options) {
-        var centerPoint = this.getCanvas().getCenter();
-
-        if (!options.left) {
-            options.left = centerPoint.left;
-        }
-
-        if (!options.top) {
-            options.top = centerPoint.top;
-        }
     },
 
     /**
@@ -478,7 +336,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      */
     _onKeyDown: function(e) {
         if (e.keyCode === KEY_CODES.SHIFT) {
-            this._withShiftKey = true;
+            this._shapeObj.isRegular = true;
         }
     },
 
@@ -489,7 +347,26 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      */
     _onKeyUp: function(e) {
         if (e.keyCode === KEY_CODES.SHIFT) {
-            this._withShiftKey = false;
+            this._shapeObj.isRegular = false;
+        }
+    },
+
+    /**
+     * Control the drawing shape object
+     */
+    _controlAddedObject: function() {
+        var canvas = this.getCanvas();
+        var shape = this._shapeObj;
+        var strokeWidth = shape.strokeWidth;
+        var width = shape.getWidth() - strokeWidth;
+        var height = shape.getHeight() - strokeWidth;
+
+        shape.remove();
+
+        if (width > 1 && height > 1) {
+            shape.isTemp = false;
+            canvas.add(shape);
+            resizeHelper.adjustOriginToCenter(shape);
         }
     }
 });
