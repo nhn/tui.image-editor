@@ -21,7 +21,8 @@ module.exports = {
         'LINE',
         'TEXT',
         'ICON',
-        'FILTER'
+        'FILTER',
+        'SHAPE'
     ),
 
     /**
@@ -76,7 +77,8 @@ module.exports = {
         'CROP',
         'FREE_DRAWING',
         'LINE',
-        'TEXT'
+        'TEXT',
+        'SHAPE'
     ),
 
     /**

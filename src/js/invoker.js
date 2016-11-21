@@ -14,6 +14,7 @@ var Line = require('./component/line');
 var Text = require('./component/text');
 var Icon = require('./component/icon');
 var Filter = require('./component/filter');
+var Shape = require('./component/shape');
 var eventNames = require('./consts').eventNames;
 
 /**
@@ -76,6 +77,7 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         this._register(new Text(main));
         this._register(new Icon(main));
         this._register(new Filter(main));
+        this._register(new Shape(main));
     },
 
     /**

@@ -8,6 +8,7 @@
 
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
+var shapeOptions = {};
 var mask;
 
 // Functions
@@ -64,6 +65,7 @@ var $btnCrop = $('#btn-crop');
 var $btnFlip = $('#btn-flip');
 var $btnRotation = $('#btn-rotation');
 var $btnDrawLine = $('#btn-draw-line');
+var $btnDrawShape = $('#btn-draw-shape');
 var $btnApplyCrop = $('#btn-apply-crop');
 var $btnCancelCrop = $('#btn-cancel-crop');
 var $btnFlipX = $('#btn-flip-x');
@@ -72,7 +74,6 @@ var $btnResetFlip = $('#btn-reset-flip');
 var $btnRotateClockwise = $('#btn-rotate-clockwise');
 var $btnRotateCounterClockWise = $('#btn-rotate-counter-clockwise');
 var $btnText = $('#btn-text');
-var $btnClosePalette = $('#btn-close-palette');
 var $btnTextStyle = $('.btn-text-style');
 var $btnAddIcon = $('#btn-add-icon');
 var $btnRegisterIcon = $('#btn-register-icon');
@@ -85,6 +86,7 @@ var $btnClose = $('.close');
 var $inputRotationRange = $('#input-rotation-range');
 var $inputBrushWidthRange = $('#input-brush-width-range');
 var $inputFontSizeRange = $('#input-font-size-range');
+var $inputStrokeWidthRange = $('#input-stroke-width-range');
 
 // Sub menus
 var $displayingSubMenu = $();
@@ -93,15 +95,19 @@ var $flipSubMenu = $('#flip-sub-menu');
 var $rotationSubMenu = $('#rotation-sub-menu');
 var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
 var $drawLineSubMenu = $('#draw-line-sub-menu');
+var $drawShapeSubMenu = $('#draw-shape-sub-menu');
 var $textSubMenu = $('#text-sub-menu');
 var $iconSubMenu = $('#icon-sub-menu');
 var $filterSubMenu = $('#filter-sub-menu');
 
 // Select line type
-var $selectMode = $('[name="select-line-type"]');
+var $selectLine = $('[name="select-line-type"]');
 
-// Text palette
-var $textPalette = $('#tui-text-palette');
+// Select shape type
+var $selectShapeType = $('[name="select-shape-type"]');
+
+// Select color of shape type
+var $selectShapeColor = $('[name="select-shape-color"]');
 
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
@@ -116,8 +122,14 @@ var brushColorpicker = tui.component.colorpicker.create({
 });
 
 // Color picker for text palette
-var textPaletteColorpicker = tui.component.colorpicker.create({
+var textColorpicker = tui.component.colorpicker.create({
     container: $('#tui-text-color-picker')[0],
+    color: '#000000'
+});
+
+// Color picker for shape
+var shapeColorpicker = tui.component.colorpicker.create({
+    container: $('#tui-shape-color-picker')[0],
     color: '#000000'
 });
 
@@ -127,17 +139,6 @@ var iconColorpicker = tui.component.colorpicker.create({
     color: '#000000'
 });
 
-brushColorpicker.on('selectColor', function(event) {
-    imageEditor.setBrush({
-        color: hexToRGBa(event.color, 0.5)
-    });
-});
-
-// Attach image editor custom events
-imageEditor.once('loadImage', function() {
-    imageEditor.clearUndoStack();
-});
-
 var resizeEditor = function() {
     var $editor = $('.tui-image-editor');
     var $container = $('.tui-image-editor-canvas-container');
@@ -145,6 +146,11 @@ var resizeEditor = function() {
 
     $editor.height(height);
 };
+
+// Attach image editor custom events
+imageEditor.once('loadImage', function() {
+    imageEditor.clearUndoStack();
+});
 
 imageEditor.on({
     endCropping: function() {
@@ -185,8 +191,20 @@ imageEditor.on({
             $inputFontSizeRange.val(obj.getFontSize());
         }
     },
-    removeObject: function(obj) {
-        console.log(obj);
+    selectObject: function(obj) {
+        var colorType;
+
+        if (obj.type === 'rect' || obj.type === 'circle') {
+            colorType = $selectShapeColor.val();
+
+            if (colorType === 'stroke') {
+                shapeColorpicker.setColor(obj.getStroke());
+            } else if (colorType === 'fill') {
+                shapeColorpicker.setColor(obj.getFill());
+            }
+
+            $inputStrokeWidthRange.val(obj.getStrokeWidth());
+        }
     }
 });
 
@@ -317,15 +335,15 @@ $btnDownload.on('click', function() {
     }
 });
 
-// control draw mode
+// control draw line mode
 $btnDrawLine.on('click', function() {
     imageEditor.endAll();
     $displayingSubMenu.hide();
     $displayingSubMenu = $drawLineSubMenu.show();
-    $selectMode.removeAttr('checked');
+    $selectLine.removeAttr('checked');
 });
 
-$selectMode.on('change', function() {
+$selectLine.on('change', function() {
     var mode = $(this).val();
     var settings = getBrushSettings();
     var state = imageEditor.getCurrentState();
@@ -343,6 +361,64 @@ $selectMode.on('change', function() {
     }
 });
 
+brushColorpicker.on('selectColor', function(event) {
+    imageEditor.setBrush({
+        color: hexToRGBa(event.color, 0.5)
+    });
+});
+
+// control draw shape mode
+$btnDrawShape.on('click', function() {
+    var state = imageEditor.getCurrentState();
+    var shapeType;
+
+    imageEditor.endAll();
+    $displayingSubMenu.hide();
+    $displayingSubMenu = $drawShapeSubMenu.show();
+
+    // set shape-drawing mode
+    if (state !== 'shape') {
+        // step 1. get type of shape
+        shapeType = $selectShapeType.val();
+
+        // step 2. get color of shape
+        shapeOptions.stroke = '#000';
+        shapeOptions.fill = '#fff';
+
+        // step 3. get line of shape
+        shapeOptions.strokeWidth = Number($inputStrokeWidthRange.val());
+
+        // step 4-1. set state of shape
+        imageEditor.setShape(shapeType, shapeOptions);
+
+        // step 4-2. change drawing shape mode (bind mousedown event on canvas)
+        imageEditor.startShapeDrawing();
+    }
+});
+
+$selectShapeType.on('change', function() {
+    var shapeType = $(this).val();
+    imageEditor.setShape(shapeType, shapeOptions);
+});
+
+shapeColorpicker.on('selectColor', function(event) {
+    var selecColorType = $selectShapeColor.val();
+    var color = event.color;
+
+    if (selecColorType === 'stroke') {
+        shapeOptions.stroke = color;
+    } else if (selecColorType === 'fill') {
+        shapeOptions.fill = color;
+    }
+
+    imageEditor.changeShape(shapeOptions);
+});
+
+$inputStrokeWidthRange.on('change', function() {
+    shapeOptions.strokeWidth = Number($(this).val());
+    imageEditor.changeShape(shapeOptions);
+});
+
 // control text mode
 $btnText.on('click', function() {
     if (imageEditor.getCurrentState() === 'TEXT') {
@@ -352,7 +428,6 @@ $btnText.on('click', function() {
         $displayingSubMenu.hide();
         $displayingSubMenu = $textSubMenu.show();
         imageEditor.startTextMode();
-        $textPalette.hide();
     }
 });
 
@@ -394,15 +469,10 @@ $btnTextStyle.on('click', function(e) { // eslint-disable-line
     imageEditor.changeTextStyle(styleObj);
 });
 
-textPaletteColorpicker.on('selectColor', function(event) {
+textColorpicker.on('selectColor', function(event) {
     imageEditor.changeTextStyle({
         'fill': event.color
     });
-});
-
-$btnClosePalette.on('click', function() {
-    imageEditor.deactivateAll();
-    $textPalette.hide();
 });
 
 // control icon
