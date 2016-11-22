@@ -868,8 +868,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             this._state = states.SHAPE;
             this._getComponent(components.SHAPE).startDrawingMode();
         }
-
-        console.log(this._canvas);
     },
 
     /**
@@ -1350,6 +1348,26 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     clearRedoStack: function() {
         this._invoker.clearRedoStack();
+    },
+
+    /**
+     * Whehter the undo stack is empty or not
+     * @api
+     * @returns {boolean}
+     * imageEditor.isEmptyUndoStack();
+     */
+    isEmptyUndoStack: function() {
+        return this._invoker.isEmptyRedoStack();
+    },
+
+    /**
+     * Whehter the redo stack is empty or not
+     * @api
+     * @returns {boolean}
+     * imageEditor.isEmptyRedoStack();
+     */
+    isEmptyRedoStack: function() {
+        return this._invoker.isEmptyUndoStack();
     },
 
     /**
