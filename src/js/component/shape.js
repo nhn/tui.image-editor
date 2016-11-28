@@ -75,7 +75,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
         this._startPoint = {};
 
         /**
-         * Using shortcut on drawing
+         * Using shortcut on drawing shape
          * @type {boolean}
          * @private
          */
