@@ -39,7 +39,6 @@ var $btnRemoveActiveObject = $('#btn-remove-active-object');
 // Image editor controls - bottom menu buttons
 var $btnCrop = $('#btn-crop');
 var $btnAddText = $('#btn-add-text');
-var $btnDrawShape = $('#btn-draw-shape');
 
 // Image editor controls - bottom submenu buttons
 var $btnApplyCrop = $('#btn-apply-crop');
@@ -52,10 +51,11 @@ var $btnAddCancelIcon = $('#btn-add-cancel-icon');
 var $btnAddCustomIcon = $('#btn-add-custom-icon');
 var $btnFreeDrawing = $('#btn-free-drawing');
 var $btnLineDrawing = $('#btn-line-drawing');
-var $btnDrawRect = $('#btn-draw-rect');
-var $btnDrawSquare = $('#btn-draw-square');
-var $btnDrawEllipse = $('#btn-draw-ellipse');
-var $btnDrawCircle = $('#btn-draw-circle');
+var $btnAddRect = $('#btn-add-rect');
+var $btnAddSquare = $('#btn-add-square');
+var $btnAddEllipse = $('#btn-add-ellipse');
+var $btnAddCircle = $('#btn-add-circle');
+var $btnAddTriangle = $('#btn-add-triangle');
 var $btnChangeTextStyle = $('.btn-change-text-style');
 
 // Image editor controls - etc.
@@ -410,31 +410,41 @@ brushColorpicker.on('selectColor', function(event) {
 });
 
 // Draw shpae menu action
-$btnDrawRect.on('click', function() {
+$btnAddRect.on('click', function() {
     imageEditor.addShape('rect', tui.util.extend({
         width: 500,
         height: 300
     }, shapeOpt));
 });
 
-$btnDrawSquare.on('click', function() {
+$btnAddSquare.on('click', function() {
     imageEditor.addShape('rect', tui.util.extend({
         width: 400,
-        height: 400
+        height: 400,
+        isRegular: true
     }, shapeOpt));
 });
 
-$btnDrawEllipse.on('click', function() {
+$btnAddEllipse.on('click', function() {
     imageEditor.addShape('circle', tui.util.extend({
         rx: 300,
         ry: 200
     }, shapeOpt));
 });
 
-$btnDrawCircle.on('click', function() {
+$btnAddCircle.on('click', function() {
     imageEditor.addShape('circle', tui.util.extend({
         rx: 200,
-        ry: 200
+        ry: 200,
+        isRegular: true
+    }, shapeOpt));
+});
+
+$btnAddTriangle.on('click', function() {
+    imageEditor.addShape('triangle', tui.util.extend({
+        width: 400,
+        height: 400,
+        isRegular: true
     }, shapeOpt));
 });
 

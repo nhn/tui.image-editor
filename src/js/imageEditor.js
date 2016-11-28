@@ -111,8 +111,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 var obj = event.target;
                 var command;
 
-                if (obj.isType('cropzone') || obj.isType('text') ||
-                    obj.isTemp) {
+                if (obj.isType('cropzone') || obj.isType('text')) {
                     return;
                 }
 
@@ -266,12 +265,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      */
     _onFabricRemoved: function(fEvent) {
-        var obj = fEvent.target;
-
-        if (obj.isTemp) {
-            return;
-        }
-
         /**
          * @api
          * @event ImageEditor#removeObject
@@ -1357,7 +1350,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.isEmptyUndoStack();
      */
     isEmptyUndoStack: function() {
-        return this._invoker.isEmptyRedoStack();
+        return this._invoker.isEmptyUndoStack();
     },
 
     /**
@@ -1367,7 +1360,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.isEmptyRedoStack();
      */
     isEmptyRedoStack: function() {
-        return this._invoker.isEmptyUndoStack();
+        return this._invoker.isEmptyRedoStack();
     },
 
     /**
@@ -1383,6 +1376,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         mainComponent.setCssMaxDimension(dimension);
         mainComponent.adjustCanvasDimension();
+    },
+
+    startDrawingIcon: function() {
+        var iconComponent = this._getComponent(components.ICON);
+
+        iconComponent.start();
     }
 });
 

@@ -9,7 +9,7 @@
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
 var shapeOptions = {};
-var mask;
+var shapeType;
 
 // Functions
 // HEX to RGBA
@@ -112,7 +112,11 @@ var $selectShapeColor = $('[name="select-shape-color"]');
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
     cssMaxWidth: 700,
-    cssMaxHeight: 500
+    cssMaxHeight: 500,
+    selectionStyle: {
+        cornerSize: 30,
+        rotatingPointOffset: 70
+    }
 });
 
 // Color picker for free drawing
@@ -194,7 +198,8 @@ imageEditor.on({
     selectObject: function(obj) {
         var colorType;
 
-        if (obj.type === 'rect' || obj.type === 'circle') {
+        if (obj.type === 'rect' || obj.type === 'circle' ||
+            obj.type === 'triangle') {
             colorType = $selectShapeColor.val();
 
             if (colorType === 'stroke') {
@@ -369,17 +374,16 @@ brushColorpicker.on('selectColor', function(event) {
 
 // control draw shape mode
 $btnDrawShape.on('click', function() {
-    var state = imageEditor.getCurrentState();
-    var shapeType;
+    if (imageEditor.getCurrentState() === 'SHAPE') {
+        $(this).removeClass('active');
 
-    imageEditor.endAll();
-    $displayingSubMenu.hide();
-    $displayingSubMenu = $drawShapeSubMenu.show();
+        imageEditor.endDrawingShapeMode();
+    } else {
+        $displayingSubMenu.hide();
+        $displayingSubMenu = $drawShapeSubMenu.show();
 
-    // set shape-drawing mode
-    if (state !== 'shape') {
         // step 1. get type of shape
-        shapeType = $selectShapeType.val();
+        shapeType = $('[name="select-shape-type"]:checked').val();
 
         // step 2. get color of shape
         shapeOptions.stroke = '#000';
@@ -389,16 +393,17 @@ $btnDrawShape.on('click', function() {
         shapeOptions.strokeWidth = Number($inputStrokeWidthRange.val());
 
         // step 4-1. set state of shape
-        imageEditor.setShape(shapeType, shapeOptions);
+        imageEditor.setDrawingShape(shapeType, shapeOptions);
 
         // step 4-2. change drawing shape mode (bind mousedown event on canvas)
-        imageEditor.startShapeDrawing();
+        imageEditor.startDrawingShapeMode();
     }
 });
 
 $selectShapeType.on('change', function() {
-    var shapeType = $(this).val();
-    imageEditor.setShape(shapeType, shapeOptions);
+    shapeType = $(this).val();
+
+    imageEditor.setDrawingShape(shapeType);
 });
 
 shapeColorpicker.on('selectColor', function(event) {
@@ -406,17 +411,26 @@ shapeColorpicker.on('selectColor', function(event) {
     var color = event.color;
 
     if (selecColorType === 'stroke') {
-        shapeOptions.stroke = color;
+        imageEditor.changeShape({
+            stroke: color
+        });
     } else if (selecColorType === 'fill') {
-        shapeOptions.fill = color;
+        imageEditor.changeShape({
+            fill: color
+        });
     }
 
-    imageEditor.changeShape(shapeOptions);
+    imageEditor.setDrawingShape(shapeType, shapeOptions);
 });
 
 $inputStrokeWidthRange.on('change', function() {
-    shapeOptions.strokeWidth = Number($(this).val());
-    imageEditor.changeShape(shapeOptions);
+    var strokeWidth = Number($(this).val());
+
+    imageEditor.changeShape({
+        strokeWidth: strokeWidth
+    });
+
+    imageEditor.setDrawingShape(shapeType, shapeOptions);
 });
 
 // control text mode

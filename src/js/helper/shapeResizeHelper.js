@@ -37,35 +37,24 @@ function setStartPoint(shape) {
 }
 
 /**
- * Get the positions of origin by the pointer value
+ * Get the positions of ratated origin by the pointer value
  * @param {{x: number, y: number}} origin - Origin value
  * @param {{x: number, y: number}} pointer - Pointer value
+ * @param {number} angle - Rotating angle
  * @returns {object} Postions of origin
  */
-function getOriginPositions(origin, pointer) {
-    return {
-        originX: (origin.x > pointer.x) ? 'right' : 'left',
-        originY: (origin.y > pointer.y) ? 'bottom' : 'top'
-    };
-}
-
-/**
- * Get the regular dimension by width, height
- * @param {number} width - Width value of the shape
- * @param {number} height - Height value of the shape
- * @param {boolean} isTriangle - Whether the dimension is calculated by triangle or not
- * @returns {object} Dimension values
- */
-function getReguralrDimension(width, height, isTriangle) {
-    width = height = Math.max(width, height);
-
-    if (isTriangle) {
-        height = Math.sqrt(3) / 2 * width;
-    }
+function getPositionsOfRotatedOrigin(origin, pointer, angle) {
+    var sx = origin.x;
+    var sy = origin.y;
+    var px = pointer.x;
+    var py = pointer.y;
+    var r = angle * Math.PI / 180;
+    var rx = (px - sx) * Math.cos(r) - (py - sy) * Math.sin(r) + sx;
+    var ry = (px - sx) * Math.sin(r) + (py - sy) * Math.cos(r) + sy;
 
     return {
-        width: width,
-        height: height
+        originX: (sx > rx) ? 'right' : 'left',
+        originY: (sy > ry) ? 'bottom' : 'top'
     };
 }
 
@@ -86,9 +75,10 @@ function hasCenterOrigin(shape) {
  */
 function adjustOriginByStartPoint(pointer, shape) {
     var centerPoint = shape.getPointByOrigin('center', 'center');
-    var originPosition = getOriginPositions(centerPoint, pointer);
-    var originX = originPosition.originX;
-    var originY = originPosition.originY;
+    var angle = -shape.getAngle();
+    var originPositions = getPositionsOfRotatedOrigin(centerPoint, pointer, angle);
+    var originX = originPositions.originX;
+    var originY = originPositions.originY;
     var origin = shape.getPointByOrigin(originX, originY);
     var left = shape.getLeft() - (centerPoint.x - origin.x);
     var top = shape.getTop() - (centerPoint.x - origin.y);
@@ -110,9 +100,10 @@ function adjustOriginByStartPoint(pointer, shape) {
  */
 function adjustOriginByMovingPointer(pointer, shape) {
     var origin = shape.startPoint;
-    var originPosition = getOriginPositions(origin, pointer);
-    var originX = originPosition.originX;
-    var originY = originPosition.originY;
+    var angle = -shape.getAngle();
+    var originPositions = getPositionsOfRotatedOrigin(origin, pointer, angle);
+    var originX = originPositions.originX;
+    var originY = originPositions.originY;
 
     shape.setPositionByOrigin(origin, originX, originY);
 }
@@ -124,24 +115,24 @@ function adjustOriginByMovingPointer(pointer, shape) {
 function adjustDimensionOnScaling(shape) {
     var type = shape.type;
     var dimensionKeys = DIMENSION_KEYS[type];
-    var width = shape[dimensionKeys.w] * shape.scaleX;
-    var height = shape[dimensionKeys.h] * shape.scaleY;
-    var isTriangle = !!(shape.type === 'triangle');
-    var lockUniScaling = !!(shape.isRegular);
-    var options, dimension;
+    var scaleX = shape.scaleX;
+    var scaleY = shape.scaleY;
+    var width = shape[dimensionKeys.w] * scaleX;
+    var height = shape[dimensionKeys.h] * scaleY;
+    var options, maxScale;
 
     if (shape.isRegular) {
-        dimension = getReguralrDimension(width, height, isTriangle);
-        width = dimension.width;
-        height = dimension.height;
+        maxScale = Math.max(scaleX, scaleY);
+
+        width = shape[dimensionKeys.w] * maxScale;
+        height = shape[dimensionKeys.h] * maxScale;
     }
 
     options = {
         hasControls: false,
         hasBorders: false,
         scaleX: 1,
-        scaleY: 1,
-        lockUniScaling: lockUniScaling
+        scaleY: 1
     };
 
     options[dimensionKeys.w] = width;
@@ -165,7 +156,6 @@ function adjustDimensionOnMouseMove(pointer, shape) {
     var strokeWidth = shape.strokeWidth;
     var isTriangle = !!(shape.type === 'triangle');
     var options = {};
-    var dimension;
 
     if (width > strokeWidth) {
         width -= strokeWidth / divisor;
@@ -176,9 +166,11 @@ function adjustDimensionOnMouseMove(pointer, shape) {
     }
 
     if (shape.isRegular) {
-        dimension = getReguralrDimension(width, height, isTriangle);
-        width = dimension.width;
-        height = dimension.height;
+        width = height = Math.max(width, height);
+
+        if (isTriangle) {
+            height = Math.sqrt(3) / 2 * width;
+        }
     }
 
     options[dimensionKeys.w] = width;
@@ -219,7 +211,7 @@ module.exports = {
         }
 
         if (isScaling) {
-            adjustDimensionOnScaling(shape);
+            adjustDimensionOnScaling(shape, pointer);
         } else {
             adjustDimensionOnMouseMove(pointer, shape);
         }

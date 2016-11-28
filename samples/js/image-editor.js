@@ -7,7 +7,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 tui.util.defineNamespace('tui.component.ImageEditor', require('./src/js/imageEditor'), true);
 
-},{"./src/js/imageEditor":17}],2:[function(require,module,exports){
+},{"./src/js/imageEditor":19}],2:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image crop module (start cropping, end cropping)
@@ -304,7 +304,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
 
 module.exports = Cropper;
 
-},{"../consts":12,"../extension/cropzone":13,"../interface/component":20,"../util":22}],3:[function(require,module,exports){
+},{"../consts":13,"../extension/cropzone":14,"../interface/component":22,"../util":24}],3:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add filter module
@@ -428,7 +428,7 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
 
 module.exports = Filter;
 
-},{"../consts":12,"../extension/mask":14,"../interface/component":20}],4:[function(require,module,exports){
+},{"../consts":13,"../extension/mask":15,"../interface/component":22}],4:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image flip module
@@ -579,7 +579,7 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
 
 module.exports = Flip;
 
-},{"../consts":12,"../interface/Component":18}],5:[function(require,module,exports){
+},{"../consts":13,"../interface/Component":20}],5:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Free drawing module, Set brush
@@ -657,7 +657,7 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
 
 module.exports = FreeDrawing;
 
-},{"../consts":12,"../interface/Component":18}],6:[function(require,module,exports){
+},{"../consts":13,"../interface/Component":20}],6:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add icon module
@@ -765,7 +765,7 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
 
 module.exports = Icon;
 
-},{"../consts":12,"../interface/component":20}],7:[function(require,module,exports){
+},{"../consts":13,"../interface/component":22}],7:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image loader
@@ -856,7 +856,7 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
 
 module.exports = ImageLoader;
 
-},{"../consts":12,"../interface/component":20}],8:[function(require,module,exports){
+},{"../consts":13,"../interface/component":22}],8:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Free drawing module, Set brush
@@ -1030,7 +1030,7 @@ var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
 
 module.exports = Line;
 
-},{"../consts":12,"../interface/Component":18}],9:[function(require,module,exports){
+},{"../consts":13,"../interface/Component":20}],9:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Main component having canvas & image, set css-max-dimension of canvas
@@ -1270,7 +1270,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
 
 module.exports = Main;
 
-},{"../consts":12,"../interface/component":20}],10:[function(require,module,exports){
+},{"../consts":13,"../interface/component":22}],10:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image rotation module
@@ -1378,7 +1378,407 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
 
 module.exports = Rotation;
 
-},{"../consts":12,"../interface/Component":18}],11:[function(require,module,exports){
+},{"../consts":13,"../interface/Component":20}],11:[function(require,module,exports){
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Shape component
+ */
+'use strict';
+
+var Component = require('../interface/component');
+var consts = require('../consts');
+var resizeHelper = require('../helper/shapeResizeHelper');
+
+var util = tui.util;
+var extend = util.extend;
+var bind = util.bind;
+
+var KEY_CODES = consts.keyCodes;
+var DEFAULT_TYPE = 'rect';
+var DEFAULT_OPTIONS = {
+    strokeWidth: 1,
+    stroke: '#000000',
+    fill: '#ffffff',
+    width: 1,
+    height: 1,
+    rx: 0,
+    ry: 0,
+    lockSkewingX: true,
+    lockSkewingY: true,
+    lockUniScaling: false,
+    bringForward: true,
+    isRegular: false
+};
+
+/**
+ * Shape
+ * @class Shape
+ * @param {Component} parent - parent component
+ * @extends {Component}
+ */
+var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
+    init: function(parent) {
+        this.setParent(parent);
+
+        /**
+         * Object of The drawing shape
+         * @type {fabric.Object}
+         * @private
+         */
+        this._shapeObj = null;
+
+        /**
+         * Type of the drawing shape
+         * @type {string}
+         * @private
+         */
+        this._type = DEFAULT_TYPE;
+
+        /**
+         * Options to draw the shape
+         * @type {object}
+         * @private
+         */
+        this._options = DEFAULT_OPTIONS;
+
+        /**
+         * Whether the shape object is selected or not
+         * @type {boolean}
+         * @private
+         */
+        this._isSelected = false;
+
+        /**
+         * Pointer for drawing shape (x, y)
+         * @type {object}
+         * @private
+         */
+        this._startPoint = {};
+
+        /**
+         * Using shortcut on drawing
+         * @type {boolean}
+         * @private
+         */
+        this._withShiftKey = false;
+
+
+        /**
+         * Event handler list
+         * @type {object}
+         * @private
+         */
+        this._handlers = {
+            mousedown: bind(this._onFabricMouseDown, this),
+            mousemove: bind(this._onFabricMouseMove, this),
+            mouseup: bind(this._onFabricMouseUp, this),
+            keydown: bind(this._onKeyDown, this),
+            keyup: bind(this._onKeyUp, this)
+        };
+    },
+
+    /**
+     * Component name
+     * @type {string}
+     */
+    name: consts.componentNames.SHAPE,
+
+    /**
+     * Start to draw the shape on canvas
+     * @ignore
+     */
+    startDrawingMode: function() {
+        var canvas = this.getCanvas();
+
+        this._isSelected = false;
+
+        canvas.defaultCursor = 'crosshair';
+        canvas.selection = false;
+        canvas.on({
+            'mouse:down': this._handlers.mousedown
+        });
+
+        fabric.util.addListener(document, 'keydown', this._handlers.keydown);
+        fabric.util.addListener(document, 'keyup', this._handlers.keyup);
+    },
+
+    /**
+     * End to draw the shape on canvas
+     * @ignore
+     */
+    endDrawingMode: function() {
+        var canvas = this.getCanvas();
+
+        this._isSelected = false;
+
+        canvas.defaultCursor = 'default';
+        canvas.selection = true;
+        canvas.off({
+            'mouse:down': this._handlers.mousedown
+        });
+
+        fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
+        fabric.util.removeListener(document, 'keyup', this._handlers.keyup);
+    },
+
+    /**
+     * Set states of the current drawing shape
+     * @ignore
+     * @param {string} type - Shape type (ex: 'rect', 'circle')
+     * @param {object} [options] - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     */
+    setStates: function(type, options) {
+        this._type = type;
+
+        if (options) {
+            this._options = extend(this._options, options);
+        }
+    },
+
+    /**
+     * Add the shape
+     * @ignore
+     * @param {string} type - Shape type (ex: 'rect', 'circle')
+     * @param {object} options - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
+     */
+    add: function(type, options) {
+        var canvas = this.getCanvas();
+        var shapeObj;
+
+        options = this._createOptions(options);
+        shapeObj = this._createInstance(type, options);
+
+        this._bindEventOnShape(shapeObj);
+
+        canvas.add(shapeObj);
+    },
+
+    /**
+     * Change the shape
+     * @ignore
+     * @param {fabric.Object} shapeObj - Selected shape object on canvas
+     * @param {object} options - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
+     */
+    change: function(shapeObj, options) {
+        shapeObj.set(options);
+        this.getCanvas().renderAll();
+    },
+
+    /**
+     * Create the instance of shape
+     * @param {string} type - Shape type
+     * @param {object} options - Options to creat the shape
+     * @returns {fabric.Object} Shape instance
+     * @private
+     */
+    _createInstance: function(type, options) {
+        var instance;
+
+        switch (type) {
+            case 'rect':
+                instance = new fabric.Rect(options);
+                break;
+            case 'circle':
+                instance = new fabric.Ellipse(extend({
+                    type: 'circle'
+                }, options));
+                break;
+            case 'triangle':
+                instance = new fabric.Triangle(options);
+                break;
+            default:
+                instance = {};
+        }
+
+        return instance;
+    },
+
+    /**
+     * Get the options to create the shape
+     * @param {object} options - Options to creat the shape
+     * @returns {object} Shape options
+     * @private
+     */
+    _createOptions: function(options) {
+        var centerPoint = this.getCanvas().getCenter();
+        var selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
+
+        options = extend({}, DEFAULT_OPTIONS, selectionStyles, centerPoint, options);
+
+        if (options.isRegular) {
+            options.lockUniScaling = true;
+        }
+
+        return options;
+    },
+
+    /**
+     * Bind fabric events on the creating shape object
+     * @param {fabric.Object} shapeObj - Shape object
+     * @private
+     */
+    _bindEventOnShape: function(shapeObj) {
+        var self = this;
+        var canvas = this.getCanvas();
+
+        shapeObj.on({
+            added: function() {
+                self._shapeObj = this;
+                resizeHelper.setOrigins(self._shapeObj);
+            },
+            selected: function() {
+                self._isSelected = true;
+                self._shapeObj = this;
+                canvas.uniScaleTransform = true;
+                canvas.defaultCursor = 'default';
+                resizeHelper.setOrigins(self._shapeObj);
+            },
+            deselected: function() {
+                self._isSelected = false;
+                self._shapeObj = null;
+                canvas.defaultCursor = 'crosshair';
+                canvas.uniScaleTransform = false;
+            },
+            modified: function() {
+                var currentObj = self._shapeObj;
+
+                resizeHelper.adjustOriginToCenter(currentObj);
+                resizeHelper.setOrigins(currentObj);
+            },
+            scaling: function(fEvent) {
+                var pointer = canvas.getPointer(fEvent.e);
+                var currentObj = self._shapeObj;
+
+                canvas.setCursor('crosshair');
+                resizeHelper.resize(currentObj, pointer, true);
+            }
+        });
+    },
+
+    /**
+     * MouseDown event handler on canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+     * @private
+     */
+    _onFabricMouseDown: function(fEvent) {
+        var canvas;
+
+        if (!this._isSelected && !this._shapeObj) {
+            canvas = this.getCanvas();
+            this._startPoint = canvas.getPointer(fEvent.e);
+
+            canvas.on({
+                'mouse:move': this._handlers.mousemove,
+                'mouse:up': this._handlers.mouseup
+            });
+        }
+    },
+
+    /**
+     * MouseDown event handler on canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+     * @private
+     */
+    _onFabricMouseMove: function(fEvent) {
+        var canvas = this.getCanvas();
+        var pointer = canvas.getPointer(fEvent.e);
+        var startPointX = this._startPoint.x;
+        var startPointY = this._startPoint.y;
+        var width = startPointX - pointer.x;
+        var height = startPointY - pointer.y;
+        var shape = this._shapeObj;
+
+        if (!shape) {
+            this.add(this._type, {
+                left: startPointX,
+                top: startPointY,
+                width: width,
+                height: width,
+                isRegular: this._withShiftKey
+            });
+        } else {
+            resizeHelper.resize(shape, pointer);
+            canvas.renderAll();
+        }
+    },
+
+    /**
+     * MouseUp event handler on canvas
+     * @private
+     */
+    _onFabricMouseUp: function() {
+        var canvas = this.getCanvas();
+        var shape = this._shapeObj;
+
+        if (shape) {
+            resizeHelper.adjustOriginToCenter(shape);
+        }
+
+        this._shapeObj = null;
+
+        canvas.off({
+            'mouse:move': this._handlers.mousemove,
+            'mouse:up': this._handlers.mouseup
+        });
+    },
+
+    /**
+     * Keydown event handler on document
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+    _onKeyDown: function(e) {
+        if (e.keyCode === KEY_CODES.SHIFT) {
+            this._withShiftKey = true;
+
+            if (this._shapeObj) {
+                this._shapeObj.isRegular = true;
+            }
+        }
+    },
+
+    /**
+     * Keyup event handler on document
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+    _onKeyUp: function(e) {
+        if (e.keyCode === KEY_CODES.SHIFT) {
+            this._withShiftKey = false;
+
+            if (this._shapeObj) {
+                this._shapeObj.isRegular = false;
+            }
+        }
+    }
+});
+
+module.exports = Shape;
+
+},{"../consts":13,"../helper/shapeResizeHelper":18,"../interface/component":22}],12:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Text module
@@ -1906,7 +2306,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
 module.exports = Text;
 
-},{"../consts":12,"../interface/component":20,"../util":22}],12:[function(require,module,exports){
+},{"../consts":13,"../interface/component":22,"../util":24}],13:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Constants
@@ -1930,7 +2330,8 @@ module.exports = {
         'LINE',
         'TEXT',
         'ICON',
-        'FILTER'
+        'FILTER',
+        'SHAPE'
     ),
 
     /**
@@ -1985,7 +2386,8 @@ module.exports = {
         'CROP',
         'FREE_DRAWING',
         'LINE',
-        'TEXT'
+        'TEXT',
+        'SHAPE'
     ),
 
     /**
@@ -2016,7 +2418,7 @@ module.exports = {
     }
 };
 
-},{"./util":22}],13:[function(require,module,exports){
+},{"./util":24}],14:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Cropzone extending fabric.Rect
@@ -2385,7 +2787,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
 
 module.exports = Cropzone;
 
-},{"../util":22}],14:[function(require,module,exports){
+},{"../util":24}],15:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Mask extending fabric.Image.filters.Mask
@@ -2489,7 +2891,7 @@ var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.pr
 
 module.exports = Mask;
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Command factory
@@ -2810,7 +3212,7 @@ module.exports = {
     create: create
 };
 
-},{"../consts":12,"../interface/command":19}],16:[function(require,module,exports){
+},{"../consts":13,"../interface/command":21}],17:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Error-message factory
@@ -2852,7 +3254,254 @@ module.exports = {
     }
 };
 
-},{"../util":22}],17:[function(require,module,exports){
+},{"../util":24}],18:[function(require,module,exports){
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Shape resize helper
+ */
+'use strict';
+
+var DIVISOR = {
+    rect: 1,
+    circle: 2,
+    triangle: 1
+};
+var DIMENSION_KEYS = {
+    rect: {
+        w: 'width',
+        h: 'height'
+    },
+    circle: {
+        w: 'rx',
+        h: 'ry'
+    },
+    triangle: {
+        w: 'width',
+        h: 'height'
+    }
+};
+
+/**
+ * Set the start point value to the shape object
+ * @param {fabric.Object} shape - Shape object
+ */
+function setStartPoint(shape) {
+    var originX = shape.getOriginX();
+    var originY = shape.getOriginY();
+    var originKey = originX.substring(0, 1) + originY.substring(0, 1);
+
+    shape.startPoint = shape.origins[originKey];
+}
+
+/**
+ * Get the positions of ratated origin by the pointer value
+ * @param {{x: number, y: number}} origin - Origin value
+ * @param {{x: number, y: number}} pointer - Pointer value
+ * @param {number} angle - Rotating angle
+ * @returns {object} Postions of origin
+ */
+function getPositionsOfRotatedOrigin(origin, pointer, angle) {
+    var sx = origin.x;
+    var sy = origin.y;
+    var px = pointer.x;
+    var py = pointer.y;
+    var r = angle * Math.PI / 180;
+    var rx = (px - sx) * Math.cos(r) - (py - sy) * Math.sin(r) + sx;
+    var ry = (px - sx) * Math.sin(r) + (py - sy) * Math.cos(r) + sy;
+
+    return {
+        originX: (sx > rx) ? 'right' : 'left',
+        originY: (sy > ry) ? 'bottom' : 'top'
+    };
+}
+
+/**
+ * Whether the shape has the center origin or not
+ * @param {fabric.Object} shape - Shape object
+ * @returns {boolean} State
+ */
+function hasCenterOrigin(shape) {
+    return (shape.getOriginX() === 'center' &&
+            shape.getOriginY() === 'center');
+}
+
+/**
+ * Adjust the origin of shape by the start point
+ * @param {{x: number, y: number}} pointer - Pointer value
+ * @param {fabric.Object} shape - Shape object
+ */
+function adjustOriginByStartPoint(pointer, shape) {
+    var centerPoint = shape.getPointByOrigin('center', 'center');
+    var angle = -shape.getAngle();
+    var originPositions = getPositionsOfRotatedOrigin(centerPoint, pointer, angle);
+    var originX = originPositions.originX;
+    var originY = originPositions.originY;
+    var origin = shape.getPointByOrigin(originX, originY);
+    var left = shape.getLeft() - (centerPoint.x - origin.x);
+    var top = shape.getTop() - (centerPoint.x - origin.y);
+
+    shape.set({
+        originX: originX,
+        originY: originY,
+        left: left,
+        top: top
+    });
+
+    shape.setCoords();
+}
+
+/**
+ * Adjust the origin of shape by the moving pointer value
+ * @param {{x: number, y: number}} pointer - Pointer value
+ * @param {fabric.Object} shape - Shape object
+ */
+function adjustOriginByMovingPointer(pointer, shape) {
+    var origin = shape.startPoint;
+    var angle = -shape.getAngle();
+    var originPositions = getPositionsOfRotatedOrigin(origin, pointer, angle);
+    var originX = originPositions.originX;
+    var originY = originPositions.originY;
+
+    shape.setPositionByOrigin(origin, originX, originY);
+}
+
+/**
+ * Adjust the dimension of shape on firing scaling event
+ * @param {fabric.Object} shape - Shape object
+ */
+function adjustDimensionOnScaling(shape) {
+    var type = shape.type;
+    var dimensionKeys = DIMENSION_KEYS[type];
+    var scaleX = shape.scaleX;
+    var scaleY = shape.scaleY;
+    var width = shape[dimensionKeys.w] * scaleX;
+    var height = shape[dimensionKeys.h] * scaleY;
+    var options, maxScale;
+
+    if (shape.isRegular) {
+        maxScale = Math.max(scaleX, scaleY);
+
+        width = shape[dimensionKeys.w] * maxScale;
+        height = shape[dimensionKeys.h] * maxScale;
+    }
+
+    options = {
+        hasControls: false,
+        hasBorders: false,
+        scaleX: 1,
+        scaleY: 1
+    };
+
+    options[dimensionKeys.w] = width;
+    options[dimensionKeys.h] = height;
+
+    shape.set(options);
+}
+
+/**
+ * Adjust the dimension of shape on firing mouse move event
+ * @param {{x: number, y: number}} pointer - Pointer value
+ * @param {fabric.Object} shape - Shape object
+ */
+function adjustDimensionOnMouseMove(pointer, shape) {
+    var origin = shape.startPoint;
+    var type = shape.type;
+    var divisor = DIVISOR[type];
+    var dimensionKeys = DIMENSION_KEYS[type];
+    var width = Math.abs(origin.x - pointer.x) / divisor;
+    var height = Math.abs(origin.y - pointer.y) / divisor;
+    var strokeWidth = shape.strokeWidth;
+    var isTriangle = !!(shape.type === 'triangle');
+    var options = {};
+
+    if (width > strokeWidth) {
+        width -= strokeWidth / divisor;
+    }
+
+    if (height > strokeWidth) {
+        height -= strokeWidth / divisor;
+    }
+
+    if (shape.isRegular) {
+        width = height = Math.max(width, height);
+
+        if (isTriangle) {
+            height = Math.sqrt(3) / 2 * width;
+        }
+    }
+
+    options[dimensionKeys.w] = width;
+    options[dimensionKeys.h] = height;
+
+    shape.set(options);
+}
+
+module.exports = {
+    /**
+     * Set each origin value to shape
+     * @param {fabric.Object} shape - Shape object
+     */
+    setOrigins: function(shape) {
+        var leftTopPoint = shape.getPointByOrigin('left', 'top');
+        var rightTopPoint = shape.getPointByOrigin('right', 'top');
+        var rightBottomPoint = shape.getPointByOrigin('right', 'bottom');
+        var leftBottomPoint = shape.getPointByOrigin('left', 'bottom');
+
+        shape.origins = {
+            lt: leftTopPoint,
+            rt: rightTopPoint,
+            rb: rightBottomPoint,
+            lb: leftBottomPoint
+        };
+    },
+
+    /**
+     * Resize the shape
+     * @param {fabric.Object} shape - Shape object
+     * @param {{x: number, y: number}} pointer - Mouse pointer values on canvas
+     * @param {boolean} isScaling - Whether the resizing action is scaling or not
+     */
+    resize: function(shape, pointer, isScaling) {
+        if (hasCenterOrigin(shape)) {
+            adjustOriginByStartPoint(pointer, shape);
+            setStartPoint(shape);
+        }
+
+        if (isScaling) {
+            adjustDimensionOnScaling(shape, pointer);
+        } else {
+            adjustDimensionOnMouseMove(pointer, shape);
+        }
+
+        adjustOriginByMovingPointer(pointer, shape);
+    },
+
+    /**
+     * Adjust the origin position of shape to center
+     * @param {fabric.Object} shape - Shape object
+     */
+    adjustOriginToCenter: function(shape) {
+        var centerPoint = shape.getPointByOrigin('center', 'center');
+        var originX = shape.getOriginX();
+        var originY = shape.getOriginY();
+        var origin = shape.getPointByOrigin(originX, originY);
+        var left = shape.getLeft() + (centerPoint.x - origin.x);
+        var top = shape.getTop() + (centerPoint.y - origin.y);
+
+        shape.set({
+            hasControls: true,
+            hasBorders: true,
+            originX: 'center',
+            originY: 'center',
+            left: left,
+            top: top
+        });
+
+        shape.setCoords(); // For left, top properties
+    }
+};
+
+},{}],19:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image-editor application class
@@ -2865,7 +3514,7 @@ var consts = require('./consts');
 
 var events = consts.eventNames;
 var commands = consts.commandNames;
-var compList = consts.componentNames;
+var components = consts.componentNames;
 var states = consts.states;
 var keyCodes = consts.keyCodes;
 var fObjectOptions = consts.fObjectOptions;
@@ -2918,9 +3567,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _setSelectionStyle: function(styles) {
-        tui.util.forEach(styles, function(style, key) {
-            fObjectOptions.SELECTION_STYLE[key] = style;
-        });
+        tui.util.extend(fObjectOptions.SELECTION_STYLE, styles);
     },
 
     /**
@@ -2968,8 +3615,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 var obj = event.target;
                 var command;
 
-                if (obj.isType('cropzone') ||
-                    obj.isType('text')) {
+                if (obj.isType('cropzone') || obj.isType('text')) {
                     return;
                 }
 
@@ -3027,6 +3673,18 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                     this.getCurrentState() !== 'TEXT') {
                     this.startTextMode();
                 }
+
+                /**
+                 * @event ImageEditor#selectObject
+                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+                 * @example
+                 * imageEditor.on('selectObject', function(obj) {
+                 *     console.log(obj);
+                 *     console.log(obj.type);
+                 *     console.log(obj.getType());
+                 * });
+                 */
+                this.fire(events.SELECT_OBJECT, event.target);
             }, this)
         });
     },
@@ -3057,6 +3715,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
             this._canvas.getActiveObject()) {
             e.preventDefault();
+
             this.removeActiveObject();
         }
     },
@@ -3066,7 +3725,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      */
     _onFabricSelectClear: function(fEvent) {
-        var textComp = this._getComponent(compList.TEXT);
+        var textComp = this._getComponent(components.TEXT);
         var obj = textComp.getSelectedObj();
         var command;
 
@@ -3088,7 +3747,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      */
     _onFabricSelect: function(fEvent) {
-        var textComp = this._getComponent(compList.TEXT);
+        var textComp = this._getComponent(components.TEXT);
         var obj = textComp.getSelectedObj();
         var command;
 
@@ -3157,7 +3816,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _getMainComponent: function() {
-        return this._getComponent(compList.MAIN);
+        return this._getComponent(components.MAIN);
     },
 
     /**
@@ -3223,6 +3882,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this.endFreeDrawing();
         this.endLineDrawing();
         this.endCropping();
+        this.endDrawingShapeMode();
         this.deactivateAll();
         this._state = states.NORMAL;
     },
@@ -3408,7 +4068,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this.endAll();
         this._state = states.CROP;
-        cropper = this._getComponent(compList.CROPPER);
+        cropper = this._getComponent(components.CROPPER);
         cropper.start();
         /**
          * @api
@@ -3436,7 +4096,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
-        cropper = this._getComponent(compList.CROPPER);
+        cropper = this._getComponent(components.CROPPER);
         this._state = states.NORMAL;
         data = cropper.end(isApplying);
 
@@ -3583,7 +4243,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
         this.endAll();
-        this._getComponent(compList.FREE_DRAWING).start(setting);
+        this._getComponent(components.FREE_DRAWING).start(setting);
         this._state = states.FREE_DRAWING;
 
         /**
@@ -3614,10 +4274,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         switch (state) {
             case states.LINE:
-                compName = compList.LINE;
+                compName = components.LINE;
                 break;
             default:
-                compName = compList.FREE_DRAWING;
+                compName = components.FREE_DRAWING;
         }
 
         this._getComponent(compName).setBrush(setting);
@@ -3634,7 +4294,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if (this.getCurrentState() !== states.FREE_DRAWING) {
             return;
         }
-        this._getComponent(compList.FREE_DRAWING).end();
+        this._getComponent(components.FREE_DRAWING).end();
         this._state = states.NORMAL;
 
         /**
@@ -3662,7 +4322,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         }
 
         this.endAll();
-        this._getComponent(compList.LINE).start(setting);
+        this._getComponent(components.LINE).start(setting);
         this._state = states.LINE;
 
         /**
@@ -3683,7 +4343,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if (this.getCurrentState() !== states.LINE) {
             return;
         }
-        this._getComponent(compList.LINE).end();
+        this._getComponent(components.LINE).end();
         this._state = states.NORMAL;
 
         /**
@@ -3691,6 +4351,154 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          * @event ImageEditor#endLineDrawing
          */
         this.fire(events.END_LINE_DRAWING);
+    },
+
+    /**
+     * Start to draw shape on canvas (bind event on canvas)
+     * @api
+     * @example
+     * imageEditor.startDrawingShapeMode();
+     */
+    startDrawingShapeMode: function() {
+        if (this.getCurrentState() !== states.SHAPE) {
+            this.endAll();
+            this._state = states.SHAPE;
+            this._getComponent(components.SHAPE).startDrawingMode();
+        }
+    },
+
+    /**
+     * Set states of current drawing shape
+     * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
+     * @param {object} [options] - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @api
+     * @example
+     * imageEditor.setDrawingShape('rect', {
+     *     fill: 'red',
+     *     width: 100,
+     *     height: 200
+     * });
+     * imageEditor.setDrawingShape('circle', {
+     *     fill: 'transparent',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100
+     * });
+     * imageEditor.setDrawingShape('triangle', { // When resizing, the shape keep the 1:1 ratio
+     *     width: 1,
+     *     height: 1,
+     *     isRegular: true
+     * });
+     * imageEditor.setDrawingShape('circle', { // When resizing, the shape keep the 1:1 ratio
+     *     rx: 10,
+     *     ry: 10,
+     *     isRegular: true
+     * });
+     */
+    setDrawingShape: function(type, options) {
+        this._getComponent(components.SHAPE).setStates(type, options);
+    },
+
+    /**
+     * Add shape
+     * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
+     * @param {object} options - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.left] - Shape x position
+     *      @param {number} [options.top] - Shape y position
+     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @api
+     * @example
+     * imageEditor.addShape('rect', {
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     width: 100,
+     *     height: 200,
+     *     left: 10,
+     *     top: 10,
+     *     isRegular: true
+     * });
+     * imageEditor.addShape('circle', {
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100,
+     *     isRegular: false
+     * });
+     */
+    addShape: function(type, options) {
+        this._getComponent(components.SHAPE).add(type, options);
+    },
+
+    /**
+     * Change shape
+     * @param {object} options - Shape options
+     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {number} [options.strokeWidth] - Shape outline width
+     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @api
+     * @example
+     * // call after selecting shape object on canvas
+     * imageEditor.changeShape({ // change rectagle or triangle
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     width: 100,
+     *     height: 200
+     * });
+     * imageEditor.changeShape({ // change circle
+     *     fill: 'red',
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100
+     * });
+     */
+    changeShape: function(options) {
+        var activeObj = this._canvas.getActiveObject();
+        var shapeComponent = this._getComponent(components.SHAPE);
+
+        if (!activeObj) {
+            return;
+        }
+
+        shapeComponent.change(activeObj, options);
+    },
+
+    /**
+     * End to draw shape on canvas (unbind event on canvas)
+     * @api
+     * @example
+     * imageEditor.startDrawingShapeMode();
+     * imageEditor.endDrawingShapeMode();
+     */
+    endDrawingShapeMode: function() {
+        if (this.getCurrentState() === states.SHAPE) {
+            this._getComponent(components.SHAPE).endDrawingMode();
+            this._state = states.NORMAL;
+        }
     },
 
     /**
@@ -3705,9 +4513,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
+        this.endAll();
         this._state = states.TEXT;
 
-        this._getComponent(compList.TEXT).start({
+        this._getComponent(components.TEXT).start({
             mousedown: $.proxy(this._onFabricMouseDown, this),
             select: $.proxy(this._onFabricSelect, this),
             selectClear: $.proxy(this._onFabricSelectClear, this),
@@ -3749,7 +4558,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             this._state = states.TEXT;
         }
 
-        this._getComponent(compList.TEXT).add(text || '', options || {});
+        this._getComponent(components.TEXT).add(text || '', options || {});
     },
 
     /**
@@ -3767,7 +4576,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
-        this._getComponent(compList.TEXT).change(activeObj, text);
+        this._getComponent(components.TEXT).change(activeObj, text);
     },
 
     /**
@@ -3794,7 +4603,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
-        this._getComponent(compList.TEXT).setStyle(activeObj, styleObj);
+        this._getComponent(components.TEXT).setStyle(activeObj, styleObj);
     },
 
     /**
@@ -3811,7 +4620,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         this._state = states.NORMAL;
 
-        this._getComponent(compList.TEXT).end();
+        this._getComponent(components.TEXT).end();
     },
 
     /**
@@ -3839,7 +4648,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var obj = event.target;
         var e = event.e || {};
         var originPointer = this._canvas.getPointer(e);
-        var textComp = this._getComponent(compList.TEXT);
+        var textComp = this._getComponent(components.TEXT);
 
         if (obj && !obj.isType('text')) {
             return;
@@ -3909,7 +4718,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * });
      */
     registerIcons: function(infos) {
-        this._getComponent(compList.ICON).registerPaths(infos);
+        this._getComponent(components.ICON).registerPaths(infos);
     },
 
     /**
@@ -3920,7 +4729,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * imageEditor.addIcon('arrow');
      */
     addIcon: function(type) {
-        this._getComponent(compList.ICON).add(type);
+        this._getComponent(components.ICON).add(type);
     },
 
     /**
@@ -3933,7 +4742,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     changeIconColor: function(color) {
         var activeObj = this._canvas.getActiveObject();
 
-        this._getComponent(compList.ICON).setColor(color, activeObj);
+        this._getComponent(components.ICON).setColor(color, activeObj);
     },
 
     /**
@@ -4039,6 +4848,26 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
+     * Whehter the undo stack is empty or not
+     * @api
+     * @returns {boolean}
+     * imageEditor.isEmptyUndoStack();
+     */
+    isEmptyUndoStack: function() {
+        return this._invoker.isEmptyUndoStack();
+    },
+
+    /**
+     * Whehter the redo stack is empty or not
+     * @api
+     * @returns {boolean}
+     * imageEditor.isEmptyRedoStack();
+     */
+    isEmptyRedoStack: function() {
+        return this._invoker.isEmptyRedoStack();
+    },
+
+    /**
      * Resize canvas dimension
      * @param {{width: number, height: number}} dimension - Max width & height
      */
@@ -4051,13 +4880,19 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         mainComponent.setCssMaxDimension(dimension);
         mainComponent.adjustCanvasDimension();
+    },
+
+    startDrawingIcon: function() {
+        var iconComponent = this._getComponent(components.ICON);
+
+        iconComponent.start();
     }
 });
 
 tui.util.CustomEvents.mixin(ImageEditor);
 module.exports = ImageEditor;
 
-},{"./consts":12,"./factory/command":15,"./invoker":21}],18:[function(require,module,exports){
+},{"./consts":13,"./factory/command":16,"./invoker":23}],20:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Component interface
@@ -4196,7 +5031,7 @@ var Component = tui.util.defineClass(/** @lends Component.prototype */{
 
 module.exports = Component;
 
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Command interface
@@ -4283,9 +5118,9 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
 
 module.exports = Command;
 
-},{"../factory/errorMessage":16}],20:[function(require,module,exports){
-arguments[4][18][0].apply(exports,arguments)
-},{"dup":18}],21:[function(require,module,exports){
+},{"../factory/errorMessage":17}],22:[function(require,module,exports){
+arguments[4][20][0].apply(exports,arguments)
+},{"dup":20}],23:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Invoker - invoke commands
@@ -4302,6 +5137,7 @@ var Line = require('./component/line');
 var Text = require('./component/text');
 var Icon = require('./component/icon');
 var Filter = require('./component/filter');
+var Shape = require('./component/shape');
 var eventNames = require('./consts').eventNames;
 
 /**
@@ -4364,6 +5200,7 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         this._register(new Text(main));
         this._register(new Icon(main));
         this._register(new Filter(main));
+        this._register(new Shape(main));
     },
 
     /**
@@ -4588,7 +5425,7 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
 
 module.exports = Invoker;
 
-},{"./component/cropper":2,"./component/filter":3,"./component/flip":4,"./component/freeDrawing":5,"./component/icon":6,"./component/imageLoader":7,"./component/line":8,"./component/main":9,"./component/rotation":10,"./component/text":11,"./consts":12}],22:[function(require,module,exports){
+},{"./component/cropper":2,"./component/filter":3,"./component/flip":4,"./component/freeDrawing":5,"./component/icon":6,"./component/imageLoader":7,"./component/line":8,"./component/main":9,"./component/rotation":10,"./component/shape":11,"./component/text":12,"./consts":13}],24:[function(require,module,exports){
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Util

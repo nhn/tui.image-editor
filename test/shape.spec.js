@@ -197,32 +197,6 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(21);
     });
 
-    describe('_onFabricMouseDown()', function() {
-        beforeEach(function() {
-            shape.startDrawingMode();
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 10, y: 10});
-        });
-
-        it('The current pointer values are set initial width and height of the rectagle object.', function() {
-            shape._onFabricMouseDown(fEvent);
-
-            shapeObj = main.canvas.getObjects()[0];
-
-            expect(shapeObj.getWidth()).toBe(2);
-            expect(shapeObj.getHeight()).toBe(2);
-        });
-
-        it('The current pointer values are set initial x and y radius of the circle object.', function() {
-            shape.setStates('circle');
-            shape._onFabricMouseDown(fEvent);
-
-            shapeObj = main.canvas.getObjects()[0];
-
-            expect(shapeObj.getWidth()).toBe(1);
-            expect(shapeObj.getHeight()).toBe(1);
-        });
-    });
-
     describe('_onFabricMouseMove()', function() {
         beforeEach(function() {
             shape.add('rect', {left: 100, top: 100});
@@ -334,15 +308,6 @@ describe('Shape', function() {
 
             expect(expectedPoint.x).toBe(startPoint.x);
             expect(expectedPoint.y).toBe(startPoint.y);
-        });
-
-        it('When the drawing object has width and height values under 1, it do not add on canvas.', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 100, y: 100});
-
-            shape._onFabricMouseMove(fEvent);
-            shape._onFabricMouseUp();
-
-            expect(main.canvas.getObjects().length).toBe(0);
         });
     });
 
