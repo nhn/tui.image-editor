@@ -63,9 +63,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _setSelectionStyle: function(styles) {
-        tui.util.forEach(styles, function(style, key) {
-            fObjectOptions.SELECTION_STYLE[key] = style;
-        });
+        tui.util.extend(fObjectOptions.SELECTION_STYLE, styles);
     },
 
     /**
@@ -113,8 +111,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                 var obj = event.target;
                 var command;
 
-                if (obj.isType('cropzone') ||
-                    obj.isType('text')) {
+                if (obj.isType('cropzone') || obj.isType('text')) {
                     return;
                 }
 
@@ -214,6 +211,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
             this._canvas.getActiveObject()) {
             e.preventDefault();
+
             this.removeActiveObject();
         }
     },
@@ -380,7 +378,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this.endFreeDrawing();
         this.endLineDrawing();
         this.endCropping();
-        this.endShapeDrawing();
+        this.endDrawingShapeMode();
         this.deactivateAll();
         this._state = states.NORMAL;
     },
@@ -852,25 +850,22 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * Start shape-drawing mode (bind event on canvas)
+     * Start to draw shape on canvas (bind event on canvas)
      * @api
      * @example
-     * imageEditor.startShapeDrawing();
+     * imageEditor.startDrawingShapeMode();
      */
-    startShapeDrawing: function() {
-        if (this.getCurrentState() === states.SHAPE) {
-            return;
+    startDrawingShapeMode: function() {
+        if (this.getCurrentState() !== states.SHAPE) {
+            this.endAll();
+            this._state = states.SHAPE;
+            this._getComponent(components.SHAPE).startDrawingMode();
         }
-
-        this.endAll();
-
-        this._getComponent(components.SHAPE).start();
-        this._state = states.SHAPE;
     },
 
     /**
      * Set states of current drawing shape
-     * @param {string} type - Shape type (ex: 'rect', 'circle')
+     * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {object} [options] - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
@@ -879,46 +874,39 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
      * @api
      * @example
-     * imageEditor.setShape('rect', {
+     * imageEditor.setDrawingShape('rect', {
      *     fill: 'red',
-     *     stroke: 'blue',
-     *     strokeWidth: 3,
      *     width: 100,
      *     height: 200
      * });
-     * imageEditor.setShape('circle', {
-     *     fill: 'red',
+     * imageEditor.setDrawingShape('circle', {
+     *     fill: 'transparent',
      *     stroke: 'blue',
      *     strokeWidth: 3,
      *     rx: 10,
      *     ry: 100
      * });
-     * imageEditor.setShape('rect', { // draw rectangle having 1:1 ratio
+     * imageEditor.setDrawingShape('triangle', { // When resizing, the shape keep the 1:1 ratio
      *     width: 1,
-     *     height: 1
+     *     height: 1,
+     *     isRegular: true
      * });
-     * imageEditor.setShape('circle', { // draw circle having 1:1 ratio
+     * imageEditor.setDrawingShape('circle', { // When resizing, the shape keep the 1:1 ratio
      *     rx: 10,
-     *     ry: 10
+     *     ry: 10,
+     *     isRegular: true
      * });
      */
-    setShape: function(type, options) {
-        var width, height, isRegularRatio;
-
-        options = options || {};
-        width = options.width || 0;
-        height = options.height || 0;
-
-        isRegularRatio = !!(width && height && (width === height));
-
-        this._getComponent(components.SHAPE).setStates(type, options, isRegularRatio);
+    setDrawingShape: function(type, options) {
+        this._getComponent(components.SHAPE).setStates(type, options);
     },
 
     /**
      * Add shape
-     * @param {string} type - Shape type (ex: 'rect', 'circle')
+     * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
@@ -927,6 +915,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.left] - Shape x position
+     *      @param {number} [options.top] - Shape y position
+     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
      * @api
      * @example
      * imageEditor.addShape('rect', {
@@ -936,14 +927,16 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *     width: 100,
      *     height: 200,
      *     left: 10,
-     *     top: 10
+     *     top: 10,
+     *     isRegular: true
      * });
      * imageEditor.addShape('circle', {
      *     fill: 'red',
      *     stroke: 'blue',
      *     strokeWidth: 3,
      *     rx: 10,
-     *     ry: 100
+     *     ry: 100,
+     *     isRegular: false
      * });
      */
     addShape: function(type, options) {
@@ -960,10 +953,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
      * @api
      * @example
      * // call after selecting shape object on canvas
-     * imageEditor.changeShape({ // change rectagle
+     * imageEditor.changeShape({ // change rectagle or triangle
      *     fill: 'red',
      *     stroke: 'blue',
      *     strokeWidth: 3,
@@ -982,8 +976,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var activeObj = this._canvas.getActiveObject();
         var shapeComponent = this._getComponent(components.SHAPE);
 
-        if (!activeObj ||
-            (activeObj.type !== 'rect' && activeObj.type !== 'circle')) {
+        if (!activeObj) {
             return;
         }
 
@@ -991,15 +984,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * End shape-drawing mode (unbind event on canvas)
+     * End to draw shape on canvas (unbind event on canvas)
      * @api
      * @example
-     * imageEditor.startShapeDrawing();
-     * imageEditor.endShapeDrawing();
+     * imageEditor.startDrawingShapeMode();
+     * imageEditor.endDrawingShapeMode();
      */
-    endShapeDrawing: function() {
+    endDrawingShapeMode: function() {
         if (this.getCurrentState() === states.SHAPE) {
-            this._getComponent(components.SHAPE).end();
+            this._getComponent(components.SHAPE).endDrawingMode();
             this._state = states.NORMAL;
         }
     },
@@ -1016,6 +1009,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
             return;
         }
 
+        this.endAll();
         this._state = states.TEXT;
 
         this._getComponent(components.TEXT).start({
@@ -1350,6 +1344,26 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
+     * Whehter the undo stack is empty or not
+     * @api
+     * @returns {boolean}
+     * imageEditor.isEmptyUndoStack();
+     */
+    isEmptyUndoStack: function() {
+        return this._invoker.isEmptyUndoStack();
+    },
+
+    /**
+     * Whehter the redo stack is empty or not
+     * @api
+     * @returns {boolean}
+     * imageEditor.isEmptyRedoStack();
+     */
+    isEmptyRedoStack: function() {
+        return this._invoker.isEmptyRedoStack();
+    },
+
+    /**
      * Resize canvas dimension
      * @param {{width: number, height: number}} dimension - Max width & height
      */
@@ -1362,6 +1376,12 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         mainComponent.setCssMaxDimension(dimension);
         mainComponent.adjustCanvasDimension();
+    },
+
+    startDrawingIcon: function() {
+        var iconComponent = this._getComponent(components.ICON);
+
+        iconComponent.start();
     }
 });
 

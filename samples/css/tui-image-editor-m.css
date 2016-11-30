@@ -121,6 +121,7 @@ input[type=file] {
     color: #fff;
     font-size: 12px;
     font-weight: bold;
+    outline: 0;
 }
 .tui-image-editor-controls .submenu-button {
     width: 80px;
@@ -153,10 +154,10 @@ input[type=file] {
 .tui-image-editor-controls .hiddenmenu {
     position: absolute;
     display: none;
-    padding: 10px;
+    padding: 20px;
     width: 100%;
     left: 0;
-    bottom: 81px;
+    bottom: 80px;
     background-color: rgba(0, 0, 0, 0.4);
     text-align: center;
     -webkit-box-sizing: border-box;
@@ -166,6 +167,11 @@ input[type=file] {
 }
 .tui-image-editor-controls .hiddenmenu.show {
     display: block;
+}
+.tui-image-editor-controls .hiddenmenu .top {
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 5px;
 }
 .tui-image-editor-controls .btn-prev {
     display: inline-block;
@@ -191,15 +197,4 @@ input[type=file] {
 }
 .tui-image-editor-controls .msg.hide {
     display: none;
-}
-#input-text {
-    position: absolute;
-    left: 0;
-    bottom: -100px;
-    display: block;
-    margin: 10px;
-    padding: 0;
-    height: 58px;
-    resize: none;
-    outline: 0;
 }

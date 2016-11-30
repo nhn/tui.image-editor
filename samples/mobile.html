@@ -53,6 +53,71 @@
                     </div>
                 </li>
                 <li class="menu-item">
+                    <button class="menu-button" id="btn-draw-line">Drawing</button>
+                    <div class="submenu">
+                        <button class="btn-prev">&lt;</button>
+                        <ul class="scrollable">
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-free-drawing">Free<br>Drawing</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-line-drawing">Line<br>Drawing</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-size">Brush<br>Size</button>
+                                <div class="hiddenmenu">
+                                    <input id="input-brush-range" type="range" min="10" max="100" value="50" />
+                                </div>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-text-color">Brush<br>Color</button>
+                                <div class="hiddenmenu">
+                                    <div id="tui-brush-color-picker"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-item">
+                    <button class="menu-button" id="btn-draw-shape">Shape</button>
+                    <div class="submenu">
+                        <button class="btn-prev">&lt;</button>
+                        <ul class="scrollable">
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-add-rect">Rectagle</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-add-square">Square</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-add-ellipse">Ellipse</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-add-circle">Circle</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-add-triangle">Triangle</button>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-stroke-size">Stroke<br>Size</button>
+                                <div class="hiddenmenu">
+                                    <input id="input-stroke-range" type="range" min="1" max="100" value="10" />
+                                </div>
+                            </li>
+                            <li class="menu-item">
+                                <button class="submenu-button" id="btn-change-shape-color">Color</button>
+                                <div class="hiddenmenu">
+                                    <div class="top">
+                                        <label for="stroke-color"><input type="radio" id="stroke-color" name="select-color-type" value="stroke" checked="checked" /> Stroke</label>
+                                        <label for="fill-color"><input type="radio" id="fill-color" name="select-color-type" value="fill" /> Fill</label>
+                                    </div>
+                                    <div id="tui-shape-color-picker"></div>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="menu-item">
                     <button class="menu-button">Icon</button>
                     <div class="submenu">
                         <button class="btn-prev">&lt;</button>
@@ -76,7 +141,7 @@
                             <li class="menu-item">
                                 <button class="submenu-button" id="btn-change-size">Size</button>
                                 <div class="hiddenmenu">
-                                    <label class="no-pointer"><input id="input-text-size-range" type="range" min="10" max="240" value="120"></label>
+                                    <input id="input-text-size-range" type="range" min="10" max="240" value="120">
                                 </div>
                             </li>
                             <li class="menu-item">
@@ -99,68 +164,6 @@
                                 <button class="submenu-button" id="btn-change-text-color">Color</button>
                                 <div class="hiddenmenu">
                                     <div id="tui-text-color-picker"></div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="menu-item">
-                    <button class="menu-button" id="btn-draw-line">Drawing</button>
-                    <div class="submenu">
-                        <button class="btn-prev">&lt;</button>
-                        <ul class="scrollable">
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-free-drawing">Free<br>Drawing</button>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-line-drawing">Line<br>Drawing</button>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-change-size">Brush<br>Size</button>
-                                <div class="hiddenmenu">
-                                    <label class="no-pointer"><input id="input-brush-range" type="range" min="10" max="100" value="50" /></label>
-                                </div>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-change-text-color">Brush<br>Color</button>
-                                <div class="hiddenmenu">
-                                    <div id="tui-brush-color-picker"></div>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <li class="menu-item">
-                    <button class="menu-button" id="btn-draw-shape">Shape</button>
-                    <div class="submenu">
-                        <button class="btn-prev">&lt;</button>
-                        <ul class="scrollable">
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-draw-rect">Rectagle</button>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-draw-square">Square</button>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-draw-ellipse">Ellipse</button>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-draw-circle">Circle</button>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-stroke-size">Stroke<br>Size</button>
-                                <div class="hiddenmenu">
-                                    <label class="no-pointer"><input id="input-stroke-range" type="range" min="1" max="100" value="10" /></label>
-                                </div>
-                            </li>
-                            <li class="menu-item">
-                                <button class="submenu-button" id="btn-change-shape-color">Color</button>
-                                <div class="hiddenmenu">
-                                    <div class="top">
-                                        <label for="stroke-color"><input type="radio" id="stroke-color" name="select-color-type" value="stroke" checked="checked" /> Stroke</label>
-                                        <label for="fill-color"><input type="radio" id="fill-color" name="select-color-type" value="fill" /> Fill</label>
-                                    </div>
-                                    <div id="tui-shape-color-picker"></div>
                                 </div>
                             </li>
                         </ul>
