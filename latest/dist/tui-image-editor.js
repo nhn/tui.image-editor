@@ -239,10 +239,10 @@
 	        var originPointer = this._canvas.getPointer(fEvent.e);
 
 	        /**
-	         * @event ImageEditor#mouseDown
+	         * @event ImageEditor#mousedown
 	         * @param {object} event - Event object
 	         * @example
-	         * imageEditor.on('mouseDown', function(event) {
+	         * imageEditor.on('mousedown', function(event) {
 	         *     console.log(event.e);
 	         *     console.log(event.originPointer);
 	         * });
@@ -2121,7 +2121,7 @@
 	        ACTIVATE_TEXT: 'activateText',
 	        APPLY_FILTER: 'applyFilter',
 	        EDIT_TEXT: 'editText',
-	        MOUSE_DOWN: 'mouseDown'
+	        MOUSE_DOWN: 'mousedown'
 	    },
 
 	    /**

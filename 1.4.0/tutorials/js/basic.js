@@ -622,7 +622,7 @@ $btnRegisterIcon.on('click', function() {
 $iconSubMenu.on('click', '.menu-item', function() {
     var iconType = $(this).attr('data-icon-type');
 
-    imageEditor.once('mouseDown', function(e) {
+    imageEditor.once('mousedown', function(e) {
         imageEditor.addIcon(iconType, {
             left: e.originPointer.x,
             top: e.originPointer.y
