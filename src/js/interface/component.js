@@ -7,6 +7,7 @@
 /**
  * Component interface
  * @class
+ * @ignore
  */
 var Component = tui.util.defineClass(/** @lends Component.prototype */{
     init: function() {},

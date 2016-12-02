@@ -21,6 +21,7 @@ var CORNER_TYPE_BOTTOM_RIGHT = 'br';
  *  - Cropzone is a black zone without transparency.
  * @class Cropzone
  * @extends {fabric.Rect}
+ * @ignore
  */
 var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
     /**
@@ -88,6 +89,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      *  y3 +--------------------------+
      *
      * @typedef {{x: Array<number>, y: Array<number>}} cropzoneCoordinates
+     * @ignore
      */
 
     /**

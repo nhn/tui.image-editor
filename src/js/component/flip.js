@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var Component = require('../interface/Component');
+var Component = require('../interface/component');
 var consts = require('../consts');
 
 /**
@@ -12,6 +12,7 @@ var consts = require('../consts');
  * @class Flip
  * @param {Component} parent - parent component
  * @extends {Component}
+ * @ignore
  */
 var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
     init: function(parent) {

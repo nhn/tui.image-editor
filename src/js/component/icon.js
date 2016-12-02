@@ -18,6 +18,7 @@ var pathMap = {
  * @class Icon
  * @param {Component} parent - parent component
  * @extends {Component}
+ * @ignore
  */
 var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
     init: function(parent) {
@@ -45,11 +46,15 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
     /**
      * Add icon
      * @param {string} type - Icon type
+     * @param {object} options - Icon options
+     *      @param {string} [options.fill] - Icon foreground color
+     *      @param {string} [options.left] - Icon x position
+     *      @param {string} [options.top] - Icon y position
      */
-    add: function(type) {
+    add: function(type, options) {
         var canvas = this.getCanvas();
-        var centerPos = this.getCanvasImage().getCenterPoint();
         var path = this._pathMap[type];
+        var selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
         var icon;
 
         if (!path) {
@@ -58,13 +63,10 @@ var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
 
         icon = this._createIcon(path);
 
-        icon.set(consts.fObjectOptions.SELECTION_STYLE);
-        icon.set({
-            fill: this._oColor,
-            left: centerPos.x,
-            top: centerPos.y,
-            type: 'icon'
-        });
+        icon.set(tui.util.extend({
+            type: 'icon',
+            fill: this._oColor
+        }, selectionStyle, options));
 
         canvas.add(icon).setActiveObject(icon);
     },

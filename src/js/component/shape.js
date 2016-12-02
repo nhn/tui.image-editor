@@ -11,6 +11,7 @@ var resizeHelper = require('../helper/shapeResizeHelper');
 var util = tui.util;
 var extend = util.extend;
 var bind = util.bind;
+var inArray = util.inArray;
 
 var KEY_CODES = consts.keyCodes;
 var DEFAULT_TYPE = 'rect';
@@ -29,11 +30,14 @@ var DEFAULT_OPTIONS = {
     isRegular: false
 };
 
+var shapeType = ['rect', 'circle', 'triangle'];
+
 /**
  * Shape
  * @class Shape
  * @param {Component} parent - parent component
  * @extends {Component}
+ * @ignore
  */
 var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
     init: function(parent) {
@@ -113,6 +117,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
 
         canvas.defaultCursor = 'crosshair';
         canvas.selection = false;
+        canvas.uniScaleTransform = true;
         canvas.on({
             'mouse:down': this._handlers.mousedown
         });
@@ -132,6 +137,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
 
         canvas.defaultCursor = 'default';
         canvas.selection = true;
+        canvas.uniScaleTransform = false;
         canvas.off({
             'mouse:down': this._handlers.mousedown
         });
@@ -167,7 +173,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
@@ -193,7 +199,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      * @param {fabric.Object} shapeObj - Selected shape object on canvas
      * @param {object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
@@ -202,6 +208,10 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
      */
     change: function(shapeObj, options) {
+        if (inArray(shapeObj.get('type'), shapeType) < 0) {
+            return;
+        }
+
         shapeObj.set(options);
         this.getCanvas().renderAll();
     },
@@ -242,10 +252,9 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      * @private
      */
     _createOptions: function(options) {
-        var centerPoint = this.getCanvas().getCenter();
         var selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
 
-        options = extend({}, DEFAULT_OPTIONS, selectionStyles, centerPoint, options);
+        options = extend({}, DEFAULT_OPTIONS, selectionStyles, options);
 
         if (options.isRegular) {
             options.lockUniScaling = true;
@@ -335,10 +344,12 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
                 left: startPointX,
                 top: startPointY,
                 width: width,
-                height: width,
-                isRegular: this._withShiftKey
+                height: height
             });
         } else {
+            this._shapeObj.set({
+                isRegular: this._withShiftKey
+            });
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
         }

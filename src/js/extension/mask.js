@@ -8,6 +8,7 @@
  * Mask object
  * @class Mask
  * @extends {fabric.Image.filters.Mask}
+ * @ignore
  */
 var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.prototype */{
     /**

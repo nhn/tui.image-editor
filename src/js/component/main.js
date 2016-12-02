@@ -19,8 +19,9 @@ var backstoreOnly = {
 
 /**
  * Main component
+ * @class Main
  * @extends {Component}
- * @class
+ * @ignore
  */
 var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
     init: function() {
@@ -95,11 +96,17 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
 
     /**
      * Set canvas element to fabric.Canvas
-     * @param {jQuery|Element|string} canvasElement - Canvas element or selector
+     * @param {jQuery|Element|string} element - Wrapper or canvas element or selector
      * @override
      */
-    setCanvasElement: function(canvasElement) {
-        this.canvas = new fabric.Canvas($(canvasElement)[0], {
+    setCanvasElement: function(element) {
+        var canvasElement = $(element)[0];
+
+        if (canvasElement.nodeName.toUpperCase() !== 'CANVAS') {
+            canvasElement = $('<canvas>').appendTo(element)[0];
+        }
+
+        this.canvas = new fabric.Canvas(canvasElement, {
             containerClass: 'tui-image-editor-canvas-container',
             enableRetinaScaling: false
         });

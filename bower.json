@@ -1,31 +1,35 @@
 {
-  "name": "tui-image-editor",
+  "name": "tui-component-image-editor",
   "authors": [
-    "NHNEnt FE Development Team <dl_javascript@nhnent.com>"
+    "NHN Ent. FE Dev Lab <dl_javascript@nhnent.com>"
   ],
-  "description": "",
   "license": "MIT",
   "main": [
-      "dist/image-editor.js"
+      "dist/tui-image-editor.js"
   ],
   "ignore": [
     "**/.*",
-    "samples",
-    "src",
-    "index.js",
-    "karma.*",
-    "gulpfile.js",
-    "jsdoc-conf.json",
-    "package.json",
     "node_modules",
     "bower_components",
     "test",
-    "tests"
+    "tests",
+    "src",
+    "server",
+    "data.js",
+    "Gruntfile.js",
+    "gulpfile.js",
+    "karma.*.js",
+    "conf.json",
+    "package.json",
+    ".gitignore",
+    "samples",
+    "index.js",
+    "jsdoc-conf.json"
   ],
   "dependencies": {
-    "tui-code-snippet": "~1.2.0",
     "jquery": "~1.8.3",
-    "fabric": "~1.6.3"
+    "fabric": "~1.6.3",
+    "tui-code-snippet": "~1.2.0"
   },
   "devDependencies": {
     "tui-component-colorpicker": "~1.0.1",

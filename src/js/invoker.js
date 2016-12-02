@@ -20,6 +20,7 @@ var eventNames = require('./consts').eventNames;
 /**
  * Invoker
  * @class
+ * @ignore
  */
 var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
     init: function() {

@@ -15,7 +15,7 @@ describe('commandFactory', function() {
         invoker = new Invoker();
         mockImage = new fabric.Image();
         mainComponent = invoker.getComponent('MAIN');
-        mainComponent.setCanvasElement();
+        mainComponent.setCanvasElement($('<canvas>'));
         mainComponent.setCanvasImage('', mockImage);
         canvas = mainComponent.getCanvas();
     });

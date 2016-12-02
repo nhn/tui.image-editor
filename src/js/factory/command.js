@@ -17,9 +17,6 @@ var FLIP = componentNames.FLIP;
 var ROTATION = componentNames.ROTATION;
 var FILTER = componentNames.FILTER;
 
-/**
- * Set mapping creators
- */
 creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
 creators[commandNames.ROTATE_IMAGE] = createRotationImageCommand;
@@ -31,6 +28,7 @@ creators[commandNames.APPLY_FILTER] = createFilterCommand;
 /**
  * @param {fabric.Object} object - Fabric object
  * @returns {Command}
+ * @ignore
  */
 function createAddObjectCommand(object) {
     tui.util.stamp(object);
@@ -39,6 +37,7 @@ function createAddObjectCommand(object) {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
@@ -56,6 +55,7 @@ function createAddObjectCommand(object) {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         undo: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
@@ -77,12 +77,14 @@ function createAddObjectCommand(object) {
  * @param {string} imageName - Image name
  * @param {string|fabric.Image} img - Image(or url)
  * @returns {Command}
+ * @ignore
  */
 function createLoadImageCommand(imageName, img) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         execute: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
@@ -101,6 +103,7 @@ function createLoadImageCommand(imageName, img) {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         undo: function(compMap) {
             var loader = compMap[IMAGE_LOADER];
@@ -118,12 +121,14 @@ function createLoadImageCommand(imageName, img) {
 /**
  * @param {string} type - 'flipX' or 'flipY' or 'reset'
  * @returns {$.Deferred}
+ * @ignore
  */
 function createFlipImageCommand(type) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         execute: function(compMap) {
             var flipComp = compMap[FLIP];
@@ -135,6 +140,7 @@ function createFlipImageCommand(type) {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         undo: function(compMap) {
             var flipComp = compMap[FLIP];
@@ -148,12 +154,14 @@ function createFlipImageCommand(type) {
  * @param {string} type - 'rotate' or 'setAngle'
  * @param {number} angle - angle value (degree)
  * @returns {$.Deferred}
+ * @ignore
  */
 function createRotationImageCommand(type, angle) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         execute: function(compMap) {
             var rotationComp = compMap[ROTATION];
@@ -165,6 +173,7 @@ function createRotationImageCommand(type, angle) {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         undo: function(compMap) {
             var rotationComp = compMap[ROTATION];
@@ -177,12 +186,14 @@ function createRotationImageCommand(type, angle) {
 /**
  * Clear command
  * @returns {Command}
+ * @ignore
  */
 function createClearCommand() {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
@@ -205,6 +216,7 @@ function createClearCommand() {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         undo: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
@@ -220,12 +232,14 @@ function createClearCommand() {
  * Remove command
  * @param {fabric.Object|fabric.Group} target - Object(s) to remove
  * @returns {Command}
+ * @ignore
  */
 function createRemoveCommand(target) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         execute: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
@@ -252,6 +266,7 @@ function createRemoveCommand(target) {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         undo: function(compMap) {
             var canvas = compMap[MAIN].getCanvas();
@@ -268,12 +283,14 @@ function createRemoveCommand(target) {
  * @param {string} type - Filter type
  * @param {object} options - Filter options
  * @returns {Command}
+ * @ignore
  */
 function createFilterCommand(type, options) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         execute: function(compMap) { // eslint-disable-line
             var filterComp = compMap[FILTER];
@@ -288,6 +305,7 @@ function createFilterCommand(type, options) {
         /**
          * @param {object.<string, Component>} compMap - Components injection
          * @returns {jQuery.Deferred}
+         * @ignore
          */
         undo: function(compMap) {
             var filterComp = compMap[FILTER];
@@ -306,6 +324,7 @@ function createFilterCommand(type, options) {
  * @param {string} name - Command name
  * @param {...*} args - Arguments for creating command
  * @returns {Command}
+ * @ignore
  */
 function create(name, args) {
     args = Array.prototype.slice.call(arguments, 1);

@@ -311,14 +311,14 @@ describe('Shape', function() {
         });
     });
 
-    it('When drawing the shape with mouse and the "isRegular" option set to true,' +
+    it('When drawing the shape with mouse and the "isRegular" option set to true, ' +
         'the created rectangle shape has the same "width" and "height" values.', function() {
         shape.add('rect', {
             left: 0,
-            top: 0,
-            isRegular: true
+            top: 0
         });
 
+        shape._withShiftKey = true;
         shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
 
         spyOn(main.canvas, 'getPointer').and.returnValue({x: 200, y: 100});
@@ -330,14 +330,14 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(201); // has 1 storkeWidth
     });
 
-    it('When drawing the shape with mouse and the "isRegular" option set to true,' +
+    it('When drawing the shape with mouse and the "isRegular" option set to true, ' +
         'the created rectangle shape has the same "width" and "height" values.', function() {
         shape.add('rect', {
             left: 0,
-            top: 0,
-            isRegular: true
+            top: 0
         });
 
+        shape._withShiftKey = true;
         shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
 
         spyOn(main.canvas, 'getPointer').and.returnValue({x: 100, y: 200});

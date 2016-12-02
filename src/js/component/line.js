@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var Component = require('../interface/Component');
+var Component = require('../interface/component');
 var consts = require('../consts');
 
 /**
@@ -12,6 +12,7 @@ var consts = require('../consts');
  * @class Line
  * @param {Component} parent - parent component
  * @extends {Component}
+ * @ignore
  */
 var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
     init: function(parent) {

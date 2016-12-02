@@ -27,6 +27,7 @@ var DIMENSION_KEYS = {
 /**
  * Set the start point value to the shape object
  * @param {fabric.Object} shape - Shape object
+ * @ignore
  */
 function setStartPoint(shape) {
     var originX = shape.getOriginX();
@@ -42,6 +43,7 @@ function setStartPoint(shape) {
  * @param {{x: number, y: number}} pointer - Pointer value
  * @param {number} angle - Rotating angle
  * @returns {object} Postions of origin
+ * @ignore
  */
 function getPositionsOfRotatedOrigin(origin, pointer, angle) {
     var sx = origin.x;
@@ -62,6 +64,7 @@ function getPositionsOfRotatedOrigin(origin, pointer, angle) {
  * Whether the shape has the center origin or not
  * @param {fabric.Object} shape - Shape object
  * @returns {boolean} State
+ * @ignore
  */
 function hasCenterOrigin(shape) {
     return (shape.getOriginX() === 'center' &&
@@ -72,6 +75,7 @@ function hasCenterOrigin(shape) {
  * Adjust the origin of shape by the start point
  * @param {{x: number, y: number}} pointer - Pointer value
  * @param {fabric.Object} shape - Shape object
+ * @ignore
  */
 function adjustOriginByStartPoint(pointer, shape) {
     var centerPoint = shape.getPointByOrigin('center', 'center');
@@ -97,6 +101,7 @@ function adjustOriginByStartPoint(pointer, shape) {
  * Adjust the origin of shape by the moving pointer value
  * @param {{x: number, y: number}} pointer - Pointer value
  * @param {fabric.Object} shape - Shape object
+ * @ignore
  */
 function adjustOriginByMovingPointer(pointer, shape) {
     var origin = shape.startPoint;
@@ -111,6 +116,7 @@ function adjustOriginByMovingPointer(pointer, shape) {
 /**
  * Adjust the dimension of shape on firing scaling event
  * @param {fabric.Object} shape - Shape object
+ * @ignore
  */
 function adjustDimensionOnScaling(shape) {
     var type = shape.type;
@@ -145,6 +151,7 @@ function adjustDimensionOnScaling(shape) {
  * Adjust the dimension of shape on firing mouse move event
  * @param {{x: number, y: number}} pointer - Pointer value
  * @param {fabric.Object} shape - Shape object
+ * @ignore
  */
 function adjustDimensionOnMouseMove(pointer, shape) {
     var origin = shape.startPoint;

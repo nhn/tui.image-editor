@@ -3,6 +3,7 @@
  * @fileoverview Image crop module (start cropping, end cropping)
  */
 'use strict';
+
 var Component = require('../interface/component');
 var Cropzone = require('../extension/cropzone');
 var consts = require('../consts');
@@ -19,6 +20,7 @@ var keyCodes = consts.keyCodes;
  * @param {Component} parent - parent component
  * @extends {Component}
  * @class Cropper
+ * @ignore
  */
 var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
     init: function(parent) {

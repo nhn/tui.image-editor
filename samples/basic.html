@@ -1,149 +1,144 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <title>Image editor basic</title>
-    <link type="text/css" href="css/colorpicker.min.css" rel="stylesheet">
-    <link type="text/css" href="css/tui-image-editor.css" rel="stylesheet">
-</head>
-<body>
-<div class="body-container">
-    <div class="tui-image-editor-controls">
-        <div class="header">
-            <img class="logo" src="img/TOAST UI Component.png">
-            <span class="name"> Image Editor</span>
-            <ul class="menu">
-                <li class="menu-item border input-wrapper">
-                    Load
-                    <input type="file" accept="image/*" id="input-image-file">
-                </li>
-                <li class="menu-item border" id="btn-download">Download</li>
-            </ul>
+    <head>
+        <meta charset="UTF-8">
+        <title>Image editor basic</title>
+        <link type="text/css" href="css/colorpicker.min.css" rel="stylesheet">
+        <link type="text/css" href="css/tui-image-editor.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="body-container">
+            <div class="tui-image-editor-controls">
+                <div class="header">
+                    <img class="logo" src="img/TOAST UI Component.png">
+                    <span class="name"> Image Editor</span>
+                    <ul class="menu">
+                        <li class="menu-item border input-wrapper">
+                            Load
+                            <input type="file" accept="image/*" id="input-image-file">
+                        </li>
+                        <li class="menu-item border" id="btn-download">Download</li>
+                    </ul>
+                </div>
+                <ul class="menu">
+                    <li class="menu-item disabled" id="btn-undo">Undo</li>
+                    <li class="menu-item disabled" id="btn-redo">Redo</li>
+                    <li class="menu-item" id="btn-clear-objects">ClearObjects</li>
+                    <li class="menu-item" id="btn-remove-active-object">RemoveActiveObject</li>
+                    <li class="menu-item" id="btn-crop">Crop</li>
+                    <li class="menu-item" id="btn-flip">Flip</li>
+                    <li class="menu-item" id="btn-rotation">Rotation</li>
+                    <li class="menu-item" id="btn-draw-line">DrawLine</li>
+                    <li class="menu-item" id="btn-draw-shape">Shape</li>
+                    <li class="menu-item" id="btn-add-icon">Icon</li>
+                    <li class="menu-item" id="btn-text">Text</li>
+                    <li class="menu-item" id="btn-mask-filter">Mask</li>
+                </ul>
+                <div class="sub-menu-container" id="crop-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item" id="btn-apply-crop">Apply</li>
+                        <li class="menu-item" id="btn-cancel-crop">Cancel</li>
+                    </ul>
+                </div>
+                <div class="sub-menu-container" id="flip-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item" id="btn-flip-x">FlipX</li>
+                        <li class="menu-item" id="btn-flip-y">FlipY</li>
+                        <li class="menu-item" id="btn-reset-flip">Reset</li>
+                        <li class="menu-item close">Close</li>
+                    </ul>
+                </div>
+                <div class="sub-menu-container" id="rotation-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item" id="btn-rotate-clockwise">Clockwise(30)</li>
+                        <li class="menu-item" id="btn-rotate-counter-clockwise">Counter-Clockwise(-30)</li>
+                        <li class="menu-item no-pointer"><label>Range input<input id="input-rotation-range" type="range" min="-360" value="0" max="360"></label></li>
+                        <li class="menu-item close">Close</li>
+                    </ul>
+                </div>
+                <div class="sub-menu-container menu" id="draw-line-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <label><input type="radio" name="select-line-type" value="freeDrawing" checked="checked"> Free drawing</label>
+                            <label><input type="radio" name="select-line-type" value="lineDrawing"> Straight line</label>
+                        </li>
+                        <li class="menu-item">
+                            <div id="tui-brush-color-picker">Brush color</div>
+                        </li>
+                        <li class="menu-item"><label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label></li>
+                        <li class="menu-item close">Close</li>
+                    </ul>
+                </div>
+                <div class="sub-menu-container" id="draw-shape-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <label><input type="radio" name="select-shape-type" value="rect" checked="checked"> rect</label>
+                            <label><input type="radio" name="select-shape-type" value="circle"> circle</label>
+                            <label><input type="radio" name="select-shape-type" value="triangle"> triangle</label>
+                        </li>
+                        <li class="menu-item">
+                            <select name="select-color-type">
+                                <option value="fill">Fill</option>
+                                <option value="stroke">Stroke</option>
+                            </select>
+                            <label><input type="checkbox" id="input-check-transparent">transparent</label>
+                            <div id="tui-shape-color-picker"></div>
+                        </li>
+                        <li class="menu-item"><label class="menu-item no-pointer">Stroke width<input id="input-stroke-width-range" type="range" min="0" max="300" value="12"></label></li>
+                        <li class="menu-item close">Close</li>
+                    </ul>
+                </div>
+                <div class="sub-menu-container" id="icon-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <div id="tui-icon-color-picker">Icon color</div>
+                        </li>
+                        <li class="menu-item border" id="btn-register-icon">Register custom icon</li>
+                        <li class="menu-item icon-text" data-icon-type="arrow">➡</li>
+                        <li class="menu-item icon-text" data-icon-type="cancel">✖</li>
+                        <li class="menu-item close">Close</li>
+                    </ul>
+                </div>
+                <div class="sub-menu-container" id="text-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item">
+                            <div>
+                                <button class="btn-text-style" data-style-type="b">Bold</button>
+                                <button class="btn-text-style" data-style-type="i">Italic</button>
+                                <button class="btn-text-style" data-style-type="u">Underline</button>
+                            </div>
+                            <div>
+                                <button class="btn-text-style" data-style-type="l">Left</button>
+                                <button class="btn-text-style" data-style-type="c">Center</button>
+                                <button class="btn-text-style" data-style-type="r">Right</button>
+                            </div>
+                        </li>
+                        <li class="menu-item"><label class="no-pointer"><input id="input-font-size-range" type="range" min="10" max="100" value="10"></label></li>
+                        <li class="menu-item">
+                            <div id="tui-text-color-picker">Text color</div>
+                        </li>
+                        <li class="menu-item close">Close</li>
+                    </ul>
+                </div>
+                <div class="sub-menu-container" id="filter-sub-menu">
+                    <ul class="menu">
+                        <li class="menu-item border input-wrapper">
+                            Load Mask Image
+                            <input type="file" accept="image/*" id="input-mask-image-file">
+                        </li>
+                        <li class="menu-item" id="btn-apply-mask">Apply mask filter</li>
+                        <li class="menu-item close">Close</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="tui-image-editor"></div>
         </div>
-        <ul class="menu">
-            <li class="menu-item disabled" id="btn-undo">Undo</li>
-            <li class="menu-item disabled" id="btn-redo">Redo</li>
-            <li class="menu-item" id="btn-clear-objects">ClearObjects</li>
-            <li class="menu-item" id="btn-remove-active-object">RemoveActiveObject</li>
-            <li class="menu-item" id="btn-crop">Crop</li>
-            <li class="menu-item" id="btn-flip">Flip</li>
-            <li class="menu-item" id="btn-rotation">Rotation</li>
-            <li class="menu-item" id="btn-draw-line">DrawLine</li>
-            <li class="menu-item" id="btn-draw-shape">Shape</li>
-            <li class="menu-item" id="btn-add-icon">Icon</li>
-            <li class="menu-item" id="btn-text">Text</li>
-            <li class="menu-item" id="btn-mask-filter">Mask</li>
-        </ul>
-
-        <div class="sub-menu-container" id="crop-sub-menu">
-            <ul class="menu">
-                <li class="menu-item" id="btn-apply-crop">Apply</li>
-                <li class="menu-item" id="btn-cancel-crop">Cancel</li>
-            </ul>
-        </div>
-        <div class="sub-menu-container" id="flip-sub-menu">
-            <ul class="menu">
-                <li class="menu-item" id="btn-flip-x">FlipX</li>
-                <li class="menu-item" id="btn-flip-y">FlipY</li>
-                <li class="menu-item" id="btn-reset-flip">Reset</li>
-                <li class="menu-item close">Close</li>
-            </ul>
-        </div>
-        <div class="sub-menu-container" id="rotation-sub-menu">
-            <ul class="menu">
-                <li class="menu-item" id="btn-rotate-clockwise">Clockwise(30)</li>
-                <li class="menu-item" id="btn-rotate-counter-clockwise">Counter-Clockwise(-30)</li>
-                <li class="menu-item no-pointer"><label>Range input<input id="input-rotation-range" type="range" min="-360" value="0" max="360"></label></li>
-                <li class="menu-item close">Close</li>
-            </ul>
-        </div>
-        <div class="sub-menu-container menu" id="draw-line-sub-menu">
-            <ul class="menu">
-                <li class="menu-item">
-                    <label><input type="radio" class="select-line-type" name="select-line-type" value="freeDrawing"> Free drawing</label>
-                </li>
-                <li class="menu-item">
-                    <label><input type="radio" class="select-line-type" name="select-line-type" value="lineDrawing"> Straight line</label>
-                </li>
-                <li class="menu-item">
-                    <div id="tui-brush-color-picker">Brush color</div>
-                </li>
-                <li class="menu-item"><label class="menu-item no-pointer">Brush width<input id="input-brush-width-range" type="range" min="5" max="30" value="12"></label></li>
-                <li class="menu-item close">Close</li>
-            </ul>
-        </div>
-        <div class="sub-menu-container" id="draw-shape-sub-menu">
-            <ul class="menu">
-                <li class="menu-item">
-                    Draw
-                    <label><input type="radio" name="select-shape-type" value="rect" checked="checked"> rect</label>
-                    <label><input type="radio" name="select-shape-type" value="circle"> circle</label>
-                    <label><input type="radio" name="select-shape-type" value="triangle"> triangle</label>
-                </li>
-                <li class="menu-item">
-                    <select name="select-shape-color">
-                        <option value="stroke">Stroke</option>
-                        <option value="fill">Fill</option>
-                    </select>
-                    <div id="tui-shape-color-picker"></div>
-                </li>
-                <li class="menu-item"><label class="menu-item no-pointer">Stroke width<input id="input-stroke-width-range" type="range" min="0" max="300" value="12"></label></li>
-                <li class="menu-item close">Close</li>
-            </ul>
-        </div>
-        <div class="sub-menu-container" id="icon-sub-menu">
-            <ul class="menu">
-                <li class="menu-item">
-                    <div id="tui-icon-color-picker">Icon color</div>
-                </li>
-                <li class="menu-item border" id="btn-register-icon">Register custom icon</li>
-                <li class="menu-item icon-text" data-icon-type="arrow">➡</li>
-                <li class="menu-item icon-text" data-icon-type="cancel">✖</li>
-                <li class="menu-item close">Close</li>
-            </ul>
-        </div>
-        <div class="sub-menu-container" id="text-sub-menu">
-            <ul class="menu">
-                <li class="menu-item">
-                    <div>
-                        <button class="btn-text-style" data-style-type="b">Bold</button>
-                        <button class="btn-text-style" data-style-type="i">Italic</button>
-                        <button class="btn-text-style" data-style-type="u">Underline</button>
-                    </div>
-                    <div>
-                        <button class="btn-text-style" data-style-type="l">Left</button>
-                        <button class="btn-text-style" data-style-type="c">Center</button>
-                        <button class="btn-text-style" data-style-type="r">Right</button>
-                    </div>
-                </li>
-                <li class="menu-item"><label class="no-pointer"><input id="input-font-size-range" type="range" min="10" max="100" value="10"></label></li>
-                <li class="menu-item">
-                    <div id="tui-text-color-picker">Text color</div>
-                </li>
-                <li class="menu-item close">Close</li>
-            </ul>
-        </div>
-        <div class="sub-menu-container" id="filter-sub-menu">
-            <ul class="menu">
-                <li class="menu-item border input-wrapper">
-                    Load Mask Image
-                    <input type="file" accept="image/*" id="input-mask-image-file">
-                </li>
-                <li class="menu-item" id="btn-apply-mask">Apply mask filter</li>
-                <li class="menu-item close">Close</li>
-            </ul>
-        </div>
-    </div>
-    <div class="tui-image-editor">
-        <canvas></canvas>
-    </div>
-</div>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.6/fabric.js"></script>
-<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
-<script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.colorpicker/1.0.2/dist/colorpicker.min.js"></script>
-<script src="js/image-editor.js"></script>
-<script src="js/basic.js"></script>
-</body>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.3/fabric.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.code-snippet/1.2.1/code-snippet.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.colorpicker/1.0.2/dist/colorpicker.min.js"></script>
+        <script type="text/javascript" src="../dist/tui-image-editor.js"></script>
+        <script src="js/basic.js"></script>
+    </body>
 </html>

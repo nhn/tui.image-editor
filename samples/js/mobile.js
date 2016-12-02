@@ -62,7 +62,8 @@ var $btnChangeTextStyle = $('.btn-change-text-style');
 var $inputTextSizeRange = $('#input-text-size-range');
 var $inputBrushWidthRange = $('#input-brush-range');
 var $inputStrokeWidthRange = $('#input-stroke-range');
-var $selectColorType = $('input[name="select-color-type"]');
+var $inputCheckTransparent = $('#input-check-transparent');
+var $selectColorType = $('[name="select-color-type"]');
 
 // Colorpicker
 var iconColorpicker = tui.component.colorpicker.create({
@@ -85,9 +86,8 @@ var shapeColorpicker = tui.component.colorpicker.create({
     color: '#000000'
 });
 
-
 // Create image editor
-var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
+var imageEditor = new tui.component.ImageEditor('.tui-image-editor', {
     cssMaxWidth: document.documentElement.clientWidth,
     cssMaxHeight: document.documentElement.clientHeight,
     selectionStyle: {
@@ -95,6 +95,8 @@ var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
         rotatingPointOffset: 100
     }
 });
+
+var $displayingSubMenu, $displayingHiddenMenu;
 
 function hexToRGBa(hex, alpha) {
     var r = parseInt(hex.slice(1, 3), 16);
@@ -136,6 +138,93 @@ function getBrushSettings() {
     };
 }
 
+function activateShapeMode() {
+    imageEditor.endTextMode();
+    imageEditor.endFreeDrawing();
+    imageEditor.endLineDrawing();
+    imageEditor.endCropping();
+}
+
+function activateIconMode() {
+    imageEditor.endTextMode();
+    imageEditor.endFreeDrawing();
+    imageEditor.endLineDrawing();
+    imageEditor.endCropping();
+    imageEditor.endDrawingShapeMode();
+}
+
+function activateTextMode() {
+    imageEditor.endFreeDrawing();
+    imageEditor.endLineDrawing();
+    imageEditor.endCropping();
+    imageEditor.endDrawingShapeMode();
+
+    if (imageEditor.getCurrentState() !== 'TEXT') {
+        imageEditor.startTextMode();
+    }
+}
+
+function setTextToolbar(obj) {
+    var fontSize = obj.getFontSize();
+    var fontColor = obj.getFill();
+
+    $inputTextSizeRange.val(fontSize);
+    textColorpicker.setColor(fontColor);
+}
+
+function setIconToolbar(obj) {
+    var iconColor = obj.getFill();
+
+    iconColorpicker.setColor(iconColor);
+}
+
+function setShapeToolbar(obj) {
+    var strokeColor, fillColor, isTransparent;
+    var colorType = $('[name="select-color-type"]:checked').val();
+
+    if (colorType === 'stroke') {
+        strokeColor = obj.getStroke();
+        isTransparent = (strokeColor === 'transparent');
+
+        if (!isTransparent) {
+            shapeColorpicker.setColor(strokeColor);
+        }
+    } else if (colorType === 'fill') {
+        fillColor = obj.getFill();
+        isTransparent = (fillColor === 'transparent');
+
+        if (!isTransparent) {
+            shapeColorpicker.setColor(fillColor);
+        }
+    }
+
+    $inputCheckTransparent.prop('checked', isTransparent);
+    $inputStrokeWidthRange.val(obj.getStrokeWidth());
+}
+
+function showSubMenu(type) {
+    var index;
+
+    switch (type) {
+        case 'shape':
+            index = 3;
+            break;
+        case 'icon':
+            index = 4;
+            break;
+        case 'text':
+            index = 5;
+            break;
+        default:
+            index = 0;
+    }
+
+    $displayingSubMenu.hide();
+    $displayingHiddenMenu.hide();
+
+    $displayingSubMenu = $menuButtons.eq(index).parent().find(submenuClass).show();
+}
+
 // Bind custom event of image editor
 imageEditor.on({
     emptyUndoStack: function() {
@@ -150,18 +239,9 @@ imageEditor.on({
     pushRedoStack: function() {
         $btnRedo.removeClass('disabled');
     },
-    removeObject: function(obj) {
-        if (!obj.isType('cropzone')) {
-            $subMenus.removeClass('show');
-            $hiddenMenus.removeClass('show');
-        }
-    },
     endCropping: function() {
         $subMenus.removeClass('show');
         $hiddenMenus.removeClass('show');
-    },
-    activateText: function() {
-        $subMenus.eq(3).addClass('show');
     },
     adjustObject: function(obj, type) {
         if (obj.type === 'text' && type === 'scale') {
@@ -169,18 +249,18 @@ imageEditor.on({
         }
     },
     selectObject: function(obj) {
-        var colorType;
-
-        if (obj.type === 'rect' || obj.type === 'circle') {
-            colorType = $selectColorType.val();
-
-            if (colorType === 'line') {
-                shapeColorpicker.setColor(obj.getStroke());
-            } else if (colorType === 'bg') {
-                shapeColorpicker.setColor(obj.getFill());
-            }
-
-            $inputStrokeWidthRange.val(obj.getStrokeWidth());
+        if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
+            showSubMenu('shape');
+            setShapeToolbar(obj);
+            activateShapeMode();
+        } else if (obj.type === 'icon') {
+            showSubMenu('icon');
+            setIconToolbar(obj);
+            activateIconMode();
+        } else if (obj.type === 'text') {
+            showSubMenu('text');
+            setTextToolbar(obj);
+            activateTextMode();
         }
     }
 });
@@ -192,24 +272,19 @@ imageEditor.once('loadImage', function() {
 
 // Image editor controls action
 $menuButtons.on('click', function() {
-    $(this).parent().find(submenuClass).addClass('show');
+    $displayingSubMenu = $(this).parent().find(submenuClass).show();
+    $displayingHiddenMenu = $(this).parent().find(hiddenmenuClass);
 });
 
 $submenuButtons.on('click', function() {
-    var $hiddenMenu = $(this).parent().find(hiddenmenuClass);
-
-    $hiddenMenus.removeClass('show');
-
-    if ($hiddenMenu.length) {
-        $hiddenMenu.addClass('show');
-        $msg.addClass('hide');
-    }
+    $displayingHiddenMenu.hide();
+    $displayingHiddenMenu = $(this).parent().find(hiddenmenuClass).show();
 });
 
 $btnShowMenu.on('click', function() {
-    $subMenus.removeClass('show');
-    $hiddenMenus.removeClass('show');
-    $msg.removeClass('hide');
+    $displayingSubMenu.hide();
+    $displayingHiddenMenu.hide();
+    $msg.show();
 
     imageEditor.endAll();
 });
@@ -399,7 +474,7 @@ $btnLineDrawing.on('click', function() {
 
 $inputBrushWidthRange.on('change', function() {
     imageEditor.setBrush({
-        width: parseInt(this.value, 10)
+        width: parseInt($(this.val()), 10)
     });
 });
 
@@ -409,7 +484,7 @@ brushColorpicker.on('selectColor', function(event) {
     });
 });
 
-// Draw shpae menu action
+// Add shape menu action
 $btnAddRect.on('click', function() {
     imageEditor.addShape('rect', tui.util.extend({
         width: 500,
@@ -442,38 +517,58 @@ $btnAddCircle.on('click', function() {
 
 $btnAddTriangle.on('click', function() {
     imageEditor.addShape('triangle', tui.util.extend({
-        width: 400,
+        width: 500,
         height: 400,
         isRegular: true
     }, shapeOpt));
 });
 
-$selectColorType.on('change', function() {
-    var colorType = this.value;
-
-    if (colorType === 'stroke') {
-        shapeOpt.stroke = shapeColorpicker.getColor();
-    } else if (colorType === 'stroke') {
-        shapeOpt.fill = shapeColorpicker.getColor();
-    }
+$inputStrokeWidthRange.on('change', function() {
+    imageEditor.changeShape({
+        strokeWidth: parseInt($(this).val(), 10)
+    });
 });
 
-$inputStrokeWidthRange.on('change', function() {
-    shapeOpt.strokeWidth = Number(this.value);
-    imageEditor.changeShape(shapeOpt);
+$inputCheckTransparent.on('change', function() {
+    var colorType = $('[name="select-color-type"]:checked').val();
+    var isTransparent = $(this).prop('checked');
+    var color;
+
+    if (!isTransparent) {
+        color = shapeColorpicker.getColor();
+    } else {
+        color = 'transparent';
+    }
+
+    if (colorType === 'stroke') {
+        imageEditor.changeShape({
+            stroke: color
+        });
+    } else if (colorType === 'fill') {
+        imageEditor.changeShape({
+            fill: color
+        });
+    }
 });
 
 shapeColorpicker.on('selectColor', function(event) {
     var colorType = $('[name="select-color-type"]:checked').val();
+    var isTransparent = $inputCheckTransparent.prop('checked');
     var color = event.color;
 
-    if (colorType === 'stroke') {
-        shapeOpt.stroke = color;
-    } else if (colorType === 'fill') {
-        shapeOpt.fill = color;
+    if (isTransparent) {
+        return;
     }
 
-    imageEditor.changeShape(shapeOpt);
+    if (colorType === 'stroke') {
+        imageEditor.changeShape({
+            stroke: color
+        });
+    } else if (colorType === 'fill') {
+        imageEditor.changeShape({
+            fill: color
+        });
+    }
 });
 
 // Load sample image

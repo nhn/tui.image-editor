@@ -220,35 +220,4 @@ describe('Text', function() {
             expect(textareaStyles['line-height']).toEqual(obj.getLineHeight() + 0.1);
         });
     });
-
-    describe('_setEventEachObject()', function() {
-        var objects;
-
-        beforeEach(function() {
-            objects = [
-                new fabric.Object({evented: true}),
-                new fabric.Circle({evented: true}),
-                new fabric.Text('', {evented: true})
-            ];
-
-            canvas.add(objects[0], objects[1], objects[2]);
-        });
-
-        it('should deactivate event on each object except text when the parameter is false.', function() {
-            text._setEventEachObject(false);
-
-            expect(objects[0].evented).toBe(false);
-            expect(objects[1].evented).toBe(false);
-            expect(objects[2].evented).toBe(true);
-        });
-
-        it('should activate event on each object except text when the parameter is true.', function() {
-            text._setEventEachObject(false);
-            text._setEventEachObject(true);
-
-            expect(objects[0].evented).toBe(true);
-            expect(objects[1].evented).toBe(true);
-            expect(objects[2].evented).toBe(true);
-        });
-    });
 });

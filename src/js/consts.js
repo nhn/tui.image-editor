@@ -65,7 +65,8 @@ module.exports = {
         PUSH_REDO_STACK: 'pushRedoStack',
         ACTIVATE_TEXT: 'activateText',
         APPLY_FILTER: 'applyFilter',
-        EDIT_TEXT: 'editText'
+        EDIT_TEXT: 'editText',
+        MOUSE_DOWN: 'mouseDown'
     },
 
     /**

@@ -154,11 +154,11 @@ input[type=file] {
 .tui-image-editor-controls .hiddenmenu {
     position: absolute;
     display: none;
-    padding: 20px;
+    padding: 40px;
     width: 100%;
     left: 0;
     bottom: 80px;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.7);
     text-align: center;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -171,7 +171,7 @@ input[type=file] {
 .tui-image-editor-controls .hiddenmenu .top {
     font-size: 12px;
     color: #fff;
-    margin-bottom: 5px;
+    margin-bottom: 20px;
 }
 .tui-image-editor-controls .btn-prev {
     display: inline-block;

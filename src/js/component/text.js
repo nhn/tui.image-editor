@@ -45,6 +45,7 @@ var DBCLICK_TIME = 500;
  * @class Text
  * @param {Component} parent - parent component
  * @extends {Component}
+ * @ignore
  */
 var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
     init: function(parent) {
@@ -128,9 +129,6 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         canvas.selection = false;
         canvas.defaultCursor = 'text';
-
-        this._setEventEachObject(false);
-
         canvas.on({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
@@ -151,11 +149,7 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
 
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-
-        this._setEventEachObject(true);
-
         canvas.deactivateAllWithDispatch(); // action for undo stack
-
         canvas.off({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
@@ -454,18 +448,6 @@ var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
         }
 
         this._lastClickTime = newClickTime;
-    },
-
-    /**
-     * Set event each object
-     * @param {boolean} state - Whether event state is true or false
-     */
-    _setEventEachObject: function(state) {
-        this.getCanvas().forEachObject(function(obj) {
-            if (!obj.isType('text')) {
-                obj.evented = state;
-            }
-        });
     },
 
     /**

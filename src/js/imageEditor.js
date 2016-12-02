@@ -15,21 +15,26 @@ var states = consts.states;
 var keyCodes = consts.keyCodes;
 var fObjectOptions = consts.fObjectOptions;
 
+var util = tui.util;
+var isUndefined = util.isUndefined;
+var bind = util.bind;
+var forEach = util.forEach;
+
 /**
  * Image editor
  * @class
- * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
+ * @param {string|jQuery|HTMLElement} element - Wrapper or canvas element or selector
  * @param {object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
  */
 var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
-    init: function(canvasElement, option) {
+    init: function(element, option) {
         option = option || {};
         /**
          * Invoker
-         * @private
          * @type {Invoker}
+         * @private
          */
         this._invoker = new Invoker();
 
@@ -47,7 +52,23 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
          */
         this._state = states.NORMAL;
 
-        this._setCanvas(canvasElement, option.cssMaxWidth, option.cssMaxHeight);
+        /**
+         * Event handler list
+         * @type {object}
+         * @private
+         */
+        this._handlers = {
+            keydown: bind(this._onKeyDown, this),
+            mousedown: bind(this._onMouseDown, this),
+            addedObject: bind(this._onAddedObject, this),
+            removedObject: bind(this._onRemovedObject, this),
+            selectedObject: bind(this._onSelectedObject, this),
+            movingObject: bind(this._onMovingObject, this),
+            scalingObject: bind(this._onScalingObject, this),
+            createdPath: this._onCreatedPath
+        };
+
+        this._setCanvas(element, option.cssMaxWidth, option.cssMaxHeight);
         this._attachInvokerEvents();
         this._attachCanvasEvents();
         this._attachDomEvents();
@@ -77,22 +98,18 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var EMPTY_REDO_STACK = events.EMPTY_REDO_STACK;
 
         /**
-         * @api
          * @event ImageEditor#pushUndoStack
          */
         this._invoker.on(PUSH_UNDO_STACK, $.proxy(this.fire, this, PUSH_UNDO_STACK));
         /**
-         * @api
          * @event ImageEditor#pushRedoStack
          */
         this._invoker.on(PUSH_REDO_STACK, $.proxy(this.fire, this, PUSH_REDO_STACK));
         /**
-         * @api
          * @event ImageEditor#emptyUndoStack
          */
         this._invoker.on(EMPTY_UNDO_STACK, $.proxy(this.fire, this, EMPTY_UNDO_STACK));
         /**
-         * @api
          * @event ImageEditor#emptyRedoStack
          */
         this._invoker.on(EMPTY_REDO_STACK, $.proxy(this.fire, this, EMPTY_REDO_STACK));
@@ -103,85 +120,14 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _attachCanvasEvents: function() {
-        this._removeEventHandler = $.proxy(this._onFabricRemoved, this);
-
         this._canvas.on({
-            'path:created': this._onPathCreated,
-            'object:added': $.proxy(function(event) {
-                var obj = event.target;
-                var command;
-
-                if (obj.isType('cropzone') || obj.isType('text')) {
-                    return;
-                }
-
-                if (!tui.util.hasStamp(obj)) {
-                    command = commandFactory.create(commands.ADD_OBJECT, obj);
-                    this._invoker.pushUndoStack(command);
-                    this._invoker.clearRedoStack();
-                }
-
-                /**
-                 * @api
-                 * @event ImageEditor#addObject
-                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @example
-                 * imageEditor.on('addObject', function(obj) {
-                 *     console.log(obj);
-                 * });
-                 */
-                this.fire(events.ADD_OBJECT, obj);
-            }, this),
-            'object:removed': this._removeEventHandler,
-            'object:moving': $.proxy(function(event) {
-                this._invoker.clearRedoStack();
-
-                /**
-                 * @api
-                 * @event ImageEditor#adjustObject
-                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @param {string} Action type (move / scale)
-                 * @example
-                 * imageEditor.on('adjustObject', function(obj, type) {
-                 *     console.log(obj);
-                 *     console.log(type);
-                 * });
-                 */
-                this.fire(events.ADJUST_OBJECT, event.target, 'move');
-            }, this),
-            'object:scaling': $.proxy(function(event) {
-                this._invoker.clearRedoStack();
-
-                /**
-                 * @event ImageEditor#adjustObject
-                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @param {string} Action type (scale / scale)
-                 * @example
-                 * imageEditor.on('adjustObject', function(obj, type) {
-                 *     console.log(obj);
-                 *     console.log(type);
-                 * });
-                 */
-                this.fire(events.ADJUST_OBJECT, event.target, 'scale');
-            }, this),
-            'object:selected': $.proxy(function(event) {
-                if (event.target.type === 'text' &&
-                    this.getCurrentState() !== 'TEXT') {
-                    this.startTextMode();
-                }
-
-                /**
-                 * @event ImageEditor#selectObject
-                 * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-                 * @example
-                 * imageEditor.on('selectObject', function(obj) {
-                 *     console.log(obj);
-                 *     console.log(obj.type);
-                 *     console.log(obj.getType());
-                 * });
-                 */
-                this.fire(events.SELECT_OBJECT, event.target);
-            }, this)
+            'mouse:down': this._handlers.mousedown,
+            'object:added': this._handlers.addedObject,
+            'object:removed': this._handlers.removedObject,
+            'object:moving': this._handlers.movingObject,
+            'object:scaling': this._handlers.scalingObject,
+            'object:selected': this._handlers.selectedObject,
+            'path:created': this._handlers.createdPath
         });
     },
 
@@ -190,7 +136,15 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @private
      */
     _attachDomEvents: function() {
-        fabric.util.addListener(document, 'keydown', $.proxy(this._onKeyDown, this));
+        fabric.util.addListener(document, 'keydown', this._handlers.keydown);
+    },
+
+    /**
+     * Detach dom events
+     * @private
+     */
+    _detachDomEvents: function() {
+        fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
     },
 
     /**
@@ -211,14 +165,151 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
             this._canvas.getActiveObject()) {
             e.preventDefault();
-
             this.removeActiveObject();
         }
     },
 
     /**
+     * "mouse:down" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onMouseDown: function(fEvent) {
+        var originPointer = this._canvas.getPointer(fEvent.e);
+
+        /**
+         * @event ImageEditor#mouseDown
+         * @param {object} event - Event object
+         * @example
+         * imageEditor.on('mouseDown', function(event) {
+         *     console.log(event.e);
+         *     console.log(event.originPointer);
+         * });
+         */
+        this.fire(events.MOUSE_DOWN, {
+            e: fEvent.e,
+            originPointer: originPointer
+        });
+    },
+
+    /**
+     * "object:added" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onAddedObject: function(fEvent) {
+        var obj = fEvent.target;
+        var command;
+
+        if (obj.isType('cropzone') || obj.isType('text')) {
+            return;
+        }
+
+        if (!tui.util.hasStamp(obj)) {
+            command = commandFactory.create(commands.ADD_OBJECT, obj);
+            this._invoker.pushUndoStack(command);
+            this._invoker.clearRedoStack();
+        }
+
+        /**
+         * @event ImageEditor#addedObject
+         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * @example
+         * imageEditor.on('addedObject', function(obj) {
+         *     console.log(obj);
+         * });
+         */
+        this.fire(events.ADD_OBJECT, obj);
+    },
+
+    /**
+     * "object:removed" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onRemovedObject: function(fEvent) {
+        /**
+         * @event ImageEditor#removedObject
+         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * @example
+         * imageEditor.on('removedObject', function(obj) {
+         *     console.log(obj);
+         * });
+         */
+        this.fire(events.REMOVE_OBJECT, fEvent.target);
+    },
+
+    /**
+     * "object:selected" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onSelectedObject: function(fEvent) {
+        /**
+         * @event ImageEditor#selectObject
+         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * @example
+         * imageEditor.on('selectObject', function(obj) {
+         *     console.log(obj);
+         *     console.log(obj.type);
+         * });
+         */
+        this.fire(events.SELECT_OBJECT, fEvent.target);
+    },
+
+    /**
+     * "object:moving" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onMovingObject: function(fEvent) {
+        /**
+         * @event ImageEditor#adjustObject
+         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * @param {string} Action type (move / scale)
+         * @example
+         * imageEditor.on('adjustObject', function(obj, type) {
+         *     console.log(obj);
+         *     console.log(type);
+         * });
+         */
+        this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
+    },
+
+    /**
+     * "object:scaling" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onScalingObject: function(fEvent) {
+        /**
+         * @ignore
+         * @event ImageEditor#adjustObject
+         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * @param {string} Action type (move / scale)
+         * @example
+         * imageEditor.on('adjustObject', function(obj, type) {
+         *     console.log(obj);
+         *     console.log(type);
+         * });
+         */
+        this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
+    },
+
+    /**
+     * EventListener - "path:created"
+     *  - Events:: "object:added" -> "path:created"
+     * @param {{path: fabric.Path}} obj - Path object
+     * @private
+     */
+    _onCreatedPath: function(obj) {
+        obj.path.set(consts.fObjectOptions.SELECTION_STYLE);
+    },
+
+    /**
      * onSelectClear handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
      */
     _onFabricSelectClear: function(fEvent) {
         var textComp = this._getComponent(components.TEXT);
@@ -241,6 +332,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * onSelect handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
      */
     _onFabricSelect: function(fEvent) {
         var textComp = this._getComponent(components.TEXT);
@@ -261,44 +353,17 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     },
 
     /**
-     * onRemoved handler in fabric canvas
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-     */
-    _onFabricRemoved: function(fEvent) {
-        /**
-         * @api
-         * @event ImageEditor#removeObject
-         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-         * @example
-         * imageEditor.on('removeObject', function(obj) {
-         *     console.log(obj);
-         * });
-         */
-        this.fire(events.REMOVE_OBJECT, fEvent.target);
-    },
-
-    /**
-     * EventListener - "path:created"
-     *  - Events:: "object:added" -> "path:created"
-     * @param {{path: fabric.Path}} obj - Path object
-     * @private
-     */
-    _onPathCreated: function(obj) {
-        obj.path.set(consts.fObjectOptions.SELECTION_STYLE);
-    },
-
-    /**
      * Set canvas element
-     * @param {string|jQuery|HTMLElement} canvasElement - Canvas element or selector
+     * @param {string|jQuery|HTMLElement} element - Wrapper or canvas element or selector
      * @param {number} cssMaxWidth - Canvas css max width
      * @param {number} cssMaxHeight - Canvas css max height
      * @private
      */
-    _setCanvas: function(canvasElement, cssMaxWidth, cssMaxHeight) {
+    _setCanvas: function(element, cssMaxWidth, cssMaxHeight) {
         var mainComponent;
 
         mainComponent = this._getMainComponent();
-        mainComponent.setCanvasElement(canvasElement);
+        mainComponent.setCanvasElement(element);
         mainComponent.setCssMaxDimension({
             width: cssMaxWidth,
             height: cssMaxHeight
@@ -327,7 +392,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Get current state
-     * @api
      * @returns {string}
      * @example
      * // Image editor states
@@ -347,7 +411,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Clear all objects
-     * @api
      * @example
      * imageEditor.clearObjects();
      */
@@ -356,7 +419,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var callback = $.proxy(this.fire, this, events.CLEAR_OBJECTS);
 
         /**
-         * @api
          * @event ImageEditor#clearObjects
          */
         command.setExecuteCallback(callback);
@@ -365,7 +427,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * End current action & Deactivate
-     * @api
      * @example
      * imageEditor.startFreeDrawing();
      * imageEidtor.endAll(); // === imageEidtor.endFreeDrawing();
@@ -385,7 +446,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Deactivate all objects
-     * @api
      * @example
      * imageEditor.deactivateAll();
      */
@@ -397,6 +457,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Invoke command
      * @param {Command} command - Command
+     * @ignore
      */
     execute: function(command) {
         this.endAll();
@@ -405,7 +466,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Undo
-     * @api
      * @example
      * imageEditor.undo();
      */
@@ -416,7 +476,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Redo
-     * @api
      * @example
      * imageEditor.redo();
      */
@@ -427,7 +486,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Load image from file
-     * @api
      * @param {File} imgFile - Image file
      * @param {string} [imageName] - imageName
      * @example
@@ -446,7 +504,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Load image from url
-     * @api
      * @param {string} url - File url
      * @param {string} imageName - imageName
      * @example
@@ -468,7 +525,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
                     callback(oImage);
                 } else {
                     /**
-                     * @api
                      * @event ImageEditor#clearImage
                      */
                     self.fire(events.CLEAR_IMAGE);
@@ -487,7 +543,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var $canvasElement = $(mainComponent.getCanvasElement());
 
         /**
-         * @api
          * @event ImageEditor#loadImage
          * @param {object} dimension
          *  @param {number} dimension.originalWidth - original image width
@@ -513,7 +568,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Add image object on canvas
      * @param {string} imgUrl - Image url to make object
-     * @api
      * @example
      * imageEditor.addImageObject('path/fileName.jpg');
      */
@@ -551,7 +605,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Start cropping
-     * @api
      * @example
      * imageEditor.startCropping();
      */
@@ -567,7 +620,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         cropper = this._getComponent(components.CROPPER);
         cropper.start();
         /**
-         * @api
          * @event ImageEditor#startCropping
          */
         this.fire(events.START_CROPPING);
@@ -575,7 +627,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Apply cropping
-     * @api
      * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
      * @example
      * imageEditor.startCropping();
@@ -598,7 +649,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
         eventHandler = tui.util.bind(function() {
             /**
-             * @api
              * @event ImageEditor#endCropping
              */
             this.fire(events.END_CROPPING);
@@ -622,7 +672,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var command = commandFactory.create(commands.FLIP_IMAGE, type);
 
         /**
-         * @api
          * @event ImageEditor#flipImage
          * @param {object} flipSetting
          *  @param {boolean} flipSetting.flipX - image.flipX
@@ -642,7 +691,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Flip x
-     * @api
      * @example
      * imageEditor.flipX();
      */
@@ -652,7 +700,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Flip y
-     * @api
      * @example
      * imageEditor.flipY();
      */
@@ -662,7 +709,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Reset flip
-     * @api
      * @example
      * imageEditor.resetFlip();
      */
@@ -680,7 +726,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var command = commandFactory.create(commands.ROTATE_IMAGE, type, angle);
 
         /**
-         * @api
          * @event ImageEditor#rotateImage
          * @param {number} currentAngle - image.angle
          * @example
@@ -695,7 +740,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Rotate image
-     * @api
      * @param {number} angle - Additional angle to rotate image
      * @example
      * imageEditor.setAngle(10); // angle = 10
@@ -709,7 +753,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Set angle
-     * @api
      * @param {number} angle - Angle of image
      * @example
      * imageEditor.setAngle(10); // angle = 10
@@ -725,7 +768,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Start free-drawing mode
      * @param {{width: number, color: string}} [setting] - Brush width & color
-     * @api
      * @example
      * imageEditor.startFreeDrawing();
      * imageEditor.endFreeDrawing();
@@ -743,7 +785,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._state = states.FREE_DRAWING;
 
         /**
-         * @api
          * @event ImageEditor#startFreeDrawing
          */
         this.fire(events.START_FREE_DRAWING);
@@ -752,7 +793,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Set drawing brush
      * @param {{width: number, color: string}} setting - Brush width & color
-     * @api
      * @example
      * imageEditor.startFreeDrawing();
      * imageEditor.setBrush({
@@ -781,7 +821,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * End free-drawing mode
-     * @api
      * @example
      * imageEditor.startFreeDrawing();
      * imageEditor.endFreeDrawing();
@@ -794,7 +833,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._state = states.NORMAL;
 
         /**
-         * @api
          * @event ImageEditor#endFreeDrawing
          */
         this.fire(events.END_FREE_DRAWING);
@@ -803,7 +841,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
     /**
      * Start line-drawing mode
      * @param {{width: number, color: string}} [setting] - Brush width & color
-     * @api
      * @example
      * imageEditor.startLineDrawing();
      * imageEditor.endLineDrawing();
@@ -822,7 +859,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._state = states.LINE;
 
         /**
-         * @api
          * @event ImageEditor#startLineDrawing
          */
         this.fire(events.START_LINE_DRAWING);
@@ -830,7 +866,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * End line-drawing mode
-     * @api
      * @example
      * imageEditor.startLineDrawing();
      * imageEditor.endLineDrawing();
@@ -843,7 +878,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         this._state = states.NORMAL;
 
         /**
-         * @api
          * @event ImageEditor#endLineDrawing
          */
         this.fire(events.END_LINE_DRAWING);
@@ -851,13 +885,11 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Start to draw shape on canvas (bind event on canvas)
-     * @api
      * @example
      * imageEditor.startDrawingShapeMode();
      */
     startDrawingShapeMode: function() {
         if (this.getCurrentState() !== states.SHAPE) {
-            this.endAll();
             this._state = states.SHAPE;
             this._getComponent(components.SHAPE).startDrawingMode();
         }
@@ -875,7 +907,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-     * @api
      * @example
      * imageEditor.setDrawingShape('rect', {
      *     fill: 'red',
@@ -909,7 +940,7 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
@@ -918,7 +949,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-     * @api
      * @example
      * imageEditor.addShape('rect', {
      *     fill: 'red',
@@ -940,6 +970,9 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * });
      */
     addShape: function(type, options) {
+        options = options || {};
+
+        this._setPositions(options);
         this._getComponent(components.SHAPE).add(type, options);
     },
 
@@ -947,14 +980,13 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      * Change shape
      * @param {object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-     *      @param {string} [options.stoke] - Shape outline color
+     *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-     * @api
      * @example
      * // call after selecting shape object on canvas
      * imageEditor.changeShape({ // change rectagle or triangle
@@ -985,7 +1017,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * End to draw shape on canvas (unbind event on canvas)
-     * @api
      * @example
      * imageEditor.startDrawingShapeMode();
      * imageEditor.endDrawingShapeMode();
@@ -999,31 +1030,26 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Start text input mode
-     * @api
      * @example
      * imageEditor.endTextMode();
      * imageEditor.startTextMode();
      */
     startTextMode: function() {
-        if (this.getCurrentState() === states.TEXT) {
-            return;
+        if (this.getCurrentState() !== states.TEXT) {
+            this._state = states.TEXT;
+
+            this._getComponent(components.TEXT).start({
+                mousedown: $.proxy(this._onFabricMouseDown, this),
+                select: $.proxy(this._onFabricSelect, this),
+                selectClear: $.proxy(this._onFabricSelectClear, this),
+                dbclick: $.proxy(this._onDBClick, this),
+                remove: this._handlers.removedObject
+            });
         }
-
-        this.endAll();
-        this._state = states.TEXT;
-
-        this._getComponent(components.TEXT).start({
-            mousedown: $.proxy(this._onFabricMouseDown, this),
-            select: $.proxy(this._onFabricSelect, this),
-            selectClear: $.proxy(this._onFabricSelectClear, this),
-            dbclick: $.proxy(this._onDBClick, this),
-            remove: this._removeEventHandler
-        });
     },
 
     /**
      * Add text on image
-     * @api
      * @param {string} text - Initial input text
      * @param {object} [options] Options for generating text
      *     @param {object} [options.styles] Initial styles
@@ -1059,7 +1085,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Change contents of selected text object on image
-     * @api
      * @param {string} text - Changing text
      * @example
      * imageEditor.changeText('change text');
@@ -1077,7 +1102,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Set style
-     * @api
      * @param {object} styleObj - Initial styles
      *     @param {string} [styleObj.fill] Color
      *     @param {string} [styleObj.fontFamily] Font type for text
@@ -1104,7 +1128,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * End text input mode
-     * @api
      * @example
      * imageEditor.startTextMode();
      * imageEditor.endTextMode();
@@ -1125,7 +1148,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
      */
     _onDBClick: function() {
         /**
-         * @api
          * @event ImageEditor#editText
          * @example
          * imageEditor.on('editText', function(obj) {
@@ -1157,7 +1179,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         }
 
         /**
-         * @api
          * @event ImageEditor#activateText
          * @param {object} options
          *     @param {boolean} options.type - Type of text object (new / select)
@@ -1205,7 +1226,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Register custom icons
-     * @api
      * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
      * @example
      * imageEditor.registerIcons({
@@ -1219,18 +1239,27 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Add icon on canvas
-     * @api
-     * @param {string} type - Icon type (arrow / cancel)
+     * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
+     * @param {object} options - Icon options
+     *      @param {string} [options.fill] - Icon foreground color
+     *      @param {string} [options.left] - Icon x position
+     *      @param {string} [options.top] - Icon y position
      * @example
-     * imageEditor.addIcon('arrow');
+     * imageEditor.addIcon('arrow'); // The position is center on canvas
+     * imageEditor.addIcon('arrow', {
+     *     left: 100,
+     *     top: 100
+     * });
      */
-    addIcon: function(type) {
-        this._getComponent(components.ICON).add(type);
+    addIcon: function(type, options) {
+        options = options || {};
+
+        this._setPositions(options);
+        this._getComponent(components.ICON).add(type, options);
     },
 
     /**
      * Change icon color
-     * @api
      * @param {string} color - Color for icon
      * @example
      * imageEditor.changeIconColor('#000000');
@@ -1243,7 +1272,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Remove active object or group
-     * @api
      * @example
      * imageEditor.removeActiveObject();
      */
@@ -1256,7 +1284,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Apply filter on canvas image
-     * @api
      * @param {string} type - Filter type (current filter type is only 'mask')
      * @param {options} options - Options to apply filter
      * @example
@@ -1284,7 +1311,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         command = commandFactory.create(commands.APPLY_FILTER, type, options);
 
         /**
-         * @api
          * @event ImageEditor#applyFilter
          * @param {string} filterType - Applied filter
          * @param {string} actType - Action type (add / remove)
@@ -1302,7 +1328,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Get data url
-     * @api
      * @param {string} type - A DOMString indicating the image format. The default type is image/png.
      * @returns {string} A DOMString containing the requested data URI
      * @example
@@ -1314,7 +1339,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Get image name
-     * @api
      * @returns {string} image name
      * @example
      * console.log(imageEditor.getImageName());
@@ -1325,7 +1349,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Clear undoStack
-     * @api
      * @example
      * imageEditor.clearUndoStack();
      */
@@ -1335,7 +1358,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Clear redoStack
-     * @api
      * @example
      * imageEditor.clearRedoStack();
      */
@@ -1345,7 +1367,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Whehter the undo stack is empty or not
-     * @api
      * @returns {boolean}
      * imageEditor.isEmptyUndoStack();
      */
@@ -1355,7 +1376,6 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
 
     /**
      * Whehter the redo stack is empty or not
-     * @api
      * @returns {boolean}
      * imageEditor.isEmptyRedoStack();
      */
@@ -1378,10 +1398,39 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         mainComponent.adjustCanvasDimension();
     },
 
-    startDrawingIcon: function() {
-        var iconComponent = this._getComponent(components.ICON);
+    /**
+     * Destroy
+     */
+    destroy: function() {
+        var wrapperEl = this._canvas.wrapperEl;
 
-        iconComponent.start();
+        this.endAll();
+        this._detachDomEvents();
+
+        this._canvas.clear();
+
+        wrapperEl.parentNode.removeChild(wrapperEl);
+
+        forEach(this, function(value, key) {
+            this[key] = null;
+        }, this);
+    },
+
+    /**
+     * Set position
+     * @param {object} options - Position options (left or top)
+     * @private
+     */
+    _setPositions: function(options) {
+        var centerPosition = this._canvas.getCenter();
+
+        if (isUndefined(options.left)) {
+            options.left = centerPosition.left;
+        }
+
+        if (isUndefined(options.top)) {
+            options.top = centerPosition.top;
+        }
     }
 });
 

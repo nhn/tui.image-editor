@@ -13,6 +13,7 @@ var createMessage = errorMessage.create,
  * Command class
  * @class
  * @param {{execute: function, undo: function}} actions - Command actions
+ * @ignore
  */
 var Command = tui.util.defineClass(/** @lends Command.prototype */{
     init: function(actions) {

@@ -13,6 +13,7 @@ var consts = require('../consts');
  * @class Filter
  * @param {Component} parent - parent component
  * @extends {Component}
+ * @ignore
  */
 var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
     init: function(parent) {

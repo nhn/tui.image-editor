@@ -4,7 +4,7 @@
  */
 'use strict';
 
-var Component = require('../interface/Component');
+var Component = require('../interface/component');
 var consts = require('../consts');
 
 /**
@@ -12,6 +12,7 @@ var consts = require('../consts');
  * @class Rotation
  * @extends {Component}
  * @param {Component} parent - parent component
+ * @ignore
  */
 var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ {
     init: function(parent) {

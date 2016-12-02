@@ -17,6 +17,7 @@ var imageOption = {
  * @extends {Component}
  * @class ImageLoader
  * @param {Component} parent - parent component
+ * @ignore
  */
 var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototype */{
     init: function(parent) {
