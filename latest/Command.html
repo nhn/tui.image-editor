@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ImageEditor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">ImageEditor</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-basic.html">Basic Example</a><div class="hidden" id="basic_sub"></div></li><li><a href="tutorial-mobile.html">Mobile Example</a><div class="hidden" id="mobile_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Command.html">Command</a><div class="hidden" id="Command_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Command.html#execute">execute</a></li><li><a href="Command.html#executeCallback">executeCallback</a></li><li><a href="Command.html#undo">undo</a></li><li><a href="Command.html#undoCallback">undoCallback</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Command.html#execute">execute</a></li><li><a href="Command.html#setExecuteCallback">setExecuteCallback</a></li><li><a href="Command.html#setUndoCallback">setUndoCallback</a></li><li><a href="Command.html#undo">undo</a></li></ul></div></li><li><a href="Component.html">Component</a><div class="hidden" id="Component_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Component.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Component.html#getCanvas">getCanvas</a></li><li><a href="Component.html#getCanvasElement">getCanvasElement</a></li><li><a href="Component.html#getCanvasImage">getCanvasImage</a></li><li><a href="Component.html#getEditor">getEditor</a></li><li><a href="Component.html#getImageName">getImageName</a></li><li><a href="Component.html#getName">getName</a></li><li><a href="Component.html#getParent">getParent</a></li><li><a href="Component.html#getRoot">getRoot</a></li><li><a href="Component.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Component.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Component.html#setCanvasImage">setCanvasImage</a></li><li><a href="Component.html#setImageProperties">setImageProperties</a></li><li><a href="Component.html#setParent">setParent</a></li></ul></div></li><li><a href="ImageEditor.html">ImageEditor</a><div class="hidden" id="ImageEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ImageEditor.html#addIcon">addIcon</a></li><li><a href="ImageEditor.html#addImageObject">addImageObject</a></li><li><a href="ImageEditor.html#addShape">addShape</a></li><li><a href="ImageEditor.html#addText">addText</a></li><li><a href="ImageEditor.html#applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#changeIconColor">changeIconColor</a></li><li><a href="ImageEditor.html#changeShape">changeShape</a></li><li><a href="ImageEditor.html#changeText">changeText</a></li><li><a href="ImageEditor.html#changeTextStyle">changeTextStyle</a></li><li><a href="ImageEditor.html#clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#clearRedoStack">clearRedoStack</a></li><li><a href="ImageEditor.html#clearUndoStack">clearUndoStack</a></li><li><a href="ImageEditor.html#deactivateAll">deactivateAll</a></li><li><a href="ImageEditor.html#destroy">destroy</a></li><li><a href="ImageEditor.html#endAll">endAll</a></li><li><a href="ImageEditor.html#endCropping">endCropping</a></li><li><a href="ImageEditor.html#endDrawingShapeMode">endDrawingShapeMode</a></li><li><a href="ImageEditor.html#endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#endTextMode">endTextMode</a></li><li><a href="ImageEditor.html#flipX">flipX</a></li><li><a href="ImageEditor.html#flipY">flipY</a></li><li><a href="ImageEditor.html#getCurrentState">getCurrentState</a></li><li><a href="ImageEditor.html#getImageName">getImageName</a></li><li><a href="ImageEditor.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="ImageEditor.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="ImageEditor.html#loadImageFromFile">loadImageFromFile</a></li><li><a href="ImageEditor.html#loadImageFromURL">loadImageFromURL</a></li><li><a href="ImageEditor.html#redo">redo</a></li><li><a href="ImageEditor.html#registerIcons">registerIcons</a></li><li><a href="ImageEditor.html#removeActiveObject">removeActiveObject</a></li><li><a href="ImageEditor.html#resetFlip">resetFlip</a></li><li><a href="ImageEditor.html#resizeCanvasDimension">resizeCanvasDimension</a></li><li><a href="ImageEditor.html#rotate">rotate</a></li><li><a href="ImageEditor.html#setAngle">setAngle</a></li><li><a href="ImageEditor.html#setBrush">setBrush</a></li><li><a href="ImageEditor.html#setDrawingShape">setDrawingShape</a></li><li><a href="ImageEditor.html#startCropping">startCropping</a></li><li><a href="ImageEditor.html#startDrawingShapeMode">startDrawingShapeMode</a></li><li><a href="ImageEditor.html#startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#startLineDrawing">startLineDrawing</a></li><li><a href="ImageEditor.html#startTextMode">startTextMode</a></li><li><a href="ImageEditor.html#toDataURL">toDataURL</a></li><li><a href="ImageEditor.html#undo">undo</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ImageEditor.html#event:activateText">activateText</a></li><li><a href="ImageEditor.html#event:addedObject">addedObject</a></li><li><a href="ImageEditor.html#event:adjustObject">adjustObject</a></li><li><a href="ImageEditor.html#event:adjustObject">adjustObject</a></li><li><a href="ImageEditor.html#event:applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#event:clearImage">clearImage</a></li><li><a href="ImageEditor.html#event:clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#event:editText">editText</a></li><li><a href="ImageEditor.html#event:emptyRedoStack">emptyRedoStack</a></li><li><a href="ImageEditor.html#event:emptyUndoStack">emptyUndoStack</a></li><li><a href="ImageEditor.html#event:endCropping">endCropping</a></li><li><a href="ImageEditor.html#event:endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#event:endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#event:flipImage">flipImage</a></li><li><a href="ImageEditor.html#event:loadImage">loadImage</a></li><li><a href="ImageEditor.html#event:mouseDown">mouseDown</a></li><li><a href="ImageEditor.html#event:pushRedoStack">pushRedoStack</a></li><li><a href="ImageEditor.html#event:pushUndoStack">pushUndoStack</a></li><li><a href="ImageEditor.html#event:removedObject">removedObject</a></li><li><a href="ImageEditor.html#event:rotateImage">rotateImage</a></li><li><a href="ImageEditor.html#event:selectObject">selectObject</a></li><li><a href="ImageEditor.html#event:startCropping">startCropping</a></li><li><a href="ImageEditor.html#event:startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#event:startLineDrawing">startLineDrawing</a></li></ul></div></li><li><a href="Invoker.html">Invoker</a><div class="hidden" id="Invoker_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Invoker.html#_customEvents">_customEvents</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Invoker.html#clearRedoStack">clearRedoStack</a></li><li><a href="Invoker.html#clearUndoStack">clearUndoStack</a></li><li><a href="Invoker.html#getComponent">getComponent</a></li><li><a href="Invoker.html#invoke">invoke</a></li><li><a href="Invoker.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="Invoker.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="Invoker.html#lock">lock</a></li><li><a href="Invoker.html#on">on</a></li><li><a href="Invoker.html#pushRedoStack">pushRedoStack</a></li><li><a href="Invoker.html#pushUndoStack">pushUndoStack</a></li><li><a href="Invoker.html#redo">redo</a></li><li><a href="Invoker.html#undo">undo</a></li><li><a href="Invoker.html#unlock">unlock</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#creators%255Bundefined%255D">creators[undefined]</a></li><li class="hidden"><a href="global.html#cropzoneCoordinates">cropzoneCoordinates</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#undo">undo</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>Command</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="Command">
+            <span class="type-signature"></span>new Command<span class="signature">(actions)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_command.js.html">interface/command.js</a></code>,
+                <code><a href="interface_command.js.html#line17">line 17</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Command class</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>actions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Command actions</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="execute">
+    <span class="type-signature"></span>execute<span class="type-signature"> :function</span>
+    
+    <div class="container-source members">
+        <code><a href="interface_command.js.html">interface/command.js</a></code>,
+        <code><a href="interface_command.js.html#line23">line 23</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Execute function</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">function</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="executeCallback">
+    <span class="type-signature"></span>executeCallback<span class="type-signature"> :null</span>
+    
+    <div class="container-source members">
+        <code><a href="interface_command.js.html">interface/command.js</a></code>,
+        <code><a href="interface_command.js.html#line35">line 35</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>executeCallback</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">null</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="undo">
+    <span class="type-signature"></span>undo<span class="type-signature"> :function</span>
+    
+    <div class="container-source members">
+        <code><a href="interface_command.js.html">interface/command.js</a></code>,
+        <code><a href="interface_command.js.html#line29">line 29</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Undo function</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">function</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        
+            
+
+<dt>
+<h4 class="name" id="undoCallback">
+    <span class="type-signature"></span>undoCallback<span class="type-signature"> :null</span>
+    
+    <div class="container-source members">
+        <code><a href="interface_command.js.html">interface/command.js</a></code>,
+        <code><a href="interface_command.js.html#line41">line 41</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>undoCallback</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">null</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="execute">
+            <span class="type-signature"><span class="icon green">abstract</span> </span>execute<span class="signature">(compMap)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_command.js.html">interface/command.js</a></code>,
+                <code><a href="interface_command.js.html#line49">line 49</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Execute action</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>compMap</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object.&lt;string, <a href="Component.html">Component</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Components injection</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setExecuteCallback">
+            <span class="type-signature"></span>setExecuteCallback<span class="signature">(callback)</span><span class="type-signature"> &rarr; {<a href="Command.html">Command</a>}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_command.js.html">interface/command.js</a></code>,
+                <code><a href="interface_command.js.html#line67">line 67</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Attach execute callabck</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback after execution</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Command.html">Command</a></span>
+
+
+
+
+
+- <p>this</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setUndoCallback">
+            <span class="type-signature"></span>setUndoCallback<span class="signature">(callback)</span><span class="type-signature"> &rarr; {<a href="Command.html">Command</a>}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_command.js.html">interface/command.js</a></code>,
+                <code><a href="interface_command.js.html#line78">line 78</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Attach undo callback</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>callback</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Callback after undo</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Command.html">Command</a></span>
+
+
+
+
+
+- <p>this</p>
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="undo">
+            <span class="type-signature"><span class="icon green">abstract</span> </span>undo<span class="signature">(compMap)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_command.js.html">interface/command.js</a></code>,
+                <code><a href="interface_command.js.html#line58">line 58</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Undo action</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>compMap</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object.&lt;string, <a href="Component.html">Component</a>></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Components injection</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = 'Command_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

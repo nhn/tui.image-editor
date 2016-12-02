@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ImageEditor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">ImageEditor</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-basic.html">Basic Example</a><div class="hidden" id="basic_sub"></div></li><li><a href="tutorial-mobile.html">Mobile Example</a><div class="hidden" id="mobile_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="ImageEditor.html">ImageEditor</a><div class="hidden" id="ImageEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ImageEditor.html#addIcon">addIcon</a></li><li><a href="ImageEditor.html#addImageObject">addImageObject</a></li><li><a href="ImageEditor.html#addShape">addShape</a></li><li><a href="ImageEditor.html#addText">addText</a></li><li><a href="ImageEditor.html#applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#changeIconColor">changeIconColor</a></li><li><a href="ImageEditor.html#changeShape">changeShape</a></li><li><a href="ImageEditor.html#changeText">changeText</a></li><li><a href="ImageEditor.html#changeTextStyle">changeTextStyle</a></li><li><a href="ImageEditor.html#clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#clearRedoStack">clearRedoStack</a></li><li><a href="ImageEditor.html#clearUndoStack">clearUndoStack</a></li><li><a href="ImageEditor.html#deactivateAll">deactivateAll</a></li><li><a href="ImageEditor.html#destroy">destroy</a></li><li><a href="ImageEditor.html#endAll">endAll</a></li><li><a href="ImageEditor.html#endCropping">endCropping</a></li><li><a href="ImageEditor.html#endDrawingShapeMode">endDrawingShapeMode</a></li><li><a href="ImageEditor.html#endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#endTextMode">endTextMode</a></li><li><a href="ImageEditor.html#flipX">flipX</a></li><li><a href="ImageEditor.html#flipY">flipY</a></li><li><a href="ImageEditor.html#getCurrentState">getCurrentState</a></li><li><a href="ImageEditor.html#getImageName">getImageName</a></li><li><a href="ImageEditor.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="ImageEditor.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="ImageEditor.html#loadImageFromFile">loadImageFromFile</a></li><li><a href="ImageEditor.html#loadImageFromURL">loadImageFromURL</a></li><li><a href="ImageEditor.html#redo">redo</a></li><li><a href="ImageEditor.html#registerIcons">registerIcons</a></li><li><a href="ImageEditor.html#removeActiveObject">removeActiveObject</a></li><li><a href="ImageEditor.html#resetFlip">resetFlip</a></li><li><a href="ImageEditor.html#resizeCanvasDimension">resizeCanvasDimension</a></li><li><a href="ImageEditor.html#rotate">rotate</a></li><li><a href="ImageEditor.html#setAngle">setAngle</a></li><li><a href="ImageEditor.html#setBrush">setBrush</a></li><li><a href="ImageEditor.html#setDrawingShape">setDrawingShape</a></li><li><a href="ImageEditor.html#startCropping">startCropping</a></li><li><a href="ImageEditor.html#startDrawingShapeMode">startDrawingShapeMode</a></li><li><a href="ImageEditor.html#startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#startLineDrawing">startLineDrawing</a></li><li><a href="ImageEditor.html#startTextMode">startTextMode</a></li><li><a href="ImageEditor.html#toDataURL">toDataURL</a></li><li><a href="ImageEditor.html#undo">undo</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ImageEditor.html#event:activateText">activateText</a></li><li><a href="ImageEditor.html#event:addedObject">addedObject</a></li><li><a href="ImageEditor.html#event:adjustObject">adjustObject</a></li><li><a href="ImageEditor.html#event:applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#event:clearImage">clearImage</a></li><li><a href="ImageEditor.html#event:clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#event:editText">editText</a></li><li><a href="ImageEditor.html#event:emptyRedoStack">emptyRedoStack</a></li><li><a href="ImageEditor.html#event:emptyUndoStack">emptyUndoStack</a></li><li><a href="ImageEditor.html#event:endCropping">endCropping</a></li><li><a href="ImageEditor.html#event:endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#event:endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#event:flipImage">flipImage</a></li><li><a href="ImageEditor.html#event:loadImage">loadImage</a></li><li><a href="ImageEditor.html#event:mouseDown">mouseDown</a></li><li><a href="ImageEditor.html#event:pushRedoStack">pushRedoStack</a></li><li><a href="ImageEditor.html#event:pushUndoStack">pushUndoStack</a></li><li><a href="ImageEditor.html#event:removedObject">removedObject</a></li><li><a href="ImageEditor.html#event:rotateImage">rotateImage</a></li><li><a href="ImageEditor.html#event:selectObject">selectObject</a></li><li><a href="ImageEditor.html#event:startCropping">startCropping</a></li><li><a href="ImageEditor.html#event:startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#event:startLineDrawing">startLineDrawing</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @author NHN Ent. FE Development Team &lt;dl_javascript@nhnent.com>
+ * @fileoverview Image crop module (start cropping, end cropping)
+ */
+'use strict';
+
+var Component = require('../interface/component');
+var Cropzone = require('../extension/cropzone');
+var consts = require('../consts');
+var util = require('../util');
+
+var MOUSE_MOVE_THRESHOLD = 10;
+
+var abs = Math.abs;
+var clamp = util.clamp;
+var keyCodes = consts.keyCodes;
+
+/**
+ * Cropper components
+ * @param {Component} parent - parent component
+ * @extends {Component}
+ * @class Cropper
+ * @ignore
+ */
+var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
+    init: function(parent) {
+        this.setParent(parent);
+
+        /**
+         * Cropzone
+         * @type {Cropzone}
+         * @private
+         */
+        this._cropzone = null;
+
+        /**
+         * StartX of Cropzone
+         * @type {number}
+         * @private
+         */
+        this._startX = null;
+
+        /**
+         * StartY of Cropzone
+         * @type {number}
+         * @private
+         */
+        this._startY = null;
+
+        /**
+         * State whether shortcut key is pressed or not
+         * @type {boolean}
+         * @private
+         */
+        this._withShiftKey = false;
+
+        /**
+         * Listeners
+         * @type {object.&lt;string, function>}
+         * @private
+         */
+        this._listeners = {
+            keydown: $.proxy(this._onKeyDown, this),
+            keyup: $.proxy(this._onKeyUp, this),
+            mousedown: $.proxy(this._onFabricMouseDown, this),
+            mousemove: $.proxy(this._onFabricMouseMove, this),
+            mouseup: $.proxy(this._onFabricMouseUp, this)
+        };
+    },
+
+    /**
+     * Component name
+     * @type {string}
+     */
+    name: consts.componentNames.CROPPER,
+
+    /**
+     * Start cropping
+     */
+    start: function() {
+        var canvas;
+
+        if (this._cropzone) {
+            return;
+        }
+        canvas = this.getCanvas();
+        canvas.forEachObject(function(obj) { // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
+            obj.evented = false;
+        });
+        this._cropzone = new Cropzone({
+            left: -10,
+            top: -10,
+            width: 1,
+            height: 1,
+            strokeWidth: 0, // {@link https://github.com/kangax/fabric.js/issues/2860}
+            cornerSize: 10,
+            cornerColor: 'black',
+            fill: 'transparent',
+            hasRotatingPoint: false,
+            hasBorders: false,
+            lockScalingFlip: true,
+            lockRotation: true
+        });
+        canvas.deactivateAll();
+        canvas.add(this._cropzone);
+        canvas.on('mouse:down', this._listeners.mousedown);
+        canvas.selection = false;
+        canvas.defaultCursor = 'crosshair';
+
+        fabric.util.addListener(document, 'keydown', this._listeners.keydown);
+        fabric.util.addListener(document, 'keyup', this._listeners.keyup);
+    },
+
+    /**
+     * End cropping
+     * @param {boolean} isApplying - Is applying or not
+     * @returns {?{imageName: string, url: string}} cropped Image data
+     */
+    end: function(isApplying) {
+        var canvas = this.getCanvas();
+        var cropzone = this._cropzone;
+        var data;
+
+        if (!cropzone) {
+            return null;
+        }
+        cropzone.remove();
+        canvas.selection = true;
+        canvas.defaultCursor = 'default';
+        canvas.off('mouse:down', this._listeners.mousedown);
+        canvas.forEachObject(function(obj) {
+            obj.evented = true;
+        });
+        if (isApplying) {
+            data = this._getCroppedImageData();
+        }
+        this._cropzone = null;
+
+        fabric.util.removeListener(document, 'keydown', this._listeners.keydown);
+        fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
+
+        return data;
+    },
+
+    /**
+     * onMousedown handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onFabricMouseDown: function(fEvent) {
+        var canvas = this.getCanvas();
+        var coord;
+
+        if (fEvent.target) {
+            return;
+        }
+
+        canvas.selection = false;
+        coord = canvas.getPointer(fEvent.e);
+
+        this._startX = coord.x;
+        this._startY = coord.y;
+
+        canvas.on({
+            'mouse:move': this._listeners.mousemove,
+            'mouse:up': this._listeners.mouseup
+        });
+    },
+
+    /**
+     * onMousemove handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onFabricMouseMove: function(fEvent) {
+        var canvas = this.getCanvas();
+        var pointer = canvas.getPointer(fEvent.e);
+        var x = pointer.x;
+        var y = pointer.y;
+        var cropzone = this._cropzone;
+
+        if (abs(x - this._startX) + abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
+            cropzone.remove();
+            cropzone.set(this._calcRectDimensionFromPoint(x, y));
+
+            canvas.add(cropzone);
+        }
+    },
+
+    /**
+     * Get rect dimension setting from Canvas-Mouse-Position(x, y)
+     * @param {number} x - Canvas-Mouse-Position x
+     * @param {number} y - Canvas-Mouse-Position Y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _calcRectDimensionFromPoint: function(x, y) {
+        var canvas = this.getCanvas();
+        var canvasWidth = canvas.getWidth();
+        var canvasHeight = canvas.getHeight();
+        var startX = this._startX;
+        var startY = this._startY;
+        var left = clamp(x, 0, startX);
+        var top = clamp(y, 0, startY);
+        var width = clamp(x, startX, canvasWidth) - left; // (startX &lt;= x(mouse) &lt;= canvasWidth) - left
+        var height = clamp(y, startY, canvasHeight) - top; // (startY &lt;= y(mouse) &lt;= canvasHeight) - top
+
+        if (this._withShiftKey) { // make fixed ratio cropzone
+            if (width > height) {
+                height = width;
+            } else if (height > width) {
+                width = height;
+            }
+
+            if (startX >= x) {
+                left = startX - width;
+            }
+
+            if (startY >= y) {
+                top = startY - height;
+            }
+        }
+
+        return {
+            left: left,
+            top: top,
+            width: width,
+            height: height
+        };
+    },
+
+    /**
+     * onMouseup handler in fabric canvas
+     * @private
+     */
+    _onFabricMouseUp: function() {
+        var cropzone = this._cropzone;
+        var listeners = this._listeners;
+        var canvas = this.getCanvas();
+
+        canvas.setActiveObject(cropzone);
+        canvas.off({
+            'mouse:move': listeners.mousemove,
+            'mouse:up': listeners.mouseup
+        });
+    },
+
+    /**
+     * Get cropped image data
+     * @returns {?{imageName: string, url: string}} cropped Image data
+     * @private
+     */
+    _getCroppedImageData: function() {
+        var cropzone = this._cropzone;
+        var cropInfo;
+
+        if (!cropzone.isValid()) {
+            return null;
+        }
+
+        cropInfo = {
+            left: cropzone.getLeft(),
+            top: cropzone.getTop(),
+            width: cropzone.getWidth(),
+            height: cropzone.getHeight()
+        };
+
+        return {
+            imageName: this.getImageName(),
+            url: this.getCanvas().toDataURL(cropInfo)
+        };
+    },
+
+    /**
+     * Keydown event handler
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+    _onKeyDown: function(e) {
+        if (e.keyCode === keyCodes.SHIFT) {
+            this._withShiftKey = true;
+        }
+    },
+
+    /**
+     * Keyup event handler
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+    _onKeyUp: function(e) {
+        if (e.keyCode === keyCodes.SHIFT) {
+            this._withShiftKey = false;
+        }
+    }
+});
+
+module.exports = Cropper;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

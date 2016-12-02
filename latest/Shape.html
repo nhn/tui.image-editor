@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ImageEditor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">ImageEditor</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-basic.html">Basic Example</a><div class="hidden" id="basic_sub"></div></li><li><a href="tutorial-mobile.html">Mobile Example</a><div class="hidden" id="mobile_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="Command.html">Command</a><div class="hidden" id="Command_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Command.html#execute">execute</a></li><li><a href="Command.html#executeCallback">executeCallback</a></li><li><a href="Command.html#undo">undo</a></li><li><a href="Command.html#undoCallback">undoCallback</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Command.html#execute">execute</a></li><li><a href="Command.html#setExecuteCallback">setExecuteCallback</a></li><li><a href="Command.html#setUndoCallback">setUndoCallback</a></li><li><a href="Command.html#undo">undo</a></li></ul></div></li><li><a href="Component.html">Component</a><div class="hidden" id="Component_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Component.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Component.html#getCanvas">getCanvas</a></li><li><a href="Component.html#getCanvasElement">getCanvasElement</a></li><li><a href="Component.html#getCanvasImage">getCanvasImage</a></li><li><a href="Component.html#getEditor">getEditor</a></li><li><a href="Component.html#getImageName">getImageName</a></li><li><a href="Component.html#getName">getName</a></li><li><a href="Component.html#getParent">getParent</a></li><li><a href="Component.html#getRoot">getRoot</a></li><li><a href="Component.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Component.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Component.html#setCanvasImage">setCanvasImage</a></li><li><a href="Component.html#setImageProperties">setImageProperties</a></li><li><a href="Component.html#setParent">setParent</a></li></ul></div></li><li><a href="Cropper.html">Cropper</a><div class="hidden" id="Cropper_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Cropper.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Cropper.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Cropper.html#end">end</a></li><li><a href="Cropper.html#getCanvas">getCanvas</a></li><li><a href="Cropper.html#getCanvasElement">getCanvasElement</a></li><li><a href="Cropper.html#getCanvasImage">getCanvasImage</a></li><li><a href="Cropper.html#getEditor">getEditor</a></li><li><a href="Cropper.html#getImageName">getImageName</a></li><li><a href="Cropper.html#getName">getName</a></li><li><a href="Cropper.html#getParent">getParent</a></li><li><a href="Cropper.html#getRoot">getRoot</a></li><li><a href="Cropper.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Cropper.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Cropper.html#setCanvasImage">setCanvasImage</a></li><li><a href="Cropper.html#setImageProperties">setImageProperties</a></li><li><a href="Cropper.html#setParent">setParent</a></li><li><a href="Cropper.html#start">start</a></li></ul></div></li><li><a href="Cropzone.html">Cropzone</a><div class="hidden" id="Cropzone_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Cropzone.html#initialize">initialize</a></li><li><a href="Cropzone.html#isValid">isValid</a></li></ul></div></li><li><a href="Filter.html">Filter</a><div class="hidden" id="Filter_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Filter.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Filter.html#add">add</a></li><li><a href="Filter.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Filter.html#getCanvas">getCanvas</a></li><li><a href="Filter.html#getCanvasElement">getCanvasElement</a></li><li><a href="Filter.html#getCanvasImage">getCanvasImage</a></li><li><a href="Filter.html#getEditor">getEditor</a></li><li><a href="Filter.html#getImageName">getImageName</a></li><li><a href="Filter.html#getName">getName</a></li><li><a href="Filter.html#getParent">getParent</a></li><li><a href="Filter.html#getRoot">getRoot</a></li><li><a href="Filter.html#remove">remove</a></li><li><a href="Filter.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Filter.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Filter.html#setCanvasImage">setCanvasImage</a></li><li><a href="Filter.html#setImageProperties">setImageProperties</a></li><li><a href="Filter.html#setParent">setParent</a></li></ul></div></li><li><a href="Flip.html">Flip</a><div class="hidden" id="Flip_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Flip.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Flip.html#_invertAngle">_invertAngle</a></li><li><a href="Flip.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Flip.html#flipX">flipX</a></li><li><a href="Flip.html#flipY">flipY</a></li><li><a href="Flip.html#getCanvas">getCanvas</a></li><li><a href="Flip.html#getCanvasElement">getCanvasElement</a></li><li><a href="Flip.html#getCanvasImage">getCanvasImage</a></li><li><a href="Flip.html#getCurrentSetting">getCurrentSetting</a></li><li><a href="Flip.html#getEditor">getEditor</a></li><li><a href="Flip.html#getImageName">getImageName</a></li><li><a href="Flip.html#getName">getName</a></li><li><a href="Flip.html#getParent">getParent</a></li><li><a href="Flip.html#getRoot">getRoot</a></li><li><a href="Flip.html#reset">reset</a></li><li><a href="Flip.html#set">set</a></li><li><a href="Flip.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Flip.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Flip.html#setCanvasImage">setCanvasImage</a></li><li><a href="Flip.html#setImageProperties">setImageProperties</a></li><li><a href="Flip.html#setParent">setParent</a></li></ul></div></li><li><a href="FreeDrawing.html">FreeDrawing</a><div class="hidden" id="FreeDrawing_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="FreeDrawing.html#name">name</a></li><li><a href="FreeDrawing.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="FreeDrawing.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="FreeDrawing.html#end">end</a></li><li><a href="FreeDrawing.html#end">end</a></li><li><a href="FreeDrawing.html#getCanvas">getCanvas</a></li><li><a href="FreeDrawing.html#getCanvasElement">getCanvasElement</a></li><li><a href="FreeDrawing.html#getCanvasImage">getCanvasImage</a></li><li><a href="FreeDrawing.html#getEditor">getEditor</a></li><li><a href="FreeDrawing.html#getImageName">getImageName</a></li><li><a href="FreeDrawing.html#getName">getName</a></li><li><a href="FreeDrawing.html#getParent">getParent</a></li><li><a href="FreeDrawing.html#getRoot">getRoot</a></li><li><a href="FreeDrawing.html#setBrush">setBrush</a></li><li><a href="FreeDrawing.html#setBrush">setBrush</a></li><li><a href="FreeDrawing.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="FreeDrawing.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="FreeDrawing.html#setCanvasImage">setCanvasImage</a></li><li><a href="FreeDrawing.html#setImageProperties">setImageProperties</a></li><li><a href="FreeDrawing.html#setParent">setParent</a></li><li><a href="FreeDrawing.html#start">start</a></li><li><a href="FreeDrawing.html#start">start</a></li></ul></div></li><li><a href="Icon.html">Icon</a><div class="hidden" id="Icon_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Icon.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Icon.html#_createIcon">_createIcon</a></li><li><a href="Icon.html#add">add</a></li><li><a href="Icon.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Icon.html#getCanvas">getCanvas</a></li><li><a href="Icon.html#getCanvasElement">getCanvasElement</a></li><li><a href="Icon.html#getCanvasImage">getCanvasImage</a></li><li><a href="Icon.html#getEditor">getEditor</a></li><li><a href="Icon.html#getImageName">getImageName</a></li><li><a href="Icon.html#getName">getName</a></li><li><a href="Icon.html#getParent">getParent</a></li><li><a href="Icon.html#getRoot">getRoot</a></li><li><a href="Icon.html#registerPaths">registerPaths</a></li><li><a href="Icon.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Icon.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Icon.html#setCanvasImage">setCanvasImage</a></li><li><a href="Icon.html#setColor">setColor</a></li><li><a href="Icon.html#setImageProperties">setImageProperties</a></li><li><a href="Icon.html#setParent">setParent</a></li></ul></div></li><li><a href="ImageEditor.html">ImageEditor</a><div class="hidden" id="ImageEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ImageEditor.html#addIcon">addIcon</a></li><li><a href="ImageEditor.html#addImageObject">addImageObject</a></li><li><a href="ImageEditor.html#addShape">addShape</a></li><li><a href="ImageEditor.html#addText">addText</a></li><li><a href="ImageEditor.html#applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#changeIconColor">changeIconColor</a></li><li><a href="ImageEditor.html#changeShape">changeShape</a></li><li><a href="ImageEditor.html#changeText">changeText</a></li><li><a href="ImageEditor.html#changeTextStyle">changeTextStyle</a></li><li><a href="ImageEditor.html#clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#clearRedoStack">clearRedoStack</a></li><li><a href="ImageEditor.html#clearUndoStack">clearUndoStack</a></li><li><a href="ImageEditor.html#deactivateAll">deactivateAll</a></li><li><a href="ImageEditor.html#destroy">destroy</a></li><li><a href="ImageEditor.html#endAll">endAll</a></li><li><a href="ImageEditor.html#endCropping">endCropping</a></li><li><a href="ImageEditor.html#endDrawingShapeMode">endDrawingShapeMode</a></li><li><a href="ImageEditor.html#endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#endTextMode">endTextMode</a></li><li><a href="ImageEditor.html#flipX">flipX</a></li><li><a href="ImageEditor.html#flipY">flipY</a></li><li><a href="ImageEditor.html#getCurrentState">getCurrentState</a></li><li><a href="ImageEditor.html#getImageName">getImageName</a></li><li><a href="ImageEditor.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="ImageEditor.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="ImageEditor.html#loadImageFromFile">loadImageFromFile</a></li><li><a href="ImageEditor.html#loadImageFromURL">loadImageFromURL</a></li><li><a href="ImageEditor.html#redo">redo</a></li><li><a href="ImageEditor.html#registerIcons">registerIcons</a></li><li><a href="ImageEditor.html#removeActiveObject">removeActiveObject</a></li><li><a href="ImageEditor.html#resetFlip">resetFlip</a></li><li><a href="ImageEditor.html#resizeCanvasDimension">resizeCanvasDimension</a></li><li><a href="ImageEditor.html#rotate">rotate</a></li><li><a href="ImageEditor.html#setAngle">setAngle</a></li><li><a href="ImageEditor.html#setBrush">setBrush</a></li><li><a href="ImageEditor.html#setDrawingShape">setDrawingShape</a></li><li><a href="ImageEditor.html#startCropping">startCropping</a></li><li><a href="ImageEditor.html#startDrawingShapeMode">startDrawingShapeMode</a></li><li><a href="ImageEditor.html#startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#startLineDrawing">startLineDrawing</a></li><li><a href="ImageEditor.html#startTextMode">startTextMode</a></li><li><a href="ImageEditor.html#toDataURL">toDataURL</a></li><li><a href="ImageEditor.html#undo">undo</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ImageEditor.html#event:activateText">activateText</a></li><li><a href="ImageEditor.html#event:addedObject">addedObject</a></li><li><a href="ImageEditor.html#event:adjustObject">adjustObject</a></li><li><a href="ImageEditor.html#event:adjustObject">adjustObject</a></li><li><a href="ImageEditor.html#event:applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#event:clearImage">clearImage</a></li><li><a href="ImageEditor.html#event:clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#event:editText">editText</a></li><li><a href="ImageEditor.html#event:emptyRedoStack">emptyRedoStack</a></li><li><a href="ImageEditor.html#event:emptyUndoStack">emptyUndoStack</a></li><li><a href="ImageEditor.html#event:endCropping">endCropping</a></li><li><a href="ImageEditor.html#event:endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#event:endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#event:flipImage">flipImage</a></li><li><a href="ImageEditor.html#event:loadImage">loadImage</a></li><li><a href="ImageEditor.html#event:mouseDown">mouseDown</a></li><li><a href="ImageEditor.html#event:pushRedoStack">pushRedoStack</a></li><li><a href="ImageEditor.html#event:pushUndoStack">pushUndoStack</a></li><li><a href="ImageEditor.html#event:removedObject">removedObject</a></li><li><a href="ImageEditor.html#event:rotateImage">rotateImage</a></li><li><a href="ImageEditor.html#event:selectObject">selectObject</a></li><li><a href="ImageEditor.html#event:startCropping">startCropping</a></li><li><a href="ImageEditor.html#event:startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#event:startLineDrawing">startLineDrawing</a></li></ul></div></li><li><a href="ImageLoader.html">ImageLoader</a><div class="hidden" id="ImageLoader_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="ImageLoader.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="ImageLoader.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="ImageLoader.html#getCanvas">getCanvas</a></li><li><a href="ImageLoader.html#getCanvasElement">getCanvasElement</a></li><li><a href="ImageLoader.html#getCanvasImage">getCanvasImage</a></li><li><a href="ImageLoader.html#getEditor">getEditor</a></li><li><a href="ImageLoader.html#getImageName">getImageName</a></li><li><a href="ImageLoader.html#getName">getName</a></li><li><a href="ImageLoader.html#getParent">getParent</a></li><li><a href="ImageLoader.html#getRoot">getRoot</a></li><li><a href="ImageLoader.html#load">load</a></li><li><a href="ImageLoader.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="ImageLoader.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="ImageLoader.html#setCanvasImage">setCanvasImage</a></li><li><a href="ImageLoader.html#setImageProperties">setImageProperties</a></li><li><a href="ImageLoader.html#setParent">setParent</a></li></ul></div></li><li><a href="Invoker.html">Invoker</a><div class="hidden" id="Invoker_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Invoker.html#_customEvents">_customEvents</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Invoker.html#clearRedoStack">clearRedoStack</a></li><li><a href="Invoker.html#clearUndoStack">clearUndoStack</a></li><li><a href="Invoker.html#getComponent">getComponent</a></li><li><a href="Invoker.html#invoke">invoke</a></li><li><a href="Invoker.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="Invoker.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="Invoker.html#lock">lock</a></li><li><a href="Invoker.html#on">on</a></li><li><a href="Invoker.html#pushRedoStack">pushRedoStack</a></li><li><a href="Invoker.html#pushUndoStack">pushUndoStack</a></li><li><a href="Invoker.html#redo">redo</a></li><li><a href="Invoker.html#undo">undo</a></li><li><a href="Invoker.html#unlock">unlock</a></li></ul></div></li><li><a href="Line.html">Line</a><div class="hidden" id="Line_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Line.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Line.html#getCanvas">getCanvas</a></li><li><a href="Line.html#getCanvasElement">getCanvasElement</a></li><li><a href="Line.html#getCanvasImage">getCanvasImage</a></li><li><a href="Line.html#getEditor">getEditor</a></li><li><a href="Line.html#getImageName">getImageName</a></li><li><a href="Line.html#getName">getName</a></li><li><a href="Line.html#getParent">getParent</a></li><li><a href="Line.html#getRoot">getRoot</a></li><li><a href="Line.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Line.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Line.html#setCanvasImage">setCanvasImage</a></li><li><a href="Line.html#setImageProperties">setImageProperties</a></li><li><a href="Line.html#setParent">setParent</a></li></ul></div></li><li><a href="Main.html">Main</a><div class="hidden" id="Main_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Main.html#canvas">canvas</a></li><li><a href="Main.html#canvasImage">canvasImage</a></li><li><a href="Main.html#cssMaxHeight">cssMaxHeight</a></li><li><a href="Main.html#cssMaxWidth">cssMaxWidth</a></li><li><a href="Main.html#imageName">imageName</a></li><li><a href="Main.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Main.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Main.html#getCanvas">getCanvas</a></li><li><a href="Main.html#getCanvasElement">getCanvasElement</a></li><li><a href="Main.html#getCanvasImage">getCanvasImage</a></li><li><a href="Main.html#getEditor">getEditor</a></li><li><a href="Main.html#getImageName">getImageName</a></li><li><a href="Main.html#getName">getName</a></li><li><a href="Main.html#getParent">getParent</a></li><li><a href="Main.html#getRoot">getRoot</a></li><li><a href="Main.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Main.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Main.html#setCanvasElement">setCanvasElement</a></li><li><a href="Main.html#setCanvasImage">setCanvasImage</a></li><li><a href="Main.html#setCssMaxDimension">setCssMaxDimension</a></li><li><a href="Main.html#setImageProperties">setImageProperties</a></li><li><a href="Main.html#setParent">setParent</a></li><li><a href="Main.html#toDataURL">toDataURL</a></li></ul></div></li><li><a href="Mask.html">Mask</a><div class="hidden" id="Mask_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="Mask.html#applyTo">applyTo</a></li></ul></div></li><li><a href="Rotation.html">Rotation</a><div class="hidden" id="Rotation_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Rotation.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Rotation.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Rotation.html#getCanvas">getCanvas</a></li><li><a href="Rotation.html#getCanvasElement">getCanvasElement</a></li><li><a href="Rotation.html#getCanvasImage">getCanvasImage</a></li><li><a href="Rotation.html#getCurrentAngle">getCurrentAngle</a></li><li><a href="Rotation.html#getEditor">getEditor</a></li><li><a href="Rotation.html#getImageName">getImageName</a></li><li><a href="Rotation.html#getName">getName</a></li><li><a href="Rotation.html#getParent">getParent</a></li><li><a href="Rotation.html#getRoot">getRoot</a></li><li><a href="Rotation.html#rotate">rotate</a></li><li><a href="Rotation.html#setAngle">setAngle</a></li><li><a href="Rotation.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Rotation.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Rotation.html#setCanvasImage">setCanvasImage</a></li><li><a href="Rotation.html#setImageProperties">setImageProperties</a></li><li><a href="Rotation.html#setParent">setParent</a></li></ul></div></li><li><a href="Shape.html">Shape</a><div class="hidden" id="Shape_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Shape.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Shape.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Shape.html#getCanvas">getCanvas</a></li><li><a href="Shape.html#getCanvasElement">getCanvasElement</a></li><li><a href="Shape.html#getCanvasImage">getCanvasImage</a></li><li><a href="Shape.html#getEditor">getEditor</a></li><li><a href="Shape.html#getImageName">getImageName</a></li><li><a href="Shape.html#getName">getName</a></li><li><a href="Shape.html#getParent">getParent</a></li><li><a href="Shape.html#getRoot">getRoot</a></li><li><a href="Shape.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Shape.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Shape.html#setCanvasImage">setCanvasImage</a></li><li><a href="Shape.html#setImageProperties">setImageProperties</a></li><li><a href="Shape.html#setParent">setParent</a></li></ul></div></li><li><a href="Text.html">Text</a><div class="hidden" id="Text_sub"><div class="member-type">Members</div><ul class="inner"><li><a href="Text.html#name">name</a></li></ul><div class="member-type">Methods</div><ul class="inner"><li><a href="Text.html#add">add</a></li><li><a href="Text.html#adjustCanvasDimension">adjustCanvasDimension</a></li><li><a href="Text.html#change">change</a></li><li><a href="Text.html#end">end</a></li><li><a href="Text.html#getCanvas">getCanvas</a></li><li><a href="Text.html#getCanvasElement">getCanvasElement</a></li><li><a href="Text.html#getCanvasImage">getCanvasImage</a></li><li><a href="Text.html#getCanvasRatio">getCanvasRatio</a></li><li><a href="Text.html#getEditor">getEditor</a></li><li><a href="Text.html#getImageName">getImageName</a></li><li><a href="Text.html#getName">getName</a></li><li><a href="Text.html#getParent">getParent</a></li><li><a href="Text.html#getRoot">getRoot</a></li><li><a href="Text.html#getSelectedObj">getSelectedObj</a></li><li><a href="Text.html#isSelected">isSelected</a></li><li><a href="Text.html#setCanvasBackstoreDimension">setCanvasBackstoreDimension</a></li><li><a href="Text.html#setCanvasCssDimension">setCanvasCssDimension</a></li><li><a href="Text.html#setCanvasImage">setCanvasImage</a></li><li><a href="Text.html#setCanvasRatio">setCanvasRatio</a></li><li><a href="Text.html#setImageProperties">setImageProperties</a></li><li><a href="Text.html#setParent">setParent</a></li><li><a href="Text.html#setSelectedInfo">setSelectedInfo</a></li><li><a href="Text.html#setStyle">setStyle</a></li><li><a href="Text.html#start">start</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3>Global</h3><ul><li><a href="global.html#adjustDimensionOnMouseMove">adjustDimensionOnMouseMove</a></li><li><a href="global.html#adjustDimensionOnScaling">adjustDimensionOnScaling</a></li><li><a href="global.html#adjustOriginByMovingPointer">adjustOriginByMovingPointer</a></li><li><a href="global.html#adjustOriginByStartPoint">adjustOriginByStartPoint</a></li><li><a href="global.html#create">create</a></li><li><a href="global.html#createAddObjectCommand">createAddObjectCommand</a></li><li><a href="global.html#createClearCommand">createClearCommand</a></li><li><a href="global.html#createFilterCommand">createFilterCommand</a></li><li><a href="global.html#createFlipImageCommand">createFlipImageCommand</a></li><li><a href="global.html#createLoadImageCommand">createLoadImageCommand</a></li><li><a href="global.html#createRemoveCommand">createRemoveCommand</a></li><li><a href="global.html#createRotationImageCommand">createRotationImageCommand</a></li><li><a href="global.html#creators%255Bundefined%255D">creators[undefined]</a></li><li class="hidden"><a href="global.html#cropzoneCoordinates">cropzoneCoordinates</a></li><li><a href="global.html#execute">execute</a></li><li><a href="global.html#getPositionsOfRotatedOrigin">getPositionsOfRotatedOrigin</a></li><li><a href="global.html#hasCenterOrigin">hasCenterOrigin</a></li><li><a href="global.html#setStartPoint">setStartPoint</a></li><li><a href="global.html#undo">undo</a></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>Shape</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="Shape">
+            <span class="type-signature"></span>new Shape<span class="signature">(parent)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="component_shape.js.html">component/shape.js</a></code>,
+                <code><a href="component_shape.js.html#line35">line 35</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Shape</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>parent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Component.html">Component</a></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>parent component</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+    
+    </div>
+
+    
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="Component.html">Component</a></li>
+    </ul>
+
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
+        <dl>
+            
+
+<dt>
+<h4 class="name" id="name">
+    <span class="type-signature"></span>name<span class="type-signature"> :string</span>
+    
+    <div class="container-source members">
+        <code><a href="component_shape.js.html">component/shape.js</a></code>,
+        <code><a href="component_shape.js.html#line106">line 106</a></code>
+    </div>
+    
+</h4>
+
+
+</dt>
+<dd>
+    
+    <div class="description">
+        <p>Component name</p>
+    </div>
+    
+
+    <!--
+    
+        <h5>Type:</h5>
+        <ul>
+            <li>
+                
+<span class="param-type">string</span>
+
+
+            </li>
+        </ul>
+    
+    -->
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+    
+</dd>
+
+        </dl>
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        <dl>
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="adjustCanvasDimension">
+            <span class="type-signature"></span>adjustCanvasDimension<span class="signature">()</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line107">line 107</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Adjust canvas dimension with scaling image</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#adjustCanvasDimension">Component#adjustCanvasDimension</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getCanvas">
+            <span class="type-signature"></span>getCanvas<span class="signature">()</span><span class="type-signature"> &rarr; {fabric.Canvas}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line35">line 35</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get fabric.Canvas instance</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">fabric.Canvas</span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getCanvas">Component#getCanvas</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getCanvasElement">
+            <span class="type-signature"></span>getCanvasElement<span class="signature">()</span><span class="type-signature"> &rarr; {HTMLCanvasElement}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line27">line 27</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Returns canvas element of fabric.Canvas[[lower-canvas]]</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">HTMLCanvasElement</span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getCanvasElement">Component#getCanvasElement</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getCanvasImage">
+            <span class="type-signature"></span>getCanvasImage<span class="signature">()</span><span class="type-signature"> &rarr; {fabric.Image}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line43">line 43</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get canvasImage (fabric.Image instance)</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">fabric.Image</span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getCanvasImage">Component#getCanvasImage</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getEditor">
+            <span class="type-signature"></span>getEditor<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="ImageEditor.html">ImageEditor</a>}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line59">line 59</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get image editor</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="ImageEditor.html">ImageEditor</a></span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getEditor">Component#getEditor</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getImageName">
+            <span class="type-signature"></span>getImageName<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line51">line 51</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Get image name</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">string</span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getImageName">Component#getImageName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getName">
+            <span class="type-signature"></span>getName<span class="signature">()</span><span class="type-signature"> &rarr; {string}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line67">line 67</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Return component name</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type">string</span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getName">Component#getName</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getParent">
+            <span class="type-signature"></span>getParent<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Component.html">Component</a>|null}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line116">line 116</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Return parent.
+If the view is root, return null</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Component.html">Component</a></span>
+|
+
+<span class="param-type">null</span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getParent">Component#getParent</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="getRoot">
+            <span class="type-signature"></span>getRoot<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Component.html">Component</a>}</span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line124">line 124</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Return root</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-returns">
+        <h5>Returns:</h5>
+        
+                
+
+
+
+<span class="param-type"><a href="Component.html">Component</a></span>
+
+
+
+
+
+
+
+
+            
+    </div>
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#getRoot">Component#getRoot</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setCanvasBackstoreDimension">
+            <span class="type-signature"></span>setCanvasBackstoreDimension<span class="signature">(dimension)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line92">line 92</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set canvas dimension - css only</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dimension</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Canvas backstore dimension</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#setCanvasBackstoreDimension">Component#setCanvasBackstoreDimension</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setCanvasCssDimension">
+            <span class="type-signature"></span>setCanvasCssDimension<span class="signature">(dimension)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line84">line 84</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set canvas dimension - css only</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>dimension</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Canvas css dimension</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#setCanvasCssDimension">Component#setCanvasCssDimension</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setCanvasImage">
+            <span class="type-signature"></span>setCanvasImage<span class="signature">(name, oImage)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line19">line 19</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Save image(background) of canvas</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Name of image</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>oImage</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">fabric.Image</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Fabric image instance</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#setCanvasImage">Component#setCanvasImage</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setImageProperties">
+            <span class="type-signature"></span>setImageProperties<span class="signature">(setting, withRendering<span class="signature-attributes">opt</span>)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line76">line 76</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set image properties</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>setting</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>Image properties</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>withRendering</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">boolean</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+
+                
+                </td>
+            
+
+            
+
+            <td class="description last"><p>If true, The changed image will be reflected in the canvas</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#setImageProperties">Component#setImageProperties</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            
+                
+
+<dt>
+
+    
+        
+
+        <h4 class="name" id="setParent">
+            <span class="type-signature"></span>setParent<span class="signature">(parent)</span><span class="type-signature"></span>
+            
+            <div class="container-source members">
+                <code><a href="interface_component.js.html">interface/component.js</a></code>,
+                <code><a href="interface_component.js.html#line100">line 100</a></code>
+            </div>
+            
+        </h4>
+
+        
+    
+
+</dt>
+<dd>
+
+    
+    <div class="description">
+        <p>Set parent</p>
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="container-params">
+        <h5>Parameters:</h5>
+        
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>parent</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><a href="Component.html">Component</a></span>
+|
+
+<span class="param-type">null</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>Parent</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+    </div>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Component.html#setParent">Component#setParent</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+    
+
+</dd>
+
+            </dl>
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = 'Shape_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

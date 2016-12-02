@@ -1,0 +1,385 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ImageEditor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px">
+        <img src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" width="100%" height="100%">
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">ImageEditor</a></h1>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-basic.html">Basic Example</a><div class="hidden" id="basic_sub"></div></li><li><a href="tutorial-mobile.html">Mobile Example</a><div class="hidden" id="mobile_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="ImageEditor.html">ImageEditor</a><div class="hidden" id="ImageEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ImageEditor.html#addIcon">addIcon</a></li><li><a href="ImageEditor.html#addImageObject">addImageObject</a></li><li><a href="ImageEditor.html#addShape">addShape</a></li><li><a href="ImageEditor.html#addText">addText</a></li><li><a href="ImageEditor.html#applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#changeIconColor">changeIconColor</a></li><li><a href="ImageEditor.html#changeShape">changeShape</a></li><li><a href="ImageEditor.html#changeText">changeText</a></li><li><a href="ImageEditor.html#changeTextStyle">changeTextStyle</a></li><li><a href="ImageEditor.html#clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#clearRedoStack">clearRedoStack</a></li><li><a href="ImageEditor.html#clearUndoStack">clearUndoStack</a></li><li><a href="ImageEditor.html#deactivateAll">deactivateAll</a></li><li><a href="ImageEditor.html#destroy">destroy</a></li><li><a href="ImageEditor.html#endAll">endAll</a></li><li><a href="ImageEditor.html#endCropping">endCropping</a></li><li><a href="ImageEditor.html#endDrawingShapeMode">endDrawingShapeMode</a></li><li><a href="ImageEditor.html#endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#endTextMode">endTextMode</a></li><li><a href="ImageEditor.html#flipX">flipX</a></li><li><a href="ImageEditor.html#flipY">flipY</a></li><li><a href="ImageEditor.html#getCurrentState">getCurrentState</a></li><li><a href="ImageEditor.html#getImageName">getImageName</a></li><li><a href="ImageEditor.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="ImageEditor.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="ImageEditor.html#loadImageFromFile">loadImageFromFile</a></li><li><a href="ImageEditor.html#loadImageFromURL">loadImageFromURL</a></li><li><a href="ImageEditor.html#redo">redo</a></li><li><a href="ImageEditor.html#registerIcons">registerIcons</a></li><li><a href="ImageEditor.html#removeActiveObject">removeActiveObject</a></li><li><a href="ImageEditor.html#resetFlip">resetFlip</a></li><li><a href="ImageEditor.html#resizeCanvasDimension">resizeCanvasDimension</a></li><li><a href="ImageEditor.html#rotate">rotate</a></li><li><a href="ImageEditor.html#setAngle">setAngle</a></li><li><a href="ImageEditor.html#setBrush">setBrush</a></li><li><a href="ImageEditor.html#setDrawingShape">setDrawingShape</a></li><li><a href="ImageEditor.html#startCropping">startCropping</a></li><li><a href="ImageEditor.html#startDrawingShapeMode">startDrawingShapeMode</a></li><li><a href="ImageEditor.html#startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#startLineDrawing">startLineDrawing</a></li><li><a href="ImageEditor.html#startTextMode">startTextMode</a></li><li><a href="ImageEditor.html#toDataURL">toDataURL</a></li><li><a href="ImageEditor.html#undo">undo</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ImageEditor.html#event:activateText">activateText</a></li><li><a href="ImageEditor.html#event:addedObject">addedObject</a></li><li><a href="ImageEditor.html#event:adjustObject">adjustObject</a></li><li><a href="ImageEditor.html#event:applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#event:clearImage">clearImage</a></li><li><a href="ImageEditor.html#event:clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#event:editText">editText</a></li><li><a href="ImageEditor.html#event:emptyRedoStack">emptyRedoStack</a></li><li><a href="ImageEditor.html#event:emptyUndoStack">emptyUndoStack</a></li><li><a href="ImageEditor.html#event:endCropping">endCropping</a></li><li><a href="ImageEditor.html#event:endFreeDrawing">endFreeDrawing</a></li><li><a href="ImageEditor.html#event:endLineDrawing">endLineDrawing</a></li><li><a href="ImageEditor.html#event:flipImage">flipImage</a></li><li><a href="ImageEditor.html#event:loadImage">loadImage</a></li><li><a href="ImageEditor.html#event:mouseDown">mouseDown</a></li><li><a href="ImageEditor.html#event:pushRedoStack">pushRedoStack</a></li><li><a href="ImageEditor.html#event:pushUndoStack">pushUndoStack</a></li><li><a href="ImageEditor.html#event:removedObject">removedObject</a></li><li><a href="ImageEditor.html#event:rotateImage">rotateImage</a></li><li><a href="ImageEditor.html#event:selectObject">selectObject</a></li><li><a href="ImageEditor.html#event:startCropping">startCropping</a></li><li><a href="ImageEditor.html#event:startFreeDrawing">startFreeDrawing</a></li><li><a href="ImageEditor.html#event:startLineDrawing">startLineDrawing</a></li></ul></div></li></ul></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @author NHN Ent. FE Development Team &lt;dl_javascript@nhnent.com>
+ * @fileoverview Invoker - invoke commands
+ */
+'use strict';
+
+var ImageLoader = require('./component/imageLoader');
+var Cropper = require('./component/cropper');
+var MainComponent = require('./component/main');
+var Flip = require('./component/flip');
+var Rotation = require('./component/rotation');
+var FreeDrawing = require('./component/freeDrawing');
+var Line = require('./component/line');
+var Text = require('./component/text');
+var Icon = require('./component/icon');
+var Filter = require('./component/filter');
+var Shape = require('./component/shape');
+var eventNames = require('./consts').eventNames;
+
+/**
+ * Invoker
+ * @class
+ * @ignore
+ */
+var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
+    init: function() {
+        /**
+         * Custom Events
+         * @type {tui.util.CustomEvents}
+         */
+        this._customEvents = new tui.util.CustomEvents();
+
+        /**
+         * Undo stack
+         * @type {Array.&lt;Command>}
+         * @private
+         */
+        this._undoStack = [];
+
+        /**
+         * Redo stack
+         * @type {Array.&lt;Command>}
+         * @private
+         */
+        this._redoStack = [];
+
+        /**
+         * Component map
+         * @type {Object.&lt;string, Component>}
+         * @private
+         */
+        this._componentMap = {};
+
+        /**
+         * Lock-flag for executing command
+         * @type {boolean}
+         * @private
+         */
+        this._isLocked = false;
+
+        this._createComponents();
+    },
+
+    /**
+     * Create components
+     * @private
+     */
+    _createComponents: function() {
+        var main = new MainComponent();
+
+        this._register(main);
+        this._register(new ImageLoader(main));
+        this._register(new Cropper(main));
+        this._register(new Flip(main));
+        this._register(new Rotation(main));
+        this._register(new FreeDrawing(main));
+        this._register(new Line(main));
+        this._register(new Text(main));
+        this._register(new Icon(main));
+        this._register(new Filter(main));
+        this._register(new Shape(main));
+    },
+
+    /**
+     * Register component
+     * @param {Component} component - Component handling the canvas
+     * @private
+     */
+    _register: function(component) {
+        this._componentMap[component.getName()] = component;
+    },
+
+    /**
+     * Invoke command execution
+     * @param {Command} command - Command
+     * @returns {jQuery.Deferred}
+     * @private
+     */
+    _invokeExecution: function(command) {
+        var self = this;
+
+        this.lock();
+
+        return $.when(command.execute(this._componentMap))
+            .done(function() {
+                self.pushUndoStack(command);
+            })
+            .done(command.executeCallback)
+            .always(function() {
+                self.unlock();
+            });
+    },
+
+    /**
+     * Invoke command undo
+     * @param {Command} command - Command
+     * @returns {jQuery.Deferred}
+     * @private
+     */
+    _invokeUndo: function(command) {
+        var self = this;
+
+        this.lock();
+
+        return $.when(command.undo(this._componentMap))
+            .done(function() {
+                self.pushRedoStack(command);
+            })
+            .done(command.undoCallback)
+            .always(function() {
+                self.unlock();
+            });
+    },
+
+    /**
+     * Fire custom events
+     * @see {@link tui.util.CustomEvents.prototype.fire}
+     * @param {...*} arguments - Arguments to fire a event
+     * @private
+     */
+    _fire: function() {
+        var event = this._customEvents;
+        event.fire.apply(event, arguments);
+    },
+
+    /**
+     * Attach custom events
+     * @see {@link tui.util.CustomEvents.prototype.on}
+     * @param {...*} arguments - Arguments to attach events
+     */
+    on: function() {
+        var event = this._customEvents;
+        event.on.apply(event, arguments);
+    },
+
+    /**
+     * Get component
+     * @param {string} name - Component name
+     * @returns {Component}
+     */
+    getComponent: function(name) {
+        return this._componentMap[name];
+    },
+
+    /**
+     * Lock this invoker
+     */
+    lock: function() {
+        this._isLocked = true;
+    },
+
+    /**
+     * Unlock this invoker
+     */
+    unlock: function() {
+        this._isLocked = false;
+    },
+
+    /**
+     * Invoke command
+     * Store the command to the undoStack
+     * Clear the redoStack
+     * @param {Command} command - Command
+     * @returns {jQuery.Deferred}
+     */
+    invoke: function(command) {
+        if (this._isLocked) {
+            return $.Deferred.reject();
+        }
+
+        return this._invokeExecution(command)
+            .done($.proxy(this.clearRedoStack, this));
+    },
+
+    /**
+     * Undo command
+     * @returns {jQuery.Deferred}
+     */
+    undo: function() {
+        var command = this._undoStack.pop();
+        var jqDefer;
+
+        if (command &amp;&amp; this._isLocked) {
+            this.pushUndoStack(command, true);
+            command = null;
+        }
+        if (command) {
+            if (this.isEmptyUndoStack()) {
+                this._fire(eventNames.EMPTY_UNDO_STACK);
+            }
+            jqDefer = this._invokeUndo(command);
+        } else {
+            jqDefer = $.Deferred().reject();
+        }
+
+        return jqDefer;
+    },
+
+    /**
+     * Redo command
+     * @returns {jQuery.Deferred}
+     */
+    redo: function() {
+        var command = this._redoStack.pop();
+        var jqDefer;
+
+        if (command &amp;&amp; this._isLocked) {
+            this.pushRedoStack(command, true);
+            command = null;
+        }
+        if (command) {
+            if (this.isEmptyRedoStack()) {
+                this._fire(eventNames.EMPTY_REDO_STACK);
+            }
+            jqDefer = this._invokeExecution(command);
+        } else {
+            jqDefer = $.Deferred().reject();
+        }
+
+        return jqDefer;
+    },
+
+    /**
+     * Push undo stack
+     * @param {Command} command - command
+     * @param {boolean} [isSilent] - Fire event or not
+     */
+    pushUndoStack: function(command, isSilent) {
+        this._undoStack.push(command);
+        if (!isSilent) {
+            this._fire(eventNames.PUSH_UNDO_STACK);
+        }
+    },
+
+    /**
+     * Push redo stack
+     * @param {Command} command - command
+     * @param {boolean} [isSilent] - Fire event or not
+     */
+    pushRedoStack: function(command, isSilent) {
+        this._redoStack.push(command);
+        if (!isSilent) {
+            this._fire(eventNames.PUSH_REDO_STACK);
+        }
+    },
+
+    /**
+     * Return whether the redoStack is empty
+     * @returns {boolean}
+     */
+    isEmptyRedoStack: function() {
+        return this._redoStack.length === 0;
+    },
+
+    /**
+     * Return whether the undoStack is empty
+     * @returns {boolean}
+     */
+    isEmptyUndoStack: function() {
+        return this._undoStack.length === 0;
+    },
+
+    /**
+     * Clear undoStack
+     */
+    clearUndoStack: function() {
+        if (!this.isEmptyUndoStack()) {
+            this._undoStack = [];
+            this._fire(eventNames.EMPTY_UNDO_STACK);
+        }
+    },
+
+    /**
+     * Clear redoStack
+     */
+    clearRedoStack: function() {
+        if (!this.isEmptyRedoStack()) {
+            this._redoStack = [];
+            this._fire(eventNames.EMPTY_REDO_STACK);
+        }
+    }
+});
+
+module.exports = Invoker;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://cloud.githubusercontent.com/assets/12269563/20029815/01133928-a39a-11e6-80f3-12500a91c755.png" style="width: 150px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var element = document.getElementById(id); // do not use jquery selector
+
+        $(element).removeClass('hidden');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
