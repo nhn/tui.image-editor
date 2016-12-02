@@ -1,5 +1,5 @@
 {
-  "name": "tui-component-image-editor",
+  "name": "tui-image-editor",
   "authors": [
     "NHN Ent. FE Dev Lab <dl_javascript@nhnent.com>"
   ],
@@ -24,7 +24,8 @@
     ".gitignore",
     "samples",
     "index.js",
-    "jsdoc-conf.json"
+    "jsdoc-conf.json",
+    "webpack.*.js"
   ],
   "dependencies": {
     "jquery": "~1.8.3",
