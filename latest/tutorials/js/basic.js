@@ -143,7 +143,7 @@ function resizeEditor() {
     var height = parseFloat($container.css('max-height'));
 
     $editor.height(height);
-};
+}
 
 function getBrushSettings() {
     var brushWidth = $inputBrushWidthRange.val();
@@ -246,7 +246,7 @@ function showSubMenu(type) {
             $submenu = $textSubMenu;
             break;
         default:
-            index = 0;
+            $submenu = 0;
     }
 
     $displayingSubMenu.hide();
