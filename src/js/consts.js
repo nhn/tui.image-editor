@@ -66,7 +66,7 @@ module.exports = {
         ACTIVATE_TEXT: 'activateText',
         APPLY_FILTER: 'applyFilter',
         EDIT_TEXT: 'editText',
-        MOUSE_DOWN: 'mouseDown'
+        MOUSE_DOWN: 'mousedown'
     },
 
     /**

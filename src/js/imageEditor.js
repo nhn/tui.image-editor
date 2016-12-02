@@ -178,10 +178,10 @@ var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
         var originPointer = this._canvas.getPointer(fEvent.e);
 
         /**
-         * @event ImageEditor#mouseDown
+         * @event ImageEditor#mousedown
          * @param {object} event - Event object
          * @example
-         * imageEditor.on('mouseDown', function(event) {
+         * imageEditor.on('mousedown', function(event) {
          *     console.log(event.e);
          *     console.log(event.originPointer);
          * });

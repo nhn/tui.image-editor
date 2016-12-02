@@ -63,7 +63,6 @@ var $inputTextSizeRange = $('#input-text-size-range');
 var $inputBrushWidthRange = $('#input-brush-range');
 var $inputStrokeWidthRange = $('#input-stroke-range');
 var $inputCheckTransparent = $('#input-check-transparent');
-var $selectColorType = $('[name="select-color-type"]');
 
 // Colorpicker
 var iconColorpicker = tui.component.colorpicker.create({
