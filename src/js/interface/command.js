@@ -2,12 +2,10 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Command interface
  */
-'use strict';
+import errorMessage from '../factory/errorMessage';
 
-var errorMessage = require('../factory/errorMessage');
-
-var createMessage = errorMessage.create,
-    errorTypes = errorMessage.types;
+const createMessage = errorMessage.create;
+const errorTypes = errorMessage.types;
 
 /**
  * Command class
@@ -15,8 +13,8 @@ var createMessage = errorMessage.create,
  * @param {{execute: function, undo: function}} actions - Command actions
  * @ignore
  */
-var Command = tui.util.defineClass(/** @lends Command.prototype */{
-    init: function(actions) {
+class Command {
+    constructor(actions) {
         /**
          * Execute function
          * @type {function}
@@ -40,47 +38,47 @@ var Command = tui.util.defineClass(/** @lends Command.prototype */{
          * @type {null}
          */
         this.undoCallback = null;
-    },
+    }
 
     /**
      * Execute action
      * @param {Object.<string, Component>} compMap - Components injection
      * @abstract
      */
-    execute: function() {
+    execute() {
         throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'execute'));
-    },
+    }
 
     /**
      * Undo action
      * @param {Object.<string, Component>} compMap - Components injection
      * @abstract
      */
-    undo: function() {
+    undo() {
         throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'undo'));
-    },
+    }
 
     /**
      * Attach execute callabck
      * @param {function} callback - Callback after execution
      * @returns {Command} this
      */
-    setExecuteCallback: function(callback) {
+    setExecuteCallback(callback) {
         this.executeCallback = callback;
 
         return this;
-    },
+    }
 
     /**
      * Attach undo callback
      * @param {function} callback - Callback after undo
      * @returns {Command} this
      */
-    setUndoCallback: function(callback) {
+    setUndoCallback(callback) {
         this.undoCallback = callback;
 
         return this;
     }
-});
+}
 
 module.exports = Command;

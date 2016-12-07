@@ -2,12 +2,10 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image loader
  */
-'use strict';
+import Component from '../interface/component';
+import consts from '../consts';
 
-var Component = require('../interface/component');
-var consts = require('../consts');
-
-var imageOption = {
+const imageOption = {
     padding: 0,
     crossOrigin: 'anonymous'
 };
@@ -19,16 +17,17 @@ var imageOption = {
  * @param {Component} parent - parent component
  * @ignore
  */
-var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototype */{
-    init: function(parent) {
+class ImageLoader extends Component {
+    constructor(parent) {
+        super();
         this.setParent(parent);
-    },
 
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.IMAGE_LOADER,
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.IMAGE_LOADER;
+    }
 
     /**
      * Load image from url
@@ -36,27 +35,27 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      * @param {?(fabric.Image|string)} img - fabric.Image instance or URL of an image
      * @returns {jQuery.Deferred} deferred
      */
-    load: function(imageName, img) {
-        var self = this;
-        var jqDefer, canvas;
+    load(imageName, img) {
+        let jqDefer;
 
         if (!imageName && !img) { // Back to the initial state, not error.
-            canvas = this.getCanvas();
+            const canvas = this.getCanvas();
+
             canvas.backgroundImage = null;
             canvas.renderAll();
 
-            jqDefer = $.Deferred(function() {
-                self.setCanvasImage('', null);
+            jqDefer = $.Deferred(() => {
+                this.setCanvasImage('', null);
             }).resolve();
         } else {
-            jqDefer = this._setBackgroundImage(img).done(function(oImage) {
-                self.setCanvasImage(imageName, oImage);
-                self.adjustCanvasDimension();
+            jqDefer = this._setBackgroundImage(img).done(oImage => {
+                this.setCanvasImage(imageName, oImage);
+                this.adjustCanvasDimension();
             });
         }
 
         return jqDefer;
-    },
+    }
 
     /**
      * Set background image
@@ -64,17 +63,17 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
      * @returns {$.Deferred} deferred
      * @private
      */
-    _setBackgroundImage: function(img) {
-        var jqDefer = $.Deferred();
-        var canvas;
+    _setBackgroundImage(img) {
+        const jqDefer = $.Deferred();
 
         if (!img) {
             return jqDefer.reject();
         }
 
-        canvas = this.getCanvas();
-        canvas.setBackgroundImage(img, function() {
-            var oImage = canvas.backgroundImage;
+        const canvas = this.getCanvas();
+
+        canvas.setBackgroundImage(img, () => {
+            const oImage = canvas.backgroundImage;
 
             if (oImage.getElement()) {
                 jqDefer.resolve(oImage);
@@ -85,6 +84,6 @@ var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototy
 
         return jqDefer;
     }
-});
+}
 
 module.exports = ImageLoader;

@@ -2,10 +2,10 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Free drawing module, Set brush
  */
-'use strict';
+import Component from '../interface/component';
+import consts from '../consts';
 
-var Component = require('../interface/component');
-var consts = require('../consts');
+const bind = tui.util.bind;
 
 /**
  * Line
@@ -14,9 +14,16 @@ var consts = require('../consts');
  * @extends {Component}
  * @ignore
  */
-var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
-    init: function(parent) {
+class Line extends Component {
+    constructor(parent) {
+        super();
         this.setParent(parent);
+
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.LINE;
 
         /**
          * Brush width
@@ -38,31 +45,25 @@ var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
          * @private
          */
         this._listeners = {
-            mousedown: $.proxy(this._onFabricMouseDown, this),
-            mousemove: $.proxy(this._onFabricMouseMove, this),
-            mouseup: $.proxy(this._onFabricMouseUp, this)
+            mousedown: bind(this._onFabricMouseDown, this),
+            mousemove: bind(this._onFabricMouseMove, this),
+            mouseup: bind(this._onFabricMouseUp, this)
         };
-    },
-
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.LINE,
+    }
 
     /**
      * Start drawing line mode
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
-    start: function(setting) {
-        var canvas = this.getCanvas();
+    start(setting) {
+        const canvas = this.getCanvas();
 
         canvas.defaultCursor = 'crosshair';
         canvas.selection = false;
 
         this.setBrush(setting);
 
-        canvas.forEachObject(function(obj) {
+        canvas.forEachObject(obj => {
             obj.set({
                 evented: false
             });
@@ -71,14 +72,14 @@ var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
         canvas.on({
             'mouse:down': this._listeners.mousedown
         });
-    },
+    }
 
     /**
      * Set brush
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
-    setBrush: function(setting) {
-        var brush = this.getCanvas().freeDrawingBrush;
+    setBrush(setting) {
+        const brush = this.getCanvas().freeDrawingBrush;
 
         setting = setting || {};
         this._width = setting.width || this._width;
@@ -88,35 +89,35 @@ var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
         }
         brush.width = this._width;
         brush.color = this._oColor.toRgba();
-    },
+    }
 
     /**
      * End drawing line mode
      */
-    end: function() {
-        var canvas = this.getCanvas();
+    end() {
+        const canvas = this.getCanvas();
 
         canvas.defaultCursor = 'default';
         canvas.selection = true;
 
-        canvas.forEachObject(function(obj) {
+        canvas.forEachObject(obj => {
             obj.set({
                 evented: true
             });
         });
 
         canvas.off('mouse:down', this._listeners.mousedown);
-    },
+    }
 
     /**
      * Mousedown event handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
      * @private
      */
-    _onFabricMouseDown: function(fEvent) {
-        var canvas = this.getCanvas();
-        var pointer = canvas.getPointer(fEvent.e);
-        var points = [pointer.x, pointer.y, pointer.x, pointer.y];
+    _onFabricMouseDown(fEvent) {
+        const canvas = this.getCanvas();
+        const pointer = canvas.getPointer(fEvent.e);
+        const points = [pointer.x, pointer.y, pointer.x, pointer.y];
 
         this._line = new fabric.Line(points, {
             stroke: this._oColor.toRgba(),
@@ -132,16 +133,16 @@ var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
             'mouse:move': this._listeners.mousemove,
             'mouse:up': this._listeners.mouseup
         });
-    },
+    }
 
     /**
      * Mousemove event handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
      * @private
      */
-    _onFabricMouseMove: function(fEvent) {
-        var canvas = this.getCanvas();
-        var pointer = canvas.getPointer(fEvent.e);
+    _onFabricMouseMove(fEvent) {
+        const canvas = this.getCanvas();
+        const pointer = canvas.getPointer(fEvent.e);
 
         this._line.set({
             x2: pointer.x,
@@ -151,15 +152,15 @@ var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
         this._line.setCoords();
 
         canvas.renderAll();
-    },
+    }
 
     /**
      * Mouseup event handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
      * @private
      */
-    _onFabricMouseUp: function() {
-        var canvas = this.getCanvas();
+    _onFabricMouseUp() {
+        const canvas = this.getCanvas();
 
         this._line = null;
 
@@ -168,6 +169,6 @@ var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
             'mouse:up': this._listeners.mouseup
         });
     }
-});
+}
 
 module.exports = Line;

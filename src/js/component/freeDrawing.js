@@ -2,10 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Free drawing module, Set brush
  */
-'use strict';
-
-var Component = require('../interface/component');
-var consts = require('../consts');
+import Component from '../interface/component';
+import consts from '../consts';
 
 /**
  * FreeDrawing
@@ -14,9 +12,16 @@ var consts = require('../consts');
  * @extends {Component}
  * @ignore
  */
-var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
-    init: function(parent) {
+class FreeDrawing extends Component {
+    constructor(parent) {
+        super();
         this.setParent(parent);
+
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.FREE_DRAWING;
 
         /**
          * Brush width
@@ -29,31 +34,25 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
          * @type {fabric.Color}
          */
         this.oColor = new fabric.Color('rgba(0, 0, 0, 0.5)');
-    },
-
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.FREE_DRAWING,
+    }
 
     /**
      * Start free drawing mode
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
-    start: function(setting) {
-        var canvas = this.getCanvas();
+    start(setting) {
+        const canvas = this.getCanvas();
 
         canvas.isDrawingMode = true;
         this.setBrush(setting);
-    },
+    }
 
     /**
      * Set brush
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
-    setBrush: function(setting) {
-        var brush = this.getCanvas().freeDrawingBrush;
+    setBrush(setting) {
+        const brush = this.getCanvas().freeDrawingBrush;
 
         setting = setting || {};
         this.width = setting.width || this.width;
@@ -62,16 +61,16 @@ var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototy
         }
         brush.width = this.width;
         brush.color = this.oColor.toRgba();
-    },
+    }
 
     /**
      * End free drawing mode
      */
-    end: function() {
-        var canvas = this.getCanvas();
+    end() {
+        const canvas = this.getCanvas();
 
         canvas.isDrawingMode = false;
     }
-});
+}
 
 module.exports = FreeDrawing;

@@ -2,40 +2,31 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Mask extending fabric.Image.filters.Mask
  */
-'use strict';
-
 /**
  * Mask object
  * @class Mask
  * @extends {fabric.Image.filters.Mask}
  * @ignore
  */
-var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.prototype */{
+const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.prototype */{
     /**
      * Apply filter to canvas element
      * @param {object} canvasEl - Canvas element to apply filter
      * @override
      */
-    applyTo: function(canvasEl) {
-        var maskCanvasEl, ctx, maskCtx, imageData;
-        var width, height;
-
+    applyTo(canvasEl) {
         if (!this.mask) {
             return;
         }
 
-        width = canvasEl.width;
-        height = canvasEl.height;
-
-        maskCanvasEl = this._createCanvasOfMask(width, height);
-
-        ctx = canvasEl.getContext('2d');
-        maskCtx = maskCanvasEl.getContext('2d');
-
-        imageData = ctx.getImageData(0, 0, width, height);
+        const width = canvasEl.width;
+        const height = canvasEl.height;
+        const maskCanvasEl = this._createCanvasOfMask(width, height);
+        const ctx = canvasEl.getContext('2d');
+        const maskCtx = maskCanvasEl.getContext('2d');
+        const imageData = ctx.getImageData(0, 0, width, height);
 
         this._drawMask(maskCtx, canvasEl, ctx);
-
         this._mapData(maskCtx, imageData, width, height);
 
         ctx.putImageData(imageData, 0, 0);
@@ -48,8 +39,8 @@ var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.pr
      * @returns {HTMLElement} Canvas element
      * @private
      */
-    _createCanvasOfMask: function(width, height) {
-        var maskCanvasEl = fabric.util.createCanvasElement();
+    _createCanvasOfMask(width, height) {
+        const maskCanvasEl = fabric.util.createCanvasElement();
 
         maskCanvasEl.width = width;
         maskCanvasEl.height = height;
@@ -62,14 +53,13 @@ var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.pr
      * @param {object} maskCtx - Context of mask canvas
      * @private
      */
-    _drawMask: function(maskCtx) {
-        var left, top, angle;
-        var mask = this.mask;
-        var maskImg = mask.getElement();
+    _drawMask(maskCtx) {
+        const mask = this.mask;
+        const maskImg = mask.getElement();
 
-        left = mask.getLeft();
-        top = mask.getTop();
-        angle = mask.getAngle();
+        const left = mask.getLeft();
+        const top = mask.getTop();
+        const angle = mask.getAngle();
 
         maskCtx.save();
         maskCtx.translate(left, top);
@@ -87,14 +77,13 @@ var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.pr
      * @param {number} height - Height of main canvas
      * @private
      */
-    _mapData: function(maskCtx, imageData, width, height) {
-        var sourceData = imageData.data;
-        var maskData = maskCtx.getImageData(0, 0, width, height).data;
-        var channel = this.channel;
-        var i = 0;
-        var len = imageData.width * imageData.height * 4;
+    _mapData(maskCtx, imageData, width, height) {
+        const sourceData = imageData.data;
+        const maskData = maskCtx.getImageData(0, 0, width, height).data;
+        const channel = this.channel;
+        const len = imageData.width * imageData.height * 4;
 
-        for (; i < len; i += 4) {
+        for (let i = 0; i < len; i += 4) {
             sourceData[i + 3] = maskData[i + channel]; // adjust value of alpha data
         }
     }

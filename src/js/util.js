@@ -2,10 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Util
  */
-'use strict';
-
-var min = Math.min,
-    max = Math.max;
+const {min, max} = Math;
 
 module.exports = {
     /**
@@ -15,8 +12,8 @@ module.exports = {
      * @param {number} maxValue - Maximum value
      * @returns {number} clamped value
      */
-    clamp: function(value, minValue, maxValue) {
-        var temp;
+    clamp(value, minValue, maxValue) {
+        let temp;
         if (minValue > maxValue) {
             temp = minValue;
             minValue = maxValue;
@@ -30,10 +27,10 @@ module.exports = {
      * Make key-value object from arguments
      * @returns {object.<string, string>}
      */
-    keyMirror: function() {
-        var obj = {};
+    keyMirror(...args) {
+        const obj = {};
 
-        tui.util.forEach(arguments, function(key) {
+        tui.util.forEach(args, key => {
             obj[key] = key;
         });
 
@@ -45,11 +42,11 @@ module.exports = {
      * @param {object} styleObj - Style info object
      * @returns {string} Connected string of style
      */
-    makeStyleText: function(styleObj) {
-        var styleStr = '';
+    makeStyleText(styleObj) {
+        let styleStr = '';
 
-        tui.util.forEach(styleObj, function(value, prop) {
-            styleStr += prop + ': ' + value + ';';
+        tui.util.forEach(styleObj, (value, prop) => {
+            styleStr += `${prop}: ${value};`;
         });
 
         return styleStr;

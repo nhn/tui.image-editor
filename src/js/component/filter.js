@@ -2,11 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add filter module
  */
-'use strict';
-
-var Component = require('../interface/component');
-var Mask = require('../extension/mask');
-var consts = require('../consts');
+import Component from '../interface/component';
+import Mask from '../extension/mask';
+import consts from '../consts';
 
 /**
  * Filter
@@ -15,16 +13,16 @@ var consts = require('../consts');
  * @extends {Component}
  * @ignore
  */
-var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
-    init: function(parent) {
+class Filter extends Component {
+    constructor(parent) {
+        super();
         this.setParent(parent);
-    },
-
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.FILTER,
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.FILTER;
+    }
 
     /**
      * Add filter to source image (a specific filter is added on fabric.js)
@@ -32,11 +30,11 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
      * @param {object} [options] - Options of filter
      * @returns {jQuery.Deferred}
      */
-    add: function(type, options) {
-        var jqDefer = $.Deferred();
-        var filter = this._createFilter(type, options);
-        var sourceImg = this._getSourceImage();
-        var canvas = this.getCanvas();
+    add(type, options) {
+        const jqDefer = $.Deferred();
+        const filter = this._createFilter(type, options);
+        const sourceImg = this._getSourceImage();
+        const canvas = this.getCanvas();
 
         if (!filter) {
             jqDefer.reject();
@@ -44,23 +42,23 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
 
         sourceImg.filters.push(filter);
 
-        this._apply(sourceImg, function() {
+        this._apply(sourceImg, () => {
             canvas.renderAll();
             jqDefer.resolve(type, 'add');
         });
 
         return jqDefer;
-    },
+    }
 
     /**
      * Remove filter to source image
      * @param {string} type - Filter type
      * @returns {jQuery.Deferred}
      */
-    remove: function(type) {
-        var jqDefer = $.Deferred();
-        var sourceImg = this._getSourceImage();
-        var canvas = this.getCanvas();
+    remove(type) {
+        const jqDefer = $.Deferred();
+        const sourceImg = this._getSourceImage();
+        const canvas = this.getCanvas();
 
         if (!sourceImg.filters.length) {
             jqDefer.reject();
@@ -68,13 +66,13 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
 
         sourceImg.filters.pop();
 
-        this._apply(sourceImg, function() {
+        this._apply(sourceImg, () => {
             canvas.renderAll();
             jqDefer.resolve(type, 'remove');
         });
 
         return jqDefer;
-    },
+    }
 
     /**
      * Apply filter
@@ -82,18 +80,18 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
      * @param {function} callback - Executed function after applying filter
      * @private
      */
-    _apply: function(sourceImg, callback) {
+    _apply(sourceImg, callback) {
         sourceImg.applyFilters(callback);
-    },
+    }
 
     /**
      * Get source image on canvas
      * @returns {fabric.Image} Current source image on canvas
      * @private
      */
-    _getSourceImage: function() {
+    _getSourceImage() {
         return this.getCanvasImage();
-    },
+    }
 
     /**
      * Create filter instance
@@ -102,8 +100,8 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
      * @returns {object} Fabric object of filter
      * @private
      */
-    _createFilter: function(type, options) {
-        var filterObj;
+    _createFilter(type, options) {
+        let filterObj;
 
         switch (type) {
             case 'mask':
@@ -118,6 +116,6 @@ var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
 
         return filterObj;
     }
-});
+}
 
 module.exports = Filter;

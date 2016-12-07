@@ -2,18 +2,18 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Cropzone extending fabric.Rect
  */
-'use strict';
+import util from '../util';
 
-var clamp = require('../util').clamp;
+const clamp = util.clamp;
 
-var CORNER_TYPE_TOP_LEFT = 'tl';
-var CORNER_TYPE_TOP_RIGHT = 'tr';
-var CORNER_TYPE_MIDDLE_TOP = 'mt';
-var CORNER_TYPE_MIDDLE_LEFT = 'ml';
-var CORNER_TYPE_MIDDLE_RIGHT = 'mr';
-var CORNER_TYPE_MIDDLE_BOTTOM = 'mb';
-var CORNER_TYPE_BOTTOM_LEFT = 'bl';
-var CORNER_TYPE_BOTTOM_RIGHT = 'br';
+const CORNER_TYPE_TOP_LEFT = 'tl';
+const CORNER_TYPE_TOP_RIGHT = 'tr';
+const CORNER_TYPE_MIDDLE_TOP = 'mt';
+const CORNER_TYPE_MIDDLE_LEFT = 'ml';
+const CORNER_TYPE_MIDDLE_RIGHT = 'mr';
+const CORNER_TYPE_MIDDLE_BOTTOM = 'mb';
+const CORNER_TYPE_BOTTOM_LEFT = 'bl';
+const CORNER_TYPE_BOTTOM_RIGHT = 'br';
 
 /**
  * Cropzone object
@@ -23,13 +23,13 @@ var CORNER_TYPE_BOTTOM_RIGHT = 'br';
  * @extends {fabric.Rect}
  * @ignore
  */
-var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
+const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
     /**
      * Constructor
      * @param {Object} options Options object
      * @override
      */
-    initialize: function(options) {
+    initialize(options) {
         options.type = 'cropzone';
         this.callSuper('initialize', options);
         this.on({
@@ -44,18 +44,16 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @private
      * @override
      */
-    _render: function(ctx) {
-        var originalFlipX, originalFlipY,
-            originalScaleX, originalScaleY,
-            cropzoneDashLineWidth = 7,
-            cropzoneDashLineOffset = 7;
+    _render(ctx) {
+        const cropzoneDashLineWidth = 7;
+        const cropzoneDashLineOffset = 7;
         this.callSuper('_render', ctx);
 
         // Calc original scale
-        originalFlipX = this.flipX ? -1 : 1;
-        originalFlipY = this.flipY ? -1 : 1;
-        originalScaleX = originalFlipX / this.scaleX;
-        originalScaleY = originalFlipY / this.scaleY;
+        const originalFlipX = this.flipX ? -1 : 1;
+        const originalFlipY = this.flipY ? -1 : 1;
+        const originalScaleX = originalFlipX / this.scaleX;
+        const originalScaleY = originalFlipY / this.scaleY;
 
         // Set original scale
         ctx.scale(originalScaleX, originalScaleY);
@@ -98,8 +96,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @param {string|CanvasGradient|CanvasPattern} fillStyle - Fill-style
      * @private
      */
-    _fillOuterRect: function(ctx, fillStyle) {
-        var coordinates = this._getCoordinates(ctx),
+    _fillOuterRect(ctx, fillStyle) {
+        const coordinates = this._getCoordinates(ctx),
             x = coordinates.x,
             y = coordinates.y;
 
@@ -134,8 +132,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @returns {cropzoneCoordinates} - {@link cropzoneCoordinates}
      * @private
      */
-    _getCoordinates: function(ctx) {
-        var ceil = Math.ceil,
+    _getCoordinates(ctx) {
+        const ceil = Math.ceil,
             width = this.getWidth(),
             height = this.getHeight(),
             halfWidth = width / 2,
@@ -168,8 +166,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @param {number} [lineDashOffset] - Dash offset
      * @private
      */
-    _strokeBorder: function(ctx, strokeStyle, lineDashWidth, lineDashOffset) {
-        var halfWidth = this.getWidth() / 2,
+    _strokeBorder(ctx, strokeStyle, lineDashWidth, lineDashOffset) {
+        const halfWidth = this.getWidth() / 2,
             halfHeight = this.getHeight() / 2;
 
         ctx.save();
@@ -196,8 +194,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * onMoving event listener
      * @private
      */
-    _onMoving: function() {
-        var canvas = this.canvas,
+    _onMoving() {
+        const canvas = this.canvas,
             left = this.getLeft(),
             top = this.getTop(),
             width = this.getWidth(),
@@ -214,8 +212,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @param {{e: MouseEvent}} fEvent - Fabric event
      * @private
      */
-    _onScaling: function(fEvent) {
-        var pointer = this.canvas.getPointer(fEvent.e),
+    _onScaling(fEvent) {
+        const pointer = this.canvas.getPointer(fEvent.e),
             settings = this._calcScalingSizeFromPointer(pointer);
 
         // On scaling cropzone,
@@ -229,8 +227,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @returns {object} Having left or(and) top or(and) width or(and) height.
      * @private
      */
-    _calcScalingSizeFromPointer: function(pointer) {
-        var pointerX = pointer.x,
+    _calcScalingSizeFromPointer(pointer) {
+        const pointerX = pointer.x,
             pointerY = pointer.y,
             tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY),
             brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
@@ -249,16 +247,16 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @returns {{top: number, left: number, width: number, height: number}}
      * @private
      */
-    _calcTopLeftScalingSizeFromPointer: function(x, y) {
-        var bottom = this.getHeight() + this.top,
+    _calcTopLeftScalingSizeFromPointer(x, y) {
+        const bottom = this.getHeight() + this.top,
             right = this.getWidth() + this.left,
             top = clamp(y, 0, bottom - 1),  // 0 <= top <= (bottom - 1)
             left = clamp(x, 0, right - 1);  // 0 <= left <= (right - 1)
 
         // When scaling "Top-Left corner": It fixes right and bottom coordinates
         return {
-            top: top,
-            left: left,
+            top,
+            left,
             width: right - left,
             height: bottom - top
         };
@@ -271,8 +269,8 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @returns {{width: number, height: number}}
      * @private
      */
-    _calcBottomRightScalingSizeFromPointer: function(x, y) {
-        var canvas = this.canvas,
+    _calcBottomRightScalingSizeFromPointer(x, y) {
+        const canvas = this.canvas,
             maxX = canvas.width,
             maxY = canvas.height,
             left = this.left,
@@ -285,7 +283,7 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
         };
     },
 
-    /*eslint-disable complexity*/
+    /* eslint-disable complexity */
     /**
      * Make scaling settings
      * @param {{width: number, height: number, left: number, top: number}} tl - Top-Left setting
@@ -293,14 +291,14 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
      * @returns {{width: ?number, height: ?number, left: ?number, top: ?number}} Position setting
      * @private
      */
-    _makeScalingSettings: function(tl, br) {
-        var tlWidth = tl.width,
-            tlHeight = tl.height,
-            brHeight = br.height,
-            brWidth = br.width,
-            tlLeft = tl.left,
-            tlTop = tl.top,
-            settings;
+    _makeScalingSettings(tl, br) {
+        const tlWidth = tl.width;
+        const tlHeight = tl.height;
+        const brHeight = br.height;
+        const brWidth = br.width;
+        const tlLeft = tl.left;
+        const tlTop = tl.top;
+        let settings;
 
         switch (this.__corner) {
             case CORNER_TYPE_TOP_LEFT:
@@ -350,13 +348,13 @@ var Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototyp
         }
 
         return settings;
-    }, /*eslint-enable complexity*/
+    }, /* eslint-enable complexity */
 
     /**
      * Return the whether this cropzone is valid
      * @returns {boolean}
      */
-    isValid: function() {
+    isValid() {
         return (
             this.left >= 0 &&
             this.top >= 0 &&

@@ -2,28 +2,28 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Invoker - invoke commands
  */
-'use strict';
+import ImageLoader from './component/imageLoader';
+import Cropper from './component/cropper';
+import MainComponent from './component/main';
+import Flip from './component/flip';
+import Rotation from './component/rotation';
+import FreeDrawing from './component/freeDrawing';
+import Line from './component/line';
+import Text from './component/text';
+import Icon from './component/icon';
+import Filter from './component/filter';
+import Shape from './component/shape';
+import consts from './consts';
 
-var ImageLoader = require('./component/imageLoader');
-var Cropper = require('./component/cropper');
-var MainComponent = require('./component/main');
-var Flip = require('./component/flip');
-var Rotation = require('./component/rotation');
-var FreeDrawing = require('./component/freeDrawing');
-var Line = require('./component/line');
-var Text = require('./component/text');
-var Icon = require('./component/icon');
-var Filter = require('./component/filter');
-var Shape = require('./component/shape');
-var eventNames = require('./consts').eventNames;
+const {eventNames} = consts;
 
 /**
  * Invoker
  * @class
  * @ignore
  */
-var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
-    init: function() {
+class Invoker {
+    constructor() {
         /**
          * Custom Events
          * @type {tui.util.CustomEvents}
@@ -59,14 +59,14 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         this._isLocked = false;
 
         this._createComponents();
-    },
+    }
 
     /**
      * Create components
      * @private
      */
-    _createComponents: function() {
-        var main = new MainComponent();
+    _createComponents() {
+        const main = new MainComponent();
 
         this._register(main);
         this._register(new ImageLoader(main));
@@ -79,16 +79,16 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         this._register(new Icon(main));
         this._register(new Filter(main));
         this._register(new Shape(main));
-    },
+    }
 
     /**
      * Register component
      * @param {Component} component - Component handling the canvas
      * @private
      */
-    _register: function(component) {
+    _register(component) {
         this._componentMap[component.getName()] = component;
-    },
+    }
 
     /**
      * Invoke command execution
@@ -96,20 +96,18 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
      * @returns {jQuery.Deferred}
      * @private
      */
-    _invokeExecution: function(command) {
-        var self = this;
-
+    _invokeExecution(command) {
         this.lock();
 
         return $.when(command.execute(this._componentMap))
-            .done(function() {
-                self.pushUndoStack(command);
+            .done(() => {
+                this.pushUndoStack(command);
             })
             .done(command.executeCallback)
-            .always(function() {
-                self.unlock();
+            .always(() => {
+                this.unlock();
             });
-    },
+    }
 
     /**
      * Invoke command undo
@@ -117,20 +115,18 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
      * @returns {jQuery.Deferred}
      * @private
      */
-    _invokeUndo: function(command) {
-        var self = this;
-
+    _invokeUndo(command) {
         this.lock();
 
         return $.when(command.undo(this._componentMap))
-            .done(function() {
-                self.pushRedoStack(command);
+            .done(() => {
+                this.pushRedoStack(command);
             })
             .done(command.undoCallback)
-            .always(function() {
-                self.unlock();
+            .always(() => {
+                this.unlock();
             });
-    },
+    }
 
     /**
      * Fire custom events
@@ -138,43 +134,45 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
      * @param {...*} arguments - Arguments to fire a event
      * @private
      */
-    _fire: function() {
-        var event = this._customEvents;
-        event.fire.apply(event, arguments);
-    },
+    _fire(...args) {
+        const event = this._customEvents;
+        const eventContext = event;
+        event.fire.apply(eventContext, args);
+    }
 
     /**
      * Attach custom events
      * @see {@link tui.util.CustomEvents.prototype.on}
      * @param {...*} arguments - Arguments to attach events
      */
-    on: function() {
-        var event = this._customEvents;
-        event.on.apply(event, arguments);
-    },
+    on(...args) {
+        const event = this._customEvents;
+        const eventContext = event;
+        event.on.apply(eventContext, args);
+    }
 
     /**
      * Get component
      * @param {string} name - Component name
      * @returns {Component}
      */
-    getComponent: function(name) {
+    getComponent(name) {
         return this._componentMap[name];
-    },
+    }
 
     /**
      * Lock this invoker
      */
-    lock: function() {
+    lock() {
         this._isLocked = true;
-    },
+    }
 
     /**
      * Unlock this invoker
      */
-    unlock: function() {
+    unlock() {
         this._isLocked = false;
-    },
+    }
 
     /**
      * Invoke command
@@ -183,22 +181,22 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
      * @param {Command} command - Command
      * @returns {jQuery.Deferred}
      */
-    invoke: function(command) {
+    invoke(command) {
         if (this._isLocked) {
             return $.Deferred.reject();
         }
 
         return this._invokeExecution(command)
-            .done($.proxy(this.clearRedoStack, this));
-    },
+            .done(tui.util.bind(this.clearRedoStack, this));
+    }
 
     /**
      * Undo command
      * @returns {jQuery.Deferred}
      */
-    undo: function() {
-        var command = this._undoStack.pop();
-        var jqDefer;
+    undo() {
+        let command = this._undoStack.pop();
+        let jqDefer;
 
         if (command && this._isLocked) {
             this.pushUndoStack(command, true);
@@ -214,15 +212,15 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         }
 
         return jqDefer;
-    },
+    }
 
     /**
      * Redo command
      * @returns {jQuery.Deferred}
      */
-    redo: function() {
-        var command = this._redoStack.pop();
-        var jqDefer;
+    redo() {
+        let command = this._redoStack.pop();
+        let jqDefer;
 
         if (command && this._isLocked) {
             this.pushRedoStack(command, true);
@@ -238,67 +236,67 @@ var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
         }
 
         return jqDefer;
-    },
+    }
 
     /**
      * Push undo stack
      * @param {Command} command - command
      * @param {boolean} [isSilent] - Fire event or not
      */
-    pushUndoStack: function(command, isSilent) {
+    pushUndoStack(command, isSilent) {
         this._undoStack.push(command);
         if (!isSilent) {
             this._fire(eventNames.PUSH_UNDO_STACK);
         }
-    },
+    }
 
     /**
      * Push redo stack
      * @param {Command} command - command
      * @param {boolean} [isSilent] - Fire event or not
      */
-    pushRedoStack: function(command, isSilent) {
+    pushRedoStack(command, isSilent) {
         this._redoStack.push(command);
         if (!isSilent) {
             this._fire(eventNames.PUSH_REDO_STACK);
         }
-    },
+    }
 
     /**
      * Return whether the redoStack is empty
      * @returns {boolean}
      */
-    isEmptyRedoStack: function() {
+    isEmptyRedoStack() {
         return this._redoStack.length === 0;
-    },
+    }
 
     /**
      * Return whether the undoStack is empty
      * @returns {boolean}
      */
-    isEmptyUndoStack: function() {
+    isEmptyUndoStack() {
         return this._undoStack.length === 0;
-    },
+    }
 
     /**
      * Clear undoStack
      */
-    clearUndoStack: function() {
+    clearUndoStack() {
         if (!this.isEmptyUndoStack()) {
             this._undoStack = [];
             this._fire(eventNames.EMPTY_UNDO_STACK);
         }
-    },
+    }
 
     /**
      * Clear redoStack
      */
-    clearRedoStack: function() {
+    clearRedoStack() {
         if (!this.isEmptyRedoStack()) {
             this._redoStack = [];
             this._fire(eventNames.EMPTY_REDO_STACK);
         }
     }
-});
+}
 
 module.exports = Invoker;

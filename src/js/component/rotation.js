@@ -2,10 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image rotation module
  */
-'use strict';
-
-var Component = require('../interface/component');
-var consts = require('../consts');
+import Component from '../interface/component';
+import consts from '../consts';
 
 /**
  * Image Rotation component
@@ -14,24 +12,25 @@ var consts = require('../consts');
  * @param {Component} parent - parent component
  * @ignore
  */
-var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ {
-    init: function(parent) {
+class Rotation extends Component {
+    constructor(parent) {
+        super();
         this.setParent(parent);
-    },
 
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.ROTATION,
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.ROTATION;
+    }
 
     /**
      * Get current angle
      * @returns {Number}
      */
-    getCurrentAngle: function() {
+    getCurrentAngle() {
         return this.getCanvasImage().angle;
-    },
+    }
 
     /**
      * Set angle of the image
@@ -43,25 +42,23 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      * @param {number} angle - Angle value
      * @returns {jQuery.Deferred}
      */
-    setAngle: function(angle) {
-        var oldAngle = this.getCurrentAngle() % 360; //The angle is lower than 2*PI(===360 degrees)
-        var jqDefer = $.Deferred();
-        var oldImageCenter, newImageCenter, canvasImage;
+    setAngle(angle) {
+        const oldAngle = this.getCurrentAngle() % 360; // The angle is lower than 2*PI(===360 degrees)
+        const jqDefer = $.Deferred();
 
         angle %= 360;
         if (angle === oldAngle) {
             return jqDefer.reject();
         }
-        canvasImage = this.getCanvasImage();
-
-        oldImageCenter = canvasImage.getCenterPoint();
+        const canvasImage = this.getCanvasImage();
+        const oldImageCenter = canvasImage.getCenterPoint();
         canvasImage.setAngle(angle).setCoords();
         this.adjustCanvasDimension();
-        newImageCenter = canvasImage.getCenterPoint();
+        const newImageCenter = canvasImage.getCenterPoint();
         this._rotateForEachObject(oldImageCenter, newImageCenter, angle - oldAngle);
 
         return jqDefer.resolve(angle);
-    },
+    }
 
     /**
      * Rotate for each object
@@ -70,17 +67,17 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
      * @param {number} angleDiff - Image angle difference after rotation
      * @private
      */
-    _rotateForEachObject: function(oldImageCenter, newImageCenter, angleDiff) {
-        var canvas = this.getCanvas();
-        var centerDiff = {
+    _rotateForEachObject(oldImageCenter, newImageCenter, angleDiff) {
+        const canvas = this.getCanvas();
+        const centerDiff = {
             x: oldImageCenter.x - newImageCenter.x,
             y: oldImageCenter.y - newImageCenter.y
         };
 
-        canvas.forEachObject(function(obj) {
-            var objCenter = obj.getCenterPoint();
-            var radian = fabric.util.degreesToRadians(angleDiff);
-            var newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
+        canvas.forEachObject(obj => {
+            const objCenter = obj.getCenterPoint();
+            const radian = fabric.util.degreesToRadians(angleDiff);
+            const newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
 
             obj.set({
                 left: newObjCenter.x - centerDiff.x,
@@ -90,18 +87,18 @@ var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ 
             obj.setCoords();
         });
         canvas.renderAll();
-    },
+    }
 
     /**
      * Rotate the image
      * @param {number} additionalAngle - Additional angle
      * @returns {jQuery.Deferred}
      */
-    rotate: function(additionalAngle) {
-        var current = this.getCurrentAngle();
+    rotate(additionalAngle) {
+        const current = this.getCurrentAngle();
 
         return this.setAngle(current + additionalAngle);
     }
-});
+}
 
 module.exports = Rotation;

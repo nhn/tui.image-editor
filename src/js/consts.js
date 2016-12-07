@@ -2,9 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Constants
  */
-'use strict';
-
-var util = require('./util');
+import util from './util';
 
 module.exports = {
     /**

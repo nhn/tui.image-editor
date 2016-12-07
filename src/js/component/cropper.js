@@ -2,18 +2,16 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image crop module (start cropping, end cropping)
  */
-'use strict';
+import Component from '../interface/component';
+import Cropzone from '../extension/cropzone';
+import consts from '../consts';
+import util from '../util';
 
-var Component = require('../interface/component');
-var Cropzone = require('../extension/cropzone');
-var consts = require('../consts');
-var util = require('../util');
-
-var MOUSE_MOVE_THRESHOLD = 10;
-
-var abs = Math.abs;
-var clamp = util.clamp;
-var keyCodes = consts.keyCodes;
+const MOUSE_MOVE_THRESHOLD = 10;
+const abs = Math.abs;
+const clamp = util.clamp;
+const keyCodes = consts.keyCodes;
+const bind = tui.util.bind;
 
 /**
  * Cropper components
@@ -22,9 +20,17 @@ var keyCodes = consts.keyCodes;
  * @class Cropper
  * @ignore
  */
-var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
-    init: function(parent) {
+class Cropper extends Component {
+    constructor(parent) {
+        super();
+
         this.setParent(parent);
+
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.CROPPER;
 
         /**
          * Cropzone
@@ -60,31 +66,23 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
          * @private
          */
         this._listeners = {
-            keydown: $.proxy(this._onKeyDown, this),
-            keyup: $.proxy(this._onKeyUp, this),
-            mousedown: $.proxy(this._onFabricMouseDown, this),
-            mousemove: $.proxy(this._onFabricMouseMove, this),
-            mouseup: $.proxy(this._onFabricMouseUp, this)
+            keydown: bind(this._onKeyDown, this),
+            keyup: bind(this._onKeyUp, this),
+            mousedown: bind(this._onFabricMouseDown, this),
+            mousemove: bind(this._onFabricMouseMove, this),
+            mouseup: bind(this._onFabricMouseUp, this)
         };
-    },
-
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.CROPPER,
+    }
 
     /**
      * Start cropping
      */
-    start: function() {
-        var canvas;
-
+    start() {
         if (this._cropzone) {
             return;
         }
-        canvas = this.getCanvas();
-        canvas.forEachObject(function(obj) { // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
+        const canvas = this.getCanvas();
+        canvas.forEachObject(obj => { // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
             obj.evented = false;
         });
         this._cropzone = new Cropzone({
@@ -109,17 +107,17 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
 
         fabric.util.addListener(document, 'keydown', this._listeners.keydown);
         fabric.util.addListener(document, 'keyup', this._listeners.keyup);
-    },
+    }
 
     /**
      * End cropping
      * @param {boolean} isApplying - Is applying or not
      * @returns {?{imageName: string, url: string}} cropped Image data
      */
-    end: function(isApplying) {
-        var canvas = this.getCanvas();
-        var cropzone = this._cropzone;
-        var data;
+    end(isApplying) {
+        const canvas = this.getCanvas();
+        const cropzone = this._cropzone;
+        let data;
 
         if (!cropzone) {
             return null;
@@ -128,7 +126,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.off('mouse:down', this._listeners.mousedown);
-        canvas.forEachObject(function(obj) {
+        canvas.forEachObject(obj => {
             obj.evented = true;
         });
         if (isApplying) {
@@ -140,23 +138,22 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
 
         return data;
-    },
+    }
 
     /**
      * onMousedown handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      * @private
      */
-    _onFabricMouseDown: function(fEvent) {
-        var canvas = this.getCanvas();
-        var coord;
+    _onFabricMouseDown(fEvent) {
+        const canvas = this.getCanvas();
 
         if (fEvent.target) {
             return;
         }
 
         canvas.selection = false;
-        coord = canvas.getPointer(fEvent.e);
+        const coord = canvas.getPointer(fEvent.e);
 
         this._startX = coord.x;
         this._startY = coord.y;
@@ -165,19 +162,19 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
             'mouse:move': this._listeners.mousemove,
             'mouse:up': this._listeners.mouseup
         });
-    },
+    }
 
     /**
      * onMousemove handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      * @private
      */
-    _onFabricMouseMove: function(fEvent) {
-        var canvas = this.getCanvas();
-        var pointer = canvas.getPointer(fEvent.e);
-        var x = pointer.x;
-        var y = pointer.y;
-        var cropzone = this._cropzone;
+    _onFabricMouseMove(fEvent) {
+        const canvas = this.getCanvas();
+        const pointer = canvas.getPointer(fEvent.e);
+        const x = pointer.x;
+        const y = pointer.y;
+        const cropzone = this._cropzone;
 
         if (abs(x - this._startX) + abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
             cropzone.remove();
@@ -185,7 +182,7 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
 
             canvas.add(cropzone);
         }
-    },
+    }
 
     /**
      * Get rect dimension setting from Canvas-Mouse-Position(x, y)
@@ -194,16 +191,16 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
      * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
-    _calcRectDimensionFromPoint: function(x, y) {
-        var canvas = this.getCanvas();
-        var canvasWidth = canvas.getWidth();
-        var canvasHeight = canvas.getHeight();
-        var startX = this._startX;
-        var startY = this._startY;
-        var left = clamp(x, 0, startX);
-        var top = clamp(y, 0, startY);
-        var width = clamp(x, startX, canvasWidth) - left; // (startX <= x(mouse) <= canvasWidth) - left
-        var height = clamp(y, startY, canvasHeight) - top; // (startY <= y(mouse) <= canvasHeight) - top
+    _calcRectDimensionFromPoint(x, y) {
+        const canvas = this.getCanvas();
+        const canvasWidth = canvas.getWidth();
+        const canvasHeight = canvas.getHeight();
+        const startX = this._startX;
+        const startY = this._startY;
+        let left = clamp(x, 0, startX);
+        let top = clamp(y, 0, startY);
+        let width = clamp(x, startX, canvasWidth) - left; // (startX <= x(mouse) <= canvasWidth) - left
+        let height = clamp(y, startY, canvasHeight) - top; // (startY <= y(mouse) <= canvasHeight) - top
 
         if (this._withShiftKey) { // make fixed ratio cropzone
             if (width > height) {
@@ -222,43 +219,42 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
         }
 
         return {
-            left: left,
-            top: top,
-            width: width,
-            height: height
+            left,
+            top,
+            width,
+            height
         };
-    },
+    }
 
     /**
      * onMouseup handler in fabric canvas
      * @private
      */
-    _onFabricMouseUp: function() {
-        var cropzone = this._cropzone;
-        var listeners = this._listeners;
-        var canvas = this.getCanvas();
+    _onFabricMouseUp() {
+        const cropzone = this._cropzone;
+        const listeners = this._listeners;
+        const canvas = this.getCanvas();
 
         canvas.setActiveObject(cropzone);
         canvas.off({
             'mouse:move': listeners.mousemove,
             'mouse:up': listeners.mouseup
         });
-    },
+    }
 
     /**
      * Get cropped image data
      * @returns {?{imageName: string, url: string}} cropped Image data
      * @private
      */
-    _getCroppedImageData: function() {
-        var cropzone = this._cropzone;
-        var cropInfo;
+    _getCroppedImageData() {
+        const cropzone = this._cropzone;
 
         if (!cropzone.isValid()) {
             return null;
         }
 
-        cropInfo = {
+        const cropInfo = {
             left: cropzone.getLeft(),
             top: cropzone.getTop(),
             width: cropzone.getWidth(),
@@ -269,29 +265,29 @@ var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
             imageName: this.getImageName(),
             url: this.getCanvas().toDataURL(cropInfo)
         };
-    },
+    }
 
     /**
      * Keydown event handler
      * @param {KeyboardEvent} e - Event object
      * @private
      */
-    _onKeyDown: function(e) {
+    _onKeyDown(e) {
         if (e.keyCode === keyCodes.SHIFT) {
             this._withShiftKey = true;
         }
-    },
+    }
 
     /**
      * Keyup event handler
      * @param {KeyboardEvent} e - Event object
      * @private
      */
-    _onKeyUp: function(e) {
+    _onKeyUp(e) {
         if (e.keyCode === keyCodes.SHIFT) {
             this._withShiftKey = false;
         }
     }
-});
+}
 
 module.exports = Cropper;
