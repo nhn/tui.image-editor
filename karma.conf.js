@@ -173,7 +173,14 @@ module.exports = function(config) {
                         test: /\.js$/,
                         include: /src/,
                         exclude: /(bower_components|node_modules)/,
-                        loaders: ['istanbul-instrumenter', 'eslint-loader']
+                        loader: 'eslint-loader'
+                    }
+                ],
+                loaders: [
+                    {
+                        test: /\.js$/,
+                        exclude: /(node_modules|bower_components)/,
+                        loader: 'babel'
                     }
                 ]
             },

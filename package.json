@@ -6,6 +6,10 @@
   "repository": "https://github.com/nhnent/tui.component.image-editor",
   "description": "",
   "devDependencies": {
+    "babel-core": "^6.18.2",
+    "babel-eslint": "^7.1.0",
+    "babel-loader": "^6.2.7",
+    "babel-preset-es2015": "^6.18.0",
     "es5-shim": "^4.5.9",
     "eslint": "^3.10.2",
     "eslint-loader": "^1.6.1",
@@ -25,7 +29,9 @@
     "phantomjs-prebuilt": "^2.1.5",
     "simulant": "^0.2.2",
     "tui-jsdoc-template": "^1.0.4",
-    "webpack": "^1.13.3"
+    "webpack": "^1.13.3",
+    "core-js": "2.4.1",
+    "babel-plugin-transform-runtime": "latest"
   },
   "scripts": {
     "test": "karma start --no-single-run",

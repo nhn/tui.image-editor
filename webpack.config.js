@@ -34,6 +34,13 @@ module.exports = {
                 exclude: /(test|node_modules|bower_components)/,
                 loader: 'eslint-loader'
             }
+        ],
+        loaders: [
+            {
+                test: /\.js$/,
+                exclude: /(node_modules|bower_components)/,
+                loader: 'babel'
+            }
         ]
     },
     plugins: [
