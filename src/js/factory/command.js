@@ -2,20 +2,12 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Command factory
  */
-'use strict';
+import Command from '../interface/command';
+import consts from '../consts';
 
-var Command = require('../interface/command');
-var consts = require('../consts');
-
-var componentNames = consts.componentNames;
-var commandNames = consts.commandNames;
-var creators = {};
-
-var MAIN = componentNames.MAIN;
-var IMAGE_LOADER = componentNames.IMAGE_LOADER;
-var FLIP = componentNames.FLIP;
-var ROTATION = componentNames.ROTATION;
-var FILTER = componentNames.FILTER;
+const {componentNames, commandNames} = consts;
+const {MAIN, IMAGE_LOADER, FLIP, ROTATION, FILTER} = componentNames;
+const creators = {};
 
 creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
@@ -39,9 +31,9 @@ function createAddObjectCommand(object) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        execute: function(compMap) {
-            var canvas = compMap[MAIN].getCanvas();
-            var jqDefer = $.Deferred();
+        execute(compMap) {
+            const canvas = compMap[MAIN].getCanvas();
+            const jqDefer = $.Deferred();
 
             if (!canvas.contains(object)) {
                 canvas.add(object);
@@ -57,9 +49,9 @@ function createAddObjectCommand(object) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        undo: function(compMap) {
-            var canvas = compMap[MAIN].getCanvas();
-            var jqDefer = $.Deferred();
+        undo(compMap) {
+            const canvas = compMap[MAIN].getCanvas();
+            const jqDefer = $.Deferred();
 
             if (canvas.contains(object)) {
                 canvas.remove(object);
@@ -86,9 +78,9 @@ function createLoadImageCommand(imageName, img) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        execute: function(compMap) {
-            var loader = compMap[IMAGE_LOADER];
-            var canvas = loader.getCanvas();
+        execute(compMap) {
+            const loader = compMap[IMAGE_LOADER];
+            const canvas = loader.getCanvas();
 
             this.store = {
                 prevName: loader.getImageName(),
@@ -105,13 +97,14 @@ function createLoadImageCommand(imageName, img) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        undo: function(compMap) {
-            var loader = compMap[IMAGE_LOADER];
-            var canvas = loader.getCanvas();
-            var store = this.store;
+        undo(compMap) {
+            const loader = compMap[IMAGE_LOADER];
+            const canvas = loader.getCanvas();
+            const store = this.store;
+            const canvasContext = canvas;
 
             canvas.clear();
-            canvas.add.apply(canvas, store.objects);
+            canvas.add.apply(canvasContext, store.objects);
 
             return loader.load(store.prevName, store.prevImage);
         }
@@ -130,8 +123,8 @@ function createFlipImageCommand(type) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        execute: function(compMap) {
-            var flipComp = compMap[FLIP];
+        execute(compMap) {
+            const flipComp = compMap[FLIP];
 
             this.store = flipComp.getCurrentSetting();
 
@@ -142,8 +135,8 @@ function createFlipImageCommand(type) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        undo: function(compMap) {
-            var flipComp = compMap[FLIP];
+        undo(compMap) {
+            const flipComp = compMap[FLIP];
 
             return flipComp.set(this.store);
         }
@@ -163,8 +156,8 @@ function createRotationImageCommand(type, angle) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        execute: function(compMap) {
-            var rotationComp = compMap[ROTATION];
+        execute(compMap) {
+            const rotationComp = compMap[ROTATION];
 
             this.store = rotationComp.getCurrentAngle();
 
@@ -175,8 +168,8 @@ function createRotationImageCommand(type, angle) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        undo: function(compMap) {
-            var rotationComp = compMap[ROTATION];
+        undo(compMap) {
+            const rotationComp = compMap[ROTATION];
 
             return rotationComp.setAngle(this.store);
         }
@@ -195,15 +188,15 @@ function createClearCommand() {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        execute: function(compMap) {
-            var canvas = compMap[MAIN].getCanvas();
-            var jqDefer = $.Deferred();
-            var objs = canvas.getObjects();
+        execute(compMap) {
+            const canvas = compMap[MAIN].getCanvas();
+            const jqDefer = $.Deferred();
+            const objs = canvas.getObjects();
 
             // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
             this.store = objs.slice();
             if (this.store.length) {
-                tui.util.forEach(objs.slice(), function(obj) {
+                tui.util.forEach(objs.slice(), obj => {
                     obj.remove();
                 });
                 jqDefer.resolve();
@@ -218,10 +211,11 @@ function createClearCommand() {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        undo: function(compMap) {
-            var canvas = compMap[MAIN].getCanvas();
+        undo(compMap) {
+            const canvas = compMap[MAIN].getCanvas();
+            const canvasContext = canvas;
 
-            canvas.add.apply(canvas, this.store);
+            canvas.add.apply(canvasContext, this.store);
 
             return $.Deferred().resolve();
         }
@@ -241,15 +235,15 @@ function createRemoveCommand(target) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        execute: function(compMap) {
-            var canvas = compMap[MAIN].getCanvas();
-            var jqDefer = $.Deferred();
-            var isValidGroup = target && target.isType('group') && !target.isEmpty();
+        execute(compMap) {
+            const canvas = compMap[MAIN].getCanvas();
+            const jqDefer = $.Deferred();
+            const isValidGroup = target && target.isType('group') && !target.isEmpty();
 
             if (isValidGroup) {
                 canvas.discardActiveGroup(); // restore states for each objects
                 this.store = target.getObjects();
-                target.forEachObject(function(obj) {
+                target.forEachObject(obj => {
                     obj.remove();
                 });
                 jqDefer.resolve();
@@ -268,10 +262,11 @@ function createRemoveCommand(target) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        undo: function(compMap) {
-            var canvas = compMap[MAIN].getCanvas();
+        undo(compMap) {
+            const canvas = compMap[MAIN].getCanvas();
+            const canvasContext = canvas;
 
-            canvas.add.apply(canvas, this.store);
+            canvas.add.apply(canvasContext, this.store);
 
             return $.Deferred().resolve();
         }
@@ -292,8 +287,8 @@ function createFilterCommand(type, options) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        execute: function(compMap) { // eslint-disable-line
-            var filterComp = compMap[FILTER];
+        execute(compMap) {
+            const filterComp = compMap[FILTER];
 
             if (type === 'mask') {
                 this.store = options.mask;
@@ -307,8 +302,8 @@ function createFilterCommand(type, options) {
          * @returns {jQuery.Deferred}
          * @ignore
          */
-        undo: function(compMap) {
-            var filterComp = compMap[FILTER];
+        undo(compMap) {
+            const filterComp = compMap[FILTER];
 
             if (type === 'mask') {
                 filterComp.getCanvas().add(this.store);
@@ -326,13 +321,11 @@ function createFilterCommand(type, options) {
  * @returns {Command}
  * @ignore
  */
-function create(name, args) {
-    args = Array.prototype.slice.call(arguments, 1);
-
+function create(name, ...args) {
     return creators[name].apply(null, args);
 }
 
 
 module.exports = {
-    create: create
+    create
 };

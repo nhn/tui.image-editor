@@ -2,18 +2,16 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Main component having canvas & image, set css-max-dimension of canvas
  */
-'use strict';
+import Component from '../interface/component';
+import consts from '../consts';
 
-var Component = require('../interface/component');
-var consts = require('../consts');
+const DEFAULT_CSS_MAX_WIDTH = 1000;
+const DEFAULT_CSS_MAX_HEIGHT = 800;
 
-var DEFAULT_CSS_MAX_WIDTH = 1000;
-var DEFAULT_CSS_MAX_HEIGHT = 800;
-
-var cssOnly = {
+const cssOnly = {
     cssOnly: true
 };
-var backstoreOnly = {
+const backstoreOnly = {
     backstoreOnly: true
 };
 
@@ -23,8 +21,16 @@ var backstoreOnly = {
  * @extends {Component}
  * @ignore
  */
-var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
-    init: function() {
+class Main extends Component {
+    constructor() {
+        super();
+
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.MAIN;
+
         /**
          * Fabric canvas instance
          * @type {fabric.Canvas}
@@ -54,22 +60,16 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
          * @type {string}
          */
         this.imageName = '';
-    },
-
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.MAIN,
+    }
 
     /**
      * To data url from canvas
      * @param {string} type - A DOMString indicating the image format. The default type is image/png.
      * @returns {string} A DOMString containing the requested data URI.
      */
-    toDataURL: function(type) {
+    toDataURL(type) {
         return this.canvas && this.canvas.toDataURL(type);
-    },
+    }
 
     /**
      * Save image(background) of canvas
@@ -77,64 +77,74 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @param {?fabric.Image} canvasImage - Fabric image instance
      * @override
      */
-    setCanvasImage: function(name, canvasImage) {
+    setCanvasImage(name, canvasImage) {
         if (canvasImage) {
             tui.util.stamp(canvasImage);
         }
         this.imageName = name;
         this.canvasImage = canvasImage;
-    },
+    }
 
     /**
      * Set css max dimension
      * @param {{width: number, height: number}} maxDimension - Max width & Max height
      */
-    setCssMaxDimension: function(maxDimension) {
+    setCssMaxDimension(maxDimension) {
         this.cssMaxWidth = maxDimension.width || this.cssMaxWidth;
         this.cssMaxHeight = maxDimension.height || this.cssMaxHeight;
-    },
+    }
 
     /**
      * Set canvas element to fabric.Canvas
      * @param {jQuery|Element|string} element - Wrapper or canvas element or selector
      * @override
      */
-    setCanvasElement: function(element) {
-        var canvasElement = $(element)[0];
+    setCanvasElement(element) {
+        let selectedElement;
+        let canvasElement;
 
-        if (canvasElement.nodeName.toUpperCase() !== 'CANVAS') {
-            canvasElement = $('<canvas>').appendTo(element)[0];
+        if (element.jquery) {
+            selectedElement = element[0];
+        } else if (element.nodeType) {
+            selectedElement = element;
+        } else {
+            selectedElement = document.querySelector(element);
+        }
+
+        if (selectedElement.nodeName.toUpperCase() !== 'CANVAS') {
+            canvasElement = document.createElement('canvas');
+            selectedElement.appendChild(canvasElement);
         }
 
         this.canvas = new fabric.Canvas(canvasElement, {
             containerClass: 'tui-image-editor-canvas-container',
             enableRetinaScaling: false
         });
-    },
+    }
 
     /**
      * Adjust canvas dimension with scaling image
      */
-    adjustCanvasDimension: function() {
-        var canvasImage = this.canvasImage.scale(1);
-        var boundingRect = canvasImage.getBoundingRect();
-        var width = boundingRect.width;
-        var height = boundingRect.height;
-        var maxDimension = this._calcMaxDimension(width, height);
+    adjustCanvasDimension() {
+        const canvasImage = this.canvasImage.scale(1);
+        const boundingRect = canvasImage.getBoundingRect();
+        const width = boundingRect.width;
+        const height = boundingRect.height;
+        const maxDimension = this._calcMaxDimension(width, height);
 
         this.setCanvasCssDimension({
             width: '100%',
             height: '100%', // Set height '' for IE9
-            'max-width': maxDimension.width + 'px',
-            'max-height': maxDimension.height + 'px'
+            'max-width': `${maxDimension.width}px`,
+            'max-height': `${maxDimension.height}px`
         });
 
         this.setCanvasBackstoreDimension({
-            width: width,
-            height: height
+            width,
+            height
         });
         this.canvas.centerObject(canvasImage);
-    },
+    }
 
     /**
      * Calculate max dimension of canvas
@@ -145,11 +155,11 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @returns {{width: number, height: number}} - Max width & Max height
      * @private
      */
-    _calcMaxDimension: function(width, height) {
-        var wScaleFactor = this.cssMaxWidth / width;
-        var hScaleFactor = this.cssMaxHeight / height;
-        var cssMaxWidth = Math.min(width, this.cssMaxWidth);
-        var cssMaxHeight = Math.min(height, this.cssMaxHeight);
+    _calcMaxDimension(width, height) {
+        const wScaleFactor = this.cssMaxWidth / width;
+        const hScaleFactor = this.cssMaxHeight / height;
+        let cssMaxWidth = Math.min(width, this.cssMaxWidth);
+        let cssMaxHeight = Math.min(height, this.cssMaxHeight);
 
         if (wScaleFactor < 1 && wScaleFactor < hScaleFactor) {
             cssMaxWidth = width * wScaleFactor;
@@ -163,7 +173,7 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
             width: Math.floor(cssMaxWidth),
             height: Math.floor(cssMaxHeight)
         };
-    },
+    }
 
     /**
      * Set canvas dimension - css only
@@ -171,9 +181,9 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @param {object} dimension - Canvas css dimension
      * @override
      */
-    setCanvasCssDimension: function(dimension) {
+    setCanvasCssDimension(dimension) {
         this.canvas.setDimensions(dimension, cssOnly);
-    },
+    }
 
     /**
      * Set canvas dimension - backstore only
@@ -181,9 +191,9 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @param {object} dimension - Canvas backstore dimension
      * @override
      */
-    setCanvasBackstoreDimension: function(dimension) {
+    setCanvasBackstoreDimension(dimension) {
         this.canvas.setDimensions(dimension, backstoreOnly);
-    },
+    }
 
     /**
      * Set image properties
@@ -192,8 +202,8 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
      * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
      * @override
      */
-    setImageProperties: function(setting, withRendering) {
-        var canvasImage = this.canvasImage;
+    setImageProperties(setting, withRendering) {
+        const canvasImage = this.canvasImage;
 
         if (!canvasImage) {
             return;
@@ -203,43 +213,43 @@ var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
         if (withRendering) {
             this.canvas.renderAll();
         }
-    },
+    }
 
     /**
      * Returns canvas element of fabric.Canvas[[lower-canvas]]
      * @returns {HTMLCanvasElement}
      * @override
      */
-    getCanvasElement: function() {
+    getCanvasElement() {
         return this.canvas.getElement();
-    },
+    }
 
     /**
      * Get fabric.Canvas instance
      * @override
      * @returns {fabric.Canvas}
      */
-    getCanvas: function() {
+    getCanvas() {
         return this.canvas;
-    },
+    }
 
     /**
      * Get canvasImage (fabric.Image instance)
      * @override
      * @returns {fabric.Image}
      */
-    getCanvasImage: function() {
+    getCanvasImage() {
         return this.canvasImage;
-    },
+    }
 
     /**
      * Get image name
      * @override
      * @returns {string}
      */
-    getImageName: function() {
+    getImageName() {
         return this.imageName;
     }
-});
+}
 
 module.exports = Main;

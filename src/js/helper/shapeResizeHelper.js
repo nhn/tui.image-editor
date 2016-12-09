@@ -2,14 +2,12 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Shape resize helper
  */
-'use strict';
-
-var DIVISOR = {
+const DIVISOR = {
     rect: 1,
     circle: 2,
     triangle: 1
 };
-var DIMENSION_KEYS = {
+const DIMENSION_KEYS = {
     rect: {
         w: 'width',
         h: 'height'
@@ -30,9 +28,9 @@ var DIMENSION_KEYS = {
  * @ignore
  */
 function setStartPoint(shape) {
-    var originX = shape.getOriginX();
-    var originY = shape.getOriginY();
-    var originKey = originX.substring(0, 1) + originY.substring(0, 1);
+    const originX = shape.getOriginX();
+    const originY = shape.getOriginY();
+    const originKey = originX.substring(0, 1) + originY.substring(0, 1);
 
     shape.startPoint = shape.origins[originKey];
 }
@@ -46,13 +44,13 @@ function setStartPoint(shape) {
  * @ignore
  */
 function getPositionsOfRotatedOrigin(origin, pointer, angle) {
-    var sx = origin.x;
-    var sy = origin.y;
-    var px = pointer.x;
-    var py = pointer.y;
-    var r = angle * Math.PI / 180;
-    var rx = (px - sx) * Math.cos(r) - (py - sy) * Math.sin(r) + sx;
-    var ry = (px - sx) * Math.sin(r) + (py - sy) * Math.cos(r) + sy;
+    const sx = origin.x;
+    const sy = origin.y;
+    const px = pointer.x;
+    const py = pointer.y;
+    const r = angle * Math.PI / 180;
+    const rx = ((px - sx) * Math.cos(r)) - ((py - sy) * Math.sin(r)) + sx;
+    const ry = ((px - sx) * Math.sin(r)) + ((py - sy) * Math.cos(r)) + sy;
 
     return {
         originX: (sx > rx) ? 'right' : 'left',
@@ -78,20 +76,20 @@ function hasCenterOrigin(shape) {
  * @ignore
  */
 function adjustOriginByStartPoint(pointer, shape) {
-    var centerPoint = shape.getPointByOrigin('center', 'center');
-    var angle = -shape.getAngle();
-    var originPositions = getPositionsOfRotatedOrigin(centerPoint, pointer, angle);
-    var originX = originPositions.originX;
-    var originY = originPositions.originY;
-    var origin = shape.getPointByOrigin(originX, originY);
-    var left = shape.getLeft() - (centerPoint.x - origin.x);
-    var top = shape.getTop() - (centerPoint.x - origin.y);
+    const centerPoint = shape.getPointByOrigin('center', 'center');
+    const angle = -shape.getAngle();
+    const originPositions = getPositionsOfRotatedOrigin(centerPoint, pointer, angle);
+    const originX = originPositions.originX;
+    const originY = originPositions.originY;
+    const origin = shape.getPointByOrigin(originX, originY);
+    const left = shape.getLeft() - (centerPoint.x - origin.x);
+    const top = shape.getTop() - (centerPoint.x - origin.y);
 
     shape.set({
-        originX: originX,
-        originY: originY,
-        left: left,
-        top: top
+        originX,
+        originY,
+        left,
+        top
     });
 
     shape.setCoords();
@@ -104,11 +102,11 @@ function adjustOriginByStartPoint(pointer, shape) {
  * @ignore
  */
 function adjustOriginByMovingPointer(pointer, shape) {
-    var origin = shape.startPoint;
-    var angle = -shape.getAngle();
-    var originPositions = getPositionsOfRotatedOrigin(origin, pointer, angle);
-    var originX = originPositions.originX;
-    var originY = originPositions.originY;
+    const origin = shape.startPoint;
+    const angle = -shape.getAngle();
+    const originPositions = getPositionsOfRotatedOrigin(origin, pointer, angle);
+    const originX = originPositions.originX;
+    const originY = originPositions.originY;
 
     shape.setPositionByOrigin(origin, originX, originY);
 }
@@ -119,22 +117,21 @@ function adjustOriginByMovingPointer(pointer, shape) {
  * @ignore
  */
 function adjustDimensionOnScaling(shape) {
-    var type = shape.type;
-    var dimensionKeys = DIMENSION_KEYS[type];
-    var scaleX = shape.scaleX;
-    var scaleY = shape.scaleY;
-    var width = shape[dimensionKeys.w] * scaleX;
-    var height = shape[dimensionKeys.h] * scaleY;
-    var options, maxScale;
+    const type = shape.type;
+    const dimensionKeys = DIMENSION_KEYS[type];
+    const scaleX = shape.scaleX;
+    const scaleY = shape.scaleY;
+    let width = shape[dimensionKeys.w] * scaleX;
+    let height = shape[dimensionKeys.h] * scaleY;
 
     if (shape.isRegular) {
-        maxScale = Math.max(scaleX, scaleY);
+        const maxScale = Math.max(scaleX, scaleY);
 
         width = shape[dimensionKeys.w] * maxScale;
         height = shape[dimensionKeys.h] * maxScale;
     }
 
-    options = {
+    const options = {
         hasControls: false,
         hasBorders: false,
         scaleX: 1,
@@ -154,15 +151,15 @@ function adjustDimensionOnScaling(shape) {
  * @ignore
  */
 function adjustDimensionOnMouseMove(pointer, shape) {
-    var origin = shape.startPoint;
-    var type = shape.type;
-    var divisor = DIVISOR[type];
-    var dimensionKeys = DIMENSION_KEYS[type];
-    var width = Math.abs(origin.x - pointer.x) / divisor;
-    var height = Math.abs(origin.y - pointer.y) / divisor;
-    var strokeWidth = shape.strokeWidth;
-    var isTriangle = !!(shape.type === 'triangle');
-    var options = {};
+    const origin = shape.startPoint;
+    const type = shape.type;
+    const divisor = DIVISOR[type];
+    const dimensionKeys = DIMENSION_KEYS[type];
+    const strokeWidth = shape.strokeWidth;
+    const isTriangle = !!(shape.type === 'triangle');
+    const options = {};
+    let width = Math.abs(origin.x - pointer.x) / divisor;
+    let height = Math.abs(origin.y - pointer.y) / divisor;
 
     if (width > strokeWidth) {
         width -= strokeWidth / divisor;
@@ -191,11 +188,11 @@ module.exports = {
      * Set each origin value to shape
      * @param {fabric.Object} shape - Shape object
      */
-    setOrigins: function(shape) {
-        var leftTopPoint = shape.getPointByOrigin('left', 'top');
-        var rightTopPoint = shape.getPointByOrigin('right', 'top');
-        var rightBottomPoint = shape.getPointByOrigin('right', 'bottom');
-        var leftBottomPoint = shape.getPointByOrigin('left', 'bottom');
+    setOrigins(shape) {
+        const leftTopPoint = shape.getPointByOrigin('left', 'top');
+        const rightTopPoint = shape.getPointByOrigin('right', 'top');
+        const rightBottomPoint = shape.getPointByOrigin('right', 'bottom');
+        const leftBottomPoint = shape.getPointByOrigin('left', 'bottom');
 
         shape.origins = {
             lt: leftTopPoint,
@@ -211,7 +208,7 @@ module.exports = {
      * @param {{x: number, y: number}} pointer - Mouse pointer values on canvas
      * @param {boolean} isScaling - Whether the resizing action is scaling or not
      */
-    resize: function(shape, pointer, isScaling) {
+    resize(shape, pointer, isScaling) {
         if (hasCenterOrigin(shape)) {
             adjustOriginByStartPoint(pointer, shape);
             setStartPoint(shape);
@@ -230,21 +227,21 @@ module.exports = {
      * Adjust the origin position of shape to center
      * @param {fabric.Object} shape - Shape object
      */
-    adjustOriginToCenter: function(shape) {
-        var centerPoint = shape.getPointByOrigin('center', 'center');
-        var originX = shape.getOriginX();
-        var originY = shape.getOriginY();
-        var origin = shape.getPointByOrigin(originX, originY);
-        var left = shape.getLeft() + (centerPoint.x - origin.x);
-        var top = shape.getTop() + (centerPoint.y - origin.y);
+    adjustOriginToCenter(shape) {
+        const centerPoint = shape.getPointByOrigin('center', 'center');
+        const originX = shape.getOriginX();
+        const originY = shape.getOriginY();
+        const origin = shape.getPointByOrigin(originX, originY);
+        const left = shape.getLeft() + (centerPoint.x - origin.x);
+        const top = shape.getTop() + (centerPoint.y - origin.y);
 
         shape.set({
             hasControls: true,
             hasBorders: true,
             originX: 'center',
             originY: 'center',
-            left: left,
-            top: top
+            left,
+            top
         });
 
         shape.setCoords(); // For left, top properties

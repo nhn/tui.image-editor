@@ -2,25 +2,22 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Error-message factory
  */
-'use strict';
+import util from '../util';
 
-var keyMirror = require('../util').keyMirror;
-
-var types = keyMirror(
+const keyMirror = util.keyMirror;
+const types = keyMirror(
     'UN_IMPLEMENTATION',
     'NO_COMPONENT_NAME'
 );
-
-var messages = {
+const messages = {
     UN_IMPLEMENTATION: 'Should implement a method: ',
     NO_COMPONENT_NAME: 'Should set a component name'
 };
-
-var map = {
-    UN_IMPLEMENTATION: function(methodName) {
+const map = {
+    UN_IMPLEMENTATION(methodName) {
         return messages.UN_IMPLEMENTATION + methodName;
     },
-    NO_COMPONENT_NAME: function() {
+    NO_COMPONENT_NAME() {
         return messages.NO_COMPONENT_NAME;
     }
 };
@@ -28,13 +25,10 @@ var map = {
 module.exports = {
     types: tui.util.extend({}, types),
 
-    create: function(type) {
-        var func;
-
+    create(type, ...args) {
         type = type.toLowerCase();
-        func = map[type];
-        Array.prototype.shift.apply(arguments);
+        const func = map[type];
 
-        return func.apply(null, arguments);
+        return func(...args);
     }
 };

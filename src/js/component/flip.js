@@ -2,10 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image flip module
  */
-'use strict';
-
-var Component = require('../interface/component');
-var consts = require('../consts');
+import Component from '../interface/component';
+import consts from '../consts';
 
 /**
  * Flip
@@ -14,40 +12,41 @@ var consts = require('../consts');
  * @extends {Component}
  * @ignore
  */
-var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
-    init: function(parent) {
+class Flip extends Component {
+    constructor(parent) {
+        super();
         this.setParent(parent);
-    },
 
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.FLIP,
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.FLIP;
+    }
 
     /**
      * Get current flip settings
      * @returns {{flipX: Boolean, flipY: Boolean}}
      */
-    getCurrentSetting: function() {
-        var canvasImage = this.getCanvasImage();
+    getCurrentSetting() {
+        const canvasImage = this.getCanvasImage();
 
         return {
             flipX: canvasImage.flipX,
             flipY: canvasImage.flipY
         };
-    },
+    }
 
     /**
      * Set flipX, flipY
      * @param {{flipX: Boolean, flipY: Boolean}} newSetting - Flip setting
      * @returns {jQuery.Deferred}
      */
-    set: function(newSetting) {
-        var setting = this.getCurrentSetting();
-        var jqDefer = $.Deferred();
-        var isChangingFlipX = (setting.flipX !== newSetting.flipX);
-        var isChangingFlipY = (setting.flipY !== newSetting.flipY);
+    set(newSetting) {
+        const setting = this.getCurrentSetting();
+        const jqDefer = $.Deferred();
+        const isChangingFlipX = (setting.flipX !== newSetting.flipX);
+        const isChangingFlipY = (setting.flipY !== newSetting.flipY);
 
         if (!isChangingFlipX && !isChangingFlipY) {
             return jqDefer.reject();
@@ -59,16 +58,16 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
         this._flipObjects(isChangingFlipX, isChangingFlipY);
 
         return jqDefer.resolve(setting, this.getCanvasImage().angle);
-    },
+    }
 
     /**
      * Invert image angle for flip
      * @param {boolean} isChangingFlipX - Change flipX
      * @param {boolean} isChangingFlipY - Change flipY
      */
-    _invertAngle: function(isChangingFlipX, isChangingFlipY) {
-        var canvasImage = this.getCanvasImage();
-        var angle = canvasImage.angle;
+    _invertAngle(isChangingFlipX, isChangingFlipY) {
+        const canvasImage = this.getCanvasImage();
+        let angle = canvasImage.angle;
 
         if (isChangingFlipX) {
             angle *= -1;
@@ -77,7 +76,7 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
             angle *= -1;
         }
         canvasImage.setAngle(parseFloat(angle)).setCoords();// parseFloat for -0 to 0
-    },
+    }
 
     /**
      * Flip objects
@@ -85,11 +84,11 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
      * @param {boolean} isChangingFlipY - Change flipY
      * @private
      */
-    _flipObjects: function(isChangingFlipX, isChangingFlipY) {
-        var canvas = this.getCanvas();
+    _flipObjects(isChangingFlipX, isChangingFlipY) {
+        const canvas = this.getCanvas();
 
         if (isChangingFlipX) {
-            canvas.forEachObject(function(obj) {
+            canvas.forEachObject(obj => {
                 obj.set({
                     angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
                     flipX: !obj.flipX,
@@ -98,7 +97,7 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
             });
         }
         if (isChangingFlipY) {
-            canvas.forEachObject(function(obj) {
+            canvas.forEachObject(obj => {
                 obj.set({
                     angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
                     flipY: !obj.flipY,
@@ -107,44 +106,44 @@ var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
             });
         }
         canvas.renderAll();
-    },
+    }
 
     /**
      * Reset flip settings
      * @returns {jQuery.Deferred}
      */
-    reset: function() {
+    reset() {
         return this.set({
             flipX: false,
             flipY: false
         });
-    },
+    }
 
     /**
      * Flip x
      * @returns {jQuery.Deferred}
      */
-    flipX: function() {
-        var current = this.getCurrentSetting();
+    flipX() {
+        const current = this.getCurrentSetting();
 
         return this.set({
             flipX: !current.flipX,
             flipY: current.flipY
         });
-    },
+    }
 
     /**
      * Flip y
      * @returns {jQuery.Deferred}
      */
-    flipY: function() {
-        var current = this.getCurrentSetting();
+    flipY() {
+        const current = this.getCurrentSetting();
 
         return this.set({
             flipX: current.flipX,
             flipY: !current.flipY
         });
     }
-});
+}
 
 module.exports = Flip;

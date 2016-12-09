@@ -1,3 +1,3 @@
-'use strict';
+import ImageEditor from './js/imageEditor';
 
-tui.util.defineNamespace('tui.component.ImageEditor', require('./js/imageEditor'), true);
+tui.util.defineNamespace('tui.component.ImageEditor', ImageEditor, true);

@@ -2,20 +2,15 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Shape component
  */
-'use strict';
+import Component from '../interface/component';
+import consts from '../consts';
+import resizeHelper from '../helper/shapeResizeHelper';
 
-var Component = require('../interface/component');
-var consts = require('../consts');
-var resizeHelper = require('../helper/shapeResizeHelper');
+const {extend, bind, inArray} = tui.util;
 
-var util = tui.util;
-var extend = util.extend;
-var bind = util.bind;
-var inArray = util.inArray;
-
-var KEY_CODES = consts.keyCodes;
-var DEFAULT_TYPE = 'rect';
-var DEFAULT_OPTIONS = {
+const KEY_CODES = consts.keyCodes;
+const DEFAULT_TYPE = 'rect';
+const DEFAULT_OPTIONS = {
     strokeWidth: 1,
     stroke: '#000000',
     fill: '#ffffff',
@@ -30,7 +25,7 @@ var DEFAULT_OPTIONS = {
     isRegular: false
 };
 
-var shapeType = ['rect', 'circle', 'triangle'];
+const shapeType = ['rect', 'circle', 'triangle'];
 
 /**
  * Shape
@@ -39,9 +34,16 @@ var shapeType = ['rect', 'circle', 'triangle'];
  * @extends {Component}
  * @ignore
  */
-var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
-    init: function(parent) {
+class Shape extends Component {
+    constructor(parent) {
+        super();
         this.setParent(parent);
+
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = consts.componentNames.SHAPE;
 
         /**
          * Object of The drawing shape
@@ -98,20 +100,14 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
             keydown: bind(this._onKeyDown, this),
             keyup: bind(this._onKeyUp, this)
         };
-    },
-
-    /**
-     * Component name
-     * @type {string}
-     */
-    name: consts.componentNames.SHAPE,
+    }
 
     /**
      * Start to draw the shape on canvas
      * @ignore
      */
-    startDrawingMode: function() {
-        var canvas = this.getCanvas();
+    startDrawingMode() {
+        const canvas = this.getCanvas();
 
         this._isSelected = false;
 
@@ -124,14 +120,14 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
 
         fabric.util.addListener(document, 'keydown', this._handlers.keydown);
         fabric.util.addListener(document, 'keyup', this._handlers.keyup);
-    },
+    }
 
     /**
      * End to draw the shape on canvas
      * @ignore
      */
-    endDrawingMode: function() {
-        var canvas = this.getCanvas();
+    endDrawingMode() {
+        const canvas = this.getCanvas();
 
         this._isSelected = false;
 
@@ -144,7 +140,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
 
         fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
         fabric.util.removeListener(document, 'keyup', this._handlers.keyup);
-    },
+    }
 
     /**
      * Set states of the current drawing shape
@@ -159,13 +155,13 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      */
-    setStates: function(type, options) {
+    setStates(type, options) {
         this._type = type;
 
         if (options) {
             this._options = extend(this._options, options);
         }
-    },
+    }
 
     /**
      * Add the shape
@@ -181,17 +177,15 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
      */
-    add: function(type, options) {
-        var canvas = this.getCanvas();
-        var shapeObj;
-
+    add(type, options) {
+        const canvas = this.getCanvas();
         options = this._createOptions(options);
-        shapeObj = this._createInstance(type, options);
+        const shapeObj = this._createInstance(type, options);
 
         this._bindEventOnShape(shapeObj);
 
         canvas.add(shapeObj);
-    },
+    }
 
     /**
      * Change the shape
@@ -207,14 +201,14 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
      */
-    change: function(shapeObj, options) {
+    change(shapeObj, options) {
         if (inArray(shapeObj.get('type'), shapeType) < 0) {
             return;
         }
 
         shapeObj.set(options);
         this.getCanvas().renderAll();
-    },
+    }
 
     /**
      * Create the instance of shape
@@ -223,8 +217,8 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      * @returns {fabric.Object} Shape instance
      * @private
      */
-    _createInstance: function(type, options) {
-        var instance;
+    _createInstance(type, options) {
+        let instance;
 
         switch (type) {
             case 'rect':
@@ -243,7 +237,7 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
         }
 
         return instance;
-    },
+    }
 
     /**
      * Get the options to create the shape
@@ -251,8 +245,8 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
      * @returns {object} Shape options
      * @private
      */
-    _createOptions: function(options) {
-        var selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
+    _createOptions(options) {
+        const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
 
         options = extend({}, DEFAULT_OPTIONS, selectionStyles, options);
 
@@ -261,61 +255,59 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
         }
 
         return options;
-    },
+    }
 
     /**
      * Bind fabric events on the creating shape object
      * @param {fabric.Object} shapeObj - Shape object
      * @private
      */
-    _bindEventOnShape: function(shapeObj) {
-        var self = this;
-        var canvas = this.getCanvas();
+    _bindEventOnShape(shapeObj) {
+        const self = this;
+        const canvas = this.getCanvas();
 
         shapeObj.on({
-            added: function() {
+            added() {
                 self._shapeObj = this;
                 resizeHelper.setOrigins(self._shapeObj);
             },
-            selected: function() {
+            selected() {
                 self._isSelected = true;
                 self._shapeObj = this;
                 canvas.uniScaleTransform = true;
                 canvas.defaultCursor = 'default';
                 resizeHelper.setOrigins(self._shapeObj);
             },
-            deselected: function() {
+            deselected() {
                 self._isSelected = false;
                 self._shapeObj = null;
                 canvas.defaultCursor = 'crosshair';
                 canvas.uniScaleTransform = false;
             },
-            modified: function() {
-                var currentObj = self._shapeObj;
+            modified() {
+                const currentObj = self._shapeObj;
 
                 resizeHelper.adjustOriginToCenter(currentObj);
                 resizeHelper.setOrigins(currentObj);
             },
-            scaling: function(fEvent) {
-                var pointer = canvas.getPointer(fEvent.e);
-                var currentObj = self._shapeObj;
+            scaling(fEvent) {
+                const pointer = canvas.getPointer(fEvent.e);
+                const currentObj = self._shapeObj;
 
                 canvas.setCursor('crosshair');
                 resizeHelper.resize(currentObj, pointer, true);
             }
         });
-    },
+    }
 
     /**
      * MouseDown event handler on canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
      * @private
      */
-    _onFabricMouseDown: function(fEvent) {
-        var canvas;
-
+    _onFabricMouseDown(fEvent) {
         if (!this._isSelected && !this._shapeObj) {
-            canvas = this.getCanvas();
+            const canvas = this.getCanvas();
             this._startPoint = canvas.getPointer(fEvent.e);
 
             canvas.on({
@@ -323,28 +315,28 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
                 'mouse:up': this._handlers.mouseup
             });
         }
-    },
+    }
 
     /**
      * MouseDown event handler on canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
      * @private
      */
-    _onFabricMouseMove: function(fEvent) {
-        var canvas = this.getCanvas();
-        var pointer = canvas.getPointer(fEvent.e);
-        var startPointX = this._startPoint.x;
-        var startPointY = this._startPoint.y;
-        var width = startPointX - pointer.x;
-        var height = startPointY - pointer.y;
-        var shape = this._shapeObj;
+    _onFabricMouseMove(fEvent) {
+        const canvas = this.getCanvas();
+        const pointer = canvas.getPointer(fEvent.e);
+        const startPointX = this._startPoint.x;
+        const startPointY = this._startPoint.y;
+        const width = startPointX - pointer.x;
+        const height = startPointY - pointer.y;
+        const shape = this._shapeObj;
 
         if (!shape) {
             this.add(this._type, {
                 left: startPointX,
                 top: startPointY,
-                width: width,
-                height: height
+                width,
+                height
             });
         } else {
             this._shapeObj.set({
@@ -353,15 +345,15 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
         }
-    },
+    }
 
     /**
      * MouseUp event handler on canvas
      * @private
      */
-    _onFabricMouseUp: function() {
-        var canvas = this.getCanvas();
-        var shape = this._shapeObj;
+    _onFabricMouseUp() {
+        const canvas = this.getCanvas();
+        const shape = this._shapeObj;
 
         if (shape) {
             resizeHelper.adjustOriginToCenter(shape);
@@ -373,14 +365,14 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
             'mouse:move': this._handlers.mousemove,
             'mouse:up': this._handlers.mouseup
         });
-    },
+    }
 
     /**
      * Keydown event handler on document
      * @param {KeyboardEvent} e - Event object
      * @private
      */
-    _onKeyDown: function(e) {
+    _onKeyDown(e) {
         if (e.keyCode === KEY_CODES.SHIFT) {
             this._withShiftKey = true;
 
@@ -388,14 +380,14 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
                 this._shapeObj.isRegular = true;
             }
         }
-    },
+    }
 
     /**
      * Keyup event handler on document
      * @param {KeyboardEvent} e - Event object
      * @private
      */
-    _onKeyUp: function(e) {
+    _onKeyUp(e) {
         if (e.keyCode === KEY_CODES.SHIFT) {
             this._withShiftKey = false;
 
@@ -404,6 +396,6 @@ var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
             }
         }
     }
-});
+}
 
 module.exports = Shape;
