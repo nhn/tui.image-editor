@@ -17,6 +17,7 @@ class Filter extends Component {
     constructor(parent) {
         super();
         this.setParent(parent);
+
         /**
          * Component name
          * @type {string}
@@ -28,50 +29,48 @@ class Filter extends Component {
      * Add filter to source image (a specific filter is added on fabric.js)
      * @param {string} type - Filter type
      * @param {object} [options] - Options of filter
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     add(type, options) {
-        const jqDefer = $.Deferred();
-        const filter = this._createFilter(type, options);
-        const sourceImg = this._getSourceImage();
-        const canvas = this.getCanvas();
+        return new Promise((resolve, reject) => {
+            const filter = this._createFilter(type, options);
+            const sourceImg = this._getSourceImage();
+            const canvas = this.getCanvas();
 
-        if (!filter) {
-            jqDefer.reject();
-        }
+            if (!filter) {
+                reject();
+            }
 
-        sourceImg.filters.push(filter);
+            sourceImg.filters.push(filter);
 
-        this._apply(sourceImg, () => {
-            canvas.renderAll();
-            jqDefer.resolve(type, 'add');
+            this._apply(sourceImg, () => {
+                canvas.renderAll();
+                resolve(type, 'add');
+            });
         });
-
-        return jqDefer;
     }
 
     /**
      * Remove filter to source image
      * @param {string} type - Filter type
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     remove(type) {
-        const jqDefer = $.Deferred();
-        const sourceImg = this._getSourceImage();
-        const canvas = this.getCanvas();
+        return new Promise((resolve, reject) => {
+            const sourceImg = this._getSourceImage();
+            const canvas = this.getCanvas();
 
-        if (!sourceImg.filters.length) {
-            jqDefer.reject();
-        }
+            if (!sourceImg.filters.length) {
+                reject();
+            }
 
-        sourceImg.filters.pop();
+            sourceImg.filters.pop();
 
-        this._apply(sourceImg, () => {
-            canvas.renderAll();
-            jqDefer.resolve(type, 'remove');
+            this._apply(sourceImg, () => {
+                canvas.renderAll();
+                resolve(type, 'remove');
+            });
         });
-
-        return jqDefer;
     }
 
     /**

@@ -49,10 +49,14 @@ describe('commandFactory', function() {
     describe('loadImageCommand', function() {
         var imageURL, command;
 
-        beforeEach(function() {
+        beforeEach(function(done) {
             mainComponent.setCanvasImage('', null);
             imageURL = 'base/test/fixtures/sampleImage.jpg';
             command = commandFactory.create(commands.LOAD_IMAGE, 'image', imageURL);
+
+            setTimeout(function() {
+                done();
+            }, 1)
         });
 
         it('should clear canvas', function() {
@@ -63,12 +67,13 @@ describe('commandFactory', function() {
         });
 
         it('should load new image', function(done) {
-            invoker.invoke(command).done(function(img) {
+            console.log(command);
+            invoker.invoke(command).then(function(img) {
                 expect(mainComponent.getImageName()).toEqual('image');
                 expect(mainComponent.getCanvasImage()).toBe(img);
                 expect(mainComponent.getCanvasImage().getSrc()).toContain(imageURL);
             })
-            .done(done);
+            .then(done);
         });
 
         it('"undo()" should clear image if not exists prev image', function(done) {

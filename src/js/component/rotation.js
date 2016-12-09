@@ -44,11 +44,10 @@ class Rotation extends Component {
      */
     setAngle(angle) {
         const oldAngle = this.getCurrentAngle() % 360; // The angle is lower than 2*PI(===360 degrees)
-        const jqDefer = $.Deferred();
 
         angle %= 360;
         if (angle === oldAngle) {
-            return jqDefer.reject();
+            return Promise.reject();
         }
         const canvasImage = this.getCanvasImage();
         const oldImageCenter = canvasImage.getCenterPoint();
@@ -57,7 +56,7 @@ class Rotation extends Component {
         const newImageCenter = canvasImage.getCenterPoint();
         this._rotateForEachObject(oldImageCenter, newImageCenter, angle - oldAngle);
 
-        return jqDefer.resolve(angle);
+        return Promise.resolve(angle);
     }
 
     /**

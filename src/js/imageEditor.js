@@ -205,10 +205,10 @@ class ImageEditor {
         }
 
         /**
-         * @event ImageEditor#addedObject
+         * @event ImageEditor#addObject
          * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
          * @example
-         * imageEditor.on('addedObject', function(obj) {
+         * imageEditor.on('addObject', function(obj) {
          *     console.log(obj);
          * });
          */
@@ -222,10 +222,10 @@ class ImageEditor {
      */
     _onRemovedObject(fEvent) {
         /**
-         * @event ImageEditor#removedObject
+         * @event ImageEditor#removeObject
          * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
          * @example
-         * imageEditor.on('removedObject', function(obj) {
+         * imageEditor.on('removeObject', function(obj) {
          *     console.log(obj);
          * });
          */

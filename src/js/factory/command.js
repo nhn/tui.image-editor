@@ -28,39 +28,37 @@ function createAddObjectCommand(object) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         execute(compMap) {
-            const canvas = compMap[MAIN].getCanvas();
-            const jqDefer = $.Deferred();
+            return new Promise((resolve, reject) => {
+                const canvas = compMap[MAIN].getCanvas();
 
-            if (!canvas.contains(object)) {
-                canvas.add(object);
-                jqDefer.resolve(object);
-            } else {
-                jqDefer.reject();
-            }
-
-            return jqDefer;
+                if (!canvas.contains(object)) {
+                    canvas.add(object);
+                    resolve(object);
+                } else {
+                    reject();
+                }
+            });
         },
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         undo(compMap) {
-            const canvas = compMap[MAIN].getCanvas();
-            const jqDefer = $.Deferred();
+            return new Promise((resolve, reject) => {
+                const canvas = compMap[MAIN].getCanvas();
 
-            if (canvas.contains(object)) {
-                canvas.remove(object);
-                jqDefer.resolve(object);
-            } else {
-                jqDefer.reject();
-            }
-
-            return jqDefer;
+                if (canvas.contains(object)) {
+                    canvas.remove(object);
+                    resolve(object);
+                } else {
+                    reject();
+                }
+            });
         }
     });
 }
@@ -75,7 +73,7 @@ function createLoadImageCommand(imageName, img) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         execute(compMap) {
@@ -94,7 +92,7 @@ function createLoadImageCommand(imageName, img) {
         },
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         undo(compMap) {
@@ -120,7 +118,7 @@ function createFlipImageCommand(type) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         execute(compMap) {
@@ -132,7 +130,7 @@ function createFlipImageCommand(type) {
         },
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         undo(compMap) {
@@ -153,7 +151,7 @@ function createRotationImageCommand(type, angle) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         execute(compMap) {
@@ -165,7 +163,7 @@ function createRotationImageCommand(type, angle) {
         },
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         undo(compMap) {
@@ -185,30 +183,29 @@ function createClearCommand() {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         execute(compMap) {
-            const canvas = compMap[MAIN].getCanvas();
-            const jqDefer = $.Deferred();
-            const objs = canvas.getObjects();
+            return new Promise((resolve, reject) => {
+                const canvas = compMap[MAIN].getCanvas();
+                const objs = canvas.getObjects();
 
-            // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
-            this.store = objs.slice();
-            if (this.store.length) {
-                tui.util.forEach(objs.slice(), obj => {
-                    obj.remove();
-                });
-                jqDefer.resolve();
-            } else {
-                jqDefer.reject();
-            }
-
-            return jqDefer;
+                // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
+                this.store = objs.slice();
+                if (this.store.length) {
+                    tui.util.forEach(objs.slice(), obj => {
+                        obj.remove();
+                    });
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
         },
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         undo(compMap) {
@@ -217,7 +214,7 @@ function createClearCommand() {
 
             canvas.add.apply(canvasContext, this.store);
 
-            return $.Deferred().resolve();
+            return Promise.resolve();
         }
     });
 }
@@ -232,34 +229,33 @@ function createRemoveCommand(target) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         execute(compMap) {
-            const canvas = compMap[MAIN].getCanvas();
-            const jqDefer = $.Deferred();
-            const isValidGroup = target && target.isType('group') && !target.isEmpty();
+            return new Promise((resolve, reject) => {
+                const canvas = compMap[MAIN].getCanvas();
+                const isValidGroup = target && target.isType('group') && !target.isEmpty();
 
-            if (isValidGroup) {
-                canvas.discardActiveGroup(); // restore states for each objects
-                this.store = target.getObjects();
-                target.forEachObject(obj => {
-                    obj.remove();
-                });
-                jqDefer.resolve();
-            } else if (canvas.contains(target)) {
-                this.store = [target];
-                target.remove();
-                jqDefer.resolve();
-            } else {
-                jqDefer.reject();
-            }
-
-            return jqDefer;
+                if (isValidGroup) {
+                    canvas.discardActiveGroup(); // restore states for each objects
+                    this.store = target.getObjects();
+                    target.forEachObject(obj => {
+                        obj.remove();
+                    });
+                    resolve();
+                } else if (canvas.contains(target)) {
+                    this.store = [target];
+                    target.remove();
+                    resolve();
+                } else {
+                    reject();
+                }
+            });
         },
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         undo(compMap) {
@@ -268,7 +264,7 @@ function createRemoveCommand(target) {
 
             canvas.add.apply(canvasContext, this.store);
 
-            return $.Deferred().resolve();
+            return Promise.resolve();
         }
     });
 }
@@ -284,7 +280,7 @@ function createFilterCommand(type, options) {
     return new Command({
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         execute(compMap) {
@@ -299,7 +295,7 @@ function createFilterCommand(type, options) {
         },
         /**
          * @param {object.<string, Component>} compMap - Components injection
-         * @returns {jQuery.Deferred}
+         * @returns {Promise}
          * @ignore
          */
         undo(compMap) {

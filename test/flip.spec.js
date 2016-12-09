@@ -94,35 +94,64 @@ describe('Flip', function() {
         });
     });
 
-    it('flipX(), flipY(), set(), reset() should resolve with angle', function() {
-        var spy = jasmine.createSpy();
-        mockImage.setAngle(10);
+    describe('Promise is returned with settings and angle,', function() {
+        beforeEach(function(done) {
+            setTimeout(function() {
+                mockImage.setAngle(10);
+                done();
+            }, 1);
+        });
 
-        flipModule.flipX().done(spy);
-        expect(spy).toHaveBeenCalledWith({
-            flipX: true,
-            flipY: false
-        }, -10);
+        it('flipX() is called.', function(done) {
+            flipModule.flipX().then(function(obj) {
+                expect(obj).toEqual({
+                    setting: {
+                        flipX: true,
+                        flipY: false
+                    },
+                    angle: -10
+                });
+                done();
+            });
+        });
 
-        spy.calls.reset();
-        flipModule.flipY().done(spy);
-        expect(spy).toHaveBeenCalledWith({
-            flipX: true,
-            flipY: true
-        }, 10);
+        it('flipY() is called.', function(done) {
+            flipModule.flipY().then(function(obj) {
+                expect(obj).toEqual({
+                    setting: {
+                        flipX: false,
+                        flipY: true
+                    },
+                    angle: -10
+                });
+                done();
+            });
+        });
 
-        spy.calls.reset();
-        flipModule.set({flipX: true, flipY: false}).done(spy);
-        expect(spy).toHaveBeenCalledWith({
-            flipX: true,
-            flipY: false
-        }, -10);
+        it('flipY() is called.', function(done) {
+            flipModule.flipY().then(function(obj) {
+                expect(obj).toEqual({
+                    setting: {
+                        flipX: false,
+                        flipY: true
+                    },
+                    angle: -10
+                });
+                done();
+            });
+        });
 
-        spy.calls.reset();
-        flipModule.set({flipX: false, flipY: false}).done(spy);
-        expect(spy).toHaveBeenCalledWith({
-            flipX: false,
-            flipY: false
-        }, 10);
+        it('set() is called.', function(done) {
+            flipModule.set({flipX: true, flipY: false}).then(function(obj) {
+                expect(obj).toEqual({
+                    setting: {
+                        flipX: true,
+                        flipY: false
+                    },
+                    angle: -10
+                });
+                done();
+            });
+        });
     });
 });

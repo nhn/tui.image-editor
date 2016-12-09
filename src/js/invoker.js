@@ -99,12 +99,15 @@ class Invoker {
     _invokeExecution(command) {
         this.lock();
 
-        return $.when(command.execute(this._componentMap))
-            .done(() => {
+        return command.execute(this._componentMap)
+            .then(value => {
                 this.pushUndoStack(command);
+                return value;
             })
-            .done(command.executeCallback)
-            .always(() => {
+            .then(value => {
+                command.executeCallback(value);
+            })
+            .then(() => {
                 this.unlock();
             });
     }
@@ -187,7 +190,7 @@ class Invoker {
         }
 
         return this._invokeExecution(command)
-            .done(tui.util.bind(this.clearRedoStack, this));
+            .then(tui.util.bind(this.clearRedoStack, this));
     }
 
     /**

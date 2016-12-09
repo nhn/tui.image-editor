@@ -44,12 +44,11 @@ class Flip extends Component {
      */
     set(newSetting) {
         const setting = this.getCurrentSetting();
-        const jqDefer = $.Deferred();
         const isChangingFlipX = (setting.flipX !== newSetting.flipX);
         const isChangingFlipY = (setting.flipY !== newSetting.flipY);
 
         if (!isChangingFlipX && !isChangingFlipY) {
-            return jqDefer.reject();
+            return Promise.reject();
         }
 
         tui.util.extend(setting, newSetting);
@@ -57,7 +56,10 @@ class Flip extends Component {
         this._invertAngle(isChangingFlipX, isChangingFlipY);
         this._flipObjects(isChangingFlipX, isChangingFlipY);
 
-        return jqDefer.resolve(setting, this.getCanvasImage().angle);
+        return Promise.resolve({
+            setting,
+            angle: this.getCanvasImage().angle
+        });
     }
 
     /**

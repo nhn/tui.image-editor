@@ -48,9 +48,11 @@ class ImageLoader extends Component {
                 this.setCanvasImage('', null);
             }).resolve();
         } else {
-            jqDefer = this._setBackgroundImage(img).done(oImage => {
+            jqDefer = this._setBackgroundImage(img).then(oImage => {
                 this.setCanvasImage(imageName, oImage);
                 this.adjustCanvasDimension();
+
+                return oImage;
             });
         }
 
@@ -64,25 +66,43 @@ class ImageLoader extends Component {
      * @private
      */
     _setBackgroundImage(img) {
-        const jqDefer = $.Deferred();
+        // const jqDefer = $.Deferred();
+        //
+        // if (!img) {
+        //     return jqDefer.reject();
+        // }
+        //
+        // const canvas = this.getCanvas();
+        //
+        // canvas.setBackgroundImage(img, () => {
+        //     const oImage = canvas.backgroundImage;
+        //
+        //     if (oImage.getElement()) {
+        //         jqDefer.resolve(oImage);
+        //     } else {
+        //         jqDefer.reject();
+        //     }
+        // }, imageOption);
+        //
+        // return jqDefer;
 
         if (!img) {
-            return jqDefer.reject();
+            return Promise.reject();
         }
 
-        const canvas = this.getCanvas();
+        return new Promise((resolve, reject) => {
+            const canvas = this.getCanvas();
 
-        canvas.setBackgroundImage(img, () => {
-            const oImage = canvas.backgroundImage;
+            canvas.setBackgroundImage(img, () => {
+                const oImage = canvas.backgroundImage;
 
-            if (oImage.getElement()) {
-                jqDefer.resolve(oImage);
-            } else {
-                jqDefer.reject();
-            }
-        }, imageOption);
-
-        return jqDefer;
+                if (oImage.getElement()) {
+                    resolve(oImage);
+                } else {
+                    reject();
+                }
+            }, imageOption);
+        });
     }
 }
 

@@ -4,8 +4,8 @@
  */
 'use strict';
 
-var Cropper = require('../src/js/component/Cropper'),
-    Main = require('../src/js/component/Main');
+var Cropper = require('../src/js/component/Cropper');
+var Main = require('../src/js/component/Main');
 
 describe('Cropper', function() {
     var cropper, main, canvas;
