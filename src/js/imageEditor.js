@@ -85,10 +85,12 @@ class ImageEditor {
      * @private
      */
     _attachInvokerEvents() {
-        const PUSH_UNDO_STACK = events.PUSH_UNDO_STACK;
-        const PUSH_REDO_STACK = events.PUSH_REDO_STACK;
-        const EMPTY_UNDO_STACK = events.EMPTY_UNDO_STACK;
-        const EMPTY_REDO_STACK = events.EMPTY_REDO_STACK;
+        const {
+            PUSH_UNDO_STACK,
+            PUSH_REDO_STACK,
+            EMPTY_UNDO_STACK,
+            EMPTY_REDO_STACK
+        } = events;
 
         /**
          * @event ImageEditor#pushUndoStack
@@ -647,8 +649,10 @@ class ImageEditor {
      * @private
      */
     _flip(type) {
-        const callback = this.fire.bind(this, events.FLIP_IMAGE);
         const command = commandFactory.create(commands.FLIP_IMAGE, type);
+        const callback = ({setting, angle}) => {
+            this.fire(events.FLIP_IMAGE, setting, angle);
+        };
 
         /**
          * @event ImageEditor#flipImage

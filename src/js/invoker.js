@@ -93,7 +93,7 @@ class Invoker {
     /**
      * Invoke command execution
      * @param {Command} command - Command
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      * @private
      */
     _invokeExecution(command) {
@@ -102,11 +102,9 @@ class Invoker {
         return command.execute(this._componentMap)
             .then(value => {
                 this.pushUndoStack(command);
-                return value;
-            })
-            .then(value => {
                 command.executeCallback(value);
             })
+            .catch(() => {}) // do nothing with exception
             .then(() => {
                 this.unlock();
             });
@@ -115,18 +113,19 @@ class Invoker {
     /**
      * Invoke command undo
      * @param {Command} command - Command
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      * @private
      */
     _invokeUndo(command) {
         this.lock();
 
-        return $.when(command.undo(this._componentMap))
-            .done(() => {
+        return command.undo(this._componentMap)
+            .then(value => {
                 this.pushRedoStack(command);
+                command.undoCallback(value);
             })
-            .done(command.undoCallback)
-            .always(() => {
+            .catch(() => {}) // do nothing with exception
+            .then(() => {
                 this.unlock();
             });
     }
@@ -182,11 +181,11 @@ class Invoker {
      * Store the command to the undoStack
      * Clear the redoStack
      * @param {Command} command - Command
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     invoke(command) {
         if (this._isLocked) {
-            return $.Deferred.reject();
+            return Promise.reject();
         }
 
         return this._invokeExecution(command)
@@ -195,11 +194,11 @@ class Invoker {
 
     /**
      * Undo command
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     undo() {
         let command = this._undoStack.pop();
-        let jqDefer;
+        let promise;
 
         if (command && this._isLocked) {
             this.pushUndoStack(command, true);
@@ -209,21 +208,21 @@ class Invoker {
             if (this.isEmptyUndoStack()) {
                 this._fire(eventNames.EMPTY_UNDO_STACK);
             }
-            jqDefer = this._invokeUndo(command);
+            promise = this._invokeUndo(command);
         } else {
-            jqDefer = $.Deferred().reject();
+            promise = Promise.reject();
         }
 
-        return jqDefer;
+        return promise;
     }
 
     /**
      * Redo command
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     redo() {
         let command = this._redoStack.pop();
-        let jqDefer;
+        let promise;
 
         if (command && this._isLocked) {
             this.pushRedoStack(command, true);
@@ -233,12 +232,12 @@ class Invoker {
             if (this.isEmptyRedoStack()) {
                 this._fire(eventNames.EMPTY_REDO_STACK);
             }
-            jqDefer = this._invokeExecution(command);
+            promise = this._invokeExecution(command);
         } else {
-            jqDefer = $.Deferred().reject();
+            promise = Promise.reject();
         }
 
-        return jqDefer;
+        return promise;
     }
 
     /**

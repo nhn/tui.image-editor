@@ -21,8 +21,8 @@ describe('Invoker', function() {
         invoker._register(component);
 
         cmd = new Command({
-            execute: jasmine.createSpy(),
-            undo: jasmine.createSpy()
+            execute: jasmine.createSpy().and.returnValue(Promise.resolve()),
+            undo: jasmine.createSpy().and.returnValue(Promise.resolve())
         });
     });
 
@@ -96,16 +96,17 @@ describe('Invoker', function() {
         });
 
         it('"invoke()" should fire events - ' +
-            ' "pushUndoStack", "clearRedoStack" (when redoStack is not empty before)', function() {
+            ' "pushUndoStack", "clearRedoStack" (when redoStack is not empty before)', function(done) {
             invoker.pushRedoStack({});
 
             invoker.on(spyEvents);
-            invoker.invoke(cmd);
-
-            expect(spyEvents.pushUndoStack).toHaveBeenCalled();
-            expect(spyEvents.pushRedoStack).not.toHaveBeenCalled();
-            expect(spyEvents.emptyUndoStack).not.toHaveBeenCalled();
-            expect(spyEvents.emptyRedoStack).toHaveBeenCalled();
+            invoker.invoke(cmd).then(() => {
+                expect(spyEvents.pushUndoStack).toHaveBeenCalled();
+                expect(spyEvents.pushRedoStack).not.toHaveBeenCalled();
+                expect(spyEvents.emptyUndoStack).not.toHaveBeenCalled();
+                expect(spyEvents.emptyRedoStack).toHaveBeenCalled();
+                done();
+            });
         });
 
         it('"undo()" should fire a event - ' +

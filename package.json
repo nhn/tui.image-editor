@@ -30,6 +30,7 @@
     "simulant": "^0.2.2",
     "tui-jsdoc-template": "^1.0.4",
     "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.1",
     "core-js": "2.4.1",
     "babel-plugin-transform-runtime": "latest"
   },
@@ -41,5 +42,8 @@
     "serve": "webpack-dev-server --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f dist/tui-image-editor.js doc/dist",
     "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json && npm run cpy-dist2doc"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.20.0"
   }
 }

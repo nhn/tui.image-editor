@@ -36,7 +36,7 @@ class ImageLoader extends Component {
      * @returns {jQuery.Deferred} deferred
      */
     load(imageName, img) {
-        let jqDefer;
+        let promise;
 
         if (!imageName && !img) { // Back to the initial state, not error.
             const canvas = this.getCanvas();
@@ -44,11 +44,12 @@ class ImageLoader extends Component {
             canvas.backgroundImage = null;
             canvas.renderAll();
 
-            jqDefer = $.Deferred(() => {
+            promise = new Promise(resolve => {
                 this.setCanvasImage('', null);
-            }).resolve();
+                resolve();
+            });
         } else {
-            jqDefer = this._setBackgroundImage(img).then(oImage => {
+            promise = this._setBackgroundImage(img).then(oImage => {
                 this.setCanvasImage(imageName, oImage);
                 this.adjustCanvasDimension();
 
@@ -56,7 +57,7 @@ class ImageLoader extends Component {
             });
         }
 
-        return jqDefer;
+        return promise;
     }
 
     /**
