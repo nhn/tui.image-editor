@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image loader
  */
+import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
@@ -67,26 +68,6 @@ class ImageLoader extends Component {
      * @private
      */
     _setBackgroundImage(img) {
-        // const jqDefer = $.Deferred();
-        //
-        // if (!img) {
-        //     return jqDefer.reject();
-        // }
-        //
-        // const canvas = this.getCanvas();
-        //
-        // canvas.setBackgroundImage(img, () => {
-        //     const oImage = canvas.backgroundImage;
-        //
-        //     if (oImage.getElement()) {
-        //         jqDefer.resolve(oImage);
-        //     } else {
-        //         jqDefer.reject();
-        //     }
-        // }, imageOption);
-        //
-        // return jqDefer;
-
         if (!img) {
             return Promise.reject();
         }

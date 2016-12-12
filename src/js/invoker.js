@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Invoker - invoke commands
  */
+import Promise from 'core-js/library/es6/promise';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
 import MainComponent from './component/main';

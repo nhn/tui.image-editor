@@ -38,25 +38,23 @@ describe('commandFactory', function() {
             expect(canvas.contains(obj)).toBe(true);
         });
 
-        it('"undo()" should remove object from canvas', function() {
-            invoker.invoke(command);
-            invoker.undo();
-
-            expect(canvas.contains(obj)).toBe(false);
+        it('"undo()" should remove object from canvas', function(done) {
+            invoker.invoke(command).then(function() {
+                return invoker.undo()
+            }).then(function() {
+                expect(canvas.contains(obj)).toBe(false);
+                done();
+            });
         });
     });
 
     describe('loadImageCommand', function() {
         var imageURL, command;
 
-        beforeEach(function(done) {
+        beforeEach(function() {
             mainComponent.setCanvasImage('', null);
             imageURL = 'base/test/fixtures/sampleImage.jpg';
             command = commandFactory.create(commands.LOAD_IMAGE, 'image', imageURL);
-
-            setTimeout(function() {
-                done();
-            }, 1)
         });
 
         it('should clear canvas', function() {
@@ -66,24 +64,23 @@ describe('commandFactory', function() {
             expect(canvas.clear).toHaveBeenCalled();
         });
 
-        it('should load new image', function(done) {
-            console.log(command);
+        xit('should load new image', function(done) {
             invoker.invoke(command).then(function(img) {
                 expect(mainComponent.getImageName()).toEqual('image');
                 expect(mainComponent.getCanvasImage()).toBe(img);
                 expect(mainComponent.getCanvasImage().getSrc()).toContain(imageURL);
+                done();
             })
-            .then(done);
         });
 
         it('"undo()" should clear image if not exists prev image', function(done) {
             invoker.invoke(command).then(function() {
                 return invoker.undo();
-            }).done(function() {
+            }).then(function() {
                 expect(mainComponent.getCanvasImage()).toBe(null);
                 expect(mainComponent.getImageName()).toBe('');
-            })
-            .done(done);
+                done();
+            });
         });
 
         it('"undo()" should restore to prev image', function(done) {
@@ -97,10 +94,11 @@ describe('commandFactory', function() {
                 expect(mainComponent.getCanvasImage().getSrc()).toContain(newImageURL);
 
                 return invoker.undo();
-            }).done(function() {
+            }).then(function() {
                 expect(mainComponent.getImageName()).toEqual('image');
                 expect(mainComponent.getCanvasImage().getSrc()).toContain(imageURL);
-            }).done(done);
+                done();
+            });
         });
     });
 
@@ -134,24 +132,28 @@ describe('commandFactory', function() {
             expect(mockImage.flipY).toBe(false);
         });
 
-        it('"undo()" should restore flipXY', function() {
+        it('"undo()" should restore flipXY', function(done) {
             var originFlipX = mockImage.flipX;
             var originFlipY = mockImage.flipY;
             var command = commandFactory.create(commands.FLIP_IMAGE, 'flipX');
 
-            invoker.invoke(command);
-            invoker.undo();
-
-            expect(mockImage.flipX).toBe(originFlipX);
-            expect(mockImage.flipY).toBe(originFlipY);
+            invoker.invoke(command).then(function() {
+                return invoker.undo();
+            }).then(function() {
+                expect(mockImage.flipX).toBe(originFlipX);
+                expect(mockImage.flipY).toBe(originFlipY);
+                done();
+            });
 
             command = commandFactory.create(commands.FLIP_IMAGE, 'flipY');
 
-            invoker.invoke(command);
-            invoker.undo();
-
-            expect(mockImage.flipX).toBe(originFlipX);
-            expect(mockImage.flipY).toBe(originFlipY);
+            invoker.invoke(command).then(function() {
+                return invoker.undo();
+            }).then(function() {
+                expect(mockImage.flipX).toBe(originFlipX);
+                expect(mockImage.flipY).toBe(originFlipY);
+                done();
+            });
         });
     });
 
@@ -174,14 +176,16 @@ describe('commandFactory', function() {
             expect(mockImage.angle).toBe(30);
         });
 
-        it('"undo()" should restore angle', function() {
+        it('"undo()" should restore angle', function(done) {
             var originalAngle = mockImage.angle;
             var command = commandFactory.create(commands.ROTATE_IMAGE, 'setAngle', 100);
 
-            invoker.invoke(command);
-            invoker.undo();
-
-            expect(mockImage.angle).toBe(originalAngle);
+            invoker.invoke(command).then(function() {
+                return invoker.undo();
+            }).then(function() {
+                expect(mockImage.angle).toBe(originalAngle);
+                done();
+            });
         });
     });
 
@@ -211,14 +215,16 @@ describe('commandFactory', function() {
             expect(canvas.contains(objects[2])).toBe(false);
         });
 
-        it('"undo()" restore all objects', function() {
+        it('"undo()" restore all objects', function(done) {
             canvas.add.apply(canvas, objects);
-            invoker.invoke(command);
-            invoker.undo();
-
-            expect(canvas.contains(objects[0])).toBe(true);
-            expect(canvas.contains(objects[1])).toBe(true);
-            expect(canvas.contains(objects[2])).toBe(true);
+            invoker.invoke(command).then(function() {
+                return invoker.undo();
+            }).then(function() {
+                expect(canvas.contains(objects[0])).toBe(true);
+                expect(canvas.contains(objects[1])).toBe(true);
+                expect(canvas.contains(objects[2])).toBe(true);
+                done();
+            });
         });
     });
 
@@ -251,21 +257,25 @@ describe('commandFactory', function() {
             expect(canvas.contains(object2)).toBe(false);
         });
 
-        it('"undo()" should restore the removed object', function() {
+        it('"undo()" should restore the removed object', function(done) {
             command = commandFactory.create(commands.REMOVE_OBJECT, object);
-            invoker.invoke(command);
-            invoker.undo();
-
-            expect(canvas.contains(object)).toBe(true);
+            invoker.invoke(command).then(function() {
+                return invoker.undo();
+            }).then(function() {
+                expect(canvas.contains(object)).toBe(true);
+                done();
+            });
         });
 
-        it ('"undo()" should restore the removed objects (group)', function() {
+        it('"undo()" should restore the removed objects (group)', function(done) {
             command = commandFactory.create(commands.REMOVE_OBJECT, group);
-            invoker.invoke(command);
-            invoker.undo();
-
-            expect(canvas.contains(object)).toBe(true);
-            expect(canvas.contains(object2)).toBe(true);
+            invoker.invoke(command).then(function() {
+                return invoker.undo();
+            }).then(function() {
+                expect(canvas.contains(object)).toBe(true);
+                expect(canvas.contains(object2)).toBe(true);
+                done();
+            });
         });
     });
 });

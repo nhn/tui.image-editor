@@ -95,11 +95,8 @@ describe('Flip', function() {
     });
 
     describe('Promise is returned with settings and angle,', function() {
-        beforeEach(function(done) {
-            setTimeout(function() {
-                mockImage.setAngle(10);
-                done();
-            }, 1);
+        beforeEach(function() {
+            mockImage.setAngle(10);
         });
 
         it('flipX() is called.', function(done) {

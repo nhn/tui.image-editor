@@ -33,12 +33,13 @@ describe('Rotation', function() {
         expect(rotationModule.getCurrentAngle()).toEqual(40);
     });
 
-    it('"setAngle()" should not set angle value if no change', function() {
+    it('"setAnglue()" should not set angle value if no change', function() {
         var current = rotationModule.getCurrentAngle();
         var spy = jasmine.createSpy();
 
-        rotationModule.setAngle(current).then(spy);
-        expect(spy).not.toHaveBeenCalled();
+        rotationModule.setAngle(current).then(function() {
+            expect(spy).toHaveBeenCalled();
+        });
     });
 
     it('"rotate()" should add angle value', function() {

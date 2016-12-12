@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Command factory
  */
+import Promise from 'core-js/library/es6/promise';
 import Command from '../interface/command';
 import consts from '../consts';
 

@@ -1288,8 +1288,10 @@ class ImageEditor {
             };
         }
 
-        const callback = this.fire.bind(this, events.APPLY_FILTER);
         const command = commandFactory.create(commands.APPLY_FILTER, type, options);
+        const callback = obj => {
+            this.fire(events.APPLY_FILTER, obj.type, obj.action);
+        };
 
         /**
          * @event ImageEditor#applyFilter

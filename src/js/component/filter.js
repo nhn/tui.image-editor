@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add filter module
  */
+import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import Mask from '../extension/mask';
 import consts from '../consts';
@@ -45,7 +46,10 @@ class Filter extends Component {
 
             this._apply(sourceImg, () => {
                 canvas.renderAll();
-                resolve(type, 'add');
+                resolve({
+                    type,
+                    action: 'add'
+                });
             });
         });
     }
@@ -68,7 +72,10 @@ class Filter extends Component {
 
             this._apply(sourceImg, () => {
                 canvas.renderAll();
-                resolve(type, 'remove');
+                resolve({
+                    type,
+                    atction: 'remove'
+                });
             });
         });
     }
