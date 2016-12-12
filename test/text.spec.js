@@ -2,67 +2,63 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/text.js"
  */
-'use strict';
+import Main from '../src/js/component/main';
+import Text from '../src/js/component/text';
 
-var Main = require('../src/js/component/main');
-var Text = require('../src/js/component/text');
+describe('Text', () => {
+    let canvas, main, mockImage, text;
 
-describe('Text', function() {
-    var canvas, main, mockImage, text;
-
-    beforeAll(function() {
+    beforeAll(() => {
         canvas = new fabric.Canvas($('<canvas>')[0]);
         main = new Main();
         main.canvas = canvas;
         text = new Text(main);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         mockImage = new fabric.Image();
         main.setCanvasImage('mockImage', mockImage);
     });
 
-    afterEach(function() {
-        canvas.forEachObject(function(obj) {
+    afterEach(() => {
+        canvas.forEachObject(obj => {
             canvas.remove(obj);
         });
     });
 
-    describe('add()', function() {
-        var activeObj;
+    describe('add()', () => {
+        let activeObj;
 
-        beforeEach(function() {
+        beforeEach(() => {
             text.add('', {});
 
             activeObj = canvas.getActiveObject();
         });
 
-        it('should make the blank text object when text parameter is empty string.', function() {
-            var newText = activeObj.getText();
+        it('should make the blank text object when text parameter is empty string.', () => {
+            const newText = activeObj.getText();
 
             expect(newText).toEqual('');
         });
 
-        it('should make the text object set default option when parameter has not "styles" property.', function() {
-            var newTextStyle = activeObj.fontWeight;
+        it('should make the text object set default option when parameter has not "styles" property.', () => {
+            const newTextStyle = activeObj.fontWeight;
 
             expect(newTextStyle).toEqual('normal');
         });
 
-        it('should create the text object on center of canvas when parameter has not "position" property.', function() {
-            var mockImagePos = mockImage.getCenterPoint();
+        it('should create the text object on center of canvas when parameter has not "position" property.', () => {
+            const mockImagePos = mockImage.getCenterPoint();
 
             expect(activeObj.left).toEqual(mockImagePos.x);
             expect(activeObj.top).toEqual(mockImagePos.y);
         });
     });
 
-    it('change() should change contents in the text object as input.', function() {
-        var activeObj;
-
+    it('change() should change contents in the text object as input.', () => {
         text.add('text123', {});
 
-        activeObj = canvas.getActiveObject();
+        const activeObj = canvas.getActiveObject();
 
         text.change(activeObj, 'abc');
 
@@ -73,8 +69,8 @@ describe('Text', function() {
         expect(activeObj.getText()).toEqual('def');
     });
 
-    describe('setStyle()', function() {
-        beforeEach(function() {
+    describe('setStyle()', () => {
+        beforeEach(() => {
             text.add('new text', {
                 styles: {
                     fontWeight: 'bold'
@@ -82,8 +78,8 @@ describe('Text', function() {
             });
         });
 
-        it('should unlock style when a selected style already apply on the activated text object.', function() {
-            var activeObj = canvas.getActiveObject();
+        it('should unlock style when a selected style already apply on the activated text object.', () => {
+            const activeObj = canvas.getActiveObject();
 
             text.setStyle(activeObj, {
                 fontWeight: 'bold'
@@ -92,8 +88,8 @@ describe('Text', function() {
             expect(activeObj.fontWeight).not.toEqual('bold');
         });
 
-        it('should apply style when the activated text object has not a selected style.', function() {
-            var activeObj = canvas.getActiveObject();
+        it('should apply style when the activated text object has not a selected style.', () => {
+            const activeObj = canvas.getActiveObject();
 
             text.setStyle(activeObj, {
                 fontStyle: 'italic'
@@ -103,52 +99,49 @@ describe('Text', function() {
         });
     });
 
-    describe('_createTextarea()', function() {
-        var $textarea;
+    describe('_createTextarea()', () => {
+        let $textarea;
 
-        beforeEach(function() {
+        beforeEach(() => {
             text._createTextarea();
 
             $textarea = $(text.getCanvasElement().parentNode).find('textarea');
         });
 
-        afterEach(function() {
+        afterEach(() => {
             text._removeTextarea();
         });
 
-        it('should attach the created "textarea" element on canvas container.', function() {
+        it('should attach the created "textarea" element on canvas container.', () => {
             expect($textarea.length).toEqual(1);
         });
 
-        it('should have class name.', function() {
-            var expected = 'tui-image-eidtor-textarea';
+        it('should have class name.', () => {
+            const expected = 'tui-image-eidtor-textarea';
 
             expect($textarea.attr('class')).toEqual(expected);
         });
 
-        it('should add inline style on "textarea" element.', function() {
+        it('should add inline style on "textarea" element.', () => {
             expect($textarea.attr('style')).not.toEqual(null);
         });
     });
 
-    it('_removeTextarea() should remove "textarea" element on canvas container.', function() {
-        var $textarea;
-
+    it('_removeTextarea() should remove "textarea" element on canvas container.', () => {
         text._createTextarea();
         text._removeTextarea();
 
-        $textarea = $(text.getCanvasElement().parentNode).find('textarea');
+        const $textarea = $(text.getCanvasElement().parentNode).find('textarea');
 
         expect($textarea.length).toEqual(0);
     });
 
-    it('_onBlur() should hide the "textarea" element.', function() {
-        var $textarea;
-        var obj = new fabric.Text('test');
+    it('_onBlur() should hide the "textarea" element.', () => {
+        const obj = new fabric.Text('test');
 
         text._createTextarea();
 
-        $textarea = $(text.getCanvasElement().parentNode).find('textarea');
+        const $textarea = $(text.getCanvasElement().parentNode).find('textarea');
 
         text._editingObj = obj;
 
@@ -159,13 +152,13 @@ describe('Text', function() {
         expect($textarea.css('display')).toEqual('none');
     });
 
-    it('_onFabricScaling() should change size of selected text object.', function() {
-        var obj = new fabric.Text('test');
-        var mock = {
+    it('_onFabricScaling() should change size of selected text object.', () => {
+        const obj = new fabric.Text('test');
+        const mock = {
             target: obj
         };
-        var scale = 10;
-        var originSize = obj.getFontSize();
+        const scale = 10;
+        const originSize = obj.getFontSize();
 
         text.start({});
 
@@ -177,10 +170,10 @@ describe('Text', function() {
         expect(obj.getFontSize()).toEqual(originSize * scale);
     });
 
-    describe('_changeToEditingMode()', function() {
-        var textarea;
-        var ratio = 10;
-        var expected = {
+    describe('_changeToEditingMode()', () => {
+        let textarea;
+        const ratio = 10;
+        const expected = {
             fontSize: 12,
             fontFamily: 'Comic Sans',
             fontStyle: 'italic',
@@ -188,9 +181,9 @@ describe('Text', function() {
             textAlign: 'right',
             lineHeight: '3'
         };
-        var obj = new fabric.Text('test', expected);
+        const obj = new fabric.Text('test', expected);
 
-        beforeEach(function() {
+        beforeEach(() => {
             text._createTextarea();
 
             textarea = text._textarea;
@@ -202,18 +195,18 @@ describe('Text', function() {
             text._changeToEditingMode(obj);
         });
 
-        afterEach(function() {
+        afterEach(() => {
             text._removeTextarea();
         });
 
-        it('should change selected text object into textarea.', function() {
+        it('should change selected text object into textarea.', () => {
             expect(textarea.style.display).not.toEqual('none');
         });
 
-        it('should set style of textarea by selected text object.', function() {
-            var textareaStyles = textarea.style;
+        it('should set style of textarea by selected text object.', () => {
+            const textareaStyles = textarea.style;
 
-            expect(textareaStyles['font-size']).toEqual(expected.fontSize / ratio + 'px');
+            expect(textareaStyles['font-size']).toEqual(`${expected.fontSize / ratio}px`);
             expect(textareaStyles['font-family'].replace(/'|"/g, '')).toEqual(expected.fontFamily);
             expect(textareaStyles['font-weight']).toEqual(expected.fontWeight);
             expect(textareaStyles['font-align']).toEqual(expected.fontAlign);

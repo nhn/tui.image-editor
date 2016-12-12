@@ -4,6 +4,7 @@
  */
 'use strict';
 
+/* eslint-disable vars-on-top, no-process-env, require-jsdoc */
 var pkg = require('./package.json');
 var webpack = require('webpack');
 
@@ -31,7 +32,7 @@ module.exports = {
         preLoaders: [
             {
                 test: /\.js$/,
-                exclude: /(test|node_modules|bower_components)/,
+                exclude: /(node_modules|bower_components)/,
                 loader: 'eslint-loader'
             }
         ],
@@ -49,7 +50,6 @@ module.exports = {
     devServer: {
         historyApiFallback: false,
         progress: true,
-        inline: true,
         host: '0.0.0.0'
     }
 };

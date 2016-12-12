@@ -2,14 +2,12 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/extension/cropzone.js"
  */
-'use strict';
+import Cropzone from '../src/js/extension/cropzone';
 
-var Cropzone = require('../src/js/extension/cropzone');
+describe('Cropzone', () => {
+    let cropzone;
 
-describe('Cropzone', function() {
-    var cropzone;
-
-    beforeEach(function() {
+    beforeEach(() => {
         cropzone = new Cropzone({
             left: 10,
             top: 10,
@@ -26,8 +24,8 @@ describe('Cropzone', function() {
         });
     });
 
-    it('"_getCoordinates()" should return outer&inner rect coordinates(array)', function() {
-        var mockCtx = {
+    it('"_getCoordinates()" should return outer&inner rect coordinates(array)', () => {
+        const mockCtx = {
                 canvas: {
                     width: 300,
                     height: 400
@@ -41,12 +39,12 @@ describe('Cropzone', function() {
         });
     });
 
-    it('"_onMoving()" should set left and top between 0 and canvas size', function() {
-        var mockFabricCanvas = {
-            getWidth: function() {
+    it('"_onMoving()" should set left and top between 0 and canvas size', () => {
+        const mockFabricCanvas = {
+            getWidth() {
                 return 300;
             },
-            getHeight: function() {
+            getHeight() {
                 return 400;
             }
         };
@@ -67,7 +65,7 @@ describe('Cropzone', function() {
         expect(cropzone.top).toEqual(300);
     });
 
-    it('"isValid()" should return whether the cropzone has real area or not', function() {
+    it('"isValid()" should return whether the cropzone has real area or not', () => {
         cropzone.setLeft(-1);
         expect(cropzone.isValid()).toBe(false);
 
@@ -82,9 +80,8 @@ describe('Cropzone', function() {
     });
 
     it('"_calcTopLeftScalingSizeFromPointer()"' +
-        ' should return scaling size(position + dimension)', function() {
-
-        var mousePointerX, mousePointerY,
+        ' should return scaling size(position + dimension)', () => {
+        let mousePointerX, mousePointerY,
             expected, actual;
 
         mousePointerX = 20;
@@ -122,9 +119,8 @@ describe('Cropzone', function() {
     });
 
     it('"_calcBottomRightScalingSizeFromPointer()"' +
-        ' should return scaling size(dimension)', function() {
-
-        var mousePointerX, mousePointerY,
+        ' should return scaling size(dimension)', () => {
+        let mousePointerX, mousePointerY,
             expected, actual;
 
         // mocking canvas
@@ -161,14 +157,13 @@ describe('Cropzone', function() {
         expect(actual).toEqual(expected);
     });
 
-    it('should be "cropzone" type', function() {
+    it('should be "cropzone" type', () => {
         expect(cropzone.isType('cropzone')).toBe(true);
     });
 
     it('"_makeScalingSettings()" ' +
-        'should return suitable position&dimension values from corner', function() {
-
-        var mockTL = {
+        'should return suitable position&dimension values from corner', () => {
+        const mockTL = {
                 width: 1,
                 height: 2,
                 left: 3,
@@ -177,8 +172,8 @@ describe('Cropzone', function() {
             mockBR = {
                 width: 5,
                 height: 6
-            },
-            expected, actual;
+            };
+        let expected, actual;
 
         cropzone.__corner = 'tl';
         expected = {

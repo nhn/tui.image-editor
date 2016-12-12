@@ -1,7 +1,7 @@
 {
   "name": "tui-image-editor",
   "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "license": "MIT",
   "repository": "https://github.com/nhnent/tui.component.image-editor",
   "description": "",
@@ -30,20 +30,18 @@
     "simulant": "^0.2.2",
     "tui-jsdoc-template": "^1.0.4",
     "webpack": "^1.13.3",
-    "webpack-dev-server": "^1.16.1",
-    "core-js": "2.4.1",
-    "babel-plugin-transform-runtime": "latest"
+    "webpack-dev-server": "latest"
   },
   "scripts": {
     "test": "karma start --no-single-run",
     "test:bs": "KARMA_SERVER=bs karma start",
     "test:ne": "KARMA_SERVER=ne karma start",
     "bundle": "webpack && webpack -p",
-    "serve": "webpack-dev-server --hot -d",
+    "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f dist/tui-image-editor.js doc/dist",
     "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json && npm run cpy-dist2doc"
   },
-  "dependencies": {
-    "babel-runtime": "^6.20.0"
+  "dependencieds": {
+    "core-js": "2.4.1"
   }
 }

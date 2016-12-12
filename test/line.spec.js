@@ -2,22 +2,20 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/line.js"
  */
-'use strict';
+import Main from '../src/js/component/main';
+import Line from '../src/js/component/line';
 
-var Main = require('../src/js/component/main');
-var Line = require('../src/js/component/line');
+describe('Line', () => {
+    let canvas, main, mockImage, line, fEvent;
 
-describe('Line', function() {
-    var canvas, main, mockImage, line, fEvent;
-
-    beforeAll(function() {
+    beforeAll(() => {
         canvas = new fabric.Canvas($('<canvas>')[0]);
         main = new Main();
         main.canvas = canvas;
         line = new Line(main);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         mockImage = new fabric.Image();
         main.setCanvasImage('mockImage', mockImage);
 
@@ -26,19 +24,19 @@ describe('Line', function() {
         };
     });
 
-    afterEach(function() {
-        canvas.forEachObject(function(obj) {
+    afterEach(() => {
+        canvas.forEachObject(obj => {
             canvas.remove(obj);
         });
     });
 
-    it('_onFabricMouseDown() should insert the line.', function() {
+    it('_onFabricMouseDown() should insert the line.', () => {
         line._onFabricMouseDown(fEvent);
 
         expect(canvas.getObjects().length).toEqual(1);
     });
 
-    it('_onFabricMouseMove() should draw line located by mouse pointer.', function() {
+    it('_onFabricMouseMove() should draw line located by mouse pointer.', () => {
         line._line = new fabric.Line([10, 20, 10, 20]);
 
         canvas.add(line._line);
@@ -57,8 +55,8 @@ describe('Line', function() {
         expect(canvas.getObjects()[0].get('y2')).toEqual(60);
     });
 
-    it('end() should restore all drawing objects activated.', function() {
-        var path = new fabric.Path();
+    it('end() should restore all drawing objects activated.', () => {
+        const path = new fabric.Path();
 
         canvas.add(path);
 

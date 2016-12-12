@@ -2,15 +2,13 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/line.js"
  */
-'use strict';
+import Main from '../src/js/component/main';
+import Shape from '../src/js/component/shape';
 
-var Main = require('../src/js/component/main');
-var Shape = require('../src/js/component/shape');
+describe('Shape', () => {
+    let canvas, main, mockImage, fEvent, shape, shapeObj;
 
-describe('Shape', function() {
-    var canvas, main, mockImage, fEvent, shape, shapeObj;
-
-    beforeAll(function() {
+    beforeAll(() => {
         canvas = new fabric.Canvas($('<canvas>')[0]);
         main = new Main();
         main.canvas = canvas;
@@ -18,7 +16,7 @@ describe('Shape', function() {
         shape = new Shape(main);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         mockImage = new fabric.Image();
         main.setCanvasImage('mockImage', mockImage);
 
@@ -27,13 +25,13 @@ describe('Shape', function() {
         };
     });
 
-    afterEach(function() {
-        canvas.forEachObject(function(obj) {
+    afterEach(() => {
+        canvas.forEachObject(obj => {
             canvas.remove(obj);
         });
     });
 
-    it('The rectagle object is created on canvas.', function() {
+    it('The rectagle object is created on canvas.', () => {
         shape.add('rect');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -41,7 +39,7 @@ describe('Shape', function() {
         expect(shapeObj.type).toBe('rect');
     });
 
-    it('The circle object(ellipse) is created on canvas.', function() {
+    it('The circle object(ellipse) is created on canvas.', () => {
         shape.add('circle');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -49,7 +47,7 @@ describe('Shape', function() {
         expect(shapeObj.type).toBe('circle');
     });
 
-    it('The triangle object is created on canvas.', function() {
+    it('The triangle object is created on canvas.', () => {
         shape.add('triangle');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -58,7 +56,7 @@ describe('Shape', function() {
     });
 
 
-    it('When add() is called with no options, the default options set the rectangle object.', function() {
+    it('When add() is called with no options, the default options set the rectangle object.', () => {
         shape.add('rect');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -67,7 +65,7 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(2); // strokeWidth: 1, height: 1
     });
 
-    it('When add() is called with no options, the default options set the circle object.', function() {
+    it('When add() is called with no options, the default options set the circle object.', () => {
         shape.add('circle');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -76,7 +74,7 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(1);
     });
 
-    it('When add() is called with no options, the default options set the triangle object.', function() {
+    it('When add() is called with no options, the default options set the triangle object.', () => {
         shape.add('triangle');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -85,8 +83,8 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(2); // strokeWidth: 1, height: 1
     });
 
-    it('When add() is called with the options, this options set the rectagle object.', function() {
-        var settings = {
+    it('When add() is called with the options, this options set the rectagle object.', () => {
+        const settings = {
             fill: 'blue',
             stroke: 'red',
             strokeWidth: 10,
@@ -105,8 +103,8 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(110); // height + storkeWidth
     });
 
-    it('When add() is called with the options, this options set the circle object.', function() {
-        var settings = {
+    it('When add() is called with the options, this options set the circle object.', () => {
+        const settings = {
             fill: 'blue',
             stroke: 'red',
             strokeWidth: 3,
@@ -125,8 +123,8 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(103); // ry * 2 + stokeWidth
     });
 
-    it('When add() is called with the options, this options set the triangle object.', function() {
-        var settings = {
+    it('When add() is called with the options, this options set the triangle object.', () => {
+        const settings = {
             fill: 'blue',
             stroke: 'red',
             strokeWidth: 0,
@@ -145,7 +143,7 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(100);
     });
 
-    it('When change() is called, the style of the rectagle object is changed.', function() {
+    it('When change() is called, the style of the rectagle object is changed.', () => {
         shape.add('rect');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -163,7 +161,7 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(21);
     });
 
-    it('When change() is called, the style of the circle object is changed.', function() {
+    it('When change() is called, the style of the circle object is changed.', () => {
         shape.add('circle');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -181,7 +179,7 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(41);
     });
 
-    it('When change() is called, the style of the triangle object is changed.', function() {
+    it('When change() is called, the style of the triangle object is changed.', () => {
         shape.add('triangle');
 
         shapeObj = main.canvas.getObjects()[0];
@@ -197,16 +195,22 @@ describe('Shape', function() {
         expect(shapeObj.getHeight()).toBe(21);
     });
 
-    describe('_onFabricMouseMove()', function() {
-        beforeEach(function() {
-            shape.add('rect', {left: 100, top: 100});
+    describe('_onFabricMouseMove()', () => {
+        beforeEach(() => {
+            shape.add('rect', {
+                left: 100,
+                top: 100
+            });
 
             shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
         });
 
         it('When the mouse direction is in 1th quadrant,' +
-            'the origin values of shape set to "left" and "top".', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 200, y: 120});
+            'the origin values of shape set to "left" and "top".', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 200,
+                y: 120
+            });
 
             shape._onFabricMouseMove(fEvent);
 
@@ -215,8 +219,11 @@ describe('Shape', function() {
         });
 
         it('When the mouse direction is in 2th quadrant,' +
-            'the origin values of shape set to "right" and "top".', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 80, y: 100});
+            'the origin values of shape set to "right" and "top".', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 80,
+                y: 100
+            });
 
             shape._onFabricMouseMove(fEvent);
 
@@ -225,8 +232,11 @@ describe('Shape', function() {
         });
 
         it('When the mouse direction is in 3th quadrant,' +
-            'the origin values of shape set to "right" and "bottom".', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 80, y: 80});
+            'the origin values of shape set to "right" and "bottom".', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 80,
+                y: 80
+            });
 
             shape._onFabricMouseMove(fEvent);
 
@@ -235,8 +245,11 @@ describe('Shape', function() {
         });
 
         it('When the mouse direction is in 4th quadrant,' +
-            'the origin values of shape set to "left" and "bottom".', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 200, y: 80});
+            'the origin values of shape set to "left" and "bottom".', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 200,
+                y: 80
+            });
 
             shape._onFabricMouseMove(fEvent);
 
@@ -245,17 +258,23 @@ describe('Shape', function() {
         });
     });
 
-    describe('_onFabricMouseUp()', function() {
-        var startPoint, expectedPoint;
+    describe('_onFabricMouseUp()', () => {
+        let startPoint, expectedPoint;
 
-        beforeEach(function() {
-            shape.add('circle', {left: 100, top: 100});
+        beforeEach(() => {
+            shape.add('circle', {
+                left: 100,
+                top: 100
+            });
 
             shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
         });
 
-        it('When the drawing shape is in 1th quadrant, "left" and "top" are the same as start point.', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 200, y: 120});
+        it('When the drawing shape is in 1th quadrant, "left" and "top" are the same as start point.', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 200,
+                y: 120
+            });
 
             startPoint = shapeObj.getPointByOrigin('left', 'top');
 
@@ -268,8 +287,11 @@ describe('Shape', function() {
             expect(expectedPoint.y).toBe(startPoint.y);
         });
 
-        it('When the drawing shape is in 2th quadrant, "right" and "top" are the same as start point.', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 80, y: 120});
+        it('When the drawing shape is in 2th quadrant, "right" and "top" are the same as start point.', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 80,
+                y: 120
+            });
 
             startPoint = shapeObj.getPointByOrigin('right', 'top');
 
@@ -282,8 +304,11 @@ describe('Shape', function() {
             expect(expectedPoint.y).toBe(startPoint.y);
         });
 
-        it('When the drawing shape is in 3th quadrant, "right" and "bottom" are the same as start point.', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 80, y: 80});
+        it('When the drawing shape is in 3th quadrant, "right" and "bottom" are the same as start point.', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 80,
+                y: 80
+            });
 
             startPoint = shapeObj.getPointByOrigin('right', 'bottom');
 
@@ -296,8 +321,11 @@ describe('Shape', function() {
             expect(expectedPoint.y).toBe(startPoint.y);
         });
 
-        it('When the drawing shape is in 4th quadrant, "left" and "bottom" are the same as start point.', function() {
-            spyOn(main.canvas, 'getPointer').and.returnValue({x: 120, y: 80});
+        it('When the drawing shape is in 4th quadrant, "left" and "bottom" are the same as start point.', () => {
+            spyOn(main.canvas, 'getPointer').and.returnValue({
+                x: 120,
+                y: 80
+            });
 
             startPoint = shapeObj.getPointByOrigin('left', 'bottom');
 
@@ -312,7 +340,7 @@ describe('Shape', function() {
     });
 
     it('When drawing the shape with mouse and the "isRegular" option set to true, ' +
-        'the created rectangle shape has the same "width" and "height" values.', function() {
+        'the created rectangle shape has the same "width" and "height" values.', () => {
         shape.add('rect', {
             left: 0,
             top: 0
@@ -321,7 +349,10 @@ describe('Shape', function() {
         shape._withShiftKey = true;
         shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
 
-        spyOn(main.canvas, 'getPointer').and.returnValue({x: 200, y: 100});
+        spyOn(main.canvas, 'getPointer').and.returnValue({
+            x: 200,
+            y: 100
+        });
 
         shape._onFabricMouseMove(fEvent);
         shape._onFabricMouseUp();
@@ -331,7 +362,7 @@ describe('Shape', function() {
     });
 
     it('When drawing the shape with mouse and the "isRegular" option set to true, ' +
-        'the created rectangle shape has the same "width" and "height" values.', function() {
+        'the created rectangle shape has the same "width" and "height" values.', () => {
         shape.add('rect', {
             left: 0,
             top: 0
@@ -340,7 +371,10 @@ describe('Shape', function() {
         shape._withShiftKey = true;
         shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
 
-        spyOn(main.canvas, 'getPointer').and.returnValue({x: 100, y: 200});
+        spyOn(main.canvas, 'getPointer').and.returnValue({
+            x: 100,
+            y: 200
+        });
 
         shape._onFabricMouseMove(fEvent);
         shape._onFabricMouseUp();

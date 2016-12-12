@@ -1,6 +1,5 @@
-'use strict';
-var testsContext = require.context('.', true, /spec\.js$/);
+const testsContext = require.context('.', true, /spec\.js$/);
 testsContext.keys().forEach(testsContext);
 
-var srcContexts = require.context('../src', true, /index\.js$/);
+const srcContexts = require.context('../src', true, /index\.js$/);
 srcContexts.keys().forEach(srcContexts);

@@ -2,22 +2,20 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/invoker.js"
  */
-'use strict';
+import Promise from 'core-js/library/es6/promise';
+import Invoker from '../src/js/invoker';
+import Command from '../src/js/interface/command';
 
-var Promise = require('core-js/library/es6/promise');
-var Invoker = require('../src/js/invoker'),
-    Command = require('../src/js/interface/command');
-
-describe('Invoker', function() {
-    var component = {
-        getName: function() {
+describe('Invoker', () => {
+    const component = {
+        getName() {
             return 'foo';
         },
-        action: function() {}
+        action() {}
     };
-    var invoker, cmd;
+    let invoker, cmd;
 
-    beforeEach(function() {
+    beforeEach(() => {
         invoker = new Invoker();
         invoker._register(component);
 
@@ -27,7 +25,7 @@ describe('Invoker', function() {
         });
     });
 
-    it('should inject registered components to "command.execute"', function() {
+    it('should inject registered components to "command.execute"', () => {
         invoker.invoke(cmd);
 
         expect(cmd.execute).toHaveBeenCalledWith(jasmine.objectContaining({
@@ -35,10 +33,8 @@ describe('Invoker', function() {
         }));
     });
 
-    it('should inject registered components to "command.undo"', function(done) {
-        invoker.invoke(cmd).then(function() {
-            return invoker.undo();
-        }).then(function() {
+    it('should inject registered components to "command.undo"', done => {
+        invoker.invoke(cmd).then(() => invoker.undo()).then(() => {
             expect(cmd.undo).toHaveBeenCalledWith(jasmine.objectContaining({
                 foo: component
             }));
@@ -46,45 +42,41 @@ describe('Invoker', function() {
         });
     });
 
-    it('"redo()" should call "command.execute" again', function(done) {
-        invoker.invoke(cmd).then(function() {
-            return invoker.undo();
-        }).then(function() {
+    it('"redo()" should call "command.execute" again', done => {
+        invoker.invoke(cmd).then(() => invoker.undo()).then(() => {
             cmd.execute.calls.reset();
 
             return invoker.redo();
-        }).then(function() {
+        }).then(() => {
             expect(cmd.execute).toHaveBeenCalled();
             done();
         });
     });
 
-    it('should call the "command.executeCallback" after invoke', function(done) {
-        var spyCallback = jasmine.createSpy();
+    it('should call the "command.executeCallback" after invoke', done => {
+        const spyCallback = jasmine.createSpy();
 
         cmd.setExecuteCallback(spyCallback);
-        invoker.invoke(cmd).then(function() {
+        invoker.invoke(cmd).then(() => {
             expect(spyCallback).toHaveBeenCalled();
             done();
         });
     });
 
-    it('should call the "command.undoCallback" after undo', function(done) {
-        var spyCallback = jasmine.createSpy();
+    it('should call the "command.undoCallback" after undo', done => {
+        const spyCallback = jasmine.createSpy();
 
         cmd.setUndoCallback(spyCallback);
-        invoker.invoke(cmd).then(function() {
-            return invoker.undo();
-        }).then(function() {
+        invoker.invoke(cmd).then(() => invoker.undo()).then(() => {
             expect(spyCallback).toHaveBeenCalled();
             done();
         });
     });
 
-    describe('invoker.customEvents', function() {
-        var spyEvents;
+    describe('invoker.customEvents', () => {
+        let spyEvents;
 
-        beforeEach(function() {
+        beforeEach(() => {
             spyEvents = {
                 pushUndoStack: jasmine.createSpy(),
                 pushRedoStack: jasmine.createSpy(),
@@ -94,9 +86,9 @@ describe('Invoker', function() {
         });
 
         it('"invoke()" should fire a event - ' +
-            ' "pushUndoStack" (when redoStack is empty before)"', function(done) {
+            ' "pushUndoStack" (when redoStack is empty before)"', done => {
             invoker.on(spyEvents);
-            invoker.invoke(cmd).then(function() {
+            invoker.invoke(cmd).then(() => {
                 expect(spyEvents.pushUndoStack).toHaveBeenCalled();
                 expect(spyEvents.pushRedoStack).not.toHaveBeenCalled();
                 expect(spyEvents.emptyUndoStack).not.toHaveBeenCalled();
@@ -106,11 +98,11 @@ describe('Invoker', function() {
         });
 
         it('"invoke()" should fire events - ' +
-            ' "pushUndoStack", "clearRedoStack" (when redoStack is not empty before)', function(done) {
+            ' "pushUndoStack", "clearRedoStack" (when redoStack is not empty before)', done => {
             invoker.pushRedoStack({});
 
             invoker.on(spyEvents);
-            invoker.invoke(cmd).then(function() {
+            invoker.invoke(cmd).then(() => {
                 expect(spyEvents.pushUndoStack).toHaveBeenCalled();
                 expect(spyEvents.pushRedoStack).not.toHaveBeenCalled();
                 expect(spyEvents.emptyUndoStack).not.toHaveBeenCalled();
@@ -120,14 +112,12 @@ describe('Invoker', function() {
         });
 
         it('"undo()" should fire a event - ' +
-            ' "pushRedoStack" (when undoStack is not empty after)', function(done) {
-            invoker.invoke(cmd).then(function() {
-                return invoker.invoke(cmd);
-            }).then(function() {
+            ' "pushRedoStack" (when undoStack is not empty after)', done => {
+            invoker.invoke(cmd).then(() => invoker.invoke(cmd)).then(() => {
                 invoker.on(spyEvents);
 
                 return invoker.undo();
-            }).then(function() {
+            }).then(() => {
                 expect(spyEvents.pushUndoStack).not.toHaveBeenCalled();
                 expect(spyEvents.pushRedoStack).toHaveBeenCalled();
                 expect(spyEvents.emptyUndoStack).not.toHaveBeenCalled();
@@ -137,12 +127,12 @@ describe('Invoker', function() {
         });
 
         it('"undo()" should fire events - ' +
-            ' "pushRedoStack", "emptyUndoStack" (when undoStack is empty after)', function(done) {
-            invoker.invoke(cmd).then(function() {
+            ' "pushRedoStack", "emptyUndoStack" (when undoStack is empty after)', done => {
+            invoker.invoke(cmd).then(() => {
                 invoker.on(spyEvents);
 
                 return invoker.undo();
-            }).then(function() {
+            }).then(() => {
                 expect(spyEvents.pushUndoStack).not.toHaveBeenCalled();
                 expect(spyEvents.pushRedoStack).toHaveBeenCalled();
                 expect(spyEvents.emptyUndoStack).toHaveBeenCalled();
@@ -152,18 +142,15 @@ describe('Invoker', function() {
         });
 
         it('"redo()" should fire a event - ' +
-            ' "pushUndoStack" (when redoStack is not empty after)', function(done) {
-            invoker.invoke(cmd).then(function() {
-                return invoker.invoke(cmd);
-            }).then(function() {
-                return invoker.undo();
-            }).then(function() {
-                return invoker.undo();
-            }).then(function() {
+            ' "pushUndoStack" (when redoStack is not empty after)', done => {
+            invoker.invoke(cmd).then(() => invoker.invoke(cmd))
+            .then(() => invoker.undo())
+            .then(() => invoker.undo())
+            .then(() => {
                 invoker.on(spyEvents);
 
                 return invoker.redo();
-            }).then(function() {
+            }).then(() => {
                 expect(spyEvents.pushUndoStack).toHaveBeenCalled();
                 expect(spyEvents.pushRedoStack).not.toHaveBeenCalled();
                 expect(spyEvents.emptyUndoStack).not.toHaveBeenCalled();
@@ -173,14 +160,12 @@ describe('Invoker', function() {
         });
 
         it('"redo()" should fire events - ' +
-            ' "pushUndoStack", "emptyRedoStack" (when undoStack is empty after)', function(done) {
-            invoker.invoke(cmd).then(function() {
-                return invoker.undo();
-            }).then(function() {
+            ' "pushUndoStack", "emptyRedoStack" (when undoStack is empty after)', done => {
+            invoker.invoke(cmd).then(() => invoker.undo()).then(() => {
                 invoker.on(spyEvents);
 
                 return invoker.redo(cmd);
-            }).then(function() {
+            }).then(() => {
                 expect(spyEvents.pushUndoStack).toHaveBeenCalled();
                 expect(spyEvents.pushRedoStack).not.toHaveBeenCalled();
                 expect(spyEvents.emptyUndoStack).not.toHaveBeenCalled();

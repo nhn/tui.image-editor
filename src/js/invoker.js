@@ -129,11 +129,17 @@ class Invoker {
         return command.undo(this._componentMap)
             .then(value => {
                 this.pushRedoStack(command);
-                command.undoCallback(value);
+                if (tui.util.isFunction(command.undoCallback)) {
+                    command.undoCallback(value);
+                }
+
+                return value;
             })
             .catch(() => {}) // do nothing with exception
-            .then(() => {
+            .then(value => {
                 this.unlock();
+
+                return value;
             });
     }
 

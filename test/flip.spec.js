@@ -2,27 +2,25 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/flip.js"
  */
-'use strict';
+import Main from '../src/js/component/main';
+import Flip from '../src/js/component/flip';
 
-var Main = require('../src/js/component/main');
-var Flip = require('../src/js/component/flip');
+describe('Flip', () => {
+    let main, flipModule, mockImage;
 
-describe('Flip', function() {
-    var main, flipModule, mockImage;
-
-    beforeAll(function() {
+    beforeAll(() => {
         main = new Main();
         flipModule = new Flip(main);
         main.canvas = new fabric.Canvas($('<canvas>')[0]);
     });
 
-    beforeEach(function() {
+    beforeEach(() => {
         mockImage = new fabric.Image();
         main.setCanvasImage('mockImage', mockImage);
     });
 
-    it('"getCurrentSetting()" should return current flip-setting', function() {
-        var setting = flipModule.getCurrentSetting();
+    it('"getCurrentSetting()" should return current flip-setting', () => {
+        let setting = flipModule.getCurrentSetting();
 
         expect(setting).toEqual({
             flipX: false,
@@ -37,7 +35,7 @@ describe('Flip', function() {
         });
     });
 
-    it('"set()" should set flip-setting', function() {
+    it('"set()" should set flip-setting', () => {
         flipModule.set({
             flipX: false,
             flipY: true
@@ -49,7 +47,7 @@ describe('Flip', function() {
         });
     });
 
-    it('"reset()" should reset flip-setting to false', function() {
+    it('"reset()" should reset flip-setting to false', () => {
         mockImage.set({
             flipX: true,
             flipY: true
@@ -62,7 +60,7 @@ describe('Flip', function() {
         });
     });
 
-    it('"flipX()" should toggle flipX', function() {
+    it('"flipX()" should toggle flipX', () => {
         flipModule.flipX();
 
         expect(flipModule.getCurrentSetting()).toEqual({
@@ -78,7 +76,7 @@ describe('Flip', function() {
         });
     });
 
-    it('"flipY()" should toggle flipY', function() {
+    it('"flipY()" should toggle flipY', () => {
         flipModule.flipY();
 
         expect(flipModule.getCurrentSetting()).toEqual({
@@ -94,13 +92,13 @@ describe('Flip', function() {
         });
     });
 
-    describe('Promise is returned with settings and angle,', function() {
-        beforeEach(function() {
+    describe('Promise is returned with settings and angle,', () => {
+        beforeEach(() => {
             mockImage.setAngle(10);
         });
 
-        it('flipX() is called.', function(done) {
-            flipModule.flipX().then(function(obj) {
+        it('flipX() is called.', done => {
+            flipModule.flipX().then(obj => {
                 expect(obj).toEqual({
                     setting: {
                         flipX: true,
@@ -112,8 +110,8 @@ describe('Flip', function() {
             });
         });
 
-        it('flipY() is called.', function(done) {
-            flipModule.flipY().then(function(obj) {
+        it('flipY() is called.', done => {
+            flipModule.flipY().then(obj => {
                 expect(obj).toEqual({
                     setting: {
                         flipX: false,
@@ -125,8 +123,8 @@ describe('Flip', function() {
             });
         });
 
-        it('flipY() is called.', function(done) {
-            flipModule.flipY().then(function(obj) {
+        it('flipY() is called.', done => {
+            flipModule.flipY().then(obj => {
                 expect(obj).toEqual({
                     setting: {
                         flipX: false,
@@ -138,8 +136,11 @@ describe('Flip', function() {
             });
         });
 
-        it('set() is called.', function(done) {
-            flipModule.set({flipX: true, flipY: false}).then(function(obj) {
+        it('set() is called.', done => {
+            flipModule.set({
+                flipX: true,
+                flipY: false
+            }).then(obj => {
                 expect(obj).toEqual({
                     setting: {
                         flipX: true,
