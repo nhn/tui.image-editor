@@ -30,14 +30,14 @@
     "simulant": "^0.2.2",
     "tui-jsdoc-template": "^1.0.4",
     "webpack": "^1.13.3",
-    "webpack-dev-server": "latest"
+    "webpack-dev-server": "^1.11.0"
   },
   "scripts": {
     "test": "karma start --no-single-run",
     "test:bs": "KARMA_SERVER=bs karma start",
     "test:ne": "KARMA_SERVER=ne karma start",
     "bundle": "webpack && webpack -p",
-    "serve": "webpack-dev-server --inline --hot -d",
+    "serve": "webpack-dev-server -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f dist/tui-image-editor.js doc/dist",
     "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json && npm run cpy-dist2doc"
   },
