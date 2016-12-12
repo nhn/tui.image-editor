@@ -6,6 +6,7 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
+const {componentNames, rejectMessages} = consts;
 const imageOption = {
     padding: 0,
     crossOrigin: 'anonymous'
@@ -27,7 +28,7 @@ class ImageLoader extends Component {
          * Component name
          * @type {string}
          */
-        this.name = consts.componentNames.IMAGE_LOADER;
+        this.name = componentNames.IMAGE_LOADER;
     }
 
     /**
@@ -69,7 +70,7 @@ class ImageLoader extends Component {
      */
     _setBackgroundImage(img) {
         if (!img) {
-            return Promise.reject();
+            return Promise.reject(rejectMessages.loadImage);
         }
 
         return new Promise((resolve, reject) => {

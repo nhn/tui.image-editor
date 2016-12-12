@@ -6,6 +6,8 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
+const {componentNames, rejectMessages} = consts;
+
 /**
  * Image Rotation component
  * @class Rotation
@@ -22,7 +24,7 @@ class Rotation extends Component {
          * Component name
          * @type {string}
          */
-        this.name = consts.componentNames.ROTATION;
+        this.name = componentNames.ROTATION;
     }
 
     /**
@@ -48,7 +50,7 @@ class Rotation extends Component {
 
         angle %= 360;
         if (angle === oldAngle) {
-            return Promise.reject();
+            return Promise.reject(rejectMessages.rotation);
         }
         const canvasImage = this.getCanvasImage();
         const oldImageCenter = canvasImage.getCenterPoint();

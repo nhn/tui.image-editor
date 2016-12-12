@@ -16,7 +16,7 @@ import Filter from './component/filter';
 import Shape from './component/shape';
 import consts from './consts';
 
-const {eventNames} = consts;
+const {eventNames, rejectMessages} = consts;
 
 /**
  * Invoker
@@ -103,11 +103,17 @@ class Invoker {
         return command.execute(this._componentMap)
             .then(value => {
                 this.pushUndoStack(command);
-                command.executeCallback(value);
+                if (tui.util.isFunction(command.executeCallback)) {
+                    command.executeCallback(value);
+                }
+
+                return value;
             })
             .catch(() => {}) // do nothing with exception
-            .then(() => {
+            .then(value => {
                 this.unlock();
+
+                return value;
             });
     }
 
@@ -186,11 +192,15 @@ class Invoker {
      */
     invoke(command) {
         if (this._isLocked) {
-            return Promise.reject();
+            return Promise.reject(rejectMessages.isLock);
         }
 
         return this._invokeExecution(command)
-            .then(tui.util.bind(this.clearRedoStack, this));
+            .then(value => {
+                this.clearRedoStack();
+
+                return value;
+            });
     }
 
     /**
@@ -211,7 +221,7 @@ class Invoker {
             }
             promise = this._invokeUndo(command);
         } else {
-            promise = Promise.reject();
+            promise = Promise.reject(rejectMessages.undo);
         }
 
         return promise;
@@ -235,7 +245,7 @@ class Invoker {
             }
             promise = this._invokeExecution(command);
         } else {
-            promise = Promise.reject();
+            promise = Promise.reject(rejectMessages.redo);
         }
 
         return promise;

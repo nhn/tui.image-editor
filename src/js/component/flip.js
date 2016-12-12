@@ -6,6 +6,8 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
+const {componentNames, rejectMessages} = consts;
+
 /**
  * Flip
  * @class Flip
@@ -22,7 +24,7 @@ class Flip extends Component {
          * Component name
          * @type {string}
          */
-        this.name = consts.componentNames.FLIP;
+        this.name = componentNames.FLIP;
     }
 
     /**
@@ -49,7 +51,7 @@ class Flip extends Component {
         const isChangingFlipY = (setting.flipY !== newSetting.flipY);
 
         if (!isChangingFlipX && !isChangingFlipY) {
-            return Promise.reject();
+            return Promise.reject(rejectMessages.flip);
         }
 
         tui.util.extend(setting, newSetting);

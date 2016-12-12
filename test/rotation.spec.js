@@ -33,12 +33,13 @@ describe('Rotation', function() {
         expect(rotationModule.getCurrentAngle()).toEqual(40);
     });
 
-    it('"setAnglue()" should not set angle value if no change', function() {
+    it('"setAngle()" should not set angle value if no change', function(done) {
         var current = rotationModule.getCurrentAngle();
         var spy = jasmine.createSpy();
 
-        rotationModule.setAngle(current).then(function() {
+        rotationModule.setAngle(current).catch(spy).then(function() {
             expect(spy).toHaveBeenCalled();
+            done();
         });
     });
 
@@ -54,10 +55,11 @@ describe('Rotation', function() {
     });
 
     it('"rotate()" should set angle value modular 360(===2*PI)', function() {
-        rotationModule.setAngle(0);
-
-        rotationModule.rotate(370);
-        expect(rotationModule.getCurrentAngle()).toBe(10);
+        rotationModule.setAngle(10).then(function() {
+            return rotationModule.rotate(380);
+        }).then(function() {
+            expect(rotationModule.getCurrentAngle()).toBe(20);
+        });
     });
 
     //@todo Move this tc to main.spec.js

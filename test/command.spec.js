@@ -64,7 +64,7 @@ describe('commandFactory', function() {
             expect(canvas.clear).toHaveBeenCalled();
         });
 
-        xit('should load new image', function(done) {
+        it('should load new image', function(done) {
             invoker.invoke(command).then(function(img) {
                 expect(mainComponent.getImageName()).toEqual('image');
                 expect(mainComponent.getCanvasImage()).toBe(img);
@@ -132,25 +132,25 @@ describe('commandFactory', function() {
             expect(mockImage.flipY).toBe(false);
         });
 
-        it('"undo()" should restore flipXY', function(done) {
+        it('"undo()" should restore flipX', function(done) {
             var originFlipX = mockImage.flipX;
-            var originFlipY = mockImage.flipY;
             var command = commandFactory.create(commands.FLIP_IMAGE, 'flipX');
 
             invoker.invoke(command).then(function() {
                 return invoker.undo();
             }).then(function() {
                 expect(mockImage.flipX).toBe(originFlipX);
-                expect(mockImage.flipY).toBe(originFlipY);
                 done();
             });
+        });
 
-            command = commandFactory.create(commands.FLIP_IMAGE, 'flipY');
+        it('"undo()" should restore filpY', function(done) {
+            var originFlipY = mockImage.flipY;
+            var command = commandFactory.create(commands.FLIP_IMAGE, 'flipY');
 
             invoker.invoke(command).then(function() {
                 return invoker.undo();
             }).then(function() {
-                expect(mockImage.flipX).toBe(originFlipX);
                 expect(mockImage.flipY).toBe(originFlipY);
                 done();
             });
