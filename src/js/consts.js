@@ -107,6 +107,10 @@ module.exports = {
         }
     },
 
+    /**
+     * Promise reject messages
+     * @type {Object.<string, string>}
+     */
     rejectMessages: {
         flip: 'The flipX and flipY setting values are not changed.',
         rotation: 'The current angle is same the old angle.',
