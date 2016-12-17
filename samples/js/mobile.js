@@ -321,12 +321,16 @@ $inputImage.on('change', function(event) {
 
 // Undo action
 $btnUndo.on('click', function() {
-    imageEditor.undo();
+    if (!$(this).hasClass('disabled')) {
+        imageEditor.undo();
+    }
 });
 
 // Redo action
 $btnRedo.on('click', function() {
-    imageEditor.redo();
+    if (!$(this).hasClass('disabled')) {
+        imageEditor.redo();
+    }
 });
 
 // Remove active object action

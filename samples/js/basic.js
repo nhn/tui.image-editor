@@ -3,14 +3,12 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview
  */
-/* eslint-disable vars-on-top */
 'use strict';
 
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
 var shapeOptions = {};
 var shapeType;
-
 
 // Buttons
 var $btns = $('.menu-item');
@@ -156,9 +154,6 @@ function getBrushSettings() {
 }
 
 function activateShapeMode() {
-    // $displayingSubMenu.hide();
-    // $displayingSubMenu = $drawShapeSubMenu.show();
-
     imageEditor.endTextMode();
     imageEditor.endFreeDrawing();
     imageEditor.endLineDrawing();
@@ -170,9 +165,6 @@ function activateShapeMode() {
 }
 
 function activateIconMode() {
-    // $displayingSubMenu.hide();
-    // $displayingSubMenu = $iconSubMenu.show();
-
     imageEditor.endTextMode();
     imageEditor.endFreeDrawing();
     imageEditor.endLineDrawing();
@@ -181,9 +173,6 @@ function activateIconMode() {
 }
 
 function activateTextMode() {
-    // $displayingSubMenu.hide();
-    // $displayingSubMenu = $textSubMenu.show();
-
     imageEditor.endFreeDrawing();
     imageEditor.endLineDrawing();
     imageEditor.endCropping();
@@ -254,7 +243,7 @@ function showSubMenu(type) {
 }
 
 // Attach image editor custom events
-imageEditor.once('loadImage', function() {
+imageEditor.once('loadImage', function(oImage) {
     imageEditor.clearUndoStack();
 });
 
@@ -322,12 +311,18 @@ $btnsActivatable.on('click', function() {
 
 $btnUndo.on('click', function() {
     $displayingSubMenu.hide();
-    imageEditor.undo();
+
+    if (!$(this).hasClass('disabled')) {
+        imageEditor.undo();
+    }
 });
 
 $btnRedo.on('click', function() {
     $displayingSubMenu.hide();
-    imageEditor.redo();
+
+    if (!$(this).hasClass('disabled')) {
+        imageEditor.redo();
+    }
 });
 
 $btnClearObjects.on('click', function() {
