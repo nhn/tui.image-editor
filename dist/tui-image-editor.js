@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 1.4.0
+ * @version 1.4.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -52,34 +52,54 @@
 
 	'use strict';
 
-	tui.util.defineNamespace('tui.component.ImageEditor', __webpack_require__(1), true);
+	var _imageEditor = __webpack_require__(1);
 
+	var _imageEditor2 = _interopRequireDefault(_imageEditor);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	tui.util.defineNamespace('tui.component.ImageEditor', _imageEditor2.default, true);
 
 /***/ },
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Image-editor application class
-	 */
 	'use strict';
 
-	var Invoker = __webpack_require__(2);
-	var commandFactory = __webpack_require__(20);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Image-editor application class
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var events = consts.eventNames;
-	var commands = consts.commandNames;
-	var components = consts.componentNames;
-	var states = consts.states;
-	var keyCodes = consts.keyCodes;
-	var fObjectOptions = consts.fObjectOptions;
 
-	var util = tui.util;
-	var isUndefined = util.isUndefined;
-	var bind = util.bind;
-	var forEach = util.forEach;
+	var _invoker = __webpack_require__(2);
+
+	var _invoker2 = _interopRequireDefault(_invoker);
+
+	var _command = __webpack_require__(84);
+
+	var _command2 = _interopRequireDefault(_command);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var events = _consts2.default.eventNames;
+	var components = _consts2.default.componentNames;
+	var commands = _consts2.default.commandNames;
+	var states = _consts2.default.states,
+	    keyCodes = _consts2.default.keyCodes,
+	    fObjectOptions = _consts2.default.fObjectOptions;
+	var _tui$util = tui.util,
+	    isUndefined = _tui$util.isUndefined,
+	    bind = _tui$util.bind,
+	    forEach = _tui$util.forEach,
+	    extend = _tui$util.extend,
+	    hasStamp = _tui$util.hasStamp;
 
 	/**
 	 * Image editor
@@ -89,15 +109,18 @@
 	 *  @param {number} option.cssMaxWidth - Canvas css-max-width
 	 *  @param {number} option.cssMaxHeight - Canvas css-max-height
 	 */
-	var ImageEditor = tui.util.defineClass(/** @lends ImageEditor.prototype */{
-	    init: function(element, option) {
+
+	var ImageEditor = function () {
+	    function ImageEditor(element, option) {
+	        _classCallCheck(this, ImageEditor);
+
 	        option = option || {};
 	        /**
 	         * Invoker
 	         * @type {Invoker}
 	         * @private
 	         */
-	        this._invoker = new Invoker();
+	        this._invoker = new _invoker2.default();
 
 	        /**
 	         * Fabric-Canvas instance
@@ -137,1398 +160,1657 @@
 	        if (option.selectionStyle) {
 	            this._setSelectionStyle(option.selectionStyle);
 	        }
-	    },
+	    }
 
 	    /**
 	     * Set selection style of fabric object by init option
 	     * @param {object} styles - Selection styles
 	     * @private
 	     */
-	    _setSelectionStyle: function(styles) {
-	        tui.util.extend(fObjectOptions.SELECTION_STYLE, styles);
-	    },
 
-	    /**
-	     * Attach invoker events
-	     * @private
-	     */
-	    _attachInvokerEvents: function() {
-	        var PUSH_UNDO_STACK = events.PUSH_UNDO_STACK;
-	        var PUSH_REDO_STACK = events.PUSH_REDO_STACK;
-	        var EMPTY_UNDO_STACK = events.EMPTY_UNDO_STACK;
-	        var EMPTY_REDO_STACK = events.EMPTY_REDO_STACK;
 
-	        /**
-	         * @event ImageEditor#pushUndoStack
-	         */
-	        this._invoker.on(PUSH_UNDO_STACK, $.proxy(this.fire, this, PUSH_UNDO_STACK));
-	        /**
-	         * @event ImageEditor#pushRedoStack
-	         */
-	        this._invoker.on(PUSH_REDO_STACK, $.proxy(this.fire, this, PUSH_REDO_STACK));
-	        /**
-	         * @event ImageEditor#emptyUndoStack
-	         */
-	        this._invoker.on(EMPTY_UNDO_STACK, $.proxy(this.fire, this, EMPTY_UNDO_STACK));
-	        /**
-	         * @event ImageEditor#emptyRedoStack
-	         */
-	        this._invoker.on(EMPTY_REDO_STACK, $.proxy(this.fire, this, EMPTY_REDO_STACK));
-	    },
-
-	    /**
-	     * Attach canvas events
-	     * @private
-	     */
-	    _attachCanvasEvents: function() {
-	        this._canvas.on({
-	            'mouse:down': this._handlers.mousedown,
-	            'object:added': this._handlers.addedObject,
-	            'object:removed': this._handlers.removedObject,
-	            'object:moving': this._handlers.movingObject,
-	            'object:scaling': this._handlers.scalingObject,
-	            'object:selected': this._handlers.selectedObject,
-	            'path:created': this._handlers.createdPath
-	        });
-	    },
-
-	    /**
-	     * Attach dom events
-	     * @private
-	     */
-	    _attachDomEvents: function() {
-	        fabric.util.addListener(document, 'keydown', this._handlers.keydown);
-	    },
-
-	    /**
-	     * Detach dom events
-	     * @private
-	     */
-	    _detachDomEvents: function() {
-	        fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
-	    },
-
-	    /**
-	     * Keydown event handler
-	     * @param {KeyboardEvent} e - Event object
-	     * @private
-	     */
-	     /*eslint-disable complexity*/
-	    _onKeyDown: function(e) {
-	        if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
-	            this.undo();
-	        }
-
-	        if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
-	            this.redo();
-	        }
-
-	        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
-	            this._canvas.getActiveObject()) {
-	            e.preventDefault();
-	            this.removeActiveObject();
-	        }
-	    },
-
-	    /**
-	     * "mouse:down" canvas event handler
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onMouseDown: function(fEvent) {
-	        var originPointer = this._canvas.getPointer(fEvent.e);
-
-	        /**
-	         * @event ImageEditor#mousedown
-	         * @param {object} event - Event object
-	         * @example
-	         * imageEditor.on('mousedown', function(event) {
-	         *     console.log(event.e);
-	         *     console.log(event.originPointer);
-	         * });
-	         */
-	        this.fire(events.MOUSE_DOWN, {
-	            e: fEvent.e,
-	            originPointer: originPointer
-	        });
-	    },
-
-	    /**
-	     * "object:added" canvas event handler
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onAddedObject: function(fEvent) {
-	        var obj = fEvent.target;
-	        var command;
-
-	        if (obj.isType('cropzone') || obj.isType('text')) {
-	            return;
-	        }
-
-	        if (!tui.util.hasStamp(obj)) {
-	            command = commandFactory.create(commands.ADD_OBJECT, obj);
-	            this._invoker.pushUndoStack(command);
-	            this._invoker.clearRedoStack();
+	    _createClass(ImageEditor, [{
+	        key: '_setSelectionStyle',
+	        value: function _setSelectionStyle(styles) {
+	            extend(fObjectOptions.SELECTION_STYLE, styles);
 	        }
 
 	        /**
-	         * @event ImageEditor#addedObject
-	         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-	         * @example
-	         * imageEditor.on('addedObject', function(obj) {
-	         *     console.log(obj);
-	         * });
+	         * Attach invoker events
+	         * @private
 	         */
-	        this.fire(events.ADD_OBJECT, obj);
-	    },
 
-	    /**
-	     * "object:removed" canvas event handler
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onRemovedObject: function(fEvent) {
+	    }, {
+	        key: '_attachInvokerEvents',
+	        value: function _attachInvokerEvents() {
+	            var PUSH_UNDO_STACK = events.PUSH_UNDO_STACK,
+	                PUSH_REDO_STACK = events.PUSH_REDO_STACK,
+	                EMPTY_UNDO_STACK = events.EMPTY_UNDO_STACK,
+	                EMPTY_REDO_STACK = events.EMPTY_REDO_STACK;
+
+	            /**
+	             * @event ImageEditor#pushUndoStack
+	             */
+
+	            this._invoker.on(PUSH_UNDO_STACK, this.fire.bind(this, PUSH_UNDO_STACK));
+	            /**
+	             * @event ImageEditor#pushRedoStack
+	             */
+	            this._invoker.on(PUSH_REDO_STACK, this.fire.bind(this, PUSH_REDO_STACK));
+	            /**
+	             * @event ImageEditor#emptyUndoStack
+	             */
+	            this._invoker.on(EMPTY_UNDO_STACK, this.fire.bind(this, EMPTY_UNDO_STACK));
+	            /**
+	             * @event ImageEditor#emptyRedoStack
+	             */
+	            this._invoker.on(EMPTY_REDO_STACK, this.fire.bind(this, EMPTY_REDO_STACK));
+	        }
+
 	        /**
-	         * @event ImageEditor#removedObject
-	         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-	         * @example
-	         * imageEditor.on('removedObject', function(obj) {
-	         *     console.log(obj);
-	         * });
+	         * Attach canvas events
+	         * @private
 	         */
-	        this.fire(events.REMOVE_OBJECT, fEvent.target);
-	    },
 
-	    /**
-	     * "object:selected" canvas event handler
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onSelectedObject: function(fEvent) {
+	    }, {
+	        key: '_attachCanvasEvents',
+	        value: function _attachCanvasEvents() {
+	            this._canvas.on({
+	                'mouse:down': this._handlers.mousedown,
+	                'object:added': this._handlers.addedObject,
+	                'object:removed': this._handlers.removedObject,
+	                'object:moving': this._handlers.movingObject,
+	                'object:scaling': this._handlers.scalingObject,
+	                'object:selected': this._handlers.selectedObject,
+	                'path:created': this._handlers.createdPath
+	            });
+	        }
+
 	        /**
-	         * @event ImageEditor#selectObject
-	         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-	         * @example
-	         * imageEditor.on('selectObject', function(obj) {
-	         *     console.log(obj);
-	         *     console.log(obj.type);
-	         * });
+	         * Attach dom events
+	         * @private
 	         */
-	        this.fire(events.SELECT_OBJECT, fEvent.target);
-	    },
 
-	    /**
-	     * "object:moving" canvas event handler
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onMovingObject: function(fEvent) {
+	    }, {
+	        key: '_attachDomEvents',
+	        value: function _attachDomEvents() {
+	            fabric.util.addListener(document, 'keydown', this._handlers.keydown);
+	        }
+
 	        /**
-	         * @event ImageEditor#adjustObject
-	         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-	         * @param {string} Action type (move / scale)
-	         * @example
-	         * imageEditor.on('adjustObject', function(obj, type) {
-	         *     console.log(obj);
-	         *     console.log(type);
-	         * });
+	         * Detach dom events
+	         * @private
 	         */
-	        this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
-	    },
 
-	    /**
-	     * "object:scaling" canvas event handler
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onScalingObject: function(fEvent) {
+	    }, {
+	        key: '_detachDomEvents',
+	        value: function _detachDomEvents() {
+	            fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
+	        }
+
 	        /**
+	         * Keydown event handler
+	         * @param {KeyboardEvent} e - Event object
+	         * @private
+	         */
+	        /* eslint-disable complexity */
+
+	    }, {
+	        key: '_onKeyDown',
+	        value: function _onKeyDown(e) {
+	            if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
+	                this.undo();
+	            }
+
+	            if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
+	                this.redo();
+	            }
+
+	            if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) && this._canvas.getActiveObject()) {
+	                e.preventDefault();
+	                this.removeActiveObject();
+	            }
+	        }
+	        /* eslint-enable complexity */
+
+	        /**
+	         * "mouse:down" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onMouseDown',
+	        value: function _onMouseDown(fEvent) {
+	            var originPointer = this._canvas.getPointer(fEvent.e);
+
+	            /**
+	             * @event ImageEditor#mousedown
+	             * @param {object} event - Event object
+	             * @example
+	             * imageEditor.on('mousedown', function(event) {
+	             *     console.log(event.e);
+	             *     console.log(event.originPointer);
+	             * });
+	             */
+	            this.fire(events.MOUSE_DOWN, {
+	                e: fEvent.e,
+	                originPointer: originPointer
+	            });
+	        }
+
+	        /**
+	         * "object:added" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onAddedObject',
+	        value: function _onAddedObject(fEvent) {
+	            var obj = fEvent.target;
+
+	            if (obj.isType('cropzone') || obj.isType('text')) {
+	                return;
+	            }
+
+	            if (!hasStamp(obj)) {
+	                var command = _command2.default.create(commands.ADD_OBJECT, obj);
+	                this._invoker.pushUndoStack(command);
+	                this._invoker.clearRedoStack();
+	            }
+
+	            /**
+	             * @event ImageEditor#addObject
+	             * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+	             * @example
+	             * imageEditor.on('addObject', function(obj) {
+	             *     console.log(obj);
+	             * });
+	             */
+	            this.fire(events.ADD_OBJECT, obj);
+	        }
+
+	        /**
+	         * "object:removed" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onRemovedObject',
+	        value: function _onRemovedObject(fEvent) {
+	            /**
+	             * @event ImageEditor#removeObject
+	             * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+	             * @example
+	             * imageEditor.on('removeObject', function(obj) {
+	             *     console.log(obj);
+	             * });
+	             */
+	            this.fire(events.REMOVE_OBJECT, fEvent.target);
+	        }
+
+	        /**
+	         * "object:selected" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onSelectedObject',
+	        value: function _onSelectedObject(fEvent) {
+	            /**
+	             * @event ImageEditor#selectObject
+	             * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+	             * @example
+	             * imageEditor.on('selectObject', function(obj) {
+	             *     console.log(obj);
+	             *     console.log(obj.type);
+	             * });
+	             */
+	            this.fire(events.SELECT_OBJECT, fEvent.target);
+	        }
+
+	        /**
+	         * "object:moving" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onMovingObject',
+	        value: function _onMovingObject(fEvent) {
+	            /**
+	             * @event ImageEditor#adjustObject
+	             * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+	             * @param {string} Action type (move / scale)
+	             * @example
+	             * imageEditor.on('adjustObject', function(obj, type) {
+	             *     console.log(obj);
+	             *     console.log(type);
+	             * });
+	             */
+	            this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
+	        }
+
+	        /**
+	         * "object:scaling" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onScalingObject',
+	        value: function _onScalingObject(fEvent) {
+	            /**
+	             * @ignore
+	             * @event ImageEditor#adjustObject
+	             * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+	             * @param {string} Action type (move / scale)
+	             * @example
+	             * imageEditor.on('adjustObject', function(obj, type) {
+	             *     console.log(obj);
+	             *     console.log(type);
+	             * });
+	             */
+	            this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
+	        }
+
+	        /**
+	         * EventListener - "path:created"
+	         *  - Events:: "object:added" -> "path:created"
+	         * @param {{path: fabric.Path}} obj - Path object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onCreatedPath',
+	        value: function _onCreatedPath(obj) {
+	            obj.path.set(_consts2.default.fObjectOptions.SELECTION_STYLE);
+	        }
+
+	        /**
+	         * onSelectClear handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricSelectClear',
+	        value: function _onFabricSelectClear(fEvent) {
+	            var textComp = this._getComponent(components.TEXT);
+	            var obj = textComp.getSelectedObj();
+
+	            textComp.isPrevEditing = true;
+
+	            textComp.setSelectedInfo(fEvent.target, false);
+
+	            if (obj.text === '') {
+	                obj.remove();
+	            } else if (!hasStamp(obj)) {
+	                var command = _command2.default.create(commands.ADD_OBJECT, obj);
+	                this._invoker.pushUndoStack(command);
+	                this._invoker.clearRedoStack();
+	            }
+	        }
+
+	        /**
+	         * onSelect handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricSelect',
+	        value: function _onFabricSelect(fEvent) {
+	            var textComp = this._getComponent(components.TEXT);
+	            var obj = textComp.getSelectedObj();
+
+	            textComp.isPrevEditing = true;
+
+	            if (obj.text === '') {
+	                obj.remove();
+	            } else if (!hasStamp(obj) && textComp.isSelected()) {
+	                var command = _command2.default.create(commands.ADD_OBJECT, obj);
+	                this._invoker.pushUndoStack(command);
+	                this._invoker.clearRedoStack();
+	            }
+
+	            textComp.setSelectedInfo(fEvent.target, true);
+	        }
+
+	        /**
+	         * Set canvas element
+	         * @param {string|jQuery|HTMLElement} element - Wrapper or canvas element or selector
+	         * @param {number} cssMaxWidth - Canvas css max width
+	         * @param {number} cssMaxHeight - Canvas css max height
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setCanvas',
+	        value: function _setCanvas(element, cssMaxWidth, cssMaxHeight) {
+	            var mainComponent = this._getMainComponent();
+	            mainComponent.setCanvasElement(element);
+	            mainComponent.setCssMaxDimension({
+	                width: cssMaxWidth,
+	                height: cssMaxHeight
+	            });
+	            this._canvas = mainComponent.getCanvas();
+	        }
+
+	        /**
+	         * Returns main component
+	         * @returns {Component} Main component
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getMainComponent',
+	        value: function _getMainComponent() {
+	            return this._getComponent(components.MAIN);
+	        }
+
+	        /**
+	         * Get component
+	         * @param {string} name - Component name
+	         * @returns {Component}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getComponent',
+	        value: function _getComponent(name) {
+	            return this._invoker.getComponent(name);
+	        }
+
+	        /**
+	         * Get current state
+	         * @returns {string}
+	         * @example
+	         * // Image editor states
+	         * //
+	         * //    NORMAL: 'NORMAL'
+	         * //    CROP: 'CROP'
+	         * //    FREE_DRAWING: 'FREE_DRAWING'
+	         * //    TEXT: 'TEXT'
+	         * //
+	         * if (imageEditor.getCurrentState() === 'FREE_DRAWING') {
+	         *     imageEditor.endFreeDrawing();
+	         * }
+	         */
+
+	    }, {
+	        key: 'getCurrentState',
+	        value: function getCurrentState() {
+	            return this._state;
+	        }
+
+	        /**
+	         * Clear all objects
+	         * @example
+	         * imageEditor.clearObjects();
+	         */
+
+	    }, {
+	        key: 'clearObjects',
+	        value: function clearObjects() {
+	            var command = _command2.default.create(commands.CLEAR_OBJECTS);
+	            var callback = this.fire.bind(this, events.CLEAR_OBJECTS);
+
+	            /**
+	             * @event ImageEditor#clearObjects
+	             */
+	            command.setExecuteCallback(callback);
+	            this.execute(command);
+	        }
+
+	        /**
+	         * End current action & Deactivate
+	         * @example
+	         * imageEditor.startFreeDrawing();
+	         * imageEidtor.endAll(); // === imageEidtor.endFreeDrawing();
+	         *
+	         * imageEditor.startCropping();
+	         * imageEditor.endAll(); // === imageEidtor.endCropping();
+	         */
+
+	    }, {
+	        key: 'endAll',
+	        value: function endAll() {
+	            this.endTextMode();
+	            this.endFreeDrawing();
+	            this.endLineDrawing();
+	            this.endCropping();
+	            this.endDrawingShapeMode();
+	            this.deactivateAll();
+	            this._state = states.NORMAL;
+	        }
+
+	        /**
+	         * Deactivate all objects
+	         * @example
+	         * imageEditor.deactivateAll();
+	         */
+
+	    }, {
+	        key: 'deactivateAll',
+	        value: function deactivateAll() {
+	            this._canvas.deactivateAll();
+	            this._canvas.renderAll();
+	        }
+
+	        /**
+	         * Invoke command
+	         * @param {Command} command - Command
 	         * @ignore
-	         * @event ImageEditor#adjustObject
-	         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-	         * @param {string} Action type (move / scale)
-	         * @example
-	         * imageEditor.on('adjustObject', function(obj, type) {
-	         *     console.log(obj);
-	         *     console.log(type);
-	         * });
 	         */
-	        this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
-	    },
 
-	    /**
-	     * EventListener - "path:created"
-	     *  - Events:: "object:added" -> "path:created"
-	     * @param {{path: fabric.Path}} obj - Path object
-	     * @private
-	     */
-	    _onCreatedPath: function(obj) {
-	        obj.path.set(consts.fObjectOptions.SELECTION_STYLE);
-	    },
-
-	    /**
-	     * onSelectClear handler in fabric canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onFabricSelectClear: function(fEvent) {
-	        var textComp = this._getComponent(components.TEXT);
-	        var obj = textComp.getSelectedObj();
-	        var command;
-
-	        textComp.isPrevEditing = true;
-
-	        textComp.setSelectedInfo(fEvent.target, false);
-
-	        if (obj.text === '') {
-	            obj.remove();
-	        } else if (!tui.util.hasStamp(obj)) {
-	            command = commandFactory.create(commands.ADD_OBJECT, obj);
-	            this._invoker.pushUndoStack(command);
-	            this._invoker.clearRedoStack();
+	    }, {
+	        key: 'execute',
+	        value: function execute(command) {
+	            this.endAll();
+	            this._invoker.invoke(command);
 	        }
-	    },
-
-	    /**
-	     * onSelect handler in fabric canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onFabricSelect: function(fEvent) {
-	        var textComp = this._getComponent(components.TEXT);
-	        var obj = textComp.getSelectedObj();
-	        var command;
-
-	        textComp.isPrevEditing = true;
-
-	        if (obj.text === '') {
-	            obj.remove();
-	        } else if (!tui.util.hasStamp(obj) && textComp.isSelected()) {
-	            command = commandFactory.create(commands.ADD_OBJECT, obj);
-	            this._invoker.pushUndoStack(command);
-	            this._invoker.clearRedoStack();
-	        }
-
-	        textComp.setSelectedInfo(fEvent.target, true);
-	    },
-
-	    /**
-	     * Set canvas element
-	     * @param {string|jQuery|HTMLElement} element - Wrapper or canvas element or selector
-	     * @param {number} cssMaxWidth - Canvas css max width
-	     * @param {number} cssMaxHeight - Canvas css max height
-	     * @private
-	     */
-	    _setCanvas: function(element, cssMaxWidth, cssMaxHeight) {
-	        var mainComponent;
-
-	        mainComponent = this._getMainComponent();
-	        mainComponent.setCanvasElement(element);
-	        mainComponent.setCssMaxDimension({
-	            width: cssMaxWidth,
-	            height: cssMaxHeight
-	        });
-	        this._canvas = mainComponent.getCanvas();
-	    },
-
-	    /**
-	     * Returns main component
-	     * @returns {Component} Main component
-	     * @private
-	     */
-	    _getMainComponent: function() {
-	        return this._getComponent(components.MAIN);
-	    },
-
-	    /**
-	     * Get component
-	     * @param {string} name - Component name
-	     * @returns {Component}
-	     * @private
-	     */
-	    _getComponent: function(name) {
-	        return this._invoker.getComponent(name);
-	    },
-
-	    /**
-	     * Get current state
-	     * @returns {string}
-	     * @example
-	     * // Image editor states
-	     * //
-	     * //    NORMAL: 'NORMAL'
-	     * //    CROP: 'CROP'
-	     * //    FREE_DRAWING: 'FREE_DRAWING'
-	     * //    TEXT: 'TEXT'
-	     * //
-	     * if (imageEditor.getCurrentState() === 'FREE_DRAWING') {
-	     *     imageEditor.endFreeDrawing();
-	     * }
-	     */
-	    getCurrentState: function() {
-	        return this._state;
-	    },
-
-	    /**
-	     * Clear all objects
-	     * @example
-	     * imageEditor.clearObjects();
-	     */
-	    clearObjects: function() {
-	        var command = commandFactory.create(commands.CLEAR_OBJECTS);
-	        var callback = $.proxy(this.fire, this, events.CLEAR_OBJECTS);
 
 	        /**
-	         * @event ImageEditor#clearObjects
+	         * Undo
+	         * @example
+	         * imageEditor.undo();
 	         */
-	        command.setExecuteCallback(callback);
-	        this.execute(command);
-	    },
 
-	    /**
-	     * End current action & Deactivate
-	     * @example
-	     * imageEditor.startFreeDrawing();
-	     * imageEidtor.endAll(); // === imageEidtor.endFreeDrawing();
-	     *
-	     * imageEditor.startCropping();
-	     * imageEditor.endAll(); // === imageEidtor.endCropping();
-	     */
-	    endAll: function() {
-	        this.endTextMode();
-	        this.endFreeDrawing();
-	        this.endLineDrawing();
-	        this.endCropping();
-	        this.endDrawingShapeMode();
-	        this.deactivateAll();
-	        this._state = states.NORMAL;
-	    },
-
-	    /**
-	     * Deactivate all objects
-	     * @example
-	     * imageEditor.deactivateAll();
-	     */
-	    deactivateAll: function() {
-	        this._canvas.deactivateAll();
-	        this._canvas.renderAll();
-	    },
-
-	    /**
-	     * Invoke command
-	     * @param {Command} command - Command
-	     * @ignore
-	     */
-	    execute: function(command) {
-	        this.endAll();
-	        this._invoker.invoke(command);
-	    },
-
-	    /**
-	     * Undo
-	     * @example
-	     * imageEditor.undo();
-	     */
-	    undo: function() {
-	        this.endAll();
-	        this._invoker.undo();
-	    },
-
-	    /**
-	     * Redo
-	     * @example
-	     * imageEditor.redo();
-	     */
-	    redo: function() {
-	        this.endAll();
-	        this._invoker.redo();
-	    },
-
-	    /**
-	     * Load image from file
-	     * @param {File} imgFile - Image file
-	     * @param {string} [imageName] - imageName
-	     * @example
-	     * imageEditor.loadImageFromFile(file);
-	     */
-	    loadImageFromFile: function(imgFile, imageName) {
-	        if (!imgFile) {
-	            return;
+	    }, {
+	        key: 'undo',
+	        value: function undo() {
+	            this.endAll();
+	            this._invoker.undo();
 	        }
 
-	        this.loadImageFromURL(
-	            URL.createObjectURL(imgFile),
-	            imageName || imgFile.name
-	        );
-	    },
+	        /**
+	         * Redo
+	         * @example
+	         * imageEditor.redo();
+	         */
 
-	    /**
-	     * Load image from url
-	     * @param {string} url - File url
-	     * @param {string} imageName - imageName
-	     * @example
-	     * imageEditor.loadImageFromURL('http://url/testImage.png', 'lena')
-	     */
-	    loadImageFromURL: function(url, imageName) {
-	        var self = this;
-	        var callback, command;
-
-	        if (!imageName || !url) {
-	            return;
+	    }, {
+	        key: 'redo',
+	        value: function redo() {
+	            this.endAll();
+	            this._invoker.redo();
 	        }
 
-	        callback = $.proxy(this._callbackAfterImageLoading, this);
-	        command = commandFactory.create(commands.LOAD_IMAGE, imageName, url);
-	        command.setExecuteCallback(callback)
-	            .setUndoCallback(function(oImage) {
+	        /**
+	         * Load image from file
+	         * @param {File} imgFile - Image file
+	         * @param {string} [imageName] - imageName
+	         * @example
+	         * imageEditor.loadImageFromFile(file);
+	         */
+
+	    }, {
+	        key: 'loadImageFromFile',
+	        value: function loadImageFromFile(imgFile, imageName) {
+	            if (!imgFile) {
+	                return;
+	            }
+
+	            this.loadImageFromURL(URL.createObjectURL(imgFile), imageName || imgFile.name);
+	        }
+
+	        /**
+	         * Load image from url
+	         * @param {string} url - File url
+	         * @param {string} imageName - imageName
+	         * @example
+	         * imageEditor.loadImageFromURL('http://url/testImage.png', 'lena')
+	         */
+
+	    }, {
+	        key: 'loadImageFromURL',
+	        value: function loadImageFromURL(url, imageName) {
+	            var _this = this;
+
+	            if (!imageName || !url) {
+	                return;
+	            }
+
+	            var callback = bind(this._callbackAfterImageLoading, this);
+	            var command = _command2.default.create(commands.LOAD_IMAGE, imageName, url);
+	            command.setExecuteCallback(callback).setUndoCallback(function (oImage) {
 	                if (oImage) {
 	                    callback(oImage);
 	                } else {
 	                    /**
 	                     * @event ImageEditor#clearImage
 	                     */
-	                    self.fire(events.CLEAR_IMAGE);
+	                    _this.fire(events.CLEAR_IMAGE);
 	                }
 	            });
-	        this.execute(command);
-	    },
-
-	    /**
-	     * Callback after image loading
-	     * @param {?fabric.Image} oImage - Image instance
-	     * @private
-	     */
-	    _callbackAfterImageLoading: function(oImage) {
-	        var mainComponent = this._getMainComponent();
-	        var $canvasElement = $(mainComponent.getCanvasElement());
+	            this.execute(command);
+	        }
 
 	        /**
-	         * @event ImageEditor#loadImage
-	         * @param {object} dimension
-	         *  @param {number} dimension.originalWidth - original image width
-	         *  @param {number} dimension.originalHeight - original image height
-	         *  @param {number} dimension.currentWidth - current width (css)
-	         *  @param {number} dimension.current - current height (css)
-	         * @example
-	         * imageEditor.on('loadImage', function(dimension) {
-	         *     console.log(dimension.originalWidth);
-	         *     console.log(dimension.originalHeight);
-	         *     console.log(dimension.currentWidth);
-	         *     console.log(dimension.currentHeight);
-	         * });
+	         * Callback after image loading
+	         * @param {?fabric.Image} oImage - Image instance
+	         * @private
 	         */
-	        this.fire(events.LOAD_IMAGE, {
-	            originalWidth: oImage.width,
-	            originalHeight: oImage.height,
-	            currentWidth: $canvasElement.width(),
-	            currentHeight: $canvasElement.height()
-	        });
-	    },
 
-	    /**
-	     * Add image object on canvas
-	     * @param {string} imgUrl - Image url to make object
-	     * @example
-	     * imageEditor.addImageObject('path/fileName.jpg');
-	     */
-	    addImageObject: function(imgUrl) {
-	        if (!imgUrl) {
-	            return;
-	        }
+	    }, {
+	        key: '_callbackAfterImageLoading',
+	        value: function _callbackAfterImageLoading(oImage) {
+	            var mainComponent = this._getMainComponent();
+	            var canvasElement = mainComponent.getCanvasElement();
 
-	        fabric.Image.fromURL(imgUrl,
-	            $.proxy(this._callbackAfterLoadingImageObject, this),
-	            {
-	                crossOrigin: 'Anonymous'
-	            }
-	        );
-	    },
+	            var _canvasElement$getBou = canvasElement.getBoundingClientRect(),
+	                width = _canvasElement$getBou.width,
+	                height = _canvasElement$getBou.height;
 
-	    /**
-	     * Callback function after loading image
-	     * @param {fabric.Image} obj - Fabric image object
-	     * @private
-	     */
-	    _callbackAfterLoadingImageObject: function(obj) {
-	        var mainComp = this._getMainComponent();
-	        var centerPos = mainComp.getCanvasImage().getCenterPoint();
-
-	        obj.set(consts.fObjectOptions.SELECTION_STYLE);
-	        obj.set({
-	            left: centerPos.x,
-	            top: centerPos.y,
-	            crossOrigin: 'anonymous'
-	        });
-
-	        this._canvas.add(obj).setActiveObject(obj);
-	    },
-
-	    /**
-	     * Start cropping
-	     * @example
-	     * imageEditor.startCropping();
-	     */
-	    startCropping: function() {
-	        var cropper;
-
-	        if (this.getCurrentState() === states.CROP) {
-	            return;
-	        }
-
-	        this.endAll();
-	        this._state = states.CROP;
-	        cropper = this._getComponent(components.CROPPER);
-	        cropper.start();
-	        /**
-	         * @event ImageEditor#startCropping
-	         */
-	        this.fire(events.START_CROPPING);
-	    },
-
-	    /**
-	     * Apply cropping
-	     * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
-	     * @example
-	     * imageEditor.startCropping();
-	     * imageEditor.endCropping(false); // cancel cropping
-	     *
-	     * imageEditor.startCropping();
-	     * imageEditor.endCropping(true); // apply cropping
-	     */
-	    endCropping: function(isApplying) {
-	        var cropper, data;
-	        var eventHandler;
-
-	        if (this.getCurrentState() !== states.CROP) {
-	            return;
-	        }
-
-	        cropper = this._getComponent(components.CROPPER);
-	        this._state = states.NORMAL;
-	        data = cropper.end(isApplying);
-
-	        eventHandler = tui.util.bind(function() {
 	            /**
-	             * @event ImageEditor#endCropping
+	             * @event ImageEditor#loadImage
+	             * @param {object} dimension
+	             *  @param {number} dimension.originalWidth - original image width
+	             *  @param {number} dimension.originalHeight - original image height
+	             *  @param {number} dimension.currentWidth - current width (css)
+	             *  @param {number} dimension.current - current height (css)
+	             * @example
+	             * imageEditor.on('loadImage', function(dimension) {
+	             *     console.log(dimension.originalWidth);
+	             *     console.log(dimension.originalHeight);
+	             *     console.log(dimension.currentWidth);
+	             *     console.log(dimension.currentHeight);
+	             * });
 	             */
-	            this.fire(events.END_CROPPING);
-	            this.off('loadImage', eventHandler);
-	        }, this);
 
-	        this.on('loadImage', eventHandler);
 
-	        if (data) {
-	            this.loadImageFromURL(data.url, data.imageName);
-	        }
-	    },
-
-	    /**
-	     * Flip
-	     * @param {string} type - 'flipX' or 'flipY' or 'reset'
-	     * @private
-	     */
-	    _flip: function(type) {
-	        var callback = $.proxy(this.fire, this, events.FLIP_IMAGE);
-	        var command = commandFactory.create(commands.FLIP_IMAGE, type);
-
-	        /**
-	         * @event ImageEditor#flipImage
-	         * @param {object} flipSetting
-	         *  @param {boolean} flipSetting.flipX - image.flipX
-	         *  @param {boolean} flipSetting.flipY - image.flipY
-	         * @param {number} angle - image.angle
-	         * @example
-	         * imageEditor.on('flipImage', function(flipSetting, angle) {
-	         *     console.log('flipX: ', setting.flipX);
-	         *     console.log('flipY: ', setting.flipY);
-	         *     console.log('angle: ', angle);
-	         * });
-	         */
-	        command.setExecuteCallback(callback)
-	            .setUndoCallback(callback);
-	        this.execute(command);
-	    },
-
-	    /**
-	     * Flip x
-	     * @example
-	     * imageEditor.flipX();
-	     */
-	    flipX: function() {
-	        this._flip('flipX');
-	    },
-
-	    /**
-	     * Flip y
-	     * @example
-	     * imageEditor.flipY();
-	     */
-	    flipY: function() {
-	        this._flip('flipY');
-	    },
-
-	    /**
-	     * Reset flip
-	     * @example
-	     * imageEditor.resetFlip();
-	     */
-	    resetFlip: function() {
-	        this._flip('reset');
-	    },
-
-	    /**
-	     * @param {string} type - 'rotate' or 'setAngle'
-	     * @param {number} angle - angle value (degree)
-	     * @private
-	     */
-	    _rotate: function(type, angle) {
-	        var callback = $.proxy(this.fire, this, events.ROTATE_IMAGE);
-	        var command = commandFactory.create(commands.ROTATE_IMAGE, type, angle);
-
-	        /**
-	         * @event ImageEditor#rotateImage
-	         * @param {number} currentAngle - image.angle
-	         * @example
-	         * imageEditor.on('rotateImage', function(angle) {
-	         *     console.log('angle: ', angle);
-	         * });
-	         */
-	        command.setExecuteCallback(callback)
-	            .setUndoCallback(callback);
-	        this.execute(command);
-	    },
-
-	    /**
-	     * Rotate image
-	     * @param {number} angle - Additional angle to rotate image
-	     * @example
-	     * imageEditor.setAngle(10); // angle = 10
-	     * imageEditor.rotate(10); // angle = 20
-	     * imageEidtor.setAngle(5); // angle = 5
-	     * imageEidtor.rotate(-95); // angle = -90
-	     */
-	    rotate: function(angle) {
-	        this._rotate('rotate', angle);
-	    },
-
-	    /**
-	     * Set angle
-	     * @param {number} angle - Angle of image
-	     * @example
-	     * imageEditor.setAngle(10); // angle = 10
-	     * imageEditor.rotate(10); // angle = 20
-	     * imageEidtor.setAngle(5); // angle = 5
-	     * imageEidtor.rotate(50); // angle = 55
-	     * imageEidtor.setAngle(-40); // angle = -40
-	     */
-	    setAngle: function(angle) {
-	        this._rotate('setAngle', angle);
-	    },
-
-	    /**
-	     * Start free-drawing mode
-	     * @param {{width: number, color: string}} [setting] - Brush width & color
-	     * @example
-	     * imageEditor.startFreeDrawing();
-	     * imageEditor.endFreeDrawing();
-	     * imageEidtor.startFreeDrawing({
-	     *     width: 12,
-	     *     color: 'rgba(0, 0, 0, 0.5)'
-	     * });
-	     */
-	    startFreeDrawing: function(setting) {
-	        if (this.getCurrentState() === states.FREE_DRAWING) {
-	            return;
-	        }
-	        this.endAll();
-	        this._getComponent(components.FREE_DRAWING).start(setting);
-	        this._state = states.FREE_DRAWING;
-
-	        /**
-	         * @event ImageEditor#startFreeDrawing
-	         */
-	        this.fire(events.START_FREE_DRAWING);
-	    },
-
-	    /**
-	     * Set drawing brush
-	     * @param {{width: number, color: string}} setting - Brush width & color
-	     * @example
-	     * imageEditor.startFreeDrawing();
-	     * imageEditor.setBrush({
-	     *     width: 12,
-	     *     color: 'rgba(0, 0, 0, 0.5)'
-	     * });
-	     * imageEditor.setBrush({
-	     *     width: 8,
-	     *     color: 'FFFFFF'
-	     * });
-	     */
-	    setBrush: function(setting) {
-	        var state = this._state;
-	        var compName;
-
-	        switch (state) {
-	            case states.LINE:
-	                compName = components.LINE;
-	                break;
-	            default:
-	                compName = components.FREE_DRAWING;
-	        }
-
-	        this._getComponent(compName).setBrush(setting);
-	    },
-
-	    /**
-	     * End free-drawing mode
-	     * @example
-	     * imageEditor.startFreeDrawing();
-	     * imageEditor.endFreeDrawing();
-	     */
-	    endFreeDrawing: function() {
-	        if (this.getCurrentState() !== states.FREE_DRAWING) {
-	            return;
-	        }
-	        this._getComponent(components.FREE_DRAWING).end();
-	        this._state = states.NORMAL;
-
-	        /**
-	         * @event ImageEditor#endFreeDrawing
-	         */
-	        this.fire(events.END_FREE_DRAWING);
-	    },
-
-	    /**
-	     * Start line-drawing mode
-	     * @param {{width: number, color: string}} [setting] - Brush width & color
-	     * @example
-	     * imageEditor.startLineDrawing();
-	     * imageEditor.endLineDrawing();
-	     * imageEidtor.startLineDrawing({
-	     *     width: 12,
-	     *     color: 'rgba(0, 0, 0, 0.5)'
-	     * });
-	     */
-	    startLineDrawing: function(setting) {
-	        if (this.getCurrentState() === states.LINE) {
-	            return;
-	        }
-
-	        this.endAll();
-	        this._getComponent(components.LINE).start(setting);
-	        this._state = states.LINE;
-
-	        /**
-	         * @event ImageEditor#startLineDrawing
-	         */
-	        this.fire(events.START_LINE_DRAWING);
-	    },
-
-	    /**
-	     * End line-drawing mode
-	     * @example
-	     * imageEditor.startLineDrawing();
-	     * imageEditor.endLineDrawing();
-	     */
-	    endLineDrawing: function() {
-	        if (this.getCurrentState() !== states.LINE) {
-	            return;
-	        }
-	        this._getComponent(components.LINE).end();
-	        this._state = states.NORMAL;
-
-	        /**
-	         * @event ImageEditor#endLineDrawing
-	         */
-	        this.fire(events.END_LINE_DRAWING);
-	    },
-
-	    /**
-	     * Start to draw shape on canvas (bind event on canvas)
-	     * @example
-	     * imageEditor.startDrawingShapeMode();
-	     */
-	    startDrawingShapeMode: function() {
-	        if (this.getCurrentState() !== states.SHAPE) {
-	            this._state = states.SHAPE;
-	            this._getComponent(components.SHAPE).startDrawingMode();
-	        }
-	    },
-
-	    /**
-	     * Set states of current drawing shape
-	     * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
-	     * @param {object} [options] - Shape options
-	     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-	     *      @param {string} [options.stoke] - Shape outline color
-	     *      @param {number} [options.strokeWidth] - Shape outline width
-	     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-	     * @example
-	     * imageEditor.setDrawingShape('rect', {
-	     *     fill: 'red',
-	     *     width: 100,
-	     *     height: 200
-	     * });
-	     * imageEditor.setDrawingShape('circle', {
-	     *     fill: 'transparent',
-	     *     stroke: 'blue',
-	     *     strokeWidth: 3,
-	     *     rx: 10,
-	     *     ry: 100
-	     * });
-	     * imageEditor.setDrawingShape('triangle', { // When resizing, the shape keep the 1:1 ratio
-	     *     width: 1,
-	     *     height: 1,
-	     *     isRegular: true
-	     * });
-	     * imageEditor.setDrawingShape('circle', { // When resizing, the shape keep the 1:1 ratio
-	     *     rx: 10,
-	     *     ry: 10,
-	     *     isRegular: true
-	     * });
-	     */
-	    setDrawingShape: function(type, options) {
-	        this._getComponent(components.SHAPE).setStates(type, options);
-	    },
-
-	    /**
-	     * Add shape
-	     * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
-	     * @param {object} options - Shape options
-	     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-	     *      @param {string} [options.stroke] - Shape outline color
-	     *      @param {number} [options.strokeWidth] - Shape outline width
-	     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.left] - Shape x position
-	     *      @param {number} [options.top] - Shape y position
-	     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-	     * @example
-	     * imageEditor.addShape('rect', {
-	     *     fill: 'red',
-	     *     stroke: 'blue',
-	     *     strokeWidth: 3,
-	     *     width: 100,
-	     *     height: 200,
-	     *     left: 10,
-	     *     top: 10,
-	     *     isRegular: true
-	     * });
-	     * imageEditor.addShape('circle', {
-	     *     fill: 'red',
-	     *     stroke: 'blue',
-	     *     strokeWidth: 3,
-	     *     rx: 10,
-	     *     ry: 100,
-	     *     isRegular: false
-	     * });
-	     */
-	    addShape: function(type, options) {
-	        options = options || {};
-
-	        this._setPositions(options);
-	        this._getComponent(components.SHAPE).add(type, options);
-	    },
-
-	    /**
-	     * Change shape
-	     * @param {object} options - Shape options
-	     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-	     *      @param {string} [options.stroke] - Shape outline color
-	     *      @param {number} [options.strokeWidth] - Shape outline width
-	     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-	     * @example
-	     * // call after selecting shape object on canvas
-	     * imageEditor.changeShape({ // change rectagle or triangle
-	     *     fill: 'red',
-	     *     stroke: 'blue',
-	     *     strokeWidth: 3,
-	     *     width: 100,
-	     *     height: 200
-	     * });
-	     * imageEditor.changeShape({ // change circle
-	     *     fill: 'red',
-	     *     stroke: 'blue',
-	     *     strokeWidth: 3,
-	     *     rx: 10,
-	     *     ry: 100
-	     * });
-	     */
-	    changeShape: function(options) {
-	        var activeObj = this._canvas.getActiveObject();
-	        var shapeComponent = this._getComponent(components.SHAPE);
-
-	        if (!activeObj) {
-	            return;
-	        }
-
-	        shapeComponent.change(activeObj, options);
-	    },
-
-	    /**
-	     * End to draw shape on canvas (unbind event on canvas)
-	     * @example
-	     * imageEditor.startDrawingShapeMode();
-	     * imageEditor.endDrawingShapeMode();
-	     */
-	    endDrawingShapeMode: function() {
-	        if (this.getCurrentState() === states.SHAPE) {
-	            this._getComponent(components.SHAPE).endDrawingMode();
-	            this._state = states.NORMAL;
-	        }
-	    },
-
-	    /**
-	     * Start text input mode
-	     * @example
-	     * imageEditor.endTextMode();
-	     * imageEditor.startTextMode();
-	     */
-	    startTextMode: function() {
-	        if (this.getCurrentState() !== states.TEXT) {
-	            this._state = states.TEXT;
-
-	            this._getComponent(components.TEXT).start({
-	                mousedown: $.proxy(this._onFabricMouseDown, this),
-	                select: $.proxy(this._onFabricSelect, this),
-	                selectClear: $.proxy(this._onFabricSelectClear, this),
-	                dbclick: $.proxy(this._onDBClick, this),
-	                remove: this._handlers.removedObject
+	            this.fire(events.LOAD_IMAGE, {
+	                originalWidth: oImage.width,
+	                originalHeight: oImage.height,
+	                currentWidth: width,
+	                currentHeight: height
 	            });
 	        }
-	    },
-
-	    /**
-	     * Add text on image
-	     * @param {string} text - Initial input text
-	     * @param {object} [options] Options for generating text
-	     *     @param {object} [options.styles] Initial styles
-	     *         @param {string} [options.styles.fill] Color
-	     *         @param {string} [options.styles.fontFamily] Font type for text
-	     *         @param {number} [options.styles.fontSize] Size
-	     *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
-	     *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
-	     *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
-	     *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
-	     *     @param {{x: number, y: number}} [options.position] - Initial position
-	     * @example
-	     * imageEditor.addText();
-	     * imageEditor.addText('init text', {
-	     *     styles: {
-	     *     fill: '#000',
-	     *         fontSize: '20',
-	     *         fontWeight: 'bold'
-	     *     },
-	     *     position: {
-	     *         x: 10,
-	     *         y: 10
-	     *     }
-	     * });
-	     */
-	    addText: function(text, options) {
-	        if (this.getCurrentState() !== states.TEXT) {
-	            this._state = states.TEXT;
-	        }
-
-	        this._getComponent(components.TEXT).add(text || '', options || {});
-	    },
-
-	    /**
-	     * Change contents of selected text object on image
-	     * @param {string} text - Changing text
-	     * @example
-	     * imageEditor.changeText('change text');
-	     */
-	    changeText: function(text) {
-	        var activeObj = this._canvas.getActiveObject();
-
-	        if (this.getCurrentState() !== states.TEXT ||
-	            !activeObj) {
-	            return;
-	        }
-
-	        this._getComponent(components.TEXT).change(activeObj, text);
-	    },
-
-	    /**
-	     * Set style
-	     * @param {object} styleObj - Initial styles
-	     *     @param {string} [styleObj.fill] Color
-	     *     @param {string} [styleObj.fontFamily] Font type for text
-	     *     @param {number} [styleObj.fontSize] Size
-	     *     @param {string} [styleObj.fontStyle] Type of inclination (normal / italic)
-	     *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
-	     *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
-	     *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
-	     * @example
-	     * imageEditor.changeTextStyle({
-	     *     fontStyle: 'italic'
-	     * });
-	     */
-	    changeTextStyle: function(styleObj) {
-	        var activeObj = this._canvas.getActiveObject();
-
-	        if (this.getCurrentState() !== states.TEXT ||
-	            !activeObj) {
-	            return;
-	        }
-
-	        this._getComponent(components.TEXT).setStyle(activeObj, styleObj);
-	    },
-
-	    /**
-	     * End text input mode
-	     * @example
-	     * imageEditor.startTextMode();
-	     * imageEditor.endTextMode();
-	     */
-	    endTextMode: function() {
-	        if (this.getCurrentState() !== states.TEXT) {
-	            return;
-	        }
-
-	        this._state = states.NORMAL;
-
-	        this._getComponent(components.TEXT).end();
-	    },
-
-	    /**
-	     * Double click event handler
-	     * @private
-	     */
-	    _onDBClick: function() {
-	        /**
-	         * @event ImageEditor#editText
-	         * @example
-	         * imageEditor.on('editText', function(obj) {
-	         *     console.log('text object: ' + obj);
-	         * });
-	         */
-	        this.fire(events.EDIT_TEXT);
-	    },
-
-	     /**
-	      * Mousedown event handler
-	      * @param {fabric.Event} event - Current mousedown event object
-	      * @private
-	      */
-	    _onFabricMouseDown: function(event) { // eslint-disable-line
-	        var obj = event.target;
-	        var e = event.e || {};
-	        var originPointer = this._canvas.getPointer(e);
-	        var textComp = this._getComponent(components.TEXT);
-
-	        if (obj && !obj.isType('text')) {
-	            return;
-	        }
-
-	        if (textComp.isPrevEditing) {
-	            textComp.isPrevEditing = false;
-
-	            return;
-	        }
 
 	        /**
-	         * @event ImageEditor#activateText
-	         * @param {object} options
-	         *     @param {boolean} options.type - Type of text object (new / select)
-	         *     @param {string} options.text - Current text
-	         *     @param {object} options.styles - Current styles
-	         *         @param {string} options.styles.fill - Color
-	         *         @param {string} options.styles.fontFamily - Font type for text
-	         *         @param {number} options.styles.fontSize - Size
-	         *         @param {string} options.styles.fontStyle - Type of inclination (normal / italic)
-	         *         @param {string} options.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
-	         *         @param {string} options.styles.textAlign - Type of text align (left / center / right)
-	         *         @param {string} options.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
-	         *     @param {{x: number, y: number}} options.originPosition - Current position on origin canvas
-	         *     @param {{x: number, y: number}} options.clientPosition - Current position on client area
+	         * Add image object on canvas
+	         * @param {string} imgUrl - Image url to make object
 	         * @example
-	         * imageEditor.on('activateText', function(obj) {
-	         *     console.log('text object type: ' + obj.type);
-	         *     console.log('text contents: ' + obj.text);
-	         *     console.log('text styles: ' + obj.styles);
-	         *     console.log('text position on canvas: ' + obj.originPosition);
-	         *     console.log('text position on brwoser: ' + obj.clientPosition);
-	         * });
+	         * imageEditor.addImageObject('path/fileName.jpg');
 	         */
-	        this.fire(events.ACTIVATE_TEXT, {
-	            type: obj ? 'select' : 'new',
-	            text: obj ? obj.text : '',
-	            styles: obj ? {
-	                fill: obj.fill,
-	                fontFamily: obj.fontFamily,
-	                fontSize: obj.fontSize,
-	                fontStyle: obj.fontStyle,
-	                textAlign: obj.textAlign,
-	                textDecoration: obj.textDecoration
-	            } : {},
-	            originPosition: {
-	                x: originPointer.x,
-	                y: originPointer.y
-	            },
-	            clientPosition: {
-	                x: e.clientX || 0,
-	                y: e.clientY || 0
-	            }
-	        });
-	    },
 
-	    /**
-	     * Register custom icons
-	     * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
-	     * @example
-	     * imageEditor.registerIcons({
-	     *     customIcon: 'M 0 0 L 20 20 L 10 10 Z',
-	     *     customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
-	     * });
-	     */
-	    registerIcons: function(infos) {
-	        this._getComponent(components.ICON).registerPaths(infos);
-	    },
-
-	    /**
-	     * Add icon on canvas
-	     * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
-	     * @param {object} options - Icon options
-	     *      @param {string} [options.fill] - Icon foreground color
-	     *      @param {string} [options.left] - Icon x position
-	     *      @param {string} [options.top] - Icon y position
-	     * @example
-	     * imageEditor.addIcon('arrow'); // The position is center on canvas
-	     * imageEditor.addIcon('arrow', {
-	     *     left: 100,
-	     *     top: 100
-	     * });
-	     */
-	    addIcon: function(type, options) {
-	        options = options || {};
-
-	        this._setPositions(options);
-	        this._getComponent(components.ICON).add(type, options);
-	    },
-
-	    /**
-	     * Change icon color
-	     * @param {string} color - Color for icon
-	     * @example
-	     * imageEditor.changeIconColor('#000000');
-	     */
-	    changeIconColor: function(color) {
-	        var activeObj = this._canvas.getActiveObject();
-
-	        this._getComponent(components.ICON).setColor(color, activeObj);
-	    },
-
-	    /**
-	     * Remove active object or group
-	     * @example
-	     * imageEditor.removeActiveObject();
-	     */
-	    removeActiveObject: function() {
-	        var canvas = this._canvas;
-	        var target = canvas.getActiveObject() || canvas.getActiveGroup();
-	        var command = commandFactory.create(commands.REMOVE_OBJECT, target);
-	        this.execute(command);
-	    },
-
-	    /**
-	     * Apply filter on canvas image
-	     * @param {string} type - Filter type (current filter type is only 'mask')
-	     * @param {options} options - Options to apply filter
-	     * @example
-	     * imageEditor.applyFilter('mask');
-	     * imageEditor.applyFilter('mask', {
-	     *     mask: fabricImgObj
-	     * });
-	     */
-	    applyFilter: function(type, options) {
-	        var command, callback, activeObj;
-
-	        if (type === 'mask' && !options) {
-	            activeObj = this._canvas.getActiveObject();
-
-	            if (!(activeObj && activeObj.isType('image'))) {
+	    }, {
+	        key: 'addImageObject',
+	        value: function addImageObject(imgUrl) {
+	            if (!imgUrl) {
 	                return;
 	            }
 
-	            options = {
-	                mask: activeObj
-	            };
+	            fabric.Image.fromURL(imgUrl, bind(this._callbackAfterLoadingImageObject, this), {
+	                crossOrigin: 'Anonymous'
+	            });
 	        }
-
-	        callback = $.proxy(this.fire, this, events.APPLY_FILTER);
-	        command = commandFactory.create(commands.APPLY_FILTER, type, options);
 
 	        /**
-	         * @event ImageEditor#applyFilter
-	         * @param {string} filterType - Applied filter
-	         * @param {string} actType - Action type (add / remove)
+	         * Callback function after loading image
+	         * @param {fabric.Image} obj - Fabric image object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_callbackAfterLoadingImageObject',
+	        value: function _callbackAfterLoadingImageObject(obj) {
+	            var mainComp = this._getMainComponent();
+	            var centerPos = mainComp.getCanvasImage().getCenterPoint();
+
+	            obj.set(_consts2.default.fObjectOptions.SELECTION_STYLE);
+	            obj.set({
+	                left: centerPos.x,
+	                top: centerPos.y,
+	                crossOrigin: 'anonymous'
+	            });
+
+	            this._canvas.add(obj).setActiveObject(obj);
+	        }
+
+	        /**
+	         * Start cropping
 	         * @example
-	         * imageEditor.on('applyFilter', function(filterType, actType) {
-	         *     console.log('filterType: ', filterType);
-	         *     console.log('actType: ', actType);
+	         * imageEditor.startCropping();
+	         */
+
+	    }, {
+	        key: 'startCropping',
+	        value: function startCropping() {
+	            if (this.getCurrentState() === states.CROP) {
+	                return;
+	            }
+
+	            this.endAll();
+	            this._state = states.CROP;
+	            var cropper = this._getComponent(components.CROPPER);
+	            cropper.start();
+	            /**
+	             * @event ImageEditor#startCropping
+	             */
+	            this.fire(events.START_CROPPING);
+	        }
+
+	        /**
+	         * Apply cropping
+	         * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
+	         * @example
+	         * imageEditor.startCropping();
+	         * imageEditor.endCropping(false); // cancel cropping
+	         *
+	         * imageEditor.startCropping();
+	         * imageEditor.endCropping(true); // apply cropping
+	         */
+
+	    }, {
+	        key: 'endCropping',
+	        value: function endCropping(isApplying) {
+	            var _this2 = this;
+
+	            if (this.getCurrentState() !== states.CROP) {
+	                return;
+	            }
+
+	            var cropper = this._getComponent(components.CROPPER);
+	            this._state = states.NORMAL;
+	            var data = cropper.end(isApplying);
+
+	            this.once('loadImage', function () {
+	                /**
+	                 * @event ImageEditor#endCropping
+	                 */
+	                _this2.fire(events.END_CROPPING);
+	            });
+
+	            if (data) {
+	                this.loadImageFromURL(data.url, data.imageName);
+	            }
+	        }
+
+	        /**
+	         * Flip
+	         * @param {string} type - 'flipX' or 'flipY' or 'reset'
+	         * @private
+	         */
+
+	    }, {
+	        key: '_flip',
+	        value: function _flip(type) {
+	            var _this3 = this;
+
+	            var command = _command2.default.create(commands.FLIP_IMAGE, type);
+	            var callback = function callback(_ref) {
+	                var setting = _ref.setting,
+	                    angle = _ref.angle;
+
+	                _this3.fire(events.FLIP_IMAGE, setting, angle);
+	            };
+
+	            /**
+	             * @event ImageEditor#flipImage
+	             * @param {object} flipSetting
+	             *  @param {boolean} flipSetting.flipX - image.flipX
+	             *  @param {boolean} flipSetting.flipY - image.flipY
+	             * @param {number} angle - image.angle
+	             * @example
+	             * imageEditor.on('flipImage', function(flipSetting, angle) {
+	             *     console.log('flipX: ', setting.flipX);
+	             *     console.log('flipY: ', setting.flipY);
+	             *     console.log('angle: ', angle);
+	             * });
+	             */
+	            command.setExecuteCallback(callback).setUndoCallback(callback);
+	            this.execute(command);
+	        }
+
+	        /**
+	         * Flip x
+	         * @example
+	         * imageEditor.flipX();
+	         */
+
+	    }, {
+	        key: 'flipX',
+	        value: function flipX() {
+	            this._flip('flipX');
+	        }
+
+	        /**
+	         * Flip y
+	         * @example
+	         * imageEditor.flipY();
+	         */
+
+	    }, {
+	        key: 'flipY',
+	        value: function flipY() {
+	            this._flip('flipY');
+	        }
+
+	        /**
+	         * Reset flip
+	         * @example
+	         * imageEditor.resetFlip();
+	         */
+
+	    }, {
+	        key: 'resetFlip',
+	        value: function resetFlip() {
+	            this._flip('reset');
+	        }
+
+	        /**
+	         * @param {string} type - 'rotate' or 'setAngle'
+	         * @param {number} angle - angle value (degree)
+	         * @private
+	         */
+
+	    }, {
+	        key: '_rotate',
+	        value: function _rotate(type, angle) {
+	            var callback = this.fire.bind(this, events.ROTATE_IMAGE);
+	            var command = _command2.default.create(commands.ROTATE_IMAGE, type, angle);
+
+	            /**
+	             * @event ImageEditor#rotateImage
+	             * @param {number} currentAngle - image.angle
+	             * @example
+	             * imageEditor.on('rotateImage', function(angle) {
+	             *     console.log('angle: ', angle);
+	             * });
+	             */
+	            command.setExecuteCallback(callback).setUndoCallback(callback);
+	            this.execute(command);
+	        }
+
+	        /**
+	         * Rotate image
+	         * @param {number} angle - Additional angle to rotate image
+	         * @example
+	         * imageEditor.setAngle(10); // angle = 10
+	         * imageEditor.rotate(10); // angle = 20
+	         * imageEidtor.setAngle(5); // angle = 5
+	         * imageEidtor.rotate(-95); // angle = -90
+	         */
+
+	    }, {
+	        key: 'rotate',
+	        value: function rotate(angle) {
+	            this._rotate('rotate', angle);
+	        }
+
+	        /**
+	         * Set angle
+	         * @param {number} angle - Angle of image
+	         * @example
+	         * imageEditor.setAngle(10); // angle = 10
+	         * imageEditor.rotate(10); // angle = 20
+	         * imageEidtor.setAngle(5); // angle = 5
+	         * imageEidtor.rotate(50); // angle = 55
+	         * imageEidtor.setAngle(-40); // angle = -40
+	         */
+
+	    }, {
+	        key: 'setAngle',
+	        value: function setAngle(angle) {
+	            this._rotate('setAngle', angle);
+	        }
+
+	        /**
+	         * Start free-drawing mode
+	         * @param {{width: number, color: string}} [setting] - Brush width & color
+	         * @example
+	         * imageEditor.startFreeDrawing();
+	         * imageEditor.endFreeDrawing();
+	         * imageEidtor.startFreeDrawing({
+	         *     width: 12,
+	         *     color: 'rgba(0, 0, 0, 0.5)'
 	         * });
 	         */
-	        command.setExecuteCallback(callback)
-	            .setUndoCallback(callback);
 
-	        this.execute(command);
-	    },
+	    }, {
+	        key: 'startFreeDrawing',
+	        value: function startFreeDrawing(setting) {
+	            if (this.getCurrentState() === states.FREE_DRAWING) {
+	                return;
+	            }
+	            this.endAll();
+	            this._getComponent(components.FREE_DRAWING).start(setting);
+	            this._state = states.FREE_DRAWING;
 
-	    /**
-	     * Get data url
-	     * @param {string} type - A DOMString indicating the image format. The default type is image/png.
-	     * @returns {string} A DOMString containing the requested data URI
-	     * @example
-	     * imgEl.src = imageEditor.toDataURL();
-	     */
-	    toDataURL: function(type) {
-	        return this._getMainComponent().toDataURL(type);
-	    },
-
-	    /**
-	     * Get image name
-	     * @returns {string} image name
-	     * @example
-	     * console.log(imageEditor.getImageName());
-	     */
-	    getImageName: function() {
-	        return this._getMainComponent().getImageName();
-	    },
-
-	    /**
-	     * Clear undoStack
-	     * @example
-	     * imageEditor.clearUndoStack();
-	     */
-	    clearUndoStack: function() {
-	        this._invoker.clearUndoStack();
-	    },
-
-	    /**
-	     * Clear redoStack
-	     * @example
-	     * imageEditor.clearRedoStack();
-	     */
-	    clearRedoStack: function() {
-	        this._invoker.clearRedoStack();
-	    },
-
-	    /**
-	     * Whehter the undo stack is empty or not
-	     * @returns {boolean}
-	     * imageEditor.isEmptyUndoStack();
-	     */
-	    isEmptyUndoStack: function() {
-	        return this._invoker.isEmptyUndoStack();
-	    },
-
-	    /**
-	     * Whehter the redo stack is empty or not
-	     * @returns {boolean}
-	     * imageEditor.isEmptyRedoStack();
-	     */
-	    isEmptyRedoStack: function() {
-	        return this._invoker.isEmptyRedoStack();
-	    },
-
-	    /**
-	     * Resize canvas dimension
-	     * @param {{width: number, height: number}} dimension - Max width & height
-	     */
-	    resizeCanvasDimension: function(dimension) {
-	        var mainComponent = this._getMainComponent();
-
-	        if (!dimension) {
-	            return;
+	            /**
+	             * @event ImageEditor#startFreeDrawing
+	             */
+	            this.fire(events.START_FREE_DRAWING);
 	        }
 
-	        mainComponent.setCssMaxDimension(dimension);
-	        mainComponent.adjustCanvasDimension();
-	    },
+	        /**
+	         * Set drawing brush
+	         * @param {{width: number, color: string}} setting - Brush width & color
+	         * @example
+	         * imageEditor.startFreeDrawing();
+	         * imageEditor.setBrush({
+	         *     width: 12,
+	         *     color: 'rgba(0, 0, 0, 0.5)'
+	         * });
+	         * imageEditor.setBrush({
+	         *     width: 8,
+	         *     color: 'FFFFFF'
+	         * });
+	         */
 
-	    /**
-	     * Destroy
-	     */
-	    destroy: function() {
-	        var wrapperEl = this._canvas.wrapperEl;
+	    }, {
+	        key: 'setBrush',
+	        value: function setBrush(setting) {
+	            var state = this._state;
+	            var compName = void 0;
 
-	        this.endAll();
-	        this._detachDomEvents();
+	            switch (state) {
+	                case states.LINE:
+	                    compName = components.LINE;
+	                    break;
+	                default:
+	                    compName = components.FREE_DRAWING;
+	            }
 
-	        this._canvas.clear();
-
-	        wrapperEl.parentNode.removeChild(wrapperEl);
-
-	        forEach(this, function(value, key) {
-	            this[key] = null;
-	        }, this);
-	    },
-
-	    /**
-	     * Set position
-	     * @param {object} options - Position options (left or top)
-	     * @private
-	     */
-	    _setPositions: function(options) {
-	        var centerPosition = this._canvas.getCenter();
-
-	        if (isUndefined(options.left)) {
-	            options.left = centerPosition.left;
+	            this._getComponent(compName).setBrush(setting);
 	        }
 
-	        if (isUndefined(options.top)) {
-	            options.top = centerPosition.top;
+	        /**
+	         * End free-drawing mode
+	         * @example
+	         * imageEditor.startFreeDrawing();
+	         * imageEditor.endFreeDrawing();
+	         */
+
+	    }, {
+	        key: 'endFreeDrawing',
+	        value: function endFreeDrawing() {
+	            if (this.getCurrentState() !== states.FREE_DRAWING) {
+	                return;
+	            }
+	            this._getComponent(components.FREE_DRAWING).end();
+	            this._state = states.NORMAL;
+
+	            /**
+	             * @event ImageEditor#endFreeDrawing
+	             */
+	            this.fire(events.END_FREE_DRAWING);
 	        }
-	    }
-	});
+
+	        /**
+	         * Start line-drawing mode
+	         * @param {{width: number, color: string}} [setting] - Brush width & color
+	         * @example
+	         * imageEditor.startLineDrawing();
+	         * imageEditor.endLineDrawing();
+	         * imageEidtor.startLineDrawing({
+	         *     width: 12,
+	         *     color: 'rgba(0, 0, 0, 0.5)'
+	         * });
+	         */
+
+	    }, {
+	        key: 'startLineDrawing',
+	        value: function startLineDrawing(setting) {
+	            if (this.getCurrentState() === states.LINE) {
+	                return;
+	            }
+
+	            this.endAll();
+	            this._getComponent(components.LINE).start(setting);
+	            this._state = states.LINE;
+
+	            /**
+	             * @event ImageEditor#startLineDrawing
+	             */
+	            this.fire(events.START_LINE_DRAWING);
+	        }
+
+	        /**
+	         * End line-drawing mode
+	         * @example
+	         * imageEditor.startLineDrawing();
+	         * imageEditor.endLineDrawing();
+	         */
+
+	    }, {
+	        key: 'endLineDrawing',
+	        value: function endLineDrawing() {
+	            if (this.getCurrentState() !== states.LINE) {
+	                return;
+	            }
+	            this._getComponent(components.LINE).end();
+	            this._state = states.NORMAL;
+
+	            /**
+	             * @event ImageEditor#endLineDrawing
+	             */
+	            this.fire(events.END_LINE_DRAWING);
+	        }
+
+	        /**
+	         * Start to draw shape on canvas (bind event on canvas)
+	         * @example
+	         * imageEditor.startDrawingShapeMode();
+	         */
+
+	    }, {
+	        key: 'startDrawingShapeMode',
+	        value: function startDrawingShapeMode() {
+	            if (this.getCurrentState() !== states.SHAPE) {
+	                this._state = states.SHAPE;
+	                this._getComponent(components.SHAPE).startDrawingMode();
+	            }
+	        }
+
+	        /**
+	         * Set states of current drawing shape
+	         * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
+	         * @param {object} [options] - Shape options
+	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+	         *      @param {string} [options.stoke] - Shape outline color
+	         *      @param {number} [options.strokeWidth] - Shape outline width
+	         *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+	         * @example
+	         * imageEditor.setDrawingShape('rect', {
+	         *     fill: 'red',
+	         *     width: 100,
+	         *     height: 200
+	         * });
+	         * imageEditor.setDrawingShape('circle', {
+	         *     fill: 'transparent',
+	         *     stroke: 'blue',
+	         *     strokeWidth: 3,
+	         *     rx: 10,
+	         *     ry: 100
+	         * });
+	         * imageEditor.setDrawingShape('triangle', { // When resizing, the shape keep the 1:1 ratio
+	         *     width: 1,
+	         *     height: 1,
+	         *     isRegular: true
+	         * });
+	         * imageEditor.setDrawingShape('circle', { // When resizing, the shape keep the 1:1 ratio
+	         *     rx: 10,
+	         *     ry: 10,
+	         *     isRegular: true
+	         * });
+	         */
+
+	    }, {
+	        key: 'setDrawingShape',
+	        value: function setDrawingShape(type, options) {
+	            this._getComponent(components.SHAPE).setStates(type, options);
+	        }
+
+	        /**
+	         * Add shape
+	         * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
+	         * @param {object} options - Shape options
+	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+	         *      @param {string} [options.stroke] - Shape outline color
+	         *      @param {number} [options.strokeWidth] - Shape outline width
+	         *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.left] - Shape x position
+	         *      @param {number} [options.top] - Shape y position
+	         *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+	         * @example
+	         * imageEditor.addShape('rect', {
+	         *     fill: 'red',
+	         *     stroke: 'blue',
+	         *     strokeWidth: 3,
+	         *     width: 100,
+	         *     height: 200,
+	         *     left: 10,
+	         *     top: 10,
+	         *     isRegular: true
+	         * });
+	         * imageEditor.addShape('circle', {
+	         *     fill: 'red',
+	         *     stroke: 'blue',
+	         *     strokeWidth: 3,
+	         *     rx: 10,
+	         *     ry: 100,
+	         *     isRegular: false
+	         * });
+	         */
+
+	    }, {
+	        key: 'addShape',
+	        value: function addShape(type, options) {
+	            options = options || {};
+
+	            this._setPositions(options);
+	            this._getComponent(components.SHAPE).add(type, options);
+	        }
+
+	        /**
+	         * Change shape
+	         * @param {object} options - Shape options
+	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+	         *      @param {string} [options.stroke] - Shape outline color
+	         *      @param {number} [options.strokeWidth] - Shape outline width
+	         *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+	         * @example
+	         * // call after selecting shape object on canvas
+	         * imageEditor.changeShape({ // change rectagle or triangle
+	         *     fill: 'red',
+	         *     stroke: 'blue',
+	         *     strokeWidth: 3,
+	         *     width: 100,
+	         *     height: 200
+	         * });
+	         * imageEditor.changeShape({ // change circle
+	         *     fill: 'red',
+	         *     stroke: 'blue',
+	         *     strokeWidth: 3,
+	         *     rx: 10,
+	         *     ry: 100
+	         * });
+	         */
+
+	    }, {
+	        key: 'changeShape',
+	        value: function changeShape(options) {
+	            var activeObj = this._canvas.getActiveObject();
+	            var shapeComponent = this._getComponent(components.SHAPE);
+
+	            if (!activeObj) {
+	                return;
+	            }
+
+	            shapeComponent.change(activeObj, options);
+	        }
+
+	        /**
+	         * End to draw shape on canvas (unbind event on canvas)
+	         * @example
+	         * imageEditor.startDrawingShapeMode();
+	         * imageEditor.endDrawingShapeMode();
+	         */
+
+	    }, {
+	        key: 'endDrawingShapeMode',
+	        value: function endDrawingShapeMode() {
+	            if (this.getCurrentState() === states.SHAPE) {
+	                this._getComponent(components.SHAPE).endDrawingMode();
+	                this._state = states.NORMAL;
+	            }
+	        }
+
+	        /**
+	         * Start text input mode
+	         * @example
+	         * imageEditor.endTextMode();
+	         * imageEditor.startTextMode();
+	         */
+
+	    }, {
+	        key: 'startTextMode',
+	        value: function startTextMode() {
+	            if (this.getCurrentState() !== states.TEXT) {
+	                this._state = states.TEXT;
+
+	                this._getComponent(components.TEXT).start({
+	                    mousedown: bind(this._onFabricMouseDown, this),
+	                    select: bind(this._onFabricSelect, this),
+	                    selectClear: bind(this._onFabricSelectClear, this),
+	                    dbclick: bind(this._onDBClick, this),
+	                    remove: this._handlers.removedObject
+	                });
+	            }
+	        }
+
+	        /**
+	         * Add text on image
+	         * @param {string} text - Initial input text
+	         * @param {object} [options] Options for generating text
+	         *     @param {object} [options.styles] Initial styles
+	         *         @param {string} [options.styles.fill] Color
+	         *         @param {string} [options.styles.fontFamily] Font type for text
+	         *         @param {number} [options.styles.fontSize] Size
+	         *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
+	         *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
+	         *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
+	         *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+	         *     @param {{x: number, y: number}} [options.position] - Initial position
+	         * @example
+	         * imageEditor.addText();
+	         * imageEditor.addText('init text', {
+	         *     styles: {
+	         *     fill: '#000',
+	         *         fontSize: '20',
+	         *         fontWeight: 'bold'
+	         *     },
+	         *     position: {
+	         *         x: 10,
+	         *         y: 10
+	         *     }
+	         * });
+	         */
+
+	    }, {
+	        key: 'addText',
+	        value: function addText(text, options) {
+	            if (this.getCurrentState() !== states.TEXT) {
+	                this._state = states.TEXT;
+	            }
+
+	            this._getComponent(components.TEXT).add(text || '', options || {});
+	        }
+
+	        /**
+	         * Change contents of selected text object on image
+	         * @param {string} text - Changing text
+	         * @example
+	         * imageEditor.changeText('change text');
+	         */
+
+	    }, {
+	        key: 'changeText',
+	        value: function changeText(text) {
+	            var activeObj = this._canvas.getActiveObject();
+
+	            if (this.getCurrentState() !== states.TEXT || !activeObj) {
+	                return;
+	            }
+
+	            this._getComponent(components.TEXT).change(activeObj, text);
+	        }
+
+	        /**
+	         * Set style
+	         * @param {object} styleObj - Initial styles
+	         *     @param {string} [styleObj.fill] Color
+	         *     @param {string} [styleObj.fontFamily] Font type for text
+	         *     @param {number} [styleObj.fontSize] Size
+	         *     @param {string} [styleObj.fontStyle] Type of inclination (normal / italic)
+	         *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
+	         *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
+	         *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
+	         * @example
+	         * imageEditor.changeTextStyle({
+	         *     fontStyle: 'italic'
+	         * });
+	         */
+
+	    }, {
+	        key: 'changeTextStyle',
+	        value: function changeTextStyle(styleObj) {
+	            var activeObj = this._canvas.getActiveObject();
+
+	            if (this.getCurrentState() !== states.TEXT || !activeObj) {
+	                return;
+	            }
+
+	            this._getComponent(components.TEXT).setStyle(activeObj, styleObj);
+	        }
+
+	        /**
+	         * End text input mode
+	         * @example
+	         * imageEditor.startTextMode();
+	         * imageEditor.endTextMode();
+	         */
+
+	    }, {
+	        key: 'endTextMode',
+	        value: function endTextMode() {
+	            if (this.getCurrentState() !== states.TEXT) {
+	                return;
+	            }
+
+	            this._state = states.NORMAL;
+
+	            this._getComponent(components.TEXT).end();
+	        }
+
+	        /**
+	         * Double click event handler
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onDBClick',
+	        value: function _onDBClick() {
+	            /**
+	             * @event ImageEditor#editText
+	             * @example
+	             * imageEditor.on('editText', function(obj) {
+	             *     console.log('text object: ' + obj);
+	             * });
+	             */
+	            this.fire(events.EDIT_TEXT);
+	        }
+
+	        /**
+	         * Mousedown event handler
+	         * @param {fabric.Event} event - Current mousedown event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseDown',
+	        value: function _onFabricMouseDown(event) {
+	            // eslint-disable-line
+	            var obj = event.target;
+	            var e = event.e || {};
+	            var originPointer = this._canvas.getPointer(e);
+	            var textComp = this._getComponent(components.TEXT);
+
+	            if (obj && !obj.isType('text')) {
+	                return;
+	            }
+
+	            if (textComp.isPrevEditing) {
+	                textComp.isPrevEditing = false;
+
+	                return;
+	            }
+
+	            /**
+	             * @event ImageEditor#activateText
+	             * @param {object} options
+	             *     @param {boolean} options.type - Type of text object (new / select)
+	             *     @param {string} options.text - Current text
+	             *     @param {object} options.styles - Current styles
+	             *         @param {string} options.styles.fill - Color
+	             *         @param {string} options.styles.fontFamily - Font type for text
+	             *         @param {number} options.styles.fontSize - Size
+	             *         @param {string} options.styles.fontStyle - Type of inclination (normal / italic)
+	             *         @param {string} options.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
+	             *         @param {string} options.styles.textAlign - Type of text align (left / center / right)
+	             *         @param {string} options.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
+	             *     @param {{x: number, y: number}} options.originPosition - Current position on origin canvas
+	             *     @param {{x: number, y: number}} options.clientPosition - Current position on client area
+	             * @example
+	             * imageEditor.on('activateText', function(obj) {
+	             *     console.log('text object type: ' + obj.type);
+	             *     console.log('text contents: ' + obj.text);
+	             *     console.log('text styles: ' + obj.styles);
+	             *     console.log('text position on canvas: ' + obj.originPosition);
+	             *     console.log('text position on brwoser: ' + obj.clientPosition);
+	             * });
+	             */
+	            this.fire(events.ACTIVATE_TEXT, {
+	                type: obj ? 'select' : 'new',
+	                text: obj ? obj.text : '',
+	                styles: obj ? {
+	                    fill: obj.fill,
+	                    fontFamily: obj.fontFamily,
+	                    fontSize: obj.fontSize,
+	                    fontStyle: obj.fontStyle,
+	                    textAlign: obj.textAlign,
+	                    textDecoration: obj.textDecoration
+	                } : {},
+	                originPosition: {
+	                    x: originPointer.x,
+	                    y: originPointer.y
+	                },
+	                clientPosition: {
+	                    x: e.clientX || 0,
+	                    y: e.clientY || 0
+	                }
+	            });
+	        }
+
+	        /**
+	         * Register custom icons
+	         * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
+	         * @example
+	         * imageEditor.registerIcons({
+	         *     customIcon: 'M 0 0 L 20 20 L 10 10 Z',
+	         *     customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
+	         * });
+	         */
+
+	    }, {
+	        key: 'registerIcons',
+	        value: function registerIcons(infos) {
+	            this._getComponent(components.ICON).registerPaths(infos);
+	        }
+
+	        /**
+	         * Add icon on canvas
+	         * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
+	         * @param {object} options - Icon options
+	         *      @param {string} [options.fill] - Icon foreground color
+	         *      @param {string} [options.left] - Icon x position
+	         *      @param {string} [options.top] - Icon y position
+	         * @example
+	         * imageEditor.addIcon('arrow'); // The position is center on canvas
+	         * imageEditor.addIcon('arrow', {
+	         *     left: 100,
+	         *     top: 100
+	         * });
+	         */
+
+	    }, {
+	        key: 'addIcon',
+	        value: function addIcon(type, options) {
+	            options = options || {};
+
+	            this._setPositions(options);
+	            this._getComponent(components.ICON).add(type, options);
+	        }
+
+	        /**
+	         * Change icon color
+	         * @param {string} color - Color for icon
+	         * @example
+	         * imageEditor.changeIconColor('#000000');
+	         */
+
+	    }, {
+	        key: 'changeIconColor',
+	        value: function changeIconColor(color) {
+	            var activeObj = this._canvas.getActiveObject();
+
+	            this._getComponent(components.ICON).setColor(color, activeObj);
+	        }
+
+	        /**
+	         * Remove active object or group
+	         * @example
+	         * imageEditor.removeActiveObject();
+	         */
+
+	    }, {
+	        key: 'removeActiveObject',
+	        value: function removeActiveObject() {
+	            var canvas = this._canvas;
+	            var target = canvas.getActiveObject() || canvas.getActiveGroup();
+	            var command = _command2.default.create(commands.REMOVE_OBJECT, target);
+	            this.execute(command);
+	        }
+
+	        /**
+	         * Apply filter on canvas image
+	         * @param {string} type - Filter type (current filter type is only 'mask')
+	         * @param {options} options - Options to apply filter
+	         * @example
+	         * imageEditor.applyFilter('mask');
+	         * imageEditor.applyFilter('mask', {
+	         *     mask: fabricImgObj
+	         * });
+	         */
+
+	    }, {
+	        key: 'applyFilter',
+	        value: function applyFilter(type, options) {
+	            var _this4 = this;
+
+	            if (type === 'mask' && !options) {
+	                var activeObj = this._canvas.getActiveObject();
+
+	                if (!(activeObj && activeObj.isType('image'))) {
+	                    return;
+	                }
+
+	                options = {
+	                    mask: activeObj
+	                };
+	            }
+
+	            var command = _command2.default.create(commands.APPLY_FILTER, type, options);
+	            var callback = function callback(obj) {
+	                _this4.fire(events.APPLY_FILTER, obj.type, obj.action);
+	            };
+
+	            /**
+	             * @event ImageEditor#applyFilter
+	             * @param {string} filterType - Applied filter
+	             * @param {string} actType - Action type (add / remove)
+	             * @example
+	             * imageEditor.on('applyFilter', function(filterType, actType) {
+	             *     console.log('filterType: ', filterType);
+	             *     console.log('actType: ', actType);
+	             * });
+	             */
+	            command.setExecuteCallback(callback).setUndoCallback(callback);
+
+	            this.execute(command);
+	        }
+
+	        /**
+	         * Get data url
+	         * @param {string} type - A DOMString indicating the image format. The default type is image/png.
+	         * @returns {string} A DOMString containing the requested data URI
+	         * @example
+	         * imgEl.src = imageEditor.toDataURL();
+	         */
+
+	    }, {
+	        key: 'toDataURL',
+	        value: function toDataURL(type) {
+	            return this._getMainComponent().toDataURL(type);
+	        }
+
+	        /**
+	         * Get image name
+	         * @returns {string} image name
+	         * @example
+	         * console.log(imageEditor.getImageName());
+	         */
+
+	    }, {
+	        key: 'getImageName',
+	        value: function getImageName() {
+	            return this._getMainComponent().getImageName();
+	        }
+
+	        /**
+	         * Clear undoStack
+	         * @example
+	         * imageEditor.clearUndoStack();
+	         */
+
+	    }, {
+	        key: 'clearUndoStack',
+	        value: function clearUndoStack() {
+	            this._invoker.clearUndoStack();
+	        }
+
+	        /**
+	         * Clear redoStack
+	         * @example
+	         * imageEditor.clearRedoStack();
+	         */
+
+	    }, {
+	        key: 'clearRedoStack',
+	        value: function clearRedoStack() {
+	            this._invoker.clearRedoStack();
+	        }
+
+	        /**
+	         * Whehter the undo stack is empty or not
+	         * @returns {boolean}
+	         * imageEditor.isEmptyUndoStack();
+	         */
+
+	    }, {
+	        key: 'isEmptyUndoStack',
+	        value: function isEmptyUndoStack() {
+	            return this._invoker.isEmptyUndoStack();
+	        }
+
+	        /**
+	         * Whehter the redo stack is empty or not
+	         * @returns {boolean}
+	         * imageEditor.isEmptyRedoStack();
+	         */
+
+	    }, {
+	        key: 'isEmptyRedoStack',
+	        value: function isEmptyRedoStack() {
+	            return this._invoker.isEmptyRedoStack();
+	        }
+
+	        /**
+	         * Resize canvas dimension
+	         * @param {{width: number, height: number}} dimension - Max width & height
+	         */
+
+	    }, {
+	        key: 'resizeCanvasDimension',
+	        value: function resizeCanvasDimension(dimension) {
+	            var mainComponent = this._getMainComponent();
+
+	            if (!dimension) {
+	                return;
+	            }
+
+	            mainComponent.setCssMaxDimension(dimension);
+	            mainComponent.adjustCanvasDimension();
+	        }
+
+	        /**
+	         * Destroy
+	         */
+
+	    }, {
+	        key: 'destroy',
+	        value: function destroy() {
+	            var _this5 = this;
+
+	            var wrapperEl = this._canvas.wrapperEl;
+
+	            this.endAll();
+	            this._detachDomEvents();
+
+	            this._canvas.clear();
+
+	            wrapperEl.parentNode.removeChild(wrapperEl);
+
+	            forEach(this, function (value, key) {
+	                _this5[key] = null;
+	            }, this);
+	        }
+
+	        /**
+	         * Set position
+	         * @param {object} options - Position options (left or top)
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setPositions',
+	        value: function _setPositions(options) {
+	            var centerPosition = this._canvas.getCenter();
+
+	            if (isUndefined(options.left)) {
+	                options.left = centerPosition.left;
+	            }
+
+	            if (isUndefined(options.top)) {
+	                options.top = centerPosition.top;
+	            }
+	        }
+	    }]);
+
+	    return ImageEditor;
+	}();
 
 	tui.util.CustomEvents.mixin(ImageEditor);
 	module.exports = ImageEditor;
-
 
 /***/ },
 /* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Invoker - invoke commands
-	 */
 	'use strict';
 
-	var ImageLoader = __webpack_require__(3);
-	var Cropper = __webpack_require__(7);
-	var MainComponent = __webpack_require__(9);
-	var Flip = __webpack_require__(10);
-	var Rotation = __webpack_require__(11);
-	var FreeDrawing = __webpack_require__(12);
-	var Line = __webpack_require__(13);
-	var Text = __webpack_require__(14);
-	var Icon = __webpack_require__(15);
-	var Filter = __webpack_require__(16);
-	var Shape = __webpack_require__(18);
-	var eventNames = __webpack_require__(5).eventNames;
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Invoker - invoke commands
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+	var _promise = __webpack_require__(3);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _imageLoader = __webpack_require__(67);
+
+	var _imageLoader2 = _interopRequireDefault(_imageLoader);
+
+	var _cropper = __webpack_require__(71);
+
+	var _cropper2 = _interopRequireDefault(_cropper);
+
+	var _main = __webpack_require__(73);
+
+	var _main2 = _interopRequireDefault(_main);
+
+	var _flip = __webpack_require__(74);
+
+	var _flip2 = _interopRequireDefault(_flip);
+
+	var _rotation = __webpack_require__(75);
+
+	var _rotation2 = _interopRequireDefault(_rotation);
+
+	var _freeDrawing = __webpack_require__(76);
+
+	var _freeDrawing2 = _interopRequireDefault(_freeDrawing);
+
+	var _line = __webpack_require__(77);
+
+	var _line2 = _interopRequireDefault(_line);
+
+	var _text = __webpack_require__(78);
+
+	var _text2 = _interopRequireDefault(_text);
+
+	var _icon = __webpack_require__(79);
+
+	var _icon2 = _interopRequireDefault(_icon);
+
+	var _filter = __webpack_require__(80);
+
+	var _filter2 = _interopRequireDefault(_filter);
+
+	var _shape = __webpack_require__(82);
+
+	var _shape2 = _interopRequireDefault(_shape);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var eventNames = _consts2.default.eventNames,
+	    rejectMessages = _consts2.default.rejectMessages;
 
 	/**
 	 * Invoker
 	 * @class
 	 * @ignore
 	 */
-	var Invoker = tui.util.defineClass(/** @lends Invoker.prototype */{
-	    init: function() {
+
+	var Invoker = function () {
+	    function Invoker() {
+	        _classCallCheck(this, Invoker);
+
 	        /**
 	         * Custom Events
 	         * @type {tui.util.CustomEvents}
@@ -1564,263 +1846,1820 @@
 	        this._isLocked = false;
 
 	        this._createComponents();
-	    },
+	    }
 
 	    /**
 	     * Create components
 	     * @private
 	     */
-	    _createComponents: function() {
-	        var main = new MainComponent();
 
-	        this._register(main);
-	        this._register(new ImageLoader(main));
-	        this._register(new Cropper(main));
-	        this._register(new Flip(main));
-	        this._register(new Rotation(main));
-	        this._register(new FreeDrawing(main));
-	        this._register(new Line(main));
-	        this._register(new Text(main));
-	        this._register(new Icon(main));
-	        this._register(new Filter(main));
-	        this._register(new Shape(main));
-	    },
 
-	    /**
-	     * Register component
-	     * @param {Component} component - Component handling the canvas
-	     * @private
-	     */
-	    _register: function(component) {
-	        this._componentMap[component.getName()] = component;
-	    },
+	    _createClass(Invoker, [{
+	        key: '_createComponents',
+	        value: function _createComponents() {
+	            var main = new _main2.default();
 
-	    /**
-	     * Invoke command execution
-	     * @param {Command} command - Command
-	     * @returns {jQuery.Deferred}
-	     * @private
-	     */
-	    _invokeExecution: function(command) {
-	        var self = this;
-
-	        this.lock();
-
-	        return $.when(command.execute(this._componentMap))
-	            .done(function() {
-	                self.pushUndoStack(command);
-	            })
-	            .done(command.executeCallback)
-	            .always(function() {
-	                self.unlock();
-	            });
-	    },
-
-	    /**
-	     * Invoke command undo
-	     * @param {Command} command - Command
-	     * @returns {jQuery.Deferred}
-	     * @private
-	     */
-	    _invokeUndo: function(command) {
-	        var self = this;
-
-	        this.lock();
-
-	        return $.when(command.undo(this._componentMap))
-	            .done(function() {
-	                self.pushRedoStack(command);
-	            })
-	            .done(command.undoCallback)
-	            .always(function() {
-	                self.unlock();
-	            });
-	    },
-
-	    /**
-	     * Fire custom events
-	     * @see {@link tui.util.CustomEvents.prototype.fire}
-	     * @param {...*} arguments - Arguments to fire a event
-	     * @private
-	     */
-	    _fire: function() {
-	        var event = this._customEvents;
-	        event.fire.apply(event, arguments);
-	    },
-
-	    /**
-	     * Attach custom events
-	     * @see {@link tui.util.CustomEvents.prototype.on}
-	     * @param {...*} arguments - Arguments to attach events
-	     */
-	    on: function() {
-	        var event = this._customEvents;
-	        event.on.apply(event, arguments);
-	    },
-
-	    /**
-	     * Get component
-	     * @param {string} name - Component name
-	     * @returns {Component}
-	     */
-	    getComponent: function(name) {
-	        return this._componentMap[name];
-	    },
-
-	    /**
-	     * Lock this invoker
-	     */
-	    lock: function() {
-	        this._isLocked = true;
-	    },
-
-	    /**
-	     * Unlock this invoker
-	     */
-	    unlock: function() {
-	        this._isLocked = false;
-	    },
-
-	    /**
-	     * Invoke command
-	     * Store the command to the undoStack
-	     * Clear the redoStack
-	     * @param {Command} command - Command
-	     * @returns {jQuery.Deferred}
-	     */
-	    invoke: function(command) {
-	        if (this._isLocked) {
-	            return $.Deferred.reject();
+	            this._register(main);
+	            this._register(new _imageLoader2.default(main));
+	            this._register(new _cropper2.default(main));
+	            this._register(new _flip2.default(main));
+	            this._register(new _rotation2.default(main));
+	            this._register(new _freeDrawing2.default(main));
+	            this._register(new _line2.default(main));
+	            this._register(new _text2.default(main));
+	            this._register(new _icon2.default(main));
+	            this._register(new _filter2.default(main));
+	            this._register(new _shape2.default(main));
 	        }
 
-	        return this._invokeExecution(command)
-	            .done($.proxy(this.clearRedoStack, this));
-	    },
+	        /**
+	         * Register component
+	         * @param {Component} component - Component handling the canvas
+	         * @private
+	         */
 
-	    /**
-	     * Undo command
-	     * @returns {jQuery.Deferred}
-	     */
-	    undo: function() {
-	        var command = this._undoStack.pop();
-	        var jqDefer;
-
-	        if (command && this._isLocked) {
-	            this.pushUndoStack(command, true);
-	            command = null;
+	    }, {
+	        key: '_register',
+	        value: function _register(component) {
+	            this._componentMap[component.getName()] = component;
 	        }
-	        if (command) {
-	            if (this.isEmptyUndoStack()) {
+
+	        /**
+	         * Invoke command execution
+	         * @param {Command} command - Command
+	         * @returns {Promise}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_invokeExecution',
+	        value: function _invokeExecution(command) {
+	            var _this = this;
+
+	            this.lock();
+
+	            return command.execute(this._componentMap).then(function (value) {
+	                _this.pushUndoStack(command);
+	                if (tui.util.isFunction(command.executeCallback)) {
+	                    command.executeCallback(value);
+	                }
+
+	                return value;
+	            }).catch(function () {}) // do nothing with exception
+	            .then(function (value) {
+	                _this.unlock();
+
+	                return value;
+	            });
+	        }
+
+	        /**
+	         * Invoke command undo
+	         * @param {Command} command - Command
+	         * @returns {Promise}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_invokeUndo',
+	        value: function _invokeUndo(command) {
+	            var _this2 = this;
+
+	            this.lock();
+
+	            return command.undo(this._componentMap).then(function (value) {
+	                _this2.pushRedoStack(command);
+	                if (tui.util.isFunction(command.undoCallback)) {
+	                    command.undoCallback(value);
+	                }
+
+	                return value;
+	            }).catch(function () {}) // do nothing with exception
+	            .then(function (value) {
+	                _this2.unlock();
+
+	                return value;
+	            });
+	        }
+
+	        /**
+	         * Fire custom events
+	         * @see {@link tui.util.CustomEvents.prototype.fire}
+	         * @param {...*} arguments - Arguments to fire a event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_fire',
+	        value: function _fire() {
+	            var event = this._customEvents;
+	            var eventContext = event;
+
+	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	                args[_key] = arguments[_key];
+	            }
+
+	            event.fire.apply(eventContext, args);
+	        }
+
+	        /**
+	         * Attach custom events
+	         * @see {@link tui.util.CustomEvents.prototype.on}
+	         * @param {...*} arguments - Arguments to attach events
+	         */
+
+	    }, {
+	        key: 'on',
+	        value: function on() {
+	            var event = this._customEvents;
+	            var eventContext = event;
+
+	            for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+	                args[_key2] = arguments[_key2];
+	            }
+
+	            event.on.apply(eventContext, args);
+	        }
+
+	        /**
+	         * Get component
+	         * @param {string} name - Component name
+	         * @returns {Component}
+	         */
+
+	    }, {
+	        key: 'getComponent',
+	        value: function getComponent(name) {
+	            return this._componentMap[name];
+	        }
+
+	        /**
+	         * Lock this invoker
+	         */
+
+	    }, {
+	        key: 'lock',
+	        value: function lock() {
+	            this._isLocked = true;
+	        }
+
+	        /**
+	         * Unlock this invoker
+	         */
+
+	    }, {
+	        key: 'unlock',
+	        value: function unlock() {
+	            this._isLocked = false;
+	        }
+
+	        /**
+	         * Invoke command
+	         * Store the command to the undoStack
+	         * Clear the redoStack
+	         * @param {Command} command - Command
+	         * @returns {Promise}
+	         */
+
+	    }, {
+	        key: 'invoke',
+	        value: function invoke(command) {
+	            var _this3 = this;
+
+	            if (this._isLocked) {
+	                return _promise2.default.reject(rejectMessages.isLock);
+	            }
+
+	            return this._invokeExecution(command).then(function (value) {
+	                _this3.clearRedoStack();
+
+	                return value;
+	            });
+	        }
+
+	        /**
+	         * Undo command
+	         * @returns {Promise}
+	         */
+
+	    }, {
+	        key: 'undo',
+	        value: function undo() {
+	            var command = this._undoStack.pop();
+	            var promise = void 0;
+
+	            if (command && this._isLocked) {
+	                this.pushUndoStack(command, true);
+	                command = null;
+	            }
+	            if (command) {
+	                if (this.isEmptyUndoStack()) {
+	                    this._fire(eventNames.EMPTY_UNDO_STACK);
+	                }
+	                promise = this._invokeUndo(command);
+	            } else {
+	                promise = _promise2.default.reject(rejectMessages.undo);
+	            }
+
+	            return promise;
+	        }
+
+	        /**
+	         * Redo command
+	         * @returns {Promise}
+	         */
+
+	    }, {
+	        key: 'redo',
+	        value: function redo() {
+	            var command = this._redoStack.pop();
+	            var promise = void 0;
+
+	            if (command && this._isLocked) {
+	                this.pushRedoStack(command, true);
+	                command = null;
+	            }
+	            if (command) {
+	                if (this.isEmptyRedoStack()) {
+	                    this._fire(eventNames.EMPTY_REDO_STACK);
+	                }
+	                promise = this._invokeExecution(command);
+	            } else {
+	                promise = _promise2.default.reject(rejectMessages.redo);
+	            }
+
+	            return promise;
+	        }
+
+	        /**
+	         * Push undo stack
+	         * @param {Command} command - command
+	         * @param {boolean} [isSilent] - Fire event or not
+	         */
+
+	    }, {
+	        key: 'pushUndoStack',
+	        value: function pushUndoStack(command, isSilent) {
+	            this._undoStack.push(command);
+	            if (!isSilent) {
+	                this._fire(eventNames.PUSH_UNDO_STACK);
+	            }
+	        }
+
+	        /**
+	         * Push redo stack
+	         * @param {Command} command - command
+	         * @param {boolean} [isSilent] - Fire event or not
+	         */
+
+	    }, {
+	        key: 'pushRedoStack',
+	        value: function pushRedoStack(command, isSilent) {
+	            this._redoStack.push(command);
+	            if (!isSilent) {
+	                this._fire(eventNames.PUSH_REDO_STACK);
+	            }
+	        }
+
+	        /**
+	         * Return whether the redoStack is empty
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: 'isEmptyRedoStack',
+	        value: function isEmptyRedoStack() {
+	            return this._redoStack.length === 0;
+	        }
+
+	        /**
+	         * Return whether the undoStack is empty
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: 'isEmptyUndoStack',
+	        value: function isEmptyUndoStack() {
+	            return this._undoStack.length === 0;
+	        }
+
+	        /**
+	         * Clear undoStack
+	         */
+
+	    }, {
+	        key: 'clearUndoStack',
+	        value: function clearUndoStack() {
+	            if (!this.isEmptyUndoStack()) {
+	                this._undoStack = [];
 	                this._fire(eventNames.EMPTY_UNDO_STACK);
 	            }
-	            jqDefer = this._invokeUndo(command);
-	        } else {
-	            jqDefer = $.Deferred().reject();
 	        }
 
-	        return jqDefer;
-	    },
+	        /**
+	         * Clear redoStack
+	         */
 
-	    /**
-	     * Redo command
-	     * @returns {jQuery.Deferred}
-	     */
-	    redo: function() {
-	        var command = this._redoStack.pop();
-	        var jqDefer;
-
-	        if (command && this._isLocked) {
-	            this.pushRedoStack(command, true);
-	            command = null;
-	        }
-	        if (command) {
-	            if (this.isEmptyRedoStack()) {
+	    }, {
+	        key: 'clearRedoStack',
+	        value: function clearRedoStack() {
+	            if (!this.isEmptyRedoStack()) {
+	                this._redoStack = [];
 	                this._fire(eventNames.EMPTY_REDO_STACK);
 	            }
-	            jqDefer = this._invokeExecution(command);
-	        } else {
-	            jqDefer = $.Deferred().reject();
 	        }
+	    }]);
 
-	        return jqDefer;
-	    },
-
-	    /**
-	     * Push undo stack
-	     * @param {Command} command - command
-	     * @param {boolean} [isSilent] - Fire event or not
-	     */
-	    pushUndoStack: function(command, isSilent) {
-	        this._undoStack.push(command);
-	        if (!isSilent) {
-	            this._fire(eventNames.PUSH_UNDO_STACK);
-	        }
-	    },
-
-	    /**
-	     * Push redo stack
-	     * @param {Command} command - command
-	     * @param {boolean} [isSilent] - Fire event or not
-	     */
-	    pushRedoStack: function(command, isSilent) {
-	        this._redoStack.push(command);
-	        if (!isSilent) {
-	            this._fire(eventNames.PUSH_REDO_STACK);
-	        }
-	    },
-
-	    /**
-	     * Return whether the redoStack is empty
-	     * @returns {boolean}
-	     */
-	    isEmptyRedoStack: function() {
-	        return this._redoStack.length === 0;
-	    },
-
-	    /**
-	     * Return whether the undoStack is empty
-	     * @returns {boolean}
-	     */
-	    isEmptyUndoStack: function() {
-	        return this._undoStack.length === 0;
-	    },
-
-	    /**
-	     * Clear undoStack
-	     */
-	    clearUndoStack: function() {
-	        if (!this.isEmptyUndoStack()) {
-	            this._undoStack = [];
-	            this._fire(eventNames.EMPTY_UNDO_STACK);
-	        }
-	    },
-
-	    /**
-	     * Clear redoStack
-	     */
-	    clearRedoStack: function() {
-	        if (!this.isEmptyRedoStack()) {
-	            this._redoStack = [];
-	            this._fire(eventNames.EMPTY_REDO_STACK);
-	        }
-	    }
-	});
+	    return Invoker;
+	}();
 
 	module.exports = Invoker;
-
 
 /***/ },
 /* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Image loader
-	 */
+	__webpack_require__(4);
+	__webpack_require__(5);
+	__webpack_require__(49);
+	__webpack_require__(53);
+	module.exports = __webpack_require__(13).Promise;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var $at  = __webpack_require__(6)(true);
+
+	// 21.1.3.27 String.prototype[@@iterator]()
+	__webpack_require__(9)(String, 'String', function(iterated){
+	  this._t = String(iterated); // target
+	  this._i = 0;                // next index
+	// 21.1.5.2.1 %StringIteratorPrototype%.next()
+	}, function(){
+	  var O     = this._t
+	    , index = this._i
+	    , point;
+	  if(index >= O.length)return {value: undefined, done: true};
+	  point = $at(O, index);
+	  this._i += point.length;
+	  return {value: point, done: false};
+	});
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var toInteger = __webpack_require__(7)
+	  , defined   = __webpack_require__(8);
+	// true  -> String#at
+	// false -> String#codePointAt
+	module.exports = function(TO_STRING){
+	  return function(that, pos){
+	    var s = String(defined(that))
+	      , i = toInteger(pos)
+	      , l = s.length
+	      , a, b;
+	    if(i < 0 || i >= l)return TO_STRING ? '' : undefined;
+	    a = s.charCodeAt(i);
+	    return a < 0xd800 || a > 0xdbff || i + 1 === l || (b = s.charCodeAt(i + 1)) < 0xdc00 || b > 0xdfff
+	      ? TO_STRING ? s.charAt(i) : a
+	      : TO_STRING ? s.slice(i, i + 2) : (a - 0xd800 << 10) + (b - 0xdc00) + 0x10000;
+	  };
+	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	// 7.1.4 ToInteger
+	var ceil  = Math.ceil
+	  , floor = Math.floor;
+	module.exports = function(it){
+	  return isNaN(it = +it) ? 0 : (it > 0 ? floor : ceil)(it);
+	};
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	// 7.2.1 RequireObjectCoercible(argument)
+	module.exports = function(it){
+	  if(it == undefined)throw TypeError("Can't call method on  " + it);
+	  return it;
+	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var LIBRARY        = __webpack_require__(10)
+	  , $export        = __webpack_require__(11)
+	  , redefine       = __webpack_require__(26)
+	  , hide           = __webpack_require__(16)
+	  , has            = __webpack_require__(27)
+	  , Iterators      = __webpack_require__(28)
+	  , $iterCreate    = __webpack_require__(29)
+	  , setToStringTag = __webpack_require__(45)
+	  , getPrototypeOf = __webpack_require__(47)
+	  , ITERATOR       = __webpack_require__(46)('iterator')
+	  , BUGGY          = !([].keys && 'next' in [].keys()) // Safari has buggy iterators w/o `next`
+	  , FF_ITERATOR    = '@@iterator'
+	  , KEYS           = 'keys'
+	  , VALUES         = 'values';
+
+	var returnThis = function(){ return this; };
+
+	module.exports = function(Base, NAME, Constructor, next, DEFAULT, IS_SET, FORCED){
+	  $iterCreate(Constructor, NAME, next);
+	  var getMethod = function(kind){
+	    if(!BUGGY && kind in proto)return proto[kind];
+	    switch(kind){
+	      case KEYS: return function keys(){ return new Constructor(this, kind); };
+	      case VALUES: return function values(){ return new Constructor(this, kind); };
+	    } return function entries(){ return new Constructor(this, kind); };
+	  };
+	  var TAG        = NAME + ' Iterator'
+	    , DEF_VALUES = DEFAULT == VALUES
+	    , VALUES_BUG = false
+	    , proto      = Base.prototype
+	    , $native    = proto[ITERATOR] || proto[FF_ITERATOR] || DEFAULT && proto[DEFAULT]
+	    , $default   = $native || getMethod(DEFAULT)
+	    , $entries   = DEFAULT ? !DEF_VALUES ? $default : getMethod('entries') : undefined
+	    , $anyNative = NAME == 'Array' ? proto.entries || $native : $native
+	    , methods, key, IteratorPrototype;
+	  // Fix native
+	  if($anyNative){
+	    IteratorPrototype = getPrototypeOf($anyNative.call(new Base));
+	    if(IteratorPrototype !== Object.prototype){
+	      // Set @@toStringTag to native iterators
+	      setToStringTag(IteratorPrototype, TAG, true);
+	      // fix for some old engines
+	      if(!LIBRARY && !has(IteratorPrototype, ITERATOR))hide(IteratorPrototype, ITERATOR, returnThis);
+	    }
+	  }
+	  // fix Array#{values, @@iterator}.name in V8 / FF
+	  if(DEF_VALUES && $native && $native.name !== VALUES){
+	    VALUES_BUG = true;
+	    $default = function values(){ return $native.call(this); };
+	  }
+	  // Define iterator
+	  if((!LIBRARY || FORCED) && (BUGGY || VALUES_BUG || !proto[ITERATOR])){
+	    hide(proto, ITERATOR, $default);
+	  }
+	  // Plug for library
+	  Iterators[NAME] = $default;
+	  Iterators[TAG]  = returnThis;
+	  if(DEFAULT){
+	    methods = {
+	      values:  DEF_VALUES ? $default : getMethod(VALUES),
+	      keys:    IS_SET     ? $default : getMethod(KEYS),
+	      entries: $entries
+	    };
+	    if(FORCED)for(key in methods){
+	      if(!(key in proto))redefine(proto, key, methods[key]);
+	    } else $export($export.P + $export.F * (BUGGY || VALUES_BUG), NAME, methods);
+	  }
+	  return methods;
+	};
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = true;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global    = __webpack_require__(12)
+	  , core      = __webpack_require__(13)
+	  , ctx       = __webpack_require__(14)
+	  , hide      = __webpack_require__(16)
+	  , PROTOTYPE = 'prototype';
+
+	var $export = function(type, name, source){
+	  var IS_FORCED = type & $export.F
+	    , IS_GLOBAL = type & $export.G
+	    , IS_STATIC = type & $export.S
+	    , IS_PROTO  = type & $export.P
+	    , IS_BIND   = type & $export.B
+	    , IS_WRAP   = type & $export.W
+	    , exports   = IS_GLOBAL ? core : core[name] || (core[name] = {})
+	    , expProto  = exports[PROTOTYPE]
+	    , target    = IS_GLOBAL ? global : IS_STATIC ? global[name] : (global[name] || {})[PROTOTYPE]
+	    , key, own, out;
+	  if(IS_GLOBAL)source = name;
+	  for(key in source){
+	    // contains in native
+	    own = !IS_FORCED && target && target[key] !== undefined;
+	    if(own && key in exports)continue;
+	    // export native or passed
+	    out = own ? target[key] : source[key];
+	    // prevent global pollution for namespaces
+	    exports[key] = IS_GLOBAL && typeof target[key] != 'function' ? source[key]
+	    // bind timers to global for call from export context
+	    : IS_BIND && own ? ctx(out, global)
+	    // wrap global constructors for prevent change them in library
+	    : IS_WRAP && target[key] == out ? (function(C){
+	      var F = function(a, b, c){
+	        if(this instanceof C){
+	          switch(arguments.length){
+	            case 0: return new C;
+	            case 1: return new C(a);
+	            case 2: return new C(a, b);
+	          } return new C(a, b, c);
+	        } return C.apply(this, arguments);
+	      };
+	      F[PROTOTYPE] = C[PROTOTYPE];
+	      return F;
+	    // make static versions for prototype methods
+	    })(out) : IS_PROTO && typeof out == 'function' ? ctx(Function.call, out) : out;
+	    // export proto methods to core.%CONSTRUCTOR%.methods.%NAME%
+	    if(IS_PROTO){
+	      (exports.virtual || (exports.virtual = {}))[key] = out;
+	      // export proto methods to core.%CONSTRUCTOR%.prototype.%NAME%
+	      if(type & $export.R && expProto && !expProto[key])hide(expProto, key, out);
+	    }
+	  }
+	};
+	// type bitmap
+	$export.F = 1;   // forced
+	$export.G = 2;   // global
+	$export.S = 4;   // static
+	$export.P = 8;   // proto
+	$export.B = 16;  // bind
+	$export.W = 32;  // wrap
+	$export.U = 64;  // safe
+	$export.R = 128; // real proto method for `library` 
+	module.exports = $export;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
+	var global = module.exports = typeof window != 'undefined' && window.Math == Math
+	  ? window : typeof self != 'undefined' && self.Math == Math ? self : Function('return this')();
+	if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	var core = module.exports = {version: '2.4.0'};
+	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// optional / simple context binding
+	var aFunction = __webpack_require__(15);
+	module.exports = function(fn, that, length){
+	  aFunction(fn);
+	  if(that === undefined)return fn;
+	  switch(length){
+	    case 1: return function(a){
+	      return fn.call(that, a);
+	    };
+	    case 2: return function(a, b){
+	      return fn.call(that, a, b);
+	    };
+	    case 3: return function(a, b, c){
+	      return fn.call(that, a, b, c);
+	    };
+	  }
+	  return function(/* ...args */){
+	    return fn.apply(that, arguments);
+	  };
+	};
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = function(it){
+	  if(typeof it != 'function')throw TypeError(it + ' is not a function!');
+	  return it;
+	};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var dP         = __webpack_require__(17)
+	  , createDesc = __webpack_require__(25);
+	module.exports = __webpack_require__(21) ? function(object, key, value){
+	  return dP.f(object, key, createDesc(1, value));
+	} : function(object, key, value){
+	  object[key] = value;
+	  return object;
+	};
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var anObject       = __webpack_require__(18)
+	  , IE8_DOM_DEFINE = __webpack_require__(20)
+	  , toPrimitive    = __webpack_require__(24)
+	  , dP             = Object.defineProperty;
+
+	exports.f = __webpack_require__(21) ? Object.defineProperty : function defineProperty(O, P, Attributes){
+	  anObject(O);
+	  P = toPrimitive(P, true);
+	  anObject(Attributes);
+	  if(IE8_DOM_DEFINE)try {
+	    return dP(O, P, Attributes);
+	  } catch(e){ /* empty */ }
+	  if('get' in Attributes || 'set' in Attributes)throw TypeError('Accessors not supported!');
+	  if('value' in Attributes)O[P] = Attributes.value;
+	  return O;
+	};
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(19);
+	module.exports = function(it){
+	  if(!isObject(it))throw TypeError(it + ' is not an object!');
+	  return it;
+	};
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = function(it){
+	  return typeof it === 'object' ? it !== null : typeof it === 'function';
+	};
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = !__webpack_require__(21) && !__webpack_require__(22)(function(){
+	  return Object.defineProperty(__webpack_require__(23)('div'), 'a', {get: function(){ return 7; }}).a != 7;
+	});
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Thank's IE8 for his funny defineProperty
+	module.exports = !__webpack_require__(22)(function(){
+	  return Object.defineProperty({}, 'a', {get: function(){ return 7; }}).a != 7;
+	});
+
+/***/ },
+/* 22 */
+/***/ function(module, exports) {
+
+	module.exports = function(exec){
+	  try {
+	    return !!exec();
+	  } catch(e){
+	    return true;
+	  }
+	};
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(19)
+	  , document = __webpack_require__(12).document
+	  // in old IE typeof document.createElement is 'object'
+	  , is = isObject(document) && isObject(document.createElement);
+	module.exports = function(it){
+	  return is ? document.createElement(it) : {};
+	};
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.1.1 ToPrimitive(input [, PreferredType])
+	var isObject = __webpack_require__(19);
+	// instead of the ES6 spec version, we didn't implement @@toPrimitive case
+	// and the second argument - flag - preferred type is a string
+	module.exports = function(it, S){
+	  if(!isObject(it))return it;
+	  var fn, val;
+	  if(S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+	  if(typeof (fn = it.valueOf) == 'function' && !isObject(val = fn.call(it)))return val;
+	  if(!S && typeof (fn = it.toString) == 'function' && !isObject(val = fn.call(it)))return val;
+	  throw TypeError("Can't convert object to primitive value");
+	};
+
+/***/ },
+/* 25 */
+/***/ function(module, exports) {
+
+	module.exports = function(bitmap, value){
+	  return {
+	    enumerable  : !(bitmap & 1),
+	    configurable: !(bitmap & 2),
+	    writable    : !(bitmap & 4),
+	    value       : value
+	  };
+	};
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(16);
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	var hasOwnProperty = {}.hasOwnProperty;
+	module.exports = function(it, key){
+	  return hasOwnProperty.call(it, key);
+	};
+
+/***/ },
+/* 28 */
+/***/ function(module, exports) {
+
+	module.exports = {};
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var create         = __webpack_require__(30)
+	  , descriptor     = __webpack_require__(25)
+	  , setToStringTag = __webpack_require__(45)
+	  , IteratorPrototype = {};
+
+	// 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
+	__webpack_require__(16)(IteratorPrototype, __webpack_require__(46)('iterator'), function(){ return this; });
+
+	module.exports = function(Constructor, NAME, next){
+	  Constructor.prototype = create(IteratorPrototype, {next: descriptor(1, next)});
+	  setToStringTag(Constructor, NAME + ' Iterator');
+	};
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.2 / 15.2.3.5 Object.create(O [, Properties])
+	var anObject    = __webpack_require__(18)
+	  , dPs         = __webpack_require__(31)
+	  , enumBugKeys = __webpack_require__(43)
+	  , IE_PROTO    = __webpack_require__(40)('IE_PROTO')
+	  , Empty       = function(){ /* empty */ }
+	  , PROTOTYPE   = 'prototype';
+
+	// Create object with fake `null` prototype: use iframe Object with cleared prototype
+	var createDict = function(){
+	  // Thrash, waste and sodomy: IE GC bug
+	  var iframe = __webpack_require__(23)('iframe')
+	    , i      = enumBugKeys.length
+	    , lt     = '<'
+	    , gt     = '>'
+	    , iframeDocument;
+	  iframe.style.display = 'none';
+	  __webpack_require__(44).appendChild(iframe);
+	  iframe.src = 'javascript:'; // eslint-disable-line no-script-url
+	  // createDict = iframe.contentWindow.Object;
+	  // html.removeChild(iframe);
+	  iframeDocument = iframe.contentWindow.document;
+	  iframeDocument.open();
+	  iframeDocument.write(lt + 'script' + gt + 'document.F=Object' + lt + '/script' + gt);
+	  iframeDocument.close();
+	  createDict = iframeDocument.F;
+	  while(i--)delete createDict[PROTOTYPE][enumBugKeys[i]];
+	  return createDict();
+	};
+
+	module.exports = Object.create || function create(O, Properties){
+	  var result;
+	  if(O !== null){
+	    Empty[PROTOTYPE] = anObject(O);
+	    result = new Empty;
+	    Empty[PROTOTYPE] = null;
+	    // add "__proto__" for Object.getPrototypeOf polyfill
+	    result[IE_PROTO] = O;
+	  } else result = createDict();
+	  return Properties === undefined ? result : dPs(result, Properties);
+	};
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var dP       = __webpack_require__(17)
+	  , anObject = __webpack_require__(18)
+	  , getKeys  = __webpack_require__(32);
+
+	module.exports = __webpack_require__(21) ? Object.defineProperties : function defineProperties(O, Properties){
+	  anObject(O);
+	  var keys   = getKeys(Properties)
+	    , length = keys.length
+	    , i = 0
+	    , P;
+	  while(length > i)dP.f(O, P = keys[i++], Properties[P]);
+	  return O;
+	};
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.14 / 15.2.3.14 Object.keys(O)
+	var $keys       = __webpack_require__(33)
+	  , enumBugKeys = __webpack_require__(43);
+
+	module.exports = Object.keys || function keys(O){
+	  return $keys(O, enumBugKeys);
+	};
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var has          = __webpack_require__(27)
+	  , toIObject    = __webpack_require__(34)
+	  , arrayIndexOf = __webpack_require__(37)(false)
+	  , IE_PROTO     = __webpack_require__(40)('IE_PROTO');
+
+	module.exports = function(object, names){
+	  var O      = toIObject(object)
+	    , i      = 0
+	    , result = []
+	    , key;
+	  for(key in O)if(key != IE_PROTO)has(O, key) && result.push(key);
+	  // Don't enum bug & hidden keys
+	  while(names.length > i)if(has(O, key = names[i++])){
+	    ~arrayIndexOf(result, key) || result.push(key);
+	  }
+	  return result;
+	};
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// to indexed object, toObject with fallback for non-array-like ES3 strings
+	var IObject = __webpack_require__(35)
+	  , defined = __webpack_require__(8);
+	module.exports = function(it){
+	  return IObject(defined(it));
+	};
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// fallback for non-array-like ES3 and non-enumerable old V8 strings
+	var cof = __webpack_require__(36);
+	module.exports = Object('z').propertyIsEnumerable(0) ? Object : function(it){
+	  return cof(it) == 'String' ? it.split('') : Object(it);
+	};
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	var toString = {}.toString;
+
+	module.exports = function(it){
+	  return toString.call(it).slice(8, -1);
+	};
+
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// false -> Array#indexOf
+	// true  -> Array#includes
+	var toIObject = __webpack_require__(34)
+	  , toLength  = __webpack_require__(38)
+	  , toIndex   = __webpack_require__(39);
+	module.exports = function(IS_INCLUDES){
+	  return function($this, el, fromIndex){
+	    var O      = toIObject($this)
+	      , length = toLength(O.length)
+	      , index  = toIndex(fromIndex, length)
+	      , value;
+	    // Array#includes uses SameValueZero equality algorithm
+	    if(IS_INCLUDES && el != el)while(length > index){
+	      value = O[index++];
+	      if(value != value)return true;
+	    // Array#toIndex ignores holes, Array#includes - not
+	    } else for(;length > index; index++)if(IS_INCLUDES || index in O){
+	      if(O[index] === el)return IS_INCLUDES || index || 0;
+	    } return !IS_INCLUDES && -1;
+	  };
+	};
+
+/***/ },
+/* 38 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.1.15 ToLength
+	var toInteger = __webpack_require__(7)
+	  , min       = Math.min;
+	module.exports = function(it){
+	  return it > 0 ? min(toInteger(it), 0x1fffffffffffff) : 0; // pow(2, 53) - 1 == 9007199254740991
+	};
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var toInteger = __webpack_require__(7)
+	  , max       = Math.max
+	  , min       = Math.min;
+	module.exports = function(index, length){
+	  index = toInteger(index);
+	  return index < 0 ? max(index + length, 0) : min(index, length);
+	};
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var shared = __webpack_require__(41)('keys')
+	  , uid    = __webpack_require__(42);
+	module.exports = function(key){
+	  return shared[key] || (shared[key] = uid(key));
+	};
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global = __webpack_require__(12)
+	  , SHARED = '__core-js_shared__'
+	  , store  = global[SHARED] || (global[SHARED] = {});
+	module.exports = function(key){
+	  return store[key] || (store[key] = {});
+	};
+
+/***/ },
+/* 42 */
+/***/ function(module, exports) {
+
+	var id = 0
+	  , px = Math.random();
+	module.exports = function(key){
+	  return 'Symbol('.concat(key === undefined ? '' : key, ')_', (++id + px).toString(36));
+	};
+
+/***/ },
+/* 43 */
+/***/ function(module, exports) {
+
+	// IE 8- don't enum bug keys
+	module.exports = (
+	  'constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf'
+	).split(',');
+
+/***/ },
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(12).document && document.documentElement;
+
+/***/ },
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var def = __webpack_require__(17).f
+	  , has = __webpack_require__(27)
+	  , TAG = __webpack_require__(46)('toStringTag');
+
+	module.exports = function(it, tag, stat){
+	  if(it && !has(it = stat ? it : it.prototype, TAG))def(it, TAG, {configurable: true, value: tag});
+	};
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var store      = __webpack_require__(41)('wks')
+	  , uid        = __webpack_require__(42)
+	  , Symbol     = __webpack_require__(12).Symbol
+	  , USE_SYMBOL = typeof Symbol == 'function';
+
+	var $exports = module.exports = function(name){
+	  return store[name] || (store[name] =
+	    USE_SYMBOL && Symbol[name] || (USE_SYMBOL ? Symbol : uid)('Symbol.' + name));
+	};
+
+	$exports.store = store;
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 19.1.2.9 / 15.2.3.2 Object.getPrototypeOf(O)
+	var has         = __webpack_require__(27)
+	  , toObject    = __webpack_require__(48)
+	  , IE_PROTO    = __webpack_require__(40)('IE_PROTO')
+	  , ObjectProto = Object.prototype;
+
+	module.exports = Object.getPrototypeOf || function(O){
+	  O = toObject(O);
+	  if(has(O, IE_PROTO))return O[IE_PROTO];
+	  if(typeof O.constructor == 'function' && O instanceof O.constructor){
+	    return O.constructor.prototype;
+	  } return O instanceof Object ? ObjectProto : null;
+	};
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.1.13 ToObject(argument)
+	var defined = __webpack_require__(8);
+	module.exports = function(it){
+	  return Object(defined(it));
+	};
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(50);
+	var global        = __webpack_require__(12)
+	  , hide          = __webpack_require__(16)
+	  , Iterators     = __webpack_require__(28)
+	  , TO_STRING_TAG = __webpack_require__(46)('toStringTag');
+
+	for(var collections = ['NodeList', 'DOMTokenList', 'MediaList', 'StyleSheetList', 'CSSRuleList'], i = 0; i < 5; i++){
+	  var NAME       = collections[i]
+	    , Collection = global[NAME]
+	    , proto      = Collection && Collection.prototype;
+	  if(proto && !proto[TO_STRING_TAG])hide(proto, TO_STRING_TAG, NAME);
+	  Iterators[NAME] = Iterators.Array;
+	}
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var addToUnscopables = __webpack_require__(51)
+	  , step             = __webpack_require__(52)
+	  , Iterators        = __webpack_require__(28)
+	  , toIObject        = __webpack_require__(34);
+
+	// 22.1.3.4 Array.prototype.entries()
+	// 22.1.3.13 Array.prototype.keys()
+	// 22.1.3.29 Array.prototype.values()
+	// 22.1.3.30 Array.prototype[@@iterator]()
+	module.exports = __webpack_require__(9)(Array, 'Array', function(iterated, kind){
+	  this._t = toIObject(iterated); // target
+	  this._i = 0;                   // next index
+	  this._k = kind;                // kind
+	// 22.1.5.2.1 %ArrayIteratorPrototype%.next()
+	}, function(){
+	  var O     = this._t
+	    , kind  = this._k
+	    , index = this._i++;
+	  if(!O || index >= O.length){
+	    this._t = undefined;
+	    return step(1);
+	  }
+	  if(kind == 'keys'  )return step(0, index);
+	  if(kind == 'values')return step(0, O[index]);
+	  return step(0, [index, O[index]]);
+	}, 'values');
+
+	// argumentsList[@@iterator] is %ArrayProto_values% (9.4.4.6, 9.4.4.7)
+	Iterators.Arguments = Iterators.Array;
+
+	addToUnscopables('keys');
+	addToUnscopables('values');
+	addToUnscopables('entries');
+
+/***/ },
+/* 51 */
+/***/ function(module, exports) {
+
+	module.exports = function(){ /* empty */ };
+
+/***/ },
+/* 52 */
+/***/ function(module, exports) {
+
+	module.exports = function(done, value){
+	  return {value: value, done: !!done};
+	};
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var LIBRARY            = __webpack_require__(10)
+	  , global             = __webpack_require__(12)
+	  , ctx                = __webpack_require__(14)
+	  , classof            = __webpack_require__(54)
+	  , $export            = __webpack_require__(11)
+	  , isObject           = __webpack_require__(19)
+	  , aFunction          = __webpack_require__(15)
+	  , anInstance         = __webpack_require__(55)
+	  , forOf              = __webpack_require__(56)
+	  , speciesConstructor = __webpack_require__(60)
+	  , task               = __webpack_require__(61).set
+	  , microtask          = __webpack_require__(63)()
+	  , PROMISE            = 'Promise'
+	  , TypeError          = global.TypeError
+	  , process            = global.process
+	  , $Promise           = global[PROMISE]
+	  , process            = global.process
+	  , isNode             = classof(process) == 'process'
+	  , empty              = function(){ /* empty */ }
+	  , Internal, GenericPromiseCapability, Wrapper;
+
+	var USE_NATIVE = !!function(){
+	  try {
+	    // correct subclassing with @@species support
+	    var promise     = $Promise.resolve(1)
+	      , FakePromise = (promise.constructor = {})[__webpack_require__(46)('species')] = function(exec){ exec(empty, empty); };
+	    // unhandled rejections tracking support, NodeJS Promise without it fails @@species test
+	    return (isNode || typeof PromiseRejectionEvent == 'function') && promise.then(empty) instanceof FakePromise;
+	  } catch(e){ /* empty */ }
+	}();
+
+	// helpers
+	var sameConstructor = function(a, b){
+	  // with library wrapper special case
+	  return a === b || a === $Promise && b === Wrapper;
+	};
+	var isThenable = function(it){
+	  var then;
+	  return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
+	};
+	var newPromiseCapability = function(C){
+	  return sameConstructor($Promise, C)
+	    ? new PromiseCapability(C)
+	    : new GenericPromiseCapability(C);
+	};
+	var PromiseCapability = GenericPromiseCapability = function(C){
+	  var resolve, reject;
+	  this.promise = new C(function($$resolve, $$reject){
+	    if(resolve !== undefined || reject !== undefined)throw TypeError('Bad Promise constructor');
+	    resolve = $$resolve;
+	    reject  = $$reject;
+	  });
+	  this.resolve = aFunction(resolve);
+	  this.reject  = aFunction(reject);
+	};
+	var perform = function(exec){
+	  try {
+	    exec();
+	  } catch(e){
+	    return {error: e};
+	  }
+	};
+	var notify = function(promise, isReject){
+	  if(promise._n)return;
+	  promise._n = true;
+	  var chain = promise._c;
+	  microtask(function(){
+	    var value = promise._v
+	      , ok    = promise._s == 1
+	      , i     = 0;
+	    var run = function(reaction){
+	      var handler = ok ? reaction.ok : reaction.fail
+	        , resolve = reaction.resolve
+	        , reject  = reaction.reject
+	        , domain  = reaction.domain
+	        , result, then;
+	      try {
+	        if(handler){
+	          if(!ok){
+	            if(promise._h == 2)onHandleUnhandled(promise);
+	            promise._h = 1;
+	          }
+	          if(handler === true)result = value;
+	          else {
+	            if(domain)domain.enter();
+	            result = handler(value);
+	            if(domain)domain.exit();
+	          }
+	          if(result === reaction.promise){
+	            reject(TypeError('Promise-chain cycle'));
+	          } else if(then = isThenable(result)){
+	            then.call(result, resolve, reject);
+	          } else resolve(result);
+	        } else reject(value);
+	      } catch(e){
+	        reject(e);
+	      }
+	    };
+	    while(chain.length > i)run(chain[i++]); // variable length - can't use forEach
+	    promise._c = [];
+	    promise._n = false;
+	    if(isReject && !promise._h)onUnhandled(promise);
+	  });
+	};
+	var onUnhandled = function(promise){
+	  task.call(global, function(){
+	    var value = promise._v
+	      , abrupt, handler, console;
+	    if(isUnhandled(promise)){
+	      abrupt = perform(function(){
+	        if(isNode){
+	          process.emit('unhandledRejection', value, promise);
+	        } else if(handler = global.onunhandledrejection){
+	          handler({promise: promise, reason: value});
+	        } else if((console = global.console) && console.error){
+	          console.error('Unhandled promise rejection', value);
+	        }
+	      });
+	      // Browsers should not trigger `rejectionHandled` event if it was handled here, NodeJS - should
+	      promise._h = isNode || isUnhandled(promise) ? 2 : 1;
+	    } promise._a = undefined;
+	    if(abrupt)throw abrupt.error;
+	  });
+	};
+	var isUnhandled = function(promise){
+	  if(promise._h == 1)return false;
+	  var chain = promise._a || promise._c
+	    , i     = 0
+	    , reaction;
+	  while(chain.length > i){
+	    reaction = chain[i++];
+	    if(reaction.fail || !isUnhandled(reaction.promise))return false;
+	  } return true;
+	};
+	var onHandleUnhandled = function(promise){
+	  task.call(global, function(){
+	    var handler;
+	    if(isNode){
+	      process.emit('rejectionHandled', promise);
+	    } else if(handler = global.onrejectionhandled){
+	      handler({promise: promise, reason: promise._v});
+	    }
+	  });
+	};
+	var $reject = function(value){
+	  var promise = this;
+	  if(promise._d)return;
+	  promise._d = true;
+	  promise = promise._w || promise; // unwrap
+	  promise._v = value;
+	  promise._s = 2;
+	  if(!promise._a)promise._a = promise._c.slice();
+	  notify(promise, true);
+	};
+	var $resolve = function(value){
+	  var promise = this
+	    , then;
+	  if(promise._d)return;
+	  promise._d = true;
+	  promise = promise._w || promise; // unwrap
+	  try {
+	    if(promise === value)throw TypeError("Promise can't be resolved itself");
+	    if(then = isThenable(value)){
+	      microtask(function(){
+	        var wrapper = {_w: promise, _d: false}; // wrap
+	        try {
+	          then.call(value, ctx($resolve, wrapper, 1), ctx($reject, wrapper, 1));
+	        } catch(e){
+	          $reject.call(wrapper, e);
+	        }
+	      });
+	    } else {
+	      promise._v = value;
+	      promise._s = 1;
+	      notify(promise, false);
+	    }
+	  } catch(e){
+	    $reject.call({_w: promise, _d: false}, e); // wrap
+	  }
+	};
+
+	// constructor polyfill
+	if(!USE_NATIVE){
+	  // 25.4.3.1 Promise(executor)
+	  $Promise = function Promise(executor){
+	    anInstance(this, $Promise, PROMISE, '_h');
+	    aFunction(executor);
+	    Internal.call(this);
+	    try {
+	      executor(ctx($resolve, this, 1), ctx($reject, this, 1));
+	    } catch(err){
+	      $reject.call(this, err);
+	    }
+	  };
+	  Internal = function Promise(executor){
+	    this._c = [];             // <- awaiting reactions
+	    this._a = undefined;      // <- checked in isUnhandled reactions
+	    this._s = 0;              // <- state
+	    this._d = false;          // <- done
+	    this._v = undefined;      // <- value
+	    this._h = 0;              // <- rejection state, 0 - default, 1 - handled, 2 - unhandled
+	    this._n = false;          // <- notify
+	  };
+	  Internal.prototype = __webpack_require__(64)($Promise.prototype, {
+	    // 25.4.5.3 Promise.prototype.then(onFulfilled, onRejected)
+	    then: function then(onFulfilled, onRejected){
+	      var reaction    = newPromiseCapability(speciesConstructor(this, $Promise));
+	      reaction.ok     = typeof onFulfilled == 'function' ? onFulfilled : true;
+	      reaction.fail   = typeof onRejected == 'function' && onRejected;
+	      reaction.domain = isNode ? process.domain : undefined;
+	      this._c.push(reaction);
+	      if(this._a)this._a.push(reaction);
+	      if(this._s)notify(this, false);
+	      return reaction.promise;
+	    },
+	    // 25.4.5.1 Promise.prototype.catch(onRejected)
+	    'catch': function(onRejected){
+	      return this.then(undefined, onRejected);
+	    }
+	  });
+	  PromiseCapability = function(){
+	    var promise  = new Internal;
+	    this.promise = promise;
+	    this.resolve = ctx($resolve, promise, 1);
+	    this.reject  = ctx($reject, promise, 1);
+	  };
+	}
+
+	$export($export.G + $export.W + $export.F * !USE_NATIVE, {Promise: $Promise});
+	__webpack_require__(45)($Promise, PROMISE);
+	__webpack_require__(65)(PROMISE);
+	Wrapper = __webpack_require__(13)[PROMISE];
+
+	// statics
+	$export($export.S + $export.F * !USE_NATIVE, PROMISE, {
+	  // 25.4.4.5 Promise.reject(r)
+	  reject: function reject(r){
+	    var capability = newPromiseCapability(this)
+	      , $$reject   = capability.reject;
+	    $$reject(r);
+	    return capability.promise;
+	  }
+	});
+	$export($export.S + $export.F * (LIBRARY || !USE_NATIVE), PROMISE, {
+	  // 25.4.4.6 Promise.resolve(x)
+	  resolve: function resolve(x){
+	    // instanceof instead of internal slot check because we should fix it without replacement native Promise core
+	    if(x instanceof $Promise && sameConstructor(x.constructor, this))return x;
+	    var capability = newPromiseCapability(this)
+	      , $$resolve  = capability.resolve;
+	    $$resolve(x);
+	    return capability.promise;
+	  }
+	});
+	$export($export.S + $export.F * !(USE_NATIVE && __webpack_require__(66)(function(iter){
+	  $Promise.all(iter)['catch'](empty);
+	})), PROMISE, {
+	  // 25.4.4.1 Promise.all(iterable)
+	  all: function all(iterable){
+	    var C          = this
+	      , capability = newPromiseCapability(C)
+	      , resolve    = capability.resolve
+	      , reject     = capability.reject;
+	    var abrupt = perform(function(){
+	      var values    = []
+	        , index     = 0
+	        , remaining = 1;
+	      forOf(iterable, false, function(promise){
+	        var $index        = index++
+	          , alreadyCalled = false;
+	        values.push(undefined);
+	        remaining++;
+	        C.resolve(promise).then(function(value){
+	          if(alreadyCalled)return;
+	          alreadyCalled  = true;
+	          values[$index] = value;
+	          --remaining || resolve(values);
+	        }, reject);
+	      });
+	      --remaining || resolve(values);
+	    });
+	    if(abrupt)reject(abrupt.error);
+	    return capability.promise;
+	  },
+	  // 25.4.4.4 Promise.race(iterable)
+	  race: function race(iterable){
+	    var C          = this
+	      , capability = newPromiseCapability(C)
+	      , reject     = capability.reject;
+	    var abrupt = perform(function(){
+	      forOf(iterable, false, function(promise){
+	        C.resolve(promise).then(capability.resolve, reject);
+	      });
+	    });
+	    if(abrupt)reject(abrupt.error);
+	    return capability.promise;
+	  }
+	});
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// getting tag from 19.1.3.6 Object.prototype.toString()
+	var cof = __webpack_require__(36)
+	  , TAG = __webpack_require__(46)('toStringTag')
+	  // ES3 wrong here
+	  , ARG = cof(function(){ return arguments; }()) == 'Arguments';
+
+	// fallback for IE11 Script Access Denied error
+	var tryGet = function(it, key){
+	  try {
+	    return it[key];
+	  } catch(e){ /* empty */ }
+	};
+
+	module.exports = function(it){
+	  var O, T, B;
+	  return it === undefined ? 'Undefined' : it === null ? 'Null'
+	    // @@toStringTag case
+	    : typeof (T = tryGet(O = Object(it), TAG)) == 'string' ? T
+	    // builtinTag case
+	    : ARG ? cof(O)
+	    // ES3 arguments fallback
+	    : (B = cof(O)) == 'Object' && typeof O.callee == 'function' ? 'Arguments' : B;
+	};
+
+/***/ },
+/* 55 */
+/***/ function(module, exports) {
+
+	module.exports = function(it, Constructor, name, forbiddenField){
+	  if(!(it instanceof Constructor) || (forbiddenField !== undefined && forbiddenField in it)){
+	    throw TypeError(name + ': incorrect invocation!');
+	  } return it;
+	};
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ctx         = __webpack_require__(14)
+	  , call        = __webpack_require__(57)
+	  , isArrayIter = __webpack_require__(58)
+	  , anObject    = __webpack_require__(18)
+	  , toLength    = __webpack_require__(38)
+	  , getIterFn   = __webpack_require__(59)
+	  , BREAK       = {}
+	  , RETURN      = {};
+	var exports = module.exports = function(iterable, entries, fn, that, ITERATOR){
+	  var iterFn = ITERATOR ? function(){ return iterable; } : getIterFn(iterable)
+	    , f      = ctx(fn, that, entries ? 2 : 1)
+	    , index  = 0
+	    , length, step, iterator, result;
+	  if(typeof iterFn != 'function')throw TypeError(iterable + ' is not iterable!');
+	  // fast case for arrays with default iterator
+	  if(isArrayIter(iterFn))for(length = toLength(iterable.length); length > index; index++){
+	    result = entries ? f(anObject(step = iterable[index])[0], step[1]) : f(iterable[index]);
+	    if(result === BREAK || result === RETURN)return result;
+	  } else for(iterator = iterFn.call(iterable); !(step = iterator.next()).done; ){
+	    result = call(iterator, f, step.value, entries);
+	    if(result === BREAK || result === RETURN)return result;
+	  }
+	};
+	exports.BREAK  = BREAK;
+	exports.RETURN = RETURN;
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// call something on iterator step with safe closing on error
+	var anObject = __webpack_require__(18);
+	module.exports = function(iterator, fn, value, entries){
+	  try {
+	    return entries ? fn(anObject(value)[0], value[1]) : fn(value);
+	  // 7.4.6 IteratorClose(iterator, completion)
+	  } catch(e){
+	    var ret = iterator['return'];
+	    if(ret !== undefined)anObject(ret.call(iterator));
+	    throw e;
+	  }
+	};
+
+/***/ },
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// check on default Array iterator
+	var Iterators  = __webpack_require__(28)
+	  , ITERATOR   = __webpack_require__(46)('iterator')
+	  , ArrayProto = Array.prototype;
+
+	module.exports = function(it){
+	  return it !== undefined && (Iterators.Array === it || ArrayProto[ITERATOR] === it);
+	};
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var classof   = __webpack_require__(54)
+	  , ITERATOR  = __webpack_require__(46)('iterator')
+	  , Iterators = __webpack_require__(28);
+	module.exports = __webpack_require__(13).getIteratorMethod = function(it){
+	  if(it != undefined)return it[ITERATOR]
+	    || it['@@iterator']
+	    || Iterators[classof(it)];
+	};
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// 7.3.20 SpeciesConstructor(O, defaultConstructor)
+	var anObject  = __webpack_require__(18)
+	  , aFunction = __webpack_require__(15)
+	  , SPECIES   = __webpack_require__(46)('species');
+	module.exports = function(O, D){
+	  var C = anObject(O).constructor, S;
+	  return C === undefined || (S = anObject(C)[SPECIES]) == undefined ? D : aFunction(S);
+	};
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ctx                = __webpack_require__(14)
+	  , invoke             = __webpack_require__(62)
+	  , html               = __webpack_require__(44)
+	  , cel                = __webpack_require__(23)
+	  , global             = __webpack_require__(12)
+	  , process            = global.process
+	  , setTask            = global.setImmediate
+	  , clearTask          = global.clearImmediate
+	  , MessageChannel     = global.MessageChannel
+	  , counter            = 0
+	  , queue              = {}
+	  , ONREADYSTATECHANGE = 'onreadystatechange'
+	  , defer, channel, port;
+	var run = function(){
+	  var id = +this;
+	  if(queue.hasOwnProperty(id)){
+	    var fn = queue[id];
+	    delete queue[id];
+	    fn();
+	  }
+	};
+	var listener = function(event){
+	  run.call(event.data);
+	};
+	// Node.js 0.9+ & IE10+ has setImmediate, otherwise:
+	if(!setTask || !clearTask){
+	  setTask = function setImmediate(fn){
+	    var args = [], i = 1;
+	    while(arguments.length > i)args.push(arguments[i++]);
+	    queue[++counter] = function(){
+	      invoke(typeof fn == 'function' ? fn : Function(fn), args);
+	    };
+	    defer(counter);
+	    return counter;
+	  };
+	  clearTask = function clearImmediate(id){
+	    delete queue[id];
+	  };
+	  // Node.js 0.8-
+	  if(__webpack_require__(36)(process) == 'process'){
+	    defer = function(id){
+	      process.nextTick(ctx(run, id, 1));
+	    };
+	  // Browsers with MessageChannel, includes WebWorkers
+	  } else if(MessageChannel){
+	    channel = new MessageChannel;
+	    port    = channel.port2;
+	    channel.port1.onmessage = listener;
+	    defer = ctx(port.postMessage, port, 1);
+	  // Browsers with postMessage, skip WebWorkers
+	  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
+	  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScripts){
+	    defer = function(id){
+	      global.postMessage(id + '', '*');
+	    };
+	    global.addEventListener('message', listener, false);
+	  // IE8-
+	  } else if(ONREADYSTATECHANGE in cel('script')){
+	    defer = function(id){
+	      html.appendChild(cel('script'))[ONREADYSTATECHANGE] = function(){
+	        html.removeChild(this);
+	        run.call(id);
+	      };
+	    };
+	  // Rest old browsers
+	  } else {
+	    defer = function(id){
+	      setTimeout(ctx(run, id, 1), 0);
+	    };
+	  }
+	}
+	module.exports = {
+	  set:   setTask,
+	  clear: clearTask
+	};
+
+/***/ },
+/* 62 */
+/***/ function(module, exports) {
+
+	// fast apply, http://jsperf.lnkit.com/fast-apply/5
+	module.exports = function(fn, args, that){
+	  var un = that === undefined;
+	  switch(args.length){
+	    case 0: return un ? fn()
+	                      : fn.call(that);
+	    case 1: return un ? fn(args[0])
+	                      : fn.call(that, args[0]);
+	    case 2: return un ? fn(args[0], args[1])
+	                      : fn.call(that, args[0], args[1]);
+	    case 3: return un ? fn(args[0], args[1], args[2])
+	                      : fn.call(that, args[0], args[1], args[2]);
+	    case 4: return un ? fn(args[0], args[1], args[2], args[3])
+	                      : fn.call(that, args[0], args[1], args[2], args[3]);
+	  } return              fn.apply(that, args);
+	};
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global    = __webpack_require__(12)
+	  , macrotask = __webpack_require__(61).set
+	  , Observer  = global.MutationObserver || global.WebKitMutationObserver
+	  , process   = global.process
+	  , Promise   = global.Promise
+	  , isNode    = __webpack_require__(36)(process) == 'process';
+
+	module.exports = function(){
+	  var head, last, notify;
+
+	  var flush = function(){
+	    var parent, fn;
+	    if(isNode && (parent = process.domain))parent.exit();
+	    while(head){
+	      fn   = head.fn;
+	      head = head.next;
+	      try {
+	        fn();
+	      } catch(e){
+	        if(head)notify();
+	        else last = undefined;
+	        throw e;
+	      }
+	    } last = undefined;
+	    if(parent)parent.enter();
+	  };
+
+	  // Node.js
+	  if(isNode){
+	    notify = function(){
+	      process.nextTick(flush);
+	    };
+	  // browsers with MutationObserver
+	  } else if(Observer){
+	    var toggle = true
+	      , node   = document.createTextNode('');
+	    new Observer(flush).observe(node, {characterData: true}); // eslint-disable-line no-new
+	    notify = function(){
+	      node.data = toggle = !toggle;
+	    };
+	  // environments with maybe non-completely correct, but existent Promise
+	  } else if(Promise && Promise.resolve){
+	    var promise = Promise.resolve();
+	    notify = function(){
+	      promise.then(flush);
+	    };
+	  // for other environments - macrotask based on:
+	  // - setImmediate
+	  // - MessageChannel
+	  // - window.postMessag
+	  // - onreadystatechange
+	  // - setTimeout
+	  } else {
+	    notify = function(){
+	      // strange IE + webpack dev server bug - use .call(global)
+	      macrotask.call(global, flush);
+	    };
+	  }
+
+	  return function(fn){
+	    var task = {fn: fn, next: undefined};
+	    if(last)last.next = task;
+	    if(!head){
+	      head = task;
+	      notify();
+	    } last = task;
+	  };
+	};
+
+/***/ },
+/* 64 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var hide = __webpack_require__(16);
+	module.exports = function(target, src, safe){
+	  for(var key in src){
+	    if(safe && target[key])target[key] = src[key];
+	    else hide(target, key, src[key]);
+	  } return target;
+	};
+
+/***/ },
+/* 65 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var global      = __webpack_require__(12)
+	  , core        = __webpack_require__(13)
+	  , dP          = __webpack_require__(17)
+	  , DESCRIPTORS = __webpack_require__(21)
+	  , SPECIES     = __webpack_require__(46)('species');
+
+	module.exports = function(KEY){
+	  var C = typeof core[KEY] == 'function' ? core[KEY] : global[KEY];
+	  if(DESCRIPTORS && C && !C[SPECIES])dP.f(C, SPECIES, {
+	    configurable: true,
+	    get: function(){ return this; }
+	  });
+	};
+
+/***/ },
+/* 66 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var ITERATOR     = __webpack_require__(46)('iterator')
+	  , SAFE_CLOSING = false;
+
+	try {
+	  var riter = [7][ITERATOR]();
+	  riter['return'] = function(){ SAFE_CLOSING = true; };
+	  Array.from(riter, function(){ throw 2; });
+	} catch(e){ /* empty */ }
+
+	module.exports = function(exec, skipClosing){
+	  if(!skipClosing && !SAFE_CLOSING)return false;
+	  var safe = false;
+	  try {
+	    var arr  = [7]
+	      , iter = arr[ITERATOR]();
+	    iter.next = function(){ return {done: safe = true}; };
+	    arr[ITERATOR] = function(){ return iter; };
+	    exec(arr);
+	  } catch(e){ /* empty */ }
+	  return safe;
+	};
+
+/***/ },
+/* 67 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _promise = __webpack_require__(3);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image loader
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var componentNames = _consts2.default.componentNames,
+	    rejectMessages = _consts2.default.rejectMessages;
 
 	var imageOption = {
 	    padding: 0,
@@ -1834,16 +3673,24 @@
 	 * @param {Component} parent - parent component
 	 * @ignore
 	 */
-	var ImageLoader = tui.util.defineClass(Component, /** @lends ImageLoader.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
-	    },
 
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.IMAGE_LOADER,
+	var ImageLoader = function (_Component) {
+	    _inherits(ImageLoader, _Component);
+
+	    function ImageLoader(parent) {
+	        _classCallCheck(this, ImageLoader);
+
+	        var _this = _possibleConstructorReturn(this, (ImageLoader.__proto__ || Object.getPrototypeOf(ImageLoader)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = componentNames.IMAGE_LOADER;
+	        return _this;
+	    }
 
 	    /**
 	     * Load image from url
@@ -1851,248 +3698,294 @@
 	     * @param {?(fabric.Image|string)} img - fabric.Image instance or URL of an image
 	     * @returns {jQuery.Deferred} deferred
 	     */
-	    load: function(imageName, img) {
-	        var self = this;
-	        var jqDefer, canvas;
 
-	        if (!imageName && !img) { // Back to the initial state, not error.
-	            canvas = this.getCanvas();
-	            canvas.backgroundImage = null;
-	            canvas.renderAll();
 
-	            jqDefer = $.Deferred(function() {
-	                self.setCanvasImage('', null);
-	            }).resolve();
-	        } else {
-	            jqDefer = this._setBackgroundImage(img).done(function(oImage) {
-	                self.setCanvasImage(imageName, oImage);
-	                self.adjustCanvasDimension();
+	    _createClass(ImageLoader, [{
+	        key: 'load',
+	        value: function load(imageName, img) {
+	            var _this2 = this;
+
+	            var promise = void 0;
+
+	            if (!imageName && !img) {
+	                // Back to the initial state, not error.
+	                var canvas = this.getCanvas();
+
+	                canvas.backgroundImage = null;
+	                canvas.renderAll();
+
+	                promise = new _promise2.default(function (resolve) {
+	                    _this2.setCanvasImage('', null);
+	                    resolve();
+	                });
+	            } else {
+	                promise = this._setBackgroundImage(img).then(function (oImage) {
+	                    _this2.setCanvasImage(imageName, oImage);
+	                    _this2.adjustCanvasDimension();
+
+	                    return oImage;
+	                });
+	            }
+
+	            return promise;
+	        }
+
+	        /**
+	         * Set background image
+	         * @param {?(fabric.Image|String)} img fabric.Image instance or URL of an image to set background to
+	         * @returns {$.Deferred} deferred
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setBackgroundImage',
+	        value: function _setBackgroundImage(img) {
+	            var _this3 = this;
+
+	            if (!img) {
+	                return _promise2.default.reject(rejectMessages.loadImage);
+	            }
+
+	            return new _promise2.default(function (resolve, reject) {
+	                var canvas = _this3.getCanvas();
+
+	                canvas.setBackgroundImage(img, function () {
+	                    var oImage = canvas.backgroundImage;
+
+	                    if (oImage.getElement()) {
+	                        resolve(oImage);
+	                    } else {
+	                        reject();
+	                    }
+	                }, imageOption);
 	            });
 	        }
+	    }]);
 
-	        return jqDefer;
-	    },
-
-	    /**
-	     * Set background image
-	     * @param {?(fabric.Image|String)} img fabric.Image instance or URL of an image to set background to
-	     * @returns {$.Deferred} deferred
-	     * @private
-	     */
-	    _setBackgroundImage: function(img) {
-	        var jqDefer = $.Deferred();
-	        var canvas;
-
-	        if (!img) {
-	            return jqDefer.reject();
-	        }
-
-	        canvas = this.getCanvas();
-	        canvas.setBackgroundImage(img, function() {
-	            var oImage = canvas.backgroundImage;
-
-	            if (oImage.getElement()) {
-	                jqDefer.resolve(oImage);
-	            } else {
-	                jqDefer.reject();
-	            }
-	        }, imageOption);
-
-	        return jqDefer;
-	    }
-	});
+	    return ImageLoader;
+	}(_component2.default);
 
 	module.exports = ImageLoader;
 
-
 /***/ },
-/* 4 */
+/* 68 */
 /***/ function(module, exports) {
+
+	"use strict";
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
 	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
 	 * @fileoverview Component interface
 	 */
-	'use strict';
 
 	/**
 	 * Component interface
 	 * @class
 	 * @ignore
 	 */
-	var Component = tui.util.defineClass(/** @lends Component.prototype */{
-	    init: function() {},
+	var Component = function () {
+	  function Component() {
+	    _classCallCheck(this, Component);
+	  }
+
+	  _createClass(Component, [{
+	    key: "setCanvasImage",
 
 	    /**
 	     * Save image(background) of canvas
 	     * @param {string} name - Name of image
 	     * @param {fabric.Image} oImage - Fabric image instance
 	     */
-	    setCanvasImage: function(name, oImage) {
-	        this.getRoot().setCanvasImage(name, oImage);
-	    },
+	    value: function setCanvasImage(name, oImage) {
+	      this.getRoot().setCanvasImage(name, oImage);
+	    }
 
 	    /**
 	     * Returns canvas element of fabric.Canvas[[lower-canvas]]
 	     * @returns {HTMLCanvasElement}
 	     */
-	    getCanvasElement: function() {
-	        return this.getRoot().getCanvasElement();
-	    },
+
+	  }, {
+	    key: "getCanvasElement",
+	    value: function getCanvasElement() {
+	      return this.getRoot().getCanvasElement();
+	    }
 
 	    /**
 	     * Get fabric.Canvas instance
 	     * @returns {fabric.Canvas}
 	     */
-	    getCanvas: function() {
-	        return this.getRoot().getCanvas();
-	    },
+
+	  }, {
+	    key: "getCanvas",
+	    value: function getCanvas() {
+	      return this.getRoot().getCanvas();
+	    }
 
 	    /**
 	     * Get canvasImage (fabric.Image instance)
 	     * @returns {fabric.Image}
 	     */
-	    getCanvasImage: function() {
-	        return this.getRoot().getCanvasImage();
-	    },
+
+	  }, {
+	    key: "getCanvasImage",
+	    value: function getCanvasImage() {
+	      return this.getRoot().getCanvasImage();
+	    }
 
 	    /**
 	     * Get image name
 	     * @returns {string}
 	     */
-	    getImageName: function() {
-	        return this.getRoot().getImageName();
-	    },
+
+	  }, {
+	    key: "getImageName",
+	    value: function getImageName() {
+	      return this.getRoot().getImageName();
+	    }
 
 	    /**
 	     * Get image editor
 	     * @returns {ImageEditor}
 	     */
-	    getEditor: function() {
-	        return this.getRoot().getEditor();
-	    },
+
+	  }, {
+	    key: "getEditor",
+	    value: function getEditor() {
+	      return this.getRoot().getEditor();
+	    }
 
 	    /**
 	     * Return component name
 	     * @returns {string}
 	     */
-	    getName: function() {
-	        return this.name;
-	    },
+
+	  }, {
+	    key: "getName",
+	    value: function getName() {
+	      return this.name;
+	    }
 
 	    /**
 	     * Set image properties
 	     * @param {object} setting - Image properties
 	     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
 	     */
-	    setImageProperties: function(setting, withRendering) {
-	        this.getRoot().setImageProperties(setting, withRendering);
-	    },
+
+	  }, {
+	    key: "setImageProperties",
+	    value: function setImageProperties(setting, withRendering) {
+	      this.getRoot().setImageProperties(setting, withRendering);
+	    }
 
 	    /**
 	     * Set canvas dimension - css only
 	     * @param {object} dimension - Canvas css dimension
 	     */
-	    setCanvasCssDimension: function(dimension) {
-	        this.getRoot().setCanvasCssDimension(dimension);
-	    },
+
+	  }, {
+	    key: "setCanvasCssDimension",
+	    value: function setCanvasCssDimension(dimension) {
+	      this.getRoot().setCanvasCssDimension(dimension);
+	    }
 
 	    /**
 	     * Set canvas dimension - css only
 	     * @param {object} dimension - Canvas backstore dimension
 	     */
-	    setCanvasBackstoreDimension: function(dimension) {
-	        this.getRoot().setCanvasBackstoreDimension(dimension);
-	    },
+
+	  }, {
+	    key: "setCanvasBackstoreDimension",
+	    value: function setCanvasBackstoreDimension(dimension) {
+	      this.getRoot().setCanvasBackstoreDimension(dimension);
+	    }
 
 	    /**
 	     * Set parent
 	     * @param {Component|null} parent - Parent
 	     */
-	    setParent: function(parent) {
-	        this._parent = parent || null;
-	    },
+
+	  }, {
+	    key: "setParent",
+	    value: function setParent(parent) {
+	      this._parent = parent || null;
+	    }
 
 	    /**
 	     * Adjust canvas dimension with scaling image
 	     */
-	    adjustCanvasDimension: function() {
-	        this.getRoot().adjustCanvasDimension();
-	    },
+
+	  }, {
+	    key: "adjustCanvasDimension",
+	    value: function adjustCanvasDimension() {
+	      this.getRoot().adjustCanvasDimension();
+	    }
 
 	    /**
 	     * Return parent.
 	     * If the view is root, return null
 	     * @returns {Component|null}
 	     */
-	    getParent: function() {
-	        return this._parent;
-	    },
+
+	  }, {
+	    key: "getParent",
+	    value: function getParent() {
+	      return this._parent;
+	    }
 
 	    /**
 	     * Return root
 	     * @returns {Component}
 	     */
-	    getRoot: function() {
-	        var next = this.getParent();
-	        var current = this; // eslint-disable-line consistent-this
 
-	        while (next) {
-	            current = next;
-	            next = current.getParent();
-	        }
+	  }, {
+	    key: "getRoot",
+	    value: function getRoot() {
+	      var next = this.getParent();
+	      var current = this; // eslint-disable-line consistent-this
 
-	        return current;
+	      while (next) {
+	        current = next;
+	        next = current.getParent();
+	      }
+
+	      return current;
 	    }
-	});
+	  }]);
+
+	  return Component;
+	}();
 
 	module.exports = Component;
 
-
 /***/ },
-/* 5 */
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Constants
-	 */
 	'use strict';
 
-	var util = __webpack_require__(6);
+	var _util = __webpack_require__(70);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	module.exports = {
 	    /**
 	     * Component names
 	     * @type {Object.<string, string>}
 	     */
-	    componentNames: util.keyMirror(
-	        'MAIN',
-	        'IMAGE_LOADER',
-	        'CROPPER',
-	        'FLIP',
-	        'ROTATION',
-	        'FREE_DRAWING',
-	        'LINE',
-	        'TEXT',
-	        'ICON',
-	        'FILTER',
-	        'SHAPE'
-	    ),
+	    componentNames: _util2.default.keyMirror('MAIN', 'IMAGE_LOADER', 'CROPPER', 'FLIP', 'ROTATION', 'FREE_DRAWING', 'LINE', 'TEXT', 'ICON', 'FILTER', 'SHAPE'),
 
 	    /**
 	     * Command names
 	     * @type {Object.<string, string>}
 	     */
-	    commandNames: util.keyMirror(
-	        'CLEAR',
-	        'LOAD_IMAGE',
-	        'FLIP_IMAGE',
-	        'ROTATE_IMAGE',
-	        'ADD_OBJECT',
-	        'REMOVE_OBJECT',
-	        'APPLY_FILTER'
-	    ),
+	    commandNames: _util2.default.keyMirror('CLEAR', 'LOAD_IMAGE', 'FLIP_IMAGE', 'ROTATE_IMAGE', 'ADD_OBJECT', 'REMOVE_OBJECT', 'APPLY_FILTER'),
 
 	    /**
 	     * Event names
@@ -2128,14 +4021,7 @@
 	     * Editor states
 	     * @type {Object.<string, string>}
 	     */
-	    states: util.keyMirror(
-	        'NORMAL',
-	        'CROP',
-	        'FREE_DRAWING',
-	        'LINE',
-	        'TEXT',
-	        'SHAPE'
-	    ),
+	    states: _util2.default.keyMirror('NORMAL', 'CROP', 'FREE_DRAWING', 'LINE', 'TEXT', 'SHAPE'),
 
 	    /**
 	     * Shortcut key values
@@ -2162,22 +4048,38 @@
 	            originY: 'center',
 	            transparentCorners: false
 	        }
-	    }
-	};
+	    },
 
+	    /**
+	     * Promise reject messages
+	     * @type {Object.<string, string>}
+	     */
+	    rejectMessages: {
+	        flip: 'The flipX and flipY setting values are not changed.',
+	        rotation: 'The current angle is same the old angle.',
+	        loadImage: 'The background image is empty.',
+	        isLock: 'The executing command state is locked.',
+	        undo: 'The promise of undo command is reject.',
+	        redo: 'The promise of redo command is reject.'
+	    }
+	}; /**
+	    * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	    * @fileoverview Constants
+	    */
 
 /***/ },
-/* 6 */
+/* 70 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	/**
 	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
 	 * @fileoverview Util
 	 */
-	'use strict';
-
 	var min = Math.min,
 	    max = Math.max;
+
 
 	module.exports = {
 	    /**
@@ -2187,8 +4089,8 @@
 	     * @param {number} maxValue - Maximum value
 	     * @returns {number} clamped value
 	     */
-	    clamp: function(value, minValue, maxValue) {
-	        var temp;
+	    clamp: function clamp(value, minValue, maxValue) {
+	        var temp = void 0;
 	        if (minValue > maxValue) {
 	            temp = minValue;
 	            minValue = maxValue;
@@ -2198,29 +4100,35 @@
 	        return max(minValue, min(value, maxValue));
 	    },
 
+
 	    /**
 	     * Make key-value object from arguments
 	     * @returns {object.<string, string>}
 	     */
-	    keyMirror: function() {
+	    keyMirror: function keyMirror() {
 	        var obj = {};
 
-	        tui.util.forEach(arguments, function(key) {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+
+	        tui.util.forEach(args, function (key) {
 	            obj[key] = key;
 	        });
 
 	        return obj;
 	    },
 
+
 	    /**
 	     * Make CSSText
 	     * @param {object} styleObj - Style info object
 	     * @returns {string} Connected string of style
 	     */
-	    makeStyleText: function(styleObj) {
+	    makeStyleText: function makeStyleText(styleObj) {
 	        var styleStr = '';
 
-	        tui.util.forEach(styleObj, function(value, prop) {
+	        tui.util.forEach(styleObj, function (value, prop) {
 	            styleStr += prop + ': ' + value + ';';
 	        });
 
@@ -2228,27 +4136,47 @@
 	    }
 	};
 
-
 /***/ },
-/* 7 */
+/* 71 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Image crop module (start cropping, end cropping)
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var Cropzone = __webpack_require__(8);
-	var consts = __webpack_require__(5);
-	var util = __webpack_require__(6);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _cropzone = __webpack_require__(72);
+
+	var _cropzone2 = _interopRequireDefault(_cropzone);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	var _util = __webpack_require__(70);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image crop module (start cropping, end cropping)
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	var MOUSE_MOVE_THRESHOLD = 10;
-
 	var abs = Math.abs;
-	var clamp = util.clamp;
-	var keyCodes = consts.keyCodes;
+	var clamp = _util2.default.clamp;
+	var keyCodes = _consts2.default.keyCodes;
+	var bind = tui.util.bind;
 
 	/**
 	 * Cropper components
@@ -2257,292 +4185,334 @@
 	 * @class Cropper
 	 * @ignore
 	 */
-	var Cropper = tui.util.defineClass(Component, /** @lends Cropper.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
+
+	var Cropper = function (_Component) {
+	    _inherits(Cropper, _Component);
+
+	    function Cropper(parent) {
+	        _classCallCheck(this, Cropper);
+
+	        var _this = _possibleConstructorReturn(this, (Cropper.__proto__ || Object.getPrototypeOf(Cropper)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = _consts2.default.componentNames.CROPPER;
 
 	        /**
 	         * Cropzone
 	         * @type {Cropzone}
 	         * @private
 	         */
-	        this._cropzone = null;
+	        _this._cropzone = null;
 
 	        /**
 	         * StartX of Cropzone
 	         * @type {number}
 	         * @private
 	         */
-	        this._startX = null;
+	        _this._startX = null;
 
 	        /**
 	         * StartY of Cropzone
 	         * @type {number}
 	         * @private
 	         */
-	        this._startY = null;
+	        _this._startY = null;
 
 	        /**
 	         * State whether shortcut key is pressed or not
 	         * @type {boolean}
 	         * @private
 	         */
-	        this._withShiftKey = false;
+	        _this._withShiftKey = false;
 
 	        /**
 	         * Listeners
 	         * @type {object.<string, function>}
 	         * @private
 	         */
-	        this._listeners = {
-	            keydown: $.proxy(this._onKeyDown, this),
-	            keyup: $.proxy(this._onKeyUp, this),
-	            mousedown: $.proxy(this._onFabricMouseDown, this),
-	            mousemove: $.proxy(this._onFabricMouseMove, this),
-	            mouseup: $.proxy(this._onFabricMouseUp, this)
+	        _this._listeners = {
+	            keydown: bind(_this._onKeyDown, _this),
+	            keyup: bind(_this._onKeyUp, _this),
+	            mousedown: bind(_this._onFabricMouseDown, _this),
+	            mousemove: bind(_this._onFabricMouseMove, _this),
+	            mouseup: bind(_this._onFabricMouseUp, _this)
 	        };
-	    },
-
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.CROPPER,
+	        return _this;
+	    }
 
 	    /**
 	     * Start cropping
 	     */
-	    start: function() {
-	        var canvas;
 
-	        if (this._cropzone) {
-	            return;
-	        }
-	        canvas = this.getCanvas();
-	        canvas.forEachObject(function(obj) { // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
-	            obj.evented = false;
-	        });
-	        this._cropzone = new Cropzone({
-	            left: -10,
-	            top: -10,
-	            width: 1,
-	            height: 1,
-	            strokeWidth: 0, // {@link https://github.com/kangax/fabric.js/issues/2860}
-	            cornerSize: 10,
-	            cornerColor: 'black',
-	            fill: 'transparent',
-	            hasRotatingPoint: false,
-	            hasBorders: false,
-	            lockScalingFlip: true,
-	            lockRotation: true
-	        });
-	        canvas.deactivateAll();
-	        canvas.add(this._cropzone);
-	        canvas.on('mouse:down', this._listeners.mousedown);
-	        canvas.selection = false;
-	        canvas.defaultCursor = 'crosshair';
 
-	        fabric.util.addListener(document, 'keydown', this._listeners.keydown);
-	        fabric.util.addListener(document, 'keyup', this._listeners.keyup);
-	    },
+	    _createClass(Cropper, [{
+	        key: 'start',
+	        value: function start() {
+	            if (this._cropzone) {
+	                return;
+	            }
+	            var canvas = this.getCanvas();
+	            canvas.forEachObject(function (obj) {
+	                // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
+	                obj.evented = false;
+	            });
+	            this._cropzone = new _cropzone2.default({
+	                left: -10,
+	                top: -10,
+	                width: 1,
+	                height: 1,
+	                strokeWidth: 0, // {@link https://github.com/kangax/fabric.js/issues/2860}
+	                cornerSize: 10,
+	                cornerColor: 'black',
+	                fill: 'transparent',
+	                hasRotatingPoint: false,
+	                hasBorders: false,
+	                lockScalingFlip: true,
+	                lockRotation: true
+	            });
+	            canvas.deactivateAll();
+	            canvas.add(this._cropzone);
+	            canvas.on('mouse:down', this._listeners.mousedown);
+	            canvas.selection = false;
+	            canvas.defaultCursor = 'crosshair';
 
-	    /**
-	     * End cropping
-	     * @param {boolean} isApplying - Is applying or not
-	     * @returns {?{imageName: string, url: string}} cropped Image data
-	     */
-	    end: function(isApplying) {
-	        var canvas = this.getCanvas();
-	        var cropzone = this._cropzone;
-	        var data;
-
-	        if (!cropzone) {
-	            return null;
-	        }
-	        cropzone.remove();
-	        canvas.selection = true;
-	        canvas.defaultCursor = 'default';
-	        canvas.off('mouse:down', this._listeners.mousedown);
-	        canvas.forEachObject(function(obj) {
-	            obj.evented = true;
-	        });
-	        if (isApplying) {
-	            data = this._getCroppedImageData();
-	        }
-	        this._cropzone = null;
-
-	        fabric.util.removeListener(document, 'keydown', this._listeners.keydown);
-	        fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
-
-	        return data;
-	    },
-
-	    /**
-	     * onMousedown handler in fabric canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onFabricMouseDown: function(fEvent) {
-	        var canvas = this.getCanvas();
-	        var coord;
-
-	        if (fEvent.target) {
-	            return;
+	            fabric.util.addListener(document, 'keydown', this._listeners.keydown);
+	            fabric.util.addListener(document, 'keyup', this._listeners.keyup);
 	        }
 
-	        canvas.selection = false;
-	        coord = canvas.getPointer(fEvent.e);
+	        /**
+	         * End cropping
+	         * @param {boolean} isApplying - Is applying or not
+	         * @returns {?{imageName: string, url: string}} cropped Image data
+	         */
 
-	        this._startX = coord.x;
-	        this._startY = coord.y;
+	    }, {
+	        key: 'end',
+	        value: function end(isApplying) {
+	            var canvas = this.getCanvas();
+	            var cropzone = this._cropzone;
+	            var data = void 0;
 
-	        canvas.on({
-	            'mouse:move': this._listeners.mousemove,
-	            'mouse:up': this._listeners.mouseup
-	        });
-	    },
-
-	    /**
-	     * onMousemove handler in fabric canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-	     * @private
-	     */
-	    _onFabricMouseMove: function(fEvent) {
-	        var canvas = this.getCanvas();
-	        var pointer = canvas.getPointer(fEvent.e);
-	        var x = pointer.x;
-	        var y = pointer.y;
-	        var cropzone = this._cropzone;
-
-	        if (abs(x - this._startX) + abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
+	            if (!cropzone) {
+	                return null;
+	            }
 	            cropzone.remove();
-	            cropzone.set(this._calcRectDimensionFromPoint(x, y));
+	            canvas.selection = true;
+	            canvas.defaultCursor = 'default';
+	            canvas.off('mouse:down', this._listeners.mousedown);
+	            canvas.forEachObject(function (obj) {
+	                obj.evented = true;
+	            });
+	            if (isApplying) {
+	                data = this._getCroppedImageData();
+	            }
+	            this._cropzone = null;
 
-	            canvas.add(cropzone);
+	            fabric.util.removeListener(document, 'keydown', this._listeners.keydown);
+	            fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
+
+	            return data;
 	        }
-	    },
 
-	    /**
-	     * Get rect dimension setting from Canvas-Mouse-Position(x, y)
-	     * @param {number} x - Canvas-Mouse-Position x
-	     * @param {number} y - Canvas-Mouse-Position Y
-	     * @returns {{left: number, top: number, width: number, height: number}}
-	     * @private
-	     */
-	    _calcRectDimensionFromPoint: function(x, y) {
-	        var canvas = this.getCanvas();
-	        var canvasWidth = canvas.getWidth();
-	        var canvasHeight = canvas.getHeight();
-	        var startX = this._startX;
-	        var startY = this._startY;
-	        var left = clamp(x, 0, startX);
-	        var top = clamp(y, 0, startY);
-	        var width = clamp(x, startX, canvasWidth) - left; // (startX <= x(mouse) <= canvasWidth) - left
-	        var height = clamp(y, startY, canvasHeight) - top; // (startY <= y(mouse) <= canvasHeight) - top
+	        /**
+	         * onMousedown handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
 
-	        if (this._withShiftKey) { // make fixed ratio cropzone
-	            if (width > height) {
-	                height = width;
-	            } else if (height > width) {
-	                width = height;
+	    }, {
+	        key: '_onFabricMouseDown',
+	        value: function _onFabricMouseDown(fEvent) {
+	            var canvas = this.getCanvas();
+
+	            if (fEvent.target) {
+	                return;
 	            }
 
-	            if (startX >= x) {
-	                left = startX - width;
+	            canvas.selection = false;
+	            var coord = canvas.getPointer(fEvent.e);
+
+	            this._startX = coord.x;
+	            this._startY = coord.y;
+
+	            canvas.on({
+	                'mouse:move': this._listeners.mousemove,
+	                'mouse:up': this._listeners.mouseup
+	            });
+	        }
+
+	        /**
+	         * onMousemove handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseMove',
+	        value: function _onFabricMouseMove(fEvent) {
+	            var canvas = this.getCanvas();
+	            var pointer = canvas.getPointer(fEvent.e);
+	            var x = pointer.x;
+	            var y = pointer.y;
+	            var cropzone = this._cropzone;
+
+	            if (abs(x - this._startX) + abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
+	                cropzone.remove();
+	                cropzone.set(this._calcRectDimensionFromPoint(x, y));
+
+	                canvas.add(cropzone);
+	            }
+	        }
+
+	        /**
+	         * Get rect dimension setting from Canvas-Mouse-Position(x, y)
+	         * @param {number} x - Canvas-Mouse-Position x
+	         * @param {number} y - Canvas-Mouse-Position Y
+	         * @returns {{left: number, top: number, width: number, height: number}}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_calcRectDimensionFromPoint',
+	        value: function _calcRectDimensionFromPoint(x, y) {
+	            var canvas = this.getCanvas();
+	            var canvasWidth = canvas.getWidth();
+	            var canvasHeight = canvas.getHeight();
+	            var startX = this._startX;
+	            var startY = this._startY;
+	            var left = clamp(x, 0, startX);
+	            var top = clamp(y, 0, startY);
+	            var width = clamp(x, startX, canvasWidth) - left; // (startX <= x(mouse) <= canvasWidth) - left
+	            var height = clamp(y, startY, canvasHeight) - top; // (startY <= y(mouse) <= canvasHeight) - top
+
+	            if (this._withShiftKey) {
+	                // make fixed ratio cropzone
+	                if (width > height) {
+	                    height = width;
+	                } else if (height > width) {
+	                    width = height;
+	                }
+
+	                if (startX >= x) {
+	                    left = startX - width;
+	                }
+
+	                if (startY >= y) {
+	                    top = startY - height;
+	                }
 	            }
 
-	            if (startY >= y) {
-	                top = startY - height;
+	            return {
+	                left: left,
+	                top: top,
+	                width: width,
+	                height: height
+	            };
+	        }
+
+	        /**
+	         * onMouseup handler in fabric canvas
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseUp',
+	        value: function _onFabricMouseUp() {
+	            var cropzone = this._cropzone;
+	            var listeners = this._listeners;
+	            var canvas = this.getCanvas();
+
+	            canvas.setActiveObject(cropzone);
+	            canvas.off({
+	                'mouse:move': listeners.mousemove,
+	                'mouse:up': listeners.mouseup
+	            });
+	        }
+
+	        /**
+	         * Get cropped image data
+	         * @returns {?{imageName: string, url: string}} cropped Image data
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getCroppedImageData',
+	        value: function _getCroppedImageData() {
+	            var cropzone = this._cropzone;
+
+	            if (!cropzone.isValid()) {
+	                return null;
+	            }
+
+	            var cropInfo = {
+	                left: cropzone.getLeft(),
+	                top: cropzone.getTop(),
+	                width: cropzone.getWidth(),
+	                height: cropzone.getHeight()
+	            };
+
+	            return {
+	                imageName: this.getImageName(),
+	                url: this.getCanvas().toDataURL(cropInfo)
+	            };
+	        }
+
+	        /**
+	         * Keydown event handler
+	         * @param {KeyboardEvent} e - Event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onKeyDown',
+	        value: function _onKeyDown(e) {
+	            if (e.keyCode === keyCodes.SHIFT) {
+	                this._withShiftKey = true;
 	            }
 	        }
 
-	        return {
-	            left: left,
-	            top: top,
-	            width: width,
-	            height: height
-	        };
-	    },
+	        /**
+	         * Keyup event handler
+	         * @param {KeyboardEvent} e - Event object
+	         * @private
+	         */
 
-	    /**
-	     * onMouseup handler in fabric canvas
-	     * @private
-	     */
-	    _onFabricMouseUp: function() {
-	        var cropzone = this._cropzone;
-	        var listeners = this._listeners;
-	        var canvas = this.getCanvas();
-
-	        canvas.setActiveObject(cropzone);
-	        canvas.off({
-	            'mouse:move': listeners.mousemove,
-	            'mouse:up': listeners.mouseup
-	        });
-	    },
-
-	    /**
-	     * Get cropped image data
-	     * @returns {?{imageName: string, url: string}} cropped Image data
-	     * @private
-	     */
-	    _getCroppedImageData: function() {
-	        var cropzone = this._cropzone;
-	        var cropInfo;
-
-	        if (!cropzone.isValid()) {
-	            return null;
+	    }, {
+	        key: '_onKeyUp',
+	        value: function _onKeyUp(e) {
+	            if (e.keyCode === keyCodes.SHIFT) {
+	                this._withShiftKey = false;
+	            }
 	        }
+	    }]);
 
-	        cropInfo = {
-	            left: cropzone.getLeft(),
-	            top: cropzone.getTop(),
-	            width: cropzone.getWidth(),
-	            height: cropzone.getHeight()
-	        };
-
-	        return {
-	            imageName: this.getImageName(),
-	            url: this.getCanvas().toDataURL(cropInfo)
-	        };
-	    },
-
-	    /**
-	     * Keydown event handler
-	     * @param {KeyboardEvent} e - Event object
-	     * @private
-	     */
-	    _onKeyDown: function(e) {
-	        if (e.keyCode === keyCodes.SHIFT) {
-	            this._withShiftKey = true;
-	        }
-	    },
-
-	    /**
-	     * Keyup event handler
-	     * @param {KeyboardEvent} e - Event object
-	     * @private
-	     */
-	    _onKeyUp: function(e) {
-	        if (e.keyCode === keyCodes.SHIFT) {
-	            this._withShiftKey = false;
-	        }
-	    }
-	});
+	    return Cropper;
+	}(_component2.default);
 
 	module.exports = Cropper;
 
-
 /***/ },
-/* 8 */
+/* 72 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Cropzone extending fabric.Rect
-	 */
 	'use strict';
 
-	var clamp = __webpack_require__(6).clamp;
+	var _util = __webpack_require__(70);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var clamp = _util2.default.clamp; /**
+	                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                   * @fileoverview Cropzone extending fabric.Rect
+	                                   */
+
 
 	var CORNER_TYPE_TOP_LEFT = 'tl';
 	var CORNER_TYPE_TOP_RIGHT = 'tr';
@@ -2567,7 +4537,7 @@
 	     * @param {Object} options Options object
 	     * @override
 	     */
-	    initialize: function(options) {
+	    initialize: function initialize(options) {
 	        options.type = 'cropzone';
 	        this.callSuper('initialize', options);
 	        this.on({
@@ -2576,24 +4546,23 @@
 	        });
 	    },
 
+
 	    /**
 	     * Render Crop-zone
 	     * @param {CanvasRenderingContext2D} ctx - Context
 	     * @private
 	     * @override
 	     */
-	    _render: function(ctx) {
-	        var originalFlipX, originalFlipY,
-	            originalScaleX, originalScaleY,
-	            cropzoneDashLineWidth = 7,
-	            cropzoneDashLineOffset = 7;
+	    _render: function _render(ctx) {
+	        var cropzoneDashLineWidth = 7;
+	        var cropzoneDashLineOffset = 7;
 	        this.callSuper('_render', ctx);
 
 	        // Calc original scale
-	        originalFlipX = this.flipX ? -1 : 1;
-	        originalFlipY = this.flipY ? -1 : 1;
-	        originalScaleX = originalFlipX / this.scaleX;
-	        originalScaleY = originalFlipY / this.scaleY;
+	        var originalFlipX = this.flipX ? -1 : 1;
+	        var originalFlipY = this.flipY ? -1 : 1;
+	        var originalScaleX = originalFlipX / this.scaleX;
+	        var originalScaleY = originalFlipY / this.scaleY;
 
 	        // Set original scale
 	        ctx.scale(originalScaleX, originalScaleY);
@@ -2610,6 +4579,7 @@
 	        // Reset scale
 	        ctx.scale(1 / originalScaleX, 1 / originalScaleY);
 	    },
+
 
 	    /**
 	     * Cropzone-coordinates with outer rectangle
@@ -2636,7 +4606,7 @@
 	     * @param {string|CanvasGradient|CanvasPattern} fillStyle - Fill-style
 	     * @private
 	     */
-	    _fillOuterRect: function(ctx, fillStyle) {
+	    _fillOuterRect: function _fillOuterRect(ctx, fillStyle) {
 	        var coordinates = this._getCoordinates(ctx),
 	            x = coordinates.x,
 	            y = coordinates.y;
@@ -2666,13 +4636,14 @@
 	        ctx.restore();
 	    },
 
+
 	    /**
 	     * Get coordinates
 	     * @param {CanvasRenderingContext2D} ctx - Context
 	     * @returns {cropzoneCoordinates} - {@link cropzoneCoordinates}
 	     * @private
 	     */
-	    _getCoordinates: function(ctx) {
+	    _getCoordinates: function _getCoordinates(ctx) {
 	        var ceil = Math.ceil,
 	            width = this.getWidth(),
 	            height = this.getHeight(),
@@ -2683,20 +4654,19 @@
 	            canvasEl = ctx.canvas; // canvas element, not fabric object
 
 	        return {
-	            x: tui.util.map([
-	                -(halfWidth + left),                        // x0
-	                -(halfWidth),                               // x1
-	                halfWidth,                                  // x2
-	                halfWidth + (canvasEl.width - left - width) // x3
+	            x: tui.util.map([-(halfWidth + left), // x0
+	            -halfWidth, // x1
+	            halfWidth, // x2
+	            halfWidth + (canvasEl.width - left - width) // x3
 	            ], ceil),
-	            y: tui.util.map([
-	                -(halfHeight + top),                            // y0
-	                -(halfHeight),                                  // y1
-	                halfHeight,                                     // y2
-	                halfHeight + (canvasEl.height - top - height)   // y3
+	            y: tui.util.map([-(halfHeight + top), // y0
+	            -halfHeight, // y1
+	            halfHeight, // y2
+	            halfHeight + (canvasEl.height - top - height) // y3
 	            ], ceil)
 	        };
 	    },
+
 
 	    /**
 	     * Stroke border
@@ -2706,7 +4676,7 @@
 	     * @param {number} [lineDashOffset] - Dash offset
 	     * @private
 	     */
-	    _strokeBorder: function(ctx, strokeStyle, lineDashWidth, lineDashOffset) {
+	    _strokeBorder: function _strokeBorder(ctx, strokeStyle, lineDashWidth, lineDashOffset) {
 	        var halfWidth = this.getWidth() / 2,
 	            halfHeight = this.getHeight() / 2;
 
@@ -2730,11 +4700,12 @@
 	        ctx.restore();
 	    },
 
+
 	    /**
 	     * onMoving event listener
 	     * @private
 	     */
-	    _onMoving: function() {
+	    _onMoving: function _onMoving() {
 	        var canvas = this.canvas,
 	            left = this.getLeft(),
 	            top = this.getTop(),
@@ -2747,12 +4718,13 @@
 	        this.setTop(clamp(top, 0, maxTop));
 	    },
 
+
 	    /**
 	     * onScaling event listener
 	     * @param {{e: MouseEvent}} fEvent - Fabric event
 	     * @private
 	     */
-	    _onScaling: function(fEvent) {
+	    _onScaling: function _onScaling(fEvent) {
 	        var pointer = this.canvas.getPointer(fEvent.e),
 	            settings = this._calcScalingSizeFromPointer(pointer);
 
@@ -2761,13 +4733,14 @@
 	        this.scale(1).set(settings);
 	    },
 
+
 	    /**
 	     * Calc scaled size from mouse pointer with selected corner
 	     * @param {{x: number, y: number}} pointer - Mouse position
 	     * @returns {object} Having left or(and) top or(and) width or(and) height.
 	     * @private
 	     */
-	    _calcScalingSizeFromPointer: function(pointer) {
+	    _calcScalingSizeFromPointer: function _calcScalingSizeFromPointer(pointer) {
 	        var pointerX = pointer.x,
 	            pointerY = pointer.y,
 	            tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY),
@@ -2780,6 +4753,7 @@
 	        return this._makeScalingSettings(tlScalingSize, brScalingSize);
 	    },
 
+
 	    /**
 	     * Calc scaling size(position + dimension) from left-top corner
 	     * @param {number} x - Mouse position X
@@ -2787,11 +4761,12 @@
 	     * @returns {{top: number, left: number, width: number, height: number}}
 	     * @private
 	     */
-	    _calcTopLeftScalingSizeFromPointer: function(x, y) {
+	    _calcTopLeftScalingSizeFromPointer: function _calcTopLeftScalingSizeFromPointer(x, y) {
 	        var bottom = this.getHeight() + this.top,
 	            right = this.getWidth() + this.left,
-	            top = clamp(y, 0, bottom - 1),  // 0 <= top <= (bottom - 1)
-	            left = clamp(x, 0, right - 1);  // 0 <= left <= (right - 1)
+	            top = clamp(y, 0, bottom - 1),
+	            // 0 <= top <= (bottom - 1)
+	        left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
 
 	        // When scaling "Top-Left corner": It fixes right and bottom coordinates
 	        return {
@@ -2802,6 +4777,7 @@
 	        };
 	    },
 
+
 	    /**
 	     * Calc scaling size from right-bottom corner
 	     * @param {number} x - Mouse position X
@@ -2809,7 +4785,7 @@
 	     * @returns {{width: number, height: number}}
 	     * @private
 	     */
-	    _calcBottomRightScalingSizeFromPointer: function(x, y) {
+	    _calcBottomRightScalingSizeFromPointer: function _calcBottomRightScalingSizeFromPointer(x, y) {
 	        var canvas = this.canvas,
 	            maxX = canvas.width,
 	            maxY = canvas.height,
@@ -2818,12 +4794,13 @@
 
 	        // When scaling "Bottom-Right corner": It fixes left and top coordinates
 	        return {
-	            width: clamp(x, (left + 1), maxX) - left,    // (width = x - left), (left + 1 <= x <= maxX)
-	            height: clamp(y, (top + 1), maxY) - top      // (height = y - top), (top + 1 <= y <= maxY)
+	            width: clamp(x, left + 1, maxX) - left, // (width = x - left), (left + 1 <= x <= maxX)
+	            height: clamp(y, top + 1, maxY) - top // (height = y - top), (top + 1 <= y <= maxY)
 	        };
 	    },
 
-	    /*eslint-disable complexity*/
+
+	    /* eslint-disable complexity */
 	    /**
 	     * Make scaling settings
 	     * @param {{width: number, height: number, left: number, top: number}} tl - Top-Left setting
@@ -2831,14 +4808,14 @@
 	     * @returns {{width: ?number, height: ?number, left: ?number, top: ?number}} Position setting
 	     * @private
 	     */
-	    _makeScalingSettings: function(tl, br) {
-	        var tlWidth = tl.width,
-	            tlHeight = tl.height,
-	            brHeight = br.height,
-	            brWidth = br.width,
-	            tlLeft = tl.left,
-	            tlTop = tl.top,
-	            settings;
+	    _makeScalingSettings: function _makeScalingSettings(tl, br) {
+	        var tlWidth = tl.width;
+	        var tlHeight = tl.height;
+	        var brHeight = br.height;
+	        var brWidth = br.width;
+	        var tlLeft = tl.left;
+	        var tlTop = tl.top;
+	        var settings = void 0;
 
 	        switch (this.__corner) {
 	            case CORNER_TYPE_TOP_LEFT:
@@ -2888,37 +4865,47 @@
 	        }
 
 	        return settings;
-	    }, /*eslint-enable complexity*/
+	    },
+	    /* eslint-enable complexity */
 
 	    /**
 	     * Return the whether this cropzone is valid
 	     * @returns {boolean}
 	     */
-	    isValid: function() {
-	        return (
-	            this.left >= 0 &&
-	            this.top >= 0 &&
-	            this.width > 0 &&
-	            this.height > 0
-	        );
+	    isValid: function isValid() {
+	        return this.left >= 0 && this.top >= 0 && this.width > 0 && this.height > 0;
 	    }
 	});
 
 	module.exports = Cropzone;
 
-
 /***/ },
-/* 9 */
+/* 73 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Main component having canvas & image, set css-max-dimension of canvas
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Main component having canvas & image, set css-max-dimension of canvas
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	var DEFAULT_CSS_MAX_WIDTH = 1000;
 	var DEFAULT_CSS_MAX_HEIGHT = 800;
@@ -2936,240 +4923,322 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var Main = tui.util.defineClass(Component, /** @lends Main.prototype */{
-	    init: function() {
+
+	var Main = function (_Component) {
+	    _inherits(Main, _Component);
+
+	    function Main() {
+	        _classCallCheck(this, Main);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        var _this = _possibleConstructorReturn(this, (Main.__proto__ || Object.getPrototypeOf(Main)).call(this));
+
+	        _this.name = _consts2.default.componentNames.MAIN;
+
 	        /**
 	         * Fabric canvas instance
 	         * @type {fabric.Canvas}
 	         */
-	        this.canvas = null;
+	        _this.canvas = null;
 
 	        /**
 	         * Fabric image instance
 	         * @type {fabric.Image}
 	         */
-	        this.canvasImage = null;
+	        _this.canvasImage = null;
 
 	        /**
 	         * Max width of canvas elements
 	         * @type {number}
 	         */
-	        this.cssMaxWidth = DEFAULT_CSS_MAX_WIDTH;
+	        _this.cssMaxWidth = DEFAULT_CSS_MAX_WIDTH;
 
 	        /**
 	         * Max height of canvas elements
 	         * @type {number}
 	         */
-	        this.cssMaxHeight = DEFAULT_CSS_MAX_HEIGHT;
+	        _this.cssMaxHeight = DEFAULT_CSS_MAX_HEIGHT;
 
 	        /**
 	         * Image name
 	         * @type {string}
 	         */
-	        this.imageName = '';
-	    },
-
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.MAIN,
+	        _this.imageName = '';
+	        return _this;
+	    }
 
 	    /**
 	     * To data url from canvas
 	     * @param {string} type - A DOMString indicating the image format. The default type is image/png.
 	     * @returns {string} A DOMString containing the requested data URI.
 	     */
-	    toDataURL: function(type) {
-	        return this.canvas && this.canvas.toDataURL(type);
-	    },
 
-	    /**
-	     * Save image(background) of canvas
-	     * @param {string} name - Name of image
-	     * @param {?fabric.Image} canvasImage - Fabric image instance
-	     * @override
-	     */
-	    setCanvasImage: function(name, canvasImage) {
-	        if (canvasImage) {
-	            tui.util.stamp(canvasImage);
-	        }
-	        this.imageName = name;
-	        this.canvasImage = canvasImage;
-	    },
 
-	    /**
-	     * Set css max dimension
-	     * @param {{width: number, height: number}} maxDimension - Max width & Max height
-	     */
-	    setCssMaxDimension: function(maxDimension) {
-	        this.cssMaxWidth = maxDimension.width || this.cssMaxWidth;
-	        this.cssMaxHeight = maxDimension.height || this.cssMaxHeight;
-	    },
-
-	    /**
-	     * Set canvas element to fabric.Canvas
-	     * @param {jQuery|Element|string} element - Wrapper or canvas element or selector
-	     * @override
-	     */
-	    setCanvasElement: function(element) {
-	        var canvasElement = $(element)[0];
-
-	        if (canvasElement.nodeName.toUpperCase() !== 'CANVAS') {
-	            canvasElement = $('<canvas>').appendTo(element)[0];
+	    _createClass(Main, [{
+	        key: 'toDataURL',
+	        value: function toDataURL(type) {
+	            return this.canvas && this.canvas.toDataURL(type);
 	        }
 
-	        this.canvas = new fabric.Canvas(canvasElement, {
-	            containerClass: 'tui-image-editor-canvas-container',
-	            enableRetinaScaling: false
-	        });
-	    },
+	        /**
+	         * Save image(background) of canvas
+	         * @param {string} name - Name of image
+	         * @param {?fabric.Image} canvasImage - Fabric image instance
+	         * @override
+	         */
 
-	    /**
-	     * Adjust canvas dimension with scaling image
-	     */
-	    adjustCanvasDimension: function() {
-	        var canvasImage = this.canvasImage.scale(1);
-	        var boundingRect = canvasImage.getBoundingRect();
-	        var width = boundingRect.width;
-	        var height = boundingRect.height;
-	        var maxDimension = this._calcMaxDimension(width, height);
-
-	        this.setCanvasCssDimension({
-	            width: '100%',
-	            height: '100%', // Set height '' for IE9
-	            'max-width': maxDimension.width + 'px',
-	            'max-height': maxDimension.height + 'px'
-	        });
-
-	        this.setCanvasBackstoreDimension({
-	            width: width,
-	            height: height
-	        });
-	        this.canvas.centerObject(canvasImage);
-	    },
-
-	    /**
-	     * Calculate max dimension of canvas
-	     * The css-max dimension is dynamically decided with maintaining image ratio
-	     * The css-max dimension is lower than canvas dimension (attribute of canvas, not css)
-	     * @param {number} width - Canvas width
-	     * @param {number} height - Canvas height
-	     * @returns {{width: number, height: number}} - Max width & Max height
-	     * @private
-	     */
-	    _calcMaxDimension: function(width, height) {
-	        var wScaleFactor = this.cssMaxWidth / width;
-	        var hScaleFactor = this.cssMaxHeight / height;
-	        var cssMaxWidth = Math.min(width, this.cssMaxWidth);
-	        var cssMaxHeight = Math.min(height, this.cssMaxHeight);
-
-	        if (wScaleFactor < 1 && wScaleFactor < hScaleFactor) {
-	            cssMaxWidth = width * wScaleFactor;
-	            cssMaxHeight = height * wScaleFactor;
-	        } else if (hScaleFactor < 1 && hScaleFactor < wScaleFactor) {
-	            cssMaxWidth = width * hScaleFactor;
-	            cssMaxHeight = height * hScaleFactor;
+	    }, {
+	        key: 'setCanvasImage',
+	        value: function setCanvasImage(name, canvasImage) {
+	            if (canvasImage) {
+	                tui.util.stamp(canvasImage);
+	            }
+	            this.imageName = name;
+	            this.canvasImage = canvasImage;
 	        }
 
-	        return {
-	            width: Math.floor(cssMaxWidth),
-	            height: Math.floor(cssMaxHeight)
-	        };
-	    },
+	        /**
+	         * Set css max dimension
+	         * @param {{width: number, height: number}} maxDimension - Max width & Max height
+	         */
 
-	    /**
-	     * Set canvas dimension - css only
-	     *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
-	     * @param {object} dimension - Canvas css dimension
-	     * @override
-	     */
-	    setCanvasCssDimension: function(dimension) {
-	        this.canvas.setDimensions(dimension, cssOnly);
-	    },
-
-	    /**
-	     * Set canvas dimension - backstore only
-	     *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
-	     * @param {object} dimension - Canvas backstore dimension
-	     * @override
-	     */
-	    setCanvasBackstoreDimension: function(dimension) {
-	        this.canvas.setDimensions(dimension, backstoreOnly);
-	    },
-
-	    /**
-	     * Set image properties
-	     * {@link http://fabricjs.com/docs/fabric.Image.html#set}
-	     * @param {object} setting - Image properties
-	     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
-	     * @override
-	     */
-	    setImageProperties: function(setting, withRendering) {
-	        var canvasImage = this.canvasImage;
-
-	        if (!canvasImage) {
-	            return;
+	    }, {
+	        key: 'setCssMaxDimension',
+	        value: function setCssMaxDimension(maxDimension) {
+	            this.cssMaxWidth = maxDimension.width || this.cssMaxWidth;
+	            this.cssMaxHeight = maxDimension.height || this.cssMaxHeight;
 	        }
 
-	        canvasImage.set(setting).setCoords();
-	        if (withRendering) {
-	            this.canvas.renderAll();
+	        /**
+	         * Set canvas element to fabric.Canvas
+	         * @param {jQuery|Element|string} element - Wrapper or canvas element or selector
+	         * @override
+	         */
+
+	    }, {
+	        key: 'setCanvasElement',
+	        value: function setCanvasElement(element) {
+	            var selectedElement = void 0;
+	            var canvasElement = void 0;
+
+	            if (element.jquery) {
+	                selectedElement = element[0];
+	            } else if (element.nodeType) {
+	                selectedElement = element;
+	            } else {
+	                selectedElement = document.querySelector(element);
+	            }
+
+	            if (selectedElement.nodeName.toUpperCase() !== 'CANVAS') {
+	                canvasElement = document.createElement('canvas');
+	                selectedElement.appendChild(canvasElement);
+	            }
+
+	            this.canvas = new fabric.Canvas(canvasElement, {
+	                containerClass: 'tui-image-editor-canvas-container',
+	                enableRetinaScaling: false
+	            });
 	        }
-	    },
 
-	    /**
-	     * Returns canvas element of fabric.Canvas[[lower-canvas]]
-	     * @returns {HTMLCanvasElement}
-	     * @override
-	     */
-	    getCanvasElement: function() {
-	        return this.canvas.getElement();
-	    },
+	        /**
+	         * Adjust canvas dimension with scaling image
+	         */
 
-	    /**
-	     * Get fabric.Canvas instance
-	     * @override
-	     * @returns {fabric.Canvas}
-	     */
-	    getCanvas: function() {
-	        return this.canvas;
-	    },
+	    }, {
+	        key: 'adjustCanvasDimension',
+	        value: function adjustCanvasDimension() {
+	            var canvasImage = this.canvasImage.scale(1);
+	            var boundingRect = canvasImage.getBoundingRect();
+	            var width = boundingRect.width;
+	            var height = boundingRect.height;
+	            var maxDimension = this._calcMaxDimension(width, height);
 
-	    /**
-	     * Get canvasImage (fabric.Image instance)
-	     * @override
-	     * @returns {fabric.Image}
-	     */
-	    getCanvasImage: function() {
-	        return this.canvasImage;
-	    },
+	            this.setCanvasCssDimension({
+	                width: '100%',
+	                height: '100%', // Set height '' for IE9
+	                'max-width': maxDimension.width + 'px',
+	                'max-height': maxDimension.height + 'px'
+	            });
 
-	    /**
-	     * Get image name
-	     * @override
-	     * @returns {string}
-	     */
-	    getImageName: function() {
-	        return this.imageName;
-	    }
-	});
+	            this.setCanvasBackstoreDimension({
+	                width: width,
+	                height: height
+	            });
+	            this.canvas.centerObject(canvasImage);
+	        }
+
+	        /**
+	         * Calculate max dimension of canvas
+	         * The css-max dimension is dynamically decided with maintaining image ratio
+	         * The css-max dimension is lower than canvas dimension (attribute of canvas, not css)
+	         * @param {number} width - Canvas width
+	         * @param {number} height - Canvas height
+	         * @returns {{width: number, height: number}} - Max width & Max height
+	         * @private
+	         */
+
+	    }, {
+	        key: '_calcMaxDimension',
+	        value: function _calcMaxDimension(width, height) {
+	            var wScaleFactor = this.cssMaxWidth / width;
+	            var hScaleFactor = this.cssMaxHeight / height;
+	            var cssMaxWidth = Math.min(width, this.cssMaxWidth);
+	            var cssMaxHeight = Math.min(height, this.cssMaxHeight);
+
+	            if (wScaleFactor < 1 && wScaleFactor < hScaleFactor) {
+	                cssMaxWidth = width * wScaleFactor;
+	                cssMaxHeight = height * wScaleFactor;
+	            } else if (hScaleFactor < 1 && hScaleFactor < wScaleFactor) {
+	                cssMaxWidth = width * hScaleFactor;
+	                cssMaxHeight = height * hScaleFactor;
+	            }
+
+	            return {
+	                width: Math.floor(cssMaxWidth),
+	                height: Math.floor(cssMaxHeight)
+	            };
+	        }
+
+	        /**
+	         * Set canvas dimension - css only
+	         *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
+	         * @param {object} dimension - Canvas css dimension
+	         * @override
+	         */
+
+	    }, {
+	        key: 'setCanvasCssDimension',
+	        value: function setCanvasCssDimension(dimension) {
+	            this.canvas.setDimensions(dimension, cssOnly);
+	        }
+
+	        /**
+	         * Set canvas dimension - backstore only
+	         *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
+	         * @param {object} dimension - Canvas backstore dimension
+	         * @override
+	         */
+
+	    }, {
+	        key: 'setCanvasBackstoreDimension',
+	        value: function setCanvasBackstoreDimension(dimension) {
+	            this.canvas.setDimensions(dimension, backstoreOnly);
+	        }
+
+	        /**
+	         * Set image properties
+	         * {@link http://fabricjs.com/docs/fabric.Image.html#set}
+	         * @param {object} setting - Image properties
+	         * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
+	         * @override
+	         */
+
+	    }, {
+	        key: 'setImageProperties',
+	        value: function setImageProperties(setting, withRendering) {
+	            var canvasImage = this.canvasImage;
+
+	            if (!canvasImage) {
+	                return;
+	            }
+
+	            canvasImage.set(setting).setCoords();
+	            if (withRendering) {
+	                this.canvas.renderAll();
+	            }
+	        }
+
+	        /**
+	         * Returns canvas element of fabric.Canvas[[lower-canvas]]
+	         * @returns {HTMLCanvasElement}
+	         * @override
+	         */
+
+	    }, {
+	        key: 'getCanvasElement',
+	        value: function getCanvasElement() {
+	            return this.canvas.getElement();
+	        }
+
+	        /**
+	         * Get fabric.Canvas instance
+	         * @override
+	         * @returns {fabric.Canvas}
+	         */
+
+	    }, {
+	        key: 'getCanvas',
+	        value: function getCanvas() {
+	            return this.canvas;
+	        }
+
+	        /**
+	         * Get canvasImage (fabric.Image instance)
+	         * @override
+	         * @returns {fabric.Image}
+	         */
+
+	    }, {
+	        key: 'getCanvasImage',
+	        value: function getCanvasImage() {
+	            return this.canvasImage;
+	        }
+
+	        /**
+	         * Get image name
+	         * @override
+	         * @returns {string}
+	         */
+
+	    }, {
+	        key: 'getImageName',
+	        value: function getImageName() {
+	            return this.imageName;
+	        }
+	    }]);
+
+	    return Main;
+	}(_component2.default);
 
 	module.exports = Main;
 
-
 /***/ },
-/* 10 */
+/* 74 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Image flip module
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _promise = __webpack_require__(3);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image flip module
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var componentNames = _consts2.default.componentNames,
+	    rejectMessages = _consts2.default.rejectMessages;
 
 	/**
 	 * Flip
@@ -3178,154 +5247,210 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var Flip = tui.util.defineClass(Component, /** @lends Flip.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
-	    },
 
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.FLIP,
+	var Flip = function (_Component) {
+	    _inherits(Flip, _Component);
+
+	    function Flip(parent) {
+	        _classCallCheck(this, Flip);
+
+	        var _this = _possibleConstructorReturn(this, (Flip.__proto__ || Object.getPrototypeOf(Flip)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = componentNames.FLIP;
+	        return _this;
+	    }
 
 	    /**
 	     * Get current flip settings
 	     * @returns {{flipX: Boolean, flipY: Boolean}}
 	     */
-	    getCurrentSetting: function() {
-	        var canvasImage = this.getCanvasImage();
 
-	        return {
-	            flipX: canvasImage.flipX,
-	            flipY: canvasImage.flipY
-	        };
-	    },
 
-	    /**
-	     * Set flipX, flipY
-	     * @param {{flipX: Boolean, flipY: Boolean}} newSetting - Flip setting
-	     * @returns {jQuery.Deferred}
-	     */
-	    set: function(newSetting) {
-	        var setting = this.getCurrentSetting();
-	        var jqDefer = $.Deferred();
-	        var isChangingFlipX = (setting.flipX !== newSetting.flipX);
-	        var isChangingFlipY = (setting.flipY !== newSetting.flipY);
+	    _createClass(Flip, [{
+	        key: 'getCurrentSetting',
+	        value: function getCurrentSetting() {
+	            var canvasImage = this.getCanvasImage();
 
-	        if (!isChangingFlipX && !isChangingFlipY) {
-	            return jqDefer.reject();
+	            return {
+	                flipX: canvasImage.flipX,
+	                flipY: canvasImage.flipY
+	            };
 	        }
 
-	        tui.util.extend(setting, newSetting);
-	        this.setImageProperties(setting, true);
-	        this._invertAngle(isChangingFlipX, isChangingFlipY);
-	        this._flipObjects(isChangingFlipX, isChangingFlipY);
+	        /**
+	         * Set flipX, flipY
+	         * @param {{flipX: Boolean, flipY: Boolean}} newSetting - Flip setting
+	         * @returns {jQuery.Deferred}
+	         */
 
-	        return jqDefer.resolve(setting, this.getCanvasImage().angle);
-	    },
+	    }, {
+	        key: 'set',
+	        value: function set(newSetting) {
+	            var setting = this.getCurrentSetting();
+	            var isChangingFlipX = setting.flipX !== newSetting.flipX;
+	            var isChangingFlipY = setting.flipY !== newSetting.flipY;
 
-	    /**
-	     * Invert image angle for flip
-	     * @param {boolean} isChangingFlipX - Change flipX
-	     * @param {boolean} isChangingFlipY - Change flipY
-	     */
-	    _invertAngle: function(isChangingFlipX, isChangingFlipY) {
-	        var canvasImage = this.getCanvasImage();
-	        var angle = canvasImage.angle;
+	            if (!isChangingFlipX && !isChangingFlipY) {
+	                return _promise2.default.reject(rejectMessages.flip);
+	            }
 
-	        if (isChangingFlipX) {
-	            angle *= -1;
-	        }
-	        if (isChangingFlipY) {
-	            angle *= -1;
-	        }
-	        canvasImage.setAngle(parseFloat(angle)).setCoords();// parseFloat for -0 to 0
-	    },
+	            tui.util.extend(setting, newSetting);
+	            this.setImageProperties(setting, true);
+	            this._invertAngle(isChangingFlipX, isChangingFlipY);
+	            this._flipObjects(isChangingFlipX, isChangingFlipY);
 
-	    /**
-	     * Flip objects
-	     * @param {boolean} isChangingFlipX - Change flipX
-	     * @param {boolean} isChangingFlipY - Change flipY
-	     * @private
-	     */
-	    _flipObjects: function(isChangingFlipX, isChangingFlipY) {
-	        var canvas = this.getCanvas();
-
-	        if (isChangingFlipX) {
-	            canvas.forEachObject(function(obj) {
-	                obj.set({
-	                    angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
-	                    flipX: !obj.flipX,
-	                    left: canvas.width - obj.left
-	                }).setCoords();
+	            return _promise2.default.resolve({
+	                setting: setting,
+	                angle: this.getCanvasImage().angle
 	            });
 	        }
-	        if (isChangingFlipY) {
-	            canvas.forEachObject(function(obj) {
-	                obj.set({
-	                    angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
-	                    flipY: !obj.flipY,
-	                    top: canvas.height - obj.top
-	                }).setCoords();
+
+	        /**
+	         * Invert image angle for flip
+	         * @param {boolean} isChangingFlipX - Change flipX
+	         * @param {boolean} isChangingFlipY - Change flipY
+	         */
+
+	    }, {
+	        key: '_invertAngle',
+	        value: function _invertAngle(isChangingFlipX, isChangingFlipY) {
+	            var canvasImage = this.getCanvasImage();
+	            var angle = canvasImage.angle;
+
+	            if (isChangingFlipX) {
+	                angle *= -1;
+	            }
+	            if (isChangingFlipY) {
+	                angle *= -1;
+	            }
+	            canvasImage.setAngle(parseFloat(angle)).setCoords(); // parseFloat for -0 to 0
+	        }
+
+	        /**
+	         * Flip objects
+	         * @param {boolean} isChangingFlipX - Change flipX
+	         * @param {boolean} isChangingFlipY - Change flipY
+	         * @private
+	         */
+
+	    }, {
+	        key: '_flipObjects',
+	        value: function _flipObjects(isChangingFlipX, isChangingFlipY) {
+	            var canvas = this.getCanvas();
+
+	            if (isChangingFlipX) {
+	                canvas.forEachObject(function (obj) {
+	                    obj.set({
+	                        angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
+	                        flipX: !obj.flipX,
+	                        left: canvas.width - obj.left
+	                    }).setCoords();
+	                });
+	            }
+	            if (isChangingFlipY) {
+	                canvas.forEachObject(function (obj) {
+	                    obj.set({
+	                        angle: parseFloat(obj.angle * -1), // parseFloat for -0 to 0
+	                        flipY: !obj.flipY,
+	                        top: canvas.height - obj.top
+	                    }).setCoords();
+	                });
+	            }
+	            canvas.renderAll();
+	        }
+
+	        /**
+	         * Reset flip settings
+	         * @returns {jQuery.Deferred}
+	         */
+
+	    }, {
+	        key: 'reset',
+	        value: function reset() {
+	            return this.set({
+	                flipX: false,
+	                flipY: false
 	            });
 	        }
-	        canvas.renderAll();
-	    },
 
-	    /**
-	     * Reset flip settings
-	     * @returns {jQuery.Deferred}
-	     */
-	    reset: function() {
-	        return this.set({
-	            flipX: false,
-	            flipY: false
-	        });
-	    },
+	        /**
+	         * Flip x
+	         * @returns {jQuery.Deferred}
+	         */
 
-	    /**
-	     * Flip x
-	     * @returns {jQuery.Deferred}
-	     */
-	    flipX: function() {
-	        var current = this.getCurrentSetting();
+	    }, {
+	        key: 'flipX',
+	        value: function flipX() {
+	            var current = this.getCurrentSetting();
 
-	        return this.set({
-	            flipX: !current.flipX,
-	            flipY: current.flipY
-	        });
-	    },
+	            return this.set({
+	                flipX: !current.flipX,
+	                flipY: current.flipY
+	            });
+	        }
 
-	    /**
-	     * Flip y
-	     * @returns {jQuery.Deferred}
-	     */
-	    flipY: function() {
-	        var current = this.getCurrentSetting();
+	        /**
+	         * Flip y
+	         * @returns {jQuery.Deferred}
+	         */
 
-	        return this.set({
-	            flipX: current.flipX,
-	            flipY: !current.flipY
-	        });
-	    }
-	});
+	    }, {
+	        key: 'flipY',
+	        value: function flipY() {
+	            var current = this.getCurrentSetting();
+
+	            return this.set({
+	                flipX: current.flipX,
+	                flipY: !current.flipY
+	            });
+	        }
+	    }]);
+
+	    return Flip;
+	}(_component2.default);
 
 	module.exports = Flip;
 
-
 /***/ },
-/* 11 */
+/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Image rotation module
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _promise = __webpack_require__(3);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image rotation module
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var componentNames = _consts2.default.componentNames,
+	    rejectMessages = _consts2.default.rejectMessages;
 
 	/**
 	 * Image Rotation component
@@ -3334,111 +5459,146 @@
 	 * @param {Component} parent - parent component
 	 * @ignore
 	 */
-	var Rotation = tui.util.defineClass(Component, /** @lends Rotation.prototype */ {
-	    init: function(parent) {
-	        this.setParent(parent);
-	    },
 
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.ROTATION,
+	var Rotation = function (_Component) {
+	    _inherits(Rotation, _Component);
+
+	    function Rotation(parent) {
+	        _classCallCheck(this, Rotation);
+
+	        var _this = _possibleConstructorReturn(this, (Rotation.__proto__ || Object.getPrototypeOf(Rotation)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = componentNames.ROTATION;
+	        return _this;
+	    }
 
 	    /**
 	     * Get current angle
 	     * @returns {Number}
 	     */
-	    getCurrentAngle: function() {
-	        return this.getCanvasImage().angle;
-	    },
 
-	    /**
-	     * Set angle of the image
-	     *
-	     *  Do not call "this.setImageProperties" for setting angle directly.
-	     *  Before setting angle, The originX,Y of image should be set to center.
-	     *      See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
-	     *
-	     * @param {number} angle - Angle value
-	     * @returns {jQuery.Deferred}
-	     */
-	    setAngle: function(angle) {
-	        var oldAngle = this.getCurrentAngle() % 360; //The angle is lower than 2*PI(===360 degrees)
-	        var jqDefer = $.Deferred();
-	        var oldImageCenter, newImageCenter, canvasImage;
 
-	        angle %= 360;
-	        if (angle === oldAngle) {
-	            return jqDefer.reject();
+	    _createClass(Rotation, [{
+	        key: 'getCurrentAngle',
+	        value: function getCurrentAngle() {
+	            return this.getCanvasImage().angle;
 	        }
-	        canvasImage = this.getCanvasImage();
 
-	        oldImageCenter = canvasImage.getCenterPoint();
-	        canvasImage.setAngle(angle).setCoords();
-	        this.adjustCanvasDimension();
-	        newImageCenter = canvasImage.getCenterPoint();
-	        this._rotateForEachObject(oldImageCenter, newImageCenter, angle - oldAngle);
+	        /**
+	         * Set angle of the image
+	         *
+	         *  Do not call "this.setImageProperties" for setting angle directly.
+	         *  Before setting angle, The originX,Y of image should be set to center.
+	         *      See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
+	         *
+	         * @param {number} angle - Angle value
+	         * @returns {jQuery.Deferred}
+	         */
 
-	        return jqDefer.resolve(angle);
-	    },
+	    }, {
+	        key: 'setAngle',
+	        value: function setAngle(angle) {
+	            var oldAngle = this.getCurrentAngle() % 360; // The angle is lower than 2*PI(===360 degrees)
 
-	    /**
-	     * Rotate for each object
-	     * @param {fabric.Point} oldImageCenter - Image center point before rotation
-	     * @param {fabric.Point} newImageCenter - Image center point after rotation
-	     * @param {number} angleDiff - Image angle difference after rotation
-	     * @private
-	     */
-	    _rotateForEachObject: function(oldImageCenter, newImageCenter, angleDiff) {
-	        var canvas = this.getCanvas();
-	        var centerDiff = {
-	            x: oldImageCenter.x - newImageCenter.x,
-	            y: oldImageCenter.y - newImageCenter.y
-	        };
+	            angle %= 360;
+	            if (angle === oldAngle) {
+	                return _promise2.default.reject(rejectMessages.rotation);
+	            }
+	            var canvasImage = this.getCanvasImage();
+	            var oldImageCenter = canvasImage.getCenterPoint();
+	            canvasImage.setAngle(angle).setCoords();
+	            this.adjustCanvasDimension();
+	            var newImageCenter = canvasImage.getCenterPoint();
+	            this._rotateForEachObject(oldImageCenter, newImageCenter, angle - oldAngle);
 
-	        canvas.forEachObject(function(obj) {
-	            var objCenter = obj.getCenterPoint();
-	            var radian = fabric.util.degreesToRadians(angleDiff);
-	            var newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
+	            return _promise2.default.resolve(angle);
+	        }
 
-	            obj.set({
-	                left: newObjCenter.x - centerDiff.x,
-	                top: newObjCenter.y - centerDiff.y,
-	                angle: (obj.angle + angleDiff) % 360
+	        /**
+	         * Rotate for each object
+	         * @param {fabric.Point} oldImageCenter - Image center point before rotation
+	         * @param {fabric.Point} newImageCenter - Image center point after rotation
+	         * @param {number} angleDiff - Image angle difference after rotation
+	         * @private
+	         */
+
+	    }, {
+	        key: '_rotateForEachObject',
+	        value: function _rotateForEachObject(oldImageCenter, newImageCenter, angleDiff) {
+	            var canvas = this.getCanvas();
+	            var centerDiff = {
+	                x: oldImageCenter.x - newImageCenter.x,
+	                y: oldImageCenter.y - newImageCenter.y
+	            };
+
+	            canvas.forEachObject(function (obj) {
+	                var objCenter = obj.getCenterPoint();
+	                var radian = fabric.util.degreesToRadians(angleDiff);
+	                var newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
+
+	                obj.set({
+	                    left: newObjCenter.x - centerDiff.x,
+	                    top: newObjCenter.y - centerDiff.y,
+	                    angle: (obj.angle + angleDiff) % 360
+	                });
+	                obj.setCoords();
 	            });
-	            obj.setCoords();
-	        });
-	        canvas.renderAll();
-	    },
+	            canvas.renderAll();
+	        }
 
-	    /**
-	     * Rotate the image
-	     * @param {number} additionalAngle - Additional angle
-	     * @returns {jQuery.Deferred}
-	     */
-	    rotate: function(additionalAngle) {
-	        var current = this.getCurrentAngle();
+	        /**
+	         * Rotate the image
+	         * @param {number} additionalAngle - Additional angle
+	         * @returns {jQuery.Deferred}
+	         */
 
-	        return this.setAngle(current + additionalAngle);
-	    }
-	});
+	    }, {
+	        key: 'rotate',
+	        value: function rotate(additionalAngle) {
+	            var current = this.getCurrentAngle();
+
+	            return this.setAngle(current + additionalAngle);
+	        }
+	    }]);
+
+	    return Rotation;
+	}(_component2.default);
 
 	module.exports = Rotation;
 
-
 /***/ },
-/* 12 */
+/* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Free drawing module, Set brush
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Free drawing module, Set brush
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	/**
 	 * FreeDrawing
@@ -3447,81 +5607,117 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var FreeDrawing = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
+	var FreeDrawing = function (_Component) {
+	  _inherits(FreeDrawing, _Component);
 
-	        /**
-	         * Brush width
-	         * @type {number}
-	         */
-	        this.width = 12;
+	  function FreeDrawing(parent) {
+	    _classCallCheck(this, FreeDrawing);
 
-	        /**
-	         * fabric.Color instance for brush color
-	         * @type {fabric.Color}
-	         */
-	        this.oColor = new fabric.Color('rgba(0, 0, 0, 0.5)');
-	    },
+	    var _this = _possibleConstructorReturn(this, (FreeDrawing.__proto__ || Object.getPrototypeOf(FreeDrawing)).call(this));
+
+	    _this.setParent(parent);
 
 	    /**
 	     * Component name
 	     * @type {string}
 	     */
-	    name: consts.componentNames.FREE_DRAWING,
+	    _this.name = _consts2.default.componentNames.FREE_DRAWING;
 
 	    /**
-	     * Start free drawing mode
-	     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
+	     * Brush width
+	     * @type {number}
 	     */
-	    start: function(setting) {
-	        var canvas = this.getCanvas();
+	    _this.width = 12;
 
-	        canvas.isDrawingMode = true;
-	        this.setBrush(setting);
-	    },
+	    /**
+	     * fabric.Color instance for brush color
+	     * @type {fabric.Color}
+	     */
+	    _this.oColor = new fabric.Color('rgba(0, 0, 0, 0.5)');
+	    return _this;
+	  }
+
+	  /**
+	   * Start free drawing mode
+	   * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
+	   */
+
+
+	  _createClass(FreeDrawing, [{
+	    key: 'start',
+	    value: function start(setting) {
+	      var canvas = this.getCanvas();
+
+	      canvas.isDrawingMode = true;
+	      this.setBrush(setting);
+	    }
 
 	    /**
 	     * Set brush
 	     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
 	     */
-	    setBrush: function(setting) {
-	        var brush = this.getCanvas().freeDrawingBrush;
 
-	        setting = setting || {};
-	        this.width = setting.width || this.width;
-	        if (setting.color) {
-	            this.oColor = new fabric.Color(setting.color);
-	        }
-	        brush.width = this.width;
-	        brush.color = this.oColor.toRgba();
-	    },
+	  }, {
+	    key: 'setBrush',
+	    value: function setBrush(setting) {
+	      var brush = this.getCanvas().freeDrawingBrush;
+
+	      setting = setting || {};
+	      this.width = setting.width || this.width;
+	      if (setting.color) {
+	        this.oColor = new fabric.Color(setting.color);
+	      }
+	      brush.width = this.width;
+	      brush.color = this.oColor.toRgba();
+	    }
 
 	    /**
 	     * End free drawing mode
 	     */
-	    end: function() {
-	        var canvas = this.getCanvas();
 
-	        canvas.isDrawingMode = false;
+	  }, {
+	    key: 'end',
+	    value: function end() {
+	      var canvas = this.getCanvas();
+
+	      canvas.isDrawingMode = false;
 	    }
-	});
+	  }]);
+
+	  return FreeDrawing;
+	}(_component2.default);
 
 	module.exports = FreeDrawing;
 
-
 /***/ },
-/* 13 */
+/* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Free drawing module, Set brush
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Free drawing module, Set brush
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var bind = tui.util.bind;
 
 	/**
 	 * Line
@@ -3530,178 +5726,225 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var Line = tui.util.defineClass(Component, /** @lends FreeDrawing.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
+
+	var Line = function (_Component) {
+	    _inherits(Line, _Component);
+
+	    function Line(parent) {
+	        _classCallCheck(this, Line);
+
+	        var _this = _possibleConstructorReturn(this, (Line.__proto__ || Object.getPrototypeOf(Line)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = _consts2.default.componentNames.LINE;
 
 	        /**
 	         * Brush width
 	         * @type {number}
 	         * @private
 	         */
-	        this._width = 12;
+	        _this._width = 12;
 
 	        /**
 	         * fabric.Color instance for brush color
 	         * @type {fabric.Color}
 	         * @private
 	         */
-	        this._oColor = new fabric.Color('rgba(0, 0, 0, 0.5)');
+	        _this._oColor = new fabric.Color('rgba(0, 0, 0, 0.5)');
 
 	        /**
 	         * Listeners
 	         * @type {object.<string, function>}
 	         * @private
 	         */
-	        this._listeners = {
-	            mousedown: $.proxy(this._onFabricMouseDown, this),
-	            mousemove: $.proxy(this._onFabricMouseMove, this),
-	            mouseup: $.proxy(this._onFabricMouseUp, this)
+	        _this._listeners = {
+	            mousedown: bind(_this._onFabricMouseDown, _this),
+	            mousemove: bind(_this._onFabricMouseMove, _this),
+	            mouseup: bind(_this._onFabricMouseUp, _this)
 	        };
-	    },
-
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.LINE,
+	        return _this;
+	    }
 
 	    /**
 	     * Start drawing line mode
 	     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
 	     */
-	    start: function(setting) {
-	        var canvas = this.getCanvas();
 
-	        canvas.defaultCursor = 'crosshair';
-	        canvas.selection = false;
 
-	        this.setBrush(setting);
+	    _createClass(Line, [{
+	        key: 'start',
+	        value: function start(setting) {
+	            var canvas = this.getCanvas();
 
-	        canvas.forEachObject(function(obj) {
-	            obj.set({
+	            canvas.defaultCursor = 'crosshair';
+	            canvas.selection = false;
+
+	            this.setBrush(setting);
+
+	            canvas.forEachObject(function (obj) {
+	                obj.set({
+	                    evented: false
+	                });
+	            });
+
+	            canvas.on({
+	                'mouse:down': this._listeners.mousedown
+	            });
+	        }
+
+	        /**
+	         * Set brush
+	         * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
+	         */
+
+	    }, {
+	        key: 'setBrush',
+	        value: function setBrush(setting) {
+	            var brush = this.getCanvas().freeDrawingBrush;
+
+	            setting = setting || {};
+	            this._width = setting.width || this._width;
+
+	            if (setting.color) {
+	                this._oColor = new fabric.Color(setting.color);
+	            }
+	            brush.width = this._width;
+	            brush.color = this._oColor.toRgba();
+	        }
+
+	        /**
+	         * End drawing line mode
+	         */
+
+	    }, {
+	        key: 'end',
+	        value: function end() {
+	            var canvas = this.getCanvas();
+
+	            canvas.defaultCursor = 'default';
+	            canvas.selection = true;
+
+	            canvas.forEachObject(function (obj) {
+	                obj.set({
+	                    evented: true
+	                });
+	            });
+
+	            canvas.off('mouse:down', this._listeners.mousedown);
+	        }
+
+	        /**
+	         * Mousedown event handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseDown',
+	        value: function _onFabricMouseDown(fEvent) {
+	            var canvas = this.getCanvas();
+	            var pointer = canvas.getPointer(fEvent.e);
+	            var points = [pointer.x, pointer.y, pointer.x, pointer.y];
+
+	            this._line = new fabric.Line(points, {
+	                stroke: this._oColor.toRgba(),
+	                strokeWidth: this._width,
 	                evented: false
 	            });
-	        });
 
-	        canvas.on({
-	            'mouse:down': this._listeners.mousedown
-	        });
-	    },
+	            this._line.set(_consts2.default.fObjectOptions.SELECTION_STYLE);
 
-	    /**
-	     * Set brush
-	     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
-	     */
-	    setBrush: function(setting) {
-	        var brush = this.getCanvas().freeDrawingBrush;
+	            canvas.add(this._line);
 
-	        setting = setting || {};
-	        this._width = setting.width || this._width;
-
-	        if (setting.color) {
-	            this._oColor = new fabric.Color(setting.color);
-	        }
-	        brush.width = this._width;
-	        brush.color = this._oColor.toRgba();
-	    },
-
-	    /**
-	     * End drawing line mode
-	     */
-	    end: function() {
-	        var canvas = this.getCanvas();
-
-	        canvas.defaultCursor = 'default';
-	        canvas.selection = true;
-
-	        canvas.forEachObject(function(obj) {
-	            obj.set({
-	                evented: true
+	            canvas.on({
+	                'mouse:move': this._listeners.mousemove,
+	                'mouse:up': this._listeners.mouseup
 	            });
-	        });
+	        }
 
-	        canvas.off('mouse:down', this._listeners.mousedown);
-	    },
+	        /**
+	         * Mousemove event handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+	         * @private
+	         */
 
-	    /**
-	     * Mousedown event handler in fabric canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
-	     * @private
-	     */
-	    _onFabricMouseDown: function(fEvent) {
-	        var canvas = this.getCanvas();
-	        var pointer = canvas.getPointer(fEvent.e);
-	        var points = [pointer.x, pointer.y, pointer.x, pointer.y];
+	    }, {
+	        key: '_onFabricMouseMove',
+	        value: function _onFabricMouseMove(fEvent) {
+	            var canvas = this.getCanvas();
+	            var pointer = canvas.getPointer(fEvent.e);
 
-	        this._line = new fabric.Line(points, {
-	            stroke: this._oColor.toRgba(),
-	            strokeWidth: this._width,
-	            evented: false
-	        });
+	            this._line.set({
+	                x2: pointer.x,
+	                y2: pointer.y
+	            });
 
-	        this._line.set(consts.fObjectOptions.SELECTION_STYLE);
+	            this._line.setCoords();
 
-	        canvas.add(this._line);
+	            canvas.renderAll();
+	        }
 
-	        canvas.on({
-	            'mouse:move': this._listeners.mousemove,
-	            'mouse:up': this._listeners.mouseup
-	        });
-	    },
+	        /**
+	         * Mouseup event handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+	         * @private
+	         */
 
-	    /**
-	     * Mousemove event handler in fabric canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
-	     * @private
-	     */
-	    _onFabricMouseMove: function(fEvent) {
-	        var canvas = this.getCanvas();
-	        var pointer = canvas.getPointer(fEvent.e);
+	    }, {
+	        key: '_onFabricMouseUp',
+	        value: function _onFabricMouseUp() {
+	            var canvas = this.getCanvas();
 
-	        this._line.set({
-	            x2: pointer.x,
-	            y2: pointer.y
-	        });
+	            this._line = null;
 
-	        this._line.setCoords();
+	            canvas.off({
+	                'mouse:move': this._listeners.mousemove,
+	                'mouse:up': this._listeners.mouseup
+	            });
+	        }
+	    }]);
 
-	        canvas.renderAll();
-	    },
-
-	    /**
-	     * Mouseup event handler in fabric canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
-	     * @private
-	     */
-	    _onFabricMouseUp: function() {
-	        var canvas = this.getCanvas();
-
-	        this._line = null;
-
-	        canvas.off({
-	            'mouse:move': this._listeners.mousemove,
-	            'mouse:up': this._listeners.mouseup
-	        });
-	    }
-	});
+	    return Line;
+	}(_component2.default);
 
 	module.exports = Line;
 
-
 /***/ },
-/* 14 */
+/* 78 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Text module
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
-	var util = __webpack_require__(6);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	var _util = __webpack_require__(70);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Text module
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	var defaultStyles = {
 	    fill: '#000000',
@@ -3718,7 +5961,7 @@
 	var browser = tui.util.browser;
 
 	var TEXTAREA_CLASSNAME = 'tui-image-eidtor-textarea';
-	var TEXTAREA_STYLES = util.makeStyleText({
+	var TEXTAREA_STYLES = _util2.default.makeStyleText({
 	    position: 'absolute',
 	    padding: 0,
 	    display: 'none',
@@ -3742,484 +5985,570 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var Text = tui.util.defineClass(Component, /** @lends Text.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
+
+	var Text = function (_Component) {
+	    _inherits(Text, _Component);
+
+	    function Text(parent) {
+	        _classCallCheck(this, Text);
+
+	        var _this = _possibleConstructorReturn(this, (Text.__proto__ || Object.getPrototypeOf(Text)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = _consts2.default.componentNames.TEXT;
 
 	        /**
 	         * Default text style
 	         * @type {object}
 	         */
-	        this._defaultStyles = defaultStyles;
+	        _this._defaultStyles = defaultStyles;
 
 	        /**
 	         * Selected state
 	         * @type {boolean}
 	         */
-	        this._isSelected = false;
+	        _this._isSelected = false;
 
 	        /**
 	         * Selected text object
 	         * @type {object}
 	         */
-	        this._selectedObj = {};
+	        _this._selectedObj = {};
 
 	        /**
 	         * Editing text object
 	         * @type {object}
 	         */
-	        this._editingObj = {};
+	        _this._editingObj = {};
 
 	        /**
 	         * Listeners for fabric event
 	         * @type {object}
 	         */
-	        this._listeners = {};
+	        _this._listeners = {};
 
 	        /**
 	         * Textarea element for editing
 	         * @type {HTMLElement}
 	         */
-	        this._textarea = null;
+	        _this._textarea = null;
 
 	        /**
 	         * Ratio of current canvas
 	         * @type {number}
 	         */
-	        this._ratio = 1;
+	        _this._ratio = 1;
 
 	        /**
 	         * Last click time
 	         * @type {Date}
 	         */
-	        this._lastClickTime = (new Date()).getTime();
+	        _this._lastClickTime = new Date().getTime();
 
 	        /**
 	         * Text object infos before editing
 	         * @type {Object}
 	         */
-	        this._editingObjInfos = {};
+	        _this._editingObjInfos = {};
 
 	        /**
 	         * Previous state of editing
 	         * @type {boolean}
 	         */
-	        this.isPrevEditing = false;
-	    },
-
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.TEXT,
+	        _this.isPrevEditing = false;
+	        return _this;
+	    }
 
 	    /**
 	     * Start input text mode
 	     * @param {object} listeners - Callback functions of fabric event
 	     */
-	    start: function(listeners) {
-	        var canvas = this.getCanvas();
 
-	        this._listeners = listeners;
 
-	        canvas.selection = false;
-	        canvas.defaultCursor = 'text';
-	        canvas.on({
-	            'mouse:down': this._listeners.mousedown,
-	            'object:selected': this._listeners.select,
-	            'before:selection:cleared': this._listeners.selectClear,
-	            'object:scaling': this._onFabricScaling
-	        });
+	    _createClass(Text, [{
+	        key: 'start',
+	        value: function start(listeners) {
+	            var canvas = this.getCanvas();
 
-	        this._createTextarea();
+	            this._listeners = listeners;
 
-	        this.setCanvasRatio();
-	    },
+	            canvas.selection = false;
+	            canvas.defaultCursor = 'text';
+	            canvas.on({
+	                'mouse:down': this._listeners.mousedown,
+	                'object:selected': this._listeners.select,
+	                'before:selection:cleared': this._listeners.selectClear,
+	                'object:scaling': this._onFabricScaling
+	            });
 
-	    /**
-	     * End input text mode
-	     */
-	    end: function() {
-	        var canvas = this.getCanvas();
+	            this._createTextarea();
 
-	        canvas.selection = true;
-	        canvas.defaultCursor = 'default';
-	        canvas.deactivateAllWithDispatch(); // action for undo stack
-	        canvas.off({
-	            'mouse:down': this._listeners.mousedown,
-	            'object:selected': this._listeners.select,
-	            'before:selection:cleared': this._listeners.selectClear,
-	            'object:scaling': this._onFabricScaling
-	        });
-
-	        this._removeTextarea();
-
-	        this._listeners = {};
-	    },
-
-	    /**
-	     * Add new text on canvas image
-	     * @param {string} text - Initial input text
-	     * @param {object} options - Options for generating text
-	     *     @param {object} [options.styles] Initial styles
-	     *         @param {string} [options.styles.fill] Color
-	     *         @param {string} [options.styles.fontFamily] Font type for text
-	     *         @param {number} [options.styles.fontSize] Size
-	     *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
-	     *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
-	     *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
-	     *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
-	     *     @param {{x: number, y: number}} [options.position] - Initial position
-	     */
-	    add: function(text, options) {
-	        var canvas = this.getCanvas();
-	        var styles = this._defaultStyles;
-	        var newText;
-
-	        this._setInitPos(options.position);
-
-	        if (options.styles) {
-	            styles = tui.util.extend(options.styles, styles);
+	            this.setCanvasRatio();
 	        }
 
-	        newText = new fabric.Text(text, styles);
+	        /**
+	         * End input text mode
+	         */
 
-	        newText.set(consts.fObjectOptions.SELECTION_STYLE);
+	    }, {
+	        key: 'end',
+	        value: function end() {
+	            var canvas = this.getCanvas();
 
-	        newText.on({
-	            mouseup: $.proxy(this._onFabricMouseUp, this)
-	        });
+	            canvas.selection = true;
+	            canvas.defaultCursor = 'default';
+	            canvas.deactivateAllWithDispatch(); // action for undo stack
+	            canvas.off({
+	                'mouse:down': this._listeners.mousedown,
+	                'object:selected': this._listeners.select,
+	                'before:selection:cleared': this._listeners.selectClear,
+	                'object:scaling': this._onFabricScaling
+	            });
 
-	        canvas.add(newText);
+	            this._removeTextarea();
 
-	        if (!canvas.getActiveObject()) {
-	            canvas.setActiveObject(newText);
+	            this._listeners = {};
 	        }
 
-	        this.isPrevEditing = true;
-	    },
+	        /**
+	         * Add new text on canvas image
+	         * @param {string} text - Initial input text
+	         * @param {object} options - Options for generating text
+	         *     @param {object} [options.styles] Initial styles
+	         *         @param {string} [options.styles.fill] Color
+	         *         @param {string} [options.styles.fontFamily] Font type for text
+	         *         @param {number} [options.styles.fontSize] Size
+	         *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
+	         *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
+	         *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
+	         *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+	         *     @param {{x: number, y: number}} [options.position] - Initial position
+	         */
 
-	    /**
-	     * Change text of activate object on canvas image
-	     * @param {object} activeObj - Current selected text object
-	     * @param {string} text - Changed text
-	     */
-	    change: function(activeObj, text) {
-	        activeObj.set('text', text);
+	    }, {
+	        key: 'add',
+	        value: function add(text, options) {
+	            var canvas = this.getCanvas();
+	            var styles = this._defaultStyles;
 
-	        this.getCanvas().renderAll();
-	    },
+	            this._setInitPos(options.position);
 
-	    /**
-	     * Set style
-	     * @param {object} activeObj - Current selected text object
-	     * @param {object} styleObj - Initial styles
-	     *     @param {string} [styleObj.fill] Color
-	     *     @param {string} [styleObj.fontFamily] Font type for text
-	     *     @param {number} [styleObj.fontSize] Size
-	     *     @param {string} [styleObj.fontStyle] Type of inclination (normal / italic)
-	     *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
-	     *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
-	     *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
-	     */
-	    setStyle: function(activeObj, styleObj) {
-	        tui.util.forEach(styleObj, function(val, key) {
-	            if (activeObj[key] === val) {
-	                styleObj[key] = resetStyles[key] || '';
+	            if (options.styles) {
+	                styles = tui.util.extend(options.styles, styles);
 	            }
-	        }, this);
 
-	        activeObj.set(styleObj);
+	            var newText = new fabric.Text(text, styles);
+	            newText.set(_consts2.default.fObjectOptions.SELECTION_STYLE);
+	            newText.on({
+	                mouseup: tui.util.bind(this._onFabricMouseUp, this)
+	            });
 
-	        this.getCanvas().renderAll();
-	    },
+	            canvas.add(newText);
 
-	    /**
-	     * Set infos of the current selected object
-	     * @param {fabric.Text} obj - Current selected text object
-	     * @param {boolean} state - State of selecting
-	     */
-	    setSelectedInfo: function(obj, state) {
-	        this._selectedObj = obj;
-	        this._isSelected = state;
-	    },
+	            if (!canvas.getActiveObject()) {
+	                canvas.setActiveObject(newText);
+	            }
 
-	    /**
-	     * Whether object is selected or not
-	     * @returns {boolean} State of selecting
-	     */
-	    isSelected: function() {
-	        return this._isSelected;
-	    },
-
-	    /**
-	     * Get current selected text object
-	     * @returns {fabric.Text} Current selected text object
-	     */
-	    getSelectedObj: function() {
-	        return this._selectedObj;
-	    },
-
-	    /**
-	     * Set ratio value of canvas
-	     */
-	    setCanvasRatio: function() {
-	        var canvasElement = this.getCanvasElement();
-	        var cssWidth = parseInt(canvasElement.style.maxWidth, 10);
-	        var originWidth = canvasElement.width;
-	        var ratio = originWidth / cssWidth;
-
-	        this._ratio = ratio;
-	    },
-
-	    /**
-	     * Get ratio value of canvas
-	     * @returns {number} Ratio value
-	     */
-	    getCanvasRatio: function() {
-	        return this._ratio;
-	    },
-
-	    /**
-	     * Set initial position on canvas image
-	     * @param {{x: number, y: number}} [position] - Selected position
-	     * @private
-	     */
-	    _setInitPos: function(position) {
-	        position = position || this.getCanvasImage().getCenterPoint();
-
-	        this._defaultStyles.left = position.x;
-	        this._defaultStyles.top = position.y;
-	    },
-
-	    /**
-	     * Create textarea element on canvas container
-	     * @private
-	     */
-	    _createTextarea: function() {
-	        var container = this.getCanvasElement().parentNode;
-	        var textarea = document.createElement('textarea');
-
-	        textarea.className = TEXTAREA_CLASSNAME;
-	        textarea.setAttribute('style', TEXTAREA_STYLES);
-	        textarea.setAttribute('wrap', 'off');
-
-	        container.appendChild(textarea);
-
-	        this._textarea = textarea;
-
-	        this._listeners = tui.util.extend(this._listeners, {
-	            input: tui.util.bind(this._onInput, this),
-	            keydown: tui.util.bind(this._onKeyDown, this),
-	            blur: tui.util.bind(this._onBlur, this),
-	            scroll: tui.util.bind(this._onScroll, this)
-	        });
-
-	        if (browser.msie && browser.version === 9) {
-	            fabric.util.addListener(textarea, 'keydown', this._listeners.keydown);
-	        } else {
-	            fabric.util.addListener(textarea, 'input', this._listeners.input);
+	            this.isPrevEditing = true;
 	        }
-	        fabric.util.addListener(textarea, 'blur', this._listeners.blur);
-	        fabric.util.addListener(textarea, 'scroll', this._listeners.scroll);
-	    },
 
-	    /**
-	     * Remove textarea element on canvas container
-	     * @private
-	     */
-	    _removeTextarea: function() {
-	        var container = this.getCanvasElement().parentNode;
-	        var textarea = container.querySelector('textarea');
+	        /**
+	         * Change text of activate object on canvas image
+	         * @param {object} activeObj - Current selected text object
+	         * @param {string} text - Changed text
+	         */
 
-	        container.removeChild(textarea);
+	    }, {
+	        key: 'change',
+	        value: function change(activeObj, text) {
+	            activeObj.set('text', text);
 
-	        this._textarea = null;
-
-	        if (browser.msie && browser.version < 10) {
-	            fabric.util.removeListener(textarea, 'keydown', this._listeners.keydown);
-	        } else {
-	            fabric.util.removeListener(textarea, 'input', this._listeners.input);
+	            this.getCanvas().renderAll();
 	        }
-	        fabric.util.removeListener(textarea, 'blur', this._listeners.blur);
-	        fabric.util.removeListener(textarea, 'scroll', this._listeners.scroll);
-	    },
 
-	    /**
-	     * Input event handler
-	     * @private
-	     */
-	    _onInput: function() {
-	        var ratio = this.getCanvasRatio();
-	        var obj = this._editingObj;
-	        var textareaStyle = this._textarea.style;
+	        /**
+	         * Set style
+	         * @param {object} activeObj - Current selected text object
+	         * @param {object} styleObj - Initial styles
+	         *     @param {string} [styleObj.fill] Color
+	         *     @param {string} [styleObj.fontFamily] Font type for text
+	         *     @param {number} [styleObj.fontSize] Size
+	         *     @param {string} [styleObj.fontStyle] Type of inclination (normal / italic)
+	         *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
+	         *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
+	         *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
+	         */
 
-	        obj.setText(this._textarea.value);
+	    }, {
+	        key: 'setStyle',
+	        value: function setStyle(activeObj, styleObj) {
+	            tui.util.forEach(styleObj, function (val, key) {
+	                if (activeObj[key] === val) {
+	                    styleObj[key] = resetStyles[key] || '';
+	                }
+	            }, this);
 
-	        textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
-	        textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
-	    },
+	            activeObj.set(styleObj);
 
-	    /**
-	     * Keydown event handler
-	     * @private
-	     */
-	    _onKeyDown: function() {
-	        var ratio = this.getCanvasRatio();
-	        var obj = this._editingObj;
-	        var textareaStyle = this._textarea.style;
-	        var self = this;
+	            this.getCanvas().renderAll();
+	        }
 
-	        setTimeout(function() {
-	            obj.setText(self._textarea.value);
+	        /**
+	         * Set infos of the current selected object
+	         * @param {fabric.Text} obj - Current selected text object
+	         * @param {boolean} state - State of selecting
+	         */
+
+	    }, {
+	        key: 'setSelectedInfo',
+	        value: function setSelectedInfo(obj, state) {
+	            this._selectedObj = obj;
+	            this._isSelected = state;
+	        }
+
+	        /**
+	         * Whether object is selected or not
+	         * @returns {boolean} State of selecting
+	         */
+
+	    }, {
+	        key: 'isSelected',
+	        value: function isSelected() {
+	            return this._isSelected;
+	        }
+
+	        /**
+	         * Get current selected text object
+	         * @returns {fabric.Text} Current selected text object
+	         */
+
+	    }, {
+	        key: 'getSelectedObj',
+	        value: function getSelectedObj() {
+	            return this._selectedObj;
+	        }
+
+	        /**
+	         * Set ratio value of canvas
+	         */
+
+	    }, {
+	        key: 'setCanvasRatio',
+	        value: function setCanvasRatio() {
+	            var canvasElement = this.getCanvasElement();
+	            var cssWidth = parseInt(canvasElement.style.maxWidth, 10);
+	            var originWidth = canvasElement.width;
+	            var ratio = originWidth / cssWidth;
+
+	            this._ratio = ratio;
+	        }
+
+	        /**
+	         * Get ratio value of canvas
+	         * @returns {number} Ratio value
+	         */
+
+	    }, {
+	        key: 'getCanvasRatio',
+	        value: function getCanvasRatio() {
+	            return this._ratio;
+	        }
+
+	        /**
+	         * Set initial position on canvas image
+	         * @param {{x: number, y: number}} [position] - Selected position
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setInitPos',
+	        value: function _setInitPos(position) {
+	            position = position || this.getCanvasImage().getCenterPoint();
+
+	            this._defaultStyles.left = position.x;
+	            this._defaultStyles.top = position.y;
+	        }
+
+	        /**
+	         * Create textarea element on canvas container
+	         * @private
+	         */
+
+	    }, {
+	        key: '_createTextarea',
+	        value: function _createTextarea() {
+	            var container = this.getCanvasElement().parentNode;
+	            var textarea = document.createElement('textarea');
+
+	            textarea.className = TEXTAREA_CLASSNAME;
+	            textarea.setAttribute('style', TEXTAREA_STYLES);
+	            textarea.setAttribute('wrap', 'off');
+
+	            container.appendChild(textarea);
+
+	            this._textarea = textarea;
+
+	            this._listeners = tui.util.extend(this._listeners, {
+	                input: tui.util.bind(this._onInput, this),
+	                keydown: tui.util.bind(this._onKeyDown, this),
+	                blur: tui.util.bind(this._onBlur, this),
+	                scroll: tui.util.bind(this._onScroll, this)
+	            });
+
+	            if (browser.msie && browser.version === 9) {
+	                fabric.util.addListener(textarea, 'keydown', this._listeners.keydown);
+	            } else {
+	                fabric.util.addListener(textarea, 'input', this._listeners.input);
+	            }
+	            fabric.util.addListener(textarea, 'blur', this._listeners.blur);
+	            fabric.util.addListener(textarea, 'scroll', this._listeners.scroll);
+	        }
+
+	        /**
+	         * Remove textarea element on canvas container
+	         * @private
+	         */
+
+	    }, {
+	        key: '_removeTextarea',
+	        value: function _removeTextarea() {
+	            var container = this.getCanvasElement().parentNode;
+	            var textarea = container.querySelector('textarea');
+
+	            container.removeChild(textarea);
+
+	            this._textarea = null;
+
+	            if (browser.msie && browser.version < 10) {
+	                fabric.util.removeListener(textarea, 'keydown', this._listeners.keydown);
+	            } else {
+	                fabric.util.removeListener(textarea, 'input', this._listeners.input);
+	            }
+	            fabric.util.removeListener(textarea, 'blur', this._listeners.blur);
+	            fabric.util.removeListener(textarea, 'scroll', this._listeners.scroll);
+	        }
+
+	        /**
+	         * Input event handler
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onInput',
+	        value: function _onInput() {
+	            var ratio = this.getCanvasRatio();
+	            var obj = this._editingObj;
+	            var textareaStyle = this._textarea.style;
+
+	            obj.setText(this._textarea.value);
 
 	            textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
 	            textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
-	        }, 0);
-	    },
-
-	    /**
-	     * Blur event handler
-	     * @private
-	     */
-	    _onBlur: function() {
-	        var ratio = this.getCanvasRatio();
-	        var editingObj = this._editingObj;
-	        var editingObjInfos = this._editingObjInfos;
-	        var transWidth = (editingObj.getWidth() / ratio) - (editingObjInfos.width / ratio);
-	        var transHeight = (editingObj.getHeight() / ratio) - (editingObjInfos.height / ratio);
-
-	        if (ratio === 1) {
-	            transWidth /= 2;
-	            transHeight /= 2;
 	        }
 
-	        this._textarea.style.display = 'none';
+	        /**
+	         * Keydown event handler
+	         * @private
+	         */
 
-	        this._editingObj.set({
-	            left: editingObjInfos.left + transWidth,
-	            top: editingObjInfos.top + transHeight
-	        });
+	    }, {
+	        key: '_onKeyDown',
+	        value: function _onKeyDown() {
+	            var _this2 = this;
 
-	        this.getCanvas().add(this._editingObj);
+	            var ratio = this.getCanvasRatio();
+	            var obj = this._editingObj;
+	            var textareaStyle = this._textarea.style;
 
-	        this.getCanvas().on('object:removed', this._listeners.remove);
-	    },
+	            setTimeout(function () {
+	                obj.setText(_this2._textarea.value);
 
-	    /**
-	     * Scroll event handler
-	     * @private
-	     */
-	    _onScroll: function() {
-	        this._textarea.scrollLeft = 0;
-	        this._textarea.scrollTop = 0;
-	    },
-
-	    /**
-	     * Fabric scaling event handler
-	     * @param {fabric.Event} fEvent - Current scaling event on selected object
-	     * @private
-	     */
-	    _onFabricScaling: function(fEvent) {
-	        var obj = fEvent.target;
-	        var scalingSize = obj.getFontSize() * obj.getScaleY();
-
-	        obj.setFontSize(scalingSize);
-	        obj.setScaleX(1);
-	        obj.setScaleY(1);
-	    },
-
-	    /**
-	     * Fabric mouseup event handler
-	     * @param {fabric.Event} fEvent - Current mousedown event on selected object
-	     * @private
-	     */
-	    _onFabricMouseUp: function(fEvent) {
-	        var newClickTime = (new Date()).getTime();
-
-	        if (this._isDoubleClick(newClickTime)) {
-	            this._changeToEditingMode(fEvent.target);
-	            this._listeners.dbclick(); // fire dbclick event
+	                textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+	                textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
+	            }, 0);
 	        }
 
-	        this._lastClickTime = newClickTime;
-	    },
+	        /**
+	         * Blur event handler
+	         * @private
+	         */
 
-	    /**
-	     * Get state of firing double click event
-	     * @param {Date} newClickTime - Current clicked time
-	     * @returns {boolean} Whether double clicked or not
-	     * @private
-	     */
-	    _isDoubleClick: function(newClickTime) {
-	        return (newClickTime - this._lastClickTime < DBCLICK_TIME);
-	    },
+	    }, {
+	        key: '_onBlur',
+	        value: function _onBlur() {
+	            var ratio = this.getCanvasRatio();
+	            var editingObj = this._editingObj;
+	            var editingObjInfos = this._editingObjInfos;
+	            var transWidth = editingObj.getWidth() / ratio - editingObjInfos.width / ratio;
+	            var transHeight = editingObj.getHeight() / ratio - editingObjInfos.height / ratio;
 
-	    /**
-	     * Change state of text object for editing
-	     * @param {fabric.Text} obj - Text object fired event
-	     * @private
-	     */
-	    _changeToEditingMode: function(obj) {
-	        var ratio = this.getCanvasRatio();
-	        var textareaStyle = this._textarea.style;
+	            if (ratio === 1) {
+	                transWidth /= 2;
+	                transHeight /= 2;
+	            }
 
-	        this.isPrevEditing = true;
+	            this._textarea.style.display = 'none';
 
-	        this.getCanvas().off('object:removed', this._listeners.remove);
+	            this._editingObj.set({
+	                left: editingObjInfos.left + transWidth,
+	                top: editingObjInfos.top + transHeight
+	            });
 
-	        obj.remove();
+	            this.getCanvas().add(this._editingObj);
 
-	        this._editingObj = obj;
-	        this._textarea.value = obj.getText();
+	            this.getCanvas().on('object:removed', this._listeners.remove);
+	        }
 
-	        this._editingObjInfos = {
-	            left: this._editingObj.getLeft(),
-	            top: this._editingObj.getTop(),
-	            width: this._editingObj.getWidth(),
-	            height: this._editingObj.getHeight()
-	        };
+	        /**
+	         * Scroll event handler
+	         * @private
+	         */
 
-	        textareaStyle.display = 'block';
-	        textareaStyle.left = (obj.oCoords.tl.x / ratio) + 'px';
-	        textareaStyle.top = (obj.oCoords.tl.y / ratio) + 'px';
-	        textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
-	        textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
-	        textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
-	        textareaStyle.color = obj.getFill();
+	    }, {
+	        key: '_onScroll',
+	        value: function _onScroll() {
+	            this._textarea.scrollLeft = 0;
+	            this._textarea.scrollTop = 0;
+	        }
 
-	        textareaStyle['font-size'] = (obj.getFontSize() / ratio) + 'px';
-	        textareaStyle['font-family'] = obj.getFontFamily();
-	        textareaStyle['font-style'] = obj.getFontStyle();
-	        textareaStyle['font-weight'] = obj.getFontWeight();
-	        textareaStyle['text-align'] = obj.getTextAlign();
-	        textareaStyle['line-height'] = obj.getLineHeight() + EXTRA_PIXEL_LINEHEIGHT;
-	        textareaStyle['transform-origin'] = 'left top';
+	        /**
+	         * Fabric scaling event handler
+	         * @param {fabric.Event} fEvent - Current scaling event on selected object
+	         * @private
+	         */
 
-	        this._textarea.focus();
-	    }
-	});
+	    }, {
+	        key: '_onFabricScaling',
+	        value: function _onFabricScaling(fEvent) {
+	            var obj = fEvent.target;
+	            var scalingSize = obj.getFontSize() * obj.getScaleY();
+
+	            obj.setFontSize(scalingSize);
+	            obj.setScaleX(1);
+	            obj.setScaleY(1);
+	        }
+
+	        /**
+	         * Fabric mouseup event handler
+	         * @param {fabric.Event} fEvent - Current mousedown event on selected object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseUp',
+	        value: function _onFabricMouseUp(fEvent) {
+	            var newClickTime = new Date().getTime();
+
+	            if (this._isDoubleClick(newClickTime)) {
+	                this._changeToEditingMode(fEvent.target);
+	                this._listeners.dbclick(); // fire dbclick event
+	            }
+
+	            this._lastClickTime = newClickTime;
+	        }
+
+	        /**
+	         * Get state of firing double click event
+	         * @param {Date} newClickTime - Current clicked time
+	         * @returns {boolean} Whether double clicked or not
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isDoubleClick',
+	        value: function _isDoubleClick(newClickTime) {
+	            return newClickTime - this._lastClickTime < DBCLICK_TIME;
+	        }
+
+	        /**
+	         * Change state of text object for editing
+	         * @param {fabric.Text} obj - Text object fired event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeToEditingMode',
+	        value: function _changeToEditingMode(obj) {
+	            var ratio = this.getCanvasRatio();
+	            var textareaStyle = this._textarea.style;
+
+	            this.isPrevEditing = true;
+
+	            this.getCanvas().off('object:removed', this._listeners.remove);
+
+	            obj.remove();
+
+	            this._editingObj = obj;
+	            this._textarea.value = obj.getText();
+
+	            this._editingObjInfos = {
+	                left: this._editingObj.getLeft(),
+	                top: this._editingObj.getTop(),
+	                width: this._editingObj.getWidth(),
+	                height: this._editingObj.getHeight()
+	            };
+
+	            textareaStyle.display = 'block';
+	            textareaStyle.left = obj.oCoords.tl.x / ratio + 'px';
+	            textareaStyle.top = obj.oCoords.tl.y / ratio + 'px';
+	            textareaStyle.width = Math.ceil(obj.getWidth() / ratio) + 'px';
+	            textareaStyle.height = Math.ceil(obj.getHeight() / ratio) + 'px';
+	            textareaStyle.transform = 'rotate(' + obj.getAngle() + 'deg)';
+	            textareaStyle.color = obj.getFill();
+
+	            textareaStyle['font-size'] = obj.getFontSize() / ratio + 'px';
+	            textareaStyle['font-family'] = obj.getFontFamily();
+	            textareaStyle['font-style'] = obj.getFontStyle();
+	            textareaStyle['font-weight'] = obj.getFontWeight();
+	            textareaStyle['text-align'] = obj.getTextAlign();
+	            textareaStyle['line-height'] = obj.getLineHeight() + EXTRA_PIXEL_LINEHEIGHT;
+	            textareaStyle['transform-origin'] = 'left top';
+
+	            this._textarea.focus();
+	        }
+	    }]);
+
+	    return Text;
+	}(_component2.default);
 
 	module.exports = Text;
 
-
 /***/ },
-/* 15 */
+/* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Add icon module
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Add icon module
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	var pathMap = {
 	    arrow: 'M 0 90 H 105 V 120 L 160 60 L 105 0 V 30 H 0 Z',
-	    cancel: 'M 0 30 L 30 60 L 0 90 L 30 120 L 60 90 L 90 120 L 120 90 ' +
-	            'L 90 60 L 120 30 L 90 0 L 60 30 L 30 0 Z'
+	    cancel: 'M 0 30 L 30 60 L 0 90 L 30 120 L 60 90 L 90 120 L 120 90 ' + 'L 90 60 L 120 30 L 90 0 L 60 30 L 30 0 Z'
 	};
 
 	/**
@@ -4229,28 +6558,36 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var Icon = tui.util.defineClass(Component, /** @lends Icon.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
+
+	var Icon = function (_Component) {
+	    _inherits(Icon, _Component);
+
+	    function Icon(parent) {
+	        _classCallCheck(this, Icon);
+
+	        var _this = _possibleConstructorReturn(this, (Icon.__proto__ || Object.getPrototypeOf(Icon)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = _consts2.default.componentNames.ICON;
 
 	        /**
 	         * Default icon color
 	         * @type {string}
 	         */
-	        this._oColor = '#000000';
+	        _this._oColor = '#000000';
 
 	        /**
 	         * Path value of each icon type
 	         * @type {object}
 	         */
-	        this._pathMap = pathMap;
-	    },
-
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.ICON,
+	        _this._pathMap = pathMap;
+	        return _this;
+	    }
 
 	    /**
 	     * Add icon
@@ -4260,76 +6597,114 @@
 	     *      @param {string} [options.left] - Icon x position
 	     *      @param {string} [options.top] - Icon y position
 	     */
-	    add: function(type, options) {
-	        var canvas = this.getCanvas();
-	        var path = this._pathMap[type];
-	        var selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
-	        var icon;
 
-	        if (!path) {
-	            return;
+
+	    _createClass(Icon, [{
+	        key: 'add',
+	        value: function add(type, options) {
+	            var canvas = this.getCanvas();
+	            var path = this._pathMap[type];
+	            var selectionStyle = _consts2.default.fObjectOptions.SELECTION_STYLE;
+
+	            if (!path) {
+	                return;
+	            }
+
+	            var icon = this._createIcon(path);
+
+	            icon.set(tui.util.extend({
+	                type: 'icon',
+	                fill: this._oColor
+	            }, selectionStyle, options));
+
+	            canvas.add(icon).setActiveObject(icon);
 	        }
 
-	        icon = this._createIcon(path);
+	        /**
+	         * Register icon paths
+	         * @param {{key: string, value: string}} pathInfos - Path infos
+	         */
 
-	        icon.set(tui.util.extend({
-	            type: 'icon',
-	            fill: this._oColor
-	        }, selectionStyle, options));
+	    }, {
+	        key: 'registerPaths',
+	        value: function registerPaths(pathInfos) {
+	            var _this2 = this;
 
-	        canvas.add(icon).setActiveObject(icon);
-	    },
-
-	    /**
-	     * Register icon paths
-	     * @param {{key: string, value: string}} pathInfos - Path infos
-	     */
-	    registerPaths: function(pathInfos) {
-	        tui.util.forEach(pathInfos, function(path, type) {
-	            this._pathMap[type] = path;
-	        }, this);
-	    },
-
-	    /**
-	     * Set icon object color
-	     * @param {strign} color - Color to set
-	     * @param {fabric.Path}[obj] - Current activated path object
-	     */
-	    setColor: function(color, obj) {
-	        this._oColor = color;
-
-	        if (obj && obj.get('type') === 'icon') {
-	            obj.setFill(this._oColor);
-	            this.getCanvas().renderAll();
+	            tui.util.forEach(pathInfos, function (path, type) {
+	                _this2._pathMap[type] = path;
+	            }, this);
 	        }
-	    },
 
-	    /**
-	     * Create icon object
-	     * @param {string} path - Path value to create icon
-	     * @returns {fabric.Path} Path object
-	     */
-	    _createIcon: function(path) {
-	        return new fabric.Path(path);
-	    }
-	});
+	        /**
+	         * Set icon object color
+	         * @param {strign} color - Color to set
+	         * @param {fabric.Path}[obj] - Current activated path object
+	         */
+
+	    }, {
+	        key: 'setColor',
+	        value: function setColor(color, obj) {
+	            this._oColor = color;
+
+	            if (obj && obj.get('type') === 'icon') {
+	                obj.setFill(this._oColor);
+	                this.getCanvas().renderAll();
+	            }
+	        }
+
+	        /**
+	         * Create icon object
+	         * @param {string} path - Path value to create icon
+	         * @returns {fabric.Path} Path object
+	         */
+
+	    }, {
+	        key: '_createIcon',
+	        value: function _createIcon(path) {
+	            return new fabric.Path(path);
+	        }
+	    }]);
+
+	    return Icon;
+	}(_component2.default);
 
 	module.exports = Icon;
 
-
 /***/ },
-/* 16 */
+/* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Add filter module
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var Mask = __webpack_require__(17);
-	var consts = __webpack_require__(5);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _promise = __webpack_require__(3);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _component = __webpack_require__(68);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _mask = __webpack_require__(81);
+
+	var _mask2 = _interopRequireDefault(_mask);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Add filter module
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
 
 	/**
 	 * Filter
@@ -4338,124 +6713,157 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var Filter = tui.util.defineClass(Component, /** @lends Filter.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
-	    },
+	var Filter = function (_Component) {
+	    _inherits(Filter, _Component);
 
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.FILTER,
+	    function Filter(parent) {
+	        _classCallCheck(this, Filter);
+
+	        var _this = _possibleConstructorReturn(this, (Filter.__proto__ || Object.getPrototypeOf(Filter)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = _consts2.default.componentNames.FILTER;
+	        return _this;
+	    }
 
 	    /**
 	     * Add filter to source image (a specific filter is added on fabric.js)
 	     * @param {string} type - Filter type
 	     * @param {object} [options] - Options of filter
-	     * @returns {jQuery.Deferred}
+	     * @returns {Promise}
 	     */
-	    add: function(type, options) {
-	        var jqDefer = $.Deferred();
-	        var filter = this._createFilter(type, options);
-	        var sourceImg = this._getSourceImage();
-	        var canvas = this.getCanvas();
 
-	        if (!filter) {
-	            jqDefer.reject();
+
+	    _createClass(Filter, [{
+	        key: 'add',
+	        value: function add(type, options) {
+	            var _this2 = this;
+
+	            return new _promise2.default(function (resolve, reject) {
+	                var filter = _this2._createFilter(type, options);
+	                var sourceImg = _this2._getSourceImage();
+	                var canvas = _this2.getCanvas();
+
+	                if (!filter) {
+	                    reject();
+	                }
+
+	                sourceImg.filters.push(filter);
+
+	                _this2._apply(sourceImg, function () {
+	                    canvas.renderAll();
+	                    resolve({
+	                        type: type,
+	                        action: 'add'
+	                    });
+	                });
+	            });
 	        }
 
-	        sourceImg.filters.push(filter);
+	        /**
+	         * Remove filter to source image
+	         * @param {string} type - Filter type
+	         * @returns {Promise}
+	         */
 
-	        this._apply(sourceImg, function() {
-	            canvas.renderAll();
-	            jqDefer.resolve(type, 'add');
-	        });
+	    }, {
+	        key: 'remove',
+	        value: function remove(type) {
+	            var _this3 = this;
 
-	        return jqDefer;
-	    },
+	            return new _promise2.default(function (resolve, reject) {
+	                var sourceImg = _this3._getSourceImage();
+	                var canvas = _this3.getCanvas();
 
-	    /**
-	     * Remove filter to source image
-	     * @param {string} type - Filter type
-	     * @returns {jQuery.Deferred}
-	     */
-	    remove: function(type) {
-	        var jqDefer = $.Deferred();
-	        var sourceImg = this._getSourceImage();
-	        var canvas = this.getCanvas();
+	                if (!sourceImg.filters.length) {
+	                    reject();
+	                }
 
-	        if (!sourceImg.filters.length) {
-	            jqDefer.reject();
+	                sourceImg.filters.pop();
+
+	                _this3._apply(sourceImg, function () {
+	                    canvas.renderAll();
+	                    resolve({
+	                        type: type,
+	                        atction: 'remove'
+	                    });
+	                });
+	            });
 	        }
 
-	        sourceImg.filters.pop();
+	        /**
+	         * Apply filter
+	         * @param {fabric.Image} sourceImg - Source image to apply filter
+	         * @param {function} callback - Executed function after applying filter
+	         * @private
+	         */
 
-	        this._apply(sourceImg, function() {
-	            canvas.renderAll();
-	            jqDefer.resolve(type, 'remove');
-	        });
-
-	        return jqDefer;
-	    },
-
-	    /**
-	     * Apply filter
-	     * @param {fabric.Image} sourceImg - Source image to apply filter
-	     * @param {function} callback - Executed function after applying filter
-	     * @private
-	     */
-	    _apply: function(sourceImg, callback) {
-	        sourceImg.applyFilters(callback);
-	    },
-
-	    /**
-	     * Get source image on canvas
-	     * @returns {fabric.Image} Current source image on canvas
-	     * @private
-	     */
-	    _getSourceImage: function() {
-	        return this.getCanvasImage();
-	    },
-
-	    /**
-	     * Create filter instance
-	     * @param {string} type - Filter type
-	     * @param {object} [options] - Options of filter
-	     * @returns {object} Fabric object of filter
-	     * @private
-	     */
-	    _createFilter: function(type, options) {
-	        var filterObj;
-
-	        switch (type) {
-	            case 'mask':
-	                filterObj = new Mask(options);
-	                break;
-	            case 'removeWhite':
-	                filterObj = new fabric.Image.filters.RemoveWhite(options);
-	                break;
-	            default:
-	                filterObj = null;
+	    }, {
+	        key: '_apply',
+	        value: function _apply(sourceImg, callback) {
+	            sourceImg.applyFilters(callback);
 	        }
 
-	        return filterObj;
-	    }
-	});
+	        /**
+	         * Get source image on canvas
+	         * @returns {fabric.Image} Current source image on canvas
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getSourceImage',
+	        value: function _getSourceImage() {
+	            return this.getCanvasImage();
+	        }
+
+	        /**
+	         * Create filter instance
+	         * @param {string} type - Filter type
+	         * @param {object} [options] - Options of filter
+	         * @returns {object} Fabric object of filter
+	         * @private
+	         */
+
+	    }, {
+	        key: '_createFilter',
+	        value: function _createFilter(type, options) {
+	            var filterObj = void 0;
+
+	            switch (type) {
+	                case 'mask':
+	                    filterObj = new _mask2.default(options);
+	                    break;
+	                case 'removeWhite':
+	                    filterObj = new fabric.Image.filters.RemoveWhite(options);
+	                    break;
+	                default:
+	                    filterObj = null;
+	            }
+
+	            return filterObj;
+	        }
+	    }]);
+
+	    return Filter;
+	}(_component2.default);
 
 	module.exports = Filter;
 
-
 /***/ },
-/* 17 */
+/* 81 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	/**
 	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
 	 * @fileoverview Mask extending fabric.Image.filters.Mask
 	 */
-	'use strict';
-
 	/**
 	 * Mask object
 	 * @class Mask
@@ -4468,30 +6876,24 @@
 	     * @param {object} canvasEl - Canvas element to apply filter
 	     * @override
 	     */
-	    applyTo: function(canvasEl) {
-	        var maskCanvasEl, ctx, maskCtx, imageData;
-	        var width, height;
-
+	    applyTo: function applyTo(canvasEl) {
 	        if (!this.mask) {
 	            return;
 	        }
 
-	        width = canvasEl.width;
-	        height = canvasEl.height;
-
-	        maskCanvasEl = this._createCanvasOfMask(width, height);
-
-	        ctx = canvasEl.getContext('2d');
-	        maskCtx = maskCanvasEl.getContext('2d');
-
-	        imageData = ctx.getImageData(0, 0, width, height);
+	        var width = canvasEl.width;
+	        var height = canvasEl.height;
+	        var maskCanvasEl = this._createCanvasOfMask(width, height);
+	        var ctx = canvasEl.getContext('2d');
+	        var maskCtx = maskCanvasEl.getContext('2d');
+	        var imageData = ctx.getImageData(0, 0, width, height);
 
 	        this._drawMask(maskCtx, canvasEl, ctx);
-
 	        this._mapData(maskCtx, imageData, width, height);
 
 	        ctx.putImageData(imageData, 0, 0);
 	    },
+
 
 	    /**
 	     * Create canvas of mask image
@@ -4500,7 +6902,7 @@
 	     * @returns {HTMLElement} Canvas element
 	     * @private
 	     */
-	    _createCanvasOfMask: function(width, height) {
+	    _createCanvasOfMask: function _createCanvasOfMask(width, height) {
 	        var maskCanvasEl = fabric.util.createCanvasElement();
 
 	        maskCanvasEl.width = width;
@@ -4509,19 +6911,19 @@
 	        return maskCanvasEl;
 	    },
 
+
 	    /**
 	     * Draw mask image on canvas element
 	     * @param {object} maskCtx - Context of mask canvas
 	     * @private
 	     */
-	    _drawMask: function(maskCtx) {
-	        var left, top, angle;
+	    _drawMask: function _drawMask(maskCtx) {
 	        var mask = this.mask;
 	        var maskImg = mask.getElement();
 
-	        left = mask.getLeft();
-	        top = mask.getTop();
-	        angle = mask.getAngle();
+	        var left = mask.getLeft();
+	        var top = mask.getTop();
+	        var angle = mask.getAngle();
 
 	        maskCtx.save();
 	        maskCtx.translate(left, top);
@@ -4531,6 +6933,7 @@
 	        maskCtx.restore();
 	    },
 
+
 	    /**
 	     * Map mask image data to source image data
 	     * @param {object} maskCtx - Context of mask canvas
@@ -4539,14 +6942,13 @@
 	     * @param {number} height - Height of main canvas
 	     * @private
 	     */
-	    _mapData: function(maskCtx, imageData, width, height) {
+	    _mapData: function _mapData(maskCtx, imageData, width, height) {
 	        var sourceData = imageData.data;
 	        var maskData = maskCtx.getImageData(0, 0, width, height).data;
 	        var channel = this.channel;
-	        var i = 0;
 	        var len = imageData.width * imageData.height * 4;
 
-	        for (; i < len; i += 4) {
+	        for (var i = 0; i < len; i += 4) {
 	            sourceData[i + 3] = maskData[i + channel]; // adjust value of alpha data
 	        }
 	    }
@@ -4554,27 +6956,45 @@
 
 	module.exports = Mask;
 
-
 /***/ },
-/* 18 */
+/* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Shape component
-	 */
 	'use strict';
 
-	var Component = __webpack_require__(4);
-	var consts = __webpack_require__(5);
-	var resizeHelper = __webpack_require__(19);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var util = tui.util;
-	var extend = util.extend;
-	var bind = util.bind;
-	var inArray = util.inArray;
+	var _component = __webpack_require__(68);
 
-	var KEY_CODES = consts.keyCodes;
+	var _component2 = _interopRequireDefault(_component);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	var _shapeResizeHelper = __webpack_require__(83);
+
+	var _shapeResizeHelper2 = _interopRequireDefault(_shapeResizeHelper);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Shape component
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
+
+
+	var _tui$util = tui.util,
+	    extend = _tui$util.extend,
+	    bind = _tui$util.bind,
+	    inArray = _tui$util.inArray;
+
+
+	var KEY_CODES = _consts2.default.keyCodes;
 	var DEFAULT_TYPE = 'rect';
 	var DEFAULT_OPTIONS = {
 	    strokeWidth: 1,
@@ -4600,386 +7020,431 @@
 	 * @extends {Component}
 	 * @ignore
 	 */
-	var Shape = tui.util.defineClass(Component, /** @lends Shape.prototype */{
-	    init: function(parent) {
-	        this.setParent(parent);
+
+	var Shape = function (_Component) {
+	    _inherits(Shape, _Component);
+
+	    function Shape(parent) {
+	        _classCallCheck(this, Shape);
+
+	        var _this = _possibleConstructorReturn(this, (Shape.__proto__ || Object.getPrototypeOf(Shape)).call(this));
+
+	        _this.setParent(parent);
+
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        _this.name = _consts2.default.componentNames.SHAPE;
 
 	        /**
 	         * Object of The drawing shape
 	         * @type {fabric.Object}
 	         * @private
 	         */
-	        this._shapeObj = null;
+	        _this._shapeObj = null;
 
 	        /**
 	         * Type of the drawing shape
 	         * @type {string}
 	         * @private
 	         */
-	        this._type = DEFAULT_TYPE;
+	        _this._type = DEFAULT_TYPE;
 
 	        /**
 	         * Options to draw the shape
 	         * @type {object}
 	         * @private
 	         */
-	        this._options = DEFAULT_OPTIONS;
+	        _this._options = DEFAULT_OPTIONS;
 
 	        /**
 	         * Whether the shape object is selected or not
 	         * @type {boolean}
 	         * @private
 	         */
-	        this._isSelected = false;
+	        _this._isSelected = false;
 
 	        /**
 	         * Pointer for drawing shape (x, y)
 	         * @type {object}
 	         * @private
 	         */
-	        this._startPoint = {};
+	        _this._startPoint = {};
 
 	        /**
 	         * Using shortcut on drawing shape
 	         * @type {boolean}
 	         * @private
 	         */
-	        this._withShiftKey = false;
-
+	        _this._withShiftKey = false;
 
 	        /**
 	         * Event handler list
 	         * @type {object}
 	         * @private
 	         */
-	        this._handlers = {
-	            mousedown: bind(this._onFabricMouseDown, this),
-	            mousemove: bind(this._onFabricMouseMove, this),
-	            mouseup: bind(this._onFabricMouseUp, this),
-	            keydown: bind(this._onKeyDown, this),
-	            keyup: bind(this._onKeyUp, this)
+	        _this._handlers = {
+	            mousedown: bind(_this._onFabricMouseDown, _this),
+	            mousemove: bind(_this._onFabricMouseMove, _this),
+	            mouseup: bind(_this._onFabricMouseUp, _this),
+	            keydown: bind(_this._onKeyDown, _this),
+	            keyup: bind(_this._onKeyUp, _this)
 	        };
-	    },
-
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    name: consts.componentNames.SHAPE,
+	        return _this;
+	    }
 
 	    /**
 	     * Start to draw the shape on canvas
 	     * @ignore
 	     */
-	    startDrawingMode: function() {
-	        var canvas = this.getCanvas();
 
-	        this._isSelected = false;
 
-	        canvas.defaultCursor = 'crosshair';
-	        canvas.selection = false;
-	        canvas.uniScaleTransform = true;
-	        canvas.on({
-	            'mouse:down': this._handlers.mousedown
-	        });
+	    _createClass(Shape, [{
+	        key: 'startDrawingMode',
+	        value: function startDrawingMode() {
+	            var canvas = this.getCanvas();
 
-	        fabric.util.addListener(document, 'keydown', this._handlers.keydown);
-	        fabric.util.addListener(document, 'keyup', this._handlers.keyup);
-	    },
+	            this._isSelected = false;
 
-	    /**
-	     * End to draw the shape on canvas
-	     * @ignore
-	     */
-	    endDrawingMode: function() {
-	        var canvas = this.getCanvas();
-
-	        this._isSelected = false;
-
-	        canvas.defaultCursor = 'default';
-	        canvas.selection = true;
-	        canvas.uniScaleTransform = false;
-	        canvas.off({
-	            'mouse:down': this._handlers.mousedown
-	        });
-
-	        fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
-	        fabric.util.removeListener(document, 'keyup', this._handlers.keyup);
-	    },
-
-	    /**
-	     * Set states of the current drawing shape
-	     * @ignore
-	     * @param {string} type - Shape type (ex: 'rect', 'circle')
-	     * @param {object} [options] - Shape options
-	     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-	     *      @param {string} [options.stoke] - Shape outline color
-	     *      @param {number} [options.strokeWidth] - Shape outline width
-	     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-	     */
-	    setStates: function(type, options) {
-	        this._type = type;
-
-	        if (options) {
-	            this._options = extend(this._options, options);
-	        }
-	    },
-
-	    /**
-	     * Add the shape
-	     * @ignore
-	     * @param {string} type - Shape type (ex: 'rect', 'circle')
-	     * @param {object} options - Shape options
-	     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-	     *      @param {string} [options.stroke] - Shape outline color
-	     *      @param {number} [options.strokeWidth] - Shape outline width
-	     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
-	     */
-	    add: function(type, options) {
-	        var canvas = this.getCanvas();
-	        var shapeObj;
-
-	        options = this._createOptions(options);
-	        shapeObj = this._createInstance(type, options);
-
-	        this._bindEventOnShape(shapeObj);
-
-	        canvas.add(shapeObj);
-	    },
-
-	    /**
-	     * Change the shape
-	     * @ignore
-	     * @param {fabric.Object} shapeObj - Selected shape object on canvas
-	     * @param {object} options - Shape options
-	     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
-	     *      @param {string} [options.stroke] - Shape outline color
-	     *      @param {number} [options.strokeWidth] - Shape outline width
-	     *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
-	     *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-	     *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
-	     */
-	    change: function(shapeObj, options) {
-	        if (inArray(shapeObj.get('type'), shapeType) < 0) {
-	            return;
-	        }
-
-	        shapeObj.set(options);
-	        this.getCanvas().renderAll();
-	    },
-
-	    /**
-	     * Create the instance of shape
-	     * @param {string} type - Shape type
-	     * @param {object} options - Options to creat the shape
-	     * @returns {fabric.Object} Shape instance
-	     * @private
-	     */
-	    _createInstance: function(type, options) {
-	        var instance;
-
-	        switch (type) {
-	            case 'rect':
-	                instance = new fabric.Rect(options);
-	                break;
-	            case 'circle':
-	                instance = new fabric.Ellipse(extend({
-	                    type: 'circle'
-	                }, options));
-	                break;
-	            case 'triangle':
-	                instance = new fabric.Triangle(options);
-	                break;
-	            default:
-	                instance = {};
-	        }
-
-	        return instance;
-	    },
-
-	    /**
-	     * Get the options to create the shape
-	     * @param {object} options - Options to creat the shape
-	     * @returns {object} Shape options
-	     * @private
-	     */
-	    _createOptions: function(options) {
-	        var selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
-
-	        options = extend({}, DEFAULT_OPTIONS, selectionStyles, options);
-
-	        if (options.isRegular) {
-	            options.lockUniScaling = true;
-	        }
-
-	        return options;
-	    },
-
-	    /**
-	     * Bind fabric events on the creating shape object
-	     * @param {fabric.Object} shapeObj - Shape object
-	     * @private
-	     */
-	    _bindEventOnShape: function(shapeObj) {
-	        var self = this;
-	        var canvas = this.getCanvas();
-
-	        shapeObj.on({
-	            added: function() {
-	                self._shapeObj = this;
-	                resizeHelper.setOrigins(self._shapeObj);
-	            },
-	            selected: function() {
-	                self._isSelected = true;
-	                self._shapeObj = this;
-	                canvas.uniScaleTransform = true;
-	                canvas.defaultCursor = 'default';
-	                resizeHelper.setOrigins(self._shapeObj);
-	            },
-	            deselected: function() {
-	                self._isSelected = false;
-	                self._shapeObj = null;
-	                canvas.defaultCursor = 'crosshair';
-	                canvas.uniScaleTransform = false;
-	            },
-	            modified: function() {
-	                var currentObj = self._shapeObj;
-
-	                resizeHelper.adjustOriginToCenter(currentObj);
-	                resizeHelper.setOrigins(currentObj);
-	            },
-	            scaling: function(fEvent) {
-	                var pointer = canvas.getPointer(fEvent.e);
-	                var currentObj = self._shapeObj;
-
-	                canvas.setCursor('crosshair');
-	                resizeHelper.resize(currentObj, pointer, true);
-	            }
-	        });
-	    },
-
-	    /**
-	     * MouseDown event handler on canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
-	     * @private
-	     */
-	    _onFabricMouseDown: function(fEvent) {
-	        var canvas;
-
-	        if (!this._isSelected && !this._shapeObj) {
-	            canvas = this.getCanvas();
-	            this._startPoint = canvas.getPointer(fEvent.e);
-
+	            canvas.defaultCursor = 'crosshair';
+	            canvas.selection = false;
+	            canvas.uniScaleTransform = true;
 	            canvas.on({
+	                'mouse:down': this._handlers.mousedown
+	            });
+
+	            fabric.util.addListener(document, 'keydown', this._handlers.keydown);
+	            fabric.util.addListener(document, 'keyup', this._handlers.keyup);
+	        }
+
+	        /**
+	         * End to draw the shape on canvas
+	         * @ignore
+	         */
+
+	    }, {
+	        key: 'endDrawingMode',
+	        value: function endDrawingMode() {
+	            var canvas = this.getCanvas();
+
+	            this._isSelected = false;
+
+	            canvas.defaultCursor = 'default';
+	            canvas.selection = true;
+	            canvas.uniScaleTransform = false;
+	            canvas.off({
+	                'mouse:down': this._handlers.mousedown
+	            });
+
+	            fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
+	            fabric.util.removeListener(document, 'keyup', this._handlers.keyup);
+	        }
+
+	        /**
+	         * Set states of the current drawing shape
+	         * @ignore
+	         * @param {string} type - Shape type (ex: 'rect', 'circle')
+	         * @param {object} [options] - Shape options
+	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+	         *      @param {string} [options.stoke] - Shape outline color
+	         *      @param {number} [options.strokeWidth] - Shape outline width
+	         *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+	         */
+
+	    }, {
+	        key: 'setStates',
+	        value: function setStates(type, options) {
+	            this._type = type;
+
+	            if (options) {
+	                this._options = extend(this._options, options);
+	            }
+	        }
+
+	        /**
+	         * Add the shape
+	         * @ignore
+	         * @param {string} type - Shape type (ex: 'rect', 'circle')
+	         * @param {object} options - Shape options
+	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+	         *      @param {string} [options.stroke] - Shape outline color
+	         *      @param {number} [options.strokeWidth] - Shape outline width
+	         *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
+	         */
+
+	    }, {
+	        key: 'add',
+	        value: function add(type, options) {
+	            var canvas = this.getCanvas();
+	            options = this._createOptions(options);
+	            var shapeObj = this._createInstance(type, options);
+
+	            this._bindEventOnShape(shapeObj);
+
+	            canvas.add(shapeObj);
+	        }
+
+	        /**
+	         * Change the shape
+	         * @ignore
+	         * @param {fabric.Object} shapeObj - Selected shape object on canvas
+	         * @param {object} options - Shape options
+	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+	         *      @param {string} [options.stroke] - Shape outline color
+	         *      @param {number} [options.strokeWidth] - Shape outline width
+	         *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
+	         *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
+	         *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
+	         */
+
+	    }, {
+	        key: 'change',
+	        value: function change(shapeObj, options) {
+	            if (inArray(shapeObj.get('type'), shapeType) < 0) {
+	                return;
+	            }
+
+	            shapeObj.set(options);
+	            this.getCanvas().renderAll();
+	        }
+
+	        /**
+	         * Create the instance of shape
+	         * @param {string} type - Shape type
+	         * @param {object} options - Options to creat the shape
+	         * @returns {fabric.Object} Shape instance
+	         * @private
+	         */
+
+	    }, {
+	        key: '_createInstance',
+	        value: function _createInstance(type, options) {
+	            var instance = void 0;
+
+	            switch (type) {
+	                case 'rect':
+	                    instance = new fabric.Rect(options);
+	                    break;
+	                case 'circle':
+	                    instance = new fabric.Ellipse(extend({
+	                        type: 'circle'
+	                    }, options));
+	                    break;
+	                case 'triangle':
+	                    instance = new fabric.Triangle(options);
+	                    break;
+	                default:
+	                    instance = {};
+	            }
+
+	            return instance;
+	        }
+
+	        /**
+	         * Get the options to create the shape
+	         * @param {object} options - Options to creat the shape
+	         * @returns {object} Shape options
+	         * @private
+	         */
+
+	    }, {
+	        key: '_createOptions',
+	        value: function _createOptions(options) {
+	            var selectionStyles = _consts2.default.fObjectOptions.SELECTION_STYLE;
+
+	            options = extend({}, DEFAULT_OPTIONS, selectionStyles, options);
+
+	            if (options.isRegular) {
+	                options.lockUniScaling = true;
+	            }
+
+	            return options;
+	        }
+
+	        /**
+	         * Bind fabric events on the creating shape object
+	         * @param {fabric.Object} shapeObj - Shape object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_bindEventOnShape',
+	        value: function _bindEventOnShape(shapeObj) {
+	            var self = this;
+	            var canvas = this.getCanvas();
+
+	            shapeObj.on({
+	                added: function added() {
+	                    self._shapeObj = this;
+	                    _shapeResizeHelper2.default.setOrigins(self._shapeObj);
+	                },
+	                selected: function selected() {
+	                    self._isSelected = true;
+	                    self._shapeObj = this;
+	                    canvas.uniScaleTransform = true;
+	                    canvas.defaultCursor = 'default';
+	                    _shapeResizeHelper2.default.setOrigins(self._shapeObj);
+	                },
+	                deselected: function deselected() {
+	                    self._isSelected = false;
+	                    self._shapeObj = null;
+	                    canvas.defaultCursor = 'crosshair';
+	                    canvas.uniScaleTransform = false;
+	                },
+	                modified: function modified() {
+	                    var currentObj = self._shapeObj;
+
+	                    _shapeResizeHelper2.default.adjustOriginToCenter(currentObj);
+	                    _shapeResizeHelper2.default.setOrigins(currentObj);
+	                },
+	                scaling: function scaling(fEvent) {
+	                    var pointer = canvas.getPointer(fEvent.e);
+	                    var currentObj = self._shapeObj;
+
+	                    canvas.setCursor('crosshair');
+	                    _shapeResizeHelper2.default.resize(currentObj, pointer, true);
+	                }
+	            });
+	        }
+
+	        /**
+	         * MouseDown event handler on canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseDown',
+	        value: function _onFabricMouseDown(fEvent) {
+	            if (!this._isSelected && !this._shapeObj) {
+	                var canvas = this.getCanvas();
+	                this._startPoint = canvas.getPointer(fEvent.e);
+
+	                canvas.on({
+	                    'mouse:move': this._handlers.mousemove,
+	                    'mouse:up': this._handlers.mouseup
+	                });
+	            }
+	        }
+
+	        /**
+	         * MouseDown event handler on canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseMove',
+	        value: function _onFabricMouseMove(fEvent) {
+	            var canvas = this.getCanvas();
+	            var pointer = canvas.getPointer(fEvent.e);
+	            var startPointX = this._startPoint.x;
+	            var startPointY = this._startPoint.y;
+	            var width = startPointX - pointer.x;
+	            var height = startPointY - pointer.y;
+	            var shape = this._shapeObj;
+
+	            if (!shape) {
+	                this.add(this._type, {
+	                    left: startPointX,
+	                    top: startPointY,
+	                    width: width,
+	                    height: height
+	                });
+	            } else {
+	                this._shapeObj.set({
+	                    isRegular: this._withShiftKey
+	                });
+	                _shapeResizeHelper2.default.resize(shape, pointer);
+	                canvas.renderAll();
+	            }
+	        }
+
+	        /**
+	         * MouseUp event handler on canvas
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricMouseUp',
+	        value: function _onFabricMouseUp() {
+	            var canvas = this.getCanvas();
+	            var shape = this._shapeObj;
+
+	            if (shape) {
+	                _shapeResizeHelper2.default.adjustOriginToCenter(shape);
+	            }
+
+	            this._shapeObj = null;
+
+	            canvas.off({
 	                'mouse:move': this._handlers.mousemove,
 	                'mouse:up': this._handlers.mouseup
 	            });
 	        }
-	    },
 
-	    /**
-	     * MouseDown event handler on canvas
-	     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
-	     * @private
-	     */
-	    _onFabricMouseMove: function(fEvent) {
-	        var canvas = this.getCanvas();
-	        var pointer = canvas.getPointer(fEvent.e);
-	        var startPointX = this._startPoint.x;
-	        var startPointY = this._startPoint.y;
-	        var width = startPointX - pointer.x;
-	        var height = startPointY - pointer.y;
-	        var shape = this._shapeObj;
+	        /**
+	         * Keydown event handler on document
+	         * @param {KeyboardEvent} e - Event object
+	         * @private
+	         */
 
-	        if (!shape) {
-	            this.add(this._type, {
-	                left: startPointX,
-	                top: startPointY,
-	                width: width,
-	                height: height
-	            });
-	        } else {
-	            this._shapeObj.set({
-	                isRegular: this._withShiftKey
-	            });
-	            resizeHelper.resize(shape, pointer);
-	            canvas.renderAll();
-	        }
-	    },
+	    }, {
+	        key: '_onKeyDown',
+	        value: function _onKeyDown(e) {
+	            if (e.keyCode === KEY_CODES.SHIFT) {
+	                this._withShiftKey = true;
 
-	    /**
-	     * MouseUp event handler on canvas
-	     * @private
-	     */
-	    _onFabricMouseUp: function() {
-	        var canvas = this.getCanvas();
-	        var shape = this._shapeObj;
-
-	        if (shape) {
-	            resizeHelper.adjustOriginToCenter(shape);
-	        }
-
-	        this._shapeObj = null;
-
-	        canvas.off({
-	            'mouse:move': this._handlers.mousemove,
-	            'mouse:up': this._handlers.mouseup
-	        });
-	    },
-
-	    /**
-	     * Keydown event handler on document
-	     * @param {KeyboardEvent} e - Event object
-	     * @private
-	     */
-	    _onKeyDown: function(e) {
-	        if (e.keyCode === KEY_CODES.SHIFT) {
-	            this._withShiftKey = true;
-
-	            if (this._shapeObj) {
-	                this._shapeObj.isRegular = true;
+	                if (this._shapeObj) {
+	                    this._shapeObj.isRegular = true;
+	                }
 	            }
 	        }
-	    },
 
-	    /**
-	     * Keyup event handler on document
-	     * @param {KeyboardEvent} e - Event object
-	     * @private
-	     */
-	    _onKeyUp: function(e) {
-	        if (e.keyCode === KEY_CODES.SHIFT) {
-	            this._withShiftKey = false;
+	        /**
+	         * Keyup event handler on document
+	         * @param {KeyboardEvent} e - Event object
+	         * @private
+	         */
 
-	            if (this._shapeObj) {
-	                this._shapeObj.isRegular = false;
+	    }, {
+	        key: '_onKeyUp',
+	        value: function _onKeyUp(e) {
+	            if (e.keyCode === KEY_CODES.SHIFT) {
+	                this._withShiftKey = false;
+
+	                if (this._shapeObj) {
+	                    this._shapeObj.isRegular = false;
+	                }
 	            }
 	        }
-	    }
-	});
+	    }]);
+
+	    return Shape;
+	}(_component2.default);
 
 	module.exports = Shape;
 
-
 /***/ },
-/* 19 */
+/* 83 */
 /***/ function(module, exports) {
+
+	'use strict';
 
 	/**
 	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
 	 * @fileoverview Shape resize helper
 	 */
-	'use strict';
-
 	var DIVISOR = {
 	    rect: 1,
 	    circle: 2,
@@ -5031,8 +7496,8 @@
 	    var ry = (px - sx) * Math.sin(r) + (py - sy) * Math.cos(r) + sy;
 
 	    return {
-	        originX: (sx > rx) ? 'right' : 'left',
-	        originY: (sy > ry) ? 'bottom' : 'top'
+	        originX: sx > rx ? 'right' : 'left',
+	        originY: sy > ry ? 'bottom' : 'top'
 	    };
 	}
 
@@ -5043,8 +7508,7 @@
 	 * @ignore
 	 */
 	function hasCenterOrigin(shape) {
-	    return (shape.getOriginX() === 'center' &&
-	            shape.getOriginY() === 'center');
+	    return shape.getOriginX() === 'center' && shape.getOriginY() === 'center';
 	}
 
 	/**
@@ -5101,16 +7565,15 @@
 	    var scaleY = shape.scaleY;
 	    var width = shape[dimensionKeys.w] * scaleX;
 	    var height = shape[dimensionKeys.h] * scaleY;
-	    var options, maxScale;
 
 	    if (shape.isRegular) {
-	        maxScale = Math.max(scaleX, scaleY);
+	        var maxScale = Math.max(scaleX, scaleY);
 
 	        width = shape[dimensionKeys.w] * maxScale;
 	        height = shape[dimensionKeys.h] * maxScale;
 	    }
 
-	    options = {
+	    var options = {
 	        hasControls: false,
 	        hasBorders: false,
 	        scaleX: 1,
@@ -5134,11 +7597,11 @@
 	    var type = shape.type;
 	    var divisor = DIVISOR[type];
 	    var dimensionKeys = DIMENSION_KEYS[type];
-	    var width = Math.abs(origin.x - pointer.x) / divisor;
-	    var height = Math.abs(origin.y - pointer.y) / divisor;
 	    var strokeWidth = shape.strokeWidth;
 	    var isTriangle = !!(shape.type === 'triangle');
 	    var options = {};
+	    var width = Math.abs(origin.x - pointer.x) / divisor;
+	    var height = Math.abs(origin.y - pointer.y) / divisor;
 
 	    if (width > strokeWidth) {
 	        width -= strokeWidth / divisor;
@@ -5167,7 +7630,7 @@
 	     * Set each origin value to shape
 	     * @param {fabric.Object} shape - Shape object
 	     */
-	    setOrigins: function(shape) {
+	    setOrigins: function setOrigins(shape) {
 	        var leftTopPoint = shape.getPointByOrigin('left', 'top');
 	        var rightTopPoint = shape.getPointByOrigin('right', 'top');
 	        var rightBottomPoint = shape.getPointByOrigin('right', 'bottom');
@@ -5181,13 +7644,14 @@
 	        };
 	    },
 
+
 	    /**
 	     * Resize the shape
 	     * @param {fabric.Object} shape - Shape object
 	     * @param {{x: number, y: number}} pointer - Mouse pointer values on canvas
 	     * @param {boolean} isScaling - Whether the resizing action is scaling or not
 	     */
-	    resize: function(shape, pointer, isScaling) {
+	    resize: function resize(shape, pointer, isScaling) {
 	        if (hasCenterOrigin(shape)) {
 	            adjustOriginByStartPoint(pointer, shape);
 	            setStartPoint(shape);
@@ -5202,11 +7666,12 @@
 	        adjustOriginByMovingPointer(pointer, shape);
 	    },
 
+
 	    /**
 	     * Adjust the origin position of shape to center
 	     * @param {fabric.Object} shape - Shape object
 	     */
-	    adjustOriginToCenter: function(shape) {
+	    adjustOriginToCenter: function adjustOriginToCenter(shape) {
 	        var centerPoint = shape.getPointByOrigin('center', 'center');
 	        var originX = shape.getOriginX();
 	        var originY = shape.getOriginY();
@@ -5227,29 +7692,39 @@
 	    }
 	};
 
-
 /***/ },
-/* 20 */
+/* 84 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Command factory
-	 */
 	'use strict';
 
-	var Command = __webpack_require__(21);
-	var consts = __webpack_require__(5);
+	var _promise = __webpack_require__(3);
 
-	var componentNames = consts.componentNames;
-	var commandNames = consts.commandNames;
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _command = __webpack_require__(85);
+
+	var _command2 = _interopRequireDefault(_command);
+
+	var _consts = __webpack_require__(69);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var componentNames = _consts2.default.componentNames,
+	    commandNames = _consts2.default.commandNames; /**
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @fileoverview Command factory
+	                                                   */
+
+	var MAIN = componentNames.MAIN,
+	    IMAGE_LOADER = componentNames.IMAGE_LOADER,
+	    FLIP = componentNames.FLIP,
+	    ROTATION = componentNames.ROTATION,
+	    FILTER = componentNames.FILTER;
+
 	var creators = {};
-
-	var MAIN = componentNames.MAIN;
-	var IMAGE_LOADER = componentNames.IMAGE_LOADER;
-	var FLIP = componentNames.FLIP;
-	var ROTATION = componentNames.ROTATION;
-	var FILTER = componentNames.FILTER;
 
 	creators[commandNames.LOAD_IMAGE] = createLoadImageCommand;
 	creators[commandNames.FLIP_IMAGE] = createFlipImageCommand;
@@ -5267,42 +7742,41 @@
 	function createAddObjectCommand(object) {
 	    tui.util.stamp(object);
 
-	    return new Command({
+	    return new _command2.default({
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        execute: function(compMap) {
-	            var canvas = compMap[MAIN].getCanvas();
-	            var jqDefer = $.Deferred();
+	        execute: function execute(compMap) {
+	            return new _promise2.default(function (resolve, reject) {
+	                var canvas = compMap[MAIN].getCanvas();
 
-	            if (!canvas.contains(object)) {
-	                canvas.add(object);
-	                jqDefer.resolve(object);
-	            } else {
-	                jqDefer.reject();
-	            }
-
-	            return jqDefer;
+	                if (!canvas.contains(object)) {
+	                    canvas.add(object);
+	                    resolve(object);
+	                } else {
+	                    reject();
+	                }
+	            });
 	        },
+
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        undo: function(compMap) {
-	            var canvas = compMap[MAIN].getCanvas();
-	            var jqDefer = $.Deferred();
+	        undo: function undo(compMap) {
+	            return new _promise2.default(function (resolve, reject) {
+	                var canvas = compMap[MAIN].getCanvas();
 
-	            if (canvas.contains(object)) {
-	                canvas.remove(object);
-	                jqDefer.resolve(object);
-	            } else {
-	                jqDefer.reject();
-	            }
-
-	            return jqDefer;
+	                if (canvas.contains(object)) {
+	                    canvas.remove(object);
+	                    resolve(object);
+	                } else {
+	                    reject();
+	                }
+	            });
 	        }
 	    });
 	}
@@ -5314,13 +7788,13 @@
 	 * @ignore
 	 */
 	function createLoadImageCommand(imageName, img) {
-	    return new Command({
+	    return new _command2.default({
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        execute: function(compMap) {
+	        execute: function execute(compMap) {
 	            var loader = compMap[IMAGE_LOADER];
 	            var canvas = loader.getCanvas();
 
@@ -5334,18 +7808,20 @@
 
 	            return loader.load(imageName, img);
 	        },
+
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        undo: function(compMap) {
+	        undo: function undo(compMap) {
 	            var loader = compMap[IMAGE_LOADER];
 	            var canvas = loader.getCanvas();
 	            var store = this.store;
+	            var canvasContext = canvas;
 
 	            canvas.clear();
-	            canvas.add.apply(canvas, store.objects);
+	            canvas.add.apply(canvasContext, store.objects);
 
 	            return loader.load(store.prevName, store.prevImage);
 	        }
@@ -5358,25 +7834,26 @@
 	 * @ignore
 	 */
 	function createFlipImageCommand(type) {
-	    return new Command({
+	    return new _command2.default({
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        execute: function(compMap) {
+	        execute: function execute(compMap) {
 	            var flipComp = compMap[FLIP];
 
 	            this.store = flipComp.getCurrentSetting();
 
 	            return flipComp[type]();
 	        },
+
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        undo: function(compMap) {
+	        undo: function undo(compMap) {
 	            var flipComp = compMap[FLIP];
 
 	            return flipComp.set(this.store);
@@ -5391,25 +7868,26 @@
 	 * @ignore
 	 */
 	function createRotationImageCommand(type, angle) {
-	    return new Command({
+	    return new _command2.default({
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        execute: function(compMap) {
+	        execute: function execute(compMap) {
 	            var rotationComp = compMap[ROTATION];
 
 	            this.store = rotationComp.getCurrentAngle();
 
 	            return rotationComp[type](angle);
 	        },
+
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        undo: function(compMap) {
+	        undo: function undo(compMap) {
 	            var rotationComp = compMap[ROTATION];
 
 	            return rotationComp.setAngle(this.store);
@@ -5423,41 +7901,44 @@
 	 * @ignore
 	 */
 	function createClearCommand() {
-	    return new Command({
+	    return new _command2.default({
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        execute: function(compMap) {
-	            var canvas = compMap[MAIN].getCanvas();
-	            var jqDefer = $.Deferred();
-	            var objs = canvas.getObjects();
+	        execute: function execute(compMap) {
+	            var _this = this;
 
-	            // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
-	            this.store = objs.slice();
-	            if (this.store.length) {
-	                tui.util.forEach(objs.slice(), function(obj) {
-	                    obj.remove();
-	                });
-	                jqDefer.resolve();
-	            } else {
-	                jqDefer.reject();
-	            }
+	            return new _promise2.default(function (resolve, reject) {
+	                var canvas = compMap[MAIN].getCanvas();
+	                var objs = canvas.getObjects();
 
-	            return jqDefer;
+	                // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
+	                _this.store = objs.slice();
+	                if (_this.store.length) {
+	                    tui.util.forEach(objs.slice(), function (obj) {
+	                        obj.remove();
+	                    });
+	                    resolve();
+	                } else {
+	                    reject();
+	                }
+	            });
 	        },
+
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        undo: function(compMap) {
+	        undo: function undo(compMap) {
 	            var canvas = compMap[MAIN].getCanvas();
+	            var canvasContext = canvas;
 
-	            canvas.add.apply(canvas, this.store);
+	            canvas.add.apply(canvasContext, this.store);
 
-	            return $.Deferred().resolve();
+	            return _promise2.default.resolve();
 	        }
 	    });
 	}
@@ -5469,45 +7950,48 @@
 	 * @ignore
 	 */
 	function createRemoveCommand(target) {
-	    return new Command({
+	    return new _command2.default({
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        execute: function(compMap) {
-	            var canvas = compMap[MAIN].getCanvas();
-	            var jqDefer = $.Deferred();
-	            var isValidGroup = target && target.isType('group') && !target.isEmpty();
+	        execute: function execute(compMap) {
+	            var _this2 = this;
 
-	            if (isValidGroup) {
-	                canvas.discardActiveGroup(); // restore states for each objects
-	                this.store = target.getObjects();
-	                target.forEachObject(function(obj) {
-	                    obj.remove();
-	                });
-	                jqDefer.resolve();
-	            } else if (canvas.contains(target)) {
-	                this.store = [target];
-	                target.remove();
-	                jqDefer.resolve();
-	            } else {
-	                jqDefer.reject();
-	            }
+	            return new _promise2.default(function (resolve, reject) {
+	                var canvas = compMap[MAIN].getCanvas();
+	                var isValidGroup = target && target.isType('group') && !target.isEmpty();
 
-	            return jqDefer;
+	                if (isValidGroup) {
+	                    canvas.discardActiveGroup(); // restore states for each objects
+	                    _this2.store = target.getObjects();
+	                    target.forEachObject(function (obj) {
+	                        obj.remove();
+	                    });
+	                    resolve();
+	                } else if (canvas.contains(target)) {
+	                    _this2.store = [target];
+	                    target.remove();
+	                    resolve();
+	                } else {
+	                    reject();
+	                }
+	            });
 	        },
+
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        undo: function(compMap) {
+	        undo: function undo(compMap) {
 	            var canvas = compMap[MAIN].getCanvas();
+	            var canvasContext = canvas;
 
-	            canvas.add.apply(canvas, this.store);
+	            canvas.add.apply(canvasContext, this.store);
 
-	            return $.Deferred().resolve();
+	            return _promise2.default.resolve();
 	        }
 	    });
 	}
@@ -5520,13 +8004,13 @@
 	 * @ignore
 	 */
 	function createFilterCommand(type, options) {
-	    return new Command({
+	    return new _command2.default({
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        execute: function(compMap) { // eslint-disable-line
+	        execute: function execute(compMap) {
 	            var filterComp = compMap[FILTER];
 
 	            if (type === 'mask') {
@@ -5536,12 +8020,13 @@
 
 	            return filterComp.add(type, options);
 	        },
+
 	        /**
 	         * @param {object.<string, Component>} compMap - Components injection
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         * @ignore
 	         */
-	        undo: function(compMap) {
+	        undo: function undo(compMap) {
 	            var filterComp = compMap[FILTER];
 
 	            if (type === 'mask') {
@@ -5560,32 +8045,40 @@
 	 * @returns {Command}
 	 * @ignore
 	 */
-	function create(name, args) {
-	    args = Array.prototype.slice.call(arguments, 1);
+	function create(name) {
+	    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	    }
 
 	    return creators[name].apply(null, args);
 	}
-
 
 	module.exports = {
 	    create: create
 	};
 
-
 /***/ },
-/* 21 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Command interface
-	 */
 	'use strict';
 
-	var errorMessage = __webpack_require__(22);
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Command interface
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
-	var createMessage = errorMessage.create,
-	    errorTypes = errorMessage.types;
+
+	var _errorMessage = __webpack_require__(86);
+
+	var _errorMessage2 = _interopRequireDefault(_errorMessage);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var createMessage = _errorMessage2.default.create;
+	var errorTypes = _errorMessage2.default.types;
 
 	/**
 	 * Command class
@@ -5593,104 +8086,122 @@
 	 * @param {{execute: function, undo: function}} actions - Command actions
 	 * @ignore
 	 */
-	var Command = tui.util.defineClass(/** @lends Command.prototype */{
-	    init: function(actions) {
-	        /**
-	         * Execute function
-	         * @type {function}
-	         */
-	        this.execute = actions.execute;
 
-	        /**
-	         * Undo function
-	         * @type {function}
-	         */
-	        this.undo = actions.undo;
-
-	        /**
-	         * executeCallback
-	         * @type {null}
-	         */
-	        this.executeCallback = null;
-
-	        /**
-	         * undoCallback
-	         * @type {null}
-	         */
-	        this.undoCallback = null;
-	    },
+	var Command = function () {
+	  function Command(actions) {
+	    _classCallCheck(this, Command);
 
 	    /**
-	     * Execute action
-	     * @param {Object.<string, Component>} compMap - Components injection
-	     * @abstract
+	     * Execute function
+	     * @type {function}
 	     */
-	    execute: function() {
-	        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'execute'));
-	    },
+	    this.execute = actions.execute;
+
+	    /**
+	     * Undo function
+	     * @type {function}
+	     */
+	    this.undo = actions.undo;
+
+	    /**
+	     * executeCallback
+	     * @type {null}
+	     */
+	    this.executeCallback = null;
+
+	    /**
+	     * undoCallback
+	     * @type {null}
+	     */
+	    this.undoCallback = null;
+	  }
+
+	  /**
+	   * Execute action
+	   * @param {Object.<string, Component>} compMap - Components injection
+	   * @abstract
+	   */
+
+
+	  _createClass(Command, [{
+	    key: 'execute',
+	    value: function execute() {
+	      throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'execute'));
+	    }
 
 	    /**
 	     * Undo action
 	     * @param {Object.<string, Component>} compMap - Components injection
 	     * @abstract
 	     */
-	    undo: function() {
-	        throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'undo'));
-	    },
+
+	  }, {
+	    key: 'undo',
+	    value: function undo() {
+	      throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'undo'));
+	    }
 
 	    /**
 	     * Attach execute callabck
 	     * @param {function} callback - Callback after execution
 	     * @returns {Command} this
 	     */
-	    setExecuteCallback: function(callback) {
-	        this.executeCallback = callback;
 
-	        return this;
-	    },
+	  }, {
+	    key: 'setExecuteCallback',
+	    value: function setExecuteCallback(callback) {
+	      this.executeCallback = callback;
+
+	      return this;
+	    }
 
 	    /**
 	     * Attach undo callback
 	     * @param {function} callback - Callback after undo
 	     * @returns {Command} this
 	     */
-	    setUndoCallback: function(callback) {
-	        this.undoCallback = callback;
 
-	        return this;
+	  }, {
+	    key: 'setUndoCallback',
+	    value: function setUndoCallback(callback) {
+	      this.undoCallback = callback;
+
+	      return this;
 	    }
-	});
+	  }]);
+
+	  return Command;
+	}();
 
 	module.exports = Command;
 
-
 /***/ },
-/* 22 */
+/* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
-	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	 * @fileoverview Error-message factory
-	 */
 	'use strict';
 
-	var keyMirror = __webpack_require__(6).keyMirror;
+	var _util = __webpack_require__(70);
 
-	var types = keyMirror(
-	    'UN_IMPLEMENTATION',
-	    'NO_COMPONENT_NAME'
-	);
+	var _util2 = _interopRequireDefault(_util);
 
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var keyMirror = _util2.default.keyMirror; /**
+	                                           * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                           * @fileoverview Error-message factory
+	                                           */
+
+	var types = keyMirror('UN_IMPLEMENTATION', 'NO_COMPONENT_NAME');
 	var messages = {
 	    UN_IMPLEMENTATION: 'Should implement a method: ',
 	    NO_COMPONENT_NAME: 'Should set a component name'
 	};
-
 	var map = {
-	    UN_IMPLEMENTATION: function(methodName) {
+	    UN_IMPLEMENTATION: function UN_IMPLEMENTATION(methodName) {
 	        return messages.UN_IMPLEMENTATION + methodName;
 	    },
-	    NO_COMPONENT_NAME: function() {
+	    NO_COMPONENT_NAME: function NO_COMPONENT_NAME() {
 	        return messages.NO_COMPONENT_NAME;
 	    }
 	};
@@ -5698,17 +8209,17 @@
 	module.exports = {
 	    types: tui.util.extend({}, types),
 
-	    create: function(type) {
-	        var func;
-
+	    create: function create(type) {
 	        type = type.toLowerCase();
-	        func = map[type];
-	        Array.prototype.shift.apply(arguments);
+	        var func = map[type];
 
-	        return func.apply(null, arguments);
+	        for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	            args[_key - 1] = arguments[_key];
+	        }
+
+	        return func.apply(undefined, args);
 	    }
 	};
-
 
 /***/ }
 /******/ ]);
