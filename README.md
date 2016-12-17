@@ -22,7 +22,6 @@ Canvas image editor
 * Samples: [http://nhnent.github.io/tui.component.image-editor/latest/tutorial-basic.html](http://nhnent.github.io/tui.component.image-editor/latest/tutorial-basic.html)
 
 ## Dependency
-* jQuery: ~1.8.3
 * fabric.js: ~1.6.4
 * tui.code-snippet: ~1.2.0
 
@@ -42,7 +41,6 @@ Canvas image editor
 * Download
   * [https://github.com/nhnent/tui.component.image-editor/tree/master/dist](https://github.com/nhnent/tui.component.image-editor/tree/master/dist)
   * Download dependencies
-    * jQuery: [https://github.com/jquery/jquery](https://github.com/jquery/jquery)
     * fabric.js: [https://github.com/kangax/fabric.js](https://github.com/kangax/fabric.js)
     * tui.code-snippet: [https://github.com/nhnent/tui.code-snippet](https://github.com/nhnent/tui.code-snippet)
 

@@ -10,8 +10,7 @@
     "globals": {
         "fabric": true,
         "tui": true,
-        "loadFixtures": true,
-        "ActiveXObject": true
+        "loadFixtures": true
     },
     "parserOptions": {
         "sourceType": "module"
