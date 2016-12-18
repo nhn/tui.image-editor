@@ -19,7 +19,7 @@ Canvas image editor
 ## Documentation
 * API: [http://nhnent.github.io/tui.component.image-editor/latest/](http://nhnent.github.io/tui.component.image-editor/latest/)
 * Tutorial: [https://github.com/nhnent/tui.component.image-editor/wiki/Tutorial](https://github.com/nhnent/tui.component.image-editor/wiki/Tutorial)
-* Samples: [http://nhnent.github.io/tui.component.image-editor/latest/tutorial-basic.html](http://nhnent.github.io/tui.component.image-editor/latest/tutorial-basic.html)
+* Examples: [http://nhnent.github.io/tui.component.image-editor/latest/tutorial-basic.html](http://nhnent.github.io/tui.component.image-editor/latest/tutorial-basic.html)
 
 ## Dependency
 * fabric.js: ~1.6.4
