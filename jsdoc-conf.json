@@ -16,7 +16,7 @@
     "opts": {
         "recurse": true,
         "destination": "doc",
-        "tutorials": "samples",
+        "tutorials": "examples",
         "template": "./node_modules/tui-jsdoc-template"
     }
 }
