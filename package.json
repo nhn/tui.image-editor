@@ -41,7 +41,7 @@
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f dist/tui-image-editor.js doc/dist",
     "doc": "./node_modules/.bin/jsdoc -c jsdoc-conf.json && npm run cpy-dist2doc"
   },
-  "dependencieds": {
+  "dependencies": {
     "core-js": "2.4.1"
   }
 }
