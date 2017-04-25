@@ -2,10 +2,10 @@
     border: 1px solid black;
 }
 .body-container {
-    width: 900px;
+    width: 1000px;
 }
 .tui-image-editor-controls {
-    height: 250px;
+    min-height: 250px;
 }
 .menu {
     padding: 0;
@@ -53,6 +53,13 @@
 .menu-item.disabled {
     cursor: default;
     color: #BFBEBE;
+}
+.align-left-top {
+    text-align: left;
+    vertical-align: top;
+}
+.range-narrow {
+    width: 80px;
 }
 .sub-menu-container {
     font-size: 14px;

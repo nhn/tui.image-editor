@@ -6,6 +6,17 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import Mask from '../extension/mask';
 import consts from '../consts';
+import Blur from '../extension/blur';
+import Sharpen from '../extension/sharpen';
+import Emboss from '../extension/emboss';
+import ColorFilter from '../extension/colorFilter';
+
+const {isUndefined, extend, forEach, defineNamespace} = tui.util;
+defineNamespace('fabric.Image.filters.Mask', Mask, true);
+defineNamespace('fabric.Image.filters.Blur', Blur, true);
+defineNamespace('fabric.Image.filters.Sharpen', Sharpen, true);
+defineNamespace('fabric.Image.filters.Emboss', Emboss, true);
+defineNamespace('fabric.Image.filters.ColorFilter', ColorFilter, true);
 
 /**
  * Filter
@@ -34,15 +45,18 @@ class Filter extends Component {
      */
     add(type, options) {
         return new Promise((resolve, reject) => {
-            const filter = this._createFilter(type, options);
             const sourceImg = this._getSourceImage();
             const canvas = this.getCanvas();
+            let filter = this._getFilter(sourceImg, type);
+            if (!filter) {
+                filter = this._createFilter(sourceImg, type, options);
+            }
 
             if (!filter) {
                 reject();
             }
 
-            sourceImg.filters.push(filter);
+            this._changeFilterValues(filter, options);
 
             this._apply(sourceImg, () => {
                 canvas.renderAll();
@@ -68,15 +82,58 @@ class Filter extends Component {
                 reject();
             }
 
-            sourceImg.filters.pop();
+            this._removeFilter(sourceImg, type);
 
             this._apply(sourceImg, () => {
                 canvas.renderAll();
                 resolve({
                     type,
-                    atction: 'remove'
+                    action: 'remove'
                 });
             });
+        });
+    }
+
+    /**
+     * Whether this has the filter or not
+     * @param {string} type - Filter type
+     * @returns {boolean} true if it has the filter
+     */
+    hasFilter(type) {
+        return !!this._getFilter(this._getSourceImage(), type);
+    }
+
+    /**
+     * Get a filter options
+     * @param {string} type - Filter type
+     * @returns {Object} filter options or null if there is no that filter
+     */
+    getOptions(type) {
+        const sourceImg = this._getSourceImage();
+        const filter = this._getFilter(sourceImg, type);
+        if (!filter) {
+            return null;
+        }
+
+        return extend({}, filter.options);
+    }
+
+    /**
+     * Change filter values
+     * @param {object} filter object of filter
+     * @param {object} options object
+     * @private
+     */
+    _changeFilterValues(filter, options) {
+        forEach(options, (value, key) => {
+            if (!isUndefined(filter[key])) {
+                filter[key] = value;
+            }
+        });
+        forEach(filter.options, (value, key) => {
+            if (!isUndefined(options[key])) {
+                filter.options[key] = options[key];
+            }
         });
     }
 
@@ -101,26 +158,71 @@ class Filter extends Component {
 
     /**
      * Create filter instance
+     * @param {fabric.Image} sourceImg - Source image to apply filter
      * @param {string} type - Filter type
      * @param {object} [options] - Options of filter
      * @returns {object} Fabric object of filter
      * @private
      */
-    _createFilter(type, options) {
+    _createFilter(sourceImg, type, options) {
         let filterObj;
-
-        switch (type) {
-            case 'mask':
-                filterObj = new Mask(options);
-                break;
-            case 'removeWhite':
-                filterObj = new fabric.Image.filters.RemoveWhite(options);
-                break;
-            default:
-                filterObj = null;
+        // capitalize first letter for matching with fabric image filter name
+        const fabricType = this._getFabricFilterType(type);
+        const ImageFilter = fabric.Image.filters[fabricType];
+        if (ImageFilter) {
+            filterObj = new ImageFilter(options);
+            filterObj.options = options;
+            sourceImg.filters.push(filterObj);
         }
 
         return filterObj;
+    }
+
+    /**
+     * Get applied filter instance
+     * @param {fabric.Image} sourceImg - Source image to apply filter
+     * @param {string} type - Filter type
+     * @returns {object} Fabric object of filter
+     * @private
+     */
+    _getFilter(sourceImg, type) {
+        let filter = null,
+            item, i, length;
+        const fabricType = this._getFabricFilterType(type);
+        if (sourceImg) {
+            length = sourceImg.filters.length;
+            for (i = 0; i < length; i += 1) {
+                item = sourceImg.filters[i];
+                if (item.type === fabricType) {
+                    filter = item;
+                    break;
+                }
+            }
+        }
+
+        return filter;
+    }
+
+    /**
+     * Remove applied filter instance
+     * @param {fabric.Image} sourceImg - Source image to apply filter
+     * @param {string} type - Filter type
+     * @private
+     */
+    _removeFilter(sourceImg, type) {
+        const fabricType = this._getFabricFilterType(type);
+        sourceImg.filters = tui.util.filter(sourceImg.filters, value => value.type !== fabricType);
+    }
+
+    /**
+     * Change filter class name to fabric's, especially capitalizing first letter
+     * @param {string} type - Filter type
+     * @example
+     * 'grayscale' -> 'Grayscale'
+     * @returns {string} Fabric filter class name
+     */
+    _getFabricFilterType(type) {
+        return type.charAt(0).toUpperCase() + type.slice(1);
     }
 }
 

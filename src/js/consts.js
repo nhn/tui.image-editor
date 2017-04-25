@@ -34,7 +34,8 @@ module.exports = {
         'ROTATE_IMAGE',
         'ADD_OBJECT',
         'REMOVE_OBJECT',
-        'APPLY_FILTER'
+        'APPLY_FILTER',
+        'REMOVE_FILTER'
     ),
 
     /**

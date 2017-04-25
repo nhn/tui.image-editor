@@ -37,6 +37,7 @@ var $btnTextStyle = $('.btn-text-style');
 var $btnAddIcon = $('#btn-add-icon');
 var $btnRegisterIcon = $('#btn-register-icon');
 var $btnMaskFilter = $('#btn-mask-filter');
+var $btnImageFilter = $('#btn-image-filter');
 var $btnLoadMaskImage = $('#input-mask-image-file');
 var $btnApplyMask = $('#btn-apply-mask');
 var $btnClose = $('.close');
@@ -47,6 +48,30 @@ var $inputBrushWidthRange = $('#input-brush-width-range');
 var $inputFontSizeRange = $('#input-font-size-range');
 var $inputStrokeWidthRange = $('#input-stroke-width-range');
 var $inputCheckTransparent = $('#input-check-transparent');
+var $inputCheckGrayscale = $('#input-check-grayscale');
+var $inputCheckInvert = $('#input-check-invert');
+var $inputCheckSepia = $('#input-check-sepia');
+var $inputCheckSepia2 = $('#input-check-sepia2');
+var $inputCheckBlur = $('#input-check-blur');
+var $inputCheckSharpen = $('#input-check-sharpen');
+var $inputCheckEmboss = $('#input-check-emboss');
+var $inputCheckRemoveWhite = $('#input-check-remove-white');
+var $inputRangeRemoveWhiteThreshold = $('#input-range-remove-white-threshold');
+var $inputRangeRemoveWhiteDistance = $('#input-range-remove-white-distance');
+var $inputCheckBrightness = $('#input-check-brightness');
+var $inputRangeBrightnessValue = $('#input-range-brightness-value');
+var $inputCheckNoise = $('#input-check-noise');
+var $inputRangeNoiseValue = $('#input-range-noise-value');
+var $inputCheckGradientTransparency = $('#input-check-gradient-transparancy');
+var $inputRangeGradientTransparencyValue = $('#input-range-gradient-transparency-value');
+var $inputCheckPixelate = $('#input-check-pixelate');
+var $inputRangePixelateValue = $('#input-range-pixelate-value');
+var $inputCheckTint = $('#input-check-tint');
+var $inputRangeTintOpacityValue = $('#input-range-tint-opacity-value');
+var $inputCheckMultiply = $('#input-check-multiply');
+var $inputCheckBlend = $('#input-check-blend');
+var $inputCheckColorFilter = $('#input-check-color-filter');
+var $inputRangeColorFilterValue = $('#input-range-color-filter-value');
 
 // Sub menus
 var $displayingSubMenu = $();
@@ -59,6 +84,7 @@ var $drawShapeSubMenu = $('#draw-shape-sub-menu');
 var $textSubMenu = $('#text-sub-menu');
 var $iconSubMenu = $('#icon-sub-menu');
 var $filterSubMenu = $('#filter-sub-menu');
+var $imageFilterSubMenu = $('#image-filter-sub-menu');
 
 // Select line type
 var $selectLine = $('[name="select-line-type"]');
@@ -68,6 +94,9 @@ var $selectShapeType = $('[name="select-shape-type"]');
 
 // Select color of shape type
 var $selectColorType = $('[name="select-color-type"]');
+
+//Select blend type
+var $selectBlendType = $('[name="select-blend-type"]');
 
 // Image editor
 var imageEditor = new tui.component.ImageEditor('.tui-image-editor', {
@@ -101,6 +130,21 @@ var shapeColorpicker = tui.component.colorpicker.create({
 var iconColorpicker = tui.component.colorpicker.create({
     container: $('#tui-icon-color-picker')[0],
     color: '#000000'
+});
+
+var tintColorpicker = tui.component.colorpicker.create({
+    container: $('#tui-tint-color-picker')[0],
+    color: '#000000'
+});
+
+var multiplyColorpicker = tui.component.colorpicker.create({
+    container: $('#tui-multiply-color-picker')[0],
+    color: '#000000'
+});
+
+var blendColorpicker = tui.component.colorpicker.create({
+    container: $('#tui-blend-color-picker')[0],
+    color: '#00FF00'
 });
 
 // Common global functions
@@ -242,6 +286,14 @@ function showSubMenu(type) {
     $displayingSubMenu = $submenu.show();
 }
 
+function applyOrRemoveFilter(applying, type, options) {
+    if (applying) {
+        imageEditor.applyFilter(type, options);
+    } else {
+        imageEditor.removeFilter(type);
+    }
+}
+
 // Attach image editor custom events
 imageEditor.once('loadImage', function(oImage) {
     imageEditor.clearUndoStack();
@@ -296,6 +348,16 @@ imageEditor.on({
             showSubMenu('text');
             setTextToolbar(obj);
             activateTextMode();
+        }
+    },
+    applyFilter: function(type, action) {
+    },
+    mousedown: function(event) {
+        if ($imageFilterSubMenu.is(':visible') && imageEditor.hasFilter('colorFilter')) {
+            imageEditor.applyFilter('colorFilter', {
+                x: parseInt(event.originPointer.x, 10),
+                y: parseInt(event.originPointer.y, 10)
+            });
         }
     }
 });
@@ -637,6 +699,34 @@ $btnMaskFilter.on('click', function() {
     $displayingSubMenu = $filterSubMenu.show();
 });
 
+$btnImageFilter.on('click', function() {
+    var filters = {
+        'grayscale': $inputCheckGrayscale,
+        'invert': $inputCheckInvert,
+        'sepia': $inputCheckSepia,
+        'sepia2': $inputCheckSepia2,
+        'blur': $inputCheckBlur,
+        'shapren': $inputCheckSharpen,
+        'emboss': $inputCheckEmboss,
+        'removeWhite': $inputCheckRemoveWhite,
+        'brightness': $inputCheckBrightness,
+        'noise': $inputCheckNoise,
+        'gradientTransparency': $inputCheckGradientTransparency,
+        'pixelate': $inputCheckPixelate,
+        'tint': $inputCheckTint,
+        'multiply': $inputCheckMultiply,
+        'blend': $inputCheckBlend,
+        'colorFilter': $inputCheckColorFilter
+    };
+
+    tui.util.forEach(filters, function($value, key) {
+        $value.prop('checked', imageEditor.hasFilter(key));
+    });
+    $displayingSubMenu.hide();
+
+    $displayingSubMenu = $imageFilterSubMenu.show();
+});
+
 $btnLoadMaskImage.on('change', function() {
     var file;
     var imgUrl;
@@ -658,6 +748,164 @@ $btnLoadMaskImage.on('change', function() {
 
 $btnApplyMask.on('click', function() {
     imageEditor.applyFilter('mask');
+});
+
+$inputCheckGrayscale.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'Grayscale', null);
+});
+
+$inputCheckInvert.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'Invert', null);
+});
+
+$inputCheckSepia.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'Sepia', null);
+});
+
+$inputCheckSepia2.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'Sepia2', null);
+});
+
+$inputCheckBlur.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'Blur', null);
+});
+
+$inputCheckSharpen.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'Sharpen', null);
+});
+
+$inputCheckEmboss.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'Emboss', null);
+});
+
+$inputCheckRemoveWhite.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'removeWhite', {
+        threshold: parseInt($inputRangeRemoveWhiteThreshold.val(), 10),
+        distance: parseInt($inputRangeRemoveWhiteDistance.val(), 10)
+    });
+});
+
+$inputRangeRemoveWhiteThreshold.on('change', function() {
+    applyOrRemoveFilter($inputCheckRemoveWhite.is(':checked'), 'removeWhite', {
+        threshold: parseInt(this.value, 10)
+    });
+});
+
+$inputRangeRemoveWhiteDistance.on('change', function() {
+    applyOrRemoveFilter($inputCheckRemoveWhite.is(':checked'), 'removeWhite', {
+        distance: parseInt(this.value, 10)
+    });
+});
+
+$inputCheckBrightness.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'brightness', {
+        brightness: parseInt($inputRangeBrightnessValue.val(), 10)
+    });
+});
+
+$inputRangeBrightnessValue.on('change', function() {
+    applyOrRemoveFilter($inputCheckBrightness.is(':checked'), 'brightness', {
+        brightness: parseInt(this.value, 10)
+    });
+});
+
+$inputCheckNoise.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'noise', {
+        noise: parseInt($inputRangeNoiseValue.val(), 10)
+    });
+});
+
+$inputRangeNoiseValue.on('change', function() {
+    applyOrRemoveFilter($inputCheckNoise.is(':checked'), 'noise', {
+        noise: parseInt(this.value, 10)
+    });
+});
+
+$inputCheckGradientTransparency.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'gradientTransparency', {
+        threshold: parseInt($inputRangeGradientTransparencyValue.val(), 10)
+    });
+});
+
+$inputRangeGradientTransparencyValue.on('change', function() {
+    applyOrRemoveFilter($inputCheckGradientTransparency.is(':checked'), 'gradientTransparency', {
+        threshold: parseInt(this.value, 10)
+    });
+});
+
+$inputCheckPixelate.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'pixelate', {
+        blocksize: parseInt($inputRangePixelateValue.val(), 10)
+    });
+});
+
+$inputRangePixelateValue.on('change', function() {
+    applyOrRemoveFilter($inputCheckPixelate.is(':checked'), 'pixelate', {
+        blocksize: parseInt(this.value, 10)
+    });
+});
+
+$inputCheckTint.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'tint', {
+        color: tintColorpicker.getColor(),
+        opacity: parseFloat($inputRangeTintOpacityValue.val())
+    });
+});
+
+tintColorpicker.on('selectColor', function(e) {
+    applyOrRemoveFilter($inputCheckTint.is(':checked'), 'tint', {
+        color: e.color
+    });
+});
+
+$inputRangeTintOpacityValue.on('change', function() {
+    applyOrRemoveFilter($inputCheckTint.is(':checked'), 'tint', {
+        opacity: parseFloat($inputRangeTintOpacityValue.val())
+    });
+});
+
+$inputCheckMultiply.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'multiply', {
+        color: multiplyColorpicker.getColor()
+    });
+});
+
+multiplyColorpicker.on('selectColor', function(e) {
+    applyOrRemoveFilter($inputCheckMultiply.is(':checked'), 'multiply', {
+        color: e.color
+    });
+});
+
+$inputCheckBlend.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'blend', {
+        color: blendColorpicker.getColor(),
+        mode: $selectBlendType.val()
+    });
+});
+
+blendColorpicker.on('selectColor', function(e) {
+    applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blend', {
+        color: e.color
+    });
+});
+
+$selectBlendType.on('change', function() {
+    applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blend', {
+        mode: this.value
+    });
+});
+
+$inputCheckColorFilter.on('change', function() {
+    applyOrRemoveFilter(this.checked, 'colorFilter', {
+        color: '#FFFFFF',
+        threshold: $inputRangeColorFilterValue.val()
+    });
+});
+
+$inputRangeColorFilterValue.on('change', function() {
+    applyOrRemoveFilter($inputCheckColorFilter.is(':checked'), 'colorFilter', {
+        threshold: this.value
+    });
 });
 
 // Etc..

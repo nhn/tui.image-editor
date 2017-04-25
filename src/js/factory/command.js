@@ -17,6 +17,7 @@ creators[commandNames.CLEAR_OBJECTS] = createClearCommand;
 creators[commandNames.ADD_OBJECT] = createAddObjectCommand;
 creators[commandNames.REMOVE_OBJECT] = createRemoveCommand;
 creators[commandNames.APPLY_FILTER] = createFilterCommand;
+creators[commandNames.REMOVE_FILTER] = createRemoveFilterCommand;
 
 /**
  * @param {fabric.Object} object - Fabric object
@@ -290,6 +291,8 @@ function createFilterCommand(type, options) {
             if (type === 'mask') {
                 this.store = options.mask;
                 options.mask.remove();
+            } else {
+                this.store = filterComp.getOptions(type);
             }
 
             return filterComp.add(type, options);
@@ -303,10 +306,51 @@ function createFilterCommand(type, options) {
             const filterComp = compMap[FILTER];
 
             if (type === 'mask') {
-                filterComp.getCanvas().add(this.store);
+                filterComp.getCanvas().add(this.store); // this.store is mask image
+
+                return filterComp.remove(type);
             }
 
+            // options changed case
+            if (this.store) {
+                return filterComp.add(type, this.store);  // this.store is options object
+            }
+
+            // filter added case
+            return filterComp.remove(type);  // this.store is options object
+        }
+    });
+}
+
+/**
+ * Filter command
+ * @param {string} type - Filter type
+ * @returns {Command}
+ * @ignore
+ */
+function createRemoveFilterCommand(type) {
+    return new Command({
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {Promise}
+         * @ignore
+         */
+        execute(compMap) {
+            const filterComp = compMap[FILTER];
+
+            this.store = filterComp.getOptions(type);
+
             return filterComp.remove(type);
+        },
+        /**
+         * @param {object.<string, Component>} compMap - Components injection
+         * @returns {Promise}
+         * @ignore
+         */
+        undo(compMap) {
+            const filterComp = compMap[FILTER];
+
+            return filterComp.add(type, this.store);
         }
     });
 }

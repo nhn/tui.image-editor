@@ -1266,8 +1266,45 @@ class ImageEditor {
     }
 
     /**
+     * Whether it has the filter or not
+     * @param {string} type - Filter type
+     * @returns {boolean} true if it has the filter
+     */
+    hasFilter(type) {
+        return this._getComponent(components.FILTER).hasFilter(type);
+    }
+
+    /**
+     * Remove filter on canvas image
+     * @param {string} type - Filter type
+     * @example
+     * imageEditor.removeFilter('Grayscale');
+     */
+    removeFilter(type) {
+        const command = commandFactory.create(commands.REMOVE_FILTER, type);
+        const callback = obj => {
+            this.fire(events.APPLY_FILTER, obj.type, obj.action);
+        };
+
+        /**
+         * @event ImageEditor#removeFilter
+         * @param {string} filterType - Applied filter
+         * @param {string} actType - Action type (add / remove)
+         * @example
+         * imageEditor.on('applyFilter', function(filterType, actType) {
+         *     console.log('filterType: ', filterType);
+         *     console.log('actType: ', actType);
+         * });
+         */
+        command.setExecuteCallback(callback)
+            .setUndoCallback(callback);
+
+        this.execute(command);
+    }
+
+    /**
      * Apply filter on canvas image
-     * @param {string} type - Filter type (current filter type is only 'mask')
+     * @param {string} type - Filter type
      * @param {options} options - Options to apply filter
      * @example
      * imageEditor.applyFilter('mask');
