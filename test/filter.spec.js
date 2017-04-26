@@ -15,16 +15,10 @@ describe('Filter', () => {
         });
         imageEditor.loadImageFromURL(imageURL, 'sampleImage');
         imageEditor.once('loadImage', () => {
-            // can't call editor function until this callback is end.
-            setTimeout(() => {
-                imageEditor.applyFilter('colorFilter');
-                imageEditor.once('applyFilter', () => {
-                    // can't call editor function until this callback is end.
-                    setTimeout(() => {
-                        done();
-                    }, 0);
-                });
-            }, 0);
+            imageEditor.applyFilter('colorFilter');
+            imageEditor.once('applyFilter', () => {
+                done();
+            });
         });
     });
 
@@ -45,10 +39,7 @@ describe('Filter', () => {
         beforeEach(done => {
             imageEditor.removeFilter('colorFilter');
             imageEditor.once('applyFilter', () => {
-                // can't call editor function until this callback is end.
-                setTimeout(() => {
-                    done();
-                }, 0);
+                done();
             });
         });
 

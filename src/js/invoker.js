@@ -103,17 +103,15 @@ class Invoker {
         return command.execute(this._componentMap)
             .then(value => {
                 this.pushUndoStack(command);
+                this.unlock();
                 if (tui.util.isFunction(command.executeCallback)) {
                     command.executeCallback(value);
                 }
 
                 return value;
             })
-            .catch(() => {}) // do nothing with exception
-            .then(value => {
+            .catch(() => {
                 this.unlock();
-
-                return value;
             });
     }
 
@@ -129,17 +127,15 @@ class Invoker {
         return command.undo(this._componentMap)
             .then(value => {
                 this.pushRedoStack(command);
+                this.unlock();
                 if (tui.util.isFunction(command.undoCallback)) {
                     command.undoCallback(value);
                 }
 
                 return value;
             })
-            .catch(() => {}) // do nothing with exception
-            .then(value => {
+            .catch(() => {
                 this.unlock();
-
-                return value;
             });
     }
 
