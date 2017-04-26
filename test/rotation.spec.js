@@ -52,9 +52,9 @@ describe('Rotation', () => {
         expect(rotationModule.getCurrentAngle()).toBe(current + 20);
     });
 
-    it('"rotate()" should set angle value modular 360(===2*PI)', () => {
+    it('"rotate()" should add angle value modular 360(===2*PI)', () => {
         rotationModule.setAngle(10).then(() => rotationModule.rotate(380)).then(() => {
-            expect(rotationModule.getCurrentAngle()).toBe(20);
+            expect(rotationModule.getCurrentAngle()).toBe(30);
         });
     });
 
