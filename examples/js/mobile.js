@@ -138,28 +138,17 @@ function getBrushSettings() {
 }
 
 function activateShapeMode() {
-    imageEditor.endTextMode();
-    imageEditor.endFreeDrawing();
-    imageEditor.endLineDrawing();
-    imageEditor.endCropping();
+    imageEditor.stopDrawingMode();
 }
 
 function activateIconMode() {
-    imageEditor.endTextMode();
-    imageEditor.endFreeDrawing();
-    imageEditor.endLineDrawing();
-    imageEditor.endCropping();
-    imageEditor.endDrawingShapeMode();
+    imageEditor.stopDrawingMode();
 }
 
 function activateTextMode() {
-    imageEditor.endFreeDrawing();
-    imageEditor.endLineDrawing();
-    imageEditor.endCropping();
-    imageEditor.endDrawingShapeMode();
-
-    if (imageEditor.getCurrentState() !== 'TEXT') {
-        imageEditor.startTextMode();
+    if (imageEditor.getDrawingMode() !== 'TEXT') {
+        imageEditor.stopDrawingMode();
+        imageEditor.startDrawingMode('TEXT');
     }
 }
 
@@ -285,7 +274,7 @@ $btnShowMenu.on('click', function() {
     $displayingHiddenMenu.hide();
     $msg.show();
 
-    imageEditor.endAll();
+    imageEditor.stopDrawingMode();
 });
 
 //Image load action
@@ -362,11 +351,14 @@ $btnDownload.on('click', function() {
 
 // Crop menu action
 $btnCrop.on('click', function() {
-    imageEditor.startCropping();
+    imageEditor.startDrawingMode('CROPPER');
 });
 
 $btnApplyCrop.on('click', function() {
-    imageEditor.endCropping(true);
+    imageEditor.crop(imageEditor.getCropzoneRect());
+    imageEditor.once('endCropping', function() {
+        imageEditor.stopDrawingMode();
+    });
 });
 
 // Orientation menu action
@@ -407,7 +399,7 @@ iconColorpicker.on('selectColor', function(event) {
 $btnAddText.on('click', function() {
     var initText = 'Double Click';
 
-    imageEditor.startTextMode();
+    imageEditor.startDrawingMode('TEXT');
     imageEditor.addText(initText, {
         styles: {
             fontSize: parseInt($inputTextSizeRange.val(), 10)
@@ -464,20 +456,20 @@ textColorpicker.on('selectColor', function(event) {
 $btnFreeDrawing.on('click', function() {
     var settings = getBrushSettings();
 
-    imageEditor.endAll();
-    imageEditor.startFreeDrawing(settings);
+    imageEditor.stopDrawingMode();
+    imageEditor.startDrawingMode('FREE_DRAWING', settings);
 });
 
 $btnLineDrawing.on('click', function() {
     var settings = getBrushSettings();
 
-    imageEditor.endAll();
-    imageEditor.startLineDrawing(settings);
+    imageEditor.stopDrawingMode();
+    imageEditor.startDrawingMode('LINE', settings);
 });
 
 $inputBrushWidthRange.on('change', function() {
     imageEditor.setBrush({
-        width: parseInt($(this.val()), 10)
+        width: parseInt($(this).val(), 10)
     });
 });
 

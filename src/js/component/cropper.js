@@ -111,16 +111,13 @@ class Cropper extends Component {
 
     /**
      * End cropping
-     * @param {boolean} isApplying - Is applying or not
-     * @returns {?{imageName: string, url: string}} cropped Image data
      */
-    end(isApplying) {
+    end() {
         const canvas = this.getCanvas();
         const cropzone = this._cropzone;
-        let data;
 
         if (!cropzone) {
-            return null;
+            return;
         }
         cropzone.remove();
         canvas.selection = true;
@@ -129,15 +126,11 @@ class Cropper extends Component {
         canvas.forEachObject(obj => {
             obj.evented = true;
         });
-        if (isApplying) {
-            data = this._getCroppedImageData();
-        }
+
         this._cropzone = null;
 
         fabric.util.removeListener(document, 'keydown', this._listeners.keydown);
         fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
-
-        return data;
     }
 
     /**
@@ -244,10 +237,41 @@ class Cropper extends Component {
 
     /**
      * Get cropped image data
+     * @param {Object} cropRect cropzone rect
+     *  @param {Number} cropRect.left left position
+     *  @param {Number} cropRect.top top position
+     *  @param {Number} cropRect.width width
+     *  @param {Number} cropRect.height height
      * @returns {?{imageName: string, url: string}} cropped Image data
-     * @private
      */
-    _getCroppedImageData() {
+    getCroppedImageData(cropRect) {
+        const canvas = this.getCanvas(),
+            containsCropzone = canvas.contains(this._cropzone);
+        if (!cropRect) {
+            return null;
+        }
+
+        if (containsCropzone) {
+            this._cropzone.remove();
+        }
+
+        const imageData = {
+            imageName: this.getImageName(),
+            url: canvas.toDataURL(cropRect)
+        };
+
+        if (containsCropzone) {
+            canvas.add(this._cropzone);
+        }
+
+        return imageData;
+    }
+
+    /**
+     * Get cropped rect
+     * @returns {Object} rect
+     */
+    getCropzoneRect() {
         const cropzone = this._cropzone;
 
         if (!cropzone.isValid()) {
@@ -261,10 +285,7 @@ class Cropper extends Component {
             height: cropzone.getHeight()
         };
 
-        return {
-            imageName: this.getImageName(),
-            url: this.getCanvas().toDataURL(cropInfo)
-        };
+        return cropInfo;
     }
 
     /**

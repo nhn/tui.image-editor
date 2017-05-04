@@ -10,7 +10,7 @@ import consts from './consts';
 const events = consts.eventNames;
 const components = consts.componentNames;
 const commands = consts.commandNames;
-const {states, keyCodes, fObjectOptions} = consts;
+const {drawingModes, keyCodes, fObjectOptions} = consts;
 const {isUndefined, bind, forEach, extend, hasStamp} = tui.util;
 
 /**
@@ -39,11 +39,11 @@ class ImageEditor {
         this._canvas = null;
 
         /**
-         * Editor current state
+         * Editor current drawing mode
          * @private
          * @type {string}
          */
-        this._state = states.NORMAL;
+        this._drawingMode = drawingModes.NORMAL;
 
         /**
          * Event handler list
@@ -314,12 +314,14 @@ class ImageEditor {
 
         textComp.setSelectedInfo(fEvent.target, false);
 
-        if (obj.text === '') {
-            obj.remove();
-        } else if (!hasStamp(obj)) {
-            const command = commandFactory.create(commands.ADD_OBJECT, obj);
-            this._invoker.pushUndoStack(command);
-            this._invoker.clearRedoStack();
+        if (obj) {
+            if (obj.text === '') {
+                obj.remove();
+            } else if (!hasStamp(obj)) {
+                const command = commandFactory.create(commands.ADD_OBJECT, obj);
+                this._invoker.pushUndoStack(command);
+                this._invoker.clearRedoStack();
+            }
         }
     }
 
@@ -382,22 +384,22 @@ class ImageEditor {
     }
 
     /**
-     * Get current state
+     * Get current drawing mode
      * @returns {string}
      * @example
-     * // Image editor states
+     * // Image editor drawing mode
      * //
      * //    NORMAL: 'NORMAL'
-     * //    CROP: 'CROP'
+     * //    CROPPER: 'CROPPER'
      * //    FREE_DRAWING: 'FREE_DRAWING'
      * //    TEXT: 'TEXT'
      * //
-     * if (imageEditor.getCurrentState() === 'FREE_DRAWING') {
-     *     imageEditor.endFreeDrawing();
+     * if (imageEditor.getDrawingMode() === 'FREE_DRAWING') {
+     *     imageEditor.stopDrawingMode();
      * }
      */
-    getCurrentState() {
-        return this._state;
+    getDrawingMode() {
+        return this._drawingMode;
     }
 
     /**
@@ -417,25 +419,6 @@ class ImageEditor {
     }
 
     /**
-     * End current action & Deactivate
-     * @example
-     * imageEditor.startFreeDrawing();
-     * imageEidtor.endAll(); // === imageEidtor.endFreeDrawing();
-     *
-     * imageEditor.startCropping();
-     * imageEditor.endAll(); // === imageEidtor.endCropping();
-     */
-    endAll() {
-        this.endTextMode();
-        this.endFreeDrawing();
-        this.endLineDrawing();
-        this.endCropping();
-        this.endDrawingShapeMode();
-        this.deactivateAll();
-        this._state = states.NORMAL;
-    }
-
-    /**
      * Deactivate all objects
      * @example
      * imageEditor.deactivateAll();
@@ -451,7 +434,7 @@ class ImageEditor {
      * @ignore
      */
     execute(command) {
-        this.endAll();
+        this.stopDrawingMode();
         this._invoker.invoke(command);
     }
 
@@ -461,7 +444,7 @@ class ImageEditor {
      * imageEditor.undo();
      */
     undo() {
-        this.endAll();
+        this.stopDrawingMode();
         this._invoker.undo();
     }
 
@@ -471,7 +454,7 @@ class ImageEditor {
      * imageEditor.redo();
      */
     redo() {
-        this.endAll();
+        this.stopDrawingMode();
         this._invoker.redo();
     }
 
@@ -593,43 +576,71 @@ class ImageEditor {
     }
 
     /**
-     * Start cropping
+     * Start a drawing mode
+     * @param {String} mode Can be one of <I>'CROPPER', 'FREE_DRAWING', 'LINE', 'TEXT', 'SHAPE'</I>
+     * @param {Object} [option] parameters of drawing mode
+     * @returns {Boolean} true if success or false
      * @example
-     * imageEditor.startCropping();
+     * imageEditor.startDrawingMode('FREE_DRAWING', option);
      */
-    startCropping() {
-        if (this.getCurrentState() === states.CROP) {
-            return;
+    startDrawingMode(mode, option) {
+        if (this.getDrawingMode() === mode) {
+            return true;
         }
 
-        this.endAll();
-        this._state = states.CROP;
-        const cropper = this._getComponent(components.CROPPER);
-        cropper.start();
-        /**
-         * @event ImageEditor#startCropping
-         */
-        this.fire(events.START_CROPPING);
+        const component = this._getComponent(mode);
+        if (component) {
+            this._drawingMode = mode;
+
+            if (component.start) {
+                if (mode === drawingModes.TEXT) {
+                    component.start({
+                        mousedown: bind(this._onFabricMouseDown, this),
+                        select: bind(this._onFabricSelect, this),
+                        selectClear: bind(this._onFabricSelectClear, this),
+                        dbclick: bind(this._onDBClick, this),
+                        remove: this._handlers.removedObject
+                    });
+                } else {
+                    component.start(option);
+                }
+            }
+        }
+
+        return !!component;
     }
 
     /**
-     * Apply cropping
-     * @param {boolean} [isApplying] - Whether the cropping is applied or canceled
+     * Stop the current drawing mode
      * @example
-     * imageEditor.startCropping();
-     * imageEditor.endCropping(false); // cancel cropping
-     *
-     * imageEditor.startCropping();
-     * imageEditor.endCropping(true); // apply cropping
+     * imageEditor.stopDrawingMode();
      */
-    endCropping(isApplying) {
-        if (this.getCurrentState() !== states.CROP) {
+    stopDrawingMode() {
+        const drawingMode = this.getDrawingMode();
+        if (drawingMode === drawingModes.NORMAL) {
             return;
         }
 
+        this._drawingMode = drawingModes.NORMAL;
+        const component = this._getComponent(drawingMode);
+        if (component && component.end) {
+            component.end();
+        }
+    }
+
+    /**
+     * Crop this image with rect
+     * @param {Object} rect crop rect
+     *  @param {Number} rect.left left position
+     *  @param {Number} rect.top top position
+     *  @param {Number} rect.width width
+     *  @param {Number} rect.height height
+     * @example
+     * imageEditor.crop(imageEditor.getCropzoneRect());
+     */
+    crop(rect) {
         const cropper = this._getComponent(components.CROPPER);
-        this._state = states.NORMAL;
-        const data = cropper.end(isApplying);
+        const data = cropper.getCroppedImageData(rect);
 
         this.once('loadImage', () => {
             /**
@@ -641,6 +652,20 @@ class ImageEditor {
         if (data) {
             this.loadImageFromURL(data.url, data.imageName);
         }
+    }
+
+    /**
+     * Get the cropping rect
+     * @returns {Object} rect
+     *  @returns {Number} rect.left left position
+     *  @returns {Number} rect.top left position
+     *  @returns {Number} rect.width width
+     *  @returns {Number} rect.height height
+     */
+    getCropzoneRect() {
+        const cropper = this._getComponent(components.CROPPER);
+
+        return cropper.getCropzoneRect();
     }
 
     /**
@@ -749,31 +774,6 @@ class ImageEditor {
     }
 
     /**
-     * Start free-drawing mode
-     * @param {{width: number, color: string}} [setting] - Brush width & color
-     * @example
-     * imageEditor.startFreeDrawing();
-     * imageEditor.endFreeDrawing();
-     * imageEidtor.startFreeDrawing({
-     *     width: 12,
-     *     color: 'rgba(0, 0, 0, 0.5)'
-     * });
-     */
-    startFreeDrawing(setting) {
-        if (this.getCurrentState() === states.FREE_DRAWING) {
-            return;
-        }
-        this.endAll();
-        this._getComponent(components.FREE_DRAWING).start(setting);
-        this._state = states.FREE_DRAWING;
-
-        /**
-         * @event ImageEditor#startFreeDrawing
-         */
-        this.fire(events.START_FREE_DRAWING);
-    }
-
-    /**
      * Set drawing brush
      * @param {{width: number, color: string}} setting - Brush width & color
      * @example
@@ -788,11 +788,11 @@ class ImageEditor {
      * });
      */
     setBrush(setting) {
-        const state = this._state;
+        const drawingMode = this._drawingMode;
         let compName;
 
-        switch (state) {
-            case states.LINE:
+        switch (drawingMode) {
+            case drawingModes.LINE:
                 compName = components.LINE;
                 break;
             default:
@@ -800,82 +800,6 @@ class ImageEditor {
         }
 
         this._getComponent(compName).setBrush(setting);
-    }
-
-    /**
-     * End free-drawing mode
-     * @example
-     * imageEditor.startFreeDrawing();
-     * imageEditor.endFreeDrawing();
-     */
-    endFreeDrawing() {
-        if (this.getCurrentState() !== states.FREE_DRAWING) {
-            return;
-        }
-        this._getComponent(components.FREE_DRAWING).end();
-        this._state = states.NORMAL;
-
-        /**
-         * @event ImageEditor#endFreeDrawing
-         */
-        this.fire(events.END_FREE_DRAWING);
-    }
-
-    /**
-     * Start line-drawing mode
-     * @param {{width: number, color: string}} [setting] - Brush width & color
-     * @example
-     * imageEditor.startLineDrawing();
-     * imageEditor.endLineDrawing();
-     * imageEidtor.startLineDrawing({
-     *     width: 12,
-     *     color: 'rgba(0, 0, 0, 0.5)'
-     * });
-     */
-    startLineDrawing(setting) {
-        if (this.getCurrentState() === states.LINE) {
-            return;
-        }
-
-        this.endAll();
-        this._getComponent(components.LINE).start(setting);
-        this._state = states.LINE;
-
-        /**
-         * @event ImageEditor#startLineDrawing
-         */
-        this.fire(events.START_LINE_DRAWING);
-    }
-
-    /**
-     * End line-drawing mode
-     * @example
-     * imageEditor.startLineDrawing();
-     * imageEditor.endLineDrawing();
-     */
-    endLineDrawing() {
-        if (this.getCurrentState() !== states.LINE) {
-            return;
-        }
-        this._getComponent(components.LINE).end();
-        this._state = states.NORMAL;
-
-        /**
-         * @event ImageEditor#endLineDrawing
-         */
-        this.fire(events.END_LINE_DRAWING);
-    }
-
-    /**
-     * Start to draw shape on canvas (bind event on canvas)
-     * @example
-     * imageEditor.startDrawingShapeMode();
-     */
-    startDrawingShapeMode() {
-        if (this.getCurrentState() !== states.SHAPE) {
-            this._state = states.SHAPE;
-            this._getComponent(components.SHAPE).startDrawingMode();
-        }
     }
 
     /**
@@ -999,39 +923,6 @@ class ImageEditor {
     }
 
     /**
-     * End to draw shape on canvas (unbind event on canvas)
-     * @example
-     * imageEditor.startDrawingShapeMode();
-     * imageEditor.endDrawingShapeMode();
-     */
-    endDrawingShapeMode() {
-        if (this.getCurrentState() === states.SHAPE) {
-            this._getComponent(components.SHAPE).endDrawingMode();
-            this._state = states.NORMAL;
-        }
-    }
-
-    /**
-     * Start text input mode
-     * @example
-     * imageEditor.endTextMode();
-     * imageEditor.startTextMode();
-     */
-    startTextMode() {
-        if (this.getCurrentState() !== states.TEXT) {
-            this._state = states.TEXT;
-
-            this._getComponent(components.TEXT).start({
-                mousedown: bind(this._onFabricMouseDown, this),
-                select: bind(this._onFabricSelect, this),
-                selectClear: bind(this._onFabricSelectClear, this),
-                dbclick: bind(this._onDBClick, this),
-                remove: this._handlers.removedObject
-            });
-        }
-    }
-
-    /**
      * Add text on image
      * @param {string} text - Initial input text
      * @param {object} [options] Options for generating text
@@ -1059,8 +950,8 @@ class ImageEditor {
      * });
      */
     addText(text, options) {
-        if (this.getCurrentState() !== states.TEXT) {
-            this._state = states.TEXT;
+        if (this.getDrawingMode() !== drawingModes.TEXT) {
+            this._drawingMode = drawingModes.TEXT;
         }
 
         this._getComponent(components.TEXT).add(text || '', options || {});
@@ -1075,7 +966,7 @@ class ImageEditor {
     changeText(text) {
         const activeObj = this._canvas.getActiveObject();
 
-        if (this.getCurrentState() !== states.TEXT ||
+        if (this.getDrawingMode() !== drawingModes.TEXT ||
             !activeObj) {
             return;
         }
@@ -1101,28 +992,12 @@ class ImageEditor {
     changeTextStyle(styleObj) {
         const activeObj = this._canvas.getActiveObject();
 
-        if (this.getCurrentState() !== states.TEXT ||
+        if (this.getDrawingMode() !== drawingModes.TEXT ||
             !activeObj) {
             return;
         }
 
         this._getComponent(components.TEXT).setStyle(activeObj, styleObj);
-    }
-
-    /**
-     * End text input mode
-     * @example
-     * imageEditor.startTextMode();
-     * imageEditor.endTextMode();
-     */
-    endTextMode() {
-        if (this.getCurrentState() !== states.TEXT) {
-            return;
-        }
-
-        this._state = states.NORMAL;
-
-        this._getComponent(components.TEXT).end();
     }
 
     /**
@@ -1424,7 +1299,7 @@ class ImageEditor {
     destroy() {
         const wrapperEl = this._canvas.wrapperEl;
 
-        this.endAll();
+        this.stopDrawingMode();
         this._detachDomEvents();
 
         this._canvas.clear();

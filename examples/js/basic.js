@@ -198,32 +198,20 @@ function getBrushSettings() {
 }
 
 function activateShapeMode() {
-    imageEditor.endTextMode();
-    imageEditor.endFreeDrawing();
-    imageEditor.endLineDrawing();
-    imageEditor.endCropping();
-
-    if (imageEditor.getCurrentState() !== 'SHAPE') {
-        imageEditor.startDrawingShapeMode();
+    if (imageEditor.getDrawingMode() !== 'SHAPE') {
+        imageEditor.stopDrawingMode();
+        imageEditor.startDrawingMode('SHAPE');
     }
 }
 
 function activateIconMode() {
-    imageEditor.endTextMode();
-    imageEditor.endFreeDrawing();
-    imageEditor.endLineDrawing();
-    imageEditor.endCropping();
-    imageEditor.endDrawingShapeMode();
+    imageEditor.stopDrawingMode();
 }
 
 function activateTextMode() {
-    imageEditor.endFreeDrawing();
-    imageEditor.endLineDrawing();
-    imageEditor.endCropping();
-    imageEditor.endDrawingShapeMode();
-
-    if (imageEditor.getCurrentState() !== 'TEXT') {
-        imageEditor.startTextMode();
+    if (imageEditor.getDrawingMode() !== 'TEXT') {
+        imageEditor.stopDrawingMode();
+        imageEditor.startDrawingMode('TEXT');
     }
 }
 
@@ -398,34 +386,37 @@ $btnRemoveActiveObject.on('click', function() {
 });
 
 $btnCrop.on('click', function() {
-    imageEditor.startCropping();
+    imageEditor.startDrawingMode('CROPPER');
     $displayingSubMenu.hide();
     $displayingSubMenu = $cropSubMenu.show();
 });
 
 $btnFlip.on('click', function() {
-    imageEditor.endAll();
+    imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
     $displayingSubMenu = $flipSubMenu.show();
 });
 
 $btnRotation.on('click', function() {
-    imageEditor.endAll();
+    imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
     $displayingSubMenu = $rotationSubMenu.show();
 });
 
 $btnClose.on('click', function() {
-    imageEditor.endAll();
+    imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
 });
 
 $btnApplyCrop.on('click', function() {
-    imageEditor.endCropping(true);
+    imageEditor.crop(imageEditor.getCropzoneRect());
+    imageEditor.once('endCropping', function() {
+        imageEditor.stopDrawingMode();
+    });
 });
 
 $btnCancelCrop.on('click', function() {
-    imageEditor.endCropping();
+    imageEditor.stopDrawingMode();
 });
 
 $btnFlipX.on('click', function() {
@@ -497,7 +488,7 @@ $btnDownload.on('click', function() {
 
 // control draw line mode
 $btnDrawLine.on('click', function() {
-    imageEditor.endAll();
+    imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
     $displayingSubMenu = $drawLineSubMenu.show();
     $selectLine.eq(0).change();
@@ -506,18 +497,12 @@ $btnDrawLine.on('click', function() {
 $selectLine.on('change', function() {
     var mode = $(this).val();
     var settings = getBrushSettings();
-    var state = imageEditor.getCurrentState();
 
+    imageEditor.stopDrawingMode();
     if (mode === 'freeDrawing') {
-        if (state === 'FREE_DRAWING') {
-            imageEditor.endFreeDrawing();
-        }
-        imageEditor.startFreeDrawing(settings);
+        imageEditor.startDrawingMode('FREE_DRAWING', settings);
     } else {
-        if (state === 'LINE') {
-            imageEditor.endLineDrawing();
-        }
-        imageEditor.startLineDrawing(settings);
+        imageEditor.startDrawingMode('LINE', settings);
     }
 });
 
@@ -693,7 +678,7 @@ iconColorpicker.on('selectColor', function(event) {
 
 // control mask filter
 $btnMaskFilter.on('click', function() {
-    imageEditor.endAll();
+    imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
 
     $displayingSubMenu = $filterSubMenu.show();
