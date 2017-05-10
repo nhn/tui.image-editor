@@ -409,8 +409,7 @@ $btnClose.on('click', function() {
 });
 
 $btnApplyCrop.on('click', function() {
-    imageEditor.crop(imageEditor.getCropzoneRect());
-    imageEditor.once('endCropping', function() {
+    imageEditor.crop(imageEditor.getCropzoneRect()).then(() => {
         imageEditor.stopDrawingMode();
     });
 });
@@ -441,13 +440,17 @@ $btnRotateCounterClockWise.on('click', function() {
 
 $inputRotationRange.on('mousedown', function() {
     var changeAngle = function() {
-        imageEditor.setAngle(parseInt($inputRotationRange.val(), 10));
+        imageEditor.setAngle(parseInt($inputRotationRange.val(), 10)).catch(() => {});
     };
     $(document).on('mousemove', changeAngle);
     $(document).on('mouseup', function stopChangingAngle() {
         $(document).off('mousemove', changeAngle);
         $(document).off('mouseup', stopChangingAngle);
     });
+});
+
+$inputRotationRange.on('change', function() {
+    imageEditor.setAngle(parseInt($inputRotationRange.val(), 10)).catch(() => {});
 });
 
 $inputBrushWidthRange.on('change', function() {
@@ -725,9 +728,9 @@ $btnLoadMaskImage.on('change', function() {
     if (file) {
         imgUrl = URL.createObjectURL(file);
 
-        imageEditor.loadImageFromURL(imageEditor.toDataURL(), 'FilterImage');
-
-        imageEditor.addImageObject(imgUrl);
+        imageEditor.loadImageFromURL(imageEditor.toDataURL(), 'FilterImage').then(() => {
+            imageEditor.addImageObject(imgUrl);
+        });
     }
 });
 

@@ -218,6 +218,27 @@ describe('Cropper', () => {
         expect(canvas.setActiveObject).toHaveBeenCalledWith(cropper._cropzone);
     });
 
+    describe('"crop()"', () => {
+        it('should return cropzone rect', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+
+            expect(cropper.getCropzoneRect()).toBeTruthy();
+            cropper.end();
+        });
+
+        it('should return cropzone data if the cropzone is valid', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+
+            expect(cropper.getCroppedImageData(cropper.getCropzoneRect())).toEqual({
+                imageName: jasmine.any(String),
+                url: jasmine.any(String)
+            });
+            cropper.end();
+        });
+    });
+
     describe('"end()"', () => {
         it('should set cropzone of cropper to null', () => {
             cropper.start();

@@ -2,12 +2,14 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Shape component
  */
+import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
 
 const {extend, bind, inArray} = tui.util;
 
+const {rejectMessages} = consts;
 const KEY_CODES = consts.keyCodes;
 const DEFAULT_TYPE = 'rect';
 const DEFAULT_OPTIONS = {
@@ -176,15 +178,19 @@ class Shape extends Component {
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
+     * @returns {Promise}
      */
     add(type, options) {
-        const canvas = this.getCanvas();
-        options = this._createOptions(options);
-        const shapeObj = this._createInstance(type, options);
+        return new Promise(resolve => {
+            const canvas = this.getCanvas();
+            options = this._createOptions(options);
+            const shapeObj = this._createInstance(type, options);
 
-        this._bindEventOnShape(shapeObj);
+            this._bindEventOnShape(shapeObj);
 
-        canvas.add(shapeObj);
+            canvas.add(shapeObj).setActiveObject(shapeObj);
+            resolve(shapeObj);
+        });
     }
 
     /**
@@ -200,14 +206,18 @@ class Shape extends Component {
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
+     * @returns {Promise}
      */
     change(shapeObj, options) {
-        if (inArray(shapeObj.get('type'), shapeType) < 0) {
-            return;
-        }
+        return new Promise((resolve, reject) => {
+            if (inArray(shapeObj.get('type'), shapeType) < 0) {
+                reject(rejectMessages.notSupportType);
+            }
 
-        shapeObj.set(options);
-        this.getCanvas().renderAll();
+            shapeObj.set(options);
+            this.getCanvas().renderAll();
+            resolve();
+        });
     }
 
     /**

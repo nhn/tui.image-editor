@@ -2,8 +2,11 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Main component having canvas & image, set css-max-dimension of canvas
  */
+import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
+
+const {bind} = tui.util;
 
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
@@ -249,6 +252,43 @@ class Main extends Component {
      */
     getImageName() {
         return this.imageName;
+    }
+
+    /**
+     * Add image object on canvas
+     * @param {string} imgUrl - Image url to make object
+     * @returns {Promise}
+     */
+    addImageObject(imgUrl) {
+        const callback = bind(this._callbackAfterLoadingImageObject, this);
+
+        return new Promise(resolve => {
+            fabric.Image.fromURL(imgUrl, image => {
+                callback(image);
+                resolve();
+            }, {
+                crossOrigin: 'Anonymous'
+            }
+            );
+        });
+    }
+
+    /**
+     * Callback function after loading image
+     * @param {fabric.Image} obj - Fabric image object
+     * @private
+     */
+    _callbackAfterLoadingImageObject(obj) {
+        const centerPos = this.getCanvasImage().getCenterPoint();
+
+        obj.set(consts.fObjectOptions.SELECTION_STYLE);
+        obj.set({
+            left: centerPos.x,
+            top: centerPos.y,
+            crossOrigin: 'anonymous'
+        });
+
+        this.getCanvas().add(obj).setActiveObject(obj);
     }
 }
 

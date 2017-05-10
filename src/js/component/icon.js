@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add icon module
  */
+import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
@@ -49,24 +50,28 @@ class Icon extends Component {
      *      @param {string} [options.fill] - Icon foreground color
      *      @param {string} [options.left] - Icon x position
      *      @param {string} [options.top] - Icon y position
+     * @returns {Promise}
      */
     add(type, options) {
-        const canvas = this.getCanvas();
-        const path = this._pathMap[type];
-        const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
+        return new Promise((resolve, reject) => {
+            const canvas = this.getCanvas();
+            const path = this._pathMap[type];
+            const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
 
-        if (!path) {
-            return;
-        }
+            if (!path) {
+                reject();
+            }
 
-        const icon = this._createIcon(path);
+            const icon = this._createIcon(path);
 
-        icon.set(tui.util.extend({
-            type: 'icon',
-            fill: this._oColor
-        }, selectionStyle, options));
+            icon.set(tui.util.extend({
+                type: 'icon',
+                fill: this._oColor
+            }, selectionStyle, options));
 
-        canvas.add(icon).setActiveObject(icon);
+            canvas.add(icon).setActiveObject(icon);
+            resolve(icon);
+        });
     }
 
     /**
@@ -81,7 +86,7 @@ class Icon extends Component {
 
     /**
      * Set icon object color
-     * @param {strign} color - Color to set
+     * @param {string} color - Color to set
      * @param {fabric.Path}[obj] - Current activated path object
      */
     setColor(color, obj) {
@@ -91,6 +96,15 @@ class Icon extends Component {
             obj.setFill(this._oColor);
             this.getCanvas().renderAll();
         }
+    }
+
+    /**
+     * Get icon color
+     * @param {fabric.Path}[obj] - Current activated path object
+     * @returns {string} color
+     */
+    getColor(obj) {
+        return obj.fill;
     }
 
     /**

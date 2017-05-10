@@ -110,8 +110,10 @@ class Invoker {
 
                 return value;
             })
-            .catch(() => {
+            .catch(message => {
                 this.unlock();
+
+                return Promise.reject(message);
             });
     }
 
@@ -134,8 +136,10 @@ class Invoker {
 
                 return value;
             })
-            .catch(() => {
+            .catch(message => {
                 this.unlock();
+
+                return Promise.reject(message);
             });
     }
 
@@ -212,6 +216,7 @@ class Invoker {
     undo() {
         let command = this._undoStack.pop();
         let promise;
+        let message = '';
 
         if (command && this._isLocked) {
             this.pushUndoStack(command, true);
@@ -223,7 +228,11 @@ class Invoker {
             }
             promise = this._invokeUndo(command);
         } else {
-            promise = Promise.reject(rejectMessages.undo);
+            message = rejectMessages.undo;
+            if (this._isLocked) {
+                message = `${message} Because ${rejectMessages.isLock}`;
+            }
+            promise = Promise.reject(message);
         }
 
         return promise;
@@ -236,6 +245,7 @@ class Invoker {
     redo() {
         let command = this._redoStack.pop();
         let promise;
+        let message = '';
 
         if (command && this._isLocked) {
             this.pushRedoStack(command, true);
@@ -247,7 +257,11 @@ class Invoker {
             }
             promise = this._invokeExecution(command);
         } else {
-            promise = Promise.reject(rejectMessages.redo);
+            message = rejectMessages.redo;
+            if (this._isLocked) {
+                message = `${message} Because ${rejectMessages.isLock}`;
+            }
+            promise = Promise.reject(message);
         }
 
         return promise;

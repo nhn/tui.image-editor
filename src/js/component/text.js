@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Text module
  */
+import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 import util from '../util';
@@ -174,41 +175,49 @@ class Text extends Component {
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
      *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
      *     @param {{x: number, y: number}} [options.position] - Initial position
+     * @returns {Promise}
      */
     add(text, options) {
-        const canvas = this.getCanvas();
-        let styles = this._defaultStyles;
+        return new Promise(resolve => {
+            const canvas = this.getCanvas();
+            let styles = this._defaultStyles;
 
-        this._setInitPos(options.position);
+            this._setInitPos(options.position);
 
-        if (options.styles) {
-            styles = tui.util.extend(options.styles, styles);
-        }
+            if (options.styles) {
+                styles = tui.util.extend(options.styles, styles);
+            }
 
-        const newText = new fabric.Text(text, styles);
-        newText.set(consts.fObjectOptions.SELECTION_STYLE);
-        newText.on({
-            mouseup: tui.util.bind(this._onFabricMouseUp, this)
+            const newText = new fabric.Text(text, styles);
+            newText.set(consts.fObjectOptions.SELECTION_STYLE);
+            newText.on({
+                mouseup: tui.util.bind(this._onFabricMouseUp, this)
+            });
+
+            canvas.add(newText);
+
+            if (!canvas.getActiveObject()) {
+                canvas.setActiveObject(newText);
+            }
+
+            this.isPrevEditing = true;
+            resolve(newText);
         });
-
-        canvas.add(newText);
-
-        if (!canvas.getActiveObject()) {
-            canvas.setActiveObject(newText);
-        }
-
-        this.isPrevEditing = true;
     }
 
     /**
      * Change text of activate object on canvas image
      * @param {object} activeObj - Current selected text object
      * @param {string} text - Changed text
+     * @returns {Promise}
      */
     change(activeObj, text) {
-        activeObj.set('text', text);
+        return new Promise(resolve => {
+            activeObj.set('text', text);
 
-        this.getCanvas().renderAll();
+            this.getCanvas().renderAll();
+            resolve();
+        });
     }
 
     /**
@@ -222,17 +231,30 @@ class Text extends Component {
      *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
      *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
+     * @returns {Promise}
      */
     setStyle(activeObj, styleObj) {
-        tui.util.forEach(styleObj, (val, key) => {
-            if (activeObj[key] === val) {
-                styleObj[key] = resetStyles[key] || '';
-            }
-        }, this);
+        return new Promise(resolve => {
+            tui.util.forEach(styleObj, (val, key) => {
+                if (activeObj[key] === val) {
+                    styleObj[key] = resetStyles[key] || '';
+                }
+            }, this);
 
-        activeObj.set(styleObj);
+            activeObj.set(styleObj);
 
-        this.getCanvas().renderAll();
+            this.getCanvas().renderAll();
+            resolve();
+        });
+    }
+
+    /**
+     * Get the text
+     * @param {object} activeObj - Current selected text object
+     * @returns {String} text
+     */
+    getText(activeObj) {
+        return activeObj.getText();
     }
 
     /**

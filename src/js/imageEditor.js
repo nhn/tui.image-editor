@@ -10,7 +10,7 @@ import consts from './consts';
 const events = consts.eventNames;
 const components = consts.componentNames;
 const commands = consts.commandNames;
-const {drawingModes, keyCodes, fObjectOptions} = consts;
+const {drawingModes, keyCodes, fObjectOptions, rejectMessages} = consts;
 const {isUndefined, bind, forEach, extend, hasStamp} = tui.util;
 
 /**
@@ -404,6 +404,7 @@ class ImageEditor {
 
     /**
      * Clear all objects
+     * @returns {Promise}
      * @example
      * imageEditor.clearObjects();
      */
@@ -415,7 +416,8 @@ class ImageEditor {
          * @event ImageEditor#clearObjects
          */
         command.setExecuteCallback(callback);
-        this.execute(command);
+
+        return this.execute(command);
     }
 
     /**
@@ -431,46 +433,53 @@ class ImageEditor {
     /**
      * Invoke command
      * @param {Command} command - Command
+     * @returns {Promise}
      * @ignore
      */
     execute(command) {
         this.stopDrawingMode();
-        this._invoker.invoke(command);
+
+        return this._invoker.invoke(command);
     }
 
     /**
      * Undo
+     * @returns {Promise}
      * @example
      * imageEditor.undo();
      */
     undo() {
         this.stopDrawingMode();
-        this._invoker.undo();
+
+        return this._invoker.undo();
     }
 
     /**
      * Redo
+     * @returns {Promise}
      * @example
      * imageEditor.redo();
      */
     redo() {
         this.stopDrawingMode();
-        this._invoker.redo();
+
+        return this._invoker.redo();
     }
 
     /**
      * Load image from file
      * @param {File} imgFile - Image file
      * @param {string} [imageName] - imageName
+     * @returns {Promise}
      * @example
      * imageEditor.loadImageFromFile(file);
      */
     loadImageFromFile(imgFile, imageName) {
         if (!imgFile) {
-            return;
+            return Promise.reject(rejectMessages.invalidParameters);
         }
 
-        this.loadImageFromURL(
+        return this.loadImageFromURL(
             URL.createObjectURL(imgFile),
             imageName || imgFile.name
         );
@@ -480,12 +489,13 @@ class ImageEditor {
      * Load image from url
      * @param {string} url - File url
      * @param {string} imageName - imageName
+     * @returns {Promise}
      * @example
      * imageEditor.loadImageFromURL('http://url/testImage.png', 'lena')
      */
     loadImageFromURL(url, imageName) {
         if (!imageName || !url) {
-            return;
+            return Promise.reject(rejectMessages.invalidParameters);
         }
 
         const callback = bind(this._callbackAfterImageLoading, this);
@@ -501,7 +511,8 @@ class ImageEditor {
                     this.fire(events.CLEAR_IMAGE);
                 }
             });
-        this.execute(command);
+
+        return this.execute(command);
     }
 
     /**
@@ -540,39 +551,18 @@ class ImageEditor {
     /**
      * Add image object on canvas
      * @param {string} imgUrl - Image url to make object
+     * @returns {Promise}
      * @example
      * imageEditor.addImageObject('path/fileName.jpg');
      */
     addImageObject(imgUrl) {
         if (!imgUrl) {
-            return;
+            return Promise.reject(rejectMessages.invalidParameters);
         }
 
-        fabric.Image.fromURL(imgUrl,
-            bind(this._callbackAfterLoadingImageObject, this),
-            {
-                crossOrigin: 'Anonymous'
-            }
-        );
-    }
+        const command = commandFactory.create(commands.ADD_IMAGE_OBJECT, imgUrl);
 
-    /**
-     * Callback function after loading image
-     * @param {fabric.Image} obj - Fabric image object
-     * @private
-     */
-    _callbackAfterLoadingImageObject(obj) {
-        const mainComp = this._getMainComponent();
-        const centerPos = mainComp.getCanvasImage().getCenterPoint();
-
-        obj.set(consts.fObjectOptions.SELECTION_STYLE);
-        obj.set({
-            left: centerPos.x,
-            top: centerPos.y,
-            crossOrigin: 'anonymous'
-        });
-
-        this._canvas.add(obj).setActiveObject(obj);
+        return this.execute(command);
     }
 
     /**
@@ -635,23 +625,18 @@ class ImageEditor {
      *  @param {Number} rect.top top position
      *  @param {Number} rect.width width
      *  @param {Number} rect.height height
+     * @returns {Promise}
      * @example
      * imageEditor.crop(imageEditor.getCropzoneRect());
      */
     crop(rect) {
         const cropper = this._getComponent(components.CROPPER);
         const data = cropper.getCroppedImageData(rect);
-
-        this.once('loadImage', () => {
-            /**
-             * @event ImageEditor#endCropping
-             */
-            this.fire(events.END_CROPPING);
-        });
-
-        if (data) {
-            this.loadImageFromURL(data.url, data.imageName);
+        if (!data) {
+            return Promise.reject(rejectMessages.invalidParameters);
         }
+
+        return this.loadImageFromURL(data.url, data.imageName);
     }
 
     /**
@@ -670,6 +655,7 @@ class ImageEditor {
 
     /**
      * Flip
+     * @returns {Promise}
      * @param {string} type - 'flipX' or 'flipY' or 'reset'
      * @private
      */
@@ -694,39 +680,44 @@ class ImageEditor {
          */
         command.setExecuteCallback(callback)
             .setUndoCallback(callback);
-        this.execute(command);
+
+        return this.execute(command);
     }
 
     /**
      * Flip x
+     * @returns {Promise}
      * @example
      * imageEditor.flipX();
      */
     flipX() {
-        this._flip('flipX');
+        return this._flip('flipX');
     }
 
     /**
      * Flip y
+     * @returns {Promise}
      * @example
      * imageEditor.flipY();
      */
     flipY() {
-        this._flip('flipY');
+        return this._flip('flipY');
     }
 
     /**
      * Reset flip
+     * @returns {Promise}
      * @example
      * imageEditor.resetFlip();
      */
     resetFlip() {
-        this._flip('reset');
+        return this._flip('reset');
     }
 
     /**
      * @param {string} type - 'rotate' or 'setAngle'
      * @param {number} angle - angle value (degree)
+     * @returns {Promise}
      * @private
      */
     _rotate(type, angle) {
@@ -743,11 +734,13 @@ class ImageEditor {
          */
         command.setExecuteCallback(callback)
             .setUndoCallback(callback);
-        this.execute(command);
+
+        return this.execute(command);
     }
 
     /**
      * Rotate image
+     * @returns {Promise}
      * @param {number} angle - Additional angle to rotate image
      * @example
      * imageEditor.setAngle(10); // angle = 10
@@ -756,12 +749,13 @@ class ImageEditor {
      * imageEidtor.rotate(-95); // angle = -90
      */
     rotate(angle) {
-        this._rotate('rotate', angle);
+        return this._rotate('rotate', angle);
     }
 
     /**
      * Set angle
      * @param {number} angle - Angle of image
+     * @returns {Promise}
      * @example
      * imageEditor.setAngle(10); // angle = 10
      * imageEditor.rotate(10); // angle = 20
@@ -770,7 +764,7 @@ class ImageEditor {
      * imageEidtor.setAngle(-40); // angle = -40
      */
     setAngle(angle) {
-        this._rotate('setAngle', angle);
+        return this._rotate('setAngle', angle);
     }
 
     /**
@@ -856,6 +850,7 @@ class ImageEditor {
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @returns {Promise}
      * @example
      * imageEditor.addShape('rect', {
      *     fill: 'red',
@@ -880,7 +875,10 @@ class ImageEditor {
         options = options || {};
 
         this._setPositions(options);
-        this._getComponent(components.SHAPE).add(type, options);
+
+        const command = commandFactory.create(commands.ADD_SHAPE, type, options);
+
+        return this.execute(command);
     }
 
     /**
@@ -894,6 +892,7 @@ class ImageEditor {
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @returns {Promise}
      * @example
      * // call after selecting shape object on canvas
      * imageEditor.changeShape({ // change rectagle or triangle
@@ -912,14 +911,9 @@ class ImageEditor {
      * });
      */
     changeShape(options) {
-        const activeObj = this._canvas.getActiveObject();
-        const shapeComponent = this._getComponent(components.SHAPE);
+        const command = commandFactory.create(commands.CHANGE_SHAPE, options);
 
-        if (!activeObj) {
-            return;
-        }
-
-        shapeComponent.change(activeObj, options);
+        return this.execute(command);
     }
 
     /**
@@ -935,6 +929,7 @@ class ImageEditor {
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
      *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
      *     @param {{x: number, y: number}} [options.position] - Initial position
+     * @returns {Promise}
      * @example
      * imageEditor.addText();
      * imageEditor.addText('init text', {
@@ -951,32 +946,39 @@ class ImageEditor {
      */
     addText(text, options) {
         if (this.getDrawingMode() !== drawingModes.TEXT) {
-            this._drawingMode = drawingModes.TEXT;
+            return Promise.reject(rejectMessages.invalidDrawingMode);
         }
 
-        this._getComponent(components.TEXT).add(text || '', options || {});
+        text = text || '';
+        options = options || {};
+
+        const command = commandFactory.create(commands.ADD_TEXT, text, options);
+
+        return this.execute(command);
     }
 
     /**
      * Change contents of selected text object on image
      * @param {string} text - Changing text
+     * @returns {Promise}
      * @example
      * imageEditor.changeText('change text');
      */
     changeText(text) {
-        const activeObj = this._canvas.getActiveObject();
-
-        if (this.getDrawingMode() !== drawingModes.TEXT ||
-            !activeObj) {
-            return;
+        if (this.getDrawingMode() !== drawingModes.TEXT) {
+            return Promise.reject(rejectMessages.invalidDrawingMode);
         }
 
-        this._getComponent(components.TEXT).change(activeObj, text);
+        text = text || '';
+
+        const command = commandFactory.create(commands.CHANGE_TEXT, text);
+
+        return this.execute(command);
     }
 
     /**
      * Set style
-     * @param {object} styleObj - Initial styles
+     * @param {object} styleObj - text styles
      *     @param {string} [styleObj.fill] Color
      *     @param {string} [styleObj.fontFamily] Font type for text
      *     @param {number} [styleObj.fontSize] Size
@@ -984,20 +986,20 @@ class ImageEditor {
      *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
      *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
+     * @returns {Promise}
      * @example
      * imageEditor.changeTextStyle({
      *     fontStyle: 'italic'
      * });
      */
     changeTextStyle(styleObj) {
-        const activeObj = this._canvas.getActiveObject();
-
-        if (this.getDrawingMode() !== drawingModes.TEXT ||
-            !activeObj) {
-            return;
+        if (this.getDrawingMode() !== drawingModes.TEXT) {
+            return Promise.reject(rejectMessages.invalidDrawingMode);
         }
 
-        this._getComponent(components.TEXT).setStyle(activeObj, styleObj);
+        const command = commandFactory.create(commands.CHANGE_TEXT_STYLE, styleObj);
+
+        return this.execute(command);
     }
 
     /**
@@ -1102,6 +1104,7 @@ class ImageEditor {
      *      @param {string} [options.fill] - Icon foreground color
      *      @param {string} [options.left] - Icon x position
      *      @param {string} [options.top] - Icon y position
+     * @returns {Promise}
      * @example
      * imageEditor.addIcon('arrow'); // The position is center on canvas
      * imageEditor.addIcon('arrow', {
@@ -1113,23 +1116,27 @@ class ImageEditor {
         options = options || {};
 
         this._setPositions(options);
-        this._getComponent(components.ICON).add(type, options);
+        const command = commandFactory.create(commands.ADD_ICON, type, options);
+
+        return this.execute(command);
     }
 
     /**
      * Change icon color
      * @param {string} color - Color for icon
+     * @returns {Promise}
      * @example
      * imageEditor.changeIconColor('#000000');
      */
     changeIconColor(color) {
-        const activeObj = this._canvas.getActiveObject();
+        const command = commandFactory.create(commands.CHANGE_ICON_COLOR, color);
 
-        this._getComponent(components.ICON).setColor(color, activeObj);
+        return this.execute(command);
     }
 
     /**
      * Remove active object or group
+     * @returns {Promise}
      * @example
      * imageEditor.removeActiveObject();
      */
@@ -1137,7 +1144,8 @@ class ImageEditor {
         const canvas = this._canvas;
         const target = canvas.getActiveObject() || canvas.getActiveGroup();
         const command = commandFactory.create(commands.REMOVE_OBJECT, target);
-        this.execute(command);
+
+        return this.execute(command);
     }
 
     /**
@@ -1152,6 +1160,7 @@ class ImageEditor {
     /**
      * Remove filter on canvas image
      * @param {string} type - Filter type
+     * @returns {Promise}
      * @example
      * imageEditor.removeFilter('Grayscale');
      */
@@ -1174,13 +1183,14 @@ class ImageEditor {
         command.setExecuteCallback(callback)
             .setUndoCallback(callback);
 
-        this.execute(command);
+        return this.execute(command);
     }
 
     /**
      * Apply filter on canvas image
      * @param {string} type - Filter type
      * @param {options} options - Options to apply filter
+     * @returns {Promise}
      * @example
      * imageEditor.applyFilter('mask');
      * imageEditor.applyFilter('mask', {
@@ -1192,7 +1202,7 @@ class ImageEditor {
             const activeObj = this._canvas.getActiveObject();
 
             if (!(activeObj && activeObj.isType('image'))) {
-                return;
+                return Promise.reject(rejectMessages.invalidParameters);
             }
 
             options = {
@@ -1218,7 +1228,7 @@ class ImageEditor {
         command.setExecuteCallback(callback)
             .setUndoCallback(callback);
 
-        this.execute(command);
+        return this.execute(command);
     }
 
     /**
@@ -1281,16 +1291,16 @@ class ImageEditor {
     /**
      * Resize canvas dimension
      * @param {{width: number, height: number}} dimension - Max width & height
+     * @returns {Promise}
      */
     resizeCanvasDimension(dimension) {
-        const mainComponent = this._getMainComponent();
-
         if (!dimension) {
-            return;
+            return Promise.reject(rejectMessages.invalidParameters);
         }
 
-        mainComponent.setCssMaxDimension(dimension);
-        mainComponent.adjustCanvasDimension();
+        const command = commandFactory.create(commands.RESIZE_CANVAS_DIMENSION, dimension);
+
+        return this.execute(command);
     }
 
     /**

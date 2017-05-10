@@ -35,7 +35,16 @@ module.exports = {
         'ADD_OBJECT',
         'REMOVE_OBJECT',
         'APPLY_FILTER',
-        'REMOVE_FILTER'
+        'REMOVE_FILTER',
+        'ADD_ICON',
+        'CHANGE_ICON_COLOR',
+        'ADD_SHAPE',
+        'CHANGE_SHAPE',
+        'ADD_TEXT',
+        'CHANGE_TEXT',
+        'CHANGE_TEXT_STYLE',
+        'ADD_IMAGE_OBJECT',
+        'RESIZE_CANVAS_DIMENSION'
     ),
 
     /**
@@ -118,6 +127,10 @@ module.exports = {
         loadImage: 'The background image is empty.',
         isLock: 'The executing command state is locked.',
         undo: 'The promise of undo command is reject.',
-        redo: 'The promise of redo command is reject.'
+        redo: 'The promise of redo command is reject.',
+        invalidDrawingMode: 'This operation is not supported in the drawing mode',
+        invalidParameters: 'Invalid parameters',
+        noActiveObject: 'There is no active object.',
+        notSupportType: 'Not support object type'
     }
 };

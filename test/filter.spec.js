@@ -8,26 +8,28 @@ describe('Filter', () => {
     let imageEditor;
     const imageURL = 'base/test/fixtures/sampleImage.jpg';
 
-    beforeEach(done => {
+    beforeAll(done => {
         imageEditor = new ImageEditor($('<div></div>'), {
             cssMaxWidth: 700,
             cssMaxHeight: 500
         });
-        imageEditor.loadImageFromURL(imageURL, 'sampleImage');
-        imageEditor.once('loadImage', () => {
-            imageEditor.applyFilter('colorFilter');
-            imageEditor.once('applyFilter', () => {
-                done();
-            });
+        imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => {
+            done();
         });
     });
 
-    afterEach(() => {
+    afterAll(() => {
         imageEditor.destroy();
     });
 
-    it('applyFilter can add undo stack', () => {
-        expect(imageEditor.isEmptyUndoStack()).toBe(false);
+    it('applyFilter() can add undo stack', done => {
+        imageEditor.applyFilter('colorFilter').then(() => {
+            expect(imageEditor.isEmptyUndoStack()).toBe(false);
+            done();
+        }).catch(() => {
+            fail();
+            done();
+        });
     });
 
     it('hasFilter', () => {
@@ -35,17 +37,16 @@ describe('Filter', () => {
         expect(imageEditor.hasFilter('colorFilter')).toBe(true);
     });
 
-    describe('removeFilter', () => {
-        beforeEach(done => {
-            imageEditor.removeFilter('colorFilter');
-            imageEditor.once('applyFilter', () => {
-                done();
-            });
-        });
-
-        it('has no "colorFilter" filter', () => {
+    it('removeFilter() can remove added filter', done => {
+        imageEditor.applyFilter('colorFilter').then(() =>
+            imageEditor.removeFilter('colorFilter')
+        ).then(() => {
             expect(imageEditor.hasFilter('colorFilter')).toBe(false);
             expect(imageEditor.isEmptyUndoStack()).toBe(false);
+            done();
+        }).catch(() => {
+            fail();
+            done();
         });
     });
 });
