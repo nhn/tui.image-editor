@@ -33,8 +33,8 @@ describe('Promise API', () => {
         }).then(() => {
             expect(imageEditor._canvas.getObjects().length).toBe(1);
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -48,8 +48,8 @@ describe('Promise API', () => {
         ).then(() => {
             expect(imageEditor._canvas.getObjects().length).toBe(0);
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -62,8 +62,8 @@ describe('Promise API', () => {
         ).then(() => {
             expect(imageEditor._canvas.getObjects()[0].getFill()).toBe('#FFFF00');
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -80,8 +80,8 @@ describe('Promise API', () => {
             expect(shape.height).toBe(100);
             expect(shape.getFill()).toBe('#FFFF00');
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -101,8 +101,8 @@ describe('Promise API', () => {
             expect(shape.width).toBe(200);
             expect(shape.getFill()).toBe('#FF0000');
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -147,8 +147,8 @@ describe('Promise API', () => {
         }).then(() =>
             // There is no way to get canvas dimension
             done()
-        ).catch(() => {
-            fail();
+        ).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -163,8 +163,8 @@ describe('Promise API', () => {
         ).then(() => {
             expect(imageEditor._canvas.getObjects().length).toBe(0);
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -179,8 +179,8 @@ describe('Promise API', () => {
                 angle: 0
             });
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -195,8 +195,8 @@ describe('Promise API', () => {
                 angle: 0
             });
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -222,8 +222,8 @@ describe('Promise API', () => {
         imageEditor.rotate(10).then(angle => {
             expect(angle).toBe(10);
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -232,8 +232,8 @@ describe('Promise API', () => {
         imageEditor.setAngle(10).then(angle => {
             expect(angle).toBe(10);
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });
@@ -247,8 +247,8 @@ describe('Promise API', () => {
         ).then(() => {
             expect(imageEditor._canvas.getObjects().length).toBe(0);
             done();
-        }).catch(() => {
-            fail();
+        }).catch(message => {
+            fail(message);
             done();
         });
     });

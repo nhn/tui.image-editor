@@ -652,20 +652,9 @@ $btnAddIcon.on('click', function() {
     activateIconMode();
 });
 
-$btnRegisterIcon.on('click', function() {
-    $iconSubMenu.find('.menu-item').eq(3).after(
-        '<li class="menu-item icon-text" data-icon-type="customArrow">↑</li>'
-    );
-
-    imageEditor.registerIcons({
-        customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
-    });
-
-    $btnRegisterIcon.off('click');
-});
-
-$iconSubMenu.on('click', '.menu-item', function() {
-    var iconType = $(this).attr('data-icon-type');
+function onClickIconSubMenu(event) {
+    var element = event.target || event.srcElement;
+    var iconType = $(element).attr('data-icon-type');
 
     imageEditor.once('mousedown', function(e) {
         imageEditor.addIcon(iconType, {
@@ -673,7 +662,23 @@ $iconSubMenu.on('click', '.menu-item', function() {
             top: e.originPointer.y
         });
     });
+}
+
+$btnRegisterIcon.on('click', function() {
+    $iconSubMenu.find('.menu-item').eq(3).after(
+        '<li id="customArrow" class="menu-item icon-text" data-icon-type="customArrow">↑</li>'
+    );
+
+    imageEditor.registerIcons({
+        customArrow: 'M 60 0 L 120 60 H 90 L 75 45 V 180 H 45 V 45 L 30 60 H 0 Z'
+    });
+
+    $btnRegisterIcon.off('click');
+
+    $iconSubMenu.on('click', '#customArrow', onClickIconSubMenu);
 });
+
+$iconSubMenu.on('click', '.icon-text', onClickIconSubMenu);
 
 iconColorpicker.on('selectColor', function(event) {
     imageEditor.changeIconColor(event.color);

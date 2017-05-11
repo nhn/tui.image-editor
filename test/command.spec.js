@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Tests command with command-factory
  */
+import Promise from 'core-js/library/es6/promise';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import consts from '../src/js/consts';
@@ -20,6 +21,80 @@ describe('commandFactory', () => {
         canvas = mainComponent.getCanvas();
     });
 
+    describe('functions', () => {
+        it('can register custom command', done => {
+            commandFactory.register({
+                name: 'testCommand',
+                execute(compMap) {
+                    expect(compMap[mainComponent.getName()]).not.toBe(null);
+
+                    return Promise.resolve('testCommand');
+                },
+                undo(compMap) {
+                    expect(compMap[mainComponent.getName()]).not.toBe(null);
+                }
+            });
+
+            const command = commandFactory.create('testCommand');
+            expect(command).not.toBe(null);
+            expect(commandFactory.contains('testCommand')).toBe(true);
+
+            invoker.invoke(command).then(commandName => {
+                expect(commandName).toBe('testCommand');
+                done();
+            }).catch(message => {
+                fail(message);
+                done();
+            });
+        });
+
+        it('can pass parameters on execute', done => {
+            commandFactory.register({
+                name: 'testCommand',
+                execute(compMap, obj1, obj2, obj3) {
+                    expect(obj1).toBe(1);
+                    expect(obj2).toBe(2);
+                    expect(obj3).toBe(3);
+
+                    return Promise.resolve();
+                }
+            });
+
+            const command = commandFactory.create('testCommand', 1, 2, 3);
+            invoker.invoke(command).then(() => {
+                done();
+            }).catch(message => {
+                fail(message);
+                done();
+            });
+        });
+
+        it('can pass parameters on undo', done => {
+            commandFactory.register({
+                name: 'testCommand',
+                execute() {
+                    return Promise.resolve();
+                },
+                undo(compMap, obj1, obj2, obj3) {
+                    expect(obj1).toBe(1);
+                    expect(obj2).toBe(2);
+                    expect(obj3).toBe(3);
+
+                    return Promise.resolve();
+                }
+            });
+
+            const command = commandFactory.create('testCommand', 1, 2, 3);
+            invoker.invoke(command).then(() =>
+                invoker.undo()
+            ).then(() => done()
+            ).catch(message => {
+                fail(message);
+                done();
+            });
+        });
+    });
+
     describe('addObjectCommand', () => {
         let obj, command;
 
@@ -28,8 +103,11 @@ describe('commandFactory', () => {
             command = commandFactory.create(commands.ADD_OBJECT, obj);
         });
 
-        it('should stamp object', () => {
-            expect(tui.util.hasStamp(obj)).toBe(true);
+        it('should stamp object', done => {
+            invoker.invoke(command).then(() => {
+                expect(tui.util.hasStamp(obj)).toBe(true);
+                done();
+            });
         });
 
         it('should add object to canvas', () => {

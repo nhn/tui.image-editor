@@ -100,7 +100,12 @@ class Invoker {
     _invokeExecution(command) {
         this.lock();
 
-        return command.execute(this._componentMap)
+        let args = [this._componentMap];
+        if (command.args) {
+            args = args.concat(Array.prototype.slice.call(command.args));
+        }
+
+        return command.execute(...args)
             .then(value => {
                 this.pushUndoStack(command);
                 this.unlock();
@@ -126,7 +131,12 @@ class Invoker {
     _invokeUndo(command) {
         this.lock();
 
-        return command.undo(this._componentMap)
+        let args = [this._componentMap];
+        if (command.args) {
+            args = args.concat(Array.prototype.slice.call(command.args));
+        }
+
+        return command.undo(...args)
             .then(value => {
                 this.pushRedoStack(command);
                 this.unlock();

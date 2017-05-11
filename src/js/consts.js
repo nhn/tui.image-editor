@@ -27,25 +27,25 @@ module.exports = {
      * Command names
      * @type {Object.<string, string>}
      */
-    commandNames: util.keyMirror(
-        'CLEAR',
-        'LOAD_IMAGE',
-        'FLIP_IMAGE',
-        'ROTATE_IMAGE',
-        'ADD_OBJECT',
-        'REMOVE_OBJECT',
-        'APPLY_FILTER',
-        'REMOVE_FILTER',
-        'ADD_ICON',
-        'CHANGE_ICON_COLOR',
-        'ADD_SHAPE',
-        'CHANGE_SHAPE',
-        'ADD_TEXT',
-        'CHANGE_TEXT',
-        'CHANGE_TEXT_STYLE',
-        'ADD_IMAGE_OBJECT',
-        'RESIZE_CANVAS_DIMENSION'
-    ),
+    commandNames: {
+        'CLEAR_OBJECTS': 'clearObjects',
+        'LOAD_IMAGE': 'loadImage',
+        'FLIP_IMAGE': 'flip',
+        'ROTATE_IMAGE': 'rotate',
+        'ADD_OBJECT': 'addObject',
+        'REMOVE_OBJECT': 'removeObject',
+        'APPLY_FILTER': 'applyFilter',
+        'REMOVE_FILTER': 'removeFilter',
+        'ADD_ICON': 'addIcon',
+        'CHANGE_ICON_COLOR': 'changeIconColor',
+        'ADD_SHAPE': 'addShape',
+        'CHANGE_SHAPE': 'changeShape',
+        'ADD_TEXT': 'addText',
+        'CHANGE_TEXT': 'changeText',
+        'CHANGE_TEXT_STYLE': 'changeTextStyle',
+        'ADD_IMAGE_OBJECT': 'addImageObject',
+        'RESIZE_CANVAS_DIMENSION': 'resizeCanvasDimension'
+    },
 
     /**
      * Event names

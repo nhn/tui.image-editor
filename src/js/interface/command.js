@@ -11,10 +11,23 @@ const errorTypes = errorMessage.types;
  * Command class
  * @class
  * @param {{execute: function, undo: function}} actions - Command actions
+ * @param {Array} args - passing arguments on execute, undo
  * @ignore
  */
 class Command {
-    constructor(actions) {
+    constructor(actions, args) {
+        /**
+         * command name
+         * @type {string}
+         */
+        this.name = actions.name;
+
+        /**
+         * arguments
+         * @type {Array}
+         */
+        this.args = args;
+
         /**
          * Execute function
          * @type {function}

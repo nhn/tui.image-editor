@@ -72,6 +72,28 @@ class ImageEditor {
     }
 
     /**
+     * @typedef {object} FilterResult
+     * @property {string} type - filter type like 'mask', 'Grayscale' and so on
+     * @property {string} action - action type like 'add', 'remove'
+     */
+
+     /**
+      * @typedef {object} FlipStatus
+      * @property {object} flipStatus - x and y axis
+      * @property {boolean} flipStatus.flipX - x
+      * @property {boolean} flipStatus.flipY - x
+      * @property {Number} angle - angle
+      */
+
+      /**
+       * @typedef {Number} RotateStatus - {Number} angle
+       */
+
+    /**
+     * @typedef {string} ErrorMsg - {string} error message
+     */
+
+    /**
      * Set selection style of fabric object by init option
      * @param {object} styles - Selection styles
      * @private
@@ -189,6 +211,17 @@ class ImageEditor {
     }
 
     /**
+     * Add a 'addObject' command
+     * @param {object} obj - Fabric object
+     * @private
+     */
+    _pushAddObjectCommand(obj) {
+        const command = commandFactory.create(commands.ADD_OBJECT, obj);
+        this._invoker.pushUndoStack(command);
+        this._invoker.clearRedoStack();
+    }
+
+    /**
      * "object:added" canvas event handler
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      * @private
@@ -201,9 +234,7 @@ class ImageEditor {
         }
 
         if (!hasStamp(obj)) {
-            const command = commandFactory.create(commands.ADD_OBJECT, obj);
-            this._invoker.pushUndoStack(command);
-            this._invoker.clearRedoStack();
+            this._pushAddObjectCommand(obj);
         }
 
         /**
@@ -318,9 +349,7 @@ class ImageEditor {
             if (obj.text === '') {
                 obj.remove();
             } else if (!hasStamp(obj)) {
-                const command = commandFactory.create(commands.ADD_OBJECT, obj);
-                this._invoker.pushUndoStack(command);
-                this._invoker.clearRedoStack();
+                this._pushAddObjectCommand(obj);
             }
         }
     }
@@ -339,9 +368,7 @@ class ImageEditor {
         if (obj.text === '') {
             obj.remove();
         } else if (!hasStamp(obj) && textComp.isSelected()) {
-            const command = commandFactory.create(commands.ADD_OBJECT, obj);
-            this._invoker.pushUndoStack(command);
-            this._invoker.clearRedoStack();
+            this._pushAddObjectCommand(obj);
         }
 
         textComp.setSelectedInfo(fEvent.target, true);
@@ -410,12 +437,6 @@ class ImageEditor {
      */
     clearObjects() {
         const command = commandFactory.create(commands.CLEAR_OBJECTS);
-        const callback = this.fire.bind(this, events.CLEAR_OBJECTS);
-
-        /**
-         * @event ImageEditor#clearObjects
-         */
-        command.setExecuteCallback(callback);
 
         return this.execute(command);
     }
@@ -434,7 +455,7 @@ class ImageEditor {
      * Invoke command
      * @param {Command} command - Command
      * @returns {Promise}
-     * @ignore
+     * @private
      */
     execute(command) {
         this.stopDrawingMode();
@@ -657,38 +678,26 @@ class ImageEditor {
      * Flip
      * @returns {Promise}
      * @param {string} type - 'flipX' or 'flipY' or 'reset'
+     * @returns {Promise<FlipStatus, ErrorMsg>}
      * @private
      */
     _flip(type) {
         const command = commandFactory.create(commands.FLIP_IMAGE, type);
-        const callback = ({setting, angle}) => {
-            this.fire(events.FLIP_IMAGE, setting, angle);
-        };
-
-        /**
-         * @event ImageEditor#flipImage
-         * @param {object} flipSetting
-         *  @param {boolean} flipSetting.flipX - image.flipX
-         *  @param {boolean} flipSetting.flipY - image.flipY
-         * @param {number} angle - image.angle
-         * @example
-         * imageEditor.on('flipImage', function(flipSetting, angle) {
-         *     console.log('flipX: ', setting.flipX);
-         *     console.log('flipY: ', setting.flipY);
-         *     console.log('angle: ', angle);
-         * });
-         */
-        command.setExecuteCallback(callback)
-            .setUndoCallback(callback);
 
         return this.execute(command);
     }
 
     /**
      * Flip x
-     * @returns {Promise}
+     * @returns {Promise<FlipStatus, ErrorMsg>}
      * @example
-     * imageEditor.flipX();
+     * imageEditor.flipX().then((flipStatus, angle) => {
+     *     console.log('flipX: ', flipStatus.flipX);
+     *     console.log('flipY: ', flipStatus.flipY);
+     *     console.log('angle: ', angle);
+     * }).catch(message => {
+     *     console.log('error: ', message);
+     * });
      */
     flipX() {
         return this._flip('flipX');
@@ -696,9 +705,15 @@ class ImageEditor {
 
     /**
      * Flip y
-     * @returns {Promise}
+     * @returns {Promise<FlipStatus, ErrorMsg>}
      * @example
-     * imageEditor.flipY();
+     * imageEditor.flipY().then((flipStatus, angle) => {
+     *     console.log('flipX: ', flipStatus.flipX);
+     *     console.log('flipY: ', flipStatus.flipY);
+     *     console.log('angle: ', angle);
+     * }).catch(message => {
+     *     console.log('error: ', message);
+     * });
      */
     flipY() {
         return this._flip('flipY');
@@ -706,9 +721,15 @@ class ImageEditor {
 
     /**
      * Reset flip
-     * @returns {Promise}
+     * @returns {Promise<FlipStatus, ErrorMsg>}
      * @example
-     * imageEditor.resetFlip();
+     * imageEditor.resetFlip().then((flipStatus, angle) => {
+     *     console.log('flipX: ', flipStatus.flipX);
+     *     console.log('flipY: ', flipStatus.flipY);
+     *     console.log('angle: ', angle);
+     * }).catch(message => {
+     *     console.log('error: ', message);
+     * });;
      */
     resetFlip() {
         return this._flip('reset');
@@ -717,23 +738,11 @@ class ImageEditor {
     /**
      * @param {string} type - 'rotate' or 'setAngle'
      * @param {number} angle - angle value (degree)
-     * @returns {Promise}
+     * @returns {Promise<RotateStatus, ErrorMsg>}
      * @private
      */
     _rotate(type, angle) {
-        const callback = this.fire.bind(this, events.ROTATE_IMAGE);
         const command = commandFactory.create(commands.ROTATE_IMAGE, type, angle);
-
-        /**
-         * @event ImageEditor#rotateImage
-         * @param {number} currentAngle - image.angle
-         * @example
-         * imageEditor.on('rotateImage', function(angle) {
-         *     console.log('angle: ', angle);
-         * });
-         */
-        command.setExecuteCallback(callback)
-            .setUndoCallback(callback);
 
         return this.execute(command);
     }
@@ -742,11 +751,17 @@ class ImageEditor {
      * Rotate image
      * @returns {Promise}
      * @param {number} angle - Additional angle to rotate image
+     * @returns {Promise<RotateStatus, ErrorMsg>}
      * @example
      * imageEditor.setAngle(10); // angle = 10
      * imageEditor.rotate(10); // angle = 20
      * imageEidtor.setAngle(5); // angle = 5
      * imageEidtor.rotate(-95); // angle = -90
+     * imageEditor.rotate(10).then(angle => {
+     *     console.log('angle: ', angle);
+     * })).catch(message => {
+     *     console.log('error: ', message);
+     * });
      */
     rotate(angle) {
         return this._rotate('rotate', angle);
@@ -755,13 +770,18 @@ class ImageEditor {
     /**
      * Set angle
      * @param {number} angle - Angle of image
-     * @returns {Promise}
+     * @returns {Promise<RotateStatus, ErrorMsg>}
      * @example
      * imageEditor.setAngle(10); // angle = 10
      * imageEditor.rotate(10); // angle = 20
      * imageEidtor.setAngle(5); // angle = 5
      * imageEidtor.rotate(50); // angle = 55
      * imageEidtor.setAngle(-40); // angle = -40
+     * imageEditor.setAngle(10).then(angle => {
+     *     console.log('angle: ', angle);
+     * })).catch(message => {
+     *     console.log('error: ', message);
+     * });
      */
     setAngle(angle) {
         return this._rotate('setAngle', angle);
@@ -1160,28 +1180,17 @@ class ImageEditor {
     /**
      * Remove filter on canvas image
      * @param {string} type - Filter type
-     * @returns {Promise}
+     * @returns {Promise<FilterResult, ErrorMsg>}
      * @example
-     * imageEditor.removeFilter('Grayscale');
+     * imageEditor.removeFilter('Grayscale').then(obj => {
+     *     console.log('filterType: ', obj.type);
+     *     console.log('actType: ', obj.action);
+     * }).catch(message => {
+     *     console.log('error: ', message);
+     * });
      */
     removeFilter(type) {
         const command = commandFactory.create(commands.REMOVE_FILTER, type);
-        const callback = obj => {
-            this.fire(events.APPLY_FILTER, obj.type, obj.action);
-        };
-
-        /**
-         * @event ImageEditor#removeFilter
-         * @param {string} filterType - Applied filter
-         * @param {string} actType - Action type (add / remove)
-         * @example
-         * imageEditor.on('applyFilter', function(filterType, actType) {
-         *     console.log('filterType: ', filterType);
-         *     console.log('actType: ', actType);
-         * });
-         */
-        command.setExecuteCallback(callback)
-            .setUndoCallback(callback);
 
         return this.execute(command);
     }
@@ -1190,12 +1199,17 @@ class ImageEditor {
      * Apply filter on canvas image
      * @param {string} type - Filter type
      * @param {options} options - Options to apply filter
-     * @returns {Promise}
+     * @returns {Promise<FilterResult, ErrorMsg>}
      * @example
      * imageEditor.applyFilter('mask');
      * imageEditor.applyFilter('mask', {
      *     mask: fabricImgObj
-     * });
+     * }).then(obj => {
+     *     console.log('filterType: ', obj.type);
+     *     console.log('actType: ', obj.action);
+     * }).catch(message => {
+     *     console.log('error: ', message);
+     * });;
      */
     applyFilter(type, options) {
         if (type === 'mask' && !options) {
@@ -1211,22 +1225,6 @@ class ImageEditor {
         }
 
         const command = commandFactory.create(commands.APPLY_FILTER, type, options);
-        const callback = obj => {
-            this.fire(events.APPLY_FILTER, obj.type, obj.action);
-        };
-
-        /**
-         * @event ImageEditor#applyFilter
-         * @param {string} filterType - Applied filter
-         * @param {string} actType - Action type (add / remove)
-         * @example
-         * imageEditor.on('applyFilter', function(filterType, actType) {
-         *     console.log('filterType: ', filterType);
-         *     console.log('actType: ', actType);
-         * });
-         */
-        command.setExecuteCallback(callback)
-            .setUndoCallback(callback);
 
         return this.execute(command);
     }
