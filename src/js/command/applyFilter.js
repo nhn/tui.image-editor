@@ -2,55 +2,72 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Apply a filter into an image
  */
+import commandFactory from '../factory/command';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, rejectMessages, commandNames} = consts;
 const {FILTER} = componentNames;
 
 const command = {
-    name: 'applyFilter',
+    name: commandNames.APPLY_FILTER,
 
     /**
      * Apply a filter into an image
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - Filter type
-     * @param {object} options - Filter options
+     * @param {Object} options - Filter options
      * @returns {Promise}
      */
-    execute(compMap, type, options) {
-        const filterComp = compMap[FILTER];
+    execute(graphics, type, options) {
+        const filterComp = graphics.getComponent(FILTER);
+
+        if (type === 'mask' && !options) {
+            const activeObj = graphics.getActiveObject();
+
+            if (!(activeObj && activeObj.isType('image'))) {
+                return Promise.reject(rejectMessages.invalidParameters);
+            }
+
+            options = {
+                mask: activeObj
+            };
+        }
 
         if (type === 'mask') {
-            this.store = options.mask;
-            options.mask.remove();
+            this.undoData.object = options.mask;
+            graphics.remove(options.mask);
         } else {
-            this.store = filterComp.getOptions(type);
+            this.undoData.options = filterComp.getOptions(type);
         }
 
         return filterComp.add(type, options);
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - Filter type
      * @returns {Promise}
      */
-    undo(compMap, type) {
-        const filterComp = compMap[FILTER];
+    undo(graphics, type) {
+        const filterComp = graphics.getComponent(FILTER);
 
         if (type === 'mask') {
-            filterComp.getCanvas().add(this.store); // this.store is mask image
+            const mask = this.undoData.object;
+            graphics.add(mask);
+            graphics.setActiveObject(mask);
 
             return filterComp.remove(type);
         }
 
         // options changed case
-        if (this.store) {
-            return filterComp.add(type, this.store);  // this.store is options object
+        if (this.undoData.options) {
+            return filterComp.add(type, this.undoData.options);
         }
 
         // filter added case
-        return filterComp.remove(type);  // this.store is options object
+        return filterComp.remove(type);
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

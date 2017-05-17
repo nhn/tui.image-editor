@@ -2,22 +2,21 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/text.js"
  */
-import Main from '../src/js/component/main';
+import Graphics from '../src/js/graphics';
 import Text from '../src/js/component/text';
 
 describe('Text', () => {
-    let canvas, main, mockImage, text;
+    let canvas, graphics, mockImage, text;
 
     beforeAll(() => {
-        canvas = new fabric.Canvas($('<canvas>')[0]);
-        main = new Main();
-        main.canvas = canvas;
-        text = new Text(main);
+        graphics = new Graphics($('<canvas>')[0]);
+        canvas = graphics.getCanvas();
+        text = new Text(graphics);
     });
 
     beforeEach(() => {
         mockImage = new fabric.Image();
-        main.setCanvasImage('mockImage', mockImage);
+        graphics.setCanvasImage('mockImage', mockImage);
     });
 
     afterEach(() => {

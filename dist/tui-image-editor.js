@@ -105,7 +105,7 @@
 	 * Image editor
 	 * @class
 	 * @param {string|jQuery|HTMLElement} element - Wrapper or canvas element or selector
-	 * @param {object} [option] - Canvas max width & height of css
+	 * @param {Object} [option] - Canvas max width & height of css
 	 *  @param {number} option.cssMaxWidth - Canvas css-max-width
 	 *  @param {number} option.cssMaxHeight - Canvas css-max-height
 	 */
@@ -138,7 +138,7 @@
 
 	        /**
 	         * Event handler list
-	         * @type {object}
+	         * @type {Object}
 	         * @private
 	         */
 	        this._handlers = {
@@ -164,7 +164,7 @@
 
 	    /**
 	     * Set selection style of fabric object by init option
-	     * @param {object} styles - Selection styles
+	     * @param {Object} styles - Selection styles
 	     * @private
 	     */
 
@@ -286,7 +286,7 @@
 
 	            /**
 	             * @event ImageEditor#mousedown
-	             * @param {object} event - Event object
+	             * @param {Object} event - Event object
 	             * @example
 	             * imageEditor.on('mousedown', function(event) {
 	             *     console.log(event.e);
@@ -708,7 +708,7 @@
 
 	            /**
 	             * @event ImageEditor#loadImage
-	             * @param {object} dimension
+	             * @param {Object} dimension
 	             *  @param {number} dimension.originalWidth - original image width
 	             *  @param {number} dimension.originalHeight - original image height
 	             *  @param {number} dimension.currentWidth - current width (css)
@@ -852,7 +852,7 @@
 
 	            /**
 	             * @event ImageEditor#flipImage
-	             * @param {object} flipSetting
+	             * @param {Object} flipSetting
 	             *  @param {boolean} flipSetting.flipX - image.flipX
 	             *  @param {boolean} flipSetting.flipY - image.flipY
 	             * @param {number} angle - image.angle
@@ -1111,7 +1111,7 @@
 	        /**
 	         * Set states of current drawing shape
 	         * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
-	         * @param {object} [options] - Shape options
+	         * @param {Object} [options] - Shape options
 	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
 	         *      @param {string} [options.stoke] - Shape outline color
 	         *      @param {number} [options.strokeWidth] - Shape outline width
@@ -1154,7 +1154,7 @@
 	        /**
 	         * Add shape
 	         * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
-	         * @param {object} options - Shape options
+	         * @param {Object} options - Shape options
 	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
 	         *      @param {string} [options.stroke] - Shape outline color
 	         *      @param {number} [options.strokeWidth] - Shape outline width
@@ -1197,7 +1197,7 @@
 
 	        /**
 	         * Change shape
-	         * @param {object} options - Shape options
+	         * @param {Object} options - Shape options
 	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
 	         *      @param {string} [options.stroke] - Shape outline color
 	         *      @param {number} [options.strokeWidth] - Shape outline width
@@ -1279,8 +1279,8 @@
 	        /**
 	         * Add text on image
 	         * @param {string} text - Initial input text
-	         * @param {object} [options] Options for generating text
-	         *     @param {object} [options.styles] Initial styles
+	         * @param {Object} [options] Options for generating text
+	         *     @param {Object} [options.styles] Initial styles
 	         *         @param {string} [options.styles.fill] Color
 	         *         @param {string} [options.styles.fontFamily] Font type for text
 	         *         @param {number} [options.styles.fontSize] Size
@@ -1335,7 +1335,7 @@
 
 	        /**
 	         * Set style
-	         * @param {object} styleObj - Initial styles
+	         * @param {Object} styleObj - Initial styles
 	         *     @param {string} [styleObj.fill] Color
 	         *     @param {string} [styleObj.fontFamily] Font type for text
 	         *     @param {number} [styleObj.fontSize] Size
@@ -1425,10 +1425,10 @@
 
 	            /**
 	             * @event ImageEditor#activateText
-	             * @param {object} options
+	             * @param {Object} options
 	             *     @param {boolean} options.type - Type of text object (new / select)
 	             *     @param {string} options.text - Current text
-	             *     @param {object} options.styles - Current styles
+	             *     @param {Object} options.styles - Current styles
 	             *         @param {string} options.styles.fill - Color
 	             *         @param {string} options.styles.fontFamily - Font type for text
 	             *         @param {number} options.styles.fontSize - Size
@@ -1488,7 +1488,7 @@
 	        /**
 	         * Add icon on canvas
 	         * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
-	         * @param {object} options - Icon options
+	         * @param {Object} options - Icon options
 	         *      @param {string} [options.fill] - Icon foreground color
 	         *      @param {string} [options.left] - Icon x position
 	         *      @param {string} [options.top] - Icon y position
@@ -1705,7 +1705,7 @@
 
 	        /**
 	         * Set position
-	         * @param {object} options - Position options (left or top)
+	         * @param {Object} options - Position options (left or top)
 	         * @private
 	         */
 
@@ -3872,7 +3872,7 @@
 
 	    /**
 	     * Set image properties
-	     * @param {object} setting - Image properties
+	     * @param {Object} setting - Image properties
 	     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
 	     */
 
@@ -3884,7 +3884,7 @@
 
 	    /**
 	     * Set canvas dimension - css only
-	     * @param {object} dimension - Canvas css dimension
+	     * @param {Object} dimension - Canvas css dimension
 	     */
 
 	  }, {
@@ -3895,7 +3895,7 @@
 
 	    /**
 	     * Set canvas dimension - css only
-	     * @param {object} dimension - Canvas backstore dimension
+	     * @param {Object} dimension - Canvas backstore dimension
 	     */
 
 	  }, {
@@ -4122,7 +4122,7 @@
 
 	    /**
 	     * Make CSSText
-	     * @param {object} styleObj - Style info object
+	     * @param {Object} styleObj - Style info object
 	     * @returns {string} Connected string of style
 	     */
 	    makeStyleText: function makeStyleText(styleObj) {
@@ -4737,7 +4737,7 @@
 	    /**
 	     * Calc scaled size from mouse pointer with selected corner
 	     * @param {{x: number, y: number}} pointer - Mouse position
-	     * @returns {object} Having left or(and) top or(and) width or(and) height.
+	     * @returns {Object} Having left or(and) top or(and) width or(and) height.
 	     * @private
 	     */
 	    _calcScalingSizeFromPointer: function _calcScalingSizeFromPointer(pointer) {
@@ -5105,7 +5105,7 @@
 	        /**
 	         * Set canvas dimension - css only
 	         *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
-	         * @param {object} dimension - Canvas css dimension
+	         * @param {Object} dimension - Canvas css dimension
 	         * @override
 	         */
 
@@ -5118,7 +5118,7 @@
 	        /**
 	         * Set canvas dimension - backstore only
 	         *  {@link http://fabricjs.com/docs/fabric.Canvas.html#setDimensions}
-	         * @param {object} dimension - Canvas backstore dimension
+	         * @param {Object} dimension - Canvas backstore dimension
 	         * @override
 	         */
 
@@ -5131,7 +5131,7 @@
 	        /**
 	         * Set image properties
 	         * {@link http://fabricjs.com/docs/fabric.Image.html#set}
-	         * @param {object} setting - Image properties
+	         * @param {Object} setting - Image properties
 	         * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
 	         * @override
 	         */
@@ -6004,7 +6004,7 @@
 
 	        /**
 	         * Default text style
-	         * @type {object}
+	         * @type {Object}
 	         */
 	        _this._defaultStyles = defaultStyles;
 
@@ -6016,19 +6016,19 @@
 
 	        /**
 	         * Selected text object
-	         * @type {object}
+	         * @type {Object}
 	         */
 	        _this._selectedObj = {};
 
 	        /**
 	         * Editing text object
-	         * @type {object}
+	         * @type {Object}
 	         */
 	        _this._editingObj = {};
 
 	        /**
 	         * Listeners for fabric event
-	         * @type {object}
+	         * @type {Object}
 	         */
 	        _this._listeners = {};
 
@@ -6066,7 +6066,7 @@
 
 	    /**
 	     * Start input text mode
-	     * @param {object} listeners - Callback functions of fabric event
+	     * @param {Object} listeners - Callback functions of fabric event
 	     */
 
 
@@ -6118,8 +6118,8 @@
 	        /**
 	         * Add new text on canvas image
 	         * @param {string} text - Initial input text
-	         * @param {object} options - Options for generating text
-	         *     @param {object} [options.styles] Initial styles
+	         * @param {Object} options - Options for generating text
+	         *     @param {Object} [options.styles] Initial styles
 	         *         @param {string} [options.styles.fill] Color
 	         *         @param {string} [options.styles.fontFamily] Font type for text
 	         *         @param {number} [options.styles.fontSize] Size
@@ -6159,7 +6159,7 @@
 
 	        /**
 	         * Change text of activate object on canvas image
-	         * @param {object} activeObj - Current selected text object
+	         * @param {Object} activeObj - Current selected text object
 	         * @param {string} text - Changed text
 	         */
 
@@ -6173,8 +6173,8 @@
 
 	        /**
 	         * Set style
-	         * @param {object} activeObj - Current selected text object
-	         * @param {object} styleObj - Initial styles
+	         * @param {Object} activeObj - Current selected text object
+	         * @param {Object} styleObj - Initial styles
 	         *     @param {string} [styleObj.fill] Color
 	         *     @param {string} [styleObj.fontFamily] Font type for text
 	         *     @param {number} [styleObj.fontSize] Size
@@ -6583,7 +6583,7 @@
 
 	        /**
 	         * Path value of each icon type
-	         * @type {object}
+	         * @type {Object}
 	         */
 	        _this._pathMap = pathMap;
 	        return _this;
@@ -6592,7 +6592,7 @@
 	    /**
 	     * Add icon
 	     * @param {string} type - Icon type
-	     * @param {object} options - Icon options
+	     * @param {Object} options - Icon options
 	     *      @param {string} [options.fill] - Icon foreground color
 	     *      @param {string} [options.left] - Icon x position
 	     *      @param {string} [options.top] - Icon y position
@@ -6734,7 +6734,7 @@
 	    /**
 	     * Add filter to source image (a specific filter is added on fabric.js)
 	     * @param {string} type - Filter type
-	     * @param {object} [options] - Options of filter
+	     * @param {Object} [options] - Options of filter
 	     * @returns {Promise}
 	     */
 
@@ -6824,8 +6824,8 @@
 	        /**
 	         * Create filter instance
 	         * @param {string} type - Filter type
-	         * @param {object} [options] - Options of filter
-	         * @returns {object} Fabric object of filter
+	         * @param {Object} [options] - Options of filter
+	         * @returns {Object} Fabric object of filter
 	         * @private
 	         */
 
@@ -6873,7 +6873,7 @@
 	var Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.prototype */{
 	    /**
 	     * Apply filter to canvas element
-	     * @param {object} canvasEl - Canvas element to apply filter
+	     * @param {Object} canvasEl - Canvas element to apply filter
 	     * @override
 	     */
 	    applyTo: function applyTo(canvasEl) {
@@ -6914,7 +6914,7 @@
 
 	    /**
 	     * Draw mask image on canvas element
-	     * @param {object} maskCtx - Context of mask canvas
+	     * @param {Object} maskCtx - Context of mask canvas
 	     * @private
 	     */
 	    _drawMask: function _drawMask(maskCtx) {
@@ -6936,8 +6936,8 @@
 
 	    /**
 	     * Map mask image data to source image data
-	     * @param {object} maskCtx - Context of mask canvas
-	     * @param {object} imageData - Data of source image
+	     * @param {Object} maskCtx - Context of mask canvas
+	     * @param {Object} imageData - Data of source image
 	     * @param {number} width - Width of main canvas
 	     * @param {number} height - Height of main canvas
 	     * @private
@@ -7053,7 +7053,7 @@
 
 	        /**
 	         * Options to draw the shape
-	         * @type {object}
+	         * @type {Object}
 	         * @private
 	         */
 	        _this._options = DEFAULT_OPTIONS;
@@ -7067,7 +7067,7 @@
 
 	        /**
 	         * Pointer for drawing shape (x, y)
-	         * @type {object}
+	         * @type {Object}
 	         * @private
 	         */
 	        _this._startPoint = {};
@@ -7081,7 +7081,7 @@
 
 	        /**
 	         * Event handler list
-	         * @type {object}
+	         * @type {Object}
 	         * @private
 	         */
 	        _this._handlers = {
@@ -7145,7 +7145,7 @@
 	         * Set states of the current drawing shape
 	         * @ignore
 	         * @param {string} type - Shape type (ex: 'rect', 'circle')
-	         * @param {object} [options] - Shape options
+	         * @param {Object} [options] - Shape options
 	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
 	         *      @param {string} [options.stoke] - Shape outline color
 	         *      @param {number} [options.strokeWidth] - Shape outline width
@@ -7169,7 +7169,7 @@
 	         * Add the shape
 	         * @ignore
 	         * @param {string} type - Shape type (ex: 'rect', 'circle')
-	         * @param {object} options - Shape options
+	         * @param {Object} options - Shape options
 	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
 	         *      @param {string} [options.stroke] - Shape outline color
 	         *      @param {number} [options.strokeWidth] - Shape outline width
@@ -7196,7 +7196,7 @@
 	         * Change the shape
 	         * @ignore
 	         * @param {fabric.Object} shapeObj - Selected shape object on canvas
-	         * @param {object} options - Shape options
+	         * @param {Object} options - Shape options
 	         *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
 	         *      @param {string} [options.stroke] - Shape outline color
 	         *      @param {number} [options.strokeWidth] - Shape outline width
@@ -7221,7 +7221,7 @@
 	        /**
 	         * Create the instance of shape
 	         * @param {string} type - Shape type
-	         * @param {object} options - Options to creat the shape
+	         * @param {Object} options - Options to creat the shape
 	         * @returns {fabric.Object} Shape instance
 	         * @private
 	         */
@@ -7252,8 +7252,8 @@
 
 	        /**
 	         * Get the options to create the shape
-	         * @param {object} options - Options to creat the shape
-	         * @returns {object} Shape options
+	         * @param {Object} options - Options to creat the shape
+	         * @returns {Object} Shape options
 	         * @private
 	         */
 
@@ -7483,7 +7483,7 @@
 	 * @param {{x: number, y: number}} origin - Origin value
 	 * @param {{x: number, y: number}} pointer - Pointer value
 	 * @param {number} angle - Rotating angle
-	 * @returns {object} Postions of origin
+	 * @returns {Object} Postions of origin
 	 * @ignore
 	 */
 	function getPositionsOfRotatedOrigin(origin, pointer, angle) {
@@ -7999,7 +7999,7 @@
 	/**
 	 * Filter command
 	 * @param {string} type - Filter type
-	 * @param {object} options - Filter options
+	 * @param {Object} options - Filter options
 	 * @returns {Command}
 	 * @ignore
 	 */

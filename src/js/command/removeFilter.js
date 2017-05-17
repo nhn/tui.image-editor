@@ -2,37 +2,41 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Remove a filter from an image
  */
+import commandFactory from '../factory/command';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, commandNames} = consts;
 const {FILTER} = componentNames;
 
 const command = {
-    name: 'removeFilter',
+    name: commandNames.REMOVE_FILTER,
 
     /**
      * Remove a filter from an image
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - Filter type
      * @returns {Promise}
      */
-    execute(compMap, type) {
-        const filterComp = compMap[FILTER];
+    execute(graphics, type) {
+        const filterComp = graphics.getComponent(FILTER);
 
-        this.store = filterComp.getOptions(type);
+        this.undoData.options = filterComp.getOptions(type);
 
         return filterComp.remove(type);
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - Filter type
      * @returns {Promise}
      */
-    undo(compMap, type) {
-        const filterComp = compMap[FILTER];
+    undo(graphics, type) {
+        const filterComp = graphics.getComponent(FILTER);
+        const options = this.undoData.options;
 
-        return filterComp.add(type, this.store);
+        return filterComp.add(type, options);
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

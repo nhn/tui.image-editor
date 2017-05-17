@@ -5,25 +5,16 @@
 import Component from '../interface/component';
 import consts from '../consts';
 
-const bind = tui.util.bind;
-
 /**
  * Line
  * @class Line
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
  */
 class Line extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = consts.componentNames.LINE;
+    constructor(graphics) {
+        super(consts.componentNames.LINE, graphics);
 
         /**
          * Brush width
@@ -45,9 +36,9 @@ class Line extends Component {
          * @private
          */
         this._listeners = {
-            mousedown: bind(this._onFabricMouseDown, this),
-            mousemove: bind(this._onFabricMouseMove, this),
-            mouseup: bind(this._onFabricMouseUp, this)
+            mousedown: this._onFabricMouseDown.bind(this),
+            mousemove: this._onFabricMouseMove.bind(this),
+            mouseup: this._onFabricMouseUp.bind(this)
         };
     }
 

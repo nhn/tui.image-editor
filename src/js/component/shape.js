@@ -7,7 +7,7 @@ import Component from '../interface/component';
 import consts from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
 
-const {extend, bind, inArray} = tui.util;
+const {extend, inArray} = tui.util;
 
 const {rejectMessages} = consts;
 const KEY_CODES = consts.keyCodes;
@@ -32,20 +32,13 @@ const shapeType = ['rect', 'circle', 'triangle'];
 /**
  * Shape
  * @class Shape
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
  */
 class Shape extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = consts.componentNames.SHAPE;
+    constructor(graphics) {
+        super(consts.componentNames.SHAPE, graphics);
 
         /**
          * Object of The drawing shape
@@ -63,10 +56,10 @@ class Shape extends Component {
 
         /**
          * Options to draw the shape
-         * @type {object}
+         * @type {Object}
          * @private
          */
-        this._options = DEFAULT_OPTIONS;
+        this._options = extend({}, DEFAULT_OPTIONS);
 
         /**
          * Whether the shape object is selected or not
@@ -77,7 +70,7 @@ class Shape extends Component {
 
         /**
          * Pointer for drawing shape (x, y)
-         * @type {object}
+         * @type {Object}
          * @private
          */
         this._startPoint = {};
@@ -92,15 +85,15 @@ class Shape extends Component {
 
         /**
          * Event handler list
-         * @type {object}
+         * @type {Object}
          * @private
          */
         this._handlers = {
-            mousedown: bind(this._onFabricMouseDown, this),
-            mousemove: bind(this._onFabricMouseMove, this),
-            mouseup: bind(this._onFabricMouseUp, this),
-            keydown: bind(this._onKeyDown, this),
-            keyup: bind(this._onKeyUp, this)
+            mousedown: this._onFabricMouseDown.bind(this),
+            mousemove: this._onFabricMouseMove.bind(this),
+            mouseup: this._onFabricMouseUp.bind(this),
+            keydown: this._onKeyDown.bind(this),
+            keyup: this._onKeyUp.bind(this)
         };
     }
 
@@ -148,7 +141,7 @@ class Shape extends Component {
      * Set states of the current drawing shape
      * @ignore
      * @param {string} type - Shape type (ex: 'rect', 'circle')
-     * @param {object} [options] - Shape options
+     * @param {Object} [options] - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -169,7 +162,7 @@ class Shape extends Component {
      * Add the shape
      * @ignore
      * @param {string} type - Shape type (ex: 'rect', 'circle')
-     * @param {object} options - Shape options
+     * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -178,6 +171,7 @@ class Shape extends Component {
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
+     *      @param {boolean} [options.needsStamp] - Use true if through Command
      * @returns {Promise}
      */
     add(type, options) {
@@ -188,6 +182,10 @@ class Shape extends Component {
 
             this._bindEventOnShape(shapeObj);
 
+            // true only through Command
+            if (options.needsStamp) {
+                tui.util.stamp(shapeObj);
+            }
             canvas.add(shapeObj).setActiveObject(shapeObj);
             resolve(shapeObj);
         });
@@ -197,7 +195,7 @@ class Shape extends Component {
      * Change the shape
      * @ignore
      * @param {fabric.Object} shapeObj - Selected shape object on canvas
-     * @param {object} options - Shape options
+     * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -211,7 +209,7 @@ class Shape extends Component {
     change(shapeObj, options) {
         return new Promise((resolve, reject) => {
             if (inArray(shapeObj.get('type'), shapeType) < 0) {
-                reject(rejectMessages.notSupportType);
+                reject(rejectMessages.unsupportedType);
             }
 
             shapeObj.set(options);
@@ -223,7 +221,7 @@ class Shape extends Component {
     /**
      * Create the instance of shape
      * @param {string} type - Shape type
-     * @param {object} options - Options to creat the shape
+     * @param {Object} options - Options to creat the shape
      * @returns {fabric.Object} Shape instance
      * @private
      */
@@ -251,14 +249,14 @@ class Shape extends Component {
 
     /**
      * Get the options to create the shape
-     * @param {object} options - Options to creat the shape
-     * @returns {object} Shape options
+     * @param {Object} options - Options to creat the shape
+     * @returns {Object} Shape options
      * @private
      */
     _createOptions(options) {
         const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
 
-        options = extend({}, DEFAULT_OPTIONS, selectionStyles, options);
+        options = extend({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
 
         if (options.isRegular) {
             options.lockUniScaling = true;
@@ -368,8 +366,6 @@ class Shape extends Component {
         if (shape) {
             resizeHelper.adjustOriginToCenter(shape);
         }
-
-        this._shapeObj = null;
 
         canvas.off({
             'mouse:move': this._handlers.mousemove,

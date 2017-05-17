@@ -2,22 +2,21 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/icon.js"
  */
-import Main from '../src/js/component/main';
+import Graphics from '../src/js/graphics';
 import Icon from '../src/js/component/icon';
 
 describe('Icon', () => {
-    let canvas, main, mockImage, icon;
+    let canvas, graphics, mockImage, icon;
 
     beforeAll(() => {
-        canvas = new fabric.Canvas($('<canvas>')[0]);
-        main = new Main();
-        main.canvas = canvas;
-        icon = new Icon(main);
+        graphics = new Graphics($('<canvas>')[0]);
+        canvas = graphics.getCanvas();
+        icon = new Icon(graphics);
     });
 
     beforeEach(() => {
         mockImage = new fabric.Image();
-        main.setCanvasImage('mockImage', mockImage);
+        graphics.setCanvasImage('mockImage', mockImage);
     });
 
     afterEach(() => {

@@ -10,7 +10,6 @@ module.exports = {
      * @type {Object.<string, string>}
      */
     componentNames: util.keyMirror(
-        'MAIN',
         'IMAGE_LOADER',
         'CROPPER',
         'FLIP',
@@ -33,7 +32,7 @@ module.exports = {
         'FLIP_IMAGE': 'flip',
         'ROTATE_IMAGE': 'rotate',
         'ADD_OBJECT': 'addObject',
-        'REMOVE_OBJECT': 'removeObject',
+        'REMOVE_ACTIVE_OBJECT': 'removeActiveObject',
         'APPLY_FILTER': 'applyFilter',
         'REMOVE_FILTER': 'removeFilter',
         'ADD_ICON': 'addIcon',
@@ -52,29 +51,16 @@ module.exports = {
      * @type {Object.<string, string>}
      */
     eventNames: {
-        LOAD_IMAGE: 'loadImage',
-        CLEAR_OBJECTS: 'clearObjects',
-        CLEAR_IMAGE: 'clearImage',
-        START_CROPPING: 'startCropping',
-        END_CROPPING: 'endCropping',
-        FLIP_IMAGE: 'flipImage',
-        ROTATE_IMAGE: 'rotateImage',
-        ADD_OBJECT: 'addObject',
-        SELECT_OBJECT: 'selectObject',
-        REMOVE_OBJECT: 'removeObject',
-        ADJUST_OBJECT: 'adjustObject',
-        START_FREE_DRAWING: 'startFreeDrawing',
-        END_FREE_DRAWING: 'endFreeDrawing',
-        START_LINE_DRAWING: 'startLineDrawing',
-        END_LINE_DRAWING: 'endLineDrawing',
-        EMPTY_REDO_STACK: 'emptyRedoStack',
-        EMPTY_UNDO_STACK: 'emptyUndoStack',
-        PUSH_UNDO_STACK: 'pushUndoStack',
-        PUSH_REDO_STACK: 'pushRedoStack',
-        ACTIVATE_TEXT: 'activateText',
-        APPLY_FILTER: 'applyFilter',
-        EDIT_TEXT: 'editText',
-        MOUSE_DOWN: 'mousedown'
+        OBJECT_ADDED: 'objectAdded',
+        OBJECT_ACTIVATED: 'objectActivated',
+        OBJECT_MOVED: 'objectMoved',
+        OBJECT_SCALED: 'objectScaled',
+        TEXT_EDITING: 'textEditing',
+        ADD_TEXT: 'addText',
+        MOUSE_DOWN: 'mousedown',
+        // UNDO/REDO Events
+        REDO_STACK_CHANGED: 'redoStackChanged',
+        UNDO_STACK_CHANGED: 'undoStackChanged'
     },
 
     /**
@@ -85,7 +71,7 @@ module.exports = {
         'NORMAL',
         'CROPPER',
         'FREE_DRAWING',
-        'LINE',
+        'LINE_DRAWING',
         'TEXT',
         'SHAPE'
     ),
@@ -131,6 +117,8 @@ module.exports = {
         invalidDrawingMode: 'This operation is not supported in the drawing mode',
         invalidParameters: 'Invalid parameters',
         noActiveObject: 'There is no active object.',
-        notSupportType: 'Not support object type'
+        unsupportedType: 'Unsupported object type',
+        noObject: 'The object is not in canvas.',
+        addedObject: 'The object is already added.'
     }
 };

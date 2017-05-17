@@ -5,42 +5,44 @@
 import Promise from 'core-js/library/es6/promise';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
+import Graphics from '../src/js/graphics';
 import consts from '../src/js/consts';
 
 const commands = consts.commandNames;
 
 describe('commandFactory', () => {
-    let invoker, mockImage, canvas, mainComponent;
+    let invoker, mockImage, canvas, graphics;
 
     beforeEach(() => {
+        graphics = new Graphics($('<canvas>'));
         invoker = new Invoker();
         mockImage = new fabric.Image();
-        mainComponent = invoker.getComponent('MAIN');
-        mainComponent.setCanvasElement($('<canvas>'));
-        mainComponent.setCanvasImage('', mockImage);
-        canvas = mainComponent.getCanvas();
+
+        graphics.setCanvasImage('', mockImage);
+        canvas = graphics.getCanvas();
     });
 
     describe('functions', () => {
         it('can register custom command', done => {
-            commandFactory.register({
+            const testCommand = {
                 name: 'testCommand',
-                execute(compMap) {
-                    expect(compMap[mainComponent.getName()]).not.toBe(null);
-
-                    return Promise.resolve('testCommand');
+                execute() {
                 },
-                undo(compMap) {
-                    expect(compMap[mainComponent.getName()]).not.toBe(null);
+                undo() {
                 }
-            });
+            };
+
+            spyOn(testCommand, 'execute').and.returnValue(Promise.resolve('testCommand'));
+            spyOn(testCommand, 'undo').and.returnValue(Promise.resolve());
+
+            commandFactory.register(testCommand);
 
             const command = commandFactory.create('testCommand');
             expect(command).not.toBe(null);
-            expect(commandFactory.contains('testCommand')).toBe(true);
 
-            invoker.invoke(command).then(commandName => {
+            invoker.execute('testCommand', graphics).then(commandName => {
                 expect(commandName).toBe('testCommand');
+                expect(testCommand.execute).toHaveBeenCalledWith(graphics);
                 done();
             }).catch(message => {
                 fail(message);
@@ -60,8 +62,7 @@ describe('commandFactory', () => {
                 }
             });
 
-            const command = commandFactory.create('testCommand', 1, 2, 3);
-            invoker.invoke(command).then(() => {
+            invoker.execute('testCommand', graphics, 1, 2, 3).then(() => {
                 done();
             }).catch(message => {
                 fail(message);
@@ -84,8 +85,7 @@ describe('commandFactory', () => {
                 }
             });
 
-            const command = commandFactory.create('testCommand', 1, 2, 3);
-            invoker.invoke(command).then(() =>
+            invoker.execute('testCommand', graphics, 1, 2, 3).then(() =>
                 invoker.undo()
             ).then(() => done()
             ).catch(message => {
@@ -96,28 +96,27 @@ describe('commandFactory', () => {
     });
 
     describe('addObjectCommand', () => {
-        let obj, command;
+        let obj;
 
         beforeEach(() => {
             obj = new fabric.Object();
-            command = commandFactory.create(commands.ADD_OBJECT, obj);
         });
 
         it('should stamp object', done => {
-            invoker.invoke(command).then(() => {
+            invoker.execute(commands.ADD_OBJECT, graphics, obj).then(() => {
                 expect(tui.util.hasStamp(obj)).toBe(true);
                 done();
             });
         });
 
         it('should add object to canvas', () => {
-            invoker.invoke(command);
+            invoker.execute(commands.ADD_OBJECT, graphics, obj);
 
             expect(canvas.contains(obj)).toBe(true);
         });
 
         it('"undo()" should remove object from canvas', done => {
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
+            invoker.execute(commands.ADD_OBJECT, graphics, obj).then(() => invoker.undo()).then(() => {
                 expect(canvas.contains(obj)).toBe(false);
                 done();
             });
@@ -125,50 +124,54 @@ describe('commandFactory', () => {
     });
 
     describe('loadImageCommand', () => {
-        let imageURL, command;
+        const imageURL = 'base/test/fixtures/sampleImage.jpg';
 
         beforeEach(() => {
-            mainComponent.setCanvasImage('', null);
-            imageURL = 'base/test/fixtures/sampleImage.jpg';
-            command = commandFactory.create(commands.LOAD_IMAGE, 'image', imageURL);
+            graphics.setCanvasImage('', null);
         });
 
         it('should clear canvas', () => {
             spyOn(canvas, 'clear');
-            invoker.invoke(command);
+            invoker.execute(commands.LOAD_IMAGE, graphics, 'image', imageURL);
 
             expect(canvas.clear).toHaveBeenCalled();
         });
 
         it('should load new image', done => {
-            invoker.invoke(command).then(img => {
-                expect(mainComponent.getImageName()).toEqual('image');
-                expect(mainComponent.getCanvasImage()).toBe(img);
-                expect(mainComponent.getCanvasImage().getSrc()).toContain(imageURL);
+            invoker.execute(commands.LOAD_IMAGE, graphics, 'image', imageURL).then(sizeChange => {
+                expect(graphics.getImageName()).toEqual('image');
+                expect(graphics.getCanvasImage().getSrc()).toContain(imageURL);
+                expect(sizeChange.oldWidth).toEqual(jasmine.any(Number));
+                expect(sizeChange.oldHeight).toEqual(jasmine.any(Number));
+                expect(sizeChange.newWidth).toEqual(jasmine.any(Number));
+                expect(sizeChange.newHeight).toEqual(jasmine.any(Number));
                 done();
             });
         });
 
         it('"undo()" should clear image if not exists prev image', done => {
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
-                expect(mainComponent.getCanvasImage()).toBe(null);
-                expect(mainComponent.getImageName()).toBe('');
+            invoker.execute(commands.LOAD_IMAGE, graphics, 'image', imageURL).then(() =>
+                invoker.undo()
+            ).then(() => {
+                expect(graphics.getCanvasImage()).toBe(null);
+                expect(graphics.getImageName()).toBe('');
                 done();
             });
         });
 
         it('"undo()" should restore to prev image', done => {
             const newImageURL = 'base/test/fixtures/TOAST%20UI%20Component.png';
-            const newCommand = commandFactory.create(commands.LOAD_IMAGE, 'newImage', newImageURL);
 
-            invoker.invoke(command).then(() => invoker.invoke(newCommand)).then(() => {
-                expect(mainComponent.getImageName()).toBe('newImage');
-                expect(mainComponent.getCanvasImage().getSrc()).toContain(newImageURL);
+            invoker.execute(commands.LOAD_IMAGE, graphics, 'image', imageURL).then(() =>
+                invoker.execute(commands.LOAD_IMAGE, graphics, 'newImage', newImageURL)
+            ).then(() => {
+                expect(graphics.getImageName()).toBe('newImage');
+                expect(graphics.getCanvasImage().getSrc()).toContain(newImageURL);
 
                 return invoker.undo();
             }).then(() => {
-                expect(mainComponent.getImageName()).toEqual('image');
-                expect(mainComponent.getCanvasImage().getSrc()).toContain(imageURL);
+                expect(graphics.getImageName()).toEqual('image');
+                expect(graphics.getCanvasImage().getSrc()).toContain(imageURL);
                 done();
             });
         });
@@ -177,28 +180,25 @@ describe('commandFactory', () => {
     describe('flipImageCommand', () => {
         it('flipX', () => {
             const originFlipX = mockImage.flipX;
-            const command = commandFactory.create(commands.FLIP_IMAGE, 'flipX');
 
-            invoker.invoke(command);
+            invoker.execute(commands.FLIP_IMAGE, graphics, 'flipX');
 
             expect(mockImage.flipX).toBe(!originFlipX);
         });
 
         it('flipY', () => {
             const originFlipY = mockImage.flipY;
-            const command = commandFactory.create(commands.FLIP_IMAGE, 'flipY');
 
-            invoker.invoke(command);
+            invoker.execute(commands.FLIP_IMAGE, graphics, 'flipY');
 
             expect(mockImage.flipY).toBe(!originFlipY);
         });
 
         it('resetFlip', () => {
-            const command = commandFactory.create(commands.FLIP_IMAGE, 'reset');
             mockImage.flipX = true;
             mockImage.flipY = true;
 
-            invoker.invoke(command);
+            invoker.execute(commands.FLIP_IMAGE, graphics, 'reset');
 
             expect(mockImage.flipX).toBe(false);
             expect(mockImage.flipY).toBe(false);
@@ -206,9 +206,10 @@ describe('commandFactory', () => {
 
         it('"undo()" should restore flipX', done => {
             const originFlipX = mockImage.flipX;
-            const command = commandFactory.create(commands.FLIP_IMAGE, 'flipX');
 
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
+            invoker.execute(commands.FLIP_IMAGE, graphics, 'flipX').then(() =>
+                invoker.undo()
+            ).then(() => {
                 expect(mockImage.flipX).toBe(originFlipX);
                 done();
             });
@@ -216,9 +217,10 @@ describe('commandFactory', () => {
 
         it('"undo()" should restore filpY', done => {
             const originFlipY = mockImage.flipY;
-            const command = commandFactory.create(commands.FLIP_IMAGE, 'flipY');
 
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
+            invoker.execute(commands.FLIP_IMAGE, graphics, 'flipY').then(() =>
+                invoker.undo()
+            ).then(() => {
                 expect(mockImage.flipY).toBe(originFlipY);
                 done();
             });
@@ -228,27 +230,25 @@ describe('commandFactory', () => {
     describe('rotationImageCommand', () => {
         it('"rotate()" should add angle', () => {
             const originAngle = mockImage.angle;
-            const command = commandFactory.create(commands.ROTATE_IMAGE, 'rotate', 10);
 
-            invoker.invoke(command);
+            invoker.execute(commands.ROTATE_IMAGE, graphics, 'rotate', 10);
 
             expect(mockImage.angle).toBe(originAngle + 10);
         });
 
         it('"setAngle()" should set angle', () => {
-            const command = commandFactory.create(commands.ROTATE_IMAGE, 'setAngle', 30);
-
             mockImage.angle = 100;
-            invoker.invoke(command);
+            invoker.execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 30);
 
             expect(mockImage.angle).toBe(30);
         });
 
         it('"undo()" should restore angle', done => {
             const originalAngle = mockImage.angle;
-            const command = commandFactory.create(commands.ROTATE_IMAGE, 'setAngle', 100);
 
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
+            invoker.execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 100).then(() =>
+                invoker.undo()
+            ).then(() => {
                 expect(mockImage.angle).toBe(originalAngle);
                 done();
             });
@@ -256,11 +256,10 @@ describe('commandFactory', () => {
     });
 
     describe('clearCommand', () => {
-        let command, objects, canvasContext;
+        let objects, canvasContext;
 
         beforeEach(() => {
             canvasContext = canvas;
-            command = commandFactory.create(commands.CLEAR_OBJECTS);
             objects = [
                 new fabric.Object(),
                 new fabric.Object(),
@@ -275,7 +274,7 @@ describe('commandFactory', () => {
             expect(canvas.contains(objects[1])).toBe(true);
             expect(canvas.contains(objects[2])).toBe(true);
 
-            invoker.invoke(command);
+            invoker.execute(commands.CLEAR_OBJECTS, graphics);
 
             expect(canvas.contains(objects[0])).toBe(false);
             expect(canvas.contains(objects[1])).toBe(false);
@@ -284,7 +283,9 @@ describe('commandFactory', () => {
 
         it('"undo()" restore all objects', done => {
             canvas.add.apply(canvasContext, objects);
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
+            invoker.execute(commands.CLEAR_OBJECTS, graphics).then(() =>
+                invoker.undo()
+            ).then(() => {
                 expect(canvas.contains(objects[0])).toBe(true);
                 expect(canvas.contains(objects[1])).toBe(true);
                 expect(canvas.contains(objects[2])).toBe(true);
@@ -294,7 +295,7 @@ describe('commandFactory', () => {
     });
 
     describe('removeCommand', () => {
-        let object, object2, group, command;
+        let object, object2, group;
 
         beforeEach(() => {
             object = new fabric.Object();
@@ -308,32 +309,36 @@ describe('commandFactory', () => {
         });
 
         it('should remove an object', () => {
-            command = commandFactory.create(commands.REMOVE_OBJECT, object);
-            invoker.invoke(command);
+            canvas.setActiveObject(object);
+            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics);
 
             expect(canvas.contains(object)).toBe(false);
         });
 
         it('should remove objects group', () => {
-            command = commandFactory.create(commands.REMOVE_OBJECT, group);
-            invoker.invoke(command);
+            canvas.setActiveObject(group);
+            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics);
 
             expect(canvas.contains(object)).toBe(false);
             expect(canvas.contains(object2)).toBe(false);
         });
 
         it('"undo()" should restore the removed object', done => {
-            command = commandFactory.create(commands.REMOVE_OBJECT, object);
+            canvas.setActiveObject(object);
 
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
+            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics).then(() =>
+                invoker.undo()
+            ).then(() => {
                 expect(canvas.contains(object)).toBe(true);
                 done();
             });
         });
 
         it('"undo()" should restore the removed objects (group)', done => {
-            command = commandFactory.create(commands.REMOVE_OBJECT, group);
-            invoker.invoke(command).then(() => invoker.undo()).then(() => {
+            canvas.setActiveObject(group);
+            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics).then(() =>
+                invoker.undo()
+            ).then(() => {
                 expect(canvas.contains(object)).toBe(true);
                 expect(canvas.contains(object2)).toBe(true);
                 done();

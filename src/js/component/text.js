@@ -7,6 +7,8 @@ import Component from '../interface/component';
 import consts from '../consts';
 import util from '../util';
 
+const events = consts.eventNames;
+
 const defaultStyles = {
     fill: '#000000',
     left: 0,
@@ -42,24 +44,17 @@ const DBCLICK_TIME = 500;
 /**
  * Text
  * @class Text
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
  */
 class Text extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = consts.componentNames.TEXT;
+    constructor(graphics) {
+        super(consts.componentNames.TEXT, graphics);
 
         /**
          * Default text style
-         * @type {object}
+         * @type {Object}
          */
         this._defaultStyles = defaultStyles;
 
@@ -71,21 +66,26 @@ class Text extends Component {
 
         /**
          * Selected text object
-         * @type {object}
+         * @type {Object}
          */
         this._selectedObj = {};
 
         /**
          * Editing text object
-         * @type {object}
+         * @type {Object}
          */
         this._editingObj = {};
 
         /**
          * Listeners for fabric event
-         * @type {object}
+         * @type {Object}
          */
-        this._listeners = {};
+        this._listeners = {
+            mousedown: this._onFabricMouseDown.bind(this),
+            select: this._onFabricSelect.bind(this),
+            selectClear: this._onFabricSelectClear.bind(this),
+            scaling: this._onFabricScaling.bind(this)
+        };
 
         /**
          * Textarea element for editing
@@ -120,12 +120,9 @@ class Text extends Component {
 
     /**
      * Start input text mode
-     * @param {object} listeners - Callback functions of fabric event
      */
-    start(listeners) {
+    start() {
         const canvas = this.getCanvas();
-
-        this._listeners = listeners;
 
         canvas.selection = false;
         canvas.defaultCursor = 'text';
@@ -133,7 +130,7 @@ class Text extends Component {
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
-            'object:scaling': this._onFabricScaling
+            'object:scaling': this._listeners.scaling
         });
 
         this._createTextarea();
@@ -154,19 +151,17 @@ class Text extends Component {
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
-            'object:scaling': this._onFabricScaling
+            'object:scaling': this._listeners.scaling
         });
 
         this._removeTextarea();
-
-        this._listeners = {};
     }
 
     /**
      * Add new text on canvas image
      * @param {string} text - Initial input text
-     * @param {object} options - Options for generating text
-     *     @param {object} [options.styles] Initial styles
+     * @param {Object} options - Options for generating text
+     *     @param {Object} [options.styles] Initial styles
      *         @param {string} [options.styles.fill] Color
      *         @param {string} [options.styles.fontFamily] Font type for text
      *         @param {number} [options.styles.fontSize] Size
@@ -191,9 +186,10 @@ class Text extends Component {
             const newText = new fabric.Text(text, styles);
             newText.set(consts.fObjectOptions.SELECTION_STYLE);
             newText.on({
-                mouseup: tui.util.bind(this._onFabricMouseUp, this)
+                mouseup: this._onFabricMouseUp.bind(this)
             });
 
+            tui.util.stamp(newText);
             canvas.add(newText);
 
             if (!canvas.getActiveObject()) {
@@ -207,7 +203,7 @@ class Text extends Component {
 
     /**
      * Change text of activate object on canvas image
-     * @param {object} activeObj - Current selected text object
+     * @param {Object} activeObj - Current selected text object
      * @param {string} text - Changed text
      * @returns {Promise}
      */
@@ -222,8 +218,8 @@ class Text extends Component {
 
     /**
      * Set style
-     * @param {object} activeObj - Current selected text object
-     * @param {object} styleObj - Initial styles
+     * @param {Object} activeObj - Current selected text object
+     * @param {Object} styleObj - Initial styles
      *     @param {string} [styleObj.fill] Color
      *     @param {string} [styleObj.fontFamily] Font type for text
      *     @param {number} [styleObj.fontSize] Size
@@ -250,7 +246,7 @@ class Text extends Component {
 
     /**
      * Get the text
-     * @param {object} activeObj - Current selected text object
+     * @param {Object} activeObj - Current selected text object
      * @returns {String} text
      */
     getText(activeObj) {
@@ -332,10 +328,10 @@ class Text extends Component {
         this._textarea = textarea;
 
         this._listeners = tui.util.extend(this._listeners, {
-            input: tui.util.bind(this._onInput, this),
-            keydown: tui.util.bind(this._onKeyDown, this),
-            blur: tui.util.bind(this._onBlur, this),
-            scroll: tui.util.bind(this._onScroll, this)
+            input: this._onInput.bind(this),
+            keydown: this._onKeyDown.bind(this),
+            blur: this._onBlur.bind(this),
+            scroll: this._onScroll.bind(this)
         });
 
         if (browser.msie && browser.version === 9) {
@@ -424,8 +420,6 @@ class Text extends Component {
         });
 
         this.getCanvas().add(this._editingObj);
-
-        this.getCanvas().on('object:removed', this._listeners.remove);
     }
 
     /**
@@ -452,6 +446,91 @@ class Text extends Component {
     }
 
     /**
+     * onSelectClear handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onFabricSelectClear(fEvent) {
+        const obj = this.getSelectedObj();
+
+        this.isPrevEditing = true;
+
+        this.setSelectedInfo(fEvent.target, false);
+
+        if (obj) {
+            // obj is empty object at initial time, will be set fabric object
+            if (!obj.text && obj.remove) {
+                obj.remove();
+            } else if (!tui.util.hasStamp(obj)) {
+                this.fire(events.OBJECT_ADDED, obj);
+            }
+        }
+    }
+
+    /**
+     * onSelect handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onFabricSelect(fEvent) {
+        const obj = this.getSelectedObj();
+
+        this.isPrevEditing = true;
+
+        if (obj.text === '') {
+            obj.remove();
+        } else if (!tui.util.hasStamp(obj) && this.isSelected()) {
+            this.fire(events.OBJECT_ADDED, obj);
+        }
+
+        this.setSelectedInfo(fEvent.target, true);
+    }
+
+    /**
+     * Fabric 'mousedown' event handler
+     * @param {fabric.Event} fEvent - Current mousedown event on selected object
+     * @private
+     */
+    _onFabricMouseDown(fEvent) {
+        const obj = fEvent.target;
+        if (obj && !obj.isType('text')) {
+            return;
+        }
+
+        if (this.isPrevEditing) {
+            this.isPrevEditing = false;
+
+            return;
+        }
+
+        this._fireAddText(fEvent);
+    }
+
+    /**
+     * Fire 'addText' event if object is not selected.
+     * @param {fabric.Event} fEvent - Current mousedown event on selected object
+     * @private
+     */
+    _fireAddText(fEvent) {
+        const obj = fEvent.target;
+        const e = fEvent.e || {};
+        const originPointer = this.getCanvas().getPointer(e);
+
+        if (!obj) {
+            this.fire(events.ADD_TEXT, {
+                originPosition: {
+                    x: originPointer.x,
+                    y: originPointer.y
+                },
+                clientPosition: {
+                    x: e.clientX || 0,
+                    y: e.clientY || 0
+                }
+            });
+        }
+    }
+
+    /**
      * Fabric mouseup event handler
      * @param {fabric.Event} fEvent - Current mousedown event on selected object
      * @private
@@ -461,7 +540,7 @@ class Text extends Component {
 
         if (this._isDoubleClick(newClickTime)) {
             this._changeToEditingMode(fEvent.target);
-            this._listeners.dbclick(); // fire dbclick event
+            this.fire(events.TEXT_EDITING); // fire editing text event
         }
 
         this._lastClickTime = newClickTime;
@@ -487,8 +566,6 @@ class Text extends Component {
         const textareaStyle = this._textarea.style;
 
         this.isPrevEditing = true;
-
-        this.getCanvas().off('object:removed', this._listeners.remove);
 
         obj.remove();
 

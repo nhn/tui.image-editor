@@ -2,48 +2,52 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Change icon color
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames, rejectMessages} = consts;
+const {componentNames, rejectMessages, commandNames} = consts;
 const {ICON} = componentNames;
 
 const command = {
-    name: 'changeIconColor',
+    name: commandNames.CHANGE_ICON_COLOR,
 
     /**
      * Change icon color
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} color - Color for icon
      * @returns {Promise}
      */
-    execute(compMap, color) {
+    execute(graphics, color) {
         return new Promise((resolve, reject) => {
-            const iconComp = compMap[ICON];
-            const canvas = iconComp.getCanvas();
-            const activeObj = canvas.getActiveObject();
+            const iconComp = graphics.getComponent(ICON);
+            const activeObj = graphics.getActiveObject();
 
             if (!activeObj) {
                 reject(rejectMessages.noActiveObject);
             }
 
-            this.storeObj = activeObj;
-            this.store = iconComp.getColor(activeObj);
+            this.undoData.object = activeObj;
+            this.undoData.color = iconComp.getColor(activeObj);
             iconComp.setColor(color, activeObj);
             resolve();
         });
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo(compMap) {
-        const iconComp = compMap[ICON];
+    undo(graphics) {
+        const iconComp = graphics.getComponent(ICON);
+        const icon = this.undoData.object;
+        const color = this.undoData.color;
 
-        iconComp.setColor(this.store, this.storeObj);
+        iconComp.setColor(color, icon);
 
         return Promise.resolve();
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

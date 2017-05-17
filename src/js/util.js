@@ -39,7 +39,7 @@ module.exports = {
 
     /**
      * Make CSSText
-     * @param {object} styleObj - Style info object
+     * @param {Object} styleObj - Style info object
      * @returns {string} Connected string of style
      */
     makeStyleText(styleObj) {
@@ -50,5 +50,25 @@ module.exports = {
         });
 
         return styleStr;
+    },
+
+    /**
+     * Get object's properties
+     * @param {Object} obj - object
+     * @param {Array} keys - keys
+     * @returns {Object} properties object
+     */
+    getProperties(obj, keys) {
+        const props = {};
+        const length = keys.length;
+        let i = 0;
+        let key;
+
+        for (i = 0; i < length; i += 1) {
+            key = keys[i];
+            props[key] = obj[key];
+        }
+
+        return props;
     }
 };

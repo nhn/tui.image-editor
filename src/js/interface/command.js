@@ -10,7 +10,8 @@ const errorTypes = errorMessage.types;
 /**
  * Command class
  * @class
- * @param {{execute: function, undo: function}} actions - Command actions
+ * @param {{name:function, execute: function, undo: function,
+ *          executeCallback: function, undoCallback: function}} actions - Command actions
  * @param {Array} args - passing arguments on execute, undo
  * @ignore
  */
@@ -42,15 +43,21 @@ class Command {
 
         /**
          * executeCallback
-         * @type {null}
+         * @type {function}
          */
-        this.executeCallback = null;
+        this.executeCallback = actions.executeCallback || null;
 
         /**
          * undoCallback
-         * @type {null}
+         * @type {function}
          */
-        this.undoCallback = null;
+        this.undoCallback = actions.undoCallback || null;
+
+        /**
+         * data for undo
+         * @type {Object}
+         */
+        this.undoData = {};
     }
 
     /**

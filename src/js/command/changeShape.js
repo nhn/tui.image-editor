@@ -2,19 +2,20 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview change a shape
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames, rejectMessages} = consts;
+const {componentNames, rejectMessages, commandNames} = consts;
 const {SHAPE} = componentNames;
 
 const command = {
-    name: 'changeShape',
+    name: commandNames.CHANGE_SHAPE,
 
     /**
      * Change a shape
-     * @param {object.<string, Component>} compMap - Components injection
-     * @param {object} options - Shape options
+     * @param {Graphics} graphics - Graphics instance
+     * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -27,32 +28,36 @@ const command = {
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
      * @returns {Promise}
      */
-    execute(compMap, options) {
-        const shapeComp = compMap[SHAPE];
-        const canvas = shapeComp.getCanvas();
-        const activeObj = canvas.getActiveObject();
+    execute(graphics, options) {
+        const shapeComp = graphics.getComponent(SHAPE);
+        const activeObj = graphics.getActiveObject();
+        const undoData = this.undoData;
 
         if (!activeObj) {
             return Promise.reject(rejectMessages.noActiveObject);
         }
 
-        this.storeObj = activeObj;
-        this.store = {};
+        undoData.object = activeObj;
+        undoData.options = {};
         tui.util.forEachOwnProperties(options, (value, key) => {
-            this.store[key] = activeObj[key];
+            undoData.options[key] = activeObj[key];
         });
 
         return shapeComp.change(activeObj, options);
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo(compMap) {
-        const shapeComp = compMap[SHAPE];
+    undo(graphics) {
+        const shapeComp = graphics.getComponent(SHAPE);
+        const shape = this.undoData.object;
+        const options = this.undoData.options;
 
-        return shapeComp.change(this.storeObj, this.store);
+        return shapeComp.change(shape, options);
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

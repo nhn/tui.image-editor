@@ -216,15 +216,15 @@ function activateTextMode() {
 }
 
 function setTextToolbar(obj) {
-    var fontSize = obj.getFontSize();
-    var fontColor = obj.getFill();
+    var fontSize = obj.fontSize;
+    var fontColor = obj.fill;
 
     $inputFontSizeRange.val(fontSize);
     textColorpicker.setColor(fontColor);
 }
 
 function setIconToolbar(obj) {
-    var iconColor = obj.getFill();
+    var iconColor = obj.fill;
 
     iconColorpicker.setColor(iconColor);
 }
@@ -234,14 +234,14 @@ function setShapeToolbar(obj) {
     var colorType = $selectColorType.val();
 
     if (colorType === 'stroke') {
-        strokeColor = obj.getStroke();
+        strokeColor = obj.stroke;
         isTransparent = (strokeColor === 'transparent');
 
         if (!isTransparent) {
             shapeColorpicker.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
-        fillColor = obj.getFill();
+        fillColor = obj.fill;
         isTransparent = (fillColor === 'transparent');
 
         if (!isTransparent) {
@@ -250,7 +250,7 @@ function setShapeToolbar(obj) {
     }
 
     $inputCheckTransparent.prop('checked', isTransparent);
-    $inputStrokeWidthRange.val(obj.getStrokeWidth());
+    $inputStrokeWidthRange.val(obj.strokeWidth);
 }
 
 function showSubMenu(type) {
@@ -283,47 +283,34 @@ function applyOrRemoveFilter(applying, type, options) {
 }
 
 // Attach image editor custom events
-imageEditor.once('loadImage', function(oImage) {
-    imageEditor.clearUndoStack();
-});
-
 imageEditor.on({
-    emptyUndoStack: function() {
-        $btnUndo.addClass('disabled');
+    undoStackChanged: function(length) {
+        if (length) {
+            $btnUndo.removeClass('disabled');
+        } else {
+            $btnUndo.addClass('disabled');
+        }
         resizeEditor();
     },
-    emptyRedoStack: function() {
-        $btnRedo.addClass('disabled');
+    redoStackChanged: function(length) {
+        if (length) {
+            $btnRedo.removeClass('disabled');
+        } else {
+            $btnRedo.addClass('disabled');
+        }
         resizeEditor();
     },
-    pushUndoStack: function() {
-        $btnUndo.removeClass('disabled');
-        resizeEditor();
-    },
-    pushRedoStack: function() {
-        $btnRedo.removeClass('disabled');
-        resizeEditor();
-    },
-    endCropping: function() {
-        $cropSubMenu.hide();
-        resizeEditor();
-    },
-    endFreeDrawing: function() {
-        $freeDrawingSubMenu.hide();
-    },
-    adjustObject: function(obj, type) {
-        if (obj.type === 'text' && type === 'scale') {
-            $inputFontSizeRange.val(obj.getFontSize());
+    objectScaled: function(obj) {
+        if (obj.type === 'text') {
+            $inputFontSizeRange.val(obj.fontSize);
         }
     },
-    activateText: function(obj) {
-        if (obj.type === 'new') { // add new text on cavas
-            imageEditor.addText('Double Click', {
-                position: obj.originPosition
-            });
-        }
+    addText: function(pos) {
+        imageEditor.addText('Double Click', {
+            position: pos.originPosition
+        });
     },
-    selectObject: function(obj) {
+    objectActivated: function(obj) {
         if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
             showSubMenu('shape');
             setShapeToolbar(obj);
@@ -338,13 +325,11 @@ imageEditor.on({
             activateTextMode();
         }
     },
-    applyFilter: function(type, action) {
-    },
-    mousedown: function(event) {
+    mousedown: function(event, originPointer) {
         if ($imageFilterSubMenu.is(':visible') && imageEditor.hasFilter('colorFilter')) {
             imageEditor.applyFilter('colorFilter', {
-                x: parseInt(event.originPointer.x, 10),
-                y: parseInt(event.originPointer.y, 10)
+                x: parseInt(originPointer.x, 10),
+                y: parseInt(originPointer.y, 10)
             });
         }
     }
@@ -411,6 +396,7 @@ $btnClose.on('click', function() {
 $btnApplyCrop.on('click', function() {
     imageEditor.crop(imageEditor.getCropzoneRect()).then(() => {
         imageEditor.stopDrawingMode();
+        resizeEditor();
     });
 });
 
@@ -419,15 +405,27 @@ $btnCancelCrop.on('click', function() {
 });
 
 $btnFlipX.on('click', function() {
-    imageEditor.flipX();
+    imageEditor.flipX().then(status => {
+        console.log('flipX: ', status.flipX);
+        console.log('flipY: ', status.flipY);
+        console.log('angle: ', status.angle);
+    });
 });
 
 $btnFlipY.on('click', function() {
-    imageEditor.flipY();
+    imageEditor.flipY().then(status => {
+        console.log('flipX: ', status.flipX);
+        console.log('flipY: ', status.flipY);
+        console.log('angle: ', status.angle);
+    });
 });
 
 $btnResetFlip.on('click', function() {
-    imageEditor.resetFlip();
+    imageEditor.resetFlip().then(status => {
+        console.log('flipX: ', status.flipX);
+        console.log('flipY: ', status.flipY);
+        console.log('angle: ', status.angle);
+    });
 });
 
 $btnRotateClockwise.on('click', function() {
@@ -465,7 +463,10 @@ $inputImage.on('change', function(event) {
     }
 
     file = event.target.files[0];
-    imageEditor.loadImageFromFile(file);
+    imageEditor.loadImageFromFile(file).then(result => {
+        console.log(result);
+        imageEditor.clearUndoStack();
+    });
 });
 
 $btnDownload.on('click', function() {
@@ -505,7 +506,7 @@ $selectLine.on('change', function() {
     if (mode === 'freeDrawing') {
         imageEditor.startDrawingMode('FREE_DRAWING', settings);
     } else {
-        imageEditor.startDrawingMode('LINE', settings);
+        imageEditor.startDrawingMode('LINE_DRAWING', settings);
     }
 });
 
@@ -656,10 +657,10 @@ function onClickIconSubMenu(event) {
     var element = event.target || event.srcElement;
     var iconType = $(element).attr('data-icon-type');
 
-    imageEditor.once('mousedown', function(e) {
+    imageEditor.once('mousedown', function(e, originPointer) {
         imageEditor.addIcon(iconType, {
-            left: e.originPointer.x,
-            top: e.originPointer.y
+            left: originPointer.x,
+            top: originPointer.y
         });
     });
 }
@@ -734,7 +735,9 @@ $btnLoadMaskImage.on('change', function() {
         imgUrl = URL.createObjectURL(file);
 
         imageEditor.loadImageFromURL(imageEditor.toDataURL(), 'FilterImage').then(() => {
-            imageEditor.addImageObject(imgUrl);
+            imageEditor.addImageObject(imgUrl).then(() => {
+                URL.revokeObjectURL(file);
+            });
         });
     }
 });
@@ -904,7 +907,9 @@ $inputRangeColorFilterValue.on('change', function() {
 // Etc..
 
 // Load sample image
-imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
+imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(() => {
+    imageEditor.clearUndoStack();
+});
 
 // IE9 Unselectable
 $('.menu').on('selectstart', function() {

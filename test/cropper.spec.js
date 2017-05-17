@@ -3,16 +3,15 @@
  * @fileoverview Test cases of "src/js/component/cropper.js"
  */
 import Cropper from '../src/js/component/cropper';
-import Main from '../src/js/component/main';
+import Graphics from '../src/js/graphics';
 
 describe('Cropper', () => {
-    let cropper, main, canvas;
+    let cropper, graphics, canvas;
 
     beforeEach(() => {
-        canvas = new fabric.Canvas($('<canvas>')[0]);
-        main = new Main();
-        main.canvas = canvas;
-        cropper = new Cropper(main);
+        graphics = new Graphics($('<canvas>')[0]);
+        canvas = graphics.getCanvas();
+        cropper = new Cropper(graphics);
     });
 
     describe('start()', () => {

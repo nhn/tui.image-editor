@@ -6,25 +6,18 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
-const {componentNames, rejectMessages} = consts;
+const {componentNames} = consts;
 
 /**
  * Image Rotation component
  * @class Rotation
  * @extends {Component}
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @ignore
  */
 class Rotation extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = componentNames.ROTATION;
+    constructor(graphics) {
+        super(componentNames.ROTATION, graphics);
     }
 
     /**
@@ -49,9 +42,7 @@ class Rotation extends Component {
         const oldAngle = this.getCurrentAngle() % 360; // The angle is lower than 2*PI(===360 degrees)
 
         angle %= 360;
-        if (angle === oldAngle) {
-            return Promise.reject(rejectMessages.rotation);
-        }
+
         const canvasImage = this.getCanvasImage();
         const oldImageCenter = canvasImage.getCenterPoint();
         canvasImage.setAngle(angle).setCoords();

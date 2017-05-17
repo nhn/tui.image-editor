@@ -11,6 +11,7 @@ import Sharpen from '../extension/sharpen';
 import Emboss from '../extension/emboss';
 import ColorFilter from '../extension/colorFilter';
 
+const {rejectMessages} = consts;
 const {isUndefined, extend, forEach, defineNamespace} = tui.util;
 defineNamespace('fabric.Image.filters.Mask', Mask, true);
 defineNamespace('fabric.Image.filters.Blur', Blur, true);
@@ -21,26 +22,19 @@ defineNamespace('fabric.Image.filters.ColorFilter', ColorFilter, true);
 /**
  * Filter
  * @class Filter
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
  */
 class Filter extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = consts.componentNames.FILTER;
+    constructor(graphics) {
+        super(consts.componentNames.FILTER, graphics);
     }
 
     /**
      * Add filter to source image (a specific filter is added on fabric.js)
      * @param {string} type - Filter type
-     * @param {object} [options] - Options of filter
+     * @param {Object} [options] - Options of filter
      * @returns {Promise}
      */
     add(type, options) {
@@ -53,7 +47,7 @@ class Filter extends Component {
             }
 
             if (!filter) {
-                reject();
+                reject(rejectMessages.invalidParameters);
             }
 
             this._changeFilterValues(filter, options);
@@ -79,7 +73,7 @@ class Filter extends Component {
             const canvas = this.getCanvas();
 
             if (!sourceImg.filters.length) {
-                reject();
+                reject(rejectMessages.unsupportedOperation);
             }
 
             this._removeFilter(sourceImg, type);
@@ -120,8 +114,8 @@ class Filter extends Component {
 
     /**
      * Change filter values
-     * @param {object} filter object of filter
-     * @param {object} options object
+     * @param {Object} filter object of filter
+     * @param {Object} options object
      * @private
      */
     _changeFilterValues(filter, options) {
@@ -160,8 +154,8 @@ class Filter extends Component {
      * Create filter instance
      * @param {fabric.Image} sourceImg - Source image to apply filter
      * @param {string} type - Filter type
-     * @param {object} [options] - Options of filter
-     * @returns {object} Fabric object of filter
+     * @param {Object} [options] - Options of filter
+     * @returns {Object} Fabric object of filter
      * @private
      */
     _createFilter(sourceImg, type, options) {
@@ -182,7 +176,7 @@ class Filter extends Component {
      * Get applied filter instance
      * @param {fabric.Image} sourceImg - Source image to apply filter
      * @param {string} type - Filter type
-     * @returns {object} Fabric object of filter
+     * @returns {Object} Fabric object of filter
      * @private
      */
     _getFilter(sourceImg, type) {

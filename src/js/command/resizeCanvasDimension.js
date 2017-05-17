@@ -2,47 +2,45 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Resize a canvas
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames} = consts;
-const {MAIN} = componentNames;
+const {commandNames} = consts;
 
 const command = {
-    name: 'resizeCanvasDimension',
+    name: commandNames.RESIZE_CANVAS_DIMENSION,
 
     /**
      * resize the canvas with given dimension
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {{width: number, height: number}} dimension - Max width & height
      * @returns {Promise}
      */
-    execute(compMap, dimension) {
+    execute(graphics, dimension) {
         return new Promise(resolve => {
-            const mainComp = compMap[MAIN];
-
-            this.store = {
-                width: mainComp.cssMaxWidth,
-                height: mainComp.cssMaxHeight
+            this.undoData.size = {
+                width: graphics.cssMaxWidth,
+                height: graphics.cssMaxHeight
             };
 
-            mainComp.setCssMaxDimension(dimension);
-            mainComp.adjustCanvasDimension();
+            graphics.setCssMaxDimension(dimension);
+            graphics.adjustCanvasDimension();
             resolve();
         });
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo(compMap) {
-        const mainComp = compMap[MAIN];
-
-        mainComp.setCssMaxDimension(this.store);
-        mainComp.adjustCanvasDimension();
+    undo(graphics) {
+        graphics.setCssMaxDimension(this.undoData.size);
+        graphics.adjustCanvasDimension();
 
         return Promise.resolve();
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

@@ -2,20 +2,21 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add a shape
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, commandNames} = consts;
 const {SHAPE} = componentNames;
 
 const command = {
-    name: 'addShape',
+    name: commandNames.ADD_SHAPE,
 
     /**
      * Add a shape
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
-     * @param {object} options - Shape options
+     * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -26,24 +27,30 @@ const command = {
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     *      @param {boolean} [options.needsStamp] - Use true if through Command
      * @returns {Promise}
      */
-    execute(compMap, type, options) {
-        const shapeComp = compMap[SHAPE];
-        const self = this;
+    execute(graphics, type, options) {
+        const shapeComp = graphics.getComponent(SHAPE);
+        const undoData = this.undoData;
+
+        options.needsStamp = true;
 
         return shapeComp.add(type, options).then(shape => {
-            self.store = shape;
+            undoData.object = shape;
         });
     },
     /**
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo() {
-        this.store.remove();
+    undo(graphics) {
+        graphics.remove(this.undoData.object);
 
         return Promise.resolve();
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

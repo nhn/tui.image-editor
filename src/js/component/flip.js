@@ -11,20 +11,13 @@ const {componentNames, rejectMessages} = consts;
 /**
  * Flip
  * @class Flip
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
  */
 class Flip extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = componentNames.FLIP;
+    constructor(graphics) {
+        super(componentNames.FLIP, graphics);
     }
 
     /**
@@ -60,7 +53,8 @@ class Flip extends Component {
         this._flipObjects(isChangingFlipX, isChangingFlipY);
 
         return Promise.resolve({
-            setting,
+            flipX: setting.flipX,
+            flipY: setting.flipY,
             angle: this.getCanvasImage().angle
         });
     }

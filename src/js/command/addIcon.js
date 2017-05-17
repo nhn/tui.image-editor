@@ -2,41 +2,45 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add an icon
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, commandNames} = consts;
 const {ICON} = componentNames;
 
 const command = {
-    name: 'addIcon',
+    name: commandNames.ADD_ICON,
 
     /**
      * Add an icon
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
-     * @param {object} options - Icon options
+     * @param {Object} options - Icon options
      *      @param {string} [options.fill] - Icon foreground color
      *      @param {string} [options.left] - Icon x position
      *      @param {string} [options.top] - Icon y position
      * @returns {Promise}
      */
-    execute(compMap, type, options) {
-        const iconComp = compMap[ICON];
-        const self = this;
+    execute(graphics, type, options) {
+        const iconComp = graphics.getComponent(ICON);
+        const undoData = this.undoData;
 
         return iconComp.add(type, options).then(icon => {
-            self.store = icon;
+            undoData.object = icon;
         });
     },
     /**
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo() {
-        this.store.remove();
+    undo(graphics) {
+        graphics.remove(this.undoData.object);
 
         return Promise.resolve();
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

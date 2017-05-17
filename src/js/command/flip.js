@@ -2,36 +2,39 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Flip an image
  */
+import commandFactory from '../factory/command';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, commandNames} = consts;
 const {FLIP} = componentNames;
 
 const command = {
-    name: 'flip',
+    name: commandNames.FLIP_IMAGE,
 
     /**
      * flip an image
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - 'flipX' or 'flipY' or 'reset'
      * @returns {Promise}
      */
-    execute(compMap, type) {
-        const flipComp = compMap[FLIP];
+    execute(graphics, type) {
+        const flipComp = graphics.getComponent(FLIP);
 
-        this.store = flipComp.getCurrentSetting();
+        this.undoData.setting = flipComp.getCurrentSetting();
 
         return flipComp[type]();
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo(compMap) {
-        const flipComp = compMap[FLIP];
+    undo(graphics) {
+        const flipComp = graphics.getComponent(FLIP);
 
-        return flipComp.set(this.store);
+        return flipComp.set(this.undoData.setting);
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

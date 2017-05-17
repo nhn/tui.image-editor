@@ -2,50 +2,38 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Clear all objects
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames} = consts;
-const {MAIN} = componentNames;
+const {commandNames} = consts;
 
 const command = {
-    name: 'clearObjects',
+    name: commandNames.CLEAR_OBJECTS,
 
     /**
-     * Clear all objects on canvas
-     * @param {object.<string, Component>} compMap - Components injection
+     * Clear all objects without background (main) image
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    execute(compMap) {
-        return new Promise((resolve, reject) => {
-            const canvas = compMap[MAIN].getCanvas();
-            const objs = canvas.getObjects();
-
-            // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
-            this.store = objs.slice();
-            if (this.store.length) {
-                tui.util.forEach(objs.slice(), obj => {
-                    obj.remove();
-                });
-                resolve();
-            } else {
-                reject();
-            }
+    execute(graphics) {
+        return new Promise(resolve => {
+            this.undoData.objects = graphics.removeAll();
+            resolve();
         });
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      * @ignore
      */
-    undo(compMap) {
-        const canvas = compMap[MAIN].getCanvas();
-        const canvasContext = canvas;
-
-        canvas.add.apply(canvasContext, this.store);
+    undo(graphics) {
+        graphics.add(this.undoData.objects);
 
         return Promise.resolve();
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

@@ -2,21 +2,22 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add a text object
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, commandNames} = consts;
 const {TEXT} = componentNames;
 
 const command = {
-    name: 'addText',
+    name: commandNames.ADD_TEXT,
 
     /**
      * Add a text object
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} text - Initial input text
-     * @param {object} [options] Options for generating text
-     *     @param {object} [options.styles] Initial styles
+     * @param {Object} [options] Options for text styles
+     *     @param {Object} [options.styles] Initial styles
      *         @param {string} [options.styles.fill] Color
      *         @param {string} [options.styles.fontFamily] Font type for text
      *         @param {number} [options.styles.fontSize] Size
@@ -27,22 +28,25 @@ const command = {
      *     @param {{x: number, y: number}} [options.position] - Initial position
      * @returns {Promise}
      */
-    execute(compMap, text, options) {
-        const textComp = compMap[TEXT];
-        const self = this;
+    execute(graphics, text, options) {
+        const textComp = graphics.getComponent(TEXT);
+        const undoData = this.undoData;
 
         return textComp.add(text, options).then(textObj => {
-            self.store = textObj;
+            undoData.object = textObj;
         });
     },
     /**
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo() {
-        this.store.remove();
+    undo(graphics) {
+        graphics.remove(this.undoData.object);
 
         return Promise.resolve();
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

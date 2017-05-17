@@ -2,44 +2,49 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Change a text
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames, rejectMessages} = consts;
+const {componentNames, rejectMessages, commandNames} = consts;
 const {TEXT} = componentNames;
 
 const command = {
-    name: 'changeText',
+    name: commandNames.CHANGE_TEXT,
 
     /**
      * Change a text
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} text - Changing text
      * @returns {Promise}
      */
-    execute(compMap, text) {
-        const textComp = compMap[TEXT];
-        const canvas = textComp.getCanvas();
-        const activeObj = canvas.getActiveObject();
+    execute(graphics, text) {
+        const textComp = graphics.getComponent(TEXT);
+        const activeObj = graphics.getActiveObject();
+        const undoData = this.undoData;
 
         if (!activeObj) {
             return Promise.reject(rejectMessages.noActiveObject);
         }
 
-        this.storeObj = activeObj;
-        this.store = textComp.getText(activeObj);
+        undoData.object = activeObj;
+        undoData.text = textComp.getText(activeObj);
 
         return textComp.change(activeObj, text);
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo(compMap) {
-        const textComp = compMap[TEXT];
+    undo(graphics) {
+        const textComp = graphics.getComponent(TEXT);
+        const textObj = this.undoData.object;
+        const text = this.undoData.text;
 
-        return textComp.change(this.storeObj, this.store);
+        return textComp.change(textObj, text);
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

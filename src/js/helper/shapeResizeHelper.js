@@ -40,7 +40,7 @@ function setStartPoint(shape) {
  * @param {{x: number, y: number}} origin - Origin value
  * @param {{x: number, y: number}} pointer - Pointer value
  * @param {number} angle - Rotating angle
- * @returns {object} Postions of origin
+ * @returns {Object} Postions of origin
  * @ignore
  */
 function getPositionsOfRotatedOrigin(origin, pointer, angle) {

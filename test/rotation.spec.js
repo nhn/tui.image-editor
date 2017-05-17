@@ -2,21 +2,21 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/rotation.js"
  */
-import Main from '../src/js/component/main';
+import Graphics from '../src/js/graphics';
 import Rotation from '../src/js/component/rotation';
 
 describe('Rotation', () => {
-    let main, rotationModule, mockImage;
+    let graphics, rotationModule, mockImage, canvas;
 
     beforeAll(() => {
-        main = new Main();
-        rotationModule = new Rotation(main);
-        main.canvas = new fabric.Canvas($('<canvas>')[0]);
+        graphics = new Graphics($('<canvas>')[0]);
+        canvas = graphics.getCanvas();
+        rotationModule = new Rotation(graphics);
     });
 
     beforeEach(() => {
         mockImage = new fabric.Image();
-        main.setCanvasImage('mockImage', mockImage);
+        graphics.setCanvasImage('mockImage', mockImage);
     });
 
     it('"getCurrentAngle()" should return current angle value', () => {
@@ -29,16 +29,6 @@ describe('Rotation', () => {
         rotationModule.setAngle(40);
 
         expect(rotationModule.getCurrentAngle()).toEqual(40);
-    });
-
-    it('"setAngle()" should not set angle value if no change', done => {
-        const current = rotationModule.getCurrentAngle();
-        const spy = jasmine.createSpy();
-
-        rotationModule.setAngle(current).catch(spy).then(() => {
-            expect(spy).toHaveBeenCalled();
-            done();
-        });
     });
 
     it('"rotate()" should add angle value', () => {
@@ -66,7 +56,7 @@ describe('Rotation', () => {
         });
 
         rotationModule.adjustCanvasDimension();
-        expect(main.canvas.getWidth()).toEqual(100);
-        expect(main.canvas.getHeight()).toEqual(110);
+        expect(canvas.getWidth()).toEqual(100);
+        expect(canvas.getHeight()).toEqual(110);
     });
 });

@@ -2,21 +2,20 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/flip.js"
  */
-import Main from '../src/js/component/main';
+import Graphics from '../src/js/graphics';
 import Flip from '../src/js/component/flip';
 
 describe('Flip', () => {
-    let main, flipModule, mockImage;
+    let graphics, flipModule, mockImage;
 
     beforeAll(() => {
-        main = new Main();
-        flipModule = new Flip(main);
-        main.canvas = new fabric.Canvas($('<canvas>')[0]);
+        graphics = new Graphics($('<canvas>')[0]);
+        flipModule = new Flip(graphics);
     });
 
     beforeEach(() => {
         mockImage = new fabric.Image();
-        main.setCanvasImage('mockImage', mockImage);
+        graphics.setCanvasImage('mockImage', mockImage);
     });
 
     it('"getCurrentSetting()" should return current flip-setting', () => {
@@ -100,10 +99,8 @@ describe('Flip', () => {
         it('flipX() is called.', done => {
             flipModule.flipX().then(obj => {
                 expect(obj).toEqual({
-                    setting: {
-                        flipX: true,
-                        flipY: false
-                    },
+                    flipX: true,
+                    flipY: false,
                     angle: -10
                 });
                 done();
@@ -113,10 +110,8 @@ describe('Flip', () => {
         it('flipY() is called.', done => {
             flipModule.flipY().then(obj => {
                 expect(obj).toEqual({
-                    setting: {
-                        flipX: false,
-                        flipY: true
-                    },
+                    flipX: false,
+                    flipY: true,
                     angle: -10
                 });
                 done();
@@ -126,10 +121,8 @@ describe('Flip', () => {
         it('flipY() is called.', done => {
             flipModule.flipY().then(obj => {
                 expect(obj).toEqual({
-                    setting: {
-                        flipX: false,
-                        flipY: true
-                    },
+                    flipX: false,
+                    flipY: true,
                     angle: -10
                 });
                 done();
@@ -142,10 +135,8 @@ describe('Flip', () => {
                 flipY: false
             }).then(obj => {
                 expect(obj).toEqual({
-                    setting: {
-                        flipX: true,
-                        flipY: false
-                    },
+                    flipX: true,
+                    flipY: false,
                     angle: -10
                 });
                 done();

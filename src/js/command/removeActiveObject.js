@@ -1,27 +1,30 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview Add an image object
+ * @fileoverview Remove an object
  */
 import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {commandNames} = consts;
+const {commandNames, rejectMessages} = consts;
 
 const command = {
-    name: commandNames.ADD_IMAGE_OBJECT,
+    name: commandNames.REMOVE_ACTIVE_OBJECT,
 
     /**
-     * Add an image object
+     * Remove an object
      * @param {Graphics} graphics - Graphics instance
-     * @param {string} imgUrl - Image url to make object
      * @returns {Promise}
      */
-    execute(graphics, imgUrl) {
-        const undoData = this.undoData;
-
-        return graphics.addImageObject(imgUrl).then(imgObj => {
-            undoData.object = imgObj;
+    execute(graphics) {
+        return new Promise((resolve, reject) => {
+            const undoData = this.undoData;
+            undoData.objects = graphics.removeActiveObject();
+            if (undoData.objects.length) {
+                resolve();
+            } else {
+                reject(rejectMessages.noActiveObject);
+            }
         });
     },
     /**
@@ -29,7 +32,7 @@ const command = {
      * @returns {Promise}
      */
     undo(graphics) {
-        graphics.remove(this.undoData.object);
+        graphics.add(this.undoData.objects);
 
         return Promise.resolve();
     }

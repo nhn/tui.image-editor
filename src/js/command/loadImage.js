@@ -1,51 +1,60 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview Load a image
+ * @fileoverview Load a background (main) image
  */
+import commandFactory from '../factory/command';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, commandNames} = consts;
 const {IMAGE_LOADER} = componentNames;
 
 const command = {
-    name: 'loadImage',
+    name: commandNames.LOAD_IMAGE,
 
     /**
-     * Add an image object on canvas
-     * @param {object.<string, Component>} compMap - Components injection
+     * Load a background (main) image
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} imageName - Image name
-     * @param {string|fabric.Image} img - Image(or url)
+     * @param {string} imgUrl - Image Url
      * @returns {Promise}
      */
-    execute(compMap, imageName, img) {
-        const loader = compMap[IMAGE_LOADER];
-        const canvas = loader.getCanvas();
+    execute(graphics, imageName, imgUrl) {
+        const loader = graphics.getComponent(IMAGE_LOADER);
 
-        this.store = {
+        this.undoData = {
             prevName: loader.getImageName(),
             prevImage: loader.getCanvasImage(),
-            // Slice: "canvas.clear()" clears the objects array, So shallow copy the array
-            objects: canvas.getObjects().slice()
+            objects: graphics.removeAll(true)
         };
-        canvas.clear();
 
-        return loader.load(imageName, img);
+        const oldRect = graphics.getCanvasElement().getBoundingClientRect();
+
+        return loader.load(imageName, imgUrl).then(() => {
+            const newRect = graphics.getCanvasElement().getBoundingClientRect();
+
+            return {
+                oldWidth: oldRect.width,
+                oldHeight: oldRect.height,
+                newWidth: newRect.width,
+                newHeight: newRect.height
+            };
+        });
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo(compMap) {
-        const loader = compMap[IMAGE_LOADER];
-        const canvas = loader.getCanvas();
-        const store = this.store;
-        const canvasContext = canvas;
+    undo(graphics) {
+        const loader = graphics.getComponent(IMAGE_LOADER);
+        const undoData = this.undoData;
 
-        canvas.clear();
-        canvas.add.apply(canvasContext, store.objects);
+        graphics.removeAll(true);
+        graphics.add(undoData.objects);
 
-        return loader.load(store.prevName, store.prevImage);
+        return loader.load(undoData.prevName, undoData.prevImage);
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

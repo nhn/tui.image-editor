@@ -9,26 +9,19 @@ import consts from '../consts';
 const {componentNames, rejectMessages} = consts;
 const imageOption = {
     padding: 0,
-    crossOrigin: 'anonymous'
+    crossOrigin: 'Anonymous'
 };
 
 /**
  * ImageLoader components
  * @extends {Component}
  * @class ImageLoader
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @ignore
  */
 class ImageLoader extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = componentNames.IMAGE_LOADER;
+    constructor(graphics) {
+        super(componentNames.IMAGE_LOADER, graphics);
     }
 
     /**
@@ -82,7 +75,7 @@ class ImageLoader extends Component {
                 if (oImage.getElement()) {
                     resolve(oImage);
                 } else {
-                    reject();
+                    reject(rejectMessages.loadingImageFailed);
                 }
             }, imageOption);
         });

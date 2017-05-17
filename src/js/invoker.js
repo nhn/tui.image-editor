@@ -3,17 +3,7 @@
  * @fileoverview Invoker - invoke commands
  */
 import Promise from 'core-js/library/es6/promise';
-import ImageLoader from './component/imageLoader';
-import Cropper from './component/cropper';
-import MainComponent from './component/main';
-import Flip from './component/flip';
-import Rotation from './component/rotation';
-import FreeDrawing from './component/freeDrawing';
-import Line from './component/line';
-import Text from './component/text';
-import Icon from './component/icon';
-import Filter from './component/filter';
-import Shape from './component/shape';
+import commandFactory from './factory/command';
 import consts from './consts';
 
 const {eventNames, rejectMessages} = consts;
@@ -25,12 +15,6 @@ const {eventNames, rejectMessages} = consts;
  */
 class Invoker {
     constructor() {
-        /**
-         * Custom Events
-         * @type {tui.util.CustomEvents}
-         */
-        this._customEvents = new tui.util.CustomEvents();
-
         /**
          * Undo stack
          * @type {Array.<Command>}
@@ -46,49 +30,11 @@ class Invoker {
         this._redoStack = [];
 
         /**
-         * Component map
-         * @type {Object.<string, Component>}
-         * @private
-         */
-        this._componentMap = {};
-
-        /**
          * Lock-flag for executing command
          * @type {boolean}
          * @private
          */
         this._isLocked = false;
-
-        this._createComponents();
-    }
-
-    /**
-     * Create components
-     * @private
-     */
-    _createComponents() {
-        const main = new MainComponent();
-
-        this._register(main);
-        this._register(new ImageLoader(main));
-        this._register(new Cropper(main));
-        this._register(new Flip(main));
-        this._register(new Rotation(main));
-        this._register(new FreeDrawing(main));
-        this._register(new Line(main));
-        this._register(new Text(main));
-        this._register(new Icon(main));
-        this._register(new Filter(main));
-        this._register(new Shape(main));
-    }
-
-    /**
-     * Register component
-     * @param {Component} component - Component handling the canvas
-     * @private
-     */
-    _register(component) {
-        this._componentMap[component.getName()] = component;
     }
 
     /**
@@ -100,9 +46,9 @@ class Invoker {
     _invokeExecution(command) {
         this.lock();
 
-        let args = [this._componentMap];
+        let args = [];
         if (command.args) {
-            args = args.concat(Array.prototype.slice.call(command.args));
+            args = command.args;
         }
 
         return command.execute(...args)
@@ -131,9 +77,9 @@ class Invoker {
     _invokeUndo(command) {
         this.lock();
 
-        let args = [this._componentMap];
+        let args = [];
         if (command.args) {
-            args = args.concat(Array.prototype.slice.call(command.args));
+            args = command.args;
         }
 
         return command.undo(...args)
@@ -154,35 +100,19 @@ class Invoker {
     }
 
     /**
-     * Fire custom events
-     * @see {@link tui.util.CustomEvents.prototype.fire}
-     * @param {...*} arguments - Arguments to fire a event
+     * fire REDO_STACK_CHANGED event
      * @private
      */
-    _fire(...args) {
-        const event = this._customEvents;
-        const eventContext = event;
-        event.fire.apply(eventContext, args);
+    _fireRedoStackChanged() {
+        this.fire(eventNames.REDO_STACK_CHANGED, this._redoStack.length);
     }
 
     /**
-     * Attach custom events
-     * @see {@link tui.util.CustomEvents.prototype.on}
-     * @param {...*} arguments - Arguments to attach events
+     * fire UNDO_STACK_CHANGED event
+     * @private
      */
-    on(...args) {
-        const event = this._customEvents;
-        const eventContext = event;
-        event.on.apply(eventContext, args);
-    }
-
-    /**
-     * Get component
-     * @param {string} name - Component name
-     * @returns {Component}
-     */
-    getComponent(name) {
-        return this._componentMap[name];
+    _fireUndoStackChanged() {
+        this.fire(eventNames.UNDO_STACK_CHANGED, this._undoStack.length);
     }
 
     /**
@@ -203,12 +133,18 @@ class Invoker {
      * Invoke command
      * Store the command to the undoStack
      * Clear the redoStack
-     * @param {Command} command - Command
+     * @param {String} commandName - Command name
+     * @param {...*} args - Arguments for creating command
      * @returns {Promise}
      */
-    invoke(command) {
+    execute(...args) {
         if (this._isLocked) {
             return Promise.reject(rejectMessages.isLock);
+        }
+
+        let command = args[0];
+        if (tui.util.isString(args[0])) {
+            command = commandFactory.create(...args);
         }
 
         return this._invokeExecution(command)
@@ -234,7 +170,7 @@ class Invoker {
         }
         if (command) {
             if (this.isEmptyUndoStack()) {
-                this._fire(eventNames.EMPTY_UNDO_STACK);
+                this._fireUndoStackChanged();
             }
             promise = this._invokeUndo(command);
         } else {
@@ -263,7 +199,7 @@ class Invoker {
         }
         if (command) {
             if (this.isEmptyRedoStack()) {
-                this._fire(eventNames.EMPTY_REDO_STACK);
+                this._fireRedoStackChanged();
             }
             promise = this._invokeExecution(command);
         } else {
@@ -285,7 +221,7 @@ class Invoker {
     pushUndoStack(command, isSilent) {
         this._undoStack.push(command);
         if (!isSilent) {
-            this._fire(eventNames.PUSH_UNDO_STACK);
+            this._fireUndoStackChanged();
         }
     }
 
@@ -297,7 +233,7 @@ class Invoker {
     pushRedoStack(command, isSilent) {
         this._redoStack.push(command);
         if (!isSilent) {
-            this._fire(eventNames.PUSH_REDO_STACK);
+            this._fireRedoStackChanged();
         }
     }
 
@@ -323,7 +259,7 @@ class Invoker {
     clearUndoStack() {
         if (!this.isEmptyUndoStack()) {
             this._undoStack = [];
-            this._fire(eventNames.EMPTY_UNDO_STACK);
+            this._fireUndoStackChanged();
         }
     }
 
@@ -333,9 +269,10 @@ class Invoker {
     clearRedoStack() {
         if (!this.isEmptyRedoStack()) {
             this._redoStack = [];
-            this._fire(eventNames.EMPTY_REDO_STACK);
+            this._fireRedoStackChanged();
         }
     }
 }
 
+tui.util.CustomEvents.mixin(Invoker);
 module.exports = Invoker;

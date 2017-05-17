@@ -2,37 +2,41 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Rotate an image
  */
+import commandFactory from '../factory/command';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, commandNames} = consts;
 const {ROTATION} = componentNames;
 
 const command = {
-    name: 'rotate',
+    name: commandNames.ROTATE_IMAGE,
 
     /**
      * Rotate an image
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {string} type - 'rotate' or 'setAngle'
      * @param {number} angle - angle value (degree)
      * @returns {Promise}
      */
-    execute(compMap, type, angle) {
-        const rotationComp = compMap[ROTATION];
+    execute(graphics, type, angle) {
+        const rotationComp = graphics.getComponent(ROTATION);
 
-        this.store = rotationComp.getCurrentAngle();
+        this.undoData.angle = rotationComp.getCurrentAngle();
 
         return rotationComp[type](angle);
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
      */
-    undo(compMap) {
-        const rotationComp = compMap[ROTATION];
+    undo(graphics) {
+        const rotationComp = graphics.getComponent(ROTATION);
+        const angle = this.undoData.angle;
 
-        return rotationComp.setAngle(this.store);
+        return rotationComp.setAngle(angle);
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

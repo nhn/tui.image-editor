@@ -153,15 +153,15 @@ function activateTextMode() {
 }
 
 function setTextToolbar(obj) {
-    var fontSize = obj.getFontSize();
-    var fontColor = obj.getFill();
+    var fontSize = obj.styles.fontSize;
+    var fontColor = obj.styles.fill;
 
     $inputTextSizeRange.val(fontSize);
     textColorpicker.setColor(fontColor);
 }
 
 function setIconToolbar(obj) {
-    var iconColor = obj.getFill();
+    var iconColor = obj.styles.fill;
 
     iconColorpicker.setColor(iconColor);
 }
@@ -171,14 +171,14 @@ function setShapeToolbar(obj) {
     var colorType = $('[name="select-color-type"]:checked').val();
 
     if (colorType === 'stroke') {
-        strokeColor = obj.getStroke();
+        strokeColor = obj.styles.stroke;
         isTransparent = (strokeColor === 'transparent');
 
         if (!isTransparent) {
             shapeColorpicker.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
-        fillColor = obj.getFill();
+        fillColor = obj.styles.fill;
         isTransparent = (fillColor === 'transparent');
 
         if (!isTransparent) {
@@ -187,7 +187,7 @@ function setShapeToolbar(obj) {
     }
 
     $inputCheckTransparent.prop('checked', isTransparent);
-    $inputStrokeWidthRange.val(obj.getStrokeWidth());
+    $inputStrokeWidthRange.val(obj.styles.strokeWith);
 }
 
 function showSubMenu(type) {
@@ -215,28 +215,26 @@ function showSubMenu(type) {
 
 // Bind custom event of image editor
 imageEditor.on({
-    emptyUndoStack: function() {
-        $btnUndo.addClass('disabled');
-    },
-    emptyRedoStack: function() {
-        $btnRedo.addClass('disabled');
-    },
-    pushUndoStack: function() {
-        $btnUndo.removeClass('disabled');
-    },
-    pushRedoStack: function() {
-        $btnRedo.removeClass('disabled');
-    },
-    endCropping: function() {
-        $subMenus.removeClass('show');
-        $hiddenMenus.removeClass('show');
-    },
-    adjustObject: function(obj, type) {
-        if (obj.type === 'text' && type === 'scale') {
-            $inputTextSizeRange.val(obj.getFontSize());
+    undoStackChanged: function(length) {
+        if (length) {
+            $btnUndo.removeClass('disabled');
+        } else {
+            $btnUndo.addClass('disabled');
         }
     },
-    selectObject: function(obj) {
+    redoStackChanged: function(length) {
+        if (length) {
+            $btnRedo.removeClass('disabled');
+        } else {
+            $btnRedo.addClass('disabled');
+        }
+    },
+    objectScaled: function(obj) {
+        if (obj.type === 'text') {
+            $inputTextSizeRange.val(obj.styles.fontSize);
+        }
+    },
+    objectActivated: function(obj) {
         if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
             showSubMenu('shape');
             setShapeToolbar(obj);
@@ -251,11 +249,6 @@ imageEditor.on({
             activateTextMode();
         }
     }
-});
-
-// Attach image editor custom events
-imageEditor.once('loadImage', function() {
-    imageEditor.clearUndoStack();
 });
 
 // Image editor controls action
@@ -296,7 +289,9 @@ $inputImage.on('change', function(event) {
             resolution = this.width * this.height;
 
             if (resolution <= MAX_RESOLUTION) {
-                imageEditor.loadImageFromFile(file);
+                imageEditor.loadImageFromFile(file).then(() => {
+                    imageEditor.clearUndoStack();
+                });
             } else {
                 alert('Loaded image\'s resolution is too large!\nRecommended resolution is 3264 * 2448!');
             }
@@ -355,9 +350,10 @@ $btnCrop.on('click', function() {
 });
 
 $btnApplyCrop.on('click', function() {
-    imageEditor.crop(imageEditor.getCropzoneRect());
-    imageEditor.once('endCropping', function() {
+    imageEditor.crop(imageEditor.getCropzoneRect()).then(() => {
         imageEditor.stopDrawingMode();
+        $subMenus.removeClass('show');
+        $hiddenMenus.removeClass('show');
     });
 });
 
@@ -397,7 +393,7 @@ iconColorpicker.on('selectColor', function(event) {
 
 // Text menu action
 $btnAddText.on('click', function() {
-    var initText = 'Double Click';
+    var initText = 'DoubleClick';
 
     imageEditor.startDrawingMode('TEXT');
     imageEditor.addText(initText, {
@@ -464,7 +460,7 @@ $btnLineDrawing.on('click', function() {
     var settings = getBrushSettings();
 
     imageEditor.stopDrawingMode();
-    imageEditor.startDrawingMode('LINE', settings);
+    imageEditor.startDrawingMode('LINE_DRAWING', settings);
 });
 
 $inputBrushWidthRange.on('change', function() {
@@ -567,4 +563,6 @@ shapeColorpicker.on('selectColor', function(event) {
 });
 
 // Load sample image
-imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage');
+imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(() => {
+    imageEditor.clearUndoStack();
+});

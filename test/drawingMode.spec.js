@@ -13,8 +13,7 @@ describe('DrawingMode', () => {
             cssMaxWidth: 700,
             cssMaxHeight: 500
         });
-        imageEditor.loadImageFromURL(imageURL, 'sampleImage');
-        imageEditor.once('loadImage', () => {
+        imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => {
             done();
         });
     });
@@ -36,7 +35,7 @@ describe('DrawingMode', () => {
     });
 
     it('enter all drawing mode with startDrawingMode in consecutive order', () => {
-        const drawingModes = ['CROPPER', 'FREE_DRAWING', 'LINE', 'TEXT', 'SHAPE'],
+        const drawingModes = ['CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE'],
             length = drawingModes.length;
         let i;
 

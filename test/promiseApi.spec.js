@@ -5,7 +5,7 @@
 import ImageEditor from '../src/js/imageEditor';
 
 describe('Promise API', () => {
-    let imageEditor;
+    let imageEditor, canvas;
     const imageURL = 'base/test/fixtures/sampleImage.jpg';
 
     beforeAll(() => {
@@ -13,6 +13,7 @@ describe('Promise API', () => {
             cssMaxWidth: 700,
             cssMaxHeight: 500
         });
+        canvas = imageEditor._graphics.getCanvas();
     });
 
     afterAll(() => {
@@ -31,7 +32,7 @@ describe('Promise API', () => {
             left: 10,
             top: 10
         }).then(() => {
-            expect(imageEditor._canvas.getObjects().length).toBe(1);
+            expect(canvas.getObjects().length).toBe(1);
             done();
         }).catch(message => {
             fail(message);
@@ -46,7 +47,7 @@ describe('Promise API', () => {
         }).then(() =>
             imageEditor.clearObjects()
         ).then(() => {
-            expect(imageEditor._canvas.getObjects().length).toBe(0);
+            expect(canvas.getObjects().length).toBe(0);
             done();
         }).catch(message => {
             fail(message);
@@ -60,7 +61,7 @@ describe('Promise API', () => {
             top: 10
         }).then(() => imageEditor.changeIconColor('#FFFF00')
         ).then(() => {
-            expect(imageEditor._canvas.getObjects()[0].getFill()).toBe('#FFFF00');
+            expect(canvas.getObjects()[0].getFill()).toBe('#FFFF00');
             done();
         }).catch(message => {
             fail(message);
@@ -74,7 +75,7 @@ describe('Promise API', () => {
             height: 100,
             fill: '#FFFF00'
         }).then(() => {
-            const shape = imageEditor._canvas.getObjects()[0];
+            const shape = canvas.getObjects()[0];
             expect(shape.type).toBe('rect');
             expect(shape.width).toBe(100);
             expect(shape.height).toBe(100);
@@ -96,7 +97,7 @@ describe('Promise API', () => {
             width: 200,
             fill: '#FF0000'
         })).then(() => {
-            const shape = imageEditor._canvas.getObjects()[0];
+            const shape = canvas.getObjects()[0];
             expect(shape.type).toBe('triangle');
             expect(shape.width).toBe(200);
             expect(shape.getFill()).toBe('#FF0000');
@@ -132,7 +133,7 @@ describe('Promise API', () => {
     it('addImageObject() supports Promise', done => {
         const maskImageURL = 'base/test/fixtures/mask.png';
         imageEditor.addImageObject(maskImageURL).then(() => {
-            expect(imageEditor._canvas.getObjects().length).toBe(1);
+            expect(canvas.getObjects().length).toBe(1);
             done();
         }).catch(message => {
             fail(message);
@@ -161,7 +162,7 @@ describe('Promise API', () => {
         }).then(() =>
             imageEditor.undo()
         ).then(() => {
-            expect(imageEditor._canvas.getObjects().length).toBe(0);
+            expect(canvas.getObjects().length).toBe(0);
             done();
         }).catch(message => {
             fail(message);
@@ -172,10 +173,8 @@ describe('Promise API', () => {
     it('flipX() supports Promise', done => {
         imageEditor.flipX().then(obj => {
             expect(obj).toEqual({
-                setting: {
-                    flipX: true,
-                    flipY: false
-                },
+                flipX: true,
+                flipY: false,
                 angle: 0
             });
             done();
@@ -188,10 +187,8 @@ describe('Promise API', () => {
     it('flipY() supports Promise', done => {
         imageEditor.flipY().then(obj => {
             expect(obj).toEqual({
-                setting: {
-                    flipX: false,
-                    flipY: true
-                },
+                flipX: false,
+                flipY: true,
                 angle: 0
             });
             done();
@@ -204,10 +201,8 @@ describe('Promise API', () => {
     it('resetFlip() supports Promise', done => {
         imageEditor.resetFlip().then(obj => {
             expect(obj).toEqual({
-                setting: {
-                    flipX: false,
-                    flipY: false
-                },
+                flipX: false,
+                flipY: false,
                 angle: 0
             });
             fail();
@@ -245,7 +240,7 @@ describe('Promise API', () => {
         }).then(() =>
             imageEditor.removeActiveObject()
         ).then(() => {
-            expect(imageEditor._canvas.getObjects().length).toBe(0);
+            expect(canvas.getObjects().length).toBe(0);
             done();
         }).catch(message => {
             fail(message);

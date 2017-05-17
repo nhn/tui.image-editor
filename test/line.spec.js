@@ -2,22 +2,21 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/line.js"
  */
-import Main from '../src/js/component/main';
+import Graphics from '../src/js/graphics';
 import Line from '../src/js/component/line';
 
 describe('Line', () => {
-    let canvas, main, mockImage, line, fEvent;
+    let canvas, graphics, mockImage, line, fEvent;
 
     beforeAll(() => {
-        canvas = new fabric.Canvas($('<canvas>')[0]);
-        main = new Main();
-        main.canvas = canvas;
-        line = new Line(main);
+        graphics = new Graphics($('<canvas>')[0]);
+        canvas = graphics.getCanvas();
+        line = new Line(graphics);
     });
 
     beforeEach(() => {
         mockImage = new fabric.Image();
-        main.setCanvasImage('mockImage', mockImage);
+        graphics.setCanvasImage('mockImage', mockImage);
 
         fEvent = {
             e: {}

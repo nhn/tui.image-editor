@@ -11,7 +11,7 @@
 const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.prototype */{
     /**
      * Apply filter to canvas element
-     * @param {object} canvasEl - Canvas element to apply filter
+     * @param {Object} canvasEl - Canvas element to apply filter
      * @override
      */
     applyTo(canvasEl) {
@@ -50,7 +50,7 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
 
     /**
      * Draw mask image on canvas element
-     * @param {object} maskCtx - Context of mask canvas
+     * @param {Object} maskCtx - Context of mask canvas
      * @private
      */
     _drawMask(maskCtx) {
@@ -71,8 +71,8 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
 
     /**
      * Map mask image data to source image data
-     * @param {object} maskCtx - Context of mask canvas
-     * @param {object} imageData - Data of source image
+     * @param {Object} maskCtx - Context of mask canvas
+     * @param {Object} imageData - Data of source image
      * @param {number} width - Width of main canvas
      * @param {number} height - Height of main canvas
      * @private

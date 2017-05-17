@@ -4,26 +4,26 @@
  */
 import Invoker from './invoker';
 import commandFactory from './factory/command';
+import Graphics from './graphics';
 import consts from './consts';
 
-
 const events = consts.eventNames;
-const components = consts.componentNames;
 const commands = consts.commandNames;
-const {drawingModes, keyCodes, fObjectOptions, rejectMessages} = consts;
-const {isUndefined, bind, forEach, extend, hasStamp} = tui.util;
+const {keyCodes, rejectMessages} = consts;
+const {isUndefined, forEach, hasStamp} = tui.util;
 
 /**
  * Image editor
  * @class
- * @param {string|jQuery|HTMLElement} element - Wrapper or canvas element or selector
- * @param {object} [option] - Canvas max width & height of css
+ * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
+ * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
  */
 class ImageEditor {
-    constructor(element, option) {
+    constructor(wrapper, option) {
         option = option || {};
+
         /**
          * Invoker
          * @type {Invoker}
@@ -32,38 +32,31 @@ class ImageEditor {
         this._invoker = new Invoker();
 
         /**
-         * Fabric-Canvas instance
-         * @type {fabric.Canvas}
+         * Graphics instance
+         * @type {Graphics}
          * @private
          */
-        this._canvas = null;
-
-        /**
-         * Editor current drawing mode
-         * @private
-         * @type {string}
-         */
-        this._drawingMode = drawingModes.NORMAL;
+        this._graphics = new Graphics(wrapper, option.cssMaxWidth, option.cssMaxHeight);
 
         /**
          * Event handler list
-         * @type {object}
+         * @type {Object}
          * @private
          */
         this._handlers = {
-            keydown: bind(this._onKeyDown, this),
-            mousedown: bind(this._onMouseDown, this),
-            addedObject: bind(this._onAddedObject, this),
-            removedObject: bind(this._onRemovedObject, this),
-            selectedObject: bind(this._onSelectedObject, this),
-            movingObject: bind(this._onMovingObject, this),
-            scalingObject: bind(this._onScalingObject, this),
-            createdPath: this._onCreatedPath
+            keydown: this._onKeyDown.bind(this),
+            mousedown: this._onMouseDown.bind(this),
+            objectAdded: this._onObjectAdded.bind(this),
+            objectActivated: this._onObjectActivated.bind(this),
+            objectMoved: this._onObjectMoved.bind(this),
+            objectScaled: this._onObjectScaled.bind(this),
+            createdPath: this._onCreatedPath,
+            addText: this._onAddText.bind(this),
+            textEditing: this._onTextEditing.bind(this)
         };
 
-        this._setCanvas(element, option.cssMaxWidth, option.cssMaxHeight);
         this._attachInvokerEvents();
-        this._attachCanvasEvents();
+        this._attachGraphicsEvents();
         this._attachDomEvents();
 
         if (option.selectionStyle) {
@@ -72,34 +65,65 @@ class ImageEditor {
     }
 
     /**
-     * @typedef {object} FilterResult
+     * Image filter result
+     * @typedef {Object} FilterResult
      * @property {string} type - filter type like 'mask', 'Grayscale' and so on
      * @property {string} action - action type like 'add', 'remove'
      */
 
-     /**
-      * @typedef {object} FlipStatus
-      * @property {object} flipStatus - x and y axis
-      * @property {boolean} flipStatus.flipX - x
-      * @property {boolean} flipStatus.flipY - x
-      * @property {Number} angle - angle
-      */
+    /**
+     * Flip status
+     * @typedef {Object} FlipStatus
+     * @property {boolean} flipX - x axis
+     * @property {boolean} flipY - y axis
+     * @property {Number} angle - angle
+     */
 
-      /**
-       * @typedef {Number} RotateStatus - {Number} angle
-       */
+    /**
+     * Rotation status
+     * @typedef {Number} RotateStatus
+     * @property {Number} angle - angle
+     */
+
+    /**
+     * Old and new Size
+     * @typedef {Object} SizeChange
+     * @property {Number} oldWidth - old width
+     * @property {Number} oldHeight - old height
+     * @property {Number} newWidth - new width
+     * @property {Number} newHeight - new height
+     */
 
     /**
      * @typedef {string} ErrorMsg - {string} error message
      */
 
     /**
-     * Set selection style of fabric object by init option
-     * @param {object} styles - Selection styles
+     * @typedef {Object} ObjectProperties - graphics object properties
+     * @property {string} type - object type
+     * @property {string} text - text content
+     * @property {string} left - Left
+     * @property {string} top - Top
+     * @property {string} width - Width
+     * @property {string} height - Height
+     * @property {string} fill - Color
+     * @property {string} stroke - Stroke
+     * @property {string} strokeWidth - StrokeWidth
+     * @property {string} fontFamily - Font type for text
+     * @property {number} fontSize - Font Size
+     * @property {string} fontStyle - Type of inclination (normal / italic)
+     * @property {string} fontWeight - Type of thicker or thinner looking (normal / bold)
+     * @property {string} textAlign - Type of text align (left / center / right)
+     * @property {string} textDecoraiton - Type of line (underline / line-throgh / overline)
+     */
+
+    /**
+     * Set selection style by init option
+     * @param {Object} styles - Selection styles
      * @private
      */
     _setSelectionStyle(styles) {
-        extend(fObjectOptions.SELECTION_STYLE, styles);
+        this._graphics.setSelectionStyle(styles);
     }
 
     /**
@@ -108,43 +132,45 @@ class ImageEditor {
      */
     _attachInvokerEvents() {
         const {
-            PUSH_UNDO_STACK,
-            PUSH_REDO_STACK,
-            EMPTY_UNDO_STACK,
-            EMPTY_REDO_STACK
+            UNDO_STACK_CHANGED,
+            REDO_STACK_CHANGED
         } = events;
 
         /**
-         * @event ImageEditor#pushUndoStack
+         * Undo stack changed event
+         * @event ImageEditor#undoStackChanged
+         * @param {Number} length - undo stack length
+         * @example
+         * imageEditor.on('undoStackChanged', function(length) {
+         *     console.log(length);
+         * });
          */
-        this._invoker.on(PUSH_UNDO_STACK, this.fire.bind(this, PUSH_UNDO_STACK));
+        this._invoker.on(UNDO_STACK_CHANGED, this.fire.bind(this, UNDO_STACK_CHANGED));
         /**
-         * @event ImageEditor#pushRedoStack
+         * Redo stack changed event
+         * @event ImageEditor#redoStackChanged
+         * @param {Number} length - redo stack length
+         * @example
+         * imageEditor.on('redoStackChanged', function(length) {
+         *     console.log(length);
+         * });
          */
-        this._invoker.on(PUSH_REDO_STACK, this.fire.bind(this, PUSH_REDO_STACK));
-        /**
-         * @event ImageEditor#emptyUndoStack
-         */
-        this._invoker.on(EMPTY_UNDO_STACK, this.fire.bind(this, EMPTY_UNDO_STACK));
-        /**
-         * @event ImageEditor#emptyRedoStack
-         */
-        this._invoker.on(EMPTY_REDO_STACK, this.fire.bind(this, EMPTY_REDO_STACK));
+        this._invoker.on(REDO_STACK_CHANGED, this.fire.bind(this, REDO_STACK_CHANGED));
     }
 
     /**
      * Attach canvas events
      * @private
      */
-    _attachCanvasEvents() {
-        this._canvas.on({
-            'mouse:down': this._handlers.mousedown,
-            'object:added': this._handlers.addedObject,
-            'object:removed': this._handlers.removedObject,
-            'object:moving': this._handlers.movingObject,
-            'object:scaling': this._handlers.scalingObject,
-            'object:selected': this._handlers.selectedObject,
-            'path:created': this._handlers.createdPath
+    _attachGraphicsEvents() {
+        this._graphics.on({
+            'mousedown': this._handlers.mousedown,
+            'objectAdded': this._handlers.objectAdded,
+            'objectMoved': this._handlers.objectMoved,
+            'objectScaled': this._handlers.objectScaled,
+            'objectActivated': this._handlers.objectActivated,
+            'addText': this._handlers.addText,
+            'textEditing': this._handlers.textEditing
         });
     }
 
@@ -153,7 +179,8 @@ class ImageEditor {
      * @private
      */
     _attachDomEvents() {
-        fabric.util.addListener(document, 'keydown', this._handlers.keydown);
+        // ImageEditor supports IE 9 higher
+        document.addEventListener('keydown', this._handlers.keydown);
     }
 
     /**
@@ -161,7 +188,8 @@ class ImageEditor {
      * @private
      */
     _detachDomEvents() {
-        fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
+        // ImageEditor supports IE 9 higher
+        document.removeEventListener('keydown', this._handlers.keydown);
     }
 
     /**
@@ -172,15 +200,17 @@ class ImageEditor {
      /* eslint-disable complexity */
     _onKeyDown(e) {
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
-            this.undo();
+            // There is no error message on shortcut when it's empty
+            this.undo().catch(() => {});
         }
 
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
-            this.redo();
+            // There is no error message on shortcut when it's empty
+            this.redo().catch(() => {});
         }
 
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
-            this._canvas.getActiveObject()) {
+            this._graphics.getActiveObject()) {
             e.preventDefault();
             this.removeActiveObject();
         }
@@ -188,226 +218,116 @@ class ImageEditor {
     /* eslint-enable complexity */
 
     /**
-     * "mouse:down" canvas event handler
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * mouse down event handler
+     * @param {Event} event mouse down event
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
      * @private
      */
-    _onMouseDown(fEvent) {
-        const originPointer = this._canvas.getPointer(fEvent.e);
-
+    _onMouseDown(event, originPointer) {
         /**
+         * The mouse down event with position x, y on canvas
          * @event ImageEditor#mousedown
-         * @param {object} event - Event object
+         * @param {Object} event - browser mouse event object
+         * @param {Object} originPointer origin pointer
+         *  @param {Number} originPointer.x x position
+         *  @param {Number} originPointer.y y position
          * @example
-         * imageEditor.on('mousedown', function(event) {
-         *     console.log(event.e);
-         *     console.log(event.originPointer);
+         * imageEditor.on('mousedown', function(event, originPointer) {
+         *     console.log(event);
+         *     console.log(originPointer);
+         *     if (imageEditor.hasFilter('colorFilter')) {
+         *         imageEditor.applyFilter('colorFilter', {
+         *             x: parseInt(originPointer.x, 10),
+         *             y: parseInt(originPointer.y, 10)
+         *         });
+         *     }
          * });
          */
-        this.fire(events.MOUSE_DOWN, {
-            e: fEvent.e,
-            originPointer
-        });
+        this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
     /**
      * Add a 'addObject' command
-     * @param {object} obj - Fabric object
+     * @param {Object} obj - Fabric object
      * @private
      */
     _pushAddObjectCommand(obj) {
-        const command = commandFactory.create(commands.ADD_OBJECT, obj);
+        const command = commandFactory.create(commands.ADD_OBJECT, this._graphics, obj);
         this._invoker.pushUndoStack(command);
         this._invoker.clearRedoStack();
     }
 
     /**
-     * "object:added" canvas event handler
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * 'objectAdded' event handler
+     * @param {Object} obj added object
      * @private
      */
-    _onAddedObject(fEvent) {
-        const obj = fEvent.target;
-
-        if (obj.isType('cropzone') || obj.isType('text')) {
-            return;
-        }
-
+    _onObjectAdded(obj) {
         if (!hasStamp(obj)) {
             this._pushAddObjectCommand(obj);
         }
+    }
 
+    /**
+     * 'objectActivated' event handler
+     * @param {ObjectProperties} props - object properties
+     * @private
+     */
+    _onObjectActivated(props) {
         /**
-         * @event ImageEditor#addObject
-         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * The event when object is selected(aka activated).
+         * @event ImageEditor#objectActivated
+         * @param {ObjectProperties} objectProperties - object properties
          * @example
-         * imageEditor.on('addObject', function(obj) {
-         *     console.log(obj);
+         * imageEditor.on('objectActivated', function(props) {
+         *     console.log(props);
+         *     console.log(props.type);
+         *     console.log(props.styles);
          * });
          */
-        this.fire(events.ADD_OBJECT, obj);
+        this.fire(events.OBJECT_ACTIVATED, props);
     }
 
     /**
-     * "object:removed" canvas event handler
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * 'objectMoved' event handler
+     * @param {ObjectProperties} props - object properties
      * @private
      */
-    _onRemovedObject(fEvent) {
+    _onObjectMoved(props) {
         /**
-         * @event ImageEditor#removeObject
-         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * The event when object is moved
+         * @event ImageEditor#objectMoved
+         * @param {ObjectProperties} props - object properties
          * @example
-         * imageEditor.on('removeObject', function(obj) {
-         *     console.log(obj);
+         * imageEditor.on('objectMoved', function(props) {
+         *     console.log(props);
+         *     console.log(props.type);
+         *     console.log(props.styles);
          * });
          */
-        this.fire(events.REMOVE_OBJECT, fEvent.target);
+        this.fire(events.OBJECT_MOVED, props);
     }
 
     /**
-     * "object:selected" canvas event handler
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * 'objectScaled' event handler
+     * @param {ObjectProperties} props - object properties
      * @private
      */
-    _onSelectedObject(fEvent) {
+    _onObjectScaled(props) {
         /**
-         * @event ImageEditor#selectObject
-         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
+         * The event when scale factor is changed
+         * @event ImageEditor#objectScaled
+         * @param {ObjectProperties} props - object properties
          * @example
-         * imageEditor.on('selectObject', function(obj) {
-         *     console.log(obj);
-         *     console.log(obj.type);
+         * imageEditor.on('objectScaled', function(props) {
+         *     console.log(props);
+         *     console.log(props.type);
+         *     console.log(props.styles);
          * });
          */
-        this.fire(events.SELECT_OBJECT, fEvent.target);
-    }
-
-    /**
-     * "object:moving" canvas event handler
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-     * @private
-     */
-    _onMovingObject(fEvent) {
-        /**
-         * @event ImageEditor#adjustObject
-         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-         * @param {string} Action type (move / scale)
-         * @example
-         * imageEditor.on('adjustObject', function(obj, type) {
-         *     console.log(obj);
-         *     console.log(type);
-         * });
-         */
-        this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
-    }
-
-    /**
-     * "object:scaling" canvas event handler
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-     * @private
-     */
-    _onScalingObject(fEvent) {
-        /**
-         * @ignore
-         * @event ImageEditor#adjustObject
-         * @param {fabric.Object} obj - http://fabricjs.com/docs/fabric.Object.html
-         * @param {string} Action type (move / scale)
-         * @example
-         * imageEditor.on('adjustObject', function(obj, type) {
-         *     console.log(obj);
-         *     console.log(type);
-         * });
-         */
-        this.fire(events.ADJUST_OBJECT, fEvent.target, 'move');
-    }
-
-    /**
-     * EventListener - "path:created"
-     *  - Events:: "object:added" -> "path:created"
-     * @param {{path: fabric.Path}} obj - Path object
-     * @private
-     */
-    _onCreatedPath(obj) {
-        obj.path.set(consts.fObjectOptions.SELECTION_STYLE);
-    }
-
-    /**
-     * onSelectClear handler in fabric canvas
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-     * @private
-     */
-    _onFabricSelectClear(fEvent) {
-        const textComp = this._getComponent(components.TEXT);
-        const obj = textComp.getSelectedObj();
-
-        textComp.isPrevEditing = true;
-
-        textComp.setSelectedInfo(fEvent.target, false);
-
-        if (obj) {
-            if (obj.text === '') {
-                obj.remove();
-            } else if (!hasStamp(obj)) {
-                this._pushAddObjectCommand(obj);
-            }
-        }
-    }
-
-    /**
-     * onSelect handler in fabric canvas
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-     * @private
-     */
-    _onFabricSelect(fEvent) {
-        const textComp = this._getComponent(components.TEXT);
-        const obj = textComp.getSelectedObj();
-
-        textComp.isPrevEditing = true;
-
-        if (obj.text === '') {
-            obj.remove();
-        } else if (!hasStamp(obj) && textComp.isSelected()) {
-            this._pushAddObjectCommand(obj);
-        }
-
-        textComp.setSelectedInfo(fEvent.target, true);
-    }
-
-    /**
-     * Set canvas element
-     * @param {string|jQuery|HTMLElement} element - Wrapper or canvas element or selector
-     * @param {number} cssMaxWidth - Canvas css max width
-     * @param {number} cssMaxHeight - Canvas css max height
-     * @private
-     */
-    _setCanvas(element, cssMaxWidth, cssMaxHeight) {
-        const mainComponent = this._getMainComponent();
-        mainComponent.setCanvasElement(element);
-        mainComponent.setCssMaxDimension({
-            width: cssMaxWidth,
-            height: cssMaxHeight
-        });
-        this._canvas = mainComponent.getCanvas();
-    }
-
-    /**
-     * Returns main component
-     * @returns {Component} Main component
-     * @private
-     */
-    _getMainComponent() {
-        return this._getComponent(components.MAIN);
-    }
-
-    /**
-     * Get component
-     * @param {string} name - Component name
-     * @returns {Component}
-     * @private
-     */
-    _getComponent(name) {
-        return this._invoker.getComponent(name);
+        this.fire(events.OBJECT_SCALED, props);
     }
 
     /**
@@ -426,7 +346,7 @@ class ImageEditor {
      * }
      */
     getDrawingMode() {
-        return this._drawingMode;
+        return this._graphics.getDrawingMode();
     }
 
     /**
@@ -436,9 +356,7 @@ class ImageEditor {
      * imageEditor.clearObjects();
      */
     clearObjects() {
-        const command = commandFactory.create(commands.CLEAR_OBJECTS);
-
-        return this.execute(command);
+        return this.execute(commands.CLEAR_OBJECTS);
     }
 
     /**
@@ -447,20 +365,22 @@ class ImageEditor {
      * imageEditor.deactivateAll();
      */
     deactivateAll() {
-        this._canvas.deactivateAll();
-        this._canvas.renderAll();
+        this._graphics.deactivateAll();
+        this._graphics.renderAll();
     }
 
     /**
      * Invoke command
-     * @param {Command} command - Command
+     * @param {String} commandName - Command name
+     * @param {...*} args - Arguments for creating command
      * @returns {Promise}
      * @private
      */
-    execute(command) {
-        this.stopDrawingMode();
+    execute(commandName, ...args) {
+        // Inject an Graphics instance as first parameter
+        const theArgs = [this._graphics].concat(args);
 
-        return this._invoker.invoke(command);
+        return this._invoker.execute(commandName, ...theArgs);
     }
 
     /**
@@ -491,82 +411,45 @@ class ImageEditor {
      * Load image from file
      * @param {File} imgFile - Image file
      * @param {string} [imageName] - imageName
-     * @returns {Promise}
+     * @returns {Promise<SizeChange, ErrorMsg>}
      * @example
-     * imageEditor.loadImageFromFile(file);
+     * imageEditor.loadImageFromFile(file).then(result => {
+     *      console.log('old : ' + result.oldWidth + ', ' + result.oldHeight);
+     *      console.log('new : ' + result.newWidth + ', ' + result.newHeight);
+     * });
      */
     loadImageFromFile(imgFile, imageName) {
         if (!imgFile) {
             return Promise.reject(rejectMessages.invalidParameters);
         }
 
-        return this.loadImageFromURL(
-            URL.createObjectURL(imgFile),
-            imageName || imgFile.name
-        );
+        const imgUrl = URL.createObjectURL(imgFile);
+        imageName = imageName || imgFile.name;
+
+        return this.loadImageFromURL(imgUrl, imageName).then(value => {
+            URL.revokeObjectURL(imgFile);
+
+            return value;
+        });
     }
 
     /**
      * Load image from url
      * @param {string} url - File url
      * @param {string} imageName - imageName
-     * @returns {Promise}
+     * @returns {Promise<SizeChange, ErrorMsg>}
      * @example
-     * imageEditor.loadImageFromURL('http://url/testImage.png', 'lena')
+     * imageEditor.loadImageFromURL('http://url/testImage.png', 'lena').then(result => {
+     *      console.log('old : ' + result.oldWidth + ', ' + result.oldHeight);
+     *      console.log('new : ' + result.newWidth + ', ' + result.newHeight);
+     * });
      */
     loadImageFromURL(url, imageName) {
         if (!imageName || !url) {
             return Promise.reject(rejectMessages.invalidParameters);
         }
 
-        const callback = bind(this._callbackAfterImageLoading, this);
-        const command = commandFactory.create(commands.LOAD_IMAGE, imageName, url);
-        command.setExecuteCallback(callback)
-            .setUndoCallback(oImage => {
-                if (oImage) {
-                    callback(oImage);
-                } else {
-                    /**
-                     * @event ImageEditor#clearImage
-                     */
-                    this.fire(events.CLEAR_IMAGE);
-                }
-            });
-
-        return this.execute(command);
-    }
-
-    /**
-     * Callback after image loading
-     * @param {?fabric.Image} oImage - Image instance
-     * @private
-     */
-    _callbackAfterImageLoading(oImage) {
-        const mainComponent = this._getMainComponent();
-        const canvasElement = mainComponent.getCanvasElement();
-        const {width, height} = canvasElement.getBoundingClientRect();
-
-        /**
-         * @event ImageEditor#loadImage
-         * @param {object} dimension
-         *  @param {number} dimension.originalWidth - original image width
-         *  @param {number} dimension.originalHeight - original image height
-         *  @param {number} dimension.currentWidth - current width (css)
-         *  @param {number} dimension.current - current height (css)
-         * @example
-         * imageEditor.on('loadImage', function(dimension) {
-         *     console.log(dimension.originalWidth);
-         *     console.log(dimension.originalHeight);
-         *     console.log(dimension.currentWidth);
-         *     console.log(dimension.currentHeight);
-         * });
-         */
-        this.fire(events.LOAD_IMAGE, {
-            originalWidth: oImage.width,
-            originalHeight: oImage.height,
-            currentWidth: width,
-            currentHeight: height
-        });
+        return this.execute(commands.LOAD_IMAGE, imageName, url);
     }
 
     /**
@@ -581,62 +464,33 @@ class ImageEditor {
             return Promise.reject(rejectMessages.invalidParameters);
         }
 
-        const command = commandFactory.create(commands.ADD_IMAGE_OBJECT, imgUrl);
-
-        return this.execute(command);
+        return this.execute(commands.ADD_IMAGE_OBJECT, imgUrl);
     }
 
     /**
-     * Start a drawing mode
-     * @param {String} mode Can be one of <I>'CROPPER', 'FREE_DRAWING', 'LINE', 'TEXT', 'SHAPE'</I>
-     * @param {Object} [option] parameters of drawing mode
-     * @returns {Boolean} true if success or false
+     * Start a drawing mode. If the current mode is not 'NORMAL', 'stopDrawingMode()' will be called first.
+     * @param {String} mode Can be one of <I>'CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE'</I>
+     * @param {Object} [option] parameters of drawing mode, it's available with 'FREE_DRAWING', 'LINE_DRAWING'
+     *  @param {Number} [option.width] brush width
+     *  @param {String} [option.color] brush color
+     * @returns {boolean} true if success or false
      * @example
-     * imageEditor.startDrawingMode('FREE_DRAWING', option);
+     * imageEditor.startDrawingMode('FREE_DRAWING', {
+     *      width: 10,
+     *      color: 'rgba(255,0,0,0.5)'
+     * });
      */
     startDrawingMode(mode, option) {
-        if (this.getDrawingMode() === mode) {
-            return true;
-        }
-
-        const component = this._getComponent(mode);
-        if (component) {
-            this._drawingMode = mode;
-
-            if (component.start) {
-                if (mode === drawingModes.TEXT) {
-                    component.start({
-                        mousedown: bind(this._onFabricMouseDown, this),
-                        select: bind(this._onFabricSelect, this),
-                        selectClear: bind(this._onFabricSelectClear, this),
-                        dbclick: bind(this._onDBClick, this),
-                        remove: this._handlers.removedObject
-                    });
-                } else {
-                    component.start(option);
-                }
-            }
-        }
-
-        return !!component;
+        return this._graphics.startDrawingMode(mode, option);
     }
 
     /**
-     * Stop the current drawing mode
+     * Stop the current drawing mode and back to the 'NORMAL' mode
      * @example
      * imageEditor.stopDrawingMode();
      */
     stopDrawingMode() {
-        const drawingMode = this.getDrawingMode();
-        if (drawingMode === drawingModes.NORMAL) {
-            return;
-        }
-
-        this._drawingMode = drawingModes.NORMAL;
-        const component = this._getComponent(drawingMode);
-        if (component && component.end) {
-            component.end();
-        }
+        this._graphics.stopDrawingMode();
     }
 
     /**
@@ -651,8 +505,7 @@ class ImageEditor {
      * imageEditor.crop(imageEditor.getCropzoneRect());
      */
     crop(rect) {
-        const cropper = this._getComponent(components.CROPPER);
-        const data = cropper.getCroppedImageData(rect);
+        const data = this._graphics.getCroppedImageData(rect);
         if (!data) {
             return Promise.reject(rejectMessages.invalidParameters);
         }
@@ -669,9 +522,7 @@ class ImageEditor {
      *  @returns {Number} rect.height height
      */
     getCropzoneRect() {
-        const cropper = this._getComponent(components.CROPPER);
-
-        return cropper.getCropzoneRect();
+        return this._graphics.getCropzoneRect();
     }
 
     /**
@@ -682,19 +533,17 @@ class ImageEditor {
      * @private
      */
     _flip(type) {
-        const command = commandFactory.create(commands.FLIP_IMAGE, type);
-
-        return this.execute(command);
+        return this.execute(commands.FLIP_IMAGE, type);
     }
 
     /**
      * Flip x
      * @returns {Promise<FlipStatus, ErrorMsg>}
      * @example
-     * imageEditor.flipX().then((flipStatus, angle) => {
-     *     console.log('flipX: ', flipStatus.flipX);
-     *     console.log('flipY: ', flipStatus.flipY);
-     *     console.log('angle: ', angle);
+     * imageEditor.flipX().then((status => {
+     *     console.log('flipX: ', status.flipX);
+     *     console.log('flipY: ', status.flipY);
+     *     console.log('angle: ', status.angle);
      * }).catch(message => {
      *     console.log('error: ', message);
      * });
@@ -707,10 +556,10 @@ class ImageEditor {
      * Flip y
      * @returns {Promise<FlipStatus, ErrorMsg>}
      * @example
-     * imageEditor.flipY().then((flipStatus, angle) => {
-     *     console.log('flipX: ', flipStatus.flipX);
-     *     console.log('flipY: ', flipStatus.flipY);
-     *     console.log('angle: ', angle);
+     * imageEditor.flipY().then(status => {
+     *     console.log('flipX: ', status.flipX);
+     *     console.log('flipY: ', status.flipY);
+     *     console.log('angle: ', status.angle);
      * }).catch(message => {
      *     console.log('error: ', message);
      * });
@@ -723,10 +572,10 @@ class ImageEditor {
      * Reset flip
      * @returns {Promise<FlipStatus, ErrorMsg>}
      * @example
-     * imageEditor.resetFlip().then((flipStatus, angle) => {
-     *     console.log('flipX: ', flipStatus.flipX);
-     *     console.log('flipY: ', flipStatus.flipY);
-     *     console.log('angle: ', angle);
+     * imageEditor.resetFlip().then(status => {
+     *     console.log('flipX: ', status.flipX);
+     *     console.log('flipY: ', status.flipY);
+     *     console.log('angle: ', status.angle);
      * }).catch(message => {
      *     console.log('error: ', message);
      * });;
@@ -742,9 +591,7 @@ class ImageEditor {
      * @private
      */
     _rotate(type, angle) {
-        const command = commandFactory.create(commands.ROTATE_IMAGE, type, angle);
-
-        return this.execute(command);
+        return this.execute(commands.ROTATE_IMAGE, type, angle);
     }
 
     /**
@@ -757,8 +604,8 @@ class ImageEditor {
      * imageEditor.rotate(10); // angle = 20
      * imageEidtor.setAngle(5); // angle = 5
      * imageEidtor.rotate(-95); // angle = -90
-     * imageEditor.rotate(10).then(angle => {
-     *     console.log('angle: ', angle);
+     * imageEditor.rotate(10).then(status => {
+     *     console.log('angle: ', status.angle);
      * })).catch(message => {
      *     console.log('error: ', message);
      * });
@@ -777,8 +624,8 @@ class ImageEditor {
      * imageEidtor.setAngle(5); // angle = 5
      * imageEidtor.rotate(50); // angle = 55
      * imageEidtor.setAngle(-40); // angle = -40
-     * imageEditor.setAngle(10).then(angle => {
-     *     console.log('angle: ', angle);
+     * imageEditor.setAngle(10).then(status => {
+     *     console.log('angle: ', status.angle);
      * })).catch(message => {
      *     console.log('error: ', message);
      * });
@@ -789,9 +636,11 @@ class ImageEditor {
 
     /**
      * Set drawing brush
-     * @param {{width: number, color: string}} setting - Brush width & color
+     * @param {Object} option brush option
+     *  @param {Number} option.width width
+     *  @param {String} option.color color like 'FFFFFF', 'rgba(0, 0, 0, 0.5)'
      * @example
-     * imageEditor.startFreeDrawing();
+     * imageEditor.startDrawingMode('FREE_DRAWING');
      * imageEditor.setBrush({
      *     width: 12,
      *     color: 'rgba(0, 0, 0, 0.5)'
@@ -801,25 +650,14 @@ class ImageEditor {
      *     color: 'FFFFFF'
      * });
      */
-    setBrush(setting) {
-        const drawingMode = this._drawingMode;
-        let compName;
-
-        switch (drawingMode) {
-            case drawingModes.LINE:
-                compName = components.LINE;
-                break;
-            default:
-                compName = components.FREE_DRAWING;
-        }
-
-        this._getComponent(compName).setBrush(setting);
+    setBrush(option) {
+        this._graphics.setBrush(option);
     }
 
     /**
      * Set states of current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
-     * @param {object} [options] - Shape options
+     * @param {Object} [options] - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -853,13 +691,13 @@ class ImageEditor {
      * });
      */
     setDrawingShape(type, options) {
-        this._getComponent(components.SHAPE).setStates(type, options);
+        this._graphics.setDrawingShape(type, options);
     }
 
     /**
      * Add shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
-     * @param {object} options - Shape options
+     * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -896,14 +734,12 @@ class ImageEditor {
 
         this._setPositions(options);
 
-        const command = commandFactory.create(commands.ADD_SHAPE, type, options);
-
-        return this.execute(command);
+        return this.execute(commands.ADD_SHAPE, type, options);
     }
 
     /**
      * Change shape
-     * @param {object} options - Shape options
+     * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -931,16 +767,14 @@ class ImageEditor {
      * });
      */
     changeShape(options) {
-        const command = commandFactory.create(commands.CHANGE_SHAPE, options);
-
-        return this.execute(command);
+        return this.execute(commands.CHANGE_SHAPE, options);
     }
 
     /**
      * Add text on image
      * @param {string} text - Initial input text
-     * @param {object} [options] Options for generating text
-     *     @param {object} [options.styles] Initial styles
+     * @param {Object} [options] Options for generating text
+     *     @param {Object} [options.styles] Initial styles
      *         @param {string} [options.styles.fill] Color
      *         @param {string} [options.styles.fontFamily] Font type for text
      *         @param {number} [options.styles.fontSize] Size
@@ -954,7 +788,7 @@ class ImageEditor {
      * imageEditor.addText();
      * imageEditor.addText('init text', {
      *     styles: {
-     *     fill: '#000',
+     *         fill: '#000',
      *         fontSize: '20',
      *         fontWeight: 'bold'
      *     },
@@ -965,16 +799,10 @@ class ImageEditor {
      * });
      */
     addText(text, options) {
-        if (this.getDrawingMode() !== drawingModes.TEXT) {
-            return Promise.reject(rejectMessages.invalidDrawingMode);
-        }
-
         text = text || '';
         options = options || {};
 
-        const command = commandFactory.create(commands.ADD_TEXT, text, options);
-
-        return this.execute(command);
+        return this.execute(commands.ADD_TEXT, text, options);
     }
 
     /**
@@ -985,20 +813,14 @@ class ImageEditor {
      * imageEditor.changeText('change text');
      */
     changeText(text) {
-        if (this.getDrawingMode() !== drawingModes.TEXT) {
-            return Promise.reject(rejectMessages.invalidDrawingMode);
-        }
-
         text = text || '';
 
-        const command = commandFactory.create(commands.CHANGE_TEXT, text);
-
-        return this.execute(command);
+        return this.execute(commands.CHANGE_TEXT, text);
     }
 
     /**
      * Set style
-     * @param {object} styleObj - text styles
+     * @param {Object} styleObj - text styles
      *     @param {string} [styleObj.fill] Color
      *     @param {string} [styleObj.fontFamily] Font type for text
      *     @param {number} [styleObj.fontSize] Size
@@ -1013,28 +835,23 @@ class ImageEditor {
      * });
      */
     changeTextStyle(styleObj) {
-        if (this.getDrawingMode() !== drawingModes.TEXT) {
-            return Promise.reject(rejectMessages.invalidDrawingMode);
-        }
-
-        const command = commandFactory.create(commands.CHANGE_TEXT_STYLE, styleObj);
-
-        return this.execute(command);
+        return this.execute(commands.CHANGE_TEXT_STYLE, styleObj);
     }
 
     /**
-     * Double click event handler
+     * 'textEditing' event handler
      * @private
      */
-    _onDBClick() {
+    _onTextEditing() {
         /**
-         * @event ImageEditor#editText
+         * The event which starts to edit text object
+         * @event ImageEditor#textEditing
          * @example
-         * imageEditor.on('editText', function(obj) {
-         *     console.log('text object: ' + obj);
+         * imageEditor.on('textEditing', function() {
+         *     console.log('text editing');
          * });
          */
-        this.fire(events.EDIT_TEXT);
+        this.fire(events.TEXT_EDITING);
     }
 
      /**
@@ -1042,65 +859,29 @@ class ImageEditor {
       * @param {fabric.Event} event - Current mousedown event object
       * @private
       */
-    _onFabricMouseDown(event) { // eslint-disable-line
-        const obj = event.target;
-        const e = event.e || {};
-        const originPointer = this._canvas.getPointer(e);
-        const textComp = this._getComponent(components.TEXT);
-
-        if (obj && !obj.isType('text')) {
-            return;
-        }
-
-        if (textComp.isPrevEditing) {
-            textComp.isPrevEditing = false;
-
-            return;
-        }
-
+    _onAddText(event) { // eslint-disable-line
         /**
-         * @event ImageEditor#activateText
-         * @param {object} options
-         *     @param {boolean} options.type - Type of text object (new / select)
-         *     @param {string} options.text - Current text
-         *     @param {object} options.styles - Current styles
-         *         @param {string} options.styles.fill - Color
-         *         @param {string} options.styles.fontFamily - Font type for text
-         *         @param {number} options.styles.fontSize - Size
-         *         @param {string} options.styles.fontStyle - Type of inclination (normal / italic)
-         *         @param {string} options.styles.fontWeight - Type of thicker or thinner looking (normal / bold)
-         *         @param {string} options.styles.textAlign - Type of text align (left / center / right)
-         *         @param {string} options.styles.textDecoraiton - Type of line (underline / line-throgh / overline)
-         *     @param {{x: number, y: number}} options.originPosition - Current position on origin canvas
-         *     @param {{x: number, y: number}} options.clientPosition - Current position on client area
+         * The event when 'TEXT' drawing mode is enabled and click non-object area.
+         * @event ImageEditor#addText
+         * @param {Object} pos
+         *  @param {Object} pos.originPosition - Current position on origin canvas
+         *      @param {Number} pos.originPosition.x - x
+         *      @param {Number} pos.originPosition.y - y
+         *  @param {Object} pos.clientPosition - Current position on client area
+         *      @param {Number} pos.clientPosition.x - x
+         *      @param {Number} pos.clientPosition.y - y
          * @example
-         * imageEditor.on('activateText', function(obj) {
-         *     console.log('text object type: ' + obj.type);
-         *     console.log('text contents: ' + obj.text);
-         *     console.log('text styles: ' + obj.styles);
-         *     console.log('text position on canvas: ' + obj.originPosition);
-         *     console.log('text position on brwoser: ' + obj.clientPosition);
+         * imageEditor.on('addText', function(pos) {
+         *     imageEditor.addText('Double Click', {
+         *         position: pos.originPosition
+         *     });
+         *     console.log('text position on canvas: ' + pos.originPosition);
+         *     console.log('text position on brwoser: ' + pos.clientPosition);
          * });
          */
-        this.fire(events.ACTIVATE_TEXT, {
-            type: obj ? 'select' : 'new',
-            text: obj ? obj.text : '',
-            styles: obj ? {
-                fill: obj.fill,
-                fontFamily: obj.fontFamily,
-                fontSize: obj.fontSize,
-                fontStyle: obj.fontStyle,
-                textAlign: obj.textAlign,
-                textDecoration: obj.textDecoration
-            } : {},
-            originPosition: {
-                x: originPointer.x,
-                y: originPointer.y
-            },
-            clientPosition: {
-                x: e.clientX || 0,
-                y: e.clientY || 0
-            }
+        this.fire(events.ADD_TEXT, {
+            originPosition: event.originPosition,
+            clientPosition: event.clientPosition
         });
     }
 
@@ -1114,13 +895,13 @@ class ImageEditor {
      * });
      */
     registerIcons(infos) {
-        this._getComponent(components.ICON).registerPaths(infos);
+        this._graphics.registerPaths(infos);
     }
 
     /**
      * Add icon on canvas
      * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
-     * @param {object} options - Icon options
+     * @param {Object} options - Icon options
      *      @param {string} [options.fill] - Icon foreground color
      *      @param {string} [options.left] - Icon x position
      *      @param {string} [options.top] - Icon y position
@@ -1136,9 +917,8 @@ class ImageEditor {
         options = options || {};
 
         this._setPositions(options);
-        const command = commandFactory.create(commands.ADD_ICON, type, options);
 
-        return this.execute(command);
+        return this.execute(commands.ADD_ICON, type, options);
     }
 
     /**
@@ -1149,9 +929,7 @@ class ImageEditor {
      * imageEditor.changeIconColor('#000000');
      */
     changeIconColor(color) {
-        const command = commandFactory.create(commands.CHANGE_ICON_COLOR, color);
-
-        return this.execute(command);
+        return this.execute(commands.CHANGE_ICON_COLOR, color);
     }
 
     /**
@@ -1161,11 +939,7 @@ class ImageEditor {
      * imageEditor.removeActiveObject();
      */
     removeActiveObject() {
-        const canvas = this._canvas;
-        const target = canvas.getActiveObject() || canvas.getActiveGroup();
-        const command = commandFactory.create(commands.REMOVE_OBJECT, target);
-
-        return this.execute(command);
+        return this.execute(commands.REMOVE_ACTIVE_OBJECT);
     }
 
     /**
@@ -1174,7 +948,7 @@ class ImageEditor {
      * @returns {boolean} true if it has the filter
      */
     hasFilter(type) {
-        return this._getComponent(components.FILTER).hasFilter(type);
+        return this._graphics.hasFilter(type);
     }
 
     /**
@@ -1190,9 +964,7 @@ class ImageEditor {
      * });
      */
     removeFilter(type) {
-        const command = commandFactory.create(commands.REMOVE_FILTER, type);
-
-        return this.execute(command);
+        return this.execute(commands.REMOVE_FILTER, type);
     }
 
     /**
@@ -1202,9 +974,7 @@ class ImageEditor {
      * @returns {Promise<FilterResult, ErrorMsg>}
      * @example
      * imageEditor.applyFilter('mask');
-     * imageEditor.applyFilter('mask', {
-     *     mask: fabricImgObj
-     * }).then(obj => {
+     * imageEditor.applyFilter('mask').then(obj => {
      *     console.log('filterType: ', obj.type);
      *     console.log('actType: ', obj.action);
      * }).catch(message => {
@@ -1212,21 +982,7 @@ class ImageEditor {
      * });;
      */
     applyFilter(type, options) {
-        if (type === 'mask' && !options) {
-            const activeObj = this._canvas.getActiveObject();
-
-            if (!(activeObj && activeObj.isType('image'))) {
-                return Promise.reject(rejectMessages.invalidParameters);
-            }
-
-            options = {
-                mask: activeObj
-            };
-        }
-
-        const command = commandFactory.create(commands.APPLY_FILTER, type, options);
-
-        return this.execute(command);
+        return this.execute(commands.APPLY_FILTER, type, options);
     }
 
     /**
@@ -1235,9 +991,13 @@ class ImageEditor {
      * @returns {string} A DOMString containing the requested data URI
      * @example
      * imgEl.src = imageEditor.toDataURL();
+     *
+     * imageEditor.loadImageFromURL(imageEditor.toDataURL(), 'FilterImage').then(() => {
+     *      imageEditor.addImageObject(imgUrl);
+     * });
      */
     toDataURL(type) {
-        return this._getMainComponent().toDataURL(type);
+        return this._graphics.toDataURL(type);
     }
 
     /**
@@ -1247,7 +1007,7 @@ class ImageEditor {
      * console.log(imageEditor.getImageName());
      */
     getImageName() {
-        return this._getMainComponent().getImageName();
+        return this._graphics.getImageName();
     }
 
     /**
@@ -1296,23 +1056,17 @@ class ImageEditor {
             return Promise.reject(rejectMessages.invalidParameters);
         }
 
-        const command = commandFactory.create(commands.RESIZE_CANVAS_DIMENSION, dimension);
-
-        return this.execute(command);
+        return this.execute(commands.RESIZE_CANVAS_DIMENSION, dimension);
     }
 
     /**
      * Destroy
      */
     destroy() {
-        const wrapperEl = this._canvas.wrapperEl;
-
         this.stopDrawingMode();
         this._detachDomEvents();
-
-        this._canvas.clear();
-
-        wrapperEl.parentNode.removeChild(wrapperEl);
+        this._graphics.destroy();
+        this._graphics = null;
 
         forEach(this, (value, key) => {
             this[key] = null;
@@ -1321,11 +1075,11 @@ class ImageEditor {
 
     /**
      * Set position
-     * @param {object} options - Position options (left or top)
+     * @param {Object} options - Position options (left or top)
      * @private
      */
     _setPositions(options) {
-        const centerPosition = this._canvas.getCenter();
+        const centerPosition = this._graphics.getCenter();
 
         if (isUndefined(options.left)) {
             options.left = centerPosition.left;

@@ -11,26 +11,17 @@ const MOUSE_MOVE_THRESHOLD = 10;
 const abs = Math.abs;
 const clamp = util.clamp;
 const keyCodes = consts.keyCodes;
-const bind = tui.util.bind;
 
 /**
  * Cropper components
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @class Cropper
  * @ignore
  */
 class Cropper extends Component {
-    constructor(parent) {
-        super();
-
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = consts.componentNames.CROPPER;
+    constructor(graphics) {
+        super(consts.componentNames.CROPPER, graphics);
 
         /**
          * Cropzone
@@ -66,11 +57,11 @@ class Cropper extends Component {
          * @private
          */
         this._listeners = {
-            keydown: bind(this._onKeyDown, this),
-            keyup: bind(this._onKeyUp, this),
-            mousedown: bind(this._onFabricMouseDown, this),
-            mousemove: bind(this._onFabricMouseMove, this),
-            mouseup: bind(this._onFabricMouseUp, this)
+            keydown: this._onKeyDown.bind(this),
+            keyup: this._onKeyUp.bind(this),
+            mousedown: this._onFabricMouseDown.bind(this),
+            mousemove: this._onFabricMouseMove.bind(this),
+            mouseup: this._onFabricMouseUp.bind(this)
         };
     }
 
@@ -245,8 +236,8 @@ class Cropper extends Component {
      * @returns {?{imageName: string, url: string}} cropped Image data
      */
     getCroppedImageData(cropRect) {
-        const canvas = this.getCanvas(),
-            containsCropzone = canvas.contains(this._cropzone);
+        const canvas = this.getCanvas();
+        const containsCropzone = canvas.contains(this._cropzone);
         if (!cropRect) {
             return null;
         }
@@ -278,14 +269,12 @@ class Cropper extends Component {
             return null;
         }
 
-        const cropInfo = {
+        return {
             left: cropzone.getLeft(),
             top: cropzone.getTop(),
             width: cropzone.getWidth(),
             height: cropzone.getHeight()
         };
-
-        return cropInfo;
     }
 
     /**

@@ -2,23 +2,22 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/line.js"
  */
-import Main from '../src/js/component/main';
+import Graphics from '../src/js/graphics';
 import Shape from '../src/js/component/shape';
 
 describe('Shape', () => {
-    let canvas, main, mockImage, fEvent, shape, shapeObj;
+    let canvas, graphics, mockImage, fEvent, shape, shapeObj;
 
     beforeAll(() => {
-        canvas = new fabric.Canvas($('<canvas>')[0]);
-        main = new Main();
-        main.canvas = canvas;
+        graphics = new Graphics($('<canvas>')[0]);
+        canvas = graphics.getCanvas();
 
-        shape = new Shape(main);
+        shape = new Shape(graphics);
     });
 
     beforeEach(() => {
         mockImage = new fabric.Image();
-        main.setCanvasImage('mockImage', mockImage);
+        graphics.setCanvasImage('mockImage', mockImage);
 
         fEvent = {
             e: {}
@@ -34,7 +33,7 @@ describe('Shape', () => {
     it('The rectagle object is created on canvas.', () => {
         shape.add('rect');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.type).toBe('rect');
     });
@@ -42,7 +41,7 @@ describe('Shape', () => {
     it('The circle object(ellipse) is created on canvas.', () => {
         shape.add('circle');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.type).toBe('circle');
     });
@@ -50,7 +49,7 @@ describe('Shape', () => {
     it('The triangle object is created on canvas.', () => {
         shape.add('triangle');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.type).toBe('triangle');
     });
@@ -59,7 +58,7 @@ describe('Shape', () => {
     it('When add() is called with no options, the default options set the rectangle object.', () => {
         shape.add('rect');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.getWidth()).toBe(2); // strokeWidth: 1, width: 1
         expect(shapeObj.getHeight()).toBe(2); // strokeWidth: 1, height: 1
@@ -68,7 +67,7 @@ describe('Shape', () => {
     it('When add() is called with no options, the default options set the circle object.', () => {
         shape.add('circle');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.getWidth()).toBe(1);
         expect(shapeObj.getHeight()).toBe(1);
@@ -77,7 +76,7 @@ describe('Shape', () => {
     it('When add() is called with no options, the default options set the triangle object.', () => {
         shape.add('triangle');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.getWidth()).toBe(2); // strokeWidth: 1, width: 1
         expect(shapeObj.getHeight()).toBe(2); // strokeWidth: 1, height: 1
@@ -94,7 +93,7 @@ describe('Shape', () => {
         };
 
         shape.add('rect', settings);
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.getFill()).toBe('blue');
         expect(shapeObj.getStroke()).toBe('red');
@@ -114,7 +113,7 @@ describe('Shape', () => {
         };
 
         shape.add('circle', settings);
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.getFill()).toBe('blue');
         expect(shapeObj.getStroke()).toBe('red');
@@ -134,7 +133,7 @@ describe('Shape', () => {
         };
 
         shape.add('triangle', settings);
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         expect(shapeObj.getFill()).toBe('blue');
         expect(shapeObj.getStroke()).toBe('red');
@@ -146,7 +145,7 @@ describe('Shape', () => {
     it('When change() is called, the style of the rectagle object is changed.', () => {
         shape.add('rect');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         shape.change(shapeObj, {
             fill: 'blue',
@@ -164,7 +163,7 @@ describe('Shape', () => {
     it('When change() is called, the style of the circle object is changed.', () => {
         shape.add('circle');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         shape.change(shapeObj, {
             fill: 'blue',
@@ -182,7 +181,7 @@ describe('Shape', () => {
     it('When change() is called, the style of the triangle object is changed.', () => {
         shape.add('triangle');
 
-        shapeObj = main.canvas.getObjects()[0];
+        shapeObj = canvas.getObjects()[0];
 
         shape.change(shapeObj, {
             width: 10,
@@ -202,12 +201,12 @@ describe('Shape', () => {
                 top: 100
             });
 
-            shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
+            shape._shapeObj = shapeObj = canvas.getObjects()[0];
         });
 
         it('When the mouse direction is in 1th quadrant,' +
             'the origin values of shape set to "left" and "top".', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 200,
                 y: 120
             });
@@ -220,7 +219,7 @@ describe('Shape', () => {
 
         it('When the mouse direction is in 2th quadrant,' +
             'the origin values of shape set to "right" and "top".', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 80,
                 y: 100
             });
@@ -233,7 +232,7 @@ describe('Shape', () => {
 
         it('When the mouse direction is in 3th quadrant,' +
             'the origin values of shape set to "right" and "bottom".', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 80,
                 y: 80
             });
@@ -246,7 +245,7 @@ describe('Shape', () => {
 
         it('When the mouse direction is in 4th quadrant,' +
             'the origin values of shape set to "left" and "bottom".', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 200,
                 y: 80
             });
@@ -267,11 +266,11 @@ describe('Shape', () => {
                 top: 100
             });
 
-            shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
+            shape._shapeObj = shapeObj = canvas.getObjects()[0];
         });
 
         it('When the drawing shape is in 1th quadrant, "left" and "top" are the same as start point.', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 200,
                 y: 120
             });
@@ -288,7 +287,7 @@ describe('Shape', () => {
         });
 
         it('When the drawing shape is in 2th quadrant, "right" and "top" are the same as start point.', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 80,
                 y: 120
             });
@@ -305,7 +304,7 @@ describe('Shape', () => {
         });
 
         it('When the drawing shape is in 3th quadrant, "right" and "bottom" are the same as start point.', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 80,
                 y: 80
             });
@@ -322,7 +321,7 @@ describe('Shape', () => {
         });
 
         it('When the drawing shape is in 4th quadrant, "left" and "bottom" are the same as start point.', () => {
-            spyOn(main.canvas, 'getPointer').and.returnValue({
+            spyOn(canvas, 'getPointer').and.returnValue({
                 x: 120,
                 y: 80
             });
@@ -347,9 +346,9 @@ describe('Shape', () => {
         });
 
         shape._withShiftKey = true;
-        shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
+        shape._shapeObj = shapeObj = canvas.getObjects()[0];
 
-        spyOn(main.canvas, 'getPointer').and.returnValue({
+        spyOn(canvas, 'getPointer').and.returnValue({
             x: 200,
             y: 100
         });
@@ -369,9 +368,9 @@ describe('Shape', () => {
         });
 
         shape._withShiftKey = true;
-        shape._shapeObj = shapeObj = main.canvas.getObjects()[0];
+        shape._shapeObj = shapeObj = canvas.getObjects()[0];
 
-        spyOn(main.canvas, 'getPointer').and.returnValue({
+        spyOn(canvas, 'getPointer').and.returnValue({
             x: 100,
             y: 200
         });

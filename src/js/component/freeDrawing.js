@@ -8,20 +8,13 @@ import consts from '../consts';
 /**
  * FreeDrawing
  * @class FreeDrawing
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
  */
 class FreeDrawing extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = consts.componentNames.FREE_DRAWING;
+    constructor(graphics) {
+        super(consts.componentNames.FREE_DRAWING, graphics);
 
         /**
          * Brush width

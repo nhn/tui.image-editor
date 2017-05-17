@@ -6,6 +6,8 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
+const {rejectMessages} = consts;
+
 const pathMap = {
     arrow: 'M 0 90 H 105 V 120 L 160 60 L 105 0 V 30 H 0 Z',
     cancel: 'M 0 30 L 30 60 L 0 90 L 30 120 L 60 90 L 90 120 L 120 90 ' +
@@ -15,20 +17,13 @@ const pathMap = {
 /**
  * Icon
  * @class Icon
- * @param {Component} parent - parent component
+ * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
  */
 class Icon extends Component {
-    constructor(parent) {
-        super();
-        this.setParent(parent);
-
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = consts.componentNames.ICON;
+    constructor(graphics) {
+        super(consts.componentNames.ICON, graphics);
 
         /**
          * Default icon color
@@ -38,7 +33,7 @@ class Icon extends Component {
 
         /**
          * Path value of each icon type
-         * @type {object}
+         * @type {Object}
          */
         this._pathMap = pathMap;
     }
@@ -46,7 +41,7 @@ class Icon extends Component {
     /**
      * Add icon
      * @param {string} type - Icon type
-     * @param {object} options - Icon options
+     * @param {Object} options - Icon options
      *      @param {string} [options.fill] - Icon foreground color
      *      @param {string} [options.left] - Icon x position
      *      @param {string} [options.top] - Icon y position
@@ -59,7 +54,7 @@ class Icon extends Component {
             const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
 
             if (!path) {
-                reject();
+                reject(rejectMessages.invalidParameters);
             }
 
             const icon = this._createIcon(path);
@@ -68,6 +63,8 @@ class Icon extends Component {
                 type: 'icon',
                 fill: this._oColor
             }, selectionStyle, options));
+
+            tui.util.stamp(icon);
 
             canvas.add(icon).setActiveObject(icon);
             resolve(icon);

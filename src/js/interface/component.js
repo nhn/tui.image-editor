@@ -6,16 +6,43 @@
 /**
  * Component interface
  * @class
+ * @param {string} name - component name
+ * @param {Graphics} graphics - Graphics instance
  * @ignore
  */
 class Component {
+    constructor(name, graphics) {
+        /**
+         * Component name
+         * @type {string}
+         */
+        this.name = name;
+
+        /**
+         * Graphics instance
+         * @type {Graphics}
+         */
+        this.graphics = graphics;
+    }
+
+    /**
+     * Fire Graphics event
+     * @param {Array} args - arguments
+     * @returns {Object} return value
+     */
+    fire(...args) {
+        const context = this.graphics;
+
+        return this.graphics.fire.apply(context, args);
+    }
+
     /**
      * Save image(background) of canvas
      * @param {string} name - Name of image
      * @param {fabric.Image} oImage - Fabric image instance
      */
     setCanvasImage(name, oImage) {
-        this.getRoot().setCanvasImage(name, oImage);
+        this.graphics.setCanvasImage(name, oImage);
     }
 
     /**
@@ -23,7 +50,7 @@ class Component {
      * @returns {HTMLCanvasElement}
      */
     getCanvasElement() {
-        return this.getRoot().getCanvasElement();
+        return this.graphics.getCanvasElement();
     }
 
     /**
@@ -31,7 +58,7 @@ class Component {
      * @returns {fabric.Canvas}
      */
     getCanvas() {
-        return this.getRoot().getCanvas();
+        return this.graphics.getCanvas();
     }
 
     /**
@@ -39,7 +66,7 @@ class Component {
      * @returns {fabric.Image}
      */
     getCanvasImage() {
-        return this.getRoot().getCanvasImage();
+        return this.graphics.getCanvasImage();
     }
 
     /**
@@ -47,7 +74,7 @@ class Component {
      * @returns {string}
      */
     getImageName() {
-        return this.getRoot().getImageName();
+        return this.graphics.getImageName();
     }
 
     /**
@@ -55,7 +82,7 @@ class Component {
      * @returns {ImageEditor}
      */
     getEditor() {
-        return this.getRoot().getEditor();
+        return this.graphics.getEditor();
     }
 
     /**
@@ -68,67 +95,34 @@ class Component {
 
     /**
      * Set image properties
-     * @param {object} setting - Image properties
+     * @param {Object} setting - Image properties
      * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
      */
     setImageProperties(setting, withRendering) {
-        this.getRoot().setImageProperties(setting, withRendering);
+        this.graphics.setImageProperties(setting, withRendering);
     }
 
     /**
      * Set canvas dimension - css only
-     * @param {object} dimension - Canvas css dimension
+     * @param {Object} dimension - Canvas css dimension
      */
     setCanvasCssDimension(dimension) {
-        this.getRoot().setCanvasCssDimension(dimension);
+        this.graphics.setCanvasCssDimension(dimension);
     }
 
     /**
      * Set canvas dimension - css only
-     * @param {object} dimension - Canvas backstore dimension
+     * @param {Object} dimension - Canvas backstore dimension
      */
     setCanvasBackstoreDimension(dimension) {
-        this.getRoot().setCanvasBackstoreDimension(dimension);
-    }
-
-    /**
-     * Set parent
-     * @param {Component|null} parent - Parent
-     */
-    setParent(parent) {
-        this._parent = parent || null;
+        this.graphics.setCanvasBackstoreDimension(dimension);
     }
 
     /**
      * Adjust canvas dimension with scaling image
      */
     adjustCanvasDimension() {
-        this.getRoot().adjustCanvasDimension();
-    }
-
-    /**
-     * Return parent.
-     * If the view is root, return null
-     * @returns {Component|null}
-     */
-    getParent() {
-        return this._parent;
-    }
-
-    /**
-     * Return root
-     * @returns {Component}
-     */
-    getRoot() {
-        let next = this.getParent();
-        let current = this; // eslint-disable-line consistent-this
-
-        while (next) {
-            current = next;
-            next = current.getParent();
-        }
-
-        return current;
+        this.graphics.adjustCanvasDimension();
     }
 }
 

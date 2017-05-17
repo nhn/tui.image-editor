@@ -66,7 +66,7 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
      * @param {Number} color1 source color
      * @param {Number} color2 filtering color
      * @param {Number} threshold threshold
-     * @returns {Boolean} true if within threshold or false
+     * @returns {boolean} true if within threshold or false
      */
     _isOutsideThreshold(color1, color2, threshold) {
         const diff = color1 - color2;

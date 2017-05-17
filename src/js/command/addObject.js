@@ -2,52 +2,51 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add an object
  */
+import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
 
-const {componentNames} = consts;
-const {MAIN} = componentNames;
+const {commandNames, rejectMessages} = consts;
 
 const command = {
-    name: 'addObject',
+    name: commandNames.ADD_OBJECT,
 
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * Add an object
+     * @param {Graphics} graphics - Graphics instance
      * @param {Object} object - Fabric object
      * @returns {Promise}
      */
-    execute(compMap, object) {
+    execute(graphics, object) {
         tui.util.stamp(object);
 
         return new Promise((resolve, reject) => {
-            const canvas = compMap[MAIN].getCanvas();
-
-            if (!canvas.contains(object)) {
-                canvas.add(object);
-                canvas.setActiveObject(object);
+            if (!graphics.contains(object)) {
+                graphics.add(object);
+                graphics.setActiveObject(object);
                 resolve(object);
             } else {
-                reject();
+                reject(rejectMessages.addedObject);
             }
         });
     },
     /**
-     * @param {object.<string, Component>} compMap - Components injection
+     * @param {Graphics} graphics - Graphics instance
      * @param {Object} object - Fabric object
      * @returns {Promise}
      */
-    undo(compMap, object) {
+    undo(graphics, object) {
         return new Promise((resolve, reject) => {
-            const canvas = compMap[MAIN].getCanvas();
-
-            if (canvas.contains(object)) {
-                canvas.remove(object);
+            if (graphics.contains(object)) {
+                graphics.remove(object);
                 resolve(object);
             } else {
-                reject();
+                reject(rejectMessages.noObject);
             }
         });
     }
 };
+
+commandFactory.register(command);
 
 module.exports = command;

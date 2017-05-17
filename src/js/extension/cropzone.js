@@ -224,7 +224,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     /**
      * Calc scaled size from mouse pointer with selected corner
      * @param {{x: number, y: number}} pointer - Mouse position
-     * @returns {object} Having left or(and) top or(and) width or(and) height.
+     * @returns {Object} Having left or(and) top or(and) width or(and) height.
      * @private
      */
     _calcScalingSizeFromPointer(pointer) {
