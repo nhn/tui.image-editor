@@ -82,17 +82,15 @@ describe('Graphics', () => {
         graphics.renderAll();
     });
 
-    it('removes active object or group', () => {
+    it('removes a object or group by id', () => {
         const triangle = new fabric.Triangle({
             width: 20,
             height: 30
         });
 
         graphics.add(triangle);
-        graphics.removeActiveObject();
-        expect(graphics.getObjects().length).toBe(1);
-        graphics.setActiveObject(triangle);
-        graphics.removeActiveObject();
+        const objectId = tui.util.stamp(triangle);
+        graphics.removeObjectById(objectId);
         expect(graphics.getObjects().length).toBe(0);
     });
 

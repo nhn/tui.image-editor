@@ -15,21 +15,22 @@ const command = {
     /**
      * Change icon color
      * @param {Graphics} graphics - Graphics instance
+     * @param {number} id - object id
      * @param {string} color - Color for icon
      * @returns {Promise}
      */
-    execute(graphics, color) {
+    execute(graphics, id, color) {
         return new Promise((resolve, reject) => {
             const iconComp = graphics.getComponent(ICON);
-            const activeObj = graphics.getActiveObject();
+            const targetObj = graphics.getObject(id);
 
-            if (!activeObj) {
-                reject(rejectMessages.noActiveObject);
+            if (!targetObj) {
+                reject(rejectMessages.noObject);
             }
 
-            this.undoData.object = activeObj;
-            this.undoData.color = iconComp.getColor(activeObj);
-            iconComp.setColor(color, activeObj);
+            this.undoData.object = targetObj;
+            this.undoData.color = iconComp.getColor(targetObj);
+            iconComp.setColor(color, targetObj);
             resolve();
         });
     },

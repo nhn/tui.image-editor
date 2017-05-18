@@ -5,6 +5,8 @@
 import Component from '../interface/component';
 import consts from '../consts';
 
+const {eventNames} = consts;
+
 /**
  * Line
  * @class Line
@@ -152,6 +154,9 @@ class Line extends Component {
      */
     _onFabricMouseUp() {
         const canvas = this.getCanvas();
+        const params = this.graphics.createObjectProperties(this._line);
+
+        this.fire(eventNames.ADD_OBJECT, params);
 
         this._line = null;
 

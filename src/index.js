@@ -15,8 +15,10 @@ import './js/command/clearObjects';
 import './js/command/flip';
 import './js/command/loadImage';
 import './js/command/removeFilter';
-import './js/command/removeActiveObject';
+import './js/command/removeObject';
 import './js/command/resizeCanvasDimension';
 import './js/command/rotate';
+import './js/command/setObjectProperties';
+import './js/command/setObjectPosition';
 
 tui.util.defineNamespace('tui.component.ImageEditor', ImageEditor, true);

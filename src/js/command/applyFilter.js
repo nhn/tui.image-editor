@@ -16,20 +16,21 @@ const command = {
      * @param {Graphics} graphics - Graphics instance
      * @param {string} type - Filter type
      * @param {Object} options - Filter options
+     *  @param {number} options.maskObjId - masking image object id
      * @returns {Promise}
      */
     execute(graphics, type, options) {
         const filterComp = graphics.getComponent(FILTER);
 
-        if (type === 'mask' && !options) {
-            const activeObj = graphics.getActiveObject();
+        if (type === 'mask') {
+            const maskObj = graphics.getObject(options.maskObjId);
 
-            if (!(activeObj && activeObj.isType('image'))) {
+            if (!(maskObj && maskObj.isType('image'))) {
                 return Promise.reject(rejectMessages.invalidParameters);
             }
 
             options = {
-                mask: activeObj
+                mask: maskObj
             };
         }
 

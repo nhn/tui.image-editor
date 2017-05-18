@@ -15,6 +15,7 @@ const command = {
     /**
      * Change a shape
      * @param {Graphics} graphics - Graphics instance
+     * @param {number} id - object id
      * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
@@ -28,22 +29,22 @@ const command = {
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
      * @returns {Promise}
      */
-    execute(graphics, options) {
+    execute(graphics, id, options) {
         const shapeComp = graphics.getComponent(SHAPE);
-        const activeObj = graphics.getActiveObject();
+        const targetObj = graphics.getObject(id);
         const undoData = this.undoData;
 
-        if (!activeObj) {
-            return Promise.reject(rejectMessages.noActiveObject);
+        if (!targetObj) {
+            return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.object = activeObj;
+        undoData.object = targetObj;
         undoData.options = {};
         tui.util.forEachOwnProperties(options, (value, key) => {
-            undoData.options[key] = activeObj[key];
+            undoData.options[key] = targetObj[key];
         });
 
-        return shapeComp.change(activeObj, options);
+        return shapeComp.change(targetObj, options);
     },
     /**
      * @param {Graphics} graphics - Graphics instance

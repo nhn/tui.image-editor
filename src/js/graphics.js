@@ -24,7 +24,7 @@ import util from './util';
 const components = consts.componentNames;
 const events = consts.eventNames;
 const {drawingModes, fObjectOptions} = consts;
-const {extend} = tui.util;
+const {extend, stamp} = tui.util;
 
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
@@ -72,6 +72,13 @@ class Graphics {
         this.imageName = '';
 
         /**
+         * Object Map
+         * @type {Object}
+         * @private
+         */
+        this._objects = {};
+
+        /**
          * Fabric-Canvas instance
          * @type {fabric.Canvas}
          * @private
@@ -107,6 +114,7 @@ class Graphics {
         this._handler = {
             onMouseDown: this._onMouseDown.bind(this),
             onObjectAdded: this._onObjectAdded.bind(this),
+            onObjectRemoved: this._onObjectRemoved.bind(this),
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
@@ -182,6 +190,15 @@ class Graphics {
     }
 
     /**
+     * Get an object by id
+     * @param {number} id - object id
+     * @returns {fabric.Object} object corresponding id
+     */
+    getObject(id) {
+        return this._objects[id];
+    }
+
+    /**
      * Removes the object or group
      * @param {Object} target - graphics object or group
      */
@@ -207,13 +224,14 @@ class Graphics {
     }
 
     /**
-     * Removes an active object or group
+     * Removes an object or group by id
+     * @param {number} id - object id
      * @returns {Array} removed objects
      */
-    removeActiveObject() {
+    removeObjectById(id) {
         const objects = [];
         const canvas = this._canvas;
-        const target = canvas.getActiveObject() || canvas.getActiveGroup();
+        const target = this.getObject(id);
         const isValidGroup = target && target.isType('group') && !target.isEmpty();
 
         if (isValidGroup) {
@@ -228,6 +246,24 @@ class Graphics {
         }
 
         return objects;
+    }
+
+    /**
+     * Get an id by object instance
+     * @param {fabric.Object} object object
+     * @returns {number} object id if it exists or null
+     */
+    getObjectId(object) {
+        let key = null;
+        for (key in this._objects) {
+            if (this._objects.hasOwnProperty(key)) {
+                if (object === this._objects[key]) {
+                    return key;
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -319,7 +355,7 @@ class Graphics {
      */
     setCanvasImage(name, canvasImage) {
         if (canvasImage) {
-            tui.util.stamp(canvasImage);
+            stamp(canvasImage);
         }
         this.imageName = name;
         this.canvasImage = canvasImage;
@@ -437,7 +473,7 @@ class Graphics {
         return new Promise(resolve => {
             fabric.Image.fromURL(imgUrl, image => {
                 callback(image);
-                resolve();
+                resolve(this.createObjectProperties(image));
             }, {
                 crossOrigin: 'Anonymous'
             }
@@ -533,6 +569,114 @@ class Graphics {
      */
     setSelectionStyle(styles) {
         extend(fObjectOptions.SELECTION_STYLE, styles);
+    }
+
+    /**
+     * Set object properties
+     * @param {number} id - object id
+     * @param {Object} props - props
+     *     @param {string} [props.fill] Color
+     *     @param {string} [props.fontFamily] Font type for text
+     *     @param {number} [props.fontSize] Size
+     *     @param {string} [props.fontStyle] Type of inclination (normal / italic)
+     *     @param {string} [props.fontWeight] Type of thicker or thinner looking (normal / bold)
+     *     @param {string} [props.textAlign] Type of text align (left / center / right)
+     *     @param {string} [props.textDecoraiton] Type of line (underline / line-throgh / overline)
+     * @returns {Object} applied properties
+     */
+    setObjectProperties(id, props) {
+        const object = this.getObject(id);
+        const clone = extend({}, props);
+
+        object.set(clone);
+
+        this.getCanvas().renderAll();
+
+        return clone;
+    }
+
+    /**
+     * Get object properties corresponding key
+     * @param {number} id - object id
+     * @param {Array<string>|ObjectProps|string} keys - property's key
+     * @returns {Object} properties
+     */
+    getObjectProperties(id, keys) {
+        const object = this.getObject(id);
+        const props = {};
+
+        if (tui.util.isString(keys)) {
+            props[keys] = object[keys];
+        } else if (tui.util.isArray(keys)) {
+            tui.util.forEachArray(keys, value => {
+                props[value] = object[value];
+            });
+        } else {
+            tui.util.forEachOwnProperties(keys, (value, key) => {
+                props[key] = object[key];
+            });
+        }
+
+        return props;
+    }
+
+    /**
+     * Get object position by originX, originY
+     * @param {number} id - object id
+     * @param {string} originX - can be 'left', 'center', 'right'
+     * @param {string} originY - can be 'top', 'center', 'bottom'
+     * @returns {Object} {{x:number, y: number}} position by origin if id is valid, or null
+     */
+    getObjectPosition(id, originX, originY) {
+        const targetObj = this.getObject(id);
+        if (!targetObj) {
+            return null;
+        }
+
+        return targetObj.getPointByOrigin(originX, originY);
+    }
+
+    /**
+     * Set object position  by originX, originY
+     * @param {number} id - object id
+     * @param {Object} posInfo - position object
+     *  @param {number} posInfo.x - x position
+     *  @param {number} posInfo.y - y position
+     *  @param {string} posInfo.originX - can be 'left', 'center', 'right'
+     *  @param {string} posInfo.originY - can be 'top', 'center', 'bottom'
+     * @returns {boolean} true if target id is valid or false
+     */
+    setObjectPosition(id, posInfo) {
+        const targetObj = this.getObject(id);
+        const {x, y, originX, originY} = posInfo;
+        if (!targetObj) {
+            return false;
+        }
+
+        const targetOrigin = targetObj.getPointByOrigin(originX, originY);
+        const centerOrigin = targetObj.getPointByOrigin('center', 'center');
+        const diffX = centerOrigin.x - targetOrigin.x;
+        const diffY = centerOrigin.y - targetOrigin.y;
+
+        targetObj.set({
+            left: x + diffX,
+            top: y + diffY
+        });
+
+        return true;
+    }
+
+    /**
+     * Get the canvas size
+     * @returns {Object} {{width: number, height: number}} image size
+     */
+    getCanvasSize() {
+        const image = this.getCanvasImage();
+
+        return {
+            width: image ? image.width : 0,
+            height: image ? image.height : 0
+        };
     }
 
     /**
@@ -665,7 +809,6 @@ class Graphics {
             crossOrigin: 'Anonymous'
         });
 
-        tui.util.stamp(obj);
         this.getCanvas().add(obj).setActiveObject(obj);
     }
 
@@ -678,6 +821,7 @@ class Graphics {
         canvas.on({
             'mouse:down': handler.onMouseDown,
             'object:added': handler.onObjectAdded,
+            'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
             'object:selected': handler.onObjectSelected,
@@ -702,12 +846,22 @@ class Graphics {
      */
     _onObjectAdded(fEvent) {
         const obj = fEvent.target;
-
-        if (obj.isType('cropzone') || obj.isType('text')) {
+        if (obj.isType('cropzone')) {
             return;
         }
 
-        this.fire(events.OBJECT_ADDED, obj);
+        this._addFabricObject(obj);
+    }
+
+    /**
+     * "object:removed" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onObjectRemoved(fEvent) {
+        const obj = fEvent.target;
+
+        this._removeFabricObject(stamp(obj));
     }
 
     /**
@@ -717,7 +871,7 @@ class Graphics {
      */
     _onObjectMoved(fEvent) {
         const target = fEvent.target;
-        const params = this._createObjectProperties(target);
+        const params = this.createObjectProperties(target);
 
         this.fire(events.OBJECT_MOVED, params);
     }
@@ -729,7 +883,7 @@ class Graphics {
      */
     _onObjectScaled(fEvent) {
         const target = fEvent.target;
-        const params = this._createObjectProperties(target);
+        const params = this.createObjectProperties(target);
 
         this.fire(events.OBJECT_SCALED, params);
     }
@@ -741,7 +895,7 @@ class Graphics {
      */
     _onObjectSelected(fEvent) {
         const target = fEvent.target;
-        const params = this._createObjectProperties(target);
+        const params = this.createObjectProperties(target);
 
         this.fire(events.OBJECT_ACTIVATED, params);
     }
@@ -753,6 +907,10 @@ class Graphics {
      */
     _onPathCreated(obj) {
         obj.path.set(consts.fObjectOptions.SELECTION_STYLE);
+
+        const params = this.createObjectProperties(obj.path);
+
+        this.fire(events.ADD_OBJECT, params);
     }
 
     /**
@@ -760,7 +918,7 @@ class Graphics {
      * @param {fabric.Object} obj - fabric object
      * @returns {Object} properties object
      */
-    _createObjectProperties(obj) {
+    createObjectProperties(obj) {
         const predefinedKeys = [
             'left',
             'top',
@@ -772,6 +930,7 @@ class Graphics {
             'opacity'
         ];
         const props = {
+            id: stamp(obj),
             type: obj.type
         };
 
@@ -803,6 +962,26 @@ class Graphics {
         extend(props, util.getProperties(obj, predefinedKeys));
 
         return props;
+    }
+
+    /**
+     * Add object array by id
+     * @param {fabric.Object} obj - fabric object
+     * @returns {number} object id
+     */
+    _addFabricObject(obj) {
+        const id = stamp(obj);
+        this._objects[id] = obj;
+
+        return id;
+    }
+
+    /**
+     * Remove an object in array yb id
+     * @param {number} id - object id
+     */
+    _removeFabricObject(id) {
+        delete this._objects[id];
     }
 }
 

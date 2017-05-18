@@ -64,10 +64,8 @@ class Icon extends Component {
                 fill: this._oColor
             }, selectionStyle, options));
 
-            tui.util.stamp(icon);
-
             canvas.add(icon).setActiveObject(icon);
-            resolve(icon);
+            resolve(this.graphics.createObjectProperties(icon));
         });
     }
 

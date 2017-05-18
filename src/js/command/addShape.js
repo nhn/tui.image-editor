@@ -27,17 +27,16 @@ const command = {
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-     *      @param {boolean} [options.needsStamp] - Use true if through Command
      * @returns {Promise}
      */
     execute(graphics, type, options) {
         const shapeComp = graphics.getComponent(SHAPE);
         const undoData = this.undoData;
 
-        options.needsStamp = true;
+        return shapeComp.add(type, options).then(objectProps => {
+            undoData.object = graphics.getObject(objectProps.id);
 
-        return shapeComp.add(type, options).then(shape => {
-            undoData.object = shape;
+            return objectProps;
         });
     },
     /**

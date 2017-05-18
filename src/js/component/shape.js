@@ -9,7 +9,7 @@ import resizeHelper from '../helper/shapeResizeHelper';
 
 const {extend, inArray} = tui.util;
 
-const {rejectMessages} = consts;
+const {rejectMessages, eventNames} = consts;
 const KEY_CODES = consts.keyCodes;
 const DEFAULT_TYPE = 'rect';
 const DEFAULT_OPTIONS = {
@@ -171,7 +171,6 @@ class Shape extends Component {
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
-     *      @param {boolean} [options.needsStamp] - Use true if through Command
      * @returns {Promise}
      */
     add(type, options) {
@@ -182,12 +181,8 @@ class Shape extends Component {
 
             this._bindEventOnShape(shapeObj);
 
-            // true only through Command
-            if (options.needsStamp) {
-                tui.util.stamp(shapeObj);
-            }
             canvas.add(shapeObj).setActiveObject(shapeObj);
-            resolve(shapeObj);
+            resolve(this.graphics.createObjectProperties(shapeObj));
         });
     }
 
@@ -345,6 +340,8 @@ class Shape extends Component {
                 top: startPointY,
                 width,
                 height
+            }).then(objectProps => {
+                this.fire(eventNames.ADD_OBJECT, objectProps);
             });
         } else {
             this._shapeObj.set({

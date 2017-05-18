@@ -9,6 +9,7 @@ var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
 var shapeOptions = {};
 var shapeType;
+var activeObjectId;
 
 // Buttons
 var $btns = $('.menu-item');
@@ -276,7 +277,9 @@ function showSubMenu(type) {
 
 function applyOrRemoveFilter(applying, type, options) {
     if (applying) {
-        imageEditor.applyFilter(type, options);
+        imageEditor.applyFilter(type, options).then(result => {
+            console.log(result);
+        });
     } else {
         imageEditor.removeFilter(type);
     }
@@ -284,6 +287,9 @@ function applyOrRemoveFilter(applying, type, options) {
 
 // Attach image editor custom events
 imageEditor.on({
+    objectAdded: function(objectProps) {
+        console.info(objectProps);
+    },
     undoStackChanged: function(length) {
         if (length) {
             $btnUndo.removeClass('disabled');
@@ -308,9 +314,12 @@ imageEditor.on({
     addText: function(pos) {
         imageEditor.addText('Double Click', {
             position: pos.originPosition
+        }).then(objectProps => {
+            console.log(objectProps);
         });
     },
     objectActivated: function(obj) {
+        activeObjectId = obj.id;
         if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
             showSubMenu('shape');
             setShapeToolbar(obj);
@@ -367,7 +376,7 @@ $btnClearObjects.on('click', function() {
 
 $btnRemoveActiveObject.on('click', function() {
     $displayingSubMenu.hide();
-    imageEditor.removeActiveObject();
+    imageEditor.removeObject(activeObjectId);
 });
 
 $btnCrop.on('click', function() {
@@ -553,11 +562,11 @@ $inputCheckTransparent.on('change', function() {
     }
 
     if (colorType === 'stroke') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             stroke: color
         });
     } else if (colorType === 'fill') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             fill: color
         });
     }
@@ -575,11 +584,11 @@ shapeColorpicker.on('selectColor', function(event) {
     }
 
     if (colorType === 'stroke') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             stroke: color
         });
     } else if (colorType === 'fill') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             fill: color
         });
     }
@@ -590,7 +599,7 @@ shapeColorpicker.on('selectColor', function(event) {
 $inputStrokeWidthRange.on('change', function() {
     var strokeWidth = Number($(this).val());
 
-    imageEditor.changeShape({
+    imageEditor.changeShape(activeObjectId, {
         strokeWidth: strokeWidth
     });
 
@@ -604,7 +613,7 @@ $btnText.on('click', function() {
 });
 
 $inputFontSizeRange.on('change', function() {
-    imageEditor.changeTextStyle({
+    imageEditor.changeTextStyle(activeObjectId, {
         fontSize: parseInt(this.value, 10)
     });
 });
@@ -638,11 +647,11 @@ $btnTextStyle.on('click', function(e) { // eslint-disable-line
             styleObj = {};
     }
 
-    imageEditor.changeTextStyle(styleObj);
+    imageEditor.changeTextStyle(activeObjectId, styleObj);
 });
 
 textColorpicker.on('selectColor', function(event) {
-    imageEditor.changeTextStyle({
+    imageEditor.changeTextStyle(activeObjectId, {
         'fill': event.color
     });
 });
@@ -661,6 +670,8 @@ function onClickIconSubMenu(event) {
         imageEditor.addIcon(iconType, {
             left: originPointer.x,
             top: originPointer.y
+        }).then(objectProps => {
+            console.log(objectProps);
         });
     });
 }
@@ -682,7 +693,7 @@ $btnRegisterIcon.on('click', function() {
 $iconSubMenu.on('click', '.icon-text', onClickIconSubMenu);
 
 iconColorpicker.on('selectColor', function(event) {
-    imageEditor.changeIconColor(event.color);
+    imageEditor.changeIconColor(activeObjectId, event.color);
 });
 
 // control mask filter
@@ -735,15 +746,20 @@ $btnLoadMaskImage.on('change', function() {
         imgUrl = URL.createObjectURL(file);
 
         imageEditor.loadImageFromURL(imageEditor.toDataURL(), 'FilterImage').then(() => {
-            imageEditor.addImageObject(imgUrl).then(() => {
+            imageEditor.addImageObject(imgUrl).then(objectProps => {
                 URL.revokeObjectURL(file);
+                console.log(objectProps);
             });
         });
     }
 });
 
 $btnApplyMask.on('click', function() {
-    imageEditor.applyFilter('mask');
+    imageEditor.applyFilter('mask', {
+        maskObjId: activeObjectId
+    }).then(result => {
+        console.log(result);
+    });
 });
 
 $inputCheckGrayscale.on('change', function() {
@@ -907,7 +923,8 @@ $inputRangeColorFilterValue.on('change', function() {
 // Etc..
 
 // Load sample image
-imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(() => {
+imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(sizeValue => {
+    console.log(sizeValue);
     imageEditor.clearUndoStack();
 });
 

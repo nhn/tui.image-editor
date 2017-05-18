@@ -32,7 +32,7 @@ module.exports = {
         'FLIP_IMAGE': 'flip',
         'ROTATE_IMAGE': 'rotate',
         'ADD_OBJECT': 'addObject',
-        'REMOVE_ACTIVE_OBJECT': 'removeActiveObject',
+        'REMOVE_OBJECT': 'removeObject',
         'APPLY_FILTER': 'applyFilter',
         'REMOVE_FILTER': 'removeFilter',
         'ADD_ICON': 'addIcon',
@@ -43,7 +43,9 @@ module.exports = {
         'CHANGE_TEXT': 'changeText',
         'CHANGE_TEXT_STYLE': 'changeTextStyle',
         'ADD_IMAGE_OBJECT': 'addImageObject',
-        'RESIZE_CANVAS_DIMENSION': 'resizeCanvasDimension'
+        'RESIZE_CANVAS_DIMENSION': 'resizeCanvasDimension',
+        'SET_OBJECT_PROPERTIES': 'setObjectProperties',
+        'SET_OBJECT_POSITION': 'setObjectPosition'
     },
 
     /**
@@ -51,12 +53,13 @@ module.exports = {
      * @type {Object.<string, string>}
      */
     eventNames: {
-        OBJECT_ADDED: 'objectAdded',
         OBJECT_ACTIVATED: 'objectActivated',
         OBJECT_MOVED: 'objectMoved',
         OBJECT_SCALED: 'objectScaled',
         TEXT_EDITING: 'textEditing',
+        TEXT_CHANGED: 'textChanged',
         ADD_TEXT: 'addText',
+        ADD_OBJECT: 'addObject',
         MOUSE_DOWN: 'mousedown',
         // UNDO/REDO Events
         REDO_STACK_CHANGED: 'redoStackChanged',

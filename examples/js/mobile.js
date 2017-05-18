@@ -15,6 +15,7 @@ var shapeOpt = {
     stroke: '#000',
     strokeWidth: 10
 };
+var activeObjectId;
 
 // Selector of image editor controls
 var submenuClass = '.submenu';
@@ -153,15 +154,15 @@ function activateTextMode() {
 }
 
 function setTextToolbar(obj) {
-    var fontSize = obj.styles.fontSize;
-    var fontColor = obj.styles.fill;
+    var fontSize = obj.fontSize;
+    var fontColor = obj.fill;
 
     $inputTextSizeRange.val(fontSize);
     textColorpicker.setColor(fontColor);
 }
 
 function setIconToolbar(obj) {
-    var iconColor = obj.styles.fill;
+    var iconColor = obj.fill;
 
     iconColorpicker.setColor(iconColor);
 }
@@ -171,14 +172,14 @@ function setShapeToolbar(obj) {
     var colorType = $('[name="select-color-type"]:checked').val();
 
     if (colorType === 'stroke') {
-        strokeColor = obj.styles.stroke;
+        strokeColor = obj.stroke;
         isTransparent = (strokeColor === 'transparent');
 
         if (!isTransparent) {
             shapeColorpicker.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
-        fillColor = obj.styles.fill;
+        fillColor = obj.fill;
         isTransparent = (fillColor === 'transparent');
 
         if (!isTransparent) {
@@ -187,7 +188,7 @@ function setShapeToolbar(obj) {
     }
 
     $inputCheckTransparent.prop('checked', isTransparent);
-    $inputStrokeWidthRange.val(obj.styles.strokeWith);
+    $inputStrokeWidthRange.val(obj.strokeWith);
 }
 
 function showSubMenu(type) {
@@ -231,10 +232,11 @@ imageEditor.on({
     },
     objectScaled: function(obj) {
         if (obj.type === 'text') {
-            $inputTextSizeRange.val(obj.styles.fontSize);
+            $inputTextSizeRange.val(obj.fontSize);
         }
     },
     objectActivated: function(obj) {
+        activeObjectId = obj.id;
         if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
             showSubMenu('shape');
             setShapeToolbar(obj);
@@ -319,7 +321,7 @@ $btnRedo.on('click', function() {
 
 // Remove active object action
 $btnRemoveActiveObject.on('click', function() {
-    imageEditor.removeActiveObject();
+    imageEditor.removeObject(activeObjectId);
 });
 
 // Download action
@@ -388,7 +390,7 @@ $btnAddCustomIcon.on('click', function() {
 });
 
 iconColorpicker.on('selectColor', function(event) {
-    imageEditor.changeIconColor(event.color);
+    imageEditor.changeIconColor(activeObjectId, event.color);
 });
 
 // Text menu action
@@ -433,17 +435,17 @@ $btnChangeTextStyle.on('click', function() {
 
     styleObj[styleObjKey] = styleType;
 
-    imageEditor.changeTextStyle(styleObj);
+    imageEditor.changeTextStyle(activeObjectId, styleObj);
 });
 
 $inputTextSizeRange.on('change', function() {
-    imageEditor.changeTextStyle({
+    imageEditor.changeTextStyle(activeObjectId, {
         fontSize: parseInt($(this).val(), 10)
     });
 });
 
 textColorpicker.on('selectColor', function(event) {
-    imageEditor.changeTextStyle({
+    imageEditor.changeTextStyle(activeObjectId, {
         fill: event.color
     });
 });
@@ -515,7 +517,7 @@ $btnAddTriangle.on('click', function() {
 });
 
 $inputStrokeWidthRange.on('change', function() {
-    imageEditor.changeShape({
+    imageEditor.changeShape(activeObjectId, {
         strokeWidth: parseInt($(this).val(), 10)
     });
 });
@@ -532,11 +534,11 @@ $inputCheckTransparent.on('change', function() {
     }
 
     if (colorType === 'stroke') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             stroke: color
         });
     } else if (colorType === 'fill') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             fill: color
         });
     }
@@ -552,11 +554,11 @@ shapeColorpicker.on('selectColor', function(event) {
     }
 
     if (colorType === 'stroke') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             stroke: color
         });
     } else if (colorType === 'fill') {
-        imageEditor.changeShape({
+        imageEditor.changeShape(activeObjectId, {
             fill: color
         });
     }

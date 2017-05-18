@@ -20,8 +20,10 @@ const command = {
     execute(graphics, imgUrl) {
         const undoData = this.undoData;
 
-        return graphics.addImageObject(imgUrl).then(imgObj => {
-            undoData.object = imgObj;
+        return graphics.addImageObject(imgUrl).then(objectProps => {
+            undoData.object = graphics.getObject(objectProps.id);
+
+            return objectProps;
         });
     },
     /**

@@ -15,6 +15,7 @@ const command = {
     /**
      * Change text styles
      * @param {Graphics} graphics - Graphics instance
+     * @param {number} id - object id
      * @param {Object} styles - text styles
      *     @param {string} [styles.fill] Color
      *     @param {string} [styles.fontFamily] Font type for text
@@ -25,22 +26,22 @@ const command = {
      *     @param {string} [styles.textDecoraiton] Type of line (underline / line-throgh / overline)
      * @returns {Promise}
      */
-    execute(graphics, styles) {
+    execute(graphics, id, styles) {
         const textComp = graphics.getComponent(TEXT);
-        const activeObj = graphics.getActiveObject();
+        const targetObj = graphics.getObject(id);
         const undoData = this.undoData;
 
-        if (!activeObj) {
-            return Promise.reject(rejectMessages.noActiveObject);
+        if (!targetObj) {
+            return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.object = activeObj;
+        undoData.object = targetObj;
         undoData.styles = {};
         tui.util.forEachOwnProperties(styles, (value, key) => {
-            undoData.styles[key] = activeObj[key];
+            undoData.styles[key] = targetObj[key];
         });
 
-        return textComp.setStyle(activeObj, styles);
+        return textComp.setStyle(targetObj, styles);
     },
     /**
      * @param {Graphics} graphics - Graphics instance

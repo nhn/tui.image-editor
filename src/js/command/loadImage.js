@@ -20,25 +20,22 @@ const command = {
      */
     execute(graphics, imageName, imgUrl) {
         const loader = graphics.getComponent(IMAGE_LOADER);
+        const prevImage = loader.getCanvasImage();
+        const prevImageWidth = prevImage ? prevImage.width : 0;
+        const prevImageHeight = prevImage ? prevImage.height : 0;
 
         this.undoData = {
-            prevName: loader.getImageName(),
-            prevImage: loader.getCanvasImage(),
+            name: loader.getImageName(),
+            image: prevImage,
             objects: graphics.removeAll(true)
         };
 
-        const oldRect = graphics.getCanvasElement().getBoundingClientRect();
-
-        return loader.load(imageName, imgUrl).then(() => {
-            const newRect = graphics.getCanvasElement().getBoundingClientRect();
-
-            return {
-                oldWidth: oldRect.width,
-                oldHeight: oldRect.height,
-                newWidth: newRect.width,
-                newHeight: newRect.height
-            };
-        });
+        return loader.load(imageName, imgUrl).then(newImage => ({
+            oldWidth: prevImageWidth,
+            oldHeight: prevImageHeight,
+            newWidth: newImage.width,
+            newHeight: newImage.height
+        }));
     },
     /**
      * @param {Graphics} graphics - Graphics instance
@@ -51,7 +48,7 @@ const command = {
         graphics.removeAll(true);
         graphics.add(undoData.objects);
 
-        return loader.load(undoData.prevName, undoData.prevImage);
+        return loader.load(undoData.name, undoData.image);
     }
 };
 

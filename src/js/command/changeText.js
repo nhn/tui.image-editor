@@ -15,22 +15,23 @@ const command = {
     /**
      * Change a text
      * @param {Graphics} graphics - Graphics instance
+     * @param {number} id - object id
      * @param {string} text - Changing text
      * @returns {Promise}
      */
-    execute(graphics, text) {
+    execute(graphics, id, text) {
         const textComp = graphics.getComponent(TEXT);
-        const activeObj = graphics.getActiveObject();
+        const targetObj = graphics.getObject(id);
         const undoData = this.undoData;
 
-        if (!activeObj) {
-            return Promise.reject(rejectMessages.noActiveObject);
+        if (!targetObj) {
+            return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.object = activeObj;
-        undoData.text = textComp.getText(activeObj);
+        undoData.object = targetObj;
+        undoData.text = textComp.getText(targetObj);
 
-        return textComp.change(activeObj, text);
+        return textComp.change(targetObj, text);
     },
     /**
      * @param {Graphics} graphics - Graphics instance

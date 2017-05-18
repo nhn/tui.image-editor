@@ -1,0 +1,58 @@
+/**
+ * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @fileoverview Set object properties
+ */
+import commandFactory from '../factory/command';
+import Promise from 'core-js/library/es6/promise';
+import consts from '../consts';
+
+const {commandNames, rejectMessages} = consts;
+
+const command = {
+    name: commandNames.SET_OBJECT_POSITION,
+
+    /**
+     * Set object properties
+     * @param {Graphics} graphics - Graphics instance
+     * @param {number} id - object id
+     * @param {Object} posInfo - position object
+     *  @param {number} posInfo.x - x position
+     *  @param {number} posInfo.y - y position
+     *  @param {string} posInfo.originX - can be 'left', 'center', 'right'
+     *  @param {string} posInfo.originY - can be 'top', 'center', 'bottom'
+     * @returns {Promise}
+     */
+    execute(graphics, id, posInfo) {
+        const targetObj = graphics.getObject(id);
+        const undoData = this.undoData;
+
+        if (!targetObj) {
+            return Promise.reject(rejectMessages.noObject);
+        }
+
+        undoData.objectId = id;
+        undoData.props = graphics.getObjectProperties(id, ['left', 'top']);
+
+        graphics.setObjectPosition(id, posInfo);
+        graphics.renderAll();
+
+        return Promise.resolve();
+    },
+    /**
+     * @param {Graphics} graphics - Graphics instance
+     * @returns {Promise}
+     */
+    undo(graphics) {
+        const objectId = this.undoData.objectId;
+        const props = this.undoData.props;
+
+        graphics.setObjectProperties(objectId, props);
+        graphics.renderAll();
+
+        return Promise.resolve();
+    }
+};
+
+commandFactory.register(command);
+
+module.exports = command;

@@ -109,10 +109,11 @@ describe('commandFactory', () => {
             });
         });
 
-        it('should add object to canvas', () => {
-            invoker.execute(commands.ADD_OBJECT, graphics, obj);
-
-            expect(canvas.contains(obj)).toBe(true);
+        it('should add object to canvas', done => {
+            invoker.execute(commands.ADD_OBJECT, graphics, obj).then(() => {
+                expect(canvas.contains(obj)).toBe(true);
+                done();
+            });
         });
 
         it('"undo()" should remove object from canvas', done => {
@@ -302,22 +303,22 @@ describe('commandFactory', () => {
             object2 = new fabric.Object();
             group = new fabric.Group();
 
-            canvas.add(object);
-            canvas.add(object2);
-            canvas.add(group);
+            graphics.add(object);
+            graphics.add(object2);
+            graphics.add(group);
             group.add(object, object2);
         });
 
         it('should remove an object', () => {
-            canvas.setActiveObject(object);
-            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics);
+            graphics.setActiveObject(object);
+            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(object));
 
             expect(canvas.contains(object)).toBe(false);
         });
 
         it('should remove objects group', () => {
             canvas.setActiveObject(group);
-            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics);
+            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(group));
 
             expect(canvas.contains(object)).toBe(false);
             expect(canvas.contains(object2)).toBe(false);
@@ -326,7 +327,7 @@ describe('commandFactory', () => {
         it('"undo()" should restore the removed object', done => {
             canvas.setActiveObject(object);
 
-            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics).then(() =>
+            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(object)).then(() =>
                 invoker.undo()
             ).then(() => {
                 expect(canvas.contains(object)).toBe(true);
@@ -336,7 +337,7 @@ describe('commandFactory', () => {
 
         it('"undo()" should restore the removed objects (group)', done => {
             canvas.setActiveObject(group);
-            invoker.execute(commands.REMOVE_ACTIVE_OBJECT, graphics).then(() =>
+            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(group)).then(() =>
                 invoker.undo()
             ).then(() => {
                 expect(canvas.contains(object)).toBe(true);

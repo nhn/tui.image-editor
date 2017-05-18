@@ -10,7 +10,7 @@ import consts from './consts';
 const events = consts.eventNames;
 const commands = consts.commandNames;
 const {keyCodes, rejectMessages} = consts;
-const {isUndefined, forEach, hasStamp} = tui.util;
+const {isUndefined, forEach} = tui.util;
 
 /**
  * Image editor
@@ -46,13 +46,14 @@ class ImageEditor {
         this._handlers = {
             keydown: this._onKeyDown.bind(this),
             mousedown: this._onMouseDown.bind(this),
-            objectAdded: this._onObjectAdded.bind(this),
             objectActivated: this._onObjectActivated.bind(this),
             objectMoved: this._onObjectMoved.bind(this),
             objectScaled: this._onObjectScaled.bind(this),
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
-            textEditing: this._onTextEditing.bind(this)
+            addObject: this._onAddObject.bind(this),
+            textEditing: this._onTextEditing.bind(this),
+            textChanged: this._onTextChanged.bind(this)
         };
 
         this._attachInvokerEvents();
@@ -99,7 +100,8 @@ class ImageEditor {
      */
 
     /**
-     * @typedef {Object} ObjectProperties - graphics object properties
+     * @typedef {Object} ObjectProps - graphics object properties
+     * @property {number} id - object id
      * @property {string} type - object type
      * @property {string} text - text content
      * @property {string} left - Left
@@ -165,12 +167,13 @@ class ImageEditor {
     _attachGraphicsEvents() {
         this._graphics.on({
             'mousedown': this._handlers.mousedown,
-            'objectAdded': this._handlers.objectAdded,
             'objectMoved': this._handlers.objectMoved,
             'objectScaled': this._handlers.objectScaled,
             'objectActivated': this._handlers.objectActivated,
             'addText': this._handlers.addText,
-            'textEditing': this._handlers.textEditing
+            'addObject': this._handlers.addObject,
+            'textEditing': this._handlers.textEditing,
+            'textChanged': this._handlers.textChanged
         });
     }
 
@@ -199,6 +202,9 @@ class ImageEditor {
      */
      /* eslint-disable complexity */
     _onKeyDown(e) {
+        const activeObject = this._graphics.getActiveObject();
+        const activeObjectId = this._graphics.getObjectId(activeObject);
+
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             // There is no error message on shortcut when it's empty
             this.undo().catch(() => {});
@@ -210,9 +216,9 @@ class ImageEditor {
         }
 
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
-            this._graphics.getActiveObject()) {
+            activeObject) {
             e.preventDefault();
-            this.removeActiveObject();
+            this.removeObject(activeObjectId);
         }
     }
     /* eslint-enable complexity */
@@ -256,35 +262,23 @@ class ImageEditor {
     _pushAddObjectCommand(obj) {
         const command = commandFactory.create(commands.ADD_OBJECT, this._graphics, obj);
         this._invoker.pushUndoStack(command);
-        this._invoker.clearRedoStack();
-    }
-
-    /**
-     * 'objectAdded' event handler
-     * @param {Object} obj added object
-     * @private
-     */
-    _onObjectAdded(obj) {
-        if (!hasStamp(obj)) {
-            this._pushAddObjectCommand(obj);
-        }
     }
 
     /**
      * 'objectActivated' event handler
-     * @param {ObjectProperties} props - object properties
+     * @param {ObjectProps} props - object properties
      * @private
      */
     _onObjectActivated(props) {
         /**
          * The event when object is selected(aka activated).
          * @event ImageEditor#objectActivated
-         * @param {ObjectProperties} objectProperties - object properties
+         * @param {ObjectProps} objectProps - object properties
          * @example
          * imageEditor.on('objectActivated', function(props) {
          *     console.log(props);
          *     console.log(props.type);
-         *     console.log(props.styles);
+         *     console.log(props.id);
          * });
          */
         this.fire(events.OBJECT_ACTIVATED, props);
@@ -292,19 +286,18 @@ class ImageEditor {
 
     /**
      * 'objectMoved' event handler
-     * @param {ObjectProperties} props - object properties
+     * @param {ObjectProps} props - object properties
      * @private
      */
     _onObjectMoved(props) {
         /**
          * The event when object is moved
          * @event ImageEditor#objectMoved
-         * @param {ObjectProperties} props - object properties
+         * @param {ObjectProps} props - object properties
          * @example
          * imageEditor.on('objectMoved', function(props) {
          *     console.log(props);
          *     console.log(props.type);
-         *     console.log(props.styles);
          * });
          */
         this.fire(events.OBJECT_MOVED, props);
@@ -312,19 +305,18 @@ class ImageEditor {
 
     /**
      * 'objectScaled' event handler
-     * @param {ObjectProperties} props - object properties
+     * @param {ObjectProps} props - object properties
      * @private
      */
     _onObjectScaled(props) {
         /**
          * The event when scale factor is changed
          * @event ImageEditor#objectScaled
-         * @param {ObjectProperties} props - object properties
+         * @param {ObjectProps} props - object properties
          * @example
          * imageEditor.on('objectScaled', function(props) {
          *     console.log(props);
          *     console.log(props.type);
-         *     console.log(props.styles);
          * });
          */
         this.fire(events.OBJECT_SCALED, props);
@@ -339,6 +331,7 @@ class ImageEditor {
      * //    NORMAL: 'NORMAL'
      * //    CROPPER: 'CROPPER'
      * //    FREE_DRAWING: 'FREE_DRAWING'
+     * //    LINE_DRAWING: 'LINE_DRAWING'
      * //    TEXT: 'TEXT'
      * //
      * if (imageEditor.getDrawingMode() === 'FREE_DRAWING') {
@@ -390,8 +383,6 @@ class ImageEditor {
      * imageEditor.undo();
      */
     undo() {
-        this.stopDrawingMode();
-
         return this._invoker.undo();
     }
 
@@ -402,8 +393,6 @@ class ImageEditor {
      * imageEditor.redo();
      */
     redo() {
-        this.stopDrawingMode();
-
         return this._invoker.redo();
     }
 
@@ -455,9 +444,11 @@ class ImageEditor {
     /**
      * Add image object on canvas
      * @param {string} imgUrl - Image url to make object
-     * @returns {Promise}
+     * @returns {Promise<ObjectProps, ErrorMsg>}
      * @example
-     * imageEditor.addImageObject('path/fileName.jpg');
+     * imageEditor.addImageObject('path/fileName.jpg').then(objectProps => {
+     *     console.log(ojectProps.id);
+     * });
      */
     addImageObject(imgUrl) {
         if (!imgUrl) {
@@ -515,11 +506,7 @@ class ImageEditor {
 
     /**
      * Get the cropping rect
-     * @returns {Object} rect
-     *  @returns {Number} rect.left left position
-     *  @returns {Number} rect.top left position
-     *  @returns {Number} rect.width width
-     *  @returns {Number} rect.height height
+     * @returns {Object}  {{left: number, top: number, width: number, height: number}} rect
      */
     getCropzoneRect() {
         return this._graphics.getCropzoneRect();
@@ -672,6 +659,7 @@ class ImageEditor {
      *     width: 100,
      *     height: 200
      * });
+     * @example
      * imageEditor.setDrawingShape('circle', {
      *     fill: 'transparent',
      *     stroke: 'blue',
@@ -679,11 +667,13 @@ class ImageEditor {
      *     rx: 10,
      *     ry: 100
      * });
+     * @example
      * imageEditor.setDrawingShape('triangle', { // When resizing, the shape keep the 1:1 ratio
      *     width: 1,
      *     height: 1,
      *     isRegular: true
      * });
+     * @example
      * imageEditor.setDrawingShape('circle', { // When resizing, the shape keep the 1:1 ratio
      *     rx: 10,
      *     ry: 10,
@@ -708,7 +698,7 @@ class ImageEditor {
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
-     * @returns {Promise}
+     * @returns {Promise<ObjectProps, ErrorMsg>}
      * @example
      * imageEditor.addShape('rect', {
      *     fill: 'red',
@@ -720,6 +710,7 @@ class ImageEditor {
      *     top: 10,
      *     isRegular: true
      * });
+     * @example
      * imageEditor.addShape('circle', {
      *     fill: 'red',
      *     stroke: 'blue',
@@ -727,6 +718,8 @@ class ImageEditor {
      *     rx: 10,
      *     ry: 100,
      *     isRegular: false
+     * }).then(objectProps => {
+     *     console.log(objectProps.id);
      * });
      */
     addShape(type, options) {
@@ -739,6 +732,7 @@ class ImageEditor {
 
     /**
      * Change shape
+     * @param {number} id - object id
      * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
@@ -751,14 +745,16 @@ class ImageEditor {
      * @returns {Promise}
      * @example
      * // call after selecting shape object on canvas
-     * imageEditor.changeShape({ // change rectagle or triangle
+     * imageEditor.changeShape(id, { // change rectagle or triangle
      *     fill: 'red',
      *     stroke: 'blue',
      *     strokeWidth: 3,
      *     width: 100,
      *     height: 200
      * });
-     * imageEditor.changeShape({ // change circle
+     * @example
+     * // call after selecting shape object on canvas
+     * imageEditor.changeShape(id, { // change circle
      *     fill: 'red',
      *     stroke: 'blue',
      *     strokeWidth: 3,
@@ -766,8 +762,8 @@ class ImageEditor {
      *     ry: 100
      * });
      */
-    changeShape(options) {
-        return this.execute(commands.CHANGE_SHAPE, options);
+    changeShape(id, options) {
+        return this.execute(commands.CHANGE_SHAPE, id, options);
     }
 
     /**
@@ -785,7 +781,8 @@ class ImageEditor {
      *     @param {{x: number, y: number}} [options.position] - Initial position
      * @returns {Promise}
      * @example
-     * imageEditor.addText();
+     * imageEditor.addText('init text');
+     * @example
      * imageEditor.addText('init text', {
      *     styles: {
      *         fill: '#000',
@@ -796,6 +793,8 @@ class ImageEditor {
      *         x: 10,
      *         y: 10
      *     }
+     * }).then(objectProps => {
+     *     console.log(objectProps.id);
      * });
      */
     addText(text, options) {
@@ -807,19 +806,21 @@ class ImageEditor {
 
     /**
      * Change contents of selected text object on image
+     * @param {number} id - object id
      * @param {string} text - Changing text
-     * @returns {Promise}
+     * @returns {Promise<ObjectProps, ErrorMsg>}
      * @example
-     * imageEditor.changeText('change text');
+     * imageEditor.changeText(id, 'change text');
      */
-    changeText(text) {
+    changeText(id, text) {
         text = text || '';
 
-        return this.execute(commands.CHANGE_TEXT, text);
+        return this.execute(commands.CHANGE_TEXT, id, text);
     }
 
     /**
      * Set style
+     * @param {number} id - object id
      * @param {Object} styleObj - text styles
      *     @param {string} [styleObj.fill] Color
      *     @param {string} [styleObj.fontFamily] Font type for text
@@ -830,12 +831,21 @@ class ImageEditor {
      *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
      * @returns {Promise}
      * @example
-     * imageEditor.changeTextStyle({
+     * imageEditor.changeTextStyle(id, {
      *     fontStyle: 'italic'
      * });
      */
-    changeTextStyle(styleObj) {
-        return this.execute(commands.CHANGE_TEXT_STYLE, styleObj);
+    changeTextStyle(id, styleObj) {
+        return this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
+    }
+
+    /**
+     * 'textChanged' event handler
+     * @param {Object} objectProps changed object properties
+     * @private
+     */
+    _onTextChanged(objectProps) {
+        this.changeText(objectProps.id, objectProps.text);
     }
 
     /**
@@ -854,12 +864,12 @@ class ImageEditor {
         this.fire(events.TEXT_EDITING);
     }
 
-     /**
-      * Mousedown event handler
-      * @param {fabric.Event} event - Current mousedown event object
-      * @private
-      */
-    _onAddText(event) { // eslint-disable-line
+    /**
+     * Mousedown event handler in case of 'TEXT' drawing mode
+     * @param {fabric.Event} event - Current mousedown event object
+     * @private
+     */
+    _onAddText(event) {
         /**
          * The event when 'TEXT' drawing mode is enabled and click non-object area.
          * @event ImageEditor#addText
@@ -886,6 +896,16 @@ class ImageEditor {
     }
 
     /**
+     * 'addObject' event handler
+     * @param {Object} objectProps added object properties
+     * @private
+     */
+    _onAddObject(objectProps) {
+        const obj = this._graphics.getObject(objectProps.id);
+        this._pushAddObjectCommand(obj);
+    }
+
+    /**
      * Register custom icons
      * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
      * @example
@@ -905,12 +925,15 @@ class ImageEditor {
      *      @param {string} [options.fill] - Icon foreground color
      *      @param {string} [options.left] - Icon x position
      *      @param {string} [options.top] - Icon y position
-     * @returns {Promise}
+     * @returns {Promise<ObjectProps, ErrorMsg>}
      * @example
      * imageEditor.addIcon('arrow'); // The position is center on canvas
+     * @example
      * imageEditor.addIcon('arrow', {
      *     left: 100,
      *     top: 100
+     * }).then(objectProps => {
+     *     console.log(objectProps.id);
      * });
      */
     addIcon(type, options) {
@@ -923,23 +946,25 @@ class ImageEditor {
 
     /**
      * Change icon color
+     * @param {number} id - object id
      * @param {string} color - Color for icon
      * @returns {Promise}
      * @example
-     * imageEditor.changeIconColor('#000000');
+     * imageEditor.changeIconColor(id, '#000000');
      */
-    changeIconColor(color) {
-        return this.execute(commands.CHANGE_ICON_COLOR, color);
+    changeIconColor(id, color) {
+        return this.execute(commands.CHANGE_ICON_COLOR, id, color);
     }
 
     /**
      * Remove active object or group
+     * @param {number} id - object id
      * @returns {Promise}
      * @example
-     * imageEditor.removeActiveObject();
+     * imageEditor.removeObject(id);
      */
-    removeActiveObject() {
-        return this.execute(commands.REMOVE_ACTIVE_OBJECT);
+    removeObject(id) {
+        return this.execute(commands.REMOVE_OBJECT, id);
     }
 
     /**
@@ -970,11 +995,13 @@ class ImageEditor {
     /**
      * Apply filter on canvas image
      * @param {string} type - Filter type
-     * @param {options} options - Options to apply filter
+     * @param {Object} options - Options to apply filter
+     *  @param {number} options.maskObjId - masking image object id
      * @returns {Promise<FilterResult, ErrorMsg>}
      * @example
-     * imageEditor.applyFilter('mask');
-     * imageEditor.applyFilter('mask').then(obj => {
+     * imageEditor.applyFilter('Grayscale');
+     * @example
+     * imageEditor.applyFilter('mask', {maskObjId: id}).then(obj => {
      *     console.log('filterType: ', obj.type);
      *     console.log('actType: ', obj.action);
      * }).catch(message => {
@@ -1088,6 +1115,129 @@ class ImageEditor {
         if (isUndefined(options.top)) {
             options.top = centerPosition.top;
         }
+    }
+
+    /**
+     * Set properties of active object
+     * @param {number} id - object id
+     * @param {Object} keyValue - key & value
+     * @returns {Promise}
+     * @example
+     * imageEditor.setObjectProperties(id, {
+     *     left:100,
+     *     top:100,
+     *     width: 200,
+     *     height: 200,
+     *     opacity: 0.5
+     * });
+     */
+    setObjectProperties(id, keyValue) {
+        return this.execute(commands.SET_OBJECT_PROPERTIES, id, keyValue);
+    }
+
+    /**
+     * Get properties of active object corresponding key
+     * @param {number} id - object id
+     * @param {Array<string>|ObjectProps|string} keys - property's key
+     * @returns {ObjectProps} properties if id is valid or null
+     * @example
+     * var props = imageEditor.getObjectProperties(id, 'left');
+     * console.log(props);
+     * @example
+     * var props = imageEditor.getObjectProperties(id, ['left', 'top', 'width', 'height']);
+     * console.log(props);
+     * @example
+     * var props = imageEditor.getObjectProperties(id, {
+     *     left: null,
+     *     top: null,
+     *     width: null,
+     *     height: null,
+     *     opacity: null
+     * });
+     * console.log(props);
+     */
+    getObjectProperties(id, keys) {
+        const object = this._graphics.getObject(id);
+        if (!object) {
+            return null;
+        }
+
+        return this._graphics.getObjectProperties(id, keys);
+    }
+
+    /**
+     * Get the canvas size
+     * @returns {Object} {{width: number, height: number}} canvas size
+     * @example
+     * var canvasSize = imageEditor.getCanvasSize();
+     * console.log(canvasSize.width);
+     * console.height(canvasSize.height);
+     */
+    getCanvasSize() {
+        return this._graphics.getCanvasSize();
+    }
+
+    /**
+     * Get object position by originX, originY
+     * @param {number} id - object id
+     * @param {string} originX - can be 'left', 'center', 'right'
+     * @param {string} originY - can be 'top', 'center', 'bottom'
+     * @returns {Object} {{x:number, y: number}} position by origin if id is valid, or null
+     * @example
+     * var position = imageEditor.getObjectPosition(id, 'left', 'top');
+     * console.log(position);
+     */
+    getObjectPosition(id, originX, originY) {
+        return this._graphics.getObjectPosition(id, originX, originY);
+    }
+
+    /**
+     * Set object position  by originX, originY
+     * @param {number} id - object id
+     * @param {Object} posInfo - position object
+     *  @param {number} posInfo.x - x position
+     *  @param {number} posInfo.y - y position
+     *  @param {string} posInfo.originX - can be 'left', 'center', 'right'
+     *  @param {string} posInfo.originY - can be 'top', 'center', 'bottom'
+     * @returns {Promise}
+     * @example
+     * // align the object to 'left', 'top'
+     * imageEditor.setObjectPosition(id, {
+     *     x: 0,
+     *     y: 0,
+     *     originX: 'left',
+     *     originY: 'top'
+     * });
+     * @example
+     * // align the object to 'right', 'top'
+     * var canvasSize = imageEditor.getCanvasSize();
+     * imageEditor.setObjectPosition(id, {
+     *     x: canvasSize.width,
+     *     y: 0,
+     *     originX: 'right',
+     *     originY: 'top'
+     * });
+     * @example
+     * // align the object to 'left', 'bottom'
+     * var canvasSize = imageEditor.getCanvasSize();
+     * imageEditor.setObjectPosition(id, {
+     *     x: 0,
+     *     y: canvasSize.height,
+     *     originX: 'left',
+     *     originY: 'bottom'
+     * });
+     * @example
+     * // align the object to 'right', 'bottom'
+     * var canvasSize = imageEditor.getCanvasSize();
+     * imageEditor.setObjectPosition(id, {
+     *     x: canvasSize.width,
+     *     y: canvasSize.height,
+     *     originX: 'right',
+     *     originY: 'bottom'
+     * });
+     */
+    setObjectPosition(id, posInfo) {
+        return this.execute(commands.SET_OBJECT_POSITION, id, posInfo);
     }
 }
 

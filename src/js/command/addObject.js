@@ -18,12 +18,9 @@ const command = {
      * @returns {Promise}
      */
     execute(graphics, object) {
-        tui.util.stamp(object);
-
         return new Promise((resolve, reject) => {
             if (!graphics.contains(object)) {
                 graphics.add(object);
-                graphics.setActiveObject(object);
                 resolve(object);
             } else {
                 reject(rejectMessages.addedObject);

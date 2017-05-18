@@ -9,21 +9,22 @@ import consts from '../consts';
 const {commandNames, rejectMessages} = consts;
 
 const command = {
-    name: commandNames.REMOVE_ACTIVE_OBJECT,
+    name: commandNames.REMOVE_OBJECT,
 
     /**
      * Remove an object
      * @param {Graphics} graphics - Graphics instance
+     * @param {number} id - object id
      * @returns {Promise}
      */
-    execute(graphics) {
+    execute(graphics, id) {
         return new Promise((resolve, reject) => {
             const undoData = this.undoData;
-            undoData.objects = graphics.removeActiveObject();
+            undoData.objects = graphics.removeObjectById(id);
             if (undoData.objects.length) {
                 resolve();
             } else {
-                reject(rejectMessages.noActiveObject);
+                reject(rejectMessages.noObject);
             }
         });
     },

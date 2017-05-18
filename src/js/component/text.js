@@ -189,7 +189,6 @@ class Text extends Component {
                 mouseup: this._onFabricMouseUp.bind(this)
             });
 
-            tui.util.stamp(newText);
             canvas.add(newText);
 
             if (!canvas.getActiveObject()) {
@@ -197,7 +196,7 @@ class Text extends Component {
             }
 
             this.isPrevEditing = true;
-            resolve(newText);
+            resolve(this.graphics.createObjectProperties(newText));
         });
     }
 
@@ -373,8 +372,6 @@ class Text extends Component {
         const obj = this._editingObj;
         const textareaStyle = this._textarea.style;
 
-        obj.setText(this._textarea.value);
-
         textareaStyle.width = `${Math.ceil(obj.getWidth() / ratio)}px`;
         textareaStyle.height = `${Math.ceil(obj.getHeight() / ratio)}px`;
     }
@@ -404,6 +401,7 @@ class Text extends Component {
         const ratio = this.getCanvasRatio();
         const editingObj = this._editingObj;
         const editingObjInfos = this._editingObjInfos;
+        const textContent = this._textarea.value;
         let transWidth = (editingObj.getWidth() / ratio) - (editingObjInfos.width / ratio);
         let transHeight = (editingObj.getHeight() / ratio) - (editingObjInfos.height / ratio);
 
@@ -414,12 +412,22 @@ class Text extends Component {
 
         this._textarea.style.display = 'none';
 
-        this._editingObj.set({
+        editingObj.set({
             left: editingObjInfos.left + transWidth,
             top: editingObjInfos.top + transHeight
         });
 
-        this.getCanvas().add(this._editingObj);
+        if (textContent.length) {
+            this.getCanvas().add(editingObj);
+
+            const params = {
+                id: tui.util.stamp(editingObj),
+                type: editingObj.type,
+                text: textContent
+            };
+
+            this.fire(events.TEXT_CHANGED, params);
+        }
     }
 
     /**
@@ -459,10 +467,8 @@ class Text extends Component {
 
         if (obj) {
             // obj is empty object at initial time, will be set fabric object
-            if (!obj.text && obj.remove) {
+            if (obj.text === '') {
                 obj.remove();
-            } else if (!tui.util.hasStamp(obj)) {
-                this.fire(events.OBJECT_ADDED, obj);
             }
         }
     }
@@ -473,15 +479,7 @@ class Text extends Component {
      * @private
      */
     _onFabricSelect(fEvent) {
-        const obj = this.getSelectedObj();
-
         this.isPrevEditing = true;
-
-        if (obj.text === '') {
-            obj.remove();
-        } else if (!tui.util.hasStamp(obj) && this.isSelected()) {
-            this.fire(events.OBJECT_ADDED, obj);
-        }
 
         this.setSelectedInfo(fEvent.target, true);
     }
