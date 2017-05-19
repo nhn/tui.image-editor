@@ -106,7 +106,7 @@ class Shape extends Component {
      * Start to draw the shape on canvas
      * @ignore
      */
-    startDrawingMode() {
+    start() {
         const canvas = this.getCanvas();
 
         this._isSelected = false;
@@ -126,7 +126,7 @@ class Shape extends Component {
      * End to draw the shape on canvas
      * @ignore
      */
-    endDrawingMode() {
+    end() {
         const canvas = this.getCanvas();
 
         this._isSelected = false;

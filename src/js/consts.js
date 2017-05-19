@@ -72,9 +72,9 @@ module.exports = {
      * Editor states
      * @type {Object.<string, string>}
      */
-    states: util.keyMirror(
+    drawingModes: util.keyMirror(
         'NORMAL',
-        'CROP',
+        'CROPPER',
         'FREE_DRAWING',
         'LINE',
         'TEXT',

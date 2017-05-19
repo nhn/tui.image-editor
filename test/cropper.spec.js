@@ -226,26 +226,6 @@ describe('Cropper', () => {
             expect(cropper._cropzone).toBe(null);
         });
 
-        it('should return cropzone data if the cropzone is valid and not canceled', () => {
-            cropper.start();
-            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
-
-            expect(cropper.end(true)).toEqual({
-                imageName: jasmine.any(String),
-                url: jasmine.any(String)
-            });
-        });
-
-        it('should not post command if cropzone is invalid or crop is canceled', () => {
-            cropper.start();
-            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
-            expect(cropper.end(false)).toBeFalsy();
-
-            cropper.start();
-            spyOn(cropper._cropzone, 'isValid').and.returnValue(false);
-            expect(cropper.end(false)).toBeFalsy();
-        });
-
         it('should set "evented" of all obejcts to true', () => {
             const objects = [
                 new fabric.Object({evented: false}),
