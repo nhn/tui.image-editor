@@ -957,7 +957,7 @@ class ImageEditor {
     }
 
     /**
-     * Remove active object or group
+     * Remove an object or group by id
      * @param {number} id - object id
      * @returns {Promise}
      * @example

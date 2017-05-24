@@ -1,7 +1,7 @@
 # Image Editor
 Canvas image editor
 
-![image](https://cloud.githubusercontent.com/assets/18183560/20796021/86d53b88-b817-11e6-8fc3-2475d070d643.png)
+![image](https://cloud.githubusercontent.com/assets/26706716/26335518/84f041e2-3fa7-11e7-8892-155a95c6d5c3.png)
 
 ## Feature
 * Load image to canvas
@@ -15,6 +15,7 @@ Canvas image editor
 * Icon
 * Text
 * Mask Filter
+* Image Filter
 
 ## Documentation
 * API: [http://nhnent.github.io/tui.component.image-editor/latest/](http://nhnent.github.io/tui.component.image-editor/latest/)
