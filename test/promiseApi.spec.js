@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/filter.js"
  */
+import $ from 'jquery';
 import ImageEditor from '../src/js/imageEditor';
 
 describe('Promise API', () => {
@@ -26,7 +27,7 @@ describe('Promise API', () => {
 
     beforeEach(done => {
         imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => done()
-        ).catch(() =>
+        )['catch'](() =>
             done()
         );
     });
@@ -38,7 +39,7 @@ describe('Promise API', () => {
         }).then(() => {
             expect(canvas.getObjects().length).toBe(1);
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -53,7 +54,7 @@ describe('Promise API', () => {
         ).then(() => {
             expect(canvas.getObjects().length).toBe(0);
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -67,7 +68,7 @@ describe('Promise API', () => {
         ).then(() => {
             expect(canvas.getObjects()[0].getFill()).toBe('#FFFF00');
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -79,13 +80,13 @@ describe('Promise API', () => {
             height: 100,
             fill: '#FFFF00'
         }).then(() => {
-            const shape = canvas.getObjects()[0];
+            const [shape] = canvas.getObjects();
             expect(shape.type).toBe('rect');
             expect(shape.width).toBe(100);
             expect(shape.height).toBe(100);
             expect(shape.getFill()).toBe('#FFFF00');
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -101,12 +102,12 @@ describe('Promise API', () => {
             width: 200,
             fill: '#FF0000'
         })).then(() => {
-            const shape = canvas.getObjects()[0];
+            const [shape] = canvas.getObjects();
             expect(shape.type).toBe('triangle');
             expect(shape.width).toBe(200);
             expect(shape.getFill()).toBe('#FF0000');
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -128,7 +129,7 @@ describe('Promise API', () => {
         }).then(() => {
             fail();
             done();
-        }).catch(message => {
+        })['catch'](message => {
             expect(message).toBe('The object is not in canvas.');
             done();
         });
@@ -140,7 +141,7 @@ describe('Promise API', () => {
             expect(canvas.getObjects().length).toBe(1);
             expect(objectProps.id).toBe(activeObjectId);
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -153,7 +154,7 @@ describe('Promise API', () => {
         }).then(() =>
             // There is no way to get canvas dimension
             done()
-        ).catch(message => {
+        )['catch'](message => {
             fail(message);
             done();
         });
@@ -169,7 +170,7 @@ describe('Promise API', () => {
         ).then(() => {
             expect(canvas.getObjects().length).toBe(0);
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -183,7 +184,7 @@ describe('Promise API', () => {
                 angle: 0
             });
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -197,7 +198,7 @@ describe('Promise API', () => {
                 angle: 0
             });
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -212,7 +213,7 @@ describe('Promise API', () => {
             });
             fail();
             done();
-        }).catch(message => {
+        })['catch'](message => {
             expect(message).toBe('The flipX and flipY setting values are not changed.');
             done();
         });
@@ -222,7 +223,7 @@ describe('Promise API', () => {
         imageEditor.rotate(10).then(angle => {
             expect(angle).toBe(10);
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -232,7 +233,7 @@ describe('Promise API', () => {
         imageEditor.setAngle(10).then(angle => {
             expect(angle).toBe(10);
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -247,7 +248,7 @@ describe('Promise API', () => {
         ).then(() => {
             expect(canvas.getObjects().length).toBe(0);
             done();
-        }).catch(message => {
+        })['catch'](message => {
             fail(message);
             done();
         });
@@ -270,7 +271,7 @@ describe('Promise API', () => {
         it('setObjectProperties() should change object\'s properties', done => {
             imageEditor.setObjectProperties(activeObjectId, properties).then(() => {
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });
@@ -292,7 +293,7 @@ describe('Promise API', () => {
                     top: 30
                 }));
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });
@@ -314,7 +315,7 @@ describe('Promise API', () => {
 
                 expect(result).toBe(null);
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });
@@ -334,7 +335,7 @@ describe('Promise API', () => {
                 expect(result).not.toBe(null);
                 expect(result).toEqual(jasmine.objectContaining(properties));
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });
@@ -349,7 +350,7 @@ describe('Promise API', () => {
                     fill: 'rgba(255, 255, 0, 0.5)'
                 }));
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });
@@ -396,7 +397,7 @@ describe('Promise API', () => {
                 expect(result.top).toBe(50);
 
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });

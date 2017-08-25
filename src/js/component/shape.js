@@ -2,12 +2,12 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Shape component
  */
+import {fabric} from 'fabric';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
-
-const {extend, inArray} = tui.util;
+import {extend, inArray} from 'tui-code-snippet';
 
 const {rejectMessages, eventNames} = consts;
 const KEY_CODES = consts.keyCodes;
@@ -81,7 +81,6 @@ class Shape extends Component {
          * @private
          */
         this._withShiftKey = false;
-
 
         /**
          * Event handler list

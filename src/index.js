@@ -21,4 +21,4 @@ import './js/command/rotate';
 import './js/command/setObjectProperties';
 import './js/command/setObjectPosition';
 
-tui.util.defineNamespace('tui.component.ImageEditor', ImageEditor, true);
+module.exports = ImageEditor;

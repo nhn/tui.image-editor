@@ -31,10 +31,9 @@ const command = {
      */
     execute(graphics, type, options) {
         const shapeComp = graphics.getComponent(SHAPE);
-        const undoData = this.undoData;
 
         return shapeComp.add(type, options).then(objectProps => {
-            undoData.object = graphics.getObject(objectProps.id);
+            this.undoData.object = graphics.getObject(objectProps.id);
 
             return objectProps;
         });

@@ -19,9 +19,8 @@ const command = {
      */
     execute(graphics, id) {
         return new Promise((resolve, reject) => {
-            const undoData = this.undoData;
-            undoData.objects = graphics.removeObjectById(id);
-            if (undoData.objects.length) {
+            this.undoData.objects = graphics.removeObjectById(id);
+            if (this.undoData.objects.length) {
                 resolve();
             } else {
                 reject(rejectMessages.noObject);

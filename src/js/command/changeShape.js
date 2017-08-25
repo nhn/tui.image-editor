@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview change a shape
  */
+import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
@@ -32,16 +33,15 @@ const command = {
     execute(graphics, id, options) {
         const shapeComp = graphics.getComponent(SHAPE);
         const targetObj = graphics.getObject(id);
-        const undoData = this.undoData;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.object = targetObj;
-        undoData.options = {};
-        tui.util.forEachOwnProperties(options, (value, key) => {
-            undoData.options[key] = targetObj[key];
+        this.undoData.object = targetObj;
+        this.undoData.options = {};
+        snippet.forEachOwnProperties(options, (value, key) => {
+            this.undoData.options[key] = targetObj[key];
         });
 
         return shapeComp.change(targetObj, options);
@@ -52,8 +52,7 @@ const command = {
      */
     undo(graphics) {
         const shapeComp = graphics.getComponent(SHAPE);
-        const shape = this.undoData.object;
-        const options = this.undoData.options;
+        const {object: shape, options} = this.undoData;
 
         return shapeComp.change(shape, options);
     }

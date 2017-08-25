@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Util
  */
+import {forEach} from 'tui-code-snippet';
 const {min, max} = Math;
 
 module.exports = {
@@ -30,7 +31,7 @@ module.exports = {
     keyMirror(...args) {
         const obj = {};
 
-        tui.util.forEach(args, key => {
+        forEach(args, key => {
             obj[key] = key;
         });
 
@@ -45,7 +46,7 @@ module.exports = {
     makeStyleText(styleObj) {
         let styleStr = '';
 
-        tui.util.forEach(styleObj, (value, prop) => {
+        forEach(styleObj, (value, prop) => {
             styleStr += `${prop}: ${value};`;
         });
 
@@ -60,7 +61,7 @@ module.exports = {
      */
     getProperties(obj, keys) {
         const props = {};
-        const length = keys.length;
+        const {length} = keys;
         let i = 0;
         let key;
 

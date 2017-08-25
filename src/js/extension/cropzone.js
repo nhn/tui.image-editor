@@ -2,9 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Cropzone extending fabric.Rect
  */
-import util from '../util';
-
-const clamp = util.clamp;
+import snippet from 'tui-code-snippet';
+import {fabric} from 'fabric';
+import {clamp} from '../util';
 
 const CORNER_TYPE_TOP_LEFT = 'tl';
 const CORNER_TYPE_TOP_RIGHT = 'tr';
@@ -97,9 +97,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _fillOuterRect(ctx, fillStyle) {
-        const coordinates = this._getCoordinates(ctx),
-            x = coordinates.x,
-            y = coordinates.y;
+        const {x, y} = this._getCoordinates(ctx);
 
         ctx.save();
         ctx.fillStyle = fillStyle;
@@ -133,8 +131,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _getCoordinates(ctx) {
-        const ceil = Math.ceil,
-            width = this.getWidth(),
+        const width = this.getWidth(),
             height = this.getHeight(),
             halfWidth = width / 2,
             halfHeight = height / 2,
@@ -143,18 +140,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             canvasEl = ctx.canvas; // canvas element, not fabric object
 
         return {
-            x: tui.util.map([
-                -(halfWidth + left),                        // x0
-                -(halfWidth),                               // x1
-                halfWidth,                                  // x2
+            x: snippet.map([
+                -(halfWidth + left), // x0
+                -(halfWidth), // x1
+                halfWidth, // x2
                 halfWidth + (canvasEl.width - left - width) // x3
-            ], ceil),
-            y: tui.util.map([
-                -(halfHeight + top),                            // y0
-                -(halfHeight),                                  // y1
-                halfHeight,                                     // y2
-                halfHeight + (canvasEl.height - top - height)   // y3
-            ], ceil)
+            ], Math.ceil),
+            y: snippet.map([
+                -(halfHeight + top), // y0
+                -(halfHeight), // y1
+                halfHeight, // y2
+                halfHeight + (canvasEl.height - top - height) // y3
+            ], Math.ceil)
         };
     },
 
@@ -195,13 +192,12 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _onMoving() {
-        const canvas = this.canvas,
-            left = this.getLeft(),
+        const left = this.getLeft(),
             top = this.getTop(),
             width = this.getWidth(),
             height = this.getHeight(),
-            maxLeft = canvas.getWidth() - width,
-            maxTop = canvas.getHeight() - height;
+            maxLeft = this.canvas.getWidth() - width,
+            maxTop = this.canvas.getHeight() - height;
 
         this.setLeft(clamp(left, 0, maxLeft));
         this.setTop(clamp(top, 0, maxTop));
@@ -250,8 +246,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     _calcTopLeftScalingSizeFromPointer(x, y) {
         const bottom = this.getHeight() + this.top,
             right = this.getWidth() + this.left,
-            top = clamp(y, 0, bottom - 1),  // 0 <= top <= (bottom - 1)
-            left = clamp(x, 0, right - 1);  // 0 <= left <= (right - 1)
+            top = clamp(y, 0, bottom - 1), // 0 <= top <= (bottom - 1)
+            left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
 
         // When scaling "Top-Left corner": It fixes right and bottom coordinates
         return {
@@ -270,16 +266,13 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _calcBottomRightScalingSizeFromPointer(x, y) {
-        const canvas = this.canvas,
-            maxX = canvas.width,
-            maxY = canvas.height,
-            left = this.left,
-            top = this.top;
+        const {width: maxX, height: maxY} = this.canvas;
+        const {left, top} = this;
 
         // When scaling "Bottom-Right corner": It fixes left and top coordinates
         return {
-            width: clamp(x, (left + 1), maxX) - left,    // (width = x - left), (left + 1 <= x <= maxX)
-            height: clamp(y, (top + 1), maxY) - top      // (height = y - top), (top + 1 <= y <= maxY)
+            width: clamp(x, (left + 1), maxX) - left, // (width = x - left), (left + 1 <= x <= maxX)
+            height: clamp(y, (top + 1), maxY) - top // (height = y - top), (top + 1 <= y <= maxY)
         };
     },
 

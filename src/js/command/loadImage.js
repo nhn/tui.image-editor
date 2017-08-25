@@ -43,12 +43,12 @@ const command = {
      */
     undo(graphics) {
         const loader = graphics.getComponent(IMAGE_LOADER);
-        const undoData = this.undoData;
+        const {objects, name, image} = this.undoData;
 
         graphics.removeAll(true);
-        graphics.add(undoData.objects);
+        graphics.add(objects);
 
-        return loader.load(undoData.name, undoData.image);
+        return loader.load(name, image);
     }
 };
 

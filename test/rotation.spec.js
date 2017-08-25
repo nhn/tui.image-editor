@@ -2,6 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/rotation.js"
  */
+import {fabric} from 'fabric';
+import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Rotation from '../src/js/component/rotation';
 

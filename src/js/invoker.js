@@ -2,11 +2,13 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Invoker - invoke commands
  */
+import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import commandFactory from './factory/command';
 import consts from './consts';
 
 const {eventNames, rejectMessages} = consts;
+const {isFunction, isString, CustomEvents} = snippet;
 
 /**
  * Invoker
@@ -46,22 +48,21 @@ class Invoker {
     _invokeExecution(command) {
         this.lock();
 
-        let args = [];
-        if (command.args) {
-            args = command.args;
+        let {args} = command;
+        if (!args) {
+            args = [];
         }
 
         return command.execute(...args)
             .then(value => {
                 this.pushUndoStack(command);
                 this.unlock();
-                if (tui.util.isFunction(command.executeCallback)) {
+                if (isFunction(command.executeCallback)) {
                     command.executeCallback(value);
                 }
 
                 return value;
-            })
-            .catch(message => {
+            })['catch'](message => {
                 this.unlock();
 
                 return Promise.reject(message);
@@ -77,22 +78,21 @@ class Invoker {
     _invokeUndo(command) {
         this.lock();
 
-        let args = [];
-        if (command.args) {
-            args = command.args;
+        let {args} = command;
+        if (!args) {
+            args = [];
         }
 
         return command.undo(...args)
             .then(value => {
                 this.pushRedoStack(command);
                 this.unlock();
-                if (tui.util.isFunction(command.undoCallback)) {
+                if (isFunction(command.undoCallback)) {
                     command.undoCallback(value);
                 }
 
                 return value;
-            })
-            .catch(message => {
+            })['catch'](message => {
                 this.unlock();
 
                 return Promise.reject(message);
@@ -142,8 +142,8 @@ class Invoker {
             return Promise.reject(rejectMessages.isLock);
         }
 
-        let command = args[0];
-        if (tui.util.isString(args[0])) {
+        let [command] = args;
+        if (isString(command)) {
             command = commandFactory.create(...args);
         }
 
@@ -274,5 +274,5 @@ class Invoker {
     }
 }
 
-tui.util.CustomEvents.mixin(Invoker);
+CustomEvents.mixin(Invoker);
 module.exports = Invoker;

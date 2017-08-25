@@ -100,7 +100,7 @@ var $selectColorType = $('[name="select-color-type"]');
 var $selectBlendType = $('[name="select-blend-type"]');
 
 // Image editor
-var imageEditor = new tui.component.ImageEditor('.tui-image-editor', {
+var imageEditor = new tui.ImageEditor('.tui-image-editor', {
     cssMaxWidth: 700,
     cssMaxHeight: 500,
     selectionStyle: {

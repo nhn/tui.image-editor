@@ -18,10 +18,8 @@ const command = {
      * @returns {Promise}
      */
     execute(graphics, imgUrl) {
-        const undoData = this.undoData;
-
         return graphics.addImageObject(imgUrl).then(objectProps => {
-            undoData.object = graphics.getObject(objectProps.id);
+            this.undoData.object = graphics.getObject(objectProps.id);
 
             return objectProps;
         });

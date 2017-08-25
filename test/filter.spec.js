@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/filter.js"
  */
+import $ from 'jquery';
 import ImageEditor from '../src/js/imageEditor';
 
 describe('Filter', () => {
@@ -26,7 +27,7 @@ describe('Filter', () => {
         imageEditor.applyFilter('colorFilter').then(() => {
             expect(imageEditor.isEmptyUndoStack()).toBe(false);
             done();
-        }).catch(() => {
+        })['catch'](() => {
             fail();
             done();
         });
@@ -44,7 +45,7 @@ describe('Filter', () => {
             expect(imageEditor.hasFilter('colorFilter')).toBe(false);
             expect(imageEditor.isEmptyUndoStack()).toBe(false);
             done();
-        }).catch(() => {
+        })['catch'](() => {
             fail();
             done();
         });

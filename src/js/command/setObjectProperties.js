@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Set object properties
  */
+import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
@@ -27,15 +28,14 @@ const command = {
      */
     execute(graphics, id, props) {
         const targetObj = graphics.getObject(id);
-        const undoData = this.undoData;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.props = {};
-        tui.util.forEachOwnProperties(props, (value, key) => {
-            undoData.props[key] = targetObj[key];
+        this.undoData.props = {};
+        snippet.forEachOwnProperties(props, (value, key) => {
+            this.undoData.props[key] = targetObj[key];
         });
 
         graphics.setObjectProperties(id, props);
@@ -48,7 +48,7 @@ const command = {
      * @returns {Promise}
      */
     undo(graphics, id) {
-        const props = this.undoData.props;
+        const {props} = this.undoData;
 
         graphics.setObjectProperties(id, props);
 

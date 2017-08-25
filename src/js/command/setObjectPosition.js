@@ -24,14 +24,13 @@ const command = {
      */
     execute(graphics, id, posInfo) {
         const targetObj = graphics.getObject(id);
-        const undoData = this.undoData;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.objectId = id;
-        undoData.props = graphics.getObjectProperties(id, ['left', 'top']);
+        this.undoData.objectId = id;
+        this.undoData.props = graphics.getObjectProperties(id, ['left', 'top']);
 
         graphics.setObjectPosition(id, posInfo);
         graphics.renderAll();
@@ -43,8 +42,7 @@ const command = {
      * @returns {Promise}
      */
     undo(graphics) {
-        const objectId = this.undoData.objectId;
-        const props = this.undoData.props;
+        const {objectId, props} = this.undoData;
 
         graphics.setObjectProperties(objectId, props);
         graphics.renderAll();

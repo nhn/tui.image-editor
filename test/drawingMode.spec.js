@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/imageEditor.js"
  */
+import $ from 'jquery';
 import ImageEditor from '../src/js/imageEditor';
 
 describe('DrawingMode', () => {
@@ -35,8 +36,8 @@ describe('DrawingMode', () => {
     });
 
     it('enter all drawing mode with startDrawingMode in consecutive order', () => {
-        const drawingModes = ['CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE'],
-            length = drawingModes.length;
+        const drawingModes = ['CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE'];
+        const {length} = drawingModes;
         let i;
 
         for (i = 0; i < length; i += 1) {

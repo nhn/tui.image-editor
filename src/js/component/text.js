@@ -2,6 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Text module
  */
+import {fabric} from 'fabric';
+import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
@@ -21,7 +23,7 @@ const resetStyles = {
     textAlign: 'left',
     textDecoraiton: ''
 };
-const browser = tui.util.browser;
+const {browser} = snippet;
 
 const TEXTAREA_CLASSNAME = 'tui-image-eidtor-textarea';
 const TEXTAREA_STYLES = util.makeStyleText({
@@ -180,7 +182,7 @@ class Text extends Component {
             this._setInitPos(options.position);
 
             if (options.styles) {
-                styles = tui.util.extend(options.styles, styles);
+                styles = snippet.extend(options.styles, styles);
             }
 
             const newText = new fabric.Text(text, styles);
@@ -230,7 +232,7 @@ class Text extends Component {
      */
     setStyle(activeObj, styleObj) {
         return new Promise(resolve => {
-            tui.util.forEach(styleObj, (val, key) => {
+            snippet.forEach(styleObj, (val, key) => {
                 if (activeObj[key] === val) {
                     styleObj[key] = resetStyles[key] || '';
                 }
@@ -326,7 +328,7 @@ class Text extends Component {
 
         this._textarea = textarea;
 
-        this._listeners = tui.util.extend(this._listeners, {
+        this._listeners = snippet.extend(this._listeners, {
             input: this._onInput.bind(this),
             keydown: this._onKeyDown.bind(this),
             blur: this._onBlur.bind(this),
@@ -421,7 +423,7 @@ class Text extends Component {
             this.getCanvas().add(editingObj);
 
             const params = {
-                id: tui.util.stamp(editingObj),
+                id: snippet.stamp(editingObj),
                 type: editingObj.type,
                 text: textContent
             };

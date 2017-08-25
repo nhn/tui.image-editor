@@ -31,7 +31,7 @@ const command = {
      */
     undo(graphics, type) {
         const filterComp = graphics.getComponent(FILTER);
-        const options = this.undoData.options;
+        const {options} = this.undoData;
 
         return filterComp.add(type, options);
     }

@@ -79,8 +79,7 @@ function adjustOriginByStartPoint(pointer, shape) {
     const centerPoint = shape.getPointByOrigin('center', 'center');
     const angle = -shape.getAngle();
     const originPositions = getPositionsOfRotatedOrigin(centerPoint, pointer, angle);
-    const originX = originPositions.originX;
-    const originY = originPositions.originY;
+    const {originX, originY} = originPositions;
     const origin = shape.getPointByOrigin(originX, originY);
     const left = shape.getLeft() - (centerPoint.x - origin.x);
     const top = shape.getTop() - (centerPoint.x - origin.y);
@@ -105,8 +104,7 @@ function adjustOriginByMovingPointer(pointer, shape) {
     const origin = shape.startPoint;
     const angle = -shape.getAngle();
     const originPositions = getPositionsOfRotatedOrigin(origin, pointer, angle);
-    const originX = originPositions.originX;
-    const originY = originPositions.originY;
+    const {originX, originY} = originPositions;
 
     shape.setPositionByOrigin(origin, originX, originY);
 }
@@ -117,10 +115,8 @@ function adjustOriginByMovingPointer(pointer, shape) {
  * @ignore
  */
 function adjustDimensionOnScaling(shape) {
-    const type = shape.type;
+    const {type, scaleX, scaleY} = shape;
     const dimensionKeys = DIMENSION_KEYS[type];
-    const scaleX = shape.scaleX;
-    const scaleY = shape.scaleY;
     let width = shape[dimensionKeys.w] * scaleX;
     let height = shape[dimensionKeys.h] * scaleY;
 
@@ -151,11 +147,9 @@ function adjustDimensionOnScaling(shape) {
  * @ignore
  */
 function adjustDimensionOnMouseMove(pointer, shape) {
-    const origin = shape.startPoint;
-    const type = shape.type;
+    const {type, strokeWidth, startPoint: origin} = shape;
     const divisor = DIVISOR[type];
     const dimensionKeys = DIMENSION_KEYS[type];
-    const strokeWidth = shape.strokeWidth;
     const isTriangle = !!(shape.type === 'triangle');
     const options = {};
     let width = Math.abs(origin.x - pointer.x) / divisor;

@@ -31,7 +31,7 @@ const command = {
      */
     undo(graphics) {
         const rotationComp = graphics.getComponent(ROTATION);
-        const angle = this.undoData.angle;
+        const {angle} = this.undoData;
 
         return rotationComp.setAngle(angle);
     }

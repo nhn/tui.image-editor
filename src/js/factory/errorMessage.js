@@ -2,9 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Error-message factory
  */
-import util from '../util';
+import snippet from 'tui-code-snippet';
+import {keyMirror} from '../util';
 
-const keyMirror = util.keyMirror;
 const types = keyMirror(
     'UN_IMPLEMENTATION',
     'NO_COMPONENT_NAME'
@@ -23,7 +23,7 @@ const map = {
 };
 
 module.exports = {
-    types: tui.util.extend({}, types),
+    types: snippet.extend({}, types),
 
     create(type, ...args) {
         type = type.toLowerCase();

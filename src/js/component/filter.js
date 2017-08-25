@@ -2,7 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add filter module
  */
+import {isUndefined, extend, forEach, filter} from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
+import {fabric} from 'fabric';
 import Component from '../interface/component';
 import Mask from '../extension/mask';
 import consts from '../consts';
@@ -12,12 +14,12 @@ import Emboss from '../extension/emboss';
 import ColorFilter from '../extension/colorFilter';
 
 const {rejectMessages} = consts;
-const {isUndefined, extend, forEach, defineNamespace} = tui.util;
-defineNamespace('fabric.Image.filters.Mask', Mask, true);
-defineNamespace('fabric.Image.filters.Blur', Blur, true);
-defineNamespace('fabric.Image.filters.Sharpen', Sharpen, true);
-defineNamespace('fabric.Image.filters.Emboss', Emboss, true);
-defineNamespace('fabric.Image.filters.ColorFilter', ColorFilter, true);
+const {filters} = fabric.Image;
+filters.Mask = Mask;
+filters.Blur = Blur;
+filters.Sharpen = Sharpen;
+filters.Emboss = Emboss;
+filters.ColorFilter = ColorFilter;
 
 /**
  * Filter
@@ -41,16 +43,16 @@ class Filter extends Component {
         return new Promise((resolve, reject) => {
             const sourceImg = this._getSourceImage();
             const canvas = this.getCanvas();
-            let filter = this._getFilter(sourceImg, type);
-            if (!filter) {
-                filter = this._createFilter(sourceImg, type, options);
+            let imgFilter = this._getFilter(sourceImg, type);
+            if (!imgFilter) {
+                imgFilter = this._createFilter(sourceImg, type, options);
             }
 
-            if (!filter) {
+            if (!imgFilter) {
                 reject(rejectMessages.invalidParameters);
             }
 
-            this._changeFilterValues(filter, options);
+            this._changeFilterValues(imgFilter, options);
 
             this._apply(sourceImg, () => {
                 canvas.renderAll();
@@ -104,29 +106,29 @@ class Filter extends Component {
      */
     getOptions(type) {
         const sourceImg = this._getSourceImage();
-        const filter = this._getFilter(sourceImg, type);
-        if (!filter) {
+        const imgFilter = this._getFilter(sourceImg, type);
+        if (!imgFilter) {
             return null;
         }
 
-        return extend({}, filter.options);
+        return extend({}, imgFilter.options);
     }
 
     /**
      * Change filter values
-     * @param {Object} filter object of filter
+     * @param {Object} imgFilter object of filter
      * @param {Object} options object
      * @private
      */
-    _changeFilterValues(filter, options) {
+    _changeFilterValues(imgFilter, options) {
         forEach(options, (value, key) => {
-            if (!isUndefined(filter[key])) {
-                filter[key] = value;
+            if (!isUndefined(imgFilter[key])) {
+                imgFilter[key] = value;
             }
         });
-        forEach(filter.options, (value, key) => {
+        forEach(imgFilter.options, (value, key) => {
             if (!isUndefined(options[key])) {
-                filter.options[key] = options[key];
+                imgFilter.options[key] = options[key];
             }
         });
     }
@@ -180,21 +182,23 @@ class Filter extends Component {
      * @private
      */
     _getFilter(sourceImg, type) {
-        let filter = null,
-            item, i, length;
-        const fabricType = this._getFabricFilterType(type);
+        let imgFilter = null;
+
         if (sourceImg) {
-            length = sourceImg.filters.length;
+            const fabricType = this._getFabricFilterType(type);
+            const {length} = sourceImg.filters;
+            let item, i;
+
             for (i = 0; i < length; i += 1) {
                 item = sourceImg.filters[i];
                 if (item.type === fabricType) {
-                    filter = item;
+                    imgFilter = item;
                     break;
                 }
             }
         }
 
-        return filter;
+        return imgFilter;
     }
 
     /**
@@ -205,7 +209,7 @@ class Filter extends Component {
      */
     _removeFilter(sourceImg, type) {
         const fabricType = this._getFabricFilterType(type);
-        sourceImg.filters = tui.util.filter(sourceImg.filters, value => value.type !== fabricType);
+        sourceImg.filters = filter(sourceImg.filters, value => value.type !== fabricType);
     }
 
     /**

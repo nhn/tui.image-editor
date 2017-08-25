@@ -2,6 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Emboss extending fabric.Image.filters.Convolute
  */
+import {fabric} from 'fabric';
+
 /**
  * Emboss object
  * @class Emboss

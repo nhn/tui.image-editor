@@ -30,10 +30,9 @@ const command = {
      */
     execute(graphics, text, options) {
         const textComp = graphics.getComponent(TEXT);
-        const undoData = this.undoData;
 
         return textComp.add(text, options).then(objectProps => {
-            undoData.object = graphics.getObject(objectProps.id);
+            this.undoData.object = graphics.getObject(objectProps.id);
 
             return objectProps;
         });

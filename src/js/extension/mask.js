@@ -2,6 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Mask extending fabric.Image.filters.Mask
  */
+import {fabric} from 'fabric';
+
 /**
  * Mask object
  * @class Mask
@@ -19,8 +21,7 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
             return;
         }
 
-        const width = canvasEl.width;
-        const height = canvasEl.height;
+        const {width, height} = canvasEl;
         const maskCanvasEl = this._createCanvasOfMask(width, height);
         const ctx = canvasEl.getContext('2d');
         const maskCtx = maskCanvasEl.getContext('2d');
@@ -54,7 +55,7 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
      * @private
      */
     _drawMask(maskCtx) {
-        const mask = this.mask;
+        const {mask} = this;
         const maskImg = mask.getElement();
 
         const left = mask.getLeft();
@@ -80,7 +81,7 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
     _mapData(maskCtx, imageData, width, height) {
         const sourceData = imageData.data;
         const maskData = maskCtx.getImageData(0, 0, width, height).data;
-        const channel = this.channel;
+        const {channel} = this;
         const len = imageData.width * imageData.height * 4;
 
         for (let i = 0; i < len; i += 4) {

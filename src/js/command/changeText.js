@@ -22,14 +22,13 @@ const command = {
     execute(graphics, id, text) {
         const textComp = graphics.getComponent(TEXT);
         const targetObj = graphics.getObject(id);
-        const undoData = this.undoData;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.object = targetObj;
-        undoData.text = textComp.getText(targetObj);
+        this.undoData.object = targetObj;
+        this.undoData.text = textComp.getText(targetObj);
 
         return textComp.change(targetObj, text);
     },
@@ -39,8 +38,7 @@ const command = {
      */
     undo(graphics) {
         const textComp = graphics.getComponent(TEXT);
-        const textObj = this.undoData.object;
-        const text = this.undoData.text;
+        const {object: textObj, text} = this.undoData;
 
         return textComp.change(textObj, text);
     }

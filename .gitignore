@@ -53,3 +53,6 @@ demo
 report
 *.vim
 test.html
+
+# Compiled files
+dist

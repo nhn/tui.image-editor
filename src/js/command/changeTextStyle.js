@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Change text styles
  */
+import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
@@ -29,16 +30,15 @@ const command = {
     execute(graphics, id, styles) {
         const textComp = graphics.getComponent(TEXT);
         const targetObj = graphics.getObject(id);
-        const undoData = this.undoData;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        undoData.object = targetObj;
-        undoData.styles = {};
-        tui.util.forEachOwnProperties(styles, (value, key) => {
-            undoData.styles[key] = targetObj[key];
+        this.undoData.object = targetObj;
+        this.undoData.styles = {};
+        snippet.forEachOwnProperties(styles, (value, key) => {
+            this.undoData.styles[key] = targetObj[key];
         });
 
         return textComp.setStyle(targetObj, styles);
@@ -49,8 +49,7 @@ const command = {
      */
     undo(graphics) {
         const textComp = graphics.getComponent(TEXT);
-        const textObj = this.undoData.object;
-        const styles = this.undoData.styles;
+        const {object: textObj, styles} = this.undoData;
 
         return textComp.setStyle(textObj, styles);
     }

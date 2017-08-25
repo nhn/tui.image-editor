@@ -2,6 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/cropper.js"
  */
+import snippet from 'tui-code-snippet';
+import {fabric} from 'fabric';
+import $ from 'jquery';
 import Cropper from '../src/js/component/cropper';
 import Graphics from '../src/js/graphics';
 
@@ -123,7 +126,7 @@ describe('Cropper', () => {
         beforeEach(() => {
             cropper._startX = 10;
             cropper._startY = 20;
-            tui.util.extend(canvas, {
+            snippet.extend(canvas, {
                 getWidth() {
                     return 100;
                 },
@@ -172,7 +175,6 @@ describe('Cropper', () => {
             actual = cropper._calcRectDimensionFromPoint(x, y);
             expect(actual).toEqual(expected);
         });
-
 
         it('should create cropzone that has fixed ratio during shift key is pressed.', () => {
             const x = 100;

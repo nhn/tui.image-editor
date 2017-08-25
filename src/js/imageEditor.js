@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image-editor application class
  */
+import snippet from 'tui-code-snippet';
 import Invoker from './invoker';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
@@ -10,7 +11,7 @@ import consts from './consts';
 const events = consts.eventNames;
 const commands = consts.commandNames;
 const {keyCodes, rejectMessages} = consts;
-const {isUndefined, forEach} = tui.util;
+const {isUndefined, forEach, CustomEvents} = snippet;
 
 /**
  * Image editor
@@ -200,19 +201,19 @@ class ImageEditor {
      * @param {KeyboardEvent} e - Event object
      * @private
      */
-     /* eslint-disable complexity */
+    /* eslint-disable complexity */
     _onKeyDown(e) {
         const activeObject = this._graphics.getActiveObject();
         const activeObjectId = this._graphics.getObjectId(activeObject);
 
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             // There is no error message on shortcut when it's empty
-            this.undo().catch(() => {});
+            this.undo()['catch'](() => {});
         }
 
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
             // There is no error message on shortcut when it's empty
-            this.redo().catch(() => {});
+            this.redo()['catch'](() => {});
         }
 
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
@@ -1241,5 +1242,5 @@ class ImageEditor {
     }
 }
 
-tui.util.CustomEvents.mixin(ImageEditor);
+CustomEvents.mixin(ImageEditor);
 module.exports = ImageEditor;

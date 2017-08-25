@@ -1,6 +1,7 @@
-var pkg = require('./package.json');
-var webpack = require('webpack');
-var webdriverConfig = {
+/* eslint-disable consts-on-top, no-process-env, require-jsdoc */
+/* eslint-disable no-process-env, require-jsdoc */
+
+const webdriverConfig = {
     hostname: 'fe.nhnent.com',
     port: 4444,
     remoteHost: true
@@ -13,19 +14,24 @@ function setConfig(defaultConfig, server) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 9
+                version: '9'
             },
             'IE10': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 10
+                version: '10'
             },
             'IE11': {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'internet explorer',
-                version: 11
+                version: '11'
+            },
+            'Edge': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'MicrosoftEdge'
             },
             'Chrome-WebDriver': {
                 base: 'WebDriver',
@@ -36,14 +42,21 @@ function setConfig(defaultConfig, server) {
                 base: 'WebDriver',
                 config: webdriverConfig,
                 browserName: 'firefox'
+            },
+            'Safari-WebDriver': {
+                base: 'WebDriver',
+                config: webdriverConfig,
+                browserName: 'safari'
             }
         };
         defaultConfig.browsers = [
             'IE9',
             'IE10',
             'IE11',
+            'Edge',
             'Chrome-WebDriver',
-            'Firefox-WebDriver'
+            'Firefox-WebDriver',
+            'Safari-WebDriver'
         ];
         defaultConfig.reporters.push('coverage');
         defaultConfig.reporters.push('junit');
@@ -52,14 +65,14 @@ function setConfig(defaultConfig, server) {
             reporters: [
                 {
                     type: 'html',
-                    subdir: function(browser) {
-                        return 'report-html/' + browser;
+                    subdir(browser) {
+                        return `report-html/${browser}`;
                     }
                 },
                 {
                     type: 'cobertura',
-                    subdir: function(browser) {
-                        return 'report-cobertura/' + browser;
+                    subdir(browser) {
+                        return `report-cobertura/${browser}`;
                     },
                     file: 'cobertura.txt'
                 }
@@ -69,84 +82,25 @@ function setConfig(defaultConfig, server) {
             outputDir: 'report',
             suite: ''
         };
-    } else if (server === 'bs') {
-        defaultConfig.browserStack = {
-            username: process.env.BROWSER_STACK_USERNAME,
-            accessKey: process.env.BROWSER_STACK_ACCESS_KEY,
-            project: pkg.name
-        };
-
-        defaultConfig.customLaunchers = {
-            bs_ie9: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '7',
-                browser_version: '9.0',
-                browser: 'ie'
-            },
-            bs_ie10: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '7',
-                browser_version: '10.0',
-                browser: 'ie'
-            },
-            bs_ie11: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '7',
-                browser_version: '11.0',
-                browser: 'ie'
-            },
-            bs_edge: {
-                base: 'BrowserStack',
-                os: 'Windows',
-                os_version: '10',
-                browser: 'edge',
-                browser_version: 'latest'
-            },
-            bs_chrome_mac: {
-                base: 'BrowserStack',
-                os: 'OS X',
-                os_version: 'sierra',
-                browser: 'chrome',
-                browser_version: 'latest'
-            },
-            bs_firefox_mac: {
-                base: 'BrowserStack',
-                os: 'OS X',
-                os_version: 'sierra',
-                browser: 'firefox',
-                browser_version: 'latest'
-            }
-        };
-        defaultConfig.browsers = [
-            'bs_ie9',
-            'bs_ie10',
-            'bs_ie11',
-            'bs_edge',
-            'bs_chrome_mac',
-            'bs_firefox_mac'
-        ];
-        defaultConfig.browserNoActivityTimeout = 30000;
     } else {
         defaultConfig.browsers = [
-            'PhantomJS',
-            'Chrome'
+            'ChromeHeadless'
         ];
     }
 }
 
 module.exports = function(config) {
-    var defaultConfig = {
+    const defaultConfig = {
         basePath: './',
-        frameworks: ['jasmine'],
+        frameworks: [
+            'jasmine',
+            'jquery-3.2.1',
+            'es5-shim'
+        ],
         files: [
-            'bower_components/jquery/jquery.min.js',
+            // reason for not using karma-jasmine-jquery framework is that including older jasmine-karma file
+            // included jasmine-karma version is 2.0.5 and this version don't support ie8
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
-            'bower_components/tui-code-snippet/dist/code-snippet.js',
-            'bower_components/fabric/dist/fabric.js',
-            'node_modules/es5-shim/es5-shim.js',
             'test/index.js',
             {
                 pattern: 'test/fixtures/*.jpg',
@@ -171,6 +125,14 @@ module.exports = function(config) {
                 preLoaders: [
                     {
                         test: /\.js$/,
+                        exclude: /(test|bower_components|node_modules)/,
+                        loader: 'istanbul-instrumenter',
+                        query: {
+                            esModules: true
+                        }
+                    },
+                    {
+                        test: /\.js$/,
                         include: /src/,
                         exclude: /(bower_components|node_modules)/,
                         loader: 'eslint-loader'
@@ -183,10 +145,7 @@ module.exports = function(config) {
                         loader: 'babel'
                     }
                 ]
-            },
-            plugins: [
-                new webpack.HotModuleReplacementPlugin()
-            ]
+            }
         },
         port: 9876,
         colors: true,
@@ -195,6 +154,7 @@ module.exports = function(config) {
         singleRun: true
     };
 
+    /* eslint-disable */
     setConfig(defaultConfig, process.env.KARMA_SERVER);
     config.set(defaultConfig);
 };

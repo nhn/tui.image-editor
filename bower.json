@@ -24,12 +24,12 @@
     ".gitignore",
     "samples",
     "index.js",
-    "jsdoc-conf.json",
+    "jsdoc.conf.json",
     "webpack.*.js"
   ],
   "dependencies": {
     "fabric": "~1.6.4",
-    "tui-code-snippet": "~1.2.0"
+    "tui-code-snippet": "^1.2.5"
   },
   "devDependencies": {
     "tui-component-colorpicker": "~1.0.1",

@@ -110,17 +110,17 @@ describe('Invoker', () => {
         it('"redo()" should fire a event - ' +
             ' "pushUndoStack" (when redoStack is not empty after)', done => {
             invoker.execute(cmd).then(() => invoker.execute(cmd))
-            .then(() => invoker.undo())
-            .then(() => invoker.undo())
-            .then(() => {
-                invoker.on(spyEvents);
+                .then(() => invoker.undo())
+                .then(() => invoker.undo())
+                .then(() => {
+                    invoker.on(spyEvents);
 
-                return invoker.redo();
-            }).then(() => {
-                expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
-                expect(spyEvents.redoStackChanged).not.toHaveBeenCalled();
-                done();
-            });
+                    return invoker.redo();
+                }).then(() => {
+                    expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
+                    expect(spyEvents.redoStackChanged).not.toHaveBeenCalled();
+                    done();
+                });
         });
 
         it('"redo()" should fire events - ' +

@@ -2,6 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Add icon module
  */
+import {fabric} from 'fabric';
+import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
@@ -59,7 +61,7 @@ class Icon extends Component {
 
             const icon = this._createIcon(path);
 
-            icon.set(tui.util.extend({
+            icon.set(snippet.extend({
                 type: 'icon',
                 fill: this._oColor
             }, selectionStyle, options));
@@ -74,7 +76,7 @@ class Icon extends Component {
      * @param {{key: string, value: string}} pathInfos - Path infos
      */
     registerPaths(pathInfos) {
-        tui.util.forEach(pathInfos, (path, type) => {
+        snippet.forEach(pathInfos, (path, type) => {
             this._pathMap[type] = path;
         }, this);
     }

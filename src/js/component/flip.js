@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image flip module
  */
+import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
@@ -47,7 +48,7 @@ class Flip extends Component {
             return Promise.reject(rejectMessages.flip);
         }
 
-        tui.util.extend(setting, newSetting);
+        snippet.extend(setting, newSetting);
         this.setImageProperties(setting, true);
         this._invertAngle(isChangingFlipX, isChangingFlipY);
         this._flipObjects(isChangingFlipX, isChangingFlipY);
@@ -66,7 +67,7 @@ class Flip extends Component {
      */
     _invertAngle(isChangingFlipX, isChangingFlipY) {
         const canvasImage = this.getCanvasImage();
-        let angle = canvasImage.angle;
+        let {angle} = canvasImage;
 
         if (isChangingFlipX) {
             angle *= -1;

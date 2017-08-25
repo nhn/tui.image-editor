@@ -2,7 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Graphics module
  */
+import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
+import {fabric} from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
 import Flip from './component/flip';
@@ -24,7 +26,7 @@ import util from './util';
 const components = consts.componentNames;
 const events = consts.eventNames;
 const {drawingModes, fObjectOptions} = consts;
-const {extend, stamp} = tui.util;
+const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
 
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
@@ -131,7 +133,7 @@ class Graphics {
      * Destroy canvas element
      */
     destroy() {
-        const wrapperEl = this._canvas.wrapperEl;
+        const {wrapperEl} = this._canvas;
 
         this._canvas.clear();
 
@@ -164,7 +166,7 @@ class Graphics {
      */
     add(objects) {
         let theArgs = [];
-        if (tui.util.isArray(objects)) {
+        if (isArray(objects)) {
             theArgs = objects;
         } else {
             theArgs.push(objects);
@@ -417,7 +419,7 @@ class Graphics {
      * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
      */
     setImageProperties(setting, withRendering) {
-        const canvasImage = this.canvasImage;
+        const {canvasImage} = this;
 
         if (!canvasImage) {
             return;
@@ -605,14 +607,14 @@ class Graphics {
         const object = this.getObject(id);
         const props = {};
 
-        if (tui.util.isString(keys)) {
+        if (isString(keys)) {
             props[keys] = object[keys];
-        } else if (tui.util.isArray(keys)) {
-            tui.util.forEachArray(keys, value => {
+        } else if (isArray(keys)) {
+            forEachArray(keys, value => {
                 props[value] = object[value];
             });
         } else {
-            tui.util.forEachOwnProperties(keys, (value, key) => {
+            forEachOwnProperties(keys, (value, key) => {
                 props[key] = object[key];
             });
         }
@@ -699,7 +701,7 @@ class Graphics {
         let canvasElement;
 
         if (element.jquery) {
-            selectedElement = element[0];
+            [selectedElement] = element;
         } else if (element.nodeType) {
             selectedElement = element;
         } else {
@@ -870,7 +872,7 @@ class Graphics {
      * @private
      */
     _onObjectMoved(fEvent) {
-        const target = fEvent.target;
+        const {target} = fEvent;
         const params = this.createObjectProperties(target);
 
         this.fire(events.OBJECT_MOVED, params);
@@ -882,7 +884,7 @@ class Graphics {
      * @private
      */
     _onObjectScaled(fEvent) {
-        const target = fEvent.target;
+        const {target} = fEvent;
         const params = this.createObjectProperties(target);
 
         this.fire(events.OBJECT_SCALED, params);
@@ -894,7 +896,7 @@ class Graphics {
      * @private
      */
     _onObjectSelected(fEvent) {
-        const target = fEvent.target;
+        const {target} = fEvent;
         const params = this.createObjectProperties(target);
 
         this.fire(events.OBJECT_ACTIVATED, params);
@@ -985,5 +987,5 @@ class Graphics {
     }
 }
 
-tui.util.CustomEvents.mixin(Graphics);
+CustomEvents.mixin(Graphics);
 module.exports = Graphics;

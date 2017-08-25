@@ -24,10 +24,9 @@ const command = {
      */
     execute(graphics, type, options) {
         const iconComp = graphics.getComponent(ICON);
-        const undoData = this.undoData;
 
         return iconComp.add(type, options).then(objectProps => {
-            undoData.object = graphics.getObject(objectProps.id);
+            this.undoData.object = graphics.getObject(objectProps.id);
 
             return objectProps;
         });

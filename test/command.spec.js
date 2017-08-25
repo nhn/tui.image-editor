@@ -2,7 +2,10 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Tests command with command-factory
  */
+import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
+import {fabric} from 'fabric';
+import $ from 'jquery';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import Graphics from '../src/js/graphics';
@@ -44,7 +47,7 @@ describe('commandFactory', () => {
                 expect(commandName).toBe('testCommand');
                 expect(testCommand.execute).toHaveBeenCalledWith(graphics);
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });
@@ -64,7 +67,7 @@ describe('commandFactory', () => {
 
             invoker.execute('testCommand', graphics, 1, 2, 3).then(() => {
                 done();
-            }).catch(message => {
+            })['catch'](message => {
                 fail(message);
                 done();
             });
@@ -88,7 +91,7 @@ describe('commandFactory', () => {
             invoker.execute('testCommand', graphics, 1, 2, 3).then(() =>
                 invoker.undo()
             ).then(() => done()
-            ).catch(message => {
+            )['catch'](message => {
                 fail(message);
                 done();
             });
@@ -104,7 +107,7 @@ describe('commandFactory', () => {
 
         it('should stamp object', done => {
             invoker.execute(commands.ADD_OBJECT, graphics, obj).then(() => {
-                expect(tui.util.hasStamp(obj)).toBe(true);
+                expect(snippet.hasStamp(obj)).toBe(true);
                 done();
             });
         });
@@ -311,14 +314,14 @@ describe('commandFactory', () => {
 
         it('should remove an object', () => {
             graphics.setActiveObject(object);
-            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(object));
+            invoker.execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(object));
 
             expect(canvas.contains(object)).toBe(false);
         });
 
         it('should remove objects group', () => {
             canvas.setActiveObject(group);
-            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(group));
+            invoker.execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(group));
 
             expect(canvas.contains(object)).toBe(false);
             expect(canvas.contains(object2)).toBe(false);
@@ -327,7 +330,7 @@ describe('commandFactory', () => {
         it('"undo()" should restore the removed object', done => {
             canvas.setActiveObject(object);
 
-            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(object)).then(() =>
+            invoker.execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(object)).then(() =>
                 invoker.undo()
             ).then(() => {
                 expect(canvas.contains(object)).toBe(true);
@@ -337,7 +340,7 @@ describe('commandFactory', () => {
 
         it('"undo()" should restore the removed objects (group)', done => {
             canvas.setActiveObject(group);
-            invoker.execute(commands.REMOVE_OBJECT, graphics, tui.util.stamp(group)).then(() =>
+            invoker.execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(group)).then(() =>
                 invoker.undo()
             ).then(() => {
                 expect(canvas.contains(object)).toBe(true);

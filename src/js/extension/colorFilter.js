@@ -2,6 +2,8 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview ColorFilter extending fabric.Image.filters.BaseFilter
  */
+import {fabric} from 'fabric';
+
 /**
  * ColorFilter object
  * @class ColorFilter
@@ -39,12 +41,12 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
      * @param {Object} canvasEl Canvas element to apply filter to
      */
     applyTo(canvasEl) {
-        const context = canvasEl.getContext('2d'),
-            imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height),
-            data = imageData.data,
-            threshold = this.threshold;
-        let i, len,
-            filterColor = fabric.Color.sourceFromHex(this.color);
+        const context = canvasEl.getContext('2d');
+        const imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
+        const {data} = imageData;
+        const {threshold} = this;
+        let filterColor = fabric.Color.sourceFromHex(this.color);
+        let i, len;
 
         if (this.x && this.y) {
             filterColor = this._getColor(imageData, this.x, this.y);
@@ -82,11 +84,11 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
      * @returns {Array} color array
      */
     _getColor(imageData, x, y) {
-        const color = [0, 0, 0, 0],
-            data = imageData.data,
-            width = imageData.width,
-            bytes = 4,
-            position = ((width * y) + x) * bytes;
+        const color = [0, 0, 0, 0];
+        const {data, width} = imageData;
+        const bytes = 4;
+        const position = ((width * y) + x) * bytes;
+
         color[0] = data[position];
         color[1] = data[position + 1];
         color[2] = data[position + 2];

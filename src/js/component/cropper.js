@@ -2,15 +2,13 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image crop module (start cropping, end cropping)
  */
+import {fabric} from 'fabric';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
-import consts from '../consts';
-import util from '../util';
+import {keyCodes, componentNames} from '../consts';
+import {clamp} from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
-const abs = Math.abs;
-const clamp = util.clamp;
-const keyCodes = consts.keyCodes;
 
 /**
  * Cropper components
@@ -21,7 +19,7 @@ const keyCodes = consts.keyCodes;
  */
 class Cropper extends Component {
     constructor(graphics) {
-        super(consts.componentNames.CROPPER, graphics);
+        super(componentNames.CROPPER, graphics);
 
         /**
          * Cropzone
@@ -156,11 +154,10 @@ class Cropper extends Component {
     _onFabricMouseMove(fEvent) {
         const canvas = this.getCanvas();
         const pointer = canvas.getPointer(fEvent.e);
-        const x = pointer.x;
-        const y = pointer.y;
+        const {x, y} = pointer;
         const cropzone = this._cropzone;
 
-        if (abs(x - this._startX) + abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
+        if (Math.abs(x - this._startX) + Math.abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
             cropzone.remove();
             cropzone.set(this._calcRectDimensionFromPoint(x, y));
 

@@ -2,6 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Tests command with command-factory
  */
+import snippet from 'tui-code-snippet';
+import {fabric} from 'fabric';
+import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import consts from '../src/js/consts';
 
@@ -89,7 +92,7 @@ describe('Graphics', () => {
         });
 
         graphics.add(triangle);
-        const objectId = tui.util.stamp(triangle);
+        const objectId = snippet.stamp(triangle);
         graphics.removeObjectById(objectId);
         expect(graphics.getObjects().length).toBe(0);
     });
