@@ -1,8 +1,8 @@
 {
-  "basic": {
+  "example01-basic": {
     "title": "Basic Example"
   },
-  "mobile": {
+  "example02-mobile": {
     "title": "Mobile Example"
   }
 }
