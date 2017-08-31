@@ -36,10 +36,10 @@ module.exports = {
             'amd': 'tui-code-snippet',
             'root': ['tui', 'util']
         },
-        'fabric': {
-            'commonjs': 'fabric',
-            'commonjs2': 'fabric',
-            'amd': 'fabric',
+        'fabric/dist/fabric.require': {
+            'commonjs': 'fabric/dist/fabric.require',
+            'commonjs2': 'fabric/dist/fabric.require',
+            'amd': 'fabric/dist/fabric.require',
             'root': ['fabric']
         }
     },
