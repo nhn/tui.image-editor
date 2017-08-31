@@ -1,16 +1,16 @@
 /*!
  * tui-image-editor.js
- * @version 3.0.0
+ * @version 3.0.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("tui-code-snippet"), require("fabric"));
+		module.exports = factory(require("tui-code-snippet"), require("fabric/dist/fabric.require"));
 	else if(typeof define === 'function' && define.amd)
-		define(["tui-code-snippet", "fabric"], factory);
+		define(["tui-code-snippet", "fabric/dist/fabric.require"], factory);
 	else if(typeof exports === 'object')
-		exports["ImageEditor"] = factory(require("tui-code-snippet"), require("fabric"));
+		exports["ImageEditor"] = factory(require("tui-code-snippet"), require("fabric/dist/fabric.require"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["ImageEditor"] = factory((root["tui"] && root["tui"]["util"]), root["fabric"]);
 })(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_74__) {
@@ -3884,6 +3884,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
 	var _imageLoader = __webpack_require__(75);
 
 	var _imageLoader2 = _interopRequireDefault(_imageLoader);
@@ -4515,7 +4517,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var callback = this._callbackAfterLoadingImageObject.bind(this);
 
 	            return new _promise2.default(function (resolve) {
-	                _fabric.fabric.Image.fromURL(imgUrl, function (image) {
+	                _fabric2.default.Image.fromURL(imgUrl, function (image) {
 	                    callback(image);
 	                    resolve(_this.createObjectProperties(image));
 	                }, {
@@ -4803,7 +4805,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                selectedElement.appendChild(canvasElement);
 	            }
 
-	            this._canvas = new _fabric.fabric.Canvas(canvasElement, {
+	            this._canvas = new _fabric2.default.Canvas(canvasElement, {
 	                containerClass: 'tui-image-editor-canvas-container',
 	                enableRetinaScaling: false
 	            });
@@ -5458,6 +5460,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
 	var _component = __webpack_require__(76);
 
 	var _component2 = _interopRequireDefault(_component);
@@ -5579,8 +5583,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvas.selection = false;
 	            canvas.defaultCursor = 'crosshair';
 
-	            _fabric.fabric.util.addListener(document, 'keydown', this._listeners.keydown);
-	            _fabric.fabric.util.addListener(document, 'keyup', this._listeners.keyup);
+	            _fabric2.default.util.addListener(document, 'keydown', this._listeners.keydown);
+	            _fabric2.default.util.addListener(document, 'keyup', this._listeners.keyup);
 	        }
 
 	        /**
@@ -5606,8 +5610,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            this._cropzone = null;
 
-	            _fabric.fabric.util.removeListener(document, 'keydown', this._listeners.keydown);
-	            _fabric.fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
+	            _fabric2.default.util.removeListener(document, 'keydown', this._listeners.keydown);
+	            _fabric2.default.util.removeListener(document, 'keyup', this._listeners.keyup);
 	        }
 
 	        /**
@@ -5829,6 +5833,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
 	var _util = __webpack_require__(71);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -5854,7 +5860,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @extends {fabric.Rect}
 	 * @ignore
 	 */
-	var Cropzone = _fabric.fabric.util.createClass(_fabric.fabric.Rect, /** @lends Cropzone.prototype */{
+	var Cropzone = _fabric2.default.util.createClass(_fabric2.default.Rect, /** @lends Cropzone.prototype */{
 	    /**
 	     * Constructor
 	     * @param {Object} options Options object
@@ -6420,6 +6426,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
 	var _promise = __webpack_require__(4);
 
 	var _promise2 = _interopRequireDefault(_promise);
@@ -6522,8 +6530,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            canvas.forEachObject(function (obj) {
 	                var objCenter = obj.getCenterPoint();
-	                var radian = _fabric.fabric.util.degreesToRadians(angleDiff);
-	                var newObjCenter = _fabric.fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
+	                var radian = _fabric2.default.util.degreesToRadians(angleDiff);
+	                var newObjCenter = _fabric2.default.util.rotatePoint(objCenter, oldImageCenter, radian);
 
 	                obj.set({
 	                    left: newObjCenter.x - centerDiff.x,
@@ -6564,6 +6572,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _fabric = __webpack_require__(74);
+
+	var _fabric2 = _interopRequireDefault(_fabric);
 
 	var _component = __webpack_require__(76);
 
@@ -6610,7 +6620,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * fabric.Color instance for brush color
 	     * @type {fabric.Color}
 	     */
-	    _this.oColor = new _fabric.fabric.Color('rgba(0, 0, 0, 0.5)');
+	    _this.oColor = new _fabric2.default.Color('rgba(0, 0, 0, 0.5)');
 	    return _this;
 	  }
 
@@ -6642,7 +6652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      setting = setting || {};
 	      this.width = setting.width || this.width;
 	      if (setting.color) {
-	        this.oColor = new _fabric.fabric.Color(setting.color);
+	        this.oColor = new _fabric2.default.Color(setting.color);
 	      }
 	      brush.width = this.width;
 	      brush.color = this.oColor.toRgba();
@@ -6675,6 +6685,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _fabric = __webpack_require__(74);
+
+	var _fabric2 = _interopRequireDefault(_fabric);
 
 	var _component = __webpack_require__(76);
 
@@ -6726,7 +6738,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {fabric.Color}
 	         * @private
 	         */
-	        _this._oColor = new _fabric.fabric.Color('rgba(0, 0, 0, 0.5)');
+	        _this._oColor = new _fabric2.default.Color('rgba(0, 0, 0, 0.5)');
 
 	        /**
 	         * Listeners
@@ -6782,7 +6794,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._width = setting.width || this._width;
 
 	            if (setting.color) {
-	                this._oColor = new _fabric.fabric.Color(setting.color);
+	                this._oColor = new _fabric2.default.Color(setting.color);
 	            }
 	            brush.width = this._width;
 	            brush.color = this._oColor.toRgba();
@@ -6822,7 +6834,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var pointer = canvas.getPointer(fEvent.e);
 	            var points = [pointer.x, pointer.y, pointer.x, pointer.y];
 
-	            this._line = new _fabric.fabric.Line(points, {
+	            this._line = new _fabric2.default.Line(points, {
 	                stroke: this._oColor.toRgba(),
 	                strokeWidth: this._width,
 	                evented: false
@@ -6897,6 +6909,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _fabric = __webpack_require__(74);
+
+	var _fabric2 = _interopRequireDefault(_fabric);
 
 	var _tuiCodeSnippet = __webpack_require__(2);
 
@@ -7125,7 +7139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    styles = _tuiCodeSnippet2.default.extend(options.styles, styles);
 	                }
 
-	                var newText = new _fabric.fabric.Text(text, styles);
+	                var newText = new _fabric2.default.Text(text, styles);
 	                newText.set(_consts2.default.fObjectOptions.SELECTION_STYLE);
 	                newText.on({
 	                    mouseup: _this2._onFabricMouseUp.bind(_this2)
@@ -7310,12 +7324,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 
 	            if (browser.msie && browser.version === 9) {
-	                _fabric.fabric.util.addListener(textarea, 'keydown', this._listeners.keydown);
+	                _fabric2.default.util.addListener(textarea, 'keydown', this._listeners.keydown);
 	            } else {
-	                _fabric.fabric.util.addListener(textarea, 'input', this._listeners.input);
+	                _fabric2.default.util.addListener(textarea, 'input', this._listeners.input);
 	            }
-	            _fabric.fabric.util.addListener(textarea, 'blur', this._listeners.blur);
-	            _fabric.fabric.util.addListener(textarea, 'scroll', this._listeners.scroll);
+	            _fabric2.default.util.addListener(textarea, 'blur', this._listeners.blur);
+	            _fabric2.default.util.addListener(textarea, 'scroll', this._listeners.scroll);
 	        }
 
 	        /**
@@ -7334,12 +7348,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._textarea = null;
 
 	            if (browser.msie && browser.version < 10) {
-	                _fabric.fabric.util.removeListener(textarea, 'keydown', this._listeners.keydown);
+	                _fabric2.default.util.removeListener(textarea, 'keydown', this._listeners.keydown);
 	            } else {
-	                _fabric.fabric.util.removeListener(textarea, 'input', this._listeners.input);
+	                _fabric2.default.util.removeListener(textarea, 'input', this._listeners.input);
 	            }
-	            _fabric.fabric.util.removeListener(textarea, 'blur', this._listeners.blur);
-	            _fabric.fabric.util.removeListener(textarea, 'scroll', this._listeners.scroll);
+	            _fabric2.default.util.removeListener(textarea, 'blur', this._listeners.blur);
+	            _fabric2.default.util.removeListener(textarea, 'scroll', this._listeners.scroll);
 	        }
 
 	        /**
@@ -7629,6 +7643,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
 	var _tuiCodeSnippet = __webpack_require__(2);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
@@ -7785,7 +7801,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_createIcon',
 	        value: function _createIcon(path) {
-	            return new _fabric.fabric.Path(path);
+	            return new _fabric2.default.Path(path);
 	        }
 	    }]);
 
@@ -7809,6 +7825,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _promise2 = _interopRequireDefault(_promise);
 
 	var _fabric = __webpack_require__(74);
+
+	var _fabric2 = _interopRequireDefault(_fabric);
 
 	var _component = __webpack_require__(76);
 
@@ -7851,7 +7869,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	var rejectMessages = _consts2.default.rejectMessages;
-	var filters = _fabric.fabric.Image.filters;
+	var filters = _fabric2.default.Image.filters;
 
 	filters.Mask = _mask2.default;
 	filters.Blur = _blur2.default;
@@ -8036,7 +8054,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var filterObj = void 0;
 	            // capitalize first letter for matching with fabric image filter name
 	            var fabricType = this._getFabricFilterType(type);
-	            var ImageFilter = _fabric.fabric.Image.filters[fabricType];
+	            var ImageFilter = _fabric2.default.Image.filters[fabricType];
 	            if (ImageFilter) {
 	                filterObj = new ImageFilter(options);
 	                filterObj.options = options;
@@ -8122,13 +8140,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	/**
 	 * Mask object
 	 * @class Mask
 	 * @extends {fabric.Image.filters.Mask}
 	 * @ignore
 	 */
-	var Mask = _fabric.fabric.util.createClass(_fabric.fabric.Image.filters.Mask, /** @lends Mask.prototype */{
+	var Mask = _fabric2.default.util.createClass(_fabric2.default.Image.filters.Mask, /** @lends Mask.prototype */{
 	    /**
 	     * Apply filter to canvas element
 	     * @param {Object} canvasEl - Canvas element to apply filter
@@ -8162,7 +8184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @private
 	     */
 	    _createCanvasOfMask: function _createCanvasOfMask(width, height) {
-	        var maskCanvasEl = _fabric.fabric.util.createCanvasElement();
+	        var maskCanvasEl = _fabric2.default.util.createCanvasElement();
 
 	        maskCanvasEl.width = width;
 	        maskCanvasEl.height = height;
@@ -8229,13 +8251,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	/**
 	 * Blur object
 	 * @class Blur
 	 * @extends {fabric.Image.filters.Convolute}
 	 * @ignore
 	 */
-	var Blur = _fabric.fabric.util.createClass(_fabric.fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
+	var Blur = _fabric2.default.util.createClass(_fabric2.default.Image.filters.Convolute, /** @lends Convolute.prototype */{
 	  /**
 	   * Filter type
 	   * @param {String} type
@@ -8267,13 +8293,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	/**
 	 * Sharpen object
 	 * @class Sharpen
 	 * @extends {fabric.Image.filters.Convolute}
 	 * @ignore
 	 */
-	var Sharpen = _fabric.fabric.util.createClass(_fabric.fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
+	var Sharpen = _fabric2.default.util.createClass(_fabric2.default.Image.filters.Convolute, /** @lends Convolute.prototype */{
 	  /**
 	   * Filter type
 	   * @param {String} type
@@ -8305,13 +8335,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	/**
 	 * Emboss object
 	 * @class Emboss
 	 * @extends {fabric.Image.filters.Convolute}
 	 * @ignore
 	 */
-	var Emboss = _fabric.fabric.util.createClass(_fabric.fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
+	var Emboss = _fabric2.default.util.createClass(_fabric2.default.Image.filters.Convolute, /** @lends Convolute.prototype */{
 	  /**
 	   * Filter type
 	   * @param {String} type
@@ -8343,13 +8377,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _fabric = __webpack_require__(74);
 
+	var _fabric2 = _interopRequireDefault(_fabric);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 	/**
 	 * ColorFilter object
 	 * @class ColorFilter
 	 * @extends {fabric.Image.filters.BaseFilter}
 	 * @ignore
 	 */
-	var ColorFilter = _fabric.fabric.util.createClass(_fabric.fabric.Image.filters.BaseFilter, /** @lends BaseFilter.prototype */{
+	var ColorFilter = _fabric2.default.util.createClass(_fabric2.default.Image.filters.BaseFilter, /** @lends BaseFilter.prototype */{
 	    /**
 	     * Filter type
 	     * @param {String} type
@@ -8386,7 +8424,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var data = imageData.data;
 	        var threshold = this.threshold;
 
-	        var filterColor = _fabric.fabric.Color.sourceFromHex(this.color);
+	        var filterColor = _fabric2.default.Color.sourceFromHex(this.color);
 	        var i = void 0,
 	            len = void 0;
 
@@ -8457,6 +8495,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 	var _fabric = __webpack_require__(74);
+
+	var _fabric2 = _interopRequireDefault(_fabric);
 
 	var _promise = __webpack_require__(4);
 
@@ -8603,8 +8643,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'mouse:down': this._handlers.mousedown
 	            });
 
-	            _fabric.fabric.util.addListener(document, 'keydown', this._handlers.keydown);
-	            _fabric.fabric.util.addListener(document, 'keyup', this._handlers.keyup);
+	            _fabric2.default.util.addListener(document, 'keydown', this._handlers.keydown);
+	            _fabric2.default.util.addListener(document, 'keyup', this._handlers.keyup);
 	        }
 
 	        /**
@@ -8626,8 +8666,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'mouse:down': this._handlers.mousedown
 	            });
 
-	            _fabric.fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
-	            _fabric.fabric.util.removeListener(document, 'keyup', this._handlers.keyup);
+	            _fabric2.default.util.removeListener(document, 'keydown', this._handlers.keydown);
+	            _fabric2.default.util.removeListener(document, 'keyup', this._handlers.keyup);
 	        }
 
 	        /**
@@ -8734,15 +8774,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            switch (type) {
 	                case 'rect':
-	                    instance = new _fabric.fabric.Rect(options);
+	                    instance = new _fabric2.default.Rect(options);
 	                    break;
 	                case 'circle':
-	                    instance = new _fabric.fabric.Ellipse((0, _tuiCodeSnippet.extend)({
+	                    instance = new _fabric2.default.Ellipse((0, _tuiCodeSnippet.extend)({
 	                        type: 'circle'
 	                    }, options));
 	                    break;
 	                case 'triangle':
-	                    instance = new _fabric.fabric.Triangle(options);
+	                    instance = new _fabric2.default.Triangle(options);
 	                    break;
 	                default:
 	                    instance = {};
