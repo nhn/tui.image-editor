@@ -592,6 +592,8 @@ class Graphics {
 
         object.set(clone);
 
+        object.setCoords();
+
         this.getCanvas().renderAll();
 
         return clone;
@@ -664,6 +666,8 @@ class Graphics {
             left: x + diffX,
             top: y + diffY
         });
+
+        targetObj.setCoords();
 
         return true;
     }
