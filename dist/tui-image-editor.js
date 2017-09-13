@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.0.1
+ * @version 3.0.2
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -4662,6 +4662,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            object.set(clone);
 
+	            object.setCoords();
+
 	            this.getCanvas().renderAll();
 
 	            return clone;
@@ -4747,6 +4749,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                left: x + diffX,
 	                top: y + diffY
 	            });
+
+	            targetObj.setCoords();
 
 	            return true;
 	        }
