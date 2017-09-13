@@ -1,6 +1,20 @@
 {
-  "name": "root",
-  "private": true,
+  "name": "tui-image-editor",
+  "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
+  "version": "3.0.2",
+  "license": "MIT",
+  "repository": "https://github.com/nhnent/tui.image-editor",
+  "main": "dist/tui-image-editor.js",
+  "description": "TOAST UI Component: ImageEditor",
+  "keywords": [
+    "nhnent",
+    "tui",
+    "component",
+    "image",
+    "editor",
+    "canvas",
+    "fabric"
+  ],
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@babel/eslint-parser": "^7.15.0",
