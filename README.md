@@ -18,22 +18,22 @@ Canvas image editor
 * Image Filter
 
 ## Documentation
-* API: [http://nhnent.github.io/tui.image-editor/latest/](http://nhnent.github.io/tui.image-editor/latest/)
-* Tutorial: [https://github.com/nhnent/tui.image-editor/wiki/Tutorial](https://github.com/nhnent/tui.image-editor/wiki/Tutorial)
-* Examples: [http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-basic.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-basic.html)
+* **API** : [http://nhnent.github.io/tui.image-editor/latest/](http://nhnent.github.io/tui.image-editor/latest/)
+* **Tutorial** : [https://github.com/nhnent/tui.image-editor/wiki/Tutorial](https://github.com/nhnent/tui.image-editor/wiki/Tutorial)
+* **Example** : [http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-basic.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-basic.html)
 
 ## Dependency
-* [fabric.js: ~1.6.7](https://github.com/kangax/fabric.js/releases/tag/v1.6.7)
-* [tui.code-snippet: 1.2.5](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5)
+* [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7
+* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.2.5
 
-## Tested Browsers
-* Browser:
-   * IE9 ~ IE11
+## Test Environment
+### PC
+   * IE9~11
    * Edge
    * Chrome
    * Firefox
    * Safari
-* Mobile test environment
+### Mobile
    * iOS 9.3.x
    * Android 4.4.x
 
