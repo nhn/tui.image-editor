@@ -7,6 +7,7 @@ import Invoker from './invoker';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
+import {sendHostName} from './util';
 
 const events = consts.eventNames;
 const commands = consts.commandNames;
@@ -20,10 +21,13 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
+ *  @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
  */
 class ImageEditor {
     constructor(wrapper, option) {
-        option = option || {};
+        option = snippet.extend({
+            usageStatistics: true
+        }, option);
 
         /**
          * Invoker
@@ -63,6 +67,10 @@ class ImageEditor {
 
         if (option.selectionStyle) {
             this._setSelectionStyle(option.selectionStyle);
+        }
+
+        if (option.usageStatistics) {
+            sendHostName();
         }
     }
 

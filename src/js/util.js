@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Util
  */
-import {forEach} from 'tui-code-snippet';
+import {forEach, imagePing} from 'tui-code-snippet';
 const {min, max} = Math;
 
 module.exports = {
@@ -71,5 +71,21 @@ module.exports = {
         }
 
         return props;
+    },
+
+    /**
+     * send hostname
+     */
+    sendHostName() {
+        const {hostname} = location;
+
+        imagePing('https://www.google-analytics.com/collect', {
+            v: 1,
+            t: 'event',
+            tid: 'UA-115377265-9',
+            cid: hostname,
+            dp: hostname,
+            dh: 'image-editor'
+        });
     }
 };
