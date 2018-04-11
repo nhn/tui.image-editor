@@ -21,7 +21,7 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
- *  @param {boolean} [options.usageStatistics=true] - send hostname to google analytics
+ *  @param {Boolean} [option.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  */
 class ImageEditor {
     constructor(wrapper, option) {
