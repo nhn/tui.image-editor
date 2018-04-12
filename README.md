@@ -24,7 +24,7 @@ Canvas image editor
 
 ## Dependency
 * [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7
-* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.2.5
+* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
 
 ## Test Environment
 ### PC

@@ -4,6 +4,7 @@
  */
 import {forEach, imagePing} from 'tui-code-snippet';
 const {min, max} = Math;
+let hostnameSent = false;
 
 module.exports = {
     /**
@@ -78,6 +79,10 @@ module.exports = {
      */
     sendHostName() {
         const {hostname} = location;
+        if (hostnameSent) {
+            return;
+        }
+        hostnameSent = true;
 
         imagePing('https://www.google-analytics.com/collect', {
             v: 1,
