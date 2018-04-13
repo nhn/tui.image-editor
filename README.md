@@ -24,7 +24,7 @@ Canvas image editor
 
 ## Dependency
 * [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7
-* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.2.5
+* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
 
 ## Test Environment
 ### PC
@@ -90,6 +90,28 @@ var imageEditor = new tui.ImageEditor('.tui-image-editor', {
         rotatingPointOffset: 70
     }
 });
+```
+
+### Via Contents Delivery Network (CDN)
+TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
+
+You can use the CDN as below.
+
+```html
+<script src="https://uicdn.toast.com/tui-image-editor/latest/tui-image-editor.js"></script>
+```
+
+If you want to use a specific version, use the tag name instead of `latest` in the url's path.
+
+The CDN directory has the following structure.
+
+```
+tui-image-editor/
+├─ latest/
+│  ├─ tui-image-editor.js
+│  └─ tui-image-editor.min.js
+├─ v3.1.0/
+│  ├─ ...
 ```
 
 ### Download

@@ -208,7 +208,7 @@ describe('Text', () => {
             const textareaStyles = textarea.style;
 
             expect(textareaStyles['font-size']).toEqual(`${expected.fontSize / ratio}px`);
-            expect(textareaStyles['font-family'].replace(/'|"/g, '')).toEqual(expected.fontFamily);
+            expect(textareaStyles['font-family'].replace(/'|"|\\/g, '')).toEqual(expected.fontFamily);
             expect(textareaStyles['font-weight']).toEqual(expected.fontWeight);
             expect(textareaStyles['font-align']).toEqual(expected.fontAlign);
             expect(textareaStyles['line-height']).toEqual(obj.getLineHeight() + 0.1);
