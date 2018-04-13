@@ -110,7 +110,7 @@ tui-image-editor/
 ├─ latest/
 │  ├─ tui-image-editor.js
 │  └─ tui-image-editor.min.js
-├─ v3.3.0/
+├─ v3.1.0/
 │  ├─ ...
 ```
 
