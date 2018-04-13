@@ -3,7 +3,10 @@
   "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
   "version": "3.1.0",
   "license": "MIT",
-  "repository": "https://github.com/nhnent/tui.image-editor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhnent/tui.image-editor.git"
+  },
   "main": "dist/tui-image-editor.js",
   "description": "TOAST UI Component: ImageEditor",
   "keywords": [
