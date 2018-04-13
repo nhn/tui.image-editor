@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.0.2
+ * @version 3.1.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -142,6 +142,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _consts2 = _interopRequireDefault(_consts);
 
+	var _util = __webpack_require__(71);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -161,13 +163,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Object} [option] - Canvas max width & height of css
 	 *  @param {number} option.cssMaxWidth - Canvas css-max-width
 	 *  @param {number} option.cssMaxHeight - Canvas css-max-height
+	 *  @param {Boolean} [option.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
 	 */
 
 	var ImageEditor = function () {
 	    function ImageEditor(wrapper, option) {
 	        _classCallCheck(this, ImageEditor);
 
-	        option = option || {};
+	        option = _tuiCodeSnippet2.default.extend({
+	            usageStatistics: true
+	        }, option);
 
 	        /**
 	         * Invoker
@@ -207,6 +212,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (option.selectionStyle) {
 	            this._setSelectionStyle(option.selectionStyle);
+	        }
+
+	        if (option.usageStatistics) {
+	            (0, _util.sendHostName)();
 	        }
 	    }
 
@@ -3666,6 +3675,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                     * @fileoverview Util
 	                     */
 
+	var hostnameSent = false;
+
 	module.exports = {
 	    /**
 	     * Clamp value
@@ -3740,6 +3751,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        return props;
+	    },
+
+
+	    /**
+	     * send hostname
+	     */
+	    sendHostName: function sendHostName() {
+	        var _location = location,
+	            hostname = _location.hostname;
+
+	        if (hostnameSent) {
+	            return;
+	        }
+	        hostnameSent = true;
+
+	        (0, _tuiCodeSnippet.imagePing)('https://www.google-analytics.com/collect', {
+	            v: 1,
+	            t: 'event',
+	            tid: 'UA-115377265-9',
+	            cid: hostname,
+	            dp: hostname,
+	            dh: 'image-editor'
+	        });
 	    }
 	};
 
