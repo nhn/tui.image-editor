@@ -77,7 +77,7 @@
              position: absolute;
              width: 100%;
              top: 0;
-             bottom: calc(64px + 150px);
+             bottom: 64px;
          }
 
          .tui-image-editor .main {
@@ -90,27 +90,26 @@
          }
 
 
+         /*
          .tui-image-editor-controls {
              width: 100%;
              position: absolute;
              bottom: 0;
          }
+         */
 
-         .tui-image-editor-controls .sub-menu {
-             position: absolute;
-             border: 1px solid green;
-             width: 100%;
-             height: 150px;
-             bottom: 64px;
-         }
-
-         .tui-image-editor-controls .menu {
+         .tui-image-editor-controls {
              position: absolute;
              background-color: #151515;
              width: 100%;
              height: 64px;
              display: table;
              bottom: 0;
+         }
+
+         .left .tui-image-editor {
+             left: 64px;
+             width: calc(100% - 64px);
          }
 
          .top .tui-image-editor-controls .logo {
@@ -122,7 +121,7 @@
          }
 
          .top .tui-image-editor .main {
-             top: calc(64px + 150px);
+             top: 64px;
              height: 100%;
          }
 
@@ -131,17 +130,13 @@
              bottom: inherit;
          }
 
-         .top .tui-image-editor-controls .sub-menu {
-             top: 64px;
-             bottom: inherit;
-         }
 
-         .top .tui-image-editor-controls .menu {
+         .top .tui-image-editor-controls {
              top: 0;
              bottom: inherit;
          }
 
-         .tui-image-editor-controls .menu ul {
+         .tui-image-editor-controls ul {
              width: auto;
              list-style: none;
              padding: 0;
@@ -153,14 +148,14 @@
              overflow: hidden;
          }
 
-         .tui-image-editor-controls .menu li {
+         .tui-image-editor-controls li {
              display: inline-block;
              border-radius: 2px;
              padding: 7px 8px 3px 8px;
              cursor: pointer;
          }
 
-         .tui-image-editor-controls .menu li.active {
+         .tui-image-editor-controls li.active {
              background-color: #fff;
          }
 
@@ -312,7 +307,7 @@
         </style>
     </html>
     <body>
-        <div class="tui-image-editor-container">
+        <div class="tui-image-editor-container left">
 
             <div class="tui-image-editor">
                 <div class="tui-image-editor-header">
@@ -327,67 +322,65 @@
                 <div class="main"></div>
             </div>
 
+            <!-- <div class="sub-menu"></div> -->
             <div class="tui-image-editor-controls">
-                <div class="sub-menu"></div>
-                <div class="menu">
-                    <div class="logo">
-                        <img src="img/icon/img-bi.svg" />
-                    </div>
-                    <ul>
-                        <li class="active">
-                            <i class="image-editor-icon ic-undo"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-redo"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-reset"></i>
-                        </li>
-                        <li>
-                            <div class="image-editor-icon ic-partition"></div>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-delete"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-delete-all"></i>
-                        </li>
-                        <li>
-                            <div class="image-editor-icon ic-partition"></div>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-crop"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-flip"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-rotate"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-draw"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-shape"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-icon"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-text"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-mask"></i>
-                        </li>
-                        <li>
-                            <i class="image-editor-icon ic-filter"></i>
-                        </li>
-                    </ul>
+                <div class="logo">
+                    <img src="img/icon/img-bi.svg" />
+                </div>
+                <ul>
+                    <li class="active">
+                        <i class="image-editor-icon ic-undo"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-redo"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-reset"></i>
+                    </li>
+                    <li>
+                        <div class="image-editor-icon ic-partition"></div>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-delete"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-delete-all"></i>
+                    </li>
+                    <li>
+                        <div class="image-editor-icon ic-partition"></div>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-crop"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-flip"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-rotate"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-draw"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-shape"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-icon"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-text"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-mask"></i>
+                    </li>
+                    <li>
+                        <i class="image-editor-icon ic-filter"></i>
+                    </li>
+                </ul>
 
-                    <div class="buttons">
-                        <button>Load</button>
-                        <button class="download">Download</button>
-                    </div>
+                <div class="buttons">
+                    <button>Load</button>
+                    <button class="download">Download</button>
                 </div>
             </div>
         </div>
