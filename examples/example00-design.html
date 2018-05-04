@@ -14,24 +14,47 @@
              box-sizing: border-box;
          }
 
+         .tui-image-editor-container {
+             height:100%;
+             position: relative;
+             background-image: url(img/bg.png);
+         }
+
          .tui-image-editor-header {
-             position: fixed;
+             min-width: 533px;
+             position: absolute;
              top: 0;
              width: 100%;
-             padding: 8px;
          }
 
-         .tui-image-editor-header .logo {
+         .tui-image-editor-header .logo,
+         .tui-image-editor-controls .logo {
              float: left;
              width: 30%;
-             padding: 8px;
+             padding: 17px;
          }
 
-         .tui-image-editor-header .buttons {
+         .tui-image-editor-header .buttons,
+         .tui-image-editor-controls .buttons {
              float: right;
+             margin: 8px;
          }
 
-         .tui-image-editor-header .buttons button {
+         .tui-image-editor-controls .logo {
+             width: 270px;
+             height: 100%;
+             display: none;
+         }
+
+         .tui-image-editor-controls .buttons {
+             width: 270px;
+             height: 100%;
+             display: none;
+         }
+
+
+         .tui-image-editor-header .buttons button,
+         .tui-image-editor-controls .buttons button {
              width: 120px;
              height: 40px;
              outline: none;
@@ -44,47 +67,81 @@
              cursor: pointer;
          }
 
-         .tui-image-editor-header .buttons button.download {
+         .tui-image-editor-container .buttons button.download {
               background-color: #fdba3b;
               border-color: #fdba3b;
               color: #fff;
+         }
+
+         .tui-image-editor {
+             position: absolute;
+             width: 100%;
+             top: 0;
+             bottom: calc(64px + 150px);
          }
 
          .tui-image-editor .main {
              border: 4px solid red;
              position: absolute;
              top: 64px;
-             bottom: 214px;
+             bottom: 0;
              right: 0;
              left: 0;
          }
 
-         .tui-image-editor-container {
-             height:100%;
-             position: relative;
-             background-image: url(img/bg.png);
-         }
 
-         #tui-image-editor-controls {
+         .tui-image-editor-controls {
              width: 100%;
              position: absolute;
              bottom: 0;
          }
 
-         #tui-image-editor-controls .sub-menu {
+         .tui-image-editor-controls .sub-menu {
+             position: absolute;
              border: 1px solid green;
              width: 100%;
              height: 150px;
+             bottom: 64px;
          }
 
-         #tui-image-editor-controls .menu {
+         .tui-image-editor-controls .menu {
+             position: absolute;
              background-color: #151515;
              width: 100%;
              height: 64px;
              display: table;
+             bottom: 0;
          }
 
-         #tui-image-editor-controls .menu ul {
+         .top .tui-image-editor-controls .logo {
+             display: table-cell;
+         }
+
+         .top .tui-image-editor-controls .buttons {
+             display: table-cell;
+         }
+
+         .top .tui-image-editor .main {
+             top: calc(64px + 150px);
+             height: 100%;
+         }
+
+         .top .tui-image-editor-controls {
+             top: 0;
+             bottom: inherit;
+         }
+
+         .top .tui-image-editor-controls .sub-menu {
+             top: 64px;
+             bottom: inherit;
+         }
+
+         .top .tui-image-editor-controls .menu {
+             top: 0;
+             bottom: inherit;
+         }
+
+         .tui-image-editor-controls .menu ul {
              width: auto;
              list-style: none;
              padding: 0;
@@ -93,18 +150,26 @@
              text-align: center;
              vertical-align: middle;
              white-space: nowrap;
+             overflow: hidden;
          }
 
-         #tui-image-editor-controls .menu li {
+         .tui-image-editor-controls .menu li {
              display: inline-block;
              border-radius: 2px;
              padding: 7px 8px 3px 8px;
              cursor: pointer;
          }
 
-         #tui-image-editor-controls .menu li.active {
+         .tui-image-editor-controls .menu li.active {
              background-color: #fff;
          }
+
+         @media screen and (max-width: 1234px) {
+             .top .tui-image-editor-controls .logo {
+                 display: none;
+             }
+         }
+
 
          .image-editor-icon {
              display: inline-block;
@@ -259,12 +324,15 @@
                         <button class="download">Download</button>
                     </div>
                 </div>
-                <div id="tui-image-editor" class="main"></div>
+                <div class="main"></div>
             </div>
 
-            <div id="tui-image-editor-controls">
+            <div class="tui-image-editor-controls">
                 <div class="sub-menu"></div>
                 <div class="menu">
+                    <div class="logo">
+                        <img src="img/icon/img-bi.svg" />
+                    </div>
                     <ul>
                         <li class="active">
                             <i class="image-editor-icon ic-undo"></i>
@@ -315,6 +383,11 @@
                             <i class="image-editor-icon ic-filter"></i>
                         </li>
                     </ul>
+
+                    <div class="buttons">
+                        <button>Load</button>
+                        <button class="download">Download</button>
+                    </div>
                 </div>
             </div>
         </div>
