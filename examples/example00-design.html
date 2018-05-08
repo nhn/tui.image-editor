@@ -3,21 +3,29 @@
     <head>
         <meta charset="UTF-8">
         <title>0. Design</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.0/normalize.css" />
+        <link rel="stylesheet" href="img/icon/svg-bundle.css" />
         <style>
 
          html, body {
              height: 100%;
-         }
-
-         body, div, ul, li {
-             box-sizing: border-box;
+             margin: 0;
          }
 
          .tui-image-editor-container {
+             marign: 0;
+             padding: 0;
+             box-sizing: border-box;
+             min-height: 300px;
              height:100%;
              position: relative;
              background-image: url(img/bg.png);
+             border: 1px solid #000;
+         }
+
+         .tui-image-editor-container div,
+         .tui-image-editor-container ul,
+         .tui-image-editor-container li {
+             box-sizing: border-box;
          }
 
          .tui-image-editor-header {
@@ -81,7 +89,6 @@
          }
 
          .tui-image-editor .main {
-             border: 4px solid red;
              position: absolute;
              top: 64px;
              bottom: 0;
@@ -89,14 +96,14 @@
              left: 0;
          }
 
-
-         /*
-         .tui-image-editor-controls {
-             width: 100%;
+         .tui-image-editor .main .sub-menu {
+             display: none;
              position: absolute;
+             border: 1px solid red;
              bottom: 0;
+             width:100%;
+             height: 150px;
          }
-         */
 
          .tui-image-editor-controls {
              position: absolute;
@@ -107,30 +114,79 @@
              bottom: 0;
          }
 
+         .ic-partition {
+             display: inline-block;
+             background-color: #282828;
+             width: 1px;
+             height: 24px;
+         }
+
+
+         .left .tui-image-editor .main .sub-menu {
+             left: 0;
+             height: 100%;
+             width: 248px;
+         }
          .left .tui-image-editor {
              left: 64px;
              width: calc(100% - 64px);
+             height: 100%;
+         }
+         .left .tui-image-editor-controls {
+            width: 64px;
+            height: 100%;
+            display: table;
+         }
+         .left .tui-image-editor-controls li,
+         .right .tui-image-editor-controls li {
+            display: block;
+            width: 39px;
+            margin: 4px 0 4px 12px;
+         }
+         .left .ic-partition,
+         .right .ic-partition {
+             position: relative;
+             top: -7px;
+             width: 24px;
+             height: 1px;
          }
 
+
+         .right .tui-image-editor .main .sub-menu {
+             right: 0;
+             height: 100%;
+             width: 248px;
+         }
+         .right .tui-image-editor {
+             right: 64px;
+             width: calc(100% - 64px);
+             height: 100%;
+         }
+         .right .tui-image-editor-controls {
+             right: 0;
+             width: 64px;
+             height: 100%;
+             display: table;
+         }
+
+         .top .tui-image-editor .main .sub-menu {
+             top: 0;
+             bottom: inherit;
+         }
          .top .tui-image-editor-controls .logo {
              display: table-cell;
          }
-
          .top .tui-image-editor-controls .buttons {
              display: table-cell;
          }
-
          .top .tui-image-editor .main {
              top: 64px;
              height: 100%;
          }
-
          .top .tui-image-editor-controls {
              top: 0;
              bottom: inherit;
          }
-
-
          .top .tui-image-editor-controls {
              top: 0;
              bottom: inherit;
@@ -145,7 +201,6 @@
              text-align: center;
              vertical-align: middle;
              white-space: nowrap;
-             overflow: hidden;
          }
 
          .tui-image-editor-controls li {
@@ -160,155 +215,17 @@
          }
 
          @media screen and (max-width: 1234px) {
+             .top .tui-image-editor-controls ul {
+                 text-align: right;
+             }
              .top .tui-image-editor-controls .logo {
                  display: none;
              }
          }
-
-
-         .image-editor-icon {
-             display: inline-block;
-             background-size: cover;
-             background-repeat: no-repeat;
-         }
-
-         .ic-undo {
-            background-image: url(img/icon/ic-undo.svg);
-            width: 24px;
-            height: 24px;
-         }
-         .active .ic-undo {
-             background-image: url(img/icon/ic-undo-active.svg);
-         }
-
-         .ic-redo {
-             background-image: url(img/icon/ic-redo.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-redo {
-             background-image: url(img/icon/ic-redo-active.svg);
-         }
-
-         .ic-reset {
-             background-image: url(img/icon/ic-reset.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-reset {
-             background-image: url(img/icon/ic-reset-active.svg);
-         }
-
-         .ic-delete {
-             background-image: url(img/icon/ic-delete.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-delete {
-             background-image: url(img/icon/ic-reset-delete.svg);
-         }
-
-         .ic-delete-all {
-             background-image: url(img/icon/ic-delete-all.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-delete-all {
-             background-image: url(img/icon/ic-reset-delete-all-active.svg);
-         }
-
-         .ic-crop {
-             background-image: url(img/icon/ic-crop.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-delete-all {
-             background-image: url(img/icon/ic-reset-delete-all-active.svg);
-         }
-
-         .ic-flip {
-             background-image: url(img/icon/ic-flip.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-flip {
-             background-image: url(img/icon/ic-reset-flip-active.svg);
-         }
-
-         .ic-rotate {
-             background-image: url(img/icon/ic-rotate.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-rotate {
-             background-image: url(img/icon/ic-rotate-active.svg);
-         }
-
-         .ic-draw {
-             background-image: url(img/icon/ic-draw.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-draw {
-             background-image: url(img/icon/ic-draw-active.svg);
-         }
-
-         .ic-shape {
-             background-image: url(img/icon/ic-shape.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-shape {
-             background-image: url(img/icon/ic-shape-active.svg);
-         }
-
-         .ic-icon {
-             background-image: url(img/icon/ic-icon.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-icon {
-             background-image: url(img/icon/ic-icon-active.svg);
-         }
-
-         .ic-text {
-             background-image: url(img/icon/ic-text.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-text {
-             background-image: url(img/icon/ic-text-active.svg);
-         }
-
-         .ic-mask {
-             background-image: url(img/icon/ic-mask.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-mask {
-             background-image: url(img/icon/ic-mask-active.svg);
-         }
-
-         .ic-filter {
-             background-image: url(img/icon/ic-filter.svg);
-             width: 24px;
-             height: 24px;
-         }
-         .active .ic-filter {
-             background-image: url(img/icon/ic-filter-active.svg);
-         }
-
-         .ic-partition {
-             background-color: #282828;
-             width: 1px;
-             height: 24px;
-         }
-
         </style>
     </html>
     <body>
         <div class="tui-image-editor-container left">
-
             <div class="tui-image-editor">
                 <div class="tui-image-editor-header">
                     <div class="logo">
@@ -319,7 +236,11 @@
                         <button class="download">Download</button>
                     </div>
                 </div>
-                <div class="main"></div>
+                <div class="main">
+                    <div class="sub-menu">
+                        sub-menu
+                    </div>
+                </div>
             </div>
 
             <!-- <div class="sub-menu"></div> -->
@@ -329,49 +250,75 @@
                 </div>
                 <ul>
                     <li class="active">
-                        <i class="image-editor-icon ic-undo"></i>
+                        <svg class="svg_ic-undo-active">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-undo-active" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-redo"></i>
+                        <svg class="svg_ic-redo">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-redo" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-reset"></i>
+                        <svg class="svg_ic-reset">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-reset" />
+                        </svg>
                     </li>
                     <li>
-                        <div class="image-editor-icon ic-partition"></div>
+                        <div class="ic-partition"></div>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-delete"></i>
+                        <svg class="svg_ic-delete">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-delete" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-delete-all"></i>
+                        <svg class="svg_ic-delete-all">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-delete-all" />
+                        </svg>
                     </li>
                     <li>
-                        <div class="image-editor-icon ic-partition"></div>
+                        <div class="ic-partition"></div>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-crop"></i>
+                        <svg class="svg_ic-crop">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-crop" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-flip"></i>
+                        <svg class="svg_ic-flip">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-flip" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-rotate"></i>
+                        <svg class="svg_ic-rotate">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-rotate" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-draw"></i>
+                        <svg class="svg_ic-draw">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-draw" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-shape"></i>
+                        <svg class="svg_ic-shape">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-shape" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-icon"></i>
+                        <svg class="svg_ic-icon">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-icon" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-text"></i>
+                        <svg class="svg_ic-text">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-text" />
+                        </svg>
                     </li>
                     <li>
-                        <i class="image-editor-icon ic-mask"></i>
+                        <svg class="svg_ic-mask">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-mask" />
+                        </svg>
                     </li>
                     <li>
                         <i class="image-editor-icon ic-filter"></i>

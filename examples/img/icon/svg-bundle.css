@@ -1,0 +1,35 @@
+.svg_ic-crop,
+.svg_ic-delete-active,
+.svg_ic-crop-active,
+.svg_ic-delete-all-active,
+.svg_ic-delete-all,
+.svg_ic-delete,
+.svg_ic-draw,
+.svg_ic-draw-active,
+.svg_ic-filter,
+.svg_ic-filter-active,
+.svg_ic-icon-active,
+.svg_ic-icon,
+.svg_ic-mask,
+.svg_ic-mask-active,
+.svg_ic-redo,
+.svg_ic-reset,
+.svg_ic-reset-active,
+.svg_ic-redo-active,
+.svg_ic-rotate-active,
+.svg_ic-rotate,
+.svg_ic-shape,
+.svg_ic-shape-active,
+.svg_ic-undo-active,
+.svg_ic-text-active,
+.svg_ic-undo,
+.svg_ic-flip-active,
+.svg_ic-flip,
+.svg_ic-text {
+  width: 24px;
+  height: 24px;
+}
+.svg_img-bi {
+  width: 257px;
+  height: 26px;
+}
