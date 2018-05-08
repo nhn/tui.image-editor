@@ -4,6 +4,8 @@
         <meta charset="UTF-8">
         <title>0. Design</title>
         <link rel="stylesheet" href="img/icon/svg-bundle.css" />
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/svg4everybody/2.1.9/svg4everybody.js"></script> -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/svgxuse/1.2.6/svgxuse.js" integrity="sha256-TU+njGBu7T1DrfKgOBEH7kCKsl7UEvUNzpZaeUNNGi8=" crossorigin="anonymous"></script>
         <style>
 
          html, body {
@@ -225,6 +227,7 @@
         </style>
     </html>
     <body>
+
         <div class="tui-image-editor-container left">
             <div class="tui-image-editor">
                 <div class="tui-image-editor-header">
@@ -250,8 +253,10 @@
                 </div>
                 <ul>
                     <li class="active">
-                        <svg class="svg_ic-undo-active">
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-undo-active" />
+                        <svg class="svg_ic-undo">
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-undo" class="normal" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-undo" class="active" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-undo" class="hover" />
                         </svg>
                     </li>
                     <li>
@@ -331,5 +336,13 @@
                 </div>
             </div>
         </div>
+        <script>
+// addEventListener polyfill 1.0 / Eirik Backer / MIT Licence
+         document.querySelector('ul').addEventListener('click', function(event) {
+            event.target.tagName.removeElement();
+             console.log(event.target.tagName);
+         })
+         // svg4everybody();
+        </script>
     </body>
 </html>
