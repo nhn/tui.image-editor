@@ -75,6 +75,20 @@ module.exports = {
     },
 
     /**
+     * Replace matched property with template
+     * @param {string} template - String of template
+     * @param {Object} propObj - Properties
+     * @returns {string} Replaced template string
+     */
+    applyTemplate(template, propObj) {
+        const newTemplate = template.replace(/\{\{(\w*)\}\}/g, (value, prop) => (
+            propObj.hasOwnProperty(prop) ? propObj[prop] : ''
+        ));
+
+        return newTemplate;
+    },
+
+    /**
      * send hostname
      */
     sendHostName() {

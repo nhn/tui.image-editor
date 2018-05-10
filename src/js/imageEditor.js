@@ -4,6 +4,7 @@
  */
 import snippet from 'tui-code-snippet';
 import Invoker from './invoker';
+import Ui from './ui';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
@@ -26,8 +27,15 @@ const {isUndefined, forEach, CustomEvents} = snippet;
 class ImageEditor {
     constructor(wrapper, option) {
         option = snippet.extend({
+            includeUi: false,
             usageStatistics: true
         }, option);
+
+        // UI를 그리자
+        if (option.includeUi) {
+            this.ui = new Ui(wrapper);
+            wrapper = this.ui.getEditorArea();
+        }
 
         /**
          * Invoker
