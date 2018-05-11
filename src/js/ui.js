@@ -46,6 +46,9 @@ export default class Ui {
                 stroke: '#000000',
                 fill: '#ffffff',
                 strokeWidth: 3
+            },
+            _btnElement: {
+                shapeSelectButton: this._subMenuElement.querySelector('#shape-button')
             }
         };
     }

@@ -70,6 +70,12 @@ class ImageEditor {
                 this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
                 this._changeActivateMode('SHAPE');
             });
+
+            this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', (event) => {
+                let shapeType = event.target.closest('.button').classList.value.match(/(circle|triangle|rect)/)[0];
+                this.ui.shape.type = shapeType;
+                this.setDrawingShape(shapeType);
+            });
         }
 
         /**

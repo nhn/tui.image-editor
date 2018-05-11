@@ -110,6 +110,17 @@
              height: 150px;
          }
 
+         .tui-image-editor-main-container .main .sub-menu .menu li {
+             display: inline-block;
+         }
+         .tui-image-editor-main-container .main .sub-menu .menu li.newline {
+             display: block;
+         }
+         .tui-image-editor-main-container .main .sub-menu .menu .button {
+             cursor: pointer;
+             display: inline-block;
+         }
+
          .tui-image-editor-main-container .main .sub-menu > div {
              display: none;
              vertical-align: middle;
@@ -230,6 +241,7 @@
 
          .tui-image-editor-controls li.active {
              background-color: #fff;
+             transition: all .3s ease;
          }
          .tui-image-editor-wrap {
              position: absolute;

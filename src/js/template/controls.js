@@ -8,21 +8,21 @@ export default `
                         <svg class="svg_ic-undo">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-undo" class="normal" />
                             <use xlink:href="img/icon/svg-bundle.svg#ic-undo" class="active" />
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-undo" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-undo" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-redo">
                         <svg class="svg_ic-redo">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-redo" class="normal" />
                             <use xlink:href="img/icon/svg-bundle.svg#ic-redo" class="active" />
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-redo" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-redo" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-reset">
                         <svg class="svg_ic-reset">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-reset" class="normal" />
                             <use xlink:href="img/icon/svg-bundle.svg#ic-reset" class="active" />
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-reset" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-reset" class="disable" />
                         </svg>
                     </li>
                     <li>
@@ -32,14 +32,14 @@ export default `
                         <svg class="svg_ic-delete">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-delete" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-delete" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-delete" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-delete" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-delete-all">
                         <svg class="svg_ic-delete-all">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-delete-all" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-delete-all" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-delete-all" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-delete-all" class="disable" />
                         </svg>
                     </li>
                     <li>
@@ -49,56 +49,56 @@ export default `
                         <svg class="svg_ic-crop">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-crop" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-crop" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-crop" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-crop" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-flip">
                         <svg class="svg_ic-flip">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-flip" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-flip" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-flip" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-flip" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-rotate">
                         <svg class="svg_ic-rotate">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-rotate" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-rotate" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-rotate" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-rotate" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-draw">
                         <svg class="svg_ic-draw">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-draw" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-draw" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-draw" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-draw" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-shape">
                         <svg class="svg_ic-shape">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-shape" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-shape" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-shape" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-shape" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-icon">
                         <svg class="svg_ic-icon">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-icon" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-icon" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-icon" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-icon" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-text">
                         <svg class="svg_ic-text">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-text" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-text" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-text" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-text" class="disable" />
                         </svg>
                     </li>
                     <li id="btn-mask">
                         <svg class="svg_ic-mask">
                             <use xlink:href="img/icon/svg-bundle.svg#ic-mask" class="normal"/>
                             <use xlink:href="img/icon/svg-bundle.svg#ic-mask" class="active"/>
-                            <use xlink:href="img/icon/svg-bundle.svg#ic-mask" class="hover" />
+                            <use xlink:href="img/icon/svg-bundle.svg#ic-mask" class="disable" />
                         </svg>
                     </li>
                     <li>
@@ -112,3 +112,21 @@ export default `
                 </div>
             </div>
 `;
+/*
+  svg use {
+  display: none;
+  }
+  svg .normal {
+  display: block;
+  }
+  .active svg .active {
+  display: block;
+  }
+  .hover svg .disable {
+  display: block;
+  }
+  .active svg .normal,
+  .hover svg .normal {
+  display: none;
+  }
+*/

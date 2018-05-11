@@ -35,7 +35,7 @@ svg .normal {
 .active svg .active {
     display: block;
 }
-.hover svg .hover {
+.hover svg .disable {
     display: block;
 }
 .active svg .normal,

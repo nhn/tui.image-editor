@@ -27,12 +27,36 @@ export default `
                 </div>
                 <div class="shape">
                     <ul class="menu">
-                        <li class="menu-item">
-                            <label><input type="radio" name="select-shape-type" value="rect" checked="checked"> rect</label>
-                            <label><input type="radio" name="select-shape-type" value="circle"> circle</label>
-                            <label><input type="radio" name="select-shape-type" value="triangle"> triangle</label>
+                        <li id="shape-button">
+                            <div class="button rect">
+                                <div>
+                                    <svg class="svg_ic-shape-rectangle">
+                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-rectangle" class="normal"/>
+                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-rectangle" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> Rectangle </label>
+                            </div>
+                            <div class="button circle">
+                                <div>
+                                    <svg class="svg_ic-shape-circle">
+                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="normal"/>
+                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> Circle </label>
+                            </div>
+                            <div class="button triangle">
+                                <div>
+                                    <svg class="svg_ic-shape-triangle">
+                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="normal"/>
+                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> Triangle </label>
+                            </div>
                         </li>
-                        <li class="menu-item">
+                        <li>
                             <select name="select-color-type">
                                 <option value="fill">Fill</option>
                                 <option value="stroke">Stroke</option>
@@ -40,7 +64,12 @@ export default `
                             <label><input type="checkbox" id="input-check-transparent">transparent</label>
                             <div id="tui-shape-color-picker"></div>
                         </li>
-                        <li class="menu-item"><label class="menu-item no-pointer">Stroke width<input id="input-stroke-width-range" type="range" min="0" max="300" value="12"></label></li>
+                        <li class="newline">
+                            <label class="menu-item no-pointer">
+                                Stroke width
+                                <input id="input-stroke-width-range" type="range" min="0" max="300" value="12">
+                            </label>
+                        </li>
                     </ul>
                 </div>
             </div>
