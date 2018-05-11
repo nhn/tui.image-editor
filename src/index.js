@@ -1,3 +1,4 @@
+import './js/polyfill';
 import ImageEditor from './js/imageEditor';
 
 // commands

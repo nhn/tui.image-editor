@@ -23,6 +23,7 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
  *  @param {Boolean} [option.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+
  */
 class ImageEditor {
     constructor(wrapper, option) {
@@ -32,9 +33,43 @@ class ImageEditor {
         }, option);
 
         // UI를 그리자
+        this.ui = null;
         if (option.includeUi) {
-            this.ui = new Ui(wrapper);
+            this.ui = new Ui(wrapper, option.includeUi);
+            // option.includeUi.loadImage.path
             wrapper = this.ui.getEditorArea();
+
+            this.on({
+                undoStackChanged: length => {
+                    if (length) {
+                        // $btnUndo.removeClass('disabled');
+                    } else {
+                        // $btnUndo.addClass('disabled');
+                    }
+                }
+            });
+
+            this.ui._btnElement.crop.addEventListener('click', () => {
+                this.startDrawingMode('CROPPER');
+                this.ui.changeMenu('crop');
+            });
+
+            this.ui._btnElement.flip.addEventListener('click', () => {
+                this.stopDrawingMode();
+                this.ui.changeMenu('flip');
+            });
+
+            this.ui._btnElement.rotate.addEventListener('click', () => {
+                this.stopDrawingMode();
+                this.ui.changeMenu('rotate');
+            });
+
+            this.ui._btnElement.shape.addEventListener('click', () => {
+                this.stopDrawingMode();
+                this.ui.changeMenu('shape');
+                this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+                this._changeActivateMode('SHAPE');
+            });
         }
 
         /**
@@ -50,6 +85,20 @@ class ImageEditor {
          * @private
          */
         this._graphics = new Graphics(wrapper, option.cssMaxWidth, option.cssMaxHeight);
+
+        const loadImageInfo = this.ui && this.ui.getLoadImage();
+        if (loadImageInfo) {
+            this.loadImageFromURL(loadImageInfo.path, loadImageInfo.name).then(sizeValue => {
+                this.ui.resizeEditor(sizeValue);
+                this.clearUndoStack();
+            });
+
+            if (this.ui.options.initMenu) {
+                const evt = document.createEvent('MouseEvents');
+                evt.initEvent('click', true, false);
+                this.ui._btnElement[this.ui.options.initMenu].dispatchEvent(evt);
+            }
+        }
 
         /**
          * Event handler list
@@ -854,6 +903,15 @@ class ImageEditor {
      */
     changeTextStyle(id, styleObj) {
         return this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
+    }
+
+    _changeActivateMode(type) {
+        if (type === 'ICON') {
+            this.stopDrawingMode();
+        } else if (this.getDrawingMode() !== type) {
+            this.stopDrawingMode();
+            this.startDrawingMode(type);
+        }
     }
 
     /**

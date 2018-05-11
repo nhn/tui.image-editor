@@ -1,25 +1,30 @@
-.svg_ic-crop,
 .svg_ic-delete-all,
 .svg_ic-delete,
 .svg_ic-draw,
+.svg_ic-crop,
 .svg_ic-filter,
-.svg_ic-mask,
 .svg_ic-icon,
-.svg_ic-rotate,
-.svg_ic-shape,
-.svg_ic-text,
-.svg_ic-undo,
+.svg_ic-mask,
 .svg_ic-redo,
+.svg_ic-reset,
+.svg_ic-shape,
+.svg_ic-rotate,
 .svg_ic-flip,
-.svg_ic-reset {
+.svg_ic-text,
+.svg_ic-undo {
   width: 24px;
   height: 24px;
+}
+.svg_ic-shape-circle,
+.svg_ic-shape-rectangle,
+.svg_ic-shape-triangle {
+  width: 32px;
+  height: 32px;
 }
 .svg_img-bi {
   width: 257px;
   height: 26px;
 }
-
 
 svg use {
     display: none;
