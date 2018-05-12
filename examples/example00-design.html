@@ -3,7 +3,6 @@
     <head>
         <meta charset="UTF-8">
         <title>0. Design</title>
-        <link rel="stylesheet" href="img/icon/svg-bundle.css" />
         <style>
          html, body {
              height: 100%;
@@ -19,12 +18,15 @@
              position: relative;
              background-image: url(img/bg.png);
              border: 1px solid #000;
+             overflow: hidden;
          }
 
          .tui-image-editor-container div,
          .tui-image-editor-container ul,
          .tui-image-editor-container li {
              box-sizing: border-box;
+             margin: 0;
+             padding: 0;
          }
 
          .tui-image-editor-header {
@@ -95,6 +97,15 @@
              right: 0;
              left: 0;
          }
+
+         .tui-image-editor-wrap {
+             border: 1px solid green;
+             position: absolute;
+             bottom: 150px;
+             width: 100%;
+             overflow: scroll;
+         }
+
          .tui-image-editor {
             position: absolute;
             display: inline-block;
@@ -104,7 +115,7 @@
          .tui-image-editor-main-container .main .sub-menu {
              display: none;
              position: absolute;
-             border: 1px solid red;
+             /* border: 1px solid red; */
              bottom: 0;
              width:100%;
              height: 150px;
@@ -141,6 +152,7 @@
              height: 64px;
              display: table;
              bottom: 0;
+             z-index: 1;
          }
 
          .ic-partition {
@@ -245,14 +257,81 @@
          }
          .tui-image-editor-wrap {
              position: absolute;
-             border: 1px solid green;
-             width: 100%;
-             top: 0;
-             bottom: 150px;
          }
 
          .tui-image-editor canvas {
              border: 1px solid red;
+         }
+
+         /* ICON */
+        .svg_ic-delete-all,
+        .svg_ic-delete,
+        .svg_ic-draw,
+        .svg_ic-crop,
+        .svg_ic-filter,
+        .svg_ic-icon,
+        .svg_ic-mask,
+        .svg_ic-redo,
+        .svg_ic-reset,
+        .svg_ic-shape,
+        .svg_ic-rotate,
+        .svg_ic-flip,
+        .svg_ic-text,
+        .svg_ic-undo {
+            width: 24px;
+            height: 24px;
+        }
+
+        .svg_ic-color-transparent-w,
+        .svg_ic-shape-circle,
+        .svg_ic-shape-rectangle,
+        .svg_ic-shape-triangle {
+            width: 32px;
+            height: 32px;
+        }
+        .svg_img-bi {
+            width: 257px;
+            height: 26px;
+        }
+
+        .tui-image-editor-controls svg use {
+            display: none;
+        }
+        .tui-image-editor-controls svg .normal {
+            display: block;
+        }
+        .tui-image-editor-controls .active svg .active {
+            display: block;
+        }
+        .tui-image-editor-controls .hover svg .disable {
+            display: block;
+        }
+        .tui-image-editor-controls .active svg .normal,
+        .tui-image-editor-controls .hover svg .normal {
+            display: none;
+        }
+
+         /* SHAPE BUTTON */
+         #shape-button .button svg > use {
+             display: none;
+         }
+         #shape-button .button svg > use.normal {
+             display: block;
+         }
+         #shape-button.rect .button.rect svg > use.normal,
+         #shape-button.circle .button.circle svg > use.normal,
+         #shape-button.triangle .button.triangle svg > use.normal {
+             display: none;
+         }
+
+         #shape-button.rect .button.rect svg > use.active {
+             display: block;
+         }
+         #shape-button.circle .button.circle svg > use.active {
+             display: block;
+         }
+         #shape-button.triangle .button.triangle svg > use.active {
+             display: block;
          }
 
          @media screen and (max-width: 1234px) {
@@ -284,7 +363,7 @@
                      name: 'SampleImage'
                  },
                  initMenu: 'shape',
-                 menuBarPosition: 'bottom'
+                 menuBarPosition: 'left'
              },
              cssMaxWidth: 700,
              cssMaxHeight: 500,

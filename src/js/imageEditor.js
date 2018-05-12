@@ -72,7 +72,12 @@ class ImageEditor {
             });
 
             this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', (event) => {
-                let shapeType = event.target.closest('.button').classList.value.match(/(circle|triangle|rect)/)[0];
+                const button = event.target.closest('.button');
+                const [shapeType] = button.classList.value.match(/(circle|triangle|rect)/);
+
+                event.currentTarget.classList.remove(this.ui.shape.type);
+                event.currentTarget.classList.add(shapeType);
+
                 this.ui.shape.type = shapeType;
                 this.setDrawingShape(shapeType);
             });

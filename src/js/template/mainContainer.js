@@ -1,5 +1,5 @@
 export default `
-    <div class="tui-image-editor-main-container" style="border: 2px solid red">
+    <div class="tui-image-editor-main-container">
         <div class="tui-image-editor-header">
             <div class="logo">
                 <img src="img/icon/img-bi.svg" />
@@ -27,12 +27,12 @@ export default `
                 </div>
                 <div class="shape">
                     <ul class="menu">
-                        <li id="shape-button">
+                        <li id="shape-button" class="rect">
                             <div class="button rect">
                                 <div>
                                     <svg class="svg_ic-shape-rectangle">
-                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-rectangle" class="normal"/>
-                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-rectangle" class="active"/>
+                                        <use xlink:href="../dist/icon-a.svg#ic-shape-rectangle" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#ic-shape-rectangle" class="active"/>
                                     </svg>
                                 </div>
                                 <label> Rectangle </label>
@@ -40,8 +40,8 @@ export default `
                             <div class="button circle">
                                 <div>
                                     <svg class="svg_ic-shape-circle">
-                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="normal"/>
-                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="active"/>
+                                        <use xlink:href="../dist/icon-a.svg#ic-shape-circle" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#ic-shape-circle" class="active"/>
                                     </svg>
                                 </div>
                                 <label> Circle </label>
@@ -49,20 +49,32 @@ export default `
                             <div class="button triangle">
                                 <div>
                                     <svg class="svg_ic-shape-triangle">
-                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="normal"/>
-                                        <use xlink:href="img/icon/svg-bundle.svg#ic-shape-circle" class="active"/>
+                                        <use xlink:href="../dist/icon-a.svg#ic-shape-triangle" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#ic-shape-triangle" class="active"/>
                                     </svg>
                                 </div>
                                 <label> Triangle </label>
                             </div>
                         </li>
                         <li>
+                            <!--
                             <select name="select-color-type">
                                 <option value="fill">Fill</option>
                                 <option value="stroke">Stroke</option>
                             </select>
                             <label><input type="checkbox" id="input-check-transparent">transparent</label>
                             <div id="tui-shape-color-picker"></div>
+                            -->
+
+                            <div class="button circle">
+                                <div>
+                                    <svg class="svg_ic-color-transparent-w">
+                                        <use xlink:href="../dist/icon-a.svg#ic-color-transparent-w" />
+                                    </svg>
+                                </div>
+                                <label> Fill </label>
+                            </div>
+
                         </li>
                         <li class="newline">
                             <label class="menu-item no-pointer">
@@ -73,7 +85,9 @@ export default `
                     </ul>
                 </div>
             </div>
-            <div class="tui-image-editor"></div>
+            <div class="tui-image-editor-wrap">
+                <div class="tui-image-editor"></div>
+            </div>
         </div>
     </div>
 `;

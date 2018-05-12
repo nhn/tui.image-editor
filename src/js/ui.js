@@ -26,6 +26,7 @@ export default class Ui {
 
         this._mainElement = this.selectedElement.querySelector('.main');
 
+        this._editorElementWrap = this.selectedElement.querySelector('.tui-image-editor-wrap');
         this._editorElement = this.selectedElement.querySelector('.tui-image-editor');
 
         this._subMenuElement = this._mainElement.querySelector('.sub-menu');
@@ -104,32 +105,44 @@ export default class Ui {
         const width = (imageSize.newWidth > maxWidth) ? maxWidth : imageSize.newWidth;
 
         const editorElementStyle = this._editorElement.style;
-        const menuBarPosition = this.options.menuBarPosition;
+        const {menuBarPosition} = this.options;
 
         editorElementStyle.height = `${height}px`;
         editorElementStyle.width = `${width}px`;
 
-        let {offsetWidth} = this._mainElement;
-        let {offsetHeight} = this._mainElement;
+        let bottom = 0;
+        let top = 0;
+        let left = 0;
+        let right = 0;
 
         if (this.submenu && menuBarPosition === 'bottom') {
-            offsetHeight -= 150;
+            bottom += 150;
         }
         if (this.submenu && menuBarPosition === 'top') {
-            offsetHeight += 150;
+            top += 150;
         }
 
         if (this.submenu && menuBarPosition === 'left') {
-            offsetWidth += 248;
+            left += 248;
+            right += 248;
         }
         if (this.submenu && menuBarPosition === 'right') {
-            offsetWidth -= 248;
+            right += 248;
         }
 
-        const top = (offsetHeight - height) / 2;
-        const left = (offsetWidth - width) / 2;
-        this._editorElement.style.top = `${top}px`;
-        this._editorElement.style.left = `${left}px`;
+        this._editorElementWrap.style.bottom = `${bottom}px`;
+        this._editorElementWrap.style.top = `${top}px`;
+        this._editorElementWrap.style.left = `${left}px`;
+        this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
+
+        const {offsetWidth} = this._editorElementWrap;
+        const {offsetHeight} = this._editorElementWrap;
+
+        const editortop = (offsetHeight - height) / 2;
+        const editorleft = (offsetWidth - width) / 2;
+
+        this._editorElement.style.top = `${editortop}px`;
+        this._editorElement.style.left = `${editorleft}px`;
     }
 }
 
