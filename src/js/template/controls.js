@@ -5,101 +5,62 @@ export default `
                 </div>
                 <ul class="">
                     <li id="btn-undo">
-                        <svg class="svg_ic-undo">
-                            <use xlink:href="../dist/icon-a.svg#ic-undo" class="normal" />
-                            <use xlink:href="../dist/icon-b.svg#ic-undo" class="active" />
-                            <use xlink:href="../dist/icon-a.svg#ic-undo" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-undo normal"> <use xlink:href="../dist/icon-a.svg#ic-undo"/> </svg>
+                        <svg class="svg_ic-undo active"> <use xlink:href="../dist/icon-b.svg#ic-undo"/> </svg>
                     </li>
                     <li id="btn-redo">
-                        <svg class="svg_ic-redo">
-                            <use xlink:href="../dist/icon-a.svg#ic-redo" class="normal" />
-                            <use xlink:href="../dist/icon-b.svg#ic-redo" class="active" />
-                            <use xlink:href="../dist/icon-a.svg#ic-redo" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-redo normal"> <use xlink:href="../dist/icon-a.svg#ic-redo"/> </svg>
+                        <svg class="svg_ic-redo active"> <use xlink:href="../dist/icon-b.svg#ic-redo"/> </svg>
                     </li>
                     <li id="btn-reset">
-                        <svg class="svg_ic-reset">
-                            <use xlink:href="../dist/icon-a.svg#ic-reset" class="normal" />
-                            <use xlink:href="../dist/icon-b.svg#ic-reset" class="active" />
-                            <use xlink:href="../dist/icon-a.svg#ic-reset" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-reset normal"> <use xlink:href="../dist/icon-a.svg#ic-reset"/> </svg>
+                        <svg class="svg_ic-reset active"> <use xlink:href="../dist/icon-b.svg#ic-reset"/> </svg>
                     </li>
                     <li>
                         <div class="ic-partition"></div>
                     </li>
                     <li id="btn-delete">
-                        <svg class="svg_ic-delete">
-                            <use xlink:href="../dist/icon-a.svg#ic-delete" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-delete" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-delete" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-delete normal"> <use xlink:href="../dist/icon-a.svg#ic-delete"/> </svg>
+                        <svg class="svg_ic-delete active"> <use xlink:href="../dist/icon-b.svg#ic-delete"/> </svg>
                     </li>
                     <li id="btn-delete-all">
-                        <svg class="svg_ic-delete-all">
-                            <use xlink:href="../dist/icon-a.svg#ic-delete-all" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-delete-all" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-delete-all" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-delete-all normal"> <use xlink:href="../dist/icon-a.svg#ic-delete-all"/> </svg>
+                        <svg class="svg_ic-delete-all active"> <use xlink:href="../dist/icon-b.svg#ic-delete-all"/> </svg>
                     </li>
                     <li>
                         <div class="ic-partition"></div>
                     </li>
                     <li id="btn-crop">
-                        <svg class="svg_ic-crop">
-                            <use xlink:href="../dist/icon-a.svg#ic-crop" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-crop" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-crop" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-crop normal"> <use xlink:href="../dist/icon-a.svg#ic-crop"/> </svg>
+                        <svg class="svg_ic-crop active"> <use xlink:href="../dist/icon-b.svg#ic-crop"/> </svg>
                     </li>
                     <li id="btn-flip">
-                        <svg class="svg_ic-flip">
-                            <use xlink:href="../dist/icon-a.svg#ic-flip" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-flip" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-flip" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-flip normal"> <use xlink:href="../dist/icon-a.svg#ic-flip"/> </svg>
+                        <svg class="svg_ic-flip active"> <use xlink:href="../dist/icon-b.svg#ic-flip"/> </svg>
                     </li>
                     <li id="btn-rotate">
-                        <svg class="svg_ic-rotate">
-                            <use xlink:href="../dist/icon-a.svg#ic-rotate" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-rotate" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-rotate" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-rotate normal"> <use xlink:href="../dist/icon-a.svg#ic-rotate"/> </svg>
+                        <svg class="svg_ic-rotate active"> <use xlink:href="../dist/icon-b.svg#ic-rotate"/> </svg>
                     </li>
                     <li id="btn-draw">
-                        <svg class="svg_ic-draw">
-                            <use xlink:href="../dist/icon-a.svg#ic-draw" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-draw" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-draw" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-draw normal"> <use xlink:href="../dist/icon-a.svg#ic-draw"/> </svg>
+                        <svg class="svg_ic-draw active"> <use xlink:href="../dist/icon-b.svg#ic-draw"/> </svg>
                     </li>
                     <li id="btn-shape">
-                        <svg class="svg_ic-shape">
-                            <use xlink:href="../dist/icon-a.svg#ic-shape" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-shape" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-shape" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-shape normal"><use xlink:href="../dist/icon-a.svg#ic-shape"/></svg>
+                        <svg class="svg_ic-shape active"><use xlink:href="../dist/icon-b.svg#ic-shape"/></svg>
                     </li>
                     <li id="btn-icon">
-                        <svg class="svg_ic-icon">
-                            <use xlink:href="../dist/icon-a.svg#ic-icon" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-icon" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-icon" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-icon normal"><use xlink:href="../dist/icon-a.svg#ic-icon"/></svg>
+                        <svg class="svg_ic-icon active"><use xlink:href="../dist/icon-b.svg#ic-icon"/></svg>
                     </li>
                     <li id="btn-text">
-                        <svg class="svg_ic-text">
-                            <use xlink:href="../dist/icon-a.svg#ic-text" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-text" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-text" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-text normal"><use xlink:href="../dist/icon-a.svg#ic-text"/></svg>
+                        <svg class="svg_ic-text active"><use xlink:href="../dist/icon-b.svg#ic-text"/></svg>
                     </li>
                     <li id="btn-mask">
-                        <svg class="svg_ic-mask">
-                            <use xlink:href="../dist/icon-a.svg#ic-mask" class="normal"/>
-                            <use xlink:href="../dist/icon-b.svg#ic-mask" class="active"/>
-                            <use xlink:href="../dist/icon-a.svg#ic-mask" class="disable" />
-                        </svg>
+                        <svg class="svg_ic-mask normal"> <use xlink:href="../dist/icon-a.svg#ic-mask"/> </svg>
+                        <svg class="svg_ic-mask active"> <use xlink:href="../dist/icon-b.svg#ic-mask"/> </svg>
                     </li>
                     <li>
                         <i class="image-editor-icon ic-filter"></i>

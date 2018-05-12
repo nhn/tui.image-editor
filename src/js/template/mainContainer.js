@@ -30,28 +30,22 @@ export default `
                         <li id="shape-button" class="rect">
                             <div class="button rect">
                                 <div>
-                                    <svg class="svg_ic-shape-rectangle">
-                                        <use xlink:href="../dist/icon-a.svg#ic-shape-rectangle" class="normal"/>
-                                        <use xlink:href="../dist/icon-b.svg#ic-shape-rectangle" class="active"/>
-                                    </svg>
+                                    <svg class="svg_ic-shape-rectangle normal"> <use xlink:href="../dist/icon-a.svg#ic-shape-rectangle"/> </svg>
+                                    <svg class="svg_ic-shape-rectangle active"> <use xlink:href="../dist/icon-b.svg#ic-shape-rectangle"/> </svg>
                                 </div>
                                 <label> Rectangle </label>
                             </div>
                             <div class="button circle">
                                 <div>
-                                    <svg class="svg_ic-shape-circle">
-                                        <use xlink:href="../dist/icon-a.svg#ic-shape-circle" class="normal"/>
-                                        <use xlink:href="../dist/icon-b.svg#ic-shape-circle" class="active"/>
-                                    </svg>
+                                    <svg class="svg_ic-shape-circle normal"> <use xlink:href="../dist/icon-a.svg#ic-shape-circle"/> </svg>
+                                    <svg class="svg_ic-shape-circle active"> <use xlink:href="../dist/icon-b.svg#ic-shape-circle"/> </svg>
                                 </div>
                                 <label> Circle </label>
                             </div>
                             <div class="button triangle">
                                 <div>
-                                    <svg class="svg_ic-shape-triangle">
-                                        <use xlink:href="../dist/icon-a.svg#ic-shape-triangle" class="normal"/>
-                                        <use xlink:href="../dist/icon-b.svg#ic-shape-triangle" class="active"/>
-                                    </svg>
+                                    <svg class="svg_ic-shape-triangle normal"> <use xlink:href="../dist/icon-a.svg#ic-shape-triangle"/> </svg>
+                                    <svg class="svg_ic-shape-triangle active"> <use xlink:href="../dist/icon-b.svg#ic-shape-triangle"/> </svg>
                                 </div>
                                 <label> Triangle </label>
                             </div>

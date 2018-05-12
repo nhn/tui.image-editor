@@ -294,44 +294,44 @@
             height: 26px;
         }
 
-        .tui-image-editor-controls svg use {
+        .tui-image-editor-controls svg {
             display: none;
         }
-        .tui-image-editor-controls svg .normal {
-            display: block;
+        .tui-image-editor-controls svg.normal {
+            display: inline-block;
         }
-        .tui-image-editor-controls .active svg .active {
-            display: block;
+        .tui-image-editor-controls .active svg.active {
+            display: inline-block;
         }
-        .tui-image-editor-controls .hover svg .disable {
-            display: block;
+        .tui-image-editor-controls .hover svg.disable {
+            display: inline-block;
         }
-        .tui-image-editor-controls .active svg .normal,
-        .tui-image-editor-controls .hover svg .normal {
+        .tui-image-editor-controls .active svg.normal,
+        .tui-image-editor-controls .hover svg.normal {
             display: none;
         }
 
          /* SHAPE BUTTON */
-         #shape-button .button svg > use {
+         #shape-button .button svg {
              display: none;
          }
-         #shape-button .button svg > use.normal {
-             display: block;
+         #shape-button .button svg.normal {
+             display: inline-block;
          }
-         #shape-button.rect .button.rect svg > use.normal,
-         #shape-button.circle .button.circle svg > use.normal,
-         #shape-button.triangle .button.triangle svg > use.normal {
+         #shape-button.rect .button.rect svg.normal,
+         #shape-button.circle .button.circle svg.normal,
+         #shape-button.triangle .button.triangle svg.normal {
              display: none;
          }
 
-         #shape-button.rect .button.rect svg > use.active {
-             display: block;
+         #shape-button.rect .button.rect svg.active {
+             display: inline-block;
          }
-         #shape-button.circle .button.circle svg > use.active {
-             display: block;
+         #shape-button.circle .button.circle svg.active {
+             display: inline-block;
          }
-         #shape-button.triangle .button.triangle svg > use.active {
-             display: block;
+         #shape-button.triangle .button.triangle svg.active {
+             display: inline-block;
          }
 
          @media screen and (max-width: 1234px) {
