@@ -141,7 +141,7 @@
 
          .tui-image-editor-main-container .main .sub-menu > div {
              display: none;
-             vertical-align: middle;
+             vertical-align: bottom;
          }
 
          .tui-image-editor-main-container .main .sub-menu.crop > div.crop {
@@ -169,6 +169,11 @@
              height: 24px;
          }
 
+
+         .left .tui-image-editor-main-container .main .sub-menu > div,
+         .right .tui-image-editor-main-container .main .sub-menu > div {
+             vertical-align: middle;
+         }
 
          .left .tui-image-editor-main-container .main .sub-menu {
              left: 0;
@@ -215,6 +220,15 @@
              width: 64px;
              height: 100%;
              display: table;
+         }
+
+         .bottom .tui-image-editor-main-container .main .sub-menu > div {
+             padding-bottom: 24px;
+         }
+
+         .top .tui-image-editor-main-container .main .sub-menu > div {
+             padding-top: 24px;
+             vertical-align: top;
          }
 
          .top .tui-image-editor-main-container .main .sub-menu {
