@@ -46,6 +46,11 @@ class ImageEditor {
                     } else {
                         // $btnUndo.addClass('disabled');
                     }
+                },
+                objectActivated: obj => {
+                    if (obj.type === 'cropzone') {
+                        this.ui.crop._btnElement.apply.classList.add('active');
+                    }
                 }
             });
 
@@ -71,7 +76,7 @@ class ImageEditor {
                 this._changeActivateMode('SHAPE');
             });
 
-            this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', (event) => {
+            this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', event => {
                 const button = event.target.closest('.button');
                 const [shapeType] = button.classList.value.match(/(circle|triangle|rect)/);
 
@@ -80,6 +85,21 @@ class ImageEditor {
 
                 this.ui.shape.type = shapeType;
                 this.setDrawingShape(shapeType);
+            });
+
+            this.ui.crop._btnElement.apply.addEventListener('click', () => {
+                this.crop(this.getCropzoneRect()).then(() => {
+                    this.stopDrawingMode();
+                    this.ui.resizeEditor();
+                    this.ui.changeMenu('crop');
+                    this.ui.crop._btnElement.apply.classList.remove('active');
+                });
+            });
+
+            this.ui.crop._btnElement.cancel.addEventListener('click', () => {
+                this.stopDrawingMode();
+                this.ui.changeMenu('crop');
+                this.ui.crop._btnElement.apply.classList.remove('active');
             });
         }
 
@@ -95,7 +115,11 @@ class ImageEditor {
          * @type {Graphics}
          * @private
          */
-        this._graphics = new Graphics(wrapper, option.cssMaxWidth, option.cssMaxHeight);
+        this._graphics = new Graphics(wrapper, {
+            cropControlOption: this.ui ? this.ui.crop.controlOption : {},
+            cssMaxWidth: option.cssMaxWidth,
+            cssMaxHeight: option.cssMaxHeight
+        });
 
         const loadImageInfo = this.ui && this.ui.getLoadImage();
         if (loadImageInfo) {

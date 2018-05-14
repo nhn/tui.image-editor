@@ -29,9 +29,14 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @param {Object} options Options object
      * @override
      */
-    initialize(options) {
+    initialize(options, extendsOptions) {
+        options = snippet.extend(options, extendsOptions);
         options.type = 'cropzone';
+
         this.callSuper('initialize', options);
+
+        this.options = options;
+
         this.on({
             'moving': this._onMoving,
             'scaling': this._onScaling
@@ -61,11 +66,23 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         // Render outer rect
         this._fillOuterRect(ctx, 'rgba(0, 0, 0, 0.55)');
 
-        // Black dash line
-        this._strokeBorder(ctx, 'rgb(0, 0, 0)', cropzoneDashLineWidth);
+        if (this.options.lineWidth) {
+            this._fillInnerRect(ctx);
+            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+                lineWidth: this.options.lineWidth
+            });
+        } else {
+            // Black dash line
+            this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
+                lineDashWidth: cropzoneDashLineWidth
+            });
 
-        // White dash line
-        this._strokeBorder(ctx, 'rgb(255, 255, 255)', cropzoneDashLineWidth, cropzoneDashLineOffset);
+            // White dash line
+            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+                lineDashWidth: cropzoneDashLineWidth,
+                lineDashOffset: cropzoneDashLineOffset
+            });
+        }
 
         // Reset scale
         ctx.scale(1 / originalScaleX, 1 / originalScaleY);
@@ -125,6 +142,39 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     },
 
     /**
+     * Draw Inner grid line
+     * @param {CanvasRenderingContext2D} ctx - Context
+     * @private
+     */
+    _fillInnerRect(ctx) {
+        const x = [], y = [];
+        const {x: outerX, y: outerY} = this._getCoordinates(ctx);
+        const caculateInnerPosition = (target, outer, size) => {
+            target[0] = outer[1];
+            target[1] = outer[1] + size;
+            target[2] = outer[1] + (size * 2);
+            target[3] = outer[2];
+        };
+        caculateInnerPosition(x, outerX, (outerX[2] - outerX[1]) / 3);
+        caculateInnerPosition(y, outerY, (outerY[2] - outerY[1]) / 3);
+
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = this.options.lineWidth;
+
+        ctx.moveTo(x[0], y[1]);
+        ctx.lineTo(x[3], y[1]);
+        ctx.moveTo(x[0], y[2]);
+        ctx.lineTo(x[3], y[2]);
+        ctx.moveTo(x[1], y[0]);
+        ctx.lineTo(x[1], y[3]);
+        ctx.moveTo(x[2], y[0]);
+        ctx.lineTo(x[2], y[3]);
+
+        ctx.stroke();
+    },
+
+    /**
      * Get coordinates
      * @param {CanvasRenderingContext2D} ctx - Context
      * @returns {cropzoneCoordinates} - {@link cropzoneCoordinates}
@@ -163,17 +213,21 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @param {number} [lineDashOffset] - Dash offset
      * @private
      */
-    _strokeBorder(ctx, strokeStyle, lineDashWidth, lineDashOffset) {
+    _strokeBorder(ctx, strokeStyle, {lineDashWidth, lineDashOffset, lineWidth}) {
         const halfWidth = this.getWidth() / 2,
             halfHeight = this.getHeight() / 2;
 
         ctx.save();
         ctx.strokeStyle = strokeStyle;
+
         if (ctx.setLineDash) {
             ctx.setLineDash([lineDashWidth, lineDashWidth]);
         }
         if (lineDashOffset) {
             ctx.lineDashOffset = lineDashOffset;
+        }
+        if (lineWidth) {
+            ctx.lineWidth = lineWidth;
         }
 
         ctx.beginPath();

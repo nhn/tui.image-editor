@@ -13,8 +13,22 @@ export default `
             <div class="sub-menu">
                 <div class="crop">
                     <ul class="menu">
-                        <li class="menu-item" id="btn-apply-crop">Apply</li>
-                        <li class="menu-item" id="btn-cancel-crop">Cancel</li>
+                        <li id="crop-button" class="apply">
+                            <div class="button apply">
+                                <svg class="svg_ic-apply normal"> <use xlink:href="../dist/icon-a.svg#ic-apply"/> </svg>
+                                <svg class="svg_ic-apply active"> <use xlink:href="../dist/icon-b.svg#ic-apply"/> </svg>
+                                <label>
+                                    Apply
+                                </label>
+                            </div>
+                            <div class="button cancel">
+                                <svg class="svg_ic-cancel normal"> <use xlink:href="../dist/icon-a.svg#ic-cancel"/> </svg>
+                                <svg class="svg_ic-cancel active"> <use xlink:href="../dist/icon-b.svg#ic-cancel"/> </svg>
+                                <label>
+                                    Cancel
+                                </label>
+                            </div>
+                        </li>
                     </ul>
                 </div>
                 <div class="flip">

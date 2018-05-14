@@ -48,7 +48,7 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-    constructor(element, cssMaxWidth, cssMaxHeight) {
+    constructor(element, {cssMaxWidth, cssMaxHeight, cropControlOption}) {
         /**
          * Fabric image instance
          * @type {fabric.Image}
@@ -107,6 +107,8 @@ class Graphics {
          * @private
          */
         this._componentMap = {};
+
+        this._cropControlOption = cropControlOption;
 
         /**
          * fabric event handlers
@@ -174,6 +176,7 @@ class Graphics {
 
         this._canvas.add(...theArgs);
     }
+
     /**
      * Removes the object or group
      * @param {Object} target - graphics object or group
@@ -326,6 +329,7 @@ class Graphics {
 
         return !!drawingModeInstance;
     }
+
     /**
      * Stop the current drawing mode and back to the 'NORMAL' mode
      */

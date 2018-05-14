@@ -103,7 +103,7 @@
              position: absolute;
              bottom: 150px;
              width: 100%;
-             overflow: scroll;
+             overflow: auto;
          }
 
          .tui-image-editor {
@@ -130,6 +130,13 @@
          .tui-image-editor-main-container .main .sub-menu .menu .button {
              cursor: pointer;
              display: inline-block;
+             color: #777;
+             font-size: 11px;
+         }
+
+         .tui-image-editor-main-container .main .sub-menu .menu .button label {
+             cursor: pointer;
+             vertical-align: 7px;
          }
 
          .tui-image-editor-main-container .main .sub-menu > div {
@@ -264,6 +271,8 @@
          }
 
          /* ICON */
+        .svg_ic-apply,
+        .svg_ic-cancel,
         .svg_ic-delete-all,
         .svg_ic-delete,
         .svg_ic-draw,
@@ -311,18 +320,34 @@
             display: none;
         }
 
-         /* SHAPE BUTTON */
-         #shape-button .button svg {
-             display: none;
-         }
-         #shape-button .button svg.normal {
-             display: inline-block;
-         }
-         #shape-button.rect .button.rect svg.normal,
-         #shape-button.circle .button.circle svg.normal,
-         #shape-button.triangle .button.triangle svg.normal {
-             display: none;
-         }
+        /* SUB MENU */
+        .sub-menu .menu .button svg {
+            display: none;
+        }
+        .sub-menu .menu .button svg.normal {
+            display: inline-block;
+        }
+
+         /* CROP BUTTON */
+        #crop-button .button.apply {
+            margin-right: 24px;
+        }
+        #crop-button .button.apply.active {
+            color: #000;
+        }
+        #crop-button .button.apply.active svg.normal {
+            display: none;
+        }
+        #crop-button .button.apply.active svg.active {
+            display: inline-block;
+        }
+
+        /* SHAPE BUTTON */
+        #shape-button.rect .button.rect svg.normal,
+        #shape-button.circle .button.circle svg.normal,
+        #shape-button.triangle .button.triangle svg.normal {
+            display: none;
+        }
 
          #shape-button.rect .button.rect svg.active {
              display: inline-block;
@@ -362,7 +387,7 @@
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
-                 initMenu: 'shape',
+                 initMenu: 'crop',
                  menuBarPosition: 'left'
              },
              cssMaxWidth: 700,

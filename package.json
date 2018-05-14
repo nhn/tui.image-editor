@@ -58,7 +58,7 @@
     "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
     "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
-    "postinstall": "npm install --no-save --no-optional fabric@~1.6.7"
+    "postinstall": "npm install --no-save --no-optional rfabric@~1.6.7"
   },
   "dependencies": {
     "core-js": "2.4.1",

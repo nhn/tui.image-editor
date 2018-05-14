@@ -52,6 +52,22 @@ export default class Ui {
                 shapeSelectButton: this._subMenuElement.querySelector('#shape-button')
             }
         };
+
+        this.crop = {
+            status: 'active',
+            controlOption: {
+                cornerStyle: 'circle',
+                cornerSize: 14,
+                cornerColor: '#fff',
+                cornerStrokeColor: '#000',
+                transparentCorners: false,
+                lineWidth: 2
+            },
+            _btnElement: {
+                apply: this._subMenuElement.querySelector('#crop-button .apply'),
+                cancel: this._subMenuElement.querySelector('#crop-button .cancel')
+            }
+        };
     }
 
     initializeOption(options) {
@@ -99,10 +115,12 @@ export default class Ui {
         this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
 
         const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
-        const height = (imageSize.newHeight > maxHeight) ? maxHeight : imageSize.newHeight;
+        const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;
+        // const height = imageSize.newHeight;
 
         const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
-        const width = (imageSize.newWidth > maxWidth) ? maxWidth : imageSize.newWidth;
+        const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
+        // const width = imageSize.newWidth;
 
         const editorElementStyle = this._editorElement.style;
         const {menuBarPosition} = this.options;
