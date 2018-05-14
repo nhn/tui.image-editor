@@ -78,13 +78,26 @@ class ImageEditor {
 
             this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', event => {
                 const button = event.target.closest('.button');
-                const [shapeType] = button.classList.value.match(/(circle|triangle|rect)/);
+                const [shapeType] = button.className.match(/(circle|triangle|rect)/);
+                console.log(shapeType);
 
                 event.currentTarget.classList.remove(this.ui.shape.type);
                 event.currentTarget.classList.add(shapeType);
 
                 this.ui.shape.type = shapeType;
                 this.setDrawingShape(shapeType);
+            });
+
+            this.ui.shape._btnElement.shapeColorButton.addEventListener('click', event => {
+                const button = event.target.closest('.button');
+                const [changeType] = button.className.match(/(fill|stroke)/);
+                const colorPickerWrapElement = this.ui.colorPickerWrapElement;
+                const x = event.layerX - event.offsetX - (colorPickerWrapElement.offsetWidth / 2) + 15;
+                console.log(event,event.layerY, event.offsetY);
+                const y = event.layerY - event.offsetY - colorPickerWrapElement.offsetHeight - 12;
+                colorPickerWrapElement.style.left = `${x}px`;
+                colorPickerWrapElement.style.top = `${y}px`;
+
             });
 
             this.ui.crop._btnElement.apply.addEventListener('click', () => {

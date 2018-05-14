@@ -11,6 +11,10 @@ export default `
         </div>
         <div class="main">
             <div class="sub-menu">
+                <div class="color-picker-control">
+                    <div class="color-picker"></div>
+                    <div class="triangle"></div>
+                </div>
                 <div class="crop">
                     <ul class="menu">
                         <li id="crop-button" class="apply">
@@ -64,23 +68,25 @@ export default `
                                 <label> Triangle </label>
                             </div>
                         </li>
-                        <li>
+                        <li id="shape-color-button" class="rect">
                             <!--
                             <select name="select-color-type">
                                 <option value="fill">Fill</option>
                                 <option value="stroke">Stroke</option>
                             </select>
                             <label><input type="checkbox" id="input-check-transparent">transparent</label>
-                            <div id="tui-shape-color-picker"></div>
+                            <div id="tui-shape-color-picker-wrap"></div>
                             -->
 
-                            <div class="button circle">
-                                <div>
-                                    <svg class="svg_ic-color-transparent-w">
-                                        <use xlink:href="../dist/icon-a.svg#ic-color-transparent-w" />
-                                    </svg>
+                            <div class="button fill">
+                                <div class="color-picker">
                                 </div>
                                 <label> Fill </label>
+                            </div>
+                            <div class="button stroke">
+                                <div class="color-picker">
+                                </div>
+                                <label> Stroke </label>
                             </div>
 
                         </li>

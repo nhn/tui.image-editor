@@ -3,6 +3,9 @@
     <head>
         <meta charset="UTF-8">
         <title>0. Design</title>
+        <link type="text/css" href="https://uicdn.toast.com/tui-color-picker/v2.2.0/tui-color-picker.css" rel="stylesheet">
+
+        
         <style>
          html, body {
              height: 100%;
@@ -335,6 +338,74 @@
         }
 
         /* SUB MENU */
+
+        .tui-image-editor-container div.tui-colorpicker-clearfix {
+          width: 156px;
+          height: 28px;
+          border: 1px solid #d5d5d5;
+          border-radius: 2px;
+          background-color: #f5f5f5;
+          margin-top: 6px;
+        }
+
+        .tui-image-editor-container .tui-colorpicker-palette-preview {
+          border-radius: 100%;
+          float: left;
+          width: 16px;
+          height: 16px;
+        }
+
+
+        .tui-image-editor-container .color-picker-control .tui-colorpicker-palette-toggle-slider {
+          display: none;
+        }
+
+        
+        .tui-image-editor-container .color-picker-control {
+            position: absolute;
+            display: inline-block !important;
+            z-index: 99;
+            width: 188px;
+            height: 112px;
+            background-color: #fff;
+            box-shadow: 0 3px 22px 0px #000;
+            padding: 14px;
+            border-radius: 2px;
+        }
+        .color-picker-control .tui-colorpicker-palette-button {
+            border-radius: 100%;
+            margin: 2px;
+        }
+
+        .color-picker-control .triangle {
+            margin: 32px auto 0;
+            width: 0;
+            height: 0;
+            border-right: 12px solid transparent;
+            border-top: 12px solid #fff;
+            border-left: 12px solid transparent;
+            position: absolute;
+            bottom: -11px;
+            left: 77px;
+        }
+
+        .color-picker,
+        .color-picker-control .tui-colorpicker-container,
+        .color-picker-control .tui-colorpicker-palette-container ul,
+        .color-picker-control .tui-colorpicker-palette-container {
+          width: 100%;
+            height: auto;
+        }
+
+
+        .sub-menu .menu .button .color-picker {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #777;
+            border-radius: 100%;
+            margin-bottom: 4px;
+        }
+
         .sub-menu .menu .button svg {
             display: none;
         }
@@ -390,7 +461,9 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.7/fabric.js"></script>
         <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.3.0/tui-code-snippet.min.js"></script>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
-        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.component.colorpicker/1.0.2/dist/colorpicker.min.js"></script>
+        <script type="text/javascript" src="https://cdn.rawgit.com/nhnent/tui.color-picker/v2.2.0/dist/tui-color-picker.js"></script>
+
+
         <script type="text/javascript" src="../dist/tui-image-editor.js"></script>
         <script>
 
@@ -401,8 +474,8 @@
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
-                 initMenu: 'crop',
-                 menuBarPosition: 'left'
+                 initMenu: 'shape',
+                 menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,
              cssMaxHeight: 500,

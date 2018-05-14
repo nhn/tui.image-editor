@@ -49,7 +49,8 @@ export default class Ui {
                 strokeWidth: 3
             },
             _btnElement: {
-                shapeSelectButton: this._subMenuElement.querySelector('#shape-button')
+                shapeSelectButton: this._subMenuElement.querySelector('#shape-button'),
+                shapeColorButton: this._subMenuElement.querySelector('#shape-color-button')
             }
         };
 
@@ -68,6 +69,15 @@ export default class Ui {
                 cancel: this._subMenuElement.querySelector('#crop-button .cancel')
             }
         };
+        this.colorPickerWrapElement = this._subMenuElement.querySelector('.color-picker-control');
+        const colorPickerElement = this.colorPickerWrapElement.querySelector('.color-picker');
+
+        console.log("COLORPICKERELEMENT",colorPickerElement);
+
+        tui.colorPicker.create({
+          container: colorPickerElement,
+          color: '#000000'
+        });
     }
 
     initializeOption(options) {
