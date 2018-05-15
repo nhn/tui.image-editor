@@ -5,7 +5,6 @@
         <title>0. Design</title>
         <link type="text/css" href="https://uicdn.toast.com/tui-color-picker/v2.2.0/tui-color-picker.css" rel="stylesheet">
 
-        
         <style>
          html, body {
              height: 100%;
@@ -115,6 +114,55 @@
             transition: all .7s ease;
          }
 
+         .tui-image-editor .grid-visual {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+         }
+
+         .flip .tui-image-editor .grid-visual,
+         .rotate .tui-image-editor .grid-visual {
+             display: block;
+         }
+
+         .tui-image-editor .grid-visual table {
+             width: 100%;
+             height: 100%;
+             border-collapse: collapse;
+             box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
+         }
+         .tui-image-editor .grid-visual table td {
+             border: 1px solid #fff;
+             box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
+         }
+
+         .tui-image-editor .grid-visual table td.dot:before {
+             content: '';
+             position: absolute;
+             width: 8px;
+             height: 8px;
+             border: 1px solid #cdcdcd;
+             border-radius: 100%;
+             background-color: #fff;
+         }
+         .tui-image-editor .grid-visual table td.dot.left-top:before {
+             top: -4px;
+             left: -4px;
+         }
+         .tui-image-editor .grid-visual table td.dot.right-top:before {
+             top: -4px;
+             right: -4px;
+         }
+         .tui-image-editor .grid-visual table td.dot.left-bottom:before {
+             bottom: -4px;
+             left: -4px;
+         }
+         .tui-image-editor .grid-visual table td.dot.right-bottom:before {
+             bottom: -4px;
+             right: -4px;
+         }
+
          .tui-image-editor-main-container .main .sub-menu {
              display: none;
              position: absolute;
@@ -135,6 +183,7 @@
              display: inline-block;
              color: #777;
              font-size: 11px;
+             margin-right: 12px;
          }
 
          .tui-image-editor-main-container .main .sub-menu .menu .button label {
@@ -146,12 +195,16 @@
              display: none;
              vertical-align: bottom;
          }
-
-         .tui-image-editor-main-container .main .sub-menu.crop > div.crop {
+         .tui-image-editor-main-container .main.crop .sub-menu > div.crop {
              display: table-cell;
          }
-
-         .tui-image-editor-main-container .main .sub-menu.shape > div.shape {
+         .tui-image-editor-main-container .main.flip .sub-menu > div.flip {
+             display: table-cell;
+         }
+         .tui-image-editor-main-container .main.rotate .sub-menu > div.rotate {
+             display: table-cell;
+         }
+         .tui-image-editor-main-container .main.shape .sub-menu > div.shape {
              display: table-cell;
          }
 
@@ -283,10 +336,6 @@
              position: absolute;
          }
 
-         .tui-image-editor canvas {
-             border: 1px solid red;
-         }
-
          /* ICON */
         .svg_ic-apply,
         .svg_ic-cancel,
@@ -309,6 +358,11 @@
         }
 
         .svg_ic-color-transparent-w,
+        .svg_ic-flip-x,
+        .svg_ic-flip-y,
+        .svg_ic-flip-reset,
+        .svg_ic-rotate-clockwise,
+        .svg_ic-rotate-counterclockwise,
         .svg_ic-shape-circle,
         .svg_ic-shape-rectangle,
         .svg_ic-shape-triangle {
@@ -338,7 +392,6 @@
         }
 
         /* SUB MENU */
-
         .tui-image-editor-container div.tui-colorpicker-clearfix {
           width: 156px;
           height: 28px;
@@ -355,15 +408,14 @@
           height: 16px;
         }
 
-
         .tui-image-editor-container .color-picker-control .tui-colorpicker-palette-toggle-slider {
           display: none;
         }
 
-        
         .tui-image-editor-container .color-picker-control {
             position: absolute;
-            display: inline-block !important;
+            /* display: inline-block !important; */
+            display: none;
             z-index: 99;
             width: 188px;
             height: 112px;
@@ -393,7 +445,7 @@
         .color-picker-control .tui-colorpicker-container,
         .color-picker-control .tui-colorpicker-palette-container ul,
         .color-picker-control .tui-colorpicker-palette-container {
-          width: 100%;
+            width: 100%;
             height: auto;
         }
 
@@ -474,7 +526,7 @@
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
-                 initMenu: 'shape',
+                 initMenu: 'rotate',
                  menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,

@@ -31,6 +31,18 @@ export default class Ui {
 
         this._subMenuElement = this._mainElement.querySelector('.sub-menu');
 
+        snippet.forEach(this.selectedElement.querySelectorAll('.tui-image-editor-range'), rangeElement => {
+            const div = document.createElement('div');
+            const innerDiv = document.createElement('div');
+            div.className = 'tui-image-editor-virtual-range';
+            const parentNode = rangeElement.parentNode;
+            div.appendChild(innerDiv);
+            div.appendChild(rangeElement);
+            console.log(rangeElement);
+            rangeElement.style.opacity = 0.1;
+            parentNode.appendChild(div);
+        });
+
         this._btnElement = {
             crop: this.selectedElement.querySelector('#btn-crop'),
             flip: this.selectedElement.querySelector('#btn-flip'),
@@ -69,10 +81,22 @@ export default class Ui {
                 cancel: this._subMenuElement.querySelector('#crop-button .cancel')
             }
         };
+
+        this.flip = {
+            _btnElement: {
+                flipButton: this._subMenuElement.querySelector('#flip-button')
+            }
+        };
+
+        this.rotate = {
+            _btnElement: {
+                rotateButton: this._subMenuElement.querySelector('#retate-button'),
+                rotateRange: this._subMenuElement.querySelector('#rotate-range')
+            }
+        };
+
         this.colorPickerWrapElement = this._subMenuElement.querySelector('.color-picker-control');
         const colorPickerElement = this.colorPickerWrapElement.querySelector('.color-picker');
-
-        console.log("COLORPICKERELEMENT",colorPickerElement);
 
         tui.colorPicker.create({
           container: colorPickerElement,
@@ -102,27 +126,37 @@ export default class Ui {
     changeMenu(menuName) {
         if (this.submenu) {
             this._btnElement[this.submenu].classList.remove('active');
-            this._subMenuElement.classList.remove(this.submenu);
+            this._mainElement.classList.remove(this.submenu);
         }
 
         if (this.submenu === menuName) {
             this.submenu = '';
         } else {
             this._btnElement[menuName].classList.add('active');
-            this._subMenuElement.classList.add(menuName);
+            this._mainElement.classList.add(menuName);
             this.submenu = menuName;
         }
         this._subMenuElement.style.display = this.submenu ? 'table' : 'none';
-
         this.resizeEditor();
+    }
+
+    initCanvas() {
+        this.gridVisual = document.createElement('div');
+        this.gridVisual.className = 'grid-visual';
+        const grid = `<table>
+           <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>
+           <tr><td></td><td></td><td></td></tr>
+           <tr><td class="dot left-bottom"></td><td></td><td class="dot right-bottom"></td></tr>
+         </table>`;
+        this.gridVisual.innerHTML = grid;
+        this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
+        this._editorContainerElement.appendChild(this.gridVisual);
     }
 
     resizeEditor(imageSize = this.imageSize) {
         if (imageSize !== this.imageSize) {
             this.imageSize = imageSize;
         }
-
-        this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
 
         const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
         const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;

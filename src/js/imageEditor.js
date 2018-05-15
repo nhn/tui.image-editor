@@ -79,7 +79,6 @@ class ImageEditor {
             this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', event => {
                 const button = event.target.closest('.button');
                 const [shapeType] = button.className.match(/(circle|triangle|rect)/);
-                console.log(shapeType);
 
                 event.currentTarget.classList.remove(this.ui.shape.type);
                 event.currentTarget.classList.add(shapeType);
@@ -93,7 +92,6 @@ class ImageEditor {
                 const [changeType] = button.className.match(/(fill|stroke)/);
                 const colorPickerWrapElement = this.ui.colorPickerWrapElement;
                 const x = event.layerX - event.offsetX - (colorPickerWrapElement.offsetWidth / 2) + 15;
-                console.log(event,event.layerY, event.offsetY);
                 const y = event.layerY - event.offsetY - colorPickerWrapElement.offsetHeight - 12;
                 colorPickerWrapElement.style.left = `${x}px`;
                 colorPickerWrapElement.style.top = `${y}px`;
@@ -113,6 +111,43 @@ class ImageEditor {
                 this.stopDrawingMode();
                 this.ui.changeMenu('crop');
                 this.ui.crop._btnElement.apply.classList.remove('active');
+            });
+
+            this.ui.flip._btnElement.flipButton.addEventListener('click', event => {
+                const button = event.target.closest('.button');
+                const [flipType] = button.className.match(/(flipX|flipY|resetFlip)/);
+                this[flipType]().then(status => {
+                    console.log(status);
+                });
+            });
+
+            this.ui.rotate._btnElement.rotateButton.addEventListener('click', event => {
+                const button = event.target.closest('.button');
+                const [rotateType] = button.className.match(/(counterclockwise|clockwise)/);
+                this.rotate({
+                    'clockwise': 30,
+                    'counterclockwise': -30
+                }[rotateType]);
+                this.ui.resizeEditor();
+            });
+
+            this.ui.rotate._btnElement.rotateRange.addEventListener('change', event => {
+                const range = event.target.value;
+                this.setAngle(parseInt(range, 10)).catch(() => {});
+            });
+
+            this.ui.rotate._btnElement.rotateRange.addEventListener('mousedown', () => {
+                const changeAngle = event => {
+                    const range = event.target.value;
+                    this.setAngle(parseInt(range, 10)).catch(() => {});
+                    this.ui.resizeEditor();
+                };
+                document.addEventListener('mousemove', changeAngle);
+                document.addEventListener('mouseup', function stopChangingAngle() {
+                    document.removeEventListener('mousemove', changeAngle);
+                    document.removeEventListener('mouseup', stopChangingAngle);
+                    this.ui.resizeEditor();
+                }.bind(this));
             });
         }
 
@@ -140,6 +175,8 @@ class ImageEditor {
                 this.ui.resizeEditor(sizeValue);
                 this.clearUndoStack();
             });
+
+            this.ui.initCanvas();
 
             if (this.ui.options.initMenu) {
                 const evt = document.createEvent('MouseEvents');
