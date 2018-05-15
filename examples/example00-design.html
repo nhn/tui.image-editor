@@ -114,18 +114,18 @@
             transition: all .7s ease;
          }
 
+
+         /* GRID VISUAL */
          .tui-image-editor .grid-visual {
             display: none;
             position: absolute;
             width: 100%;
             height: 100%;
          }
-
          .flip .tui-image-editor .grid-visual,
          .rotate .tui-image-editor .grid-visual {
              display: block;
          }
-
          .tui-image-editor .grid-visual table {
              width: 100%;
              height: 100%;
@@ -136,7 +136,6 @@
              border: 1px solid #fff;
              box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
          }
-
          .tui-image-editor .grid-visual table td.dot:before {
              content: '';
              position: absolute;
@@ -162,6 +161,7 @@
              bottom: -4px;
              right: -4px;
          }
+
 
          .tui-image-editor-main-container .main .sub-menu {
              display: none;
@@ -206,6 +206,32 @@
          }
          .tui-image-editor-main-container .main.shape .sub-menu > div.shape {
              display: table-cell;
+         }
+
+         /* VIRTUAL RANGE */
+         .tui-image-editor-container .tui-image-editor-range {
+             position: relative;
+             width: 200px;
+             height: 20px;
+             display: inline-block;
+         }
+         .tui-image-editor-container .tui-image-editor-virtual-range-bar {
+             top: 7px;
+             position: absolute;
+             width: 100%;
+             height: 2px;
+             background-color: #bcbcbc;
+         }
+
+         .tui-image-editor-container .tui-image-editor-virtual-range-pointer {
+             position: absolute;
+             cursor: pointer;
+             top: -5px;
+             left: 0;
+             width: 12px;
+             height: 12px;
+             background-color: #333;
+             border-radius: 100%;
          }
 
          .tui-image-editor-controls {

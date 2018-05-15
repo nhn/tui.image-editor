@@ -2,6 +2,7 @@ import util from './util';
 import snippet from 'tui-code-snippet';
 import mainContainer from './template/mainContainer';
 import controls from './template/controls';
+import Range from './ui/range';
 
 export default class Ui {
     constructor(element, options) {
@@ -32,15 +33,7 @@ export default class Ui {
         this._subMenuElement = this._mainElement.querySelector('.sub-menu');
 
         snippet.forEach(this.selectedElement.querySelectorAll('.tui-image-editor-range'), rangeElement => {
-            const div = document.createElement('div');
-            const innerDiv = document.createElement('div');
-            div.className = 'tui-image-editor-virtual-range';
-            const parentNode = rangeElement.parentNode;
-            div.appendChild(innerDiv);
-            div.appendChild(rangeElement);
-            console.log(rangeElement);
-            rangeElement.style.opacity = 0.1;
-            parentNode.appendChild(div);
+            const rangeObject = new Range(rangeElement);
         });
 
         this._btnElement = {
@@ -91,7 +84,8 @@ export default class Ui {
         this.rotate = {
             _btnElement: {
                 rotateButton: this._subMenuElement.querySelector('#retate-button'),
-                rotateRange: this._subMenuElement.querySelector('#rotate-range')
+                rotateRange: this._subMenuElement.querySelector('#rotate-range'),
+                rotateRangePointer: this._subMenuElement.querySelector('#rotate-range .tui-image-editor-virtual-range-pointer')
             }
         };
 
@@ -99,8 +93,8 @@ export default class Ui {
         const colorPickerElement = this.colorPickerWrapElement.querySelector('.color-picker');
 
         tui.colorPicker.create({
-          container: colorPickerElement,
-          color: '#000000'
+            container: colorPickerElement,
+            color: '#000000'
         });
     }
 

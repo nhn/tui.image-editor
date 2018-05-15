@@ -38,7 +38,7 @@ export default `
                             </div>
                         </li>
                         <li class="newline">
-                            <input id="rotate-range" type="range" class="tui-image-editor-range" min="-360" value="0" max="360">
+                            <div id="rotate-range" class="tui-image-editor-range" min="-360" max="360">
                         </li>
                     </ul>
                 </div>

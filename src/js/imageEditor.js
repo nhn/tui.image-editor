@@ -131,24 +131,41 @@ class ImageEditor {
                 this.ui.resizeEditor();
             });
 
-            this.ui.rotate._btnElement.rotateRange.addEventListener('change', event => {
-                const range = event.target.value;
-                this.setAngle(parseInt(range, 10)).catch(() => {});
+            /*
+            this.ui.rotate._btnElement.rotateRange.addEventListener('click', event => {
+                if (event.target.className !== 'tui-image-editor-range') {
+                    return;
+                }
+                const touchPx = event.offsetX;
+                const ratio = touchPx / 200;
+                const value = (720 * ratio) - 360;
+                this.ui.rotate._btnElement.rotateRangePointer.style.left = `${ratio * 200}px`;
+                this.setAngle(parseInt(value, 10)).catch(() => {});
+                this.ui.resizeEditor();
             });
+            this.ui.rotate._btnElement.rotateRangePointer.addEventListener('mousedown', event => {
+                const firstPosition = event.screenX;
+                const left = parseInt(this.ui.rotate._btnElement.rotateRangePointer.style.left, 10) || 0;
+                const changeAngle = changeEvent => {
+                    const changePosition = changeEvent.screenX;
+                    const diffPosition = changePosition - firstPosition;
+                    let touchPx = left + diffPosition;
+                    touchPx = touchPx > 200 ? 200 : touchPx;
+                    touchPx = touchPx < 0 ? 0 : touchPx;
 
-            this.ui.rotate._btnElement.rotateRange.addEventListener('mousedown', () => {
-                const changeAngle = event => {
-                    const range = event.target.value;
-                    this.setAngle(parseInt(range, 10)).catch(() => {});
+                    this.ui.rotate._btnElement.rotateRangePointer.style.left = `${touchPx}px`;
+                    const ratio = touchPx / 200;
+                    const value = (720 * ratio) - 360;
+                    this.setAngle(parseInt(value, 10)).catch(() => {});
                     this.ui.resizeEditor();
                 };
                 document.addEventListener('mousemove', changeAngle);
-                document.addEventListener('mouseup', function stopChangingAngle() {
+                document.addEventListener('mouseup', function stopChangingAngle(upEvent) {
                     document.removeEventListener('mousemove', changeAngle);
                     document.removeEventListener('mouseup', stopChangingAngle);
-                    this.ui.resizeEditor();
                 }.bind(this));
             });
+            */
         }
 
         /**
