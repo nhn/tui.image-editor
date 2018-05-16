@@ -25,6 +25,7 @@
 
          .tui-image-editor-container div,
          .tui-image-editor-container ul,
+         .tui-image-editor-container input,
          .tui-image-editor-container li {
              box-sizing: border-box;
              margin: 0;
@@ -172,23 +173,34 @@
              height: 150px;
          }
 
+         .tui-image-editor-main-container .main .sub-menu .partition-left {
+             width: 1px;
+             height: 52px;
+             border-left: 1px solid #e5e5e5;
+             margin: 0 12px 0 14px;
+         }
+
          .tui-image-editor-main-container .main .sub-menu .menu li {
              display: inline-block;
          }
          .tui-image-editor-main-container .main .sub-menu .menu li.newline {
              display: block;
+             margin-top: 7px;
          }
          .tui-image-editor-main-container .main .sub-menu .menu .button {
+             position: relative;
              cursor: pointer;
              display: inline-block;
              color: #777;
              font-size: 11px;
-             margin-right: 12px;
+             margin: 0 12px 0 12px;
          }
 
          .tui-image-editor-main-container .main .sub-menu .menu .button label {
+             display: inline-block;
              cursor: pointer;
-             vertical-align: 7px;
+             /* vertical-align: 7px; */
+             padding-top: 5px;
          }
 
          .tui-image-editor-main-container .main .sub-menu > div {
@@ -211,7 +223,8 @@
          /* VIRTUAL RANGE */
          .tui-image-editor-container .tui-image-editor-range {
              position: relative;
-             width: 200px;
+             top: 7px;
+             width: 166px;
              height: 20px;
              display: inline-block;
          }
@@ -232,6 +245,23 @@
              height: 12px;
              background-color: #333;
              border-radius: 100%;
+         }
+         .tui-image-editor-container .tui-image-editor-range-wrap label {
+             vertical-align: baseline;
+             font-size: 11px;
+             color: #333;
+             margin-right: 7px;
+         }
+         .tui-image-editor-container .tui-image-editor-range-value {
+            width: 40px;
+            height: 24px;
+            outline: none;
+            border-radius: 2px;
+            box-shadow: none;
+            border: 1px solid #d5d5d5;
+            text-align: center;
+            background-color: #f5f5f5;
+            vertical-align: baseline;
          }
 
          .tui-image-editor-controls {
@@ -425,6 +455,14 @@
           border-radius: 2px;
           background-color: #f5f5f5;
           margin-top: 6px;
+          padding: 4px 7px 4px 7px;
+        }
+        .tui-image-editor-container .tui-colorpicker-palette-hex {
+            width: 114px;
+            background-color: #f5f5f5;
+            border: 0;
+            font-size: 11px;
+            margin-top: 2px;
         }
 
         .tui-image-editor-container .tui-colorpicker-palette-preview {
@@ -440,7 +478,6 @@
 
         .tui-image-editor-container .color-picker-control {
             position: absolute;
-            /* display: inline-block !important; */
             display: none;
             z-index: 99;
             width: 188px;
@@ -476,12 +513,16 @@
         }
 
 
-        .sub-menu .menu .button .color-picker {
+        .sub-menu .menu .button .color-picker-value {
             width: 30px;
             height: 30px;
-            border: 1px solid #777;
+            border: 1px solid #d2d2d2;
             border-radius: 100%;
             margin-bottom: 4px;
+        }
+        .sub-menu .menu .button .color-picker-value.transparent {
+            background-size: cover;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAdBJREFUWAnFl0FuwjAQRZ0ukiugHqFSOQNdseuKW3ALzkA4BateICvUGyCxrtRFd4WuunH/TzykaYJrnLEYaTJJsP2+x8GZZCbQrLU5mj7Bn+EP8HvnCObd+R7xBV5lWfaNON4AnsA38E94qLEt+0yiFaBzAV/Bv+Cxxr4co7hKCDpw1q9wLeNYYdlAwyn8TYt8Hme3+8D5ozcTaMCZ68PXa2tnM2sbEcOZAJhrrpl2DAcTOGNjZPSfCdzkw6JrfbiMv+osBe4y9WOedhm4jZfhbENWuxS44H9Wz/xw4WzqLOAqh1+zycgAwzEMzr5k5gaHOa9ULBwuuDkFlHI1Kl4PJ66kgIpnoywOTmRFAYcbwYk9UMApWkD8zAV5ihcwHk4Rx7gl0IFTQL0EFc+CTQ9OZHWH3YhlVJiVpTHbrTGLhTHLZVgff6s9lyBsI9KduSS83oj+34rTwJutmBmCnMsvozRwZqB5GTkBw6/jdPDu69iJ6BYk6eCcfbcgcQIK/MByaaiMqm8rHcjol2TnpWDhyAKSGdA3FrxtJUToX0ODqatetfGE+8tyEUOV8GY5dGRwLP/MBS4RHQr4bT7NRAQjlcOTfZxmv2G+c4hI8nn+Ax5PG/zhI393AAAAAElFTkSuQmCC');
         }
 
         .sub-menu .menu .button svg {
@@ -552,7 +593,7 @@
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
-                 initMenu: 'rotate',
+                 initMenu: 'shape',
                  menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,
@@ -566,26 +607,6 @@
          window.onresize = function() {
              imageEditor.ui.resizeEditor();
          }
-
-
-
-         /*
-         imageEditor.on({
-             undoStackChanged: function(length) {
-                 if (length) {
-                     $btnUndo.removeClass('disabled');
-                 } else {
-                     $btnUndo.addClass('disabled');
-                 }
-                 resizeEditor();
-             }
-         });
-
-         imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(sizeValue => {
-             console.log(sizeValue);
-             imageEditor.clearUndoStack();
-         });
-         */
         </script>
     </body>
 </html>

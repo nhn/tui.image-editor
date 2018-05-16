@@ -11,10 +11,6 @@ export default `
         </div>
         <div class="main">
             <div class="sub-menu">
-                <div class="color-picker-control">
-                    <div class="color-picker"></div>
-                    <div class="triangle"></div>
-                </div>
                 <div class="rotate">
                     <ul class="menu">
                         <li id="retate-button">
@@ -37,8 +33,10 @@ export default `
                                 </label>
                             </div>
                         </li>
-                        <li class="newline">
-                            <div id="rotate-range" class="tui-image-editor-range" min="-360" max="360">
+                        <li class="newline tui-image-editor-range-wrap">
+                            <label>Range</label>
+                            <div id="rotate-range" min="-360" max="360"></div>
+                            <input id="ratate-range-value" class="tui-image-editor-range-value" value="0" />
                         </li>
                     </ul>
                 </div>
@@ -123,23 +121,17 @@ export default `
                                 <label> Triangle </label>
                             </div>
                         </li>
-                        <li id="shape-color-button">
-                            <div class="button fill">
-                                <div class="color-picker">
-                                </div>
-                                <label> Fill </label>
-                            </div>
-                            <div class="button stroke">
-                                <div class="color-picker">
-                                </div>
-                                <label> Stroke </label>
-                            </div>
+                        <li>
+                            <div class="partition-left"></div>
                         </li>
-                        <li class="newline">
-                            <label class="menu-item no-pointer">
-                                Stroke width
-                                <input id="input-stroke-width-range" type="range" min="0" max="300" value="12">
-                            </label>
+                        <li id="shape-color-button">
+                            <div id="color-fill" title="fill"></div>
+                            <div id="color-stroke" title="stroke"></div>
+                        </li>
+                        <li class="newline tui-image-editor-range-wrap">
+                            <label>Stroke</label>
+                            <div id="stroke-range" min="0" max="300"></div>
+                            <input id="stroke-range-value" class="tui-image-editor-range-value" value="0" />
                         </li>
                     </ul>
                 </div>

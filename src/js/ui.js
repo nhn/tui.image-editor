@@ -3,12 +3,14 @@ import snippet from 'tui-code-snippet';
 import mainContainer from './template/mainContainer';
 import controls from './template/controls';
 import Range from './ui/range';
+import Colorpicker from './ui/colorpicker';
 
 export default class Ui {
     constructor(element, options) {
         let selectedElement;
 
         this.options = this.initializeOption(options);
+        this.activeObjectId;
 
         if (element.jquery) {
             [selectedElement] = element;
@@ -20,21 +22,12 @@ export default class Ui {
 
         // util.applyTemplate
         selectedElement.innerHTML = controls + mainContainer;
-
         this.selectedElement = selectedElement;
-
         this.selectedElement.classList.add(this.options.menuBarPosition);
-
         this._mainElement = this.selectedElement.querySelector('.main');
-
         this._editorElementWrap = this.selectedElement.querySelector('.tui-image-editor-wrap');
         this._editorElement = this.selectedElement.querySelector('.tui-image-editor');
-
         this._subMenuElement = this._mainElement.querySelector('.sub-menu');
-
-        snippet.forEach(this.selectedElement.querySelectorAll('.tui-image-editor-range'), rangeElement => {
-            const rangeObject = new Range(rangeElement);
-        });
 
         this._btnElement = {
             crop: this.selectedElement.querySelector('#btn-crop'),
@@ -49,13 +42,26 @@ export default class Ui {
         this.shape = {
             type: 'rect',
             options: {
-                stroke: '#000000',
-                fill: '#ffffff',
+                stroke: '#ffbb3b',
+                fill: '',
                 strokeWidth: 3
+            },
+            controlOption: {
+                cornerStyle: 'circle',
+                cornerSize: 20,
+                cornerColor: '#fff',
+                cornerStrokeColor: '#000',
+                transparentCorners: false,
+                lineWidth: 2,
+                borderColor: '#fff'
             },
             _btnElement: {
                 shapeSelectButton: this._subMenuElement.querySelector('#shape-button'),
-                shapeColorButton: this._subMenuElement.querySelector('#shape-color-button')
+                shapeColorButton: this._subMenuElement.querySelector('#shape-color-button'),
+                strokeRange: new Range(this._subMenuElement.querySelector('#stroke-range'), 3),
+                strokeRangeValue: this._subMenuElement.querySelector('#stroke-range-value'),
+                fillColorpicker: new Colorpicker(this._subMenuElement.querySelector('#color-fill'), ''),
+                strokeColorpicker: new Colorpicker(this._subMenuElement.querySelector('#color-stroke'), '#ffbb3b')
             }
         };
 
@@ -63,7 +69,7 @@ export default class Ui {
             status: 'active',
             controlOption: {
                 cornerStyle: 'circle',
-                cornerSize: 14,
+                cornerSize: 20,
                 cornerColor: '#fff',
                 cornerStrokeColor: '#000',
                 transparentCorners: false,
@@ -84,18 +90,11 @@ export default class Ui {
         this.rotate = {
             _btnElement: {
                 rotateButton: this._subMenuElement.querySelector('#retate-button'),
-                rotateRange: this._subMenuElement.querySelector('#rotate-range'),
-                rotateRangePointer: this._subMenuElement.querySelector('#rotate-range .tui-image-editor-virtual-range-pointer')
+                rotateRange: new Range(this._subMenuElement.querySelector('#rotate-range'), 0),
+                rotateRangeValue: this._subMenuElement.querySelector('#ratate-range-value')
             }
         };
 
-        this.colorPickerWrapElement = this._subMenuElement.querySelector('.color-picker-control');
-        const colorPickerElement = this.colorPickerWrapElement.querySelector('.color-picker');
-
-        tui.colorPicker.create({
-            container: colorPickerElement,
-            color: '#000000'
-        });
     }
 
     initializeOption(options) {

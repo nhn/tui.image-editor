@@ -48,10 +48,24 @@ class ImageEditor {
                     }
                 },
                 objectActivated: obj => {
+                    this.ui.activeObjectId = obj.id;
+
                     if (obj.type === 'cropzone') {
                         this.ui.crop._btnElement.apply.classList.add('active');
+                    } else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
+                        this._changeActivateMode('SHAPE');
+                        const strokeColor = obj.stroke;
+                        const {strokeWidth} = obj;
+                        const fillColor = obj.fill;
+                        this.ui.shape._btnElement.strokeRange.setValue(strokeWidth);
+                        this.ui.shape._btnElement.strokeColorpicker.setColor(strokeColor);
+                        this.ui.shape._btnElement.fillColorpicker.setColor(fillColor);
+                        this.ui.shape.options.stroke = strokeColor;
+                        this.ui.shape.options.fill = fillColor;
+                        this.ui.shape.options.strokeWidth = strokeWidth;
                     }
                 }
+
             });
 
             this.ui._btnElement.crop.addEventListener('click', () => {
@@ -86,16 +100,30 @@ class ImageEditor {
                 this.ui.shape.type = shapeType;
                 this.setDrawingShape(shapeType);
             });
+            this.ui.shape._btnElement.strokeRange.on('change', value => {
+                this.ui.shape.options.strokeWidth = parseInt(value, 10);
+                this.ui.shape._btnElement.strokeRangeValue.value = parseInt(value, 10);
 
-            this.ui.shape._btnElement.shapeColorButton.addEventListener('click', event => {
-                const button = event.target.closest('.button');
-                const [changeType] = button.className.match(/(fill|stroke)/);
-                const colorPickerWrapElement = this.ui.colorPickerWrapElement;
-                const x = event.layerX - event.offsetX - (colorPickerWrapElement.offsetWidth / 2) + 15;
-                const y = event.layerY - event.offsetY - colorPickerWrapElement.offsetHeight - 12;
-                colorPickerWrapElement.style.left = `${x}px`;
-                colorPickerWrapElement.style.top = `${y}px`;
-
+                if (this.ui.activeObjectId) {
+                    this.changeShape(this.ui.activeObjectId, {
+                        strokeWidth: value
+                    });
+                }
+                this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+            });
+            this.ui.shape._btnElement.fillColorpicker.on('change', value => {
+                const color = value.color || 'transparent';
+                this.ui.shape.options.fill = color;
+                this.changeShape(this.ui.activeObjectId, {
+                    fill: color
+                });
+            });
+            this.ui.shape._btnElement.strokeColorpicker.on('change', value => {
+                const color = value.color || 'transparent';
+                this.ui.shape.options.stroke = color;
+                this.changeShape(this.ui.activeObjectId, {
+                    stroke: color
+                });
             });
 
             this.ui.crop._btnElement.apply.addEventListener('click', () => {
@@ -130,42 +158,11 @@ class ImageEditor {
                 }[rotateType]);
                 this.ui.resizeEditor();
             });
-
-            /*
-            this.ui.rotate._btnElement.rotateRange.addEventListener('click', event => {
-                if (event.target.className !== 'tui-image-editor-range') {
-                    return;
-                }
-                const touchPx = event.offsetX;
-                const ratio = touchPx / 200;
-                const value = (720 * ratio) - 360;
-                this.ui.rotate._btnElement.rotateRangePointer.style.left = `${ratio * 200}px`;
-                this.setAngle(parseInt(value, 10)).catch(() => {});
+            this.ui.rotate._btnElement.rotateRange.on('change', value => {
+                this.ui.rotate._btnElement.rotateRangeValue.value = parseInt(value, 10);
+                this.setAngle(parseInt(value, 10));
                 this.ui.resizeEditor();
             });
-            this.ui.rotate._btnElement.rotateRangePointer.addEventListener('mousedown', event => {
-                const firstPosition = event.screenX;
-                const left = parseInt(this.ui.rotate._btnElement.rotateRangePointer.style.left, 10) || 0;
-                const changeAngle = changeEvent => {
-                    const changePosition = changeEvent.screenX;
-                    const diffPosition = changePosition - firstPosition;
-                    let touchPx = left + diffPosition;
-                    touchPx = touchPx > 200 ? 200 : touchPx;
-                    touchPx = touchPx < 0 ? 0 : touchPx;
-
-                    this.ui.rotate._btnElement.rotateRangePointer.style.left = `${touchPx}px`;
-                    const ratio = touchPx / 200;
-                    const value = (720 * ratio) - 360;
-                    this.setAngle(parseInt(value, 10)).catch(() => {});
-                    this.ui.resizeEditor();
-                };
-                document.addEventListener('mousemove', changeAngle);
-                document.addEventListener('mouseup', function stopChangingAngle(upEvent) {
-                    document.removeEventListener('mousemove', changeAngle);
-                    document.removeEventListener('mouseup', stopChangingAngle);
-                }.bind(this));
-            });
-            */
         }
 
         /**
@@ -182,6 +179,7 @@ class ImageEditor {
          */
         this._graphics = new Graphics(wrapper, {
             cropControlOption: this.ui ? this.ui.crop.controlOption : {},
+            shapeControlOption: this.ui ? this.ui.shape.controlOption : {},
             cssMaxWidth: option.cssMaxWidth,
             cssMaxHeight: option.cssMaxHeight
         });

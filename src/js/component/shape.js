@@ -16,6 +16,7 @@ const DEFAULT_OPTIONS = {
     strokeWidth: 1,
     stroke: '#000000',
     fill: '#ffffff',
+
     width: 1,
     height: 1,
     rx: 0,
@@ -46,6 +47,13 @@ class Shape extends Component {
          * @private
          */
         this._shapeObj = null;
+
+        /**
+         * Shape Control Option
+         * @type {Object}
+         * @private
+         */
+        this._shapeControlOption = graphics._shapeControlOption;
 
         /**
          * Type of the drawing shape
@@ -222,17 +230,19 @@ class Shape extends Component {
     _createInstance(type, options) {
         let instance;
 
+        console.log(extend(options, this._shapeControlOption));
+
         switch (type) {
             case 'rect':
-                instance = new fabric.Rect(options);
+                instance = new fabric.Rect(extend(options, this._shapeControlOption));
                 break;
             case 'circle':
                 instance = new fabric.Ellipse(extend({
                     type: 'circle'
-                }, options));
+                }, options, this._shapeControlOption));
                 break;
             case 'triangle':
-                instance = new fabric.Triangle(options);
+                instance = new fabric.Triangle(extend(options, this._shapeControlOption));
                 break;
             default:
                 instance = {};

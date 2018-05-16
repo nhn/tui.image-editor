@@ -78,9 +78,11 @@ class Cropper extends Component {
             return;
         }
         const canvas = this.getCanvas();
+
         canvas.forEachObject(obj => { // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
             obj.evented = false;
         });
+
         this._cropzone = new Cropzone({
             left: -10,
             top: -10,
@@ -95,6 +97,7 @@ class Cropper extends Component {
             lockScalingFlip: true,
             lockRotation: true
         }, this._cropControlOption);
+
         canvas.deactivateAll();
         canvas.add(this._cropzone);
         canvas.on('mouse:down', this._listeners.mousedown);
