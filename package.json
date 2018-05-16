@@ -45,7 +45,7 @@
     "karma-webpack": "^1.8.0",
     "safe-umd-webpack-plugin": "0.0.2",
     "simulant": "^0.2.2",
-    "svg-join": "^1.1.1",
+    "svgstore": "^2.0.3",
     "tui-jsdoc-template": "^1.0.4",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.11.0"
@@ -54,7 +54,7 @@
     "test": "karma start --no-single-run",
     "test:ne": "KARMA_SERVER=ne karma start",
     "bundle": "webpack && webpack -p",
-    "bundle:svg": "mkdir -p dist && svg-join -s 'src/svg/icon-a/*.svg' -o 'dist/' -n 'icon-a' && svg-join -s 'src/svg/icon-b/*.svg' -o 'dist/' -n 'icon-b'",
+    "bundle:svg": "mkdir -p dist && node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
     "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
