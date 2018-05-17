@@ -5,6 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Invoker from './invoker';
 import Ui from './ui';
+import Action from './ui/action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
@@ -90,7 +91,7 @@ class ImageEditor {
             this.ui.menuAddEvent(snippet.bind(this._modeChange, this));
 
             /* 서브 메뉴 */
-            this.ui.subMenuAddEvent(this._getActions());
+            this.ui.subMenuAddEvent(new Action(this));
         }
 
         /**
@@ -247,73 +248,6 @@ class ImageEditor {
                 this.stopDrawingMode();
                 break;
         }
-    }
-
-    _getActions() {
-        return {
-            shape: {
-                changeShape: changeShapeObject => {
-                    if (this.activeObjectId) {
-                        this.changeShape(this.activeObjectId, changeShapeObject);
-                    }
-                },
-                setDrawingShape: shapeType => {
-                    this.setDrawingShape(shapeType);
-                }
-            },
-            crop: {
-                crop: () => {
-                    this.crop(this.getCropzoneRect()).then(() => {
-                        this.stopDrawingMode();
-                        this.ui.resizeEditor();
-                        this.ui.changeMenu('crop');
-                    });
-                },
-                cancel: () => {
-                    this.stopDrawingMode();
-                    this.ui.changeMenu('crop');
-                }
-            },
-            flip: {
-                flip: flipType => {
-                    this[flipType]().then(status => {
-                        console.log(status);
-                    });
-                }
-            },
-            rotate: {
-                rotate: angle => {
-                    this.rotate(angle);
-                    this.ui.resizeEditor();
-                },
-                setAngle: angle => {
-                    this.setAngle(angle);
-                    this.ui.resizeEditor();
-                }
-            },
-            text: {
-                changeTextStyle: styleObj => {
-                    this.changeTextStyle(this.activeObjectId, styleObj);
-                }
-            },
-            mask: {
-                loadImageFromURL: (imgUrl, file) => {
-                    this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
-                        this.addImageObject(imgUrl).then(objectProps => {
-                            URL.revokeObjectURL(file);
-                            console.log(objectProps);
-                        });
-                    });
-                },
-                applyFilter: () => {
-                    this.applyFilter('mask', {
-                        maskObjId: this.activeObjectId
-                    }).then(result => {
-                        console.log(result);
-                    });
-                }
-            }
-        };
     }
 
     /**

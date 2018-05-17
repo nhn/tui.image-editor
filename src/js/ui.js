@@ -41,7 +41,6 @@ export default class Ui {
             mask: this.selectedElement.querySelector('#btn-mask')
         };
 
-        this.actions = {};
         this.submenu = false;
         this.imageSize = {};
 
