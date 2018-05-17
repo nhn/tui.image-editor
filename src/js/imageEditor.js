@@ -45,6 +45,7 @@ class ImageEditor {
                     } else {
                         // $btnUndo.addClass('disabled');
                     }
+                    this.ui.resizeEditor();
                 },
                 objectActivated: obj => {
                     this.ui.activeObjectId = obj.id;
@@ -62,33 +63,64 @@ class ImageEditor {
                         this.ui.shape.options.stroke = strokeColor;
                         this.ui.shape.options.fill = fillColor;
                         this.ui.shape.options.strokeWidth = strokeWidth;
+                    } else if (obj.type === 'text') {
+                        // $inputFontSizeRange.val(obj.fontSize);
+                        // textColorpicker.setColor(obj.fill);
+                        this._changeActivateMode('TEXT');
+                    }
+                },
+                objectScaled: obj => {
+                    if (obj.type === 'text') {
+                        // $inputFontSizeRange.val(obj.fontSize);
+                    }
+                },
+                addText: pos => {
+                    this.addText('Double Click', {
+                        position: pos.originPosition
+                    }).then(objectProps => {
+                        console.log(objectProps);
+                    });
+                },
+
+                mousedown: (event, originPointer) => {
+                    if (this.ui.submenu && this.hasFilter('colorFilter')) {
+                        this.applyFilter('colorFilter', {
+                            x: parseInt(originPointer.x, 10),
+                            y: parseInt(originPointer.y, 10)
+                        });
                     }
                 }
-
             });
 
+            /* 대 매뉴 */
+            this.ui._btnElement.text.addEventListener('click', () => {
+                this._changeActivateMode('TEXT');
+                this.ui.changeMenu('text');
+            });
             this.ui._btnElement.crop.addEventListener('click', () => {
                 this.startDrawingMode('CROPPER');
                 this.ui.changeMenu('crop');
             });
-
             this.ui._btnElement.flip.addEventListener('click', () => {
                 this.stopDrawingMode();
                 this.ui.changeMenu('flip');
             });
-
             this.ui._btnElement.rotate.addEventListener('click', () => {
                 this.stopDrawingMode();
                 this.ui.changeMenu('rotate');
             });
-
             this.ui._btnElement.shape.addEventListener('click', () => {
                 this.stopDrawingMode();
                 this.ui.changeMenu('shape');
                 this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
                 this._changeActivateMode('SHAPE');
             });
+            this.ui._btnElement.mask.addEventListener('click', () => {
+                this.stopDrawingMode();
+                this.ui.changeMenu('mask');
+            });
 
+            /* 서브메뉴 */
             this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', event => {
                 const button = event.target.closest('.button');
                 const [shapeType] = button.className.match(/(circle|triangle|rect)/);
@@ -162,6 +194,77 @@ class ImageEditor {
                 this.setAngle(parseInt(value, 10));
                 this.ui.resizeEditor();
             });
+            this.ui.text._btnElement.textEffectButton.addEventListener('click', event => {
+                const button = event.target.closest('.button');
+                const [styleType] = button.className.match(/(bold|italic|underline)/);
+                const styleObj = {
+                    'bold': {fontWeight: 'bold'},
+                    'italic': {fontStyle: 'italic'},
+                    'underline': {textDecoration: 'underline'}
+                }[styleType];
+
+                this.changeTextStyle(this.ui.activeObjectId, styleObj);
+                this.ui.text.effect[styleType] = !this.ui.text.effect[styleType];
+                button.classList.toggle('active');
+            });
+            this.ui.text._btnElement.textAlignButton.addEventListener('click', event => {
+                const button = event.target.closest('.button');
+                const [styleType] = button.className.match(/(left|center|right)/);
+                event.currentTarget.classList.remove(this.ui.text.align);
+                if (this.ui.text.align !== styleType) {
+                    event.currentTarget.classList.add(styleType);
+                }
+
+                this.changeTextStyle(this.ui.activeObjectId, {textAlign: styleType});
+                this.ui.text.align = styleType;
+            });
+
+            this.ui.text._btnElement.textRange.on('change', value => {
+                value = parseInt(value, 10);
+                this.ui.text._btnElement.textRangeValue.value = value;
+
+                clearTimeout(this.ui.text.rangeTimeout);
+                this.ui.text.rangeTimeout = setTimeout(() => {
+                    this.changeTextStyle(this.ui.activeObjectId, {
+                        fontSize: parseInt(value, 10)
+                    });
+                }, 300);
+            });
+            this.ui.text._btnElement.textColorpicker.on('change', value => {
+                const color = value.color || 'transparent';
+                this.changeTextStyle(this.ui.activeObjectId, {
+                    'fill': color
+                });
+            });
+            this.ui.mask._btnElement.maskImageButton.addEventListener('change', event => {
+                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
+                let imgUrl;
+
+                if (!supportingFileAPI) {
+                    alert('This browser does not support file-api');
+                }
+
+                const [file] = event.target.files;
+
+                if (file) {
+                    imgUrl = URL.createObjectURL(file);
+
+                    this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+                        this.addImageObject(imgUrl).then(objectProps => {
+                            URL.revokeObjectURL(file);
+                            console.log(objectProps);
+                        });
+                    });
+                }
+            });
+
+            this.ui.mask._btnElement.applyButton.addEventListener('click', () => {
+                this.applyFilter('mask', {
+                    maskObjId: this.ui.activeObjectId
+                }).then(result => {
+                    console.log(result);
+                });
+            });
         }
 
         /**
@@ -179,6 +282,7 @@ class ImageEditor {
         this._graphics = new Graphics(wrapper, {
             cropControlOption: this.ui ? this.ui.crop.controlOption : {},
             shapeControlOption: this.ui ? this.ui.shape.controlOption : {},
+            textControlOption: this.ui ? this.ui.text.controlOption : {},
             cssMaxWidth: option.cssMaxWidth,
             cssMaxHeight: option.cssMaxHeight
         });
@@ -195,7 +299,9 @@ class ImageEditor {
             if (this.ui.options.initMenu) {
                 const evt = document.createEvent('MouseEvents');
                 evt.initEvent('click', true, false);
-                this.ui._btnElement[this.ui.options.initMenu].dispatchEvent(evt);
+                setTimeout(() => {
+                    this.ui._btnElement[this.ui.options.initMenu].dispatchEvent(evt);
+                }, 1000);
             }
         }
 

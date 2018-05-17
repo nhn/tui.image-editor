@@ -33,11 +33,47 @@ export default class Ui {
             crop: this.selectedElement.querySelector('#btn-crop'),
             flip: this.selectedElement.querySelector('#btn-flip'),
             rotate: this.selectedElement.querySelector('#btn-rotate'),
-            shape: this.selectedElement.querySelector('#btn-shape')
+            shape: this.selectedElement.querySelector('#btn-shape'),
+            text: this.selectedElement.querySelector('#btn-text'),
+            mask: this.selectedElement.querySelector('#btn-mask')
         };
 
         this.submenu = false;
         this.imageSize = {};
+
+        this.mask = {
+            _btnElement: {
+                applyButton: this._subMenuElement.querySelector('#mask-apply'),
+                maskImageButton: this._subMenuElement.querySelector('#mask-image-file')
+            }
+        };
+
+        this.text = {
+            effect: {
+                bold: false,
+                italic: false,
+                underline: false
+            },
+            align: 'left',
+            rangeTimeout: null,
+            controlOption: {
+                cornerStyle: 'circle',
+                cornerSize: 20,
+                borderColor: '#fff',
+                cornerColor: '#fff',
+                cornerStrokeColor: '#000',
+                transparentCorners: false,
+                padding: 20,
+                lineWidth: 2
+            },
+            _btnElement: {
+                textEffectButton: this._subMenuElement.querySelector('#text-effect-button'),
+                textAlignButton: this._subMenuElement.querySelector('#text-align-button'),
+                textColorpicker: new Colorpicker(this._subMenuElement.querySelector('#text-color'), '#ffbb3b'),
+                textRange: new Range(this._subMenuElement.querySelector('#text-range'), 10),
+                textRangeValue: this._subMenuElement.querySelector('#text-range-value')
+            }
+        };
 
         this.shape = {
             type: 'rect',

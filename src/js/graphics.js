@@ -48,7 +48,7 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-    constructor(element, {cssMaxWidth, cssMaxHeight, cropControlOption, shapeControlOption}) {
+    constructor(element, {cssMaxWidth, cssMaxHeight, cropControlOption, shapeControlOption, textControlOption}) {
         /**
          * Fabric image instance
          * @type {fabric.Image}
@@ -110,6 +110,7 @@ class Graphics {
 
         this._cropControlOption = cropControlOption;
         this._shapeControlOption = shapeControlOption;
+        this._textControlOption = textControlOption;
 
         /**
          * fabric event handlers

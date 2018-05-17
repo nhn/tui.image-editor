@@ -199,8 +199,12 @@
          .tui-image-editor-main-container .main .sub-menu .menu .button label {
              display: inline-block;
              cursor: pointer;
-             /* vertical-align: 7px; */
              padding-top: 5px;
+         }
+
+         .tui-image-editor-main-container .main .sub-menu .menu .button.apply label,
+         .tui-image-editor-main-container .main .sub-menu .menu .button.cancel label {
+             vertical-align: 7px;
          }
 
          .tui-image-editor-main-container .main .sub-menu > div {
@@ -217,6 +221,13 @@
              display: table-cell;
          }
          .tui-image-editor-main-container .main.shape .sub-menu > div.shape {
+             display: table-cell;
+         }
+         .tui-image-editor-main-container .main.text .sub-menu > div.text {
+             display: table-cell;
+         }
+
+         .tui-image-editor-main-container .main.mask .sub-menu > div.mask {
              display: table-cell;
          }
 
@@ -393,35 +404,12 @@
          }
 
          /* ICON */
-        .svg_ic-apply,
-        .svg_ic-cancel,
-        .svg_ic-delete-all,
-        .svg_ic-delete,
-        .svg_ic-draw,
-        .svg_ic-crop,
-        .svg_ic-filter,
-        .svg_ic-icon,
-        .svg_ic-mask,
-        .svg_ic-redo,
-        .svg_ic-reset,
-        .svg_ic-shape,
-        .svg_ic-rotate,
-        .svg_ic-flip,
-        .svg_ic-text,
-        .svg_ic-undo {
+        .svg_ic-menu {
             width: 24px;
             height: 24px;
         }
 
-        .svg_ic-color-transparent-w,
-        .svg_ic-flip-x,
-        .svg_ic-flip-y,
-        .svg_ic-flip-reset,
-        .svg_ic-rotate-clockwise,
-        .svg_ic-rotate-counterclockwise,
-        .svg_ic-shape-circle,
-        .svg_ic-shape-rectangle,
-        .svg_ic-shape-triangle {
+        .svg_ic-submenu {
             width: 32px;
             height: 32px;
         }
@@ -543,7 +531,7 @@
             display: none;
         }
         #crop-button .button.apply.active svg > use.active {
-            display: inline-block;
+            display: block;
         }
 
         /* SHAPE BUTTON */
@@ -561,6 +549,48 @@
          }
          #shape-button.triangle .button.triangle svg > use.active {
              display: block;
+         }
+
+         /* TEXT BUTTON */
+         #text-effect-button .button svg > use.normal {
+             display: block;
+         }
+         #text-effect-button .button svg > use.active {
+             display: none;
+         }
+
+         #text-effect-button .button.active svg > use.active {
+             display: block;
+         }
+         #text-effect-button .button.normal svg > use.active {
+             display: none;
+         }
+
+         #text-align-button .button svg > use.normal {
+             display: block;
+         }
+         #text-effect-button .button svg > use.active {
+             display: none;
+         }
+
+         #text-align-button.left .button.left svg > use.active {
+             display: block;
+         }
+         #text-align-button.center .button.center svg > use.active {
+             display: block;
+         }
+         #text-align-button.right .button.right svg > use.active {
+             display: block;
+         }
+         #mask-image-file {
+            opacity: 0;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 1px solid green;
+            cursor: inherit;
+            left: 0;
+            top: 0;
          }
 
          @media screen and (max-width: 1234px) {
@@ -593,7 +623,7 @@
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
-                 initMenu: 'shape',
+                 initMenu: 'mask',
                  menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,

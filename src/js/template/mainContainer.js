@@ -16,7 +16,7 @@ export default `
                         <li id="retate-button">
                             <div class="button clockwise">
                                 <div>
-                                    <svg class="svg_ic-rotate-clockwise">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-rotate-clockwise" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-rotate-clockwise" class="active"/>
                                     </svg>
@@ -27,7 +27,7 @@ export default `
                             </div>
                             <div class="button counterclockwise">
                                 <div>
-                                    <svg class="svg_ic-rotate-counterclockwise">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-rotate-counterclockwise" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-rotate-counterclockwise" class="active"/>
                                     </svg>
@@ -48,7 +48,7 @@ export default `
                     <ul class="menu">
                         <li id="crop-button" class="apply">
                             <div class="button apply">
-                                <svg class="svg_ic-apply">
+                                <svg class="svg_ic-menu">
                                     <use xlink:href="../dist/icon-a.svg#icon-a-ic-apply" class="normal"/>
                                     <use xlink:href="../dist/icon-b.svg#icon-b-ic-apply" class="active"/>
                                 </svg>
@@ -57,7 +57,7 @@ export default `
                                 </label>
                             </div>
                             <div class="button cancel">
-                                <svg class="svg_ic-cancel">
+                                <svg class="svg_ic-menu">
                                     <use xlink:href="../dist/icon-a.svg#icon-a-ic-cancel" class="normal"/>
                                     <use xlink:href="../dist/icon-b.svg#icon-b-ic-cancel" class="active"/>
                                 </svg>
@@ -73,7 +73,7 @@ export default `
                         <li>
                             <div class="button flipX">
                                 <div>
-                                    <svg class="svg_ic-flip-x">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-flip-x" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-flip-x" class="active"/>
                                     </svg>
@@ -84,7 +84,7 @@ export default `
                             </div>
                             <div class="button flipY">
                                 <div>
-                                    <svg class="svg_ic-flip-y">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-flip-y" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-flip-y" class="active"/>
                                     </svg>
@@ -97,7 +97,7 @@ export default `
                         <li>
                             <div class="button resetFlip">
                                 <div>
-                                    <svg class="svg_ic-flip-reset">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-flip-reset" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-flip-reset" class="active"/>
                                     </svg>
@@ -107,7 +107,109 @@ export default `
                                 </label>
                             </div>
                         </li>
-
+                    </ul>
+                </div>
+                <div class="mask">
+                    <ul class="menu">
+                        <li>
+                            <div class="button">
+                                <div>
+                                    <input type="file" accept="image/*" id="mask-image-file">
+                                    <svg class="svg_ic-submenu">
+                                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-mask-load" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-mask-load" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> Load Mask Image </label>
+                            </div>
+                        </li>
+                        <li id="mask-apply" class="newline apply">
+                            <div class="button apply">
+                                <svg class="svg_ic-menu">
+                                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-apply" class="normal"/>
+                                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-apply" class="active"/>
+                                </svg>
+                                <label>
+                                    Apply
+                                </label>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="text">
+                    <ul class="menu">
+                        <li id="text-effect-button">
+                            <div class="button bold">
+                                <div>
+                                    <svg class="svg_ic-submenu">
+                                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-bold" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-bold" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> Bold </label>
+                            </div>
+                            <div class="button italic">
+                                <div>
+                                    <svg class="svg_ic-submenu">
+                                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-italic" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-italic" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> Italic </label>
+                            </div>
+                            <div class="button underline">
+                                <div>
+                                    <svg class="svg_ic-submenu">
+                                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-underline" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-underline" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> Underline </label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="partition-left"></div>
+                        </li>
+                        <li id="text-align-button">
+                            <div class="button left">
+                                <div>
+                                    <svg class="svg_ic-submenu">
+                                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-left" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-align-left" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> left </label>
+                            </div>
+                            <div class="button center">
+                                <div>
+                                    <svg class="svg_ic-submenu">
+                                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-center" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-align-center" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> center </label>
+                            </div>
+                            <div class="button right">
+                                <div>
+                                    <svg class="svg_ic-submenu">
+                                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-right" class="normal"/>
+                                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-align-right" class="active"/>
+                                    </svg>
+                                </div>
+                                <label> right </label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="partition-left"></div>
+                        </li>
+                        <li>
+                            <div id="text-color" title="Color"></div>
+                        </li>
+                        <li class="newline tui-image-editor-range-wrap">
+                            <label>Text size</label>
+                            <div id="text-range" min="10" max="100"></div>
+                            <input id="text-range-value" class="tui-image-editor-range-value" value="0" />
+                        </li>
                     </ul>
                 </div>
                 <div class="shape">
@@ -115,7 +217,7 @@ export default `
                         <li id="shape-button" class="rect">
                             <div class="button rect">
                                 <div>
-                                    <svg class="svg_ic-shape-rectangle">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-shape-rectangle" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-shape-rectangle" class="active"/>
                                     </svg>
@@ -124,7 +226,7 @@ export default `
                             </div>
                             <div class="button circle">
                                 <div>
-                                    <svg class="svg_ic-shape-circle">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-shape-circle" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-shape-circle" class="active"/>
                                     </svg>
@@ -133,7 +235,7 @@ export default `
                             </div>
                             <div class="button triangle">
                                 <div>
-                                    <svg class="svg_ic-shape-triangle">
+                                    <svg class="svg_ic-submenu">
                                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-shape-triangle" class="normal"/>
                                         <use xlink:href="../dist/icon-b.svg#icon-b-ic-shape-triangle" class="active"/>
                                     </svg>
