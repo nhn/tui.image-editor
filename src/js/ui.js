@@ -2,15 +2,18 @@ import util from './util';
 import snippet from 'tui-code-snippet';
 import mainContainer from './template/mainContainer';
 import controls from './template/controls';
-import Range from './ui/range';
-import Colorpicker from './ui/colorpicker';
+import Shape from './ui/shape';
+import Crop from './ui/crop';
+import Flip from './ui/flip';
+import Rotate from './ui/rotate';
+import Text from './ui/text';
+import Mask from './ui/mask';
 
 export default class Ui {
     constructor(element, options) {
         let selectedElement;
 
         this.options = this.initializeOption(options);
-        this.activeObjectId;
 
         if (element.jquery) {
             [selectedElement] = element;
@@ -38,99 +41,52 @@ export default class Ui {
             mask: this.selectedElement.querySelector('#btn-mask')
         };
 
+        this.actions = {};
         this.submenu = false;
         this.imageSize = {};
 
-        this.mask = {
-            _btnElement: {
-                applyButton: this._subMenuElement.querySelector('#mask-apply'),
-                maskImageButton: this._subMenuElement.querySelector('#mask-image-file')
-            }
-        };
+        this.mask = new Mask(this._subMenuElement);
+        this.shape = new Shape(this._subMenuElement);
+        this.crop = new Crop(this._subMenuElement);
+        this.flip = new Flip(this._subMenuElement);
+        this.rotate = new Rotate(this._subMenuElement);
+        this.text = new Text(this._subMenuElement);
+    }
 
-        this.text = {
-            effect: {
-                bold: false,
-                italic: false,
-                underline: false
-            },
-            align: 'left',
-            rangeTimeout: null,
-            controlOption: {
-                cornerStyle: 'circle',
-                cornerSize: 20,
-                borderColor: '#fff',
-                cornerColor: '#fff',
-                cornerStrokeColor: '#000',
-                transparentCorners: false,
-                padding: 20,
-                lineWidth: 2
-            },
-            _btnElement: {
-                textEffectButton: this._subMenuElement.querySelector('#text-effect-button'),
-                textAlignButton: this._subMenuElement.querySelector('#text-align-button'),
-                textColorpicker: new Colorpicker(this._subMenuElement.querySelector('#text-color'), '#ffbb3b'),
-                textRange: new Range(this._subMenuElement.querySelector('#text-range'), 10),
-                textRangeValue: this._subMenuElement.querySelector('#text-range-value')
-            }
-        };
+    menuAddEvent(changeMode) {
+        this._btnElement.text.addEventListener('click', () => {
+            this.changeMenu('text');
+            changeMode('text');
+        });
+        this._btnElement.crop.addEventListener('click', () => {
+            this.changeMenu('crop');
+            changeMode('crop');
+        });
+        this._btnElement.flip.addEventListener('click', () => {
+            this.changeMenu('flip');
+            changeMode('flip');
+        });
+        this._btnElement.rotate.addEventListener('click', () => {
+            this.changeMenu('rotate');
+            changeMode('rotate');
+        });
+        this._btnElement.shape.addEventListener('click', () => {
+            this.changeMenu('shape');
+            changeMode('shape');
+        });
+        this._btnElement.mask.addEventListener('click', () => {
+            this.changeMenu('mask');
+            changeMode('mask');
+        });
+    }
 
-        this.shape = {
-            type: 'rect',
-            options: {
-                stroke: '#ffbb3b',
-                fill: '',
-                strokeWidth: 3
-            },
-            controlOption: {
-                cornerStyle: 'circle',
-                cornerSize: 20,
-                cornerColor: '#fff',
-                cornerStrokeColor: '#000',
-                transparentCorners: false,
-                lineWidth: 2,
-                borderColor: '#fff'
-            },
-            _btnElement: {
-                shapeSelectButton: this._subMenuElement.querySelector('#shape-button'),
-                shapeColorButton: this._subMenuElement.querySelector('#shape-color-button'),
-                strokeRange: new Range(this._subMenuElement.querySelector('#stroke-range'), 3),
-                strokeRangeValue: this._subMenuElement.querySelector('#stroke-range-value'),
-                fillColorpicker: new Colorpicker(this._subMenuElement.querySelector('#color-fill'), ''),
-                strokeColorpicker: new Colorpicker(this._subMenuElement.querySelector('#color-stroke'), '#ffbb3b')
-            }
-        };
-
-        this.crop = {
-            status: 'active',
-            controlOption: {
-                cornerStyle: 'circle',
-                cornerSize: 20,
-                cornerColor: '#fff',
-                cornerStrokeColor: '#000',
-                transparentCorners: false,
-                lineWidth: 2
-            },
-            _btnElement: {
-                apply: this._subMenuElement.querySelector('#crop-button .apply'),
-                cancel: this._subMenuElement.querySelector('#crop-button .cancel')
-            }
-        };
-
-        this.flip = {
-            _btnElement: {
-                flipButton: this._subMenuElement.querySelector('#flip-button')
-            }
-        };
-
-        this.rotate = {
-            _btnElement: {
-                rotateButton: this._subMenuElement.querySelector('#retate-button'),
-                rotateRange: new Range(this._subMenuElement.querySelector('#rotate-range'), 0),
-                rotateRangeValue: this._subMenuElement.querySelector('#ratate-range-value')
-            }
-        };
-
+    subMenuAddEvent(actions) {
+        this.shape.addEvent(actions.shape);
+        this.crop.addEvent(actions.crop);
+        this.flip.addEvent(actions.flip);
+        this.rotate.addEvent(actions.rotate);
+        this.text.addEvent(actions.text);
+        this.mask.addEvent(actions.mask);
     }
 
     initializeOption(options) {
@@ -189,11 +145,9 @@ export default class Ui {
 
         const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
         const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;
-        // const height = imageSize.newHeight;
 
         const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
         const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
-        // const width = imageSize.newWidth;
 
         const editorElementStyle = this._editorElement.style;
         const {menuBarPosition} = this.options;

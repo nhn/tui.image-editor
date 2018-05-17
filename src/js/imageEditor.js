@@ -31,6 +31,8 @@ class ImageEditor {
             usageStatistics: true
         }, option);
 
+        this.activeObjectId = null;
+
         // UI를 그리자
         this.ui = null;
         if (option.includeUi) {
@@ -48,7 +50,7 @@ class ImageEditor {
                     this.ui.resizeEditor();
                 },
                 objectActivated: obj => {
-                    this.ui.activeObjectId = obj.id;
+                    this.activeObjectId = obj.id;
 
                     if (obj.type === 'cropzone') {
                         this.ui.crop._btnElement.apply.classList.add('active');
@@ -64,14 +66,7 @@ class ImageEditor {
                         this.ui.shape.options.fill = fillColor;
                         this.ui.shape.options.strokeWidth = strokeWidth;
                     } else if (obj.type === 'text') {
-                        // $inputFontSizeRange.val(obj.fontSize);
-                        // textColorpicker.setColor(obj.fill);
                         this._changeActivateMode('TEXT');
-                    }
-                },
-                objectScaled: obj => {
-                    if (obj.type === 'text') {
-                        // $inputFontSizeRange.val(obj.fontSize);
                     }
                 },
                 addText: pos => {
@@ -81,7 +76,6 @@ class ImageEditor {
                         console.log(objectProps);
                     });
                 },
-
                 mousedown: (event, originPointer) => {
                     if (this.ui.submenu && this.hasFilter('colorFilter')) {
                         this.applyFilter('colorFilter', {
@@ -92,179 +86,11 @@ class ImageEditor {
                 }
             });
 
-            /* 대 매뉴 */
-            this.ui._btnElement.text.addEventListener('click', () => {
-                this._changeActivateMode('TEXT');
-                this.ui.changeMenu('text');
-            });
-            this.ui._btnElement.crop.addEventListener('click', () => {
-                this.startDrawingMode('CROPPER');
-                this.ui.changeMenu('crop');
-            });
-            this.ui._btnElement.flip.addEventListener('click', () => {
-                this.stopDrawingMode();
-                this.ui.changeMenu('flip');
-            });
-            this.ui._btnElement.rotate.addEventListener('click', () => {
-                this.stopDrawingMode();
-                this.ui.changeMenu('rotate');
-            });
-            this.ui._btnElement.shape.addEventListener('click', () => {
-                this.stopDrawingMode();
-                this.ui.changeMenu('shape');
-                this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
-                this._changeActivateMode('SHAPE');
-            });
-            this.ui._btnElement.mask.addEventListener('click', () => {
-                this.stopDrawingMode();
-                this.ui.changeMenu('mask');
-            });
+            /* 대 메뉴 */
+            this.ui.menuAddEvent(snippet.bind(this._modeChange, this));
 
-            /* 서브메뉴 */
-            this.ui.shape._btnElement.shapeSelectButton.addEventListener('click', event => {
-                const button = event.target.closest('.button');
-                const [shapeType] = button.className.match(/(circle|triangle|rect)/);
-
-                event.currentTarget.classList.remove(this.ui.shape.type);
-                event.currentTarget.classList.add(shapeType);
-
-                this.ui.shape.type = shapeType;
-                this.setDrawingShape(shapeType);
-            });
-            this.ui.shape._btnElement.strokeRange.on('change', value => {
-                this.ui.shape.options.strokeWidth = parseInt(value, 10);
-                this.ui.shape._btnElement.strokeRangeValue.value = parseInt(value, 10);
-
-                if (this.ui.activeObjectId) {
-                    this.changeShape(this.ui.activeObjectId, {
-                        strokeWidth: value
-                    });
-                }
-                this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
-            });
-            this.ui.shape._btnElement.fillColorpicker.on('change', value => {
-                const color = value.color || 'transparent';
-                this.ui.shape.options.fill = color;
-                this.changeShape(this.ui.activeObjectId, {
-                    fill: color
-                });
-            });
-            this.ui.shape._btnElement.strokeColorpicker.on('change', value => {
-                const color = value.color || 'transparent';
-                this.ui.shape.options.stroke = color;
-                this.changeShape(this.ui.activeObjectId, {
-                    stroke: color
-                });
-            });
-
-            this.ui.crop._btnElement.apply.addEventListener('click', () => {
-                this.crop(this.getCropzoneRect()).then(() => {
-                    this.stopDrawingMode();
-                    this.ui.resizeEditor();
-                    this.ui.changeMenu('crop');
-                    this.ui.crop._btnElement.apply.classList.remove('active');
-                });
-            });
-
-            this.ui.crop._btnElement.cancel.addEventListener('click', () => {
-                this.stopDrawingMode();
-                this.ui.changeMenu('crop');
-                this.ui.crop._btnElement.apply.classList.remove('active');
-            });
-
-            this.ui.flip._btnElement.flipButton.addEventListener('click', event => {
-                const button = event.target.closest('.button');
-                const [flipType] = button.className.match(/(flipX|flipY|resetFlip)/);
-                this[flipType]().then(status => {
-                    console.log(status);
-                });
-            });
-
-            this.ui.rotate._btnElement.rotateButton.addEventListener('click', event => {
-                const button = event.target.closest('.button');
-                const [rotateType] = button.className.match(/(counterclockwise|clockwise)/);
-                this.rotate({
-                    'clockwise': 30,
-                    'counterclockwise': -30
-                }[rotateType]);
-                this.ui.resizeEditor();
-            });
-            this.ui.rotate._btnElement.rotateRange.on('change', value => {
-                this.ui.rotate._btnElement.rotateRangeValue.value = parseInt(value, 10);
-                this.setAngle(parseInt(value, 10));
-                this.ui.resizeEditor();
-            });
-            this.ui.text._btnElement.textEffectButton.addEventListener('click', event => {
-                const button = event.target.closest('.button');
-                const [styleType] = button.className.match(/(bold|italic|underline)/);
-                const styleObj = {
-                    'bold': {fontWeight: 'bold'},
-                    'italic': {fontStyle: 'italic'},
-                    'underline': {textDecoration: 'underline'}
-                }[styleType];
-
-                this.changeTextStyle(this.ui.activeObjectId, styleObj);
-                this.ui.text.effect[styleType] = !this.ui.text.effect[styleType];
-                button.classList.toggle('active');
-            });
-            this.ui.text._btnElement.textAlignButton.addEventListener('click', event => {
-                const button = event.target.closest('.button');
-                const [styleType] = button.className.match(/(left|center|right)/);
-                event.currentTarget.classList.remove(this.ui.text.align);
-                if (this.ui.text.align !== styleType) {
-                    event.currentTarget.classList.add(styleType);
-                }
-
-                this.changeTextStyle(this.ui.activeObjectId, {textAlign: styleType});
-                this.ui.text.align = styleType;
-            });
-
-            this.ui.text._btnElement.textRange.on('change', value => {
-                value = parseInt(value, 10);
-                this.ui.text._btnElement.textRangeValue.value = value;
-
-                clearTimeout(this.ui.text.rangeTimeout);
-                this.ui.text.rangeTimeout = setTimeout(() => {
-                    this.changeTextStyle(this.ui.activeObjectId, {
-                        fontSize: parseInt(value, 10)
-                    });
-                }, 300);
-            });
-            this.ui.text._btnElement.textColorpicker.on('change', value => {
-                const color = value.color || 'transparent';
-                this.changeTextStyle(this.ui.activeObjectId, {
-                    'fill': color
-                });
-            });
-            this.ui.mask._btnElement.maskImageButton.addEventListener('change', event => {
-                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
-                let imgUrl;
-
-                if (!supportingFileAPI) {
-                    alert('This browser does not support file-api');
-                }
-
-                const [file] = event.target.files;
-
-                if (file) {
-                    imgUrl = URL.createObjectURL(file);
-
-                    this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
-                        this.addImageObject(imgUrl).then(objectProps => {
-                            URL.revokeObjectURL(file);
-                            console.log(objectProps);
-                        });
-                    });
-                }
-            });
-
-            this.ui.mask._btnElement.applyButton.addEventListener('click', () => {
-                this.applyFilter('mask', {
-                    maskObjId: this.ui.activeObjectId
-                }).then(result => {
-                    console.log(result);
-                });
-            });
+            /* 서브 메뉴 */
+            this.ui.subMenuAddEvent(this._getActions());
         }
 
         /**
@@ -397,6 +223,97 @@ class ImageEditor {
      */
     _setSelectionStyle(styles) {
         this._graphics.setSelectionStyle(styles);
+    }
+
+    /**
+     * modeChange
+     * @param {string} menu - menu name
+     * @private
+     */
+    _modeChange(menu) {
+        switch (menu) {
+            case 'text':
+                this._changeActivateMode('TEXT');
+                break;
+            case 'crop':
+                this.startDrawingMode('CROPPER');
+                break;
+            case 'shape':
+                this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+                this.stopDrawingMode();
+                this._changeActivateMode('SHAPE');
+                break;
+            default:
+                this.stopDrawingMode();
+                break;
+        }
+    }
+
+    _getActions() {
+        return {
+            shape: {
+                changeShape: changeShapeObject => {
+                    if (this.activeObjectId) {
+                        this.changeShape(this.activeObjectId, changeShapeObject);
+                    }
+                },
+                setDrawingShape: shapeType => {
+                    this.setDrawingShape(shapeType);
+                }
+            },
+            crop: {
+                crop: () => {
+                    this.crop(this.getCropzoneRect()).then(() => {
+                        this.stopDrawingMode();
+                        this.ui.resizeEditor();
+                        this.ui.changeMenu('crop');
+                    });
+                },
+                cancel: () => {
+                    this.stopDrawingMode();
+                    this.ui.changeMenu('crop');
+                }
+            },
+            flip: {
+                flip: flipType => {
+                    this[flipType]().then(status => {
+                        console.log(status);
+                    });
+                }
+            },
+            rotate: {
+                rotate: angle => {
+                    this.rotate(angle);
+                    this.ui.resizeEditor();
+                },
+                setAngle: angle => {
+                    this.setAngle(angle);
+                    this.ui.resizeEditor();
+                }
+            },
+            text: {
+                changeTextStyle: styleObj => {
+                    this.changeTextStyle(this.activeObjectId, styleObj);
+                }
+            },
+            mask: {
+                loadImageFromURL: (imgUrl, file) => {
+                    this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+                        this.addImageObject(imgUrl).then(objectProps => {
+                            URL.revokeObjectURL(file);
+                            console.log(objectProps);
+                        });
+                    });
+                },
+                applyFilter: () => {
+                    this.applyFilter('mask', {
+                        maskObjId: this.activeObjectId
+                    }).then(result => {
+                        console.log(result);
+                    });
+                }
+            }
+        };
     }
 
     /**
