@@ -44,7 +44,9 @@ export default class Action {
             },
             text: {
                 changeTextStyle: styleObj => {
-                    imageEditor.changeTextStyle(imageEditor.activeObjectId, styleObj);
+                    if (imageEditor.activeObjectId) {
+                        imageEditor.changeTextStyle(imageEditor.activeObjectId, styleObj);
+                    }
                 }
             },
             mask: {

@@ -52,7 +52,6 @@ class ImageEditor {
                 },
                 objectActivated: obj => {
                     this.activeObjectId = obj.id;
-                    console.log(obj);
 
                     if (obj.type === 'cropzone') {
                         this.ui.crop._btnElement.apply.classList.add('active');
@@ -87,12 +86,6 @@ class ImageEditor {
                     }
                 }
             });
-
-            /* 대 메뉴 */
-            this.ui.menuAddEvent(snippet.bind(this._modeChange, this));
-
-            /* 서브 메뉴 */
-            this.ui.subMenuAddEvent(new Action(this));
         }
 
         /**
@@ -124,10 +117,15 @@ class ImageEditor {
 
             this.ui.initCanvas();
 
+            /* 대 메뉴 */
+            this.ui.menuAddEvent(snippet.bind(this._modeChange, this));
+
             if (this.ui.options.initMenu) {
                 const evt = document.createEvent('MouseEvents');
                 evt.initEvent('click', true, false);
                 setTimeout(() => {
+                    /* 서브 메뉴 */
+                    this.ui.subMenuAddEvent(new Action(this));
                     this.ui._btnElement[this.ui.options.initMenu].dispatchEvent(evt);
                     this.ui.icon.registDefaultIcon();
                     this.ui.draw.setDrawMode();
