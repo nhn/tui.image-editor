@@ -18,13 +18,10 @@ class Colorpicker {
             this.colorElement.classList.add('transparent');
         }
 
-
         const label = document.createElement('label');
         label.innerHTML = title;
 
-
         /* draw picker element */
-
         this.pickerControl = document.createElement('div');
         this.pickerControl.className = 'color-picker-control';
 

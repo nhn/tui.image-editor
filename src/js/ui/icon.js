@@ -60,5 +60,4 @@ export default class Icon {
             this.actions.registDefalutIcons(type, path);
         });
     }
-
 }
