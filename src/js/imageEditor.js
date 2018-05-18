@@ -52,6 +52,7 @@ class ImageEditor {
                 },
                 objectActivated: obj => {
                     this.activeObjectId = obj.id;
+                    console.log(obj);
 
                     if (obj.type === 'cropzone') {
                         this.ui.crop._btnElement.apply.classList.add('active');
@@ -128,7 +129,9 @@ class ImageEditor {
                 evt.initEvent('click', true, false);
                 setTimeout(() => {
                     this.ui._btnElement[this.ui.options.initMenu].dispatchEvent(evt);
-                }, 1000);
+                    this.ui.icon.registDefaultIcon();
+                    this.ui.draw.setDrawMode();
+                }, 700);
             }
         }
 

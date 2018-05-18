@@ -5,11 +5,11 @@ class Range {
         this.value = defaultValue;
         this.rangeElement = rangeElement;
         this.drawRangeElement();
-        this.rangeWidth = parseInt(window.getComputedStyle(rangeElement, null).width, 10);
+        this.rangeWidth = parseInt(window.getComputedStyle(rangeElement, null).width, 10) - 12;
 
         this.min = Number(rangeElement.getAttribute('min'));
         this.max = Number(rangeElement.getAttribute('max'));
-        this.absMax = this.min < 0 ? (this.min * -1) + this.max : this.max;
+        this.absMax = (this.min * -1) + this.max;
 
         this.addClickEvent();
         this.addDragEvent();
@@ -17,6 +17,7 @@ class Range {
     }
 
     setValue(value) {
+        this.value = value;
         const absValue = value + Math.abs(this.min);
         const leftPosition = absValue * this.rangeWidth / this.absMax;
         this.pointer.style.left = `${leftPosition}px`;
@@ -24,6 +25,10 @@ class Range {
         setTimeout(() => {
             this.fire('change', value);
         });
+    }
+
+    getValue() {
+        return this.value;
     }
 
     drawRangeElement() {
@@ -47,7 +52,8 @@ class Range {
             const touchPx = event.offsetX;
             const ratio = touchPx / this.rangeWidth;
             const value = (this.absMax * ratio) + this.min;
-            this.pointer.style.left = `${(ratio * this.rangeWidth) - 7}px`;
+            this.pointer.style.left = `${ratio * this.rangeWidth}px`;
+            this.value = value;
 
             this.fire('change', value);
         });
@@ -64,7 +70,7 @@ class Range {
                 touchPx = touchPx > this.rangeWidth ? this.rangeWidth : touchPx;
                 touchPx = touchPx < 0 ? 0 : touchPx;
 
-                this.pointer.style.left = `${touchPx - 7}px`;
+                this.pointer.style.left = `${touchPx}px`;
                 const ratio = touchPx / this.rangeWidth;
                 const value = (this.absMax * ratio) + this.min;
 

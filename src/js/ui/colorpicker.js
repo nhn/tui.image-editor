@@ -91,6 +91,10 @@ class Colorpicker {
     setColor(color) {
         this.changeColorElement(color);
     }
+
+    getColor() {
+        return this.picker.getColor();
+    }
 }
 
 snippet.CustomEvents.mixin(Colorpicker);

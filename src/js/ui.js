@@ -1,4 +1,3 @@
-import util from './util';
 import snippet from 'tui-code-snippet';
 import mainContainer from './template/mainContainer';
 import controls from './template/controls';
@@ -8,6 +7,9 @@ import Flip from './ui/flip';
 import Rotate from './ui/rotate';
 import Text from './ui/text';
 import Mask from './ui/mask';
+import Icon from './ui/icon';
+import Draw from './ui/draw';
+// import util from './util';
 
 export default class Ui {
     constructor(element, options) {
@@ -38,7 +40,9 @@ export default class Ui {
             rotate: this.selectedElement.querySelector('#btn-rotate'),
             shape: this.selectedElement.querySelector('#btn-shape'),
             text: this.selectedElement.querySelector('#btn-text'),
-            mask: this.selectedElement.querySelector('#btn-mask')
+            mask: this.selectedElement.querySelector('#btn-mask'),
+            icon: this.selectedElement.querySelector('#btn-icon'),
+            draw: this.selectedElement.querySelector('#btn-draw')
         };
 
         this.submenu = false;
@@ -50,6 +54,8 @@ export default class Ui {
         this.flip = new Flip(this._subMenuElement);
         this.rotate = new Rotate(this._subMenuElement);
         this.text = new Text(this._subMenuElement);
+        this.icon = new Icon(this._subMenuElement);
+        this.draw = new Draw(this._subMenuElement);
     }
 
     menuAddEvent(changeMode) {
@@ -77,6 +83,14 @@ export default class Ui {
             this.changeMenu('mask');
             changeMode('mask');
         });
+        this._btnElement.icon.addEventListener('click', () => {
+            this.changeMenu('icon');
+            changeMode('icon');
+        });
+        this._btnElement.draw.addEventListener('click', () => {
+            this.changeMenu('draw');
+            changeMode('draw');
+        });
     }
 
     subMenuAddEvent(actions) {
@@ -86,6 +100,8 @@ export default class Ui {
         this.rotate.addEvent(actions.rotate);
         this.text.addEvent(actions.text);
         this.mask.addEvent(actions.mask);
+        this.icon.addEvent(actions.icon);
+        this.draw.addEvent(actions.draw);
     }
 
     initializeOption(options) {
@@ -189,13 +205,3 @@ export default class Ui {
         this._editorElement.style.left = `${editorleft}px`;
     }
 }
-
-
-
-
-
-
-
-
-
-

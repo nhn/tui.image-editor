@@ -1,12 +1,14 @@
-exprot default function ImageTracer() {
+export default function ImageTracer(){
 	var _this = this;
 
 	this.versionnumber = '1.2.4',
+	
 	////////////////////////////////////////////////////////////
 	//
 	//  User friendly functions
 	//
 	////////////////////////////////////////////////////////////
+	
 	// Loading an image from a URL, tracing when loaded,
 	// then executing callback with the scaled svg string as argument
 	this.imageToSVG = function( url, callback, options ){
@@ -22,7 +24,7 @@ exprot default function ImageTracer() {
 			options
 		);
 	},// End of imageToSVG()
-
+	
 	// Tracing imagedata, then returning the scaled svg string
 	this.imagedataToSVG = function( imgd, options ){
 		options = _this.checkoptions(options);
@@ -31,7 +33,7 @@ exprot default function ImageTracer() {
 		// returning SVG string
 		return _this.getsvgstring(td, options);
 	},// End of imagedataToSVG()
-
+	
 	// Loading an image from a URL, tracing when loaded,
 	// then executing callback with tracedata as argument
 	this.imageToTracedata = function( url, callback, options ){
@@ -47,16 +49,16 @@ exprot default function ImageTracer() {
 				options
 		);
 	},// End of imageToTracedata()
-
+	
 	// Tracing imagedata, then returning tracedata (layers with paths, palette, image size)
 	this.imagedataToTracedata = function( imgd, options ){
 		options = _this.checkoptions(options);
-
+		
 		// 1. Color quantization
 		var ii = _this.colorquantization( imgd, options );
-
+		
 		if(options.layering === 0){// Sequential layering
-
+			
 			// create tracedata object
 			var tracedata = {
 				layers : [],
@@ -64,39 +66,48 @@ exprot default function ImageTracer() {
 				width : ii.array[0].length-2,
 				height : ii.array.length-2
 			};
-
+			
 			// Loop to trace each color layer
 			for(var colornum=0; colornum<ii.palette.length; colornum++){
-
+				
 				// layeringstep -> pathscan -> internodes -> batchtracepaths
 				var tracedlayer =
 					_this.batchtracepaths(
-
+							
 						_this.internodes(
-
+								
 							_this.pathscan(
 								_this.layeringstep( ii, colornum ),
 								options.pathomit
 							),
-
+							
 							options
-
+							
 						),
+						
 						options.ltres,
 						options.qtres
+						
 					);
+				
 				// adding traced layer
 				tracedata.layers.push(tracedlayer);
+				
 			}// End of color loop
+			
 		}else{// Parallel layering
 			// 2. Layer separation and edge detection
 			var ls = _this.layering( ii );
+			
 			// Optional edge node visualization
 			if(options.layercontainerid){ _this.drawLayers( ls, _this.specpalette, options.scale, options.layercontainerid ); }
+			
 			// 3. Batch pathscan
 			var bps = _this.batchpathscan( ls, options.pathomit );
+			
 			// 4. Batch interpollation
 			var bis = _this.batchinternodes( bps, options );
+			
 			// 5. Batch tracing and creating tracedata object
 			var tracedata = {
 				layers : _this.batchtracelayers( bis, options.ltres, options.qtres ),
@@ -104,25 +115,33 @@ exprot default function ImageTracer() {
 				width : imgd.width,
 				height : imgd.height
 			};
+			
 		}// End of parallel layering
+		
 		// return tracedata
 		return tracedata;
+		
 	},// End of imagedataToTracedata()
+	
 	this.optionpresets = {
 		'default': {
+			
 			// Tracing
 			corsenabled : false,
 			ltres : 1,
 			qtres : 1,
 			pathomit : 8,
 			rightangleenhance : true,
+			
 			// Color quantization
 			colorsampling : 2,
 			numberofcolors : 16,
 			mincolorratio : 0,
 			colorquantcycles : 3,
+			
 			// Layering method
 			layering : 0,
+			
 			// SVG rendering
 			strokewidth : 1,
 			linefilter : false,
@@ -132,9 +151,11 @@ exprot default function ImageTracer() {
 			desc : false,
 			lcpr : 0,
 			qcpr : 0,
+			
 			// Blur
 			blurradius : 0,
 			blurdelta : 20
+			
 		},
 		'posterized1': { colorsampling:0, numberofcolors:2 },
 		'posterized2': { numberofcolors:4, blurradius:5 },
@@ -154,6 +175,7 @@ exprot default function ImageTracer() {
 			mincolorratio: 0, colorquantcycles: 3, blurradius: 3, blurdelta: 20, strokewidth: 0, linefilter: false,
 			roundcoords: 1, pal: [ { r: 0, g: 0, b: 100, a: 255 }, { r: 255, g: 255, b: 255, a: 255 } ] }
 	},// End of optionpresets
+	
 	// creating options object, setting defaults for missing values
 	this.checkoptions = function(options){
 		options = options || {};
@@ -171,17 +193,21 @@ exprot default function ImageTracer() {
 		// options.layercontainerid is not defined here, can be added externally: options.layercontainerid = 'mydiv'; ... <div id="mydiv"></div>
 		return options;
 	},// End of checkoptions()
+	
 	////////////////////////////////////////////////////////////
 	//
 	//  Vectorizing functions
 	//
 	////////////////////////////////////////////////////////////
+	
 	// 1. Color quantization
 	// Using a form of k-means clustering repeatead options.colorquantcycles times. http://en.wikipedia.org/wiki/Color_quantization
 	this.colorquantization = function( imgd, options ){
 		var arr = [], idx=0, cd,cdl,ci, paletteacc = [], pixelnum = imgd.width * imgd.height, i, j, k, cnt, palette;
+		
 		// Filling arr (color index array) with -1
 		for( j=0; j<imgd.height+2; j++ ){ arr[j]=[]; for(i=0; i<imgd.width+2 ; i++){ arr[j][i] = -1; } }
+		
 		// Use custom palette if pal is defined or sample / generate custom length palette
 		if(options.pal){
 			palette = options.pal;
@@ -192,14 +218,18 @@ exprot default function ImageTracer() {
 		}else{
 			palette = _this.samplepalette2( options.numberofcolors, imgd );
 		}
+		
 		// Selective Gaussian blur preprocessing
 		if( options.blurradius > 0 ){ imgd = _this.blur( imgd, options.blurradius, options.blurdelta ); }
+		
 		// Repeat clustering step options.colorquantcycles times
 		for( cnt=0; cnt < options.colorquantcycles; cnt++ ){
+			
 			// Average colors from the second iteration
 			if(cnt>0){
 				// averaging paletteacc for palette
 				for( k=0; k < palette.length; k++ ){
+					
 					// averaging
 					if( paletteacc[k].n > 0 ){
 						palette[k] = {  r: Math.floor( paletteacc[k].r / paletteacc[k].n ),
@@ -207,6 +237,7 @@ exprot default function ImageTracer() {
 										b: Math.floor( paletteacc[k].b / paletteacc[k].n ),
 										a:  Math.floor( paletteacc[k].a / paletteacc[k].n ) };
 					}
+					
 					// Randomizing a color, if there are too few pixels and there will be a new cycle
 					if( ( paletteacc[k].n/pixelnum < options.mincolorratio ) && ( cnt < options.colorquantcycles-1 ) ){
 						palette[k] = {  r: Math.floor(Math.random()*255),
@@ -214,36 +245,51 @@ exprot default function ImageTracer() {
 										b: Math.floor(Math.random()*255),
 										a: Math.floor(Math.random()*255) };
 					}
+					
 				}// End of palette loop
 			}// End of Average colors from the second iteration
+			
 			// Reseting palette accumulator for averaging
 			for( i=0; i < palette.length; i++ ){ paletteacc[i] = { r:0, g:0, b:0, a:0, n:0 }; }
+			
 			// loop through all pixels
 			for( j=0; j < imgd.height; j++ ){
 				for( i=0; i < imgd.width; i++ ){
+					
 					// pixel index
 					idx = (j*imgd.width+i)*4;
+					
 					// find closest color from palette by measuring (rectilinear) color distance between this pixel and all palette colors
 					ci=0; cdl = 1024; // 4 * 256 is the maximum RGBA distance
 					for( k=0; k<palette.length; k++ ){
+						
 						// In my experience, https://en.wikipedia.org/wiki/Rectilinear_distance works better than https://en.wikipedia.org/wiki/Euclidean_distance
 						cd = Math.abs(palette[k].r-imgd.data[idx]) + Math.abs(palette[k].g-imgd.data[idx+1]) + Math.abs(palette[k].b-imgd.data[idx+2]) + Math.abs(palette[k].a-imgd.data[idx+3]);
+						
 						// Remember this color if this is the closest yet
 						if(cd<cdl){ cdl = cd; ci = k; }
+						
 					}// End of palette loop
+					
 					// add to palettacc
 					paletteacc[ci].r += imgd.data[idx  ];
 					paletteacc[ci].g += imgd.data[idx+1];
 					paletteacc[ci].b += imgd.data[idx+2];
 					paletteacc[ci].a += imgd.data[idx+3];
 					paletteacc[ci].n++;
+					
 					// update the indexed color array
 					arr[j+1][i+1] = ci;
+					
 				}// End of i loop
 			}// End of j loop
+			
 		}// End of Repeat clustering step options.colorquantcycles times
+		
 		return { array:arr, palette:palette };
+		
 	},// End of colorquantization()
+	
 	// Sampling a palette from imagedata
 	this.samplepalette = function( numberofcolors, imgd ){
 		var idx, palette=[];

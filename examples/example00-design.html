@@ -193,7 +193,7 @@
              display: inline-block;
              color: #777;
              font-size: 11px;
-             margin: 0 12px 0 12px;
+             margin: 0 7px 0 7px;
          }
 
          .tui-image-editor-main-container .main .sub-menu .menu .button label {
@@ -228,6 +228,12 @@
          }
 
          .tui-image-editor-main-container .main.mask .sub-menu > div.mask {
+             display: table-cell;
+         }
+         .tui-image-editor-main-container .main.icon .sub-menu > div.icon {
+             display: table-cell;
+         }
+         .tui-image-editor-main-container .main.draw .sub-menu > div.draw {
              display: table-cell;
          }
 
@@ -582,7 +588,8 @@
          #text-align-button.right .button.right svg > use.active {
              display: block;
          }
-         #mask-image-file {
+         #mask-image-file ,
+         #icon-image-file {
             opacity: 0;
             position: absolute;
             width: 100%;
@@ -623,7 +630,7 @@
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
-                 initMenu: 'mask',
+                 initMenu: 'draw',
                  menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,

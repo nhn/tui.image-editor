@@ -89,6 +89,22 @@ module.exports = {
     },
 
     /**
+     * hex to rgb
+     * @param {string} color - hex color
+     * @param {string} alpha - color alpha value
+     * @returns {string} rgb expression
+     */
+    getRgb(color, alpha) {
+        console.log('getRBG',color);
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
+        const a = alpha || 1;
+
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+    },
+
+    /**
      * send hostname
      */
     sendHostName() {
