@@ -38,54 +38,7 @@ class ImageEditor {
         this.ui = null;
         if (option.includeUi) {
             this.ui = new Ui(wrapper, option.includeUi);
-            // option.includeUi.loadImage.path
             wrapper = this.ui.getEditorArea();
-
-            this.on({
-                undoStackChanged: length => {
-                    if (length) {
-                        // $btnUndo.removeClass('disabled');
-                    } else {
-                        // $btnUndo.addClass('disabled');
-                    }
-                    this.ui.resizeEditor();
-                },
-                objectActivated: obj => {
-                    this.activeObjectId = obj.id;
-
-                    if (obj.type === 'cropzone') {
-                        this.ui.crop._btnElement.apply.classList.add('active');
-                    } else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
-                        this._changeActivateMode('SHAPE');
-                        const strokeColor = obj.stroke;
-                        const {strokeWidth} = obj;
-                        const fillColor = obj.fill;
-                        this.ui.shape._btnElement.strokeRange.setValue(strokeWidth);
-                        this.ui.shape._btnElement.strokeColorpicker.setColor(strokeColor);
-                        this.ui.shape._btnElement.fillColorpicker.setColor(fillColor);
-                        this.ui.shape.options.stroke = strokeColor;
-                        this.ui.shape.options.fill = fillColor;
-                        this.ui.shape.options.strokeWidth = strokeWidth;
-                    } else if (obj.type === 'text') {
-                        this._changeActivateMode('TEXT');
-                    }
-                },
-                addText: pos => {
-                    this.addText('Double Click', {
-                        position: pos.originPosition
-                    }).then(objectProps => {
-                        console.log(objectProps);
-                    });
-                },
-                mousedown: (event, originPointer) => {
-                    if (this.ui.submenu && this.hasFilter('colorFilter')) {
-                        this.applyFilter('colorFilter', {
-                            x: parseInt(originPointer.x, 10),
-                            y: parseInt(originPointer.y, 10)
-                        });
-                    }
-                }
-            });
         }
 
         /**

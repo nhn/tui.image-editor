@@ -58,9 +58,6 @@ export default class Ui {
         this.draw = new Draw(this._subMenuElement);
     }
 
-    makeSubMenu() {
-    }
-
     menuAddEvent(changeMode) {
         this._btnElement.text.addEventListener('click', () => {
             this.changeMenu('text');
