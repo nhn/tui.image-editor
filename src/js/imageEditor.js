@@ -33,12 +33,13 @@ class ImageEditor {
         }, option);
 
         this.activeObjectId = null;
+        console.log(this);
 
         /**
          * Ui instance
          * @type {Ui}
          */
-        this.ui = option.includeUi ? new Ui(wrapper, option.includeUi, new Action(this)) : null;
+        this.ui = option.includeUi ? new Ui(wrapper, option.includeUi, this.getActions()) : null;
 
         /**
          * Invoker
@@ -1280,5 +1281,7 @@ class ImageEditor {
     }
 }
 
+Action.mixin(ImageEditor);
 CustomEvents.mixin(ImageEditor);
+
 module.exports = ImageEditor;

@@ -1,58 +1,62 @@
+import snippet from 'tui-code-snippet';
 import Imagetracer from '../plugin/imagetracer';
-export default class Action {
-    constructor(imageEditor) {
-        this._editorEventHandler(imageEditor);
 
+export default {
+    mixin(ImageEditor) {
+        snippet.extend(ImageEditor.prototype, this);
+    },
+
+    getActions() {
         return {
-            main: this.mainAction(imageEditor),
-            shape: this.shapeAction(imageEditor),
-            crop: this.cropAction(imageEditor),
-            flip: this.flipAction(imageEditor),
-            rotate: this.rotateAction(imageEditor),
-            text: this.textAction(imageEditor),
-            mask: this.maskAction(imageEditor),
-            draw: this.drawAction(imageEditor),
-            icon: this.iconAction(imageEditor)
+            main: this.mainAction(),
+            shape: this.shapeAction(),
+            crop: this.cropAction(),
+            flip: this.flipAction(),
+            rotate: this.rotateAction(),
+            text: this.textAction(),
+            mask: this.maskAction(),
+            draw: this.drawAction(),
+            icon: this.iconAction()
         };
-    }
+    },
 
-    mainAction(imageEditor) {
+    mainAction() {
         return {
             initLoadImage: (imagePath, imageName) => {
-                imageEditor.loadImageFromURL(imagePath, imageName).then(sizeValue => {
-                    imageEditor.ui.resizeEditor(sizeValue);
-                    imageEditor.clearUndoStack();
+                this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
+                    this.ui.resizeEditor(sizeValue);
+                    this.clearUndoStack();
                 });
             },
             modeChange: menu => {
                 switch (menu) {
                     case 'text':
-                        imageEditor._changeActivateMode('TEXT');
+                        this._changeActivateMode('TEXT');
                         break;
                     case 'crop':
-                        imageEditor.startDrawingMode('CROPPER');
+                        this.startDrawingMode('CROPPER');
                         break;
                     case 'shape':
-                        imageEditor.setDrawingShape(imageEditor.ui.shape.type, imageEditor.ui.shape.options);
-                        imageEditor.stopDrawingMode();
-                        imageEditor._changeActivateMode('SHAPE');
+                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+                        this.stopDrawingMode();
+                        this._changeActivateMode('SHAPE');
                         break;
                     default:
-                        imageEditor.stopDrawingMode();
+                        this.stopDrawingMode();
                         break;
                 }
             }
         };
-    }
+    },
 
-    iconAction(imageEditor) {
+    iconAction() {
         return {
             changeColor: color => {
-                imageEditor.changeIconColor(imageEditor.activeObjectId, color);
+                this.changeIconColor(this.activeObjectId, color);
             },
             addIcon: iconType => {
-                imageEditor.once('mousedown', (e, originPointer) => {
-                    imageEditor.addIcon(iconType, {
+                this.once('mousedown', (e, originPointer) => {
+                    this.addIcon(iconType, {
                         left: originPointer.x,
                         top: originPointer.y
                     }).then(objectProps => {
@@ -63,7 +67,7 @@ export default class Action {
             registDefalutIcons: (type, path) => {
                 const iconObj = {};
                 iconObj[type] = path;
-                imageEditor.registerIcons(iconObj);
+                this.registerIcons(iconObj);
             },
             registCustomIcon: (imgUrl, file) => {
                 const imagetracer = new Imagetracer();
@@ -73,8 +77,8 @@ export default class Action {
                         const [, svgPath] = svgstr.match(/path[^>]*d="([^"]*)"/);
                         const iconObj = {};
                         iconObj[file.name] = svgPath;
-                        imageEditor.registerIcons(iconObj);
-                        imageEditor.addIcon(file.name, {
+                        this.registerIcons(iconObj);
+                        this.addIcon(file.name, {
                             left: 100,
                             top: 100
                         }).then(objectProps => {
@@ -106,148 +110,148 @@ export default class Action {
                 );
             }
         };
-    }
+    },
 
-    drawAction(imageEditor) {
+    drawAction() {
         return {
             setDrawMode: (type, settings) => {
-                imageEditor.stopDrawingMode();
+                this.stopDrawingMode();
                 if (type === 'free') {
-                    imageEditor.startDrawingMode('FREE_DRAWING', settings);
+                    this.startDrawingMode('FREE_DRAWING', settings);
                 } else {
-                    imageEditor.startDrawingMode('LINE_DRAWING', settings);
+                    this.startDrawingMode('LINE_DRAWING', settings);
                 }
             },
             setColor: color => {
-                imageEditor.setBrush({
+                this.setBrush({
                     color
                 });
             }
         };
-    }
+    },
 
-    maskAction(imageEditor) {
+    maskAction() {
         return {
             loadImageFromURL: (imgUrl, file) => {
-                imageEditor.loadImageFromURL(imageEditor.toDataURL(), 'FilterImage').then(() => {
-                    imageEditor.addImageObject(imgUrl).then(objectProps => {
+                this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+                    this.addImageObject(imgUrl).then(objectProps => {
                         URL.revokeObjectURL(file);
                         console.log(objectProps);
                     });
                 });
             },
             applyFilter: () => {
-                imageEditor.applyFilter('mask', {
-                    maskObjId: imageEditor.activeObjectId
+                this.applyFilter('mask', {
+                    maskObjId: this.activeObjectId
                 }).then(result => {
                     console.log(result);
                 });
             }
         };
-    }
+    },
 
-    textAction(imageEditor) {
+    textAction() {
         return {
             changeTextStyle: styleObj => {
-                if (imageEditor.activeObjectId) {
-                    imageEditor.changeTextStyle(imageEditor.activeObjectId, styleObj);
+                if (this.activeObjectId) {
+                    this.changeTextStyle(this.activeObjectId, styleObj);
                 }
             }
         };
-    }
+    },
 
-    rotateAction(imageEditor) {
+    rotateAction() {
         return {
             rotate: angle => {
-                imageEditor.rotate(angle);
-                imageEditor.ui.resizeEditor();
+                this.rotate(angle);
+                this.ui.resizeEditor();
             },
             setAngle: angle => {
-                imageEditor.setAngle(angle);
-                imageEditor.ui.resizeEditor();
+                this.setAngle(angle);
+                this.ui.resizeEditor();
             }
         };
-    }
+    },
 
-    shapeAction(imageEditor) {
+    shapeAction() {
         return {
             changeShape: changeShapeObject => {
-                if (imageEditor.activeObjectId) {
-                    imageEditor.changeShape(imageEditor.activeObjectId, changeShapeObject);
+                if (this.activeObjectId) {
+                    this.changeShape(this.activeObjectId, changeShapeObject);
                 }
             },
             setDrawingShape: shapeType => {
-                imageEditor.setDrawingShape(shapeType);
+                this.setDrawingShape(shapeType);
             }
         };
-    }
+    },
 
-    cropAction(imageEditor) {
+    cropAction() {
         return {
             crop: () => {
-                imageEditor.crop(imageEditor.getCropzoneRect()).then(() => {
-                    imageEditor.stopDrawingMode();
-                    imageEditor.ui.resizeEditor();
-                    imageEditor.ui.changeMenu('crop');
+                this.crop(this.getCropzoneRect()).then(() => {
+                    this.stopDrawingMode();
+                    this.ui.resizeEditor();
+                    this.ui.changeMenu('crop');
                 });
             },
             cancel: () => {
-                imageEditor.stopDrawingMode();
-                imageEditor.ui.changeMenu('crop');
+                this.stopDrawingMode();
+                this.ui.changeMenu('crop');
             }
         };
-    }
+    },
 
-    flipAction(imageEditor) {
+    flipAction() {
         return {
             flip: flipType => {
-                imageEditor[flipType]().then(status => {
+                this[flipType]().then(status => {
                     console.log(status);
                 });
             }
         };
-    }
+    },
 
-    _editorEventHandler(imageEditor) {
-        imageEditor.on({
+    _editorEventHandler() {
+        this.on({
             undoStackChanged: length => {
                 if (length) {
                     // $btnUndo.removeClass('disabled');
                 } else {
                     // $btnUndo.addClass('disabled');
                 }
-                imageEditor.ui.resizeEditor();
+                this.ui.resizeEditor();
             },
             objectActivated: obj => {
-                imageEditor.activeObjectId = obj.id;
+                this.activeObjectId = obj.id;
 
                 if (obj.type === 'cropzone') {
-                    imageEditor.ui.crop._btnElement.apply.classList.add('active');
+                    this.ui.crop._btnElement.apply.classList.add('active');
                 } else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
-                    imageEditor._changeActivateMode('SHAPE');
+                    this._changeActivateMode('SHAPE');
                     const strokeColor = obj.stroke;
                     const {strokeWidth} = obj;
                     const fillColor = obj.fill;
-                    imageEditor.ui.shape._btnElement.strokeRange.setValue(strokeWidth);
-                    imageEditor.ui.shape._btnElement.strokeColorpicker.setColor(strokeColor);
-                    imageEditor.ui.shape._btnElement.fillColorpicker.setColor(fillColor);
-                    imageEditor.ui.shape.options.stroke = strokeColor;
-                    imageEditor.ui.shape.options.fill = fillColor;
-                    imageEditor.ui.shape.options.strokeWidth = strokeWidth;
+                    this.ui.shape._btnElement.strokeRange.setValue(strokeWidth);
+                    this.ui.shape._btnElement.strokeColorpicker.setColor(strokeColor);
+                    this.ui.shape._btnElement.fillColorpicker.setColor(fillColor);
+                    this.ui.shape.options.stroke = strokeColor;
+                    this.ui.shape.options.fill = fillColor;
+                    this.ui.shape.options.strokeWidth = strokeWidth;
                 } else if (obj.type === 'text') {
-                    imageEditor._changeActivateMode('TEXT');
+                    this._changeActivateMode('TEXT');
                 }
             },
             addText: pos => {
-                imageEditor.addText('Double Click', {
+                this.addText('Double Click', {
                     position: pos.originPosition
                 }).then(objectProps => {
                     console.log(objectProps);
                 });
             },
             mousedown: (event, originPointer) => {
-                if (imageEditor.ui.submenu && imageEditor.hasFilter('colorFilter')) {
-                    imageEditor.applyFilter('colorFilter', {
+                if (this.ui.submenu && this.hasFilter('colorFilter')) {
+                    this.applyFilter('colorFilter', {
                         x: parseInt(originPointer.x, 10),
                         y: parseInt(originPointer.y, 10)
                     });
@@ -255,4 +259,4 @@ export default class Action {
             }
         });
     }
-}
+};
