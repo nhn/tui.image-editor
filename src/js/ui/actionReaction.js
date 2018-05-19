@@ -212,7 +212,7 @@ export default {
         };
     },
 
-    _editorEventHandler() {
+    setReAction() {
         this.on({
             undoStackChanged: length => {
                 if (length) {

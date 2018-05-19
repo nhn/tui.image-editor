@@ -5,7 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Invoker from './invoker';
 import Ui from './ui';
-import Action from './ui/action';
+import ActionReaction from './ui/actionReaction';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
@@ -33,7 +33,6 @@ class ImageEditor {
         }, option);
 
         this.activeObjectId = null;
-        console.log(this);
 
         /**
          * Ui instance
@@ -63,6 +62,7 @@ class ImageEditor {
 
         if (this.ui) {
             this.ui.initCanvas();
+            this.setReAction();
         }
 
         /**
@@ -1281,7 +1281,7 @@ class ImageEditor {
     }
 }
 
-Action.mixin(ImageEditor);
+ActionReaction.mixin(ImageEditor);
 CustomEvents.mixin(ImageEditor);
 
 module.exports = ImageEditor;

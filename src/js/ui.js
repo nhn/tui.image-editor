@@ -145,7 +145,6 @@ export default class Ui {
 
     initCanvas() {
         const loadImageInfo = this.getLoadImage();
-        console.log(this._actions);
         this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name);
 
         this.menuAddEvent();
