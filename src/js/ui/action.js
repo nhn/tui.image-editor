@@ -4,6 +4,7 @@ export default class Action {
         this._editorEventHandler(imageEditor);
 
         return {
+            main: this.mainAction(imageEditor),
             shape: this.shapeAction(imageEditor),
             crop: this.cropAction(imageEditor),
             flip: this.flipAction(imageEditor),
@@ -12,6 +13,35 @@ export default class Action {
             mask: this.maskAction(imageEditor),
             draw: this.drawAction(imageEditor),
             icon: this.iconAction(imageEditor)
+        };
+    }
+
+    mainAction(imageEditor) {
+        return {
+            initLoadImage: (imagePath, imageName) => {
+                imageEditor.loadImageFromURL(imagePath, imageName).then(sizeValue => {
+                    imageEditor.ui.resizeEditor(sizeValue);
+                    imageEditor.clearUndoStack();
+                });
+            },
+            modeChange: menu => {
+                switch (menu) {
+                    case 'text':
+                        imageEditor._changeActivateMode('TEXT');
+                        break;
+                    case 'crop':
+                        imageEditor.startDrawingMode('CROPPER');
+                        break;
+                    case 'shape':
+                        imageEditor.setDrawingShape(imageEditor.ui.shape.type, imageEditor.ui.shape.options);
+                        imageEditor.stopDrawingMode();
+                        imageEditor._changeActivateMode('SHAPE');
+                        break;
+                    default:
+                        imageEditor.stopDrawingMode();
+                        break;
+                }
+            }
         };
     }
 

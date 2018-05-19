@@ -1077,7 +1077,6 @@ export default class ImageTracer {
         return context.getImageData(0, 0, canvas.width, canvas.height);
     }
 
-    /* eslint-disable */
     drawLayers(layers, palette, scale, parentid) {
         scale = scale || 1;
         let w, h, i, j, k;
@@ -1098,13 +1097,16 @@ export default class ImageTracer {
                 continue;
             }
 
-            w = layers[k][0].length; h = layers[k].length;
+            w = layers[k][0].length;
+            h = layers[k].length;
 
-            const canvas = document.createElement('canvas'); canvas.width = w * scale; canvas.height = h * scale;
+            const canvas = document.createElement('canvas');
+            canvas.width = w * scale;
+            canvas.height = h * scale;
             const context = canvas.getContext('2d');
 
-            for (j = 0; j < h; j++) {
-                for (i = 0; i < w; i++) {
+            for (j = 0; j < h; j += 1) {
+                for (i = 0; i < w; i += 1) {
                     context.fillStyle = this.torgbastr(palette[layers[k][j][i] % palette.length]);
                     context.fillRect(i * scale, j * scale, scale, scale);
                 }
@@ -1113,5 +1115,4 @@ export default class ImageTracer {
             div.appendChild(canvas);
         }
     }
-    /* eslint-enable */
 }

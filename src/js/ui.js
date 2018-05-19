@@ -12,10 +12,12 @@ import Draw from './ui/draw';
 // import util from './util';
 
 export default class Ui {
-    constructor(element, options) {
+    constructor(element, options, actions) {
         let selectedElement;
 
         this.options = this.initializeOption(options);
+
+        this._actions = actions;
 
         if (element.jquery) {
             [selectedElement] = element;
@@ -58,7 +60,8 @@ export default class Ui {
         this.draw = new Draw(this._subMenuElement);
     }
 
-    menuAddEvent(changeMode) {
+    menuAddEvent() {
+        const changeMode = this._actions.main.modeChange;
         this._btnElement.text.addEventListener('click', () => {
             this.changeMenu('text');
             changeMode('text');
@@ -93,15 +96,15 @@ export default class Ui {
         });
     }
 
-    subMenuAddEvent(actions) {
-        this.shape.addEvent(actions.shape);
-        this.crop.addEvent(actions.crop);
-        this.flip.addEvent(actions.flip);
-        this.rotate.addEvent(actions.rotate);
-        this.text.addEvent(actions.text);
-        this.mask.addEvent(actions.mask);
-        this.icon.addEvent(actions.icon);
-        this.draw.addEvent(actions.draw);
+    subMenuAddEvent() {
+        this.shape.addEvent(this._actions.shape);
+        this.crop.addEvent(this._actions.crop);
+        this.flip.addEvent(this._actions.flip);
+        this.rotate.addEvent(this._actions.rotate);
+        this.text.addEvent(this._actions.text);
+        this.mask.addEvent(this._actions.mask);
+        this.icon.addEvent(this._actions.icon);
+        this.draw.addEvent(this._actions.draw);
     }
 
     initializeOption(options) {
@@ -141,6 +144,15 @@ export default class Ui {
     }
 
     initCanvas() {
+        const loadImageInfo = this.getLoadImage();
+        console.log(this._actions);
+        this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name);
+
+        this.menuAddEvent();
+        this.subMenuAddEvent();
+
+        this._initMenu();
+
         this.gridVisual = document.createElement('div');
         this.gridVisual.className = 'tui-image-editor-grid-visual';
         const grid = `<table>
@@ -151,6 +163,18 @@ export default class Ui {
         this.gridVisual.innerHTML = grid;
         this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
         this._editorContainerElement.appendChild(this.gridVisual);
+    }
+
+    _initMenu() {
+        if (this.options.initMenu) {
+            const evt = document.createEvent('MouseEvents');
+            evt.initEvent('click', true, false);
+            setTimeout(() => {
+                this._btnElement[this.options.initMenu].dispatchEvent(evt);
+                this.icon.registDefaultIcon();
+                this.draw.setDrawMode();
+            }, 700);
+        }
     }
 
     resizeEditor(imageSize = this.imageSize) {

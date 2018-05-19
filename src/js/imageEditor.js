@@ -34,12 +34,11 @@ class ImageEditor {
 
         this.activeObjectId = null;
 
-        // UI를 그리자
-        this.ui = null;
-        if (option.includeUi) {
-            this.ui = new Ui(wrapper, option.includeUi);
-            wrapper = this.ui.getEditorArea();
-        }
+        /**
+         * Ui instance
+         * @type {Ui}
+         */
+        this.ui = option.includeUi ? new Ui(wrapper, option.includeUi, new Action(this)) : null;
 
         /**
          * Invoker
@@ -53,7 +52,7 @@ class ImageEditor {
          * @type {Graphics}
          * @private
          */
-        this._graphics = new Graphics(wrapper, {
+        this._graphics = new Graphics((this.ui) ? this.ui.getEditorArea() : wrapper, {
             cropControlOption: this.ui ? this.ui.crop.controlOption : {},
             shapeControlOption: this.ui ? this.ui.shape.controlOption : {},
             textControlOption: this.ui ? this.ui.text.controlOption : {},
@@ -61,29 +60,8 @@ class ImageEditor {
             cssMaxHeight: option.cssMaxHeight
         });
 
-        const loadImageInfo = this.ui && this.ui.getLoadImage();
-        if (loadImageInfo) {
-            this.loadImageFromURL(loadImageInfo.path, loadImageInfo.name).then(sizeValue => {
-                this.ui.resizeEditor(sizeValue);
-                this.clearUndoStack();
-            });
-
+        if (this.ui) {
             this.ui.initCanvas();
-
-            /* 대 메뉴 */
-            this.ui.menuAddEvent(snippet.bind(this._modeChange, this));
-
-            if (this.ui.options.initMenu) {
-                const evt = document.createEvent('MouseEvents');
-                evt.initEvent('click', true, false);
-                setTimeout(() => {
-                    /* 서브 메뉴 */
-                    this.ui.subMenuAddEvent(new Action(this));
-                    this.ui._btnElement[this.ui.options.initMenu].dispatchEvent(evt);
-                    this.ui.icon.registDefaultIcon();
-                    this.ui.draw.setDrawMode();
-                }, 700);
-            }
         }
 
         /**
@@ -178,30 +156,6 @@ class ImageEditor {
      */
     _setSelectionStyle(styles) {
         this._graphics.setSelectionStyle(styles);
-    }
-
-    /**
-     * modeChange
-     * @param {string} menu - menu name
-     * @private
-     */
-    _modeChange(menu) {
-        switch (menu) {
-            case 'text':
-                this._changeActivateMode('TEXT');
-                break;
-            case 'crop':
-                this.startDrawingMode('CROPPER');
-                break;
-            case 'shape':
-                this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
-                this.stopDrawingMode();
-                this._changeActivateMode('SHAPE');
-                break;
-            default:
-                this.stopDrawingMode();
-                break;
-        }
     }
 
     /**
