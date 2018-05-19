@@ -29,10 +29,10 @@ export default class Ui {
         selectedElement.innerHTML = controls + mainContainer;
         this.selectedElement = selectedElement;
         this.selectedElement.classList.add(this.options.menuBarPosition);
-        this._mainElement = this.selectedElement.querySelector('.main');
+        this._mainElement = this.selectedElement.querySelector('.tui-image-editor-main');
         this._editorElementWrap = this.selectedElement.querySelector('.tui-image-editor-wrap');
         this._editorElement = this.selectedElement.querySelector('.tui-image-editor');
-        this._subMenuElement = this._mainElement.querySelector('.sub-menu');
+        this._subMenuElement = this._mainElement.querySelector('.tui-image-editor-submenu');
 
         this._btnElement = {
             crop: this.selectedElement.querySelector('#btn-crop'),
@@ -142,7 +142,7 @@ export default class Ui {
 
     initCanvas() {
         this.gridVisual = document.createElement('div');
-        this.gridVisual.className = 'grid-visual';
+        this.gridVisual.className = 'tui-image-editor-grid-visual';
         const grid = `<table>
            <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>
            <tr><td></td><td></td><td></td></tr>

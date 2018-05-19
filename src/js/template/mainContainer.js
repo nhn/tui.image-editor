@@ -1,16 +1,16 @@
 export default `
     <div class="tui-image-editor-main-container">
         <div class="tui-image-editor-header">
-            <div class="logo">
+            <div class="tui-image-editor-header-logo">
                 <img src="img/icon/img-bi.svg" />
             </div>
-            <div class="buttons">
+            <div class="tui-image-editor-header-buttons">
                 <button>Load</button>
                 <button class="download">Download</button>
             </div>
         </div>
-        <div class="main">
-            <div class="sub-menu">
+        <div class="tui-image-editor-main">
+            <div class="tui-image-editor-submenu">
                 <div class="draw">
                     <ul class="menu">
                         <li id="draw-line-select-button">
@@ -38,7 +38,7 @@ export default `
                             </div>
                         </li>
                         <li>
-                            <div class="partition-left"></div>
+                            <div class="tui-image-editor-partition"></div>
                         </li>
                         <li>
                             <div id="draw-color" title="Color"></div>
@@ -159,7 +159,7 @@ export default `
                             </div>
                         </li>
                         <li>
-                            <div class="partition-left"></div>
+                            <div class="tui-image-editor-partition"></div>
                         </li>
                         <li id="icon-add-button">
                             <div class="button clockwise">
@@ -176,7 +176,7 @@ export default `
                             </div>
                         </li>
                         <li>
-                            <div class="partition-left"></div>
+                            <div class="tui-image-editor-partition"></div>
                         </li>
                         <li>
                             <div id="icon-color" title="Color"></div>
@@ -340,7 +340,7 @@ export default `
                             </div>
                         </li>
                         <li>
-                            <div class="partition-left"></div>
+                            <div class="tui-image-editor-partition"></div>
                         </li>
                         <li id="text-align-button">
                             <div class="button left">
@@ -372,7 +372,7 @@ export default `
                             </div>
                         </li>
                         <li>
-                            <div class="partition-left"></div>
+                            <div class="tui-image-editor-partition"></div>
                         </li>
                         <li>
                             <div id="text-color" title="Color"></div>
@@ -416,7 +416,7 @@ export default `
                             </div>
                         </li>
                         <li>
-                            <div class="partition-left"></div>
+                            <div class="tui-image-editor-partition"></div>
                         </li>
                         <li id="shape-color-button">
                             <div id="color-fill" title="fill"></div>
