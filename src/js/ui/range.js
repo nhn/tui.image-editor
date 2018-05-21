@@ -6,7 +6,6 @@ class Range {
         this.rangeElement = rangeElement;
         this.drawRangeElement();
         this.rangeWidth = parseInt(window.getComputedStyle(rangeElement, null).width, 10) - 12;
-
         this.min = Number(rangeElement.getAttribute('min'));
         this.max = Number(rangeElement.getAttribute('max'));
         this.absMax = (this.min * -1) + this.max;
@@ -46,6 +45,7 @@ class Range {
 
     addClickEvent() {
         this.rangeElement.addEventListener('click', event => {
+            event.stopPropagation();
             if (event.target.className !== 'tui-image-editor-range') {
                 return;
             }

@@ -16,7 +16,22 @@ export default {
             text: this.textAction(),
             mask: this.maskAction(),
             draw: this.drawAction(),
-            icon: this.iconAction()
+            icon: this.iconAction(),
+            filter: this.filterAction()
+        };
+    },
+
+    filterAction() {
+        return {
+            applyFilter: (applying, type, options) => {
+                if (applying) {
+                    this.applyFilter(type, options).then(result => {
+                        console.log(result);
+                    });
+                } else {
+                    this.removeFilter(type);
+                }
+            }
         };
     },
 

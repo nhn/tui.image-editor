@@ -88,8 +88,11 @@ export default `
                             <use xlink:href="../dist/icon-b.svg#icon-b-ic-mask" class="active"/>
                         </svg>
                     </li>
-                    <li class="item">
-                        <i class="image-editor-icon ic-filter"></i>
+                    <li id="btn-filter" class="item">
+                        <svg class="svg_ic-menu">
+                            <use xlink:href="../dist/icon-a.svg#icon-a-ic-filter" class="normal"/>
+                            <use xlink:href="../dist/icon-b.svg#icon-b-ic-filter" class="active"/>
+                        </svg>
                     </li>
                 </ul>
 

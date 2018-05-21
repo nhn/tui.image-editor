@@ -6,12 +6,14 @@
     min-height: 300px;
     height:100%;
     position: relative;
-    background-image: url(img/bg.png);
+    /* background-image: url(img/bg.png); */
+    background-color: #282828;
     border: 1px solid #000;
     overflow: hidden;
 }
 .tui-image-editor-container div,
 .tui-image-editor-container ul,
+.tui-image-editor-container label,
 .tui-image-editor-container input,
 .tui-image-editor-container li {
     box-sizing: border-box;
@@ -23,6 +25,7 @@
 .tui-image-editor-container .tui-image-editor-header {
     min-width: 533px;
     position: absolute;
+    background-color: #151515;
     top: 0;
     width: 100%;
 }
@@ -152,15 +155,15 @@
 .tui-image-editor-main-container .tui-image-editor-partition {
     width: 1px;
     height: 52px;
-    border-left: 1px solid #e5e5e5;
+    border-left: 1px solid #3c3c3c;
     margin: 0 12px 0 14px;
 }
 .tui-image-editor-main-container .tui-image-editor-submenu .menu li {
     display: inline-block;
+    vertical-align: top;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu .menu li.newline {
+.tui-image-editor-main-container .tui-image-editor-submenu .menu .newline {
     display: block;
-    margin-top: 7px;
 }
 .tui-image-editor-main-container .tui-image-editor-submenu .menu .button {
     position: relative;
@@ -170,10 +173,12 @@
     font-size: 11px;
     margin: 0 7px 0 7px;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu .menu .button label {
+.tui-image-editor-main-container .tui-image-editor-submenu .menu label {
     display: inline-block;
     cursor: pointer;
     padding-top: 5px;
+    color: #777;
+    font-size: 11px;
 }
 .tui-image-editor-main-container .tui-image-editor-submenu .menu .button.apply label,
 .tui-image-editor-main-container .tui-image-editor-submenu .menu .button.cancel label {
@@ -183,6 +188,14 @@
     display: none;
     vertical-align: bottom;
 }
+.tui-image-editor-container .tui-image-editor-submenu-align {
+    text-align: left;
+    margin-left: 30px;
+}
+.tui-image-editor-container .tui-image-editor-submenu-align label {
+    width: 70px;
+}
+
 .tui-image-editor-main-container .tui-image-editor-main.crop .tui-image-editor-submenu > div.crop {
     display: table-cell;
 }
@@ -207,15 +220,88 @@
 .tui-image-editor-main-container .tui-image-editor-main.draw .tui-image-editor-submenu > div.draw {
     display: table-cell;
 }
+.tui-image-editor-main-container .tui-image-editor-main.filter .tui-image-editor-submenu > div.filter {
+    display: table-cell;
+}
+
+/* ??? */
+.tui-image-editor-container .filter-color-item {
+    display: inline-block;
+}
+.tui-image-editor-container .filter-color-item .tui-image-editor-checkbox {
+    display: block;
+}
+
+
+/* VIRTUAL CHECKBOX */
+.tui-image-editor-container .tui-image-editor-checkbox-wrap {
+    display: inline-block !important;
+    text-align: left;
+}
+.tui-image-editor-container .tui-image-editor-checkbox-wrap.fixed-width {
+    width: 187px;
+}
+
+
+.tui-image-editor-container .tui-image-editor-checkbox {
+    display: inline-block;
+}
+
+.tui-image-editor-container .tui-image-editor-checkbox input {
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+}
+.tui-image-editor-container .tui-image-editor-checkbox input + label {
+    height: 14px;
+    position: relative;
+}
+.tui-image-editor-container .tui-image-editor-checkbox input + label:before {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background-color: #fff;
+    top: 4px;
+    left: -19px;
+    display: inline-block;
+    margin: 0;
+    text-align: center;
+    font-size: 11px;
+    border: 0;
+    border-radius: 2px;
+    padding-top: 1px;
+    box-sizing: border-box;
+}
+.tui-image-editor-container .tui-image-editor-checkbox input[type='checkbox']:checked + label:before {
+    background-size: cover;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAMBJREFUKBWVkjEOwjAMRe2WgZW7IIHEDdhghhuwcQ42rlJugAQS54Cxa5cq1QM5TUpByZfS2j9+dlJVt/tX5ZxbS4ZU9VLkQvSHKTIGRaVJYFmKrBbTCJxE2UgCdDzMZDkHrOV6b95V0US6UmgKodujEZbJg0B0ZgEModO5lrY1TMQf1TpyJGBEjD+E2NPN7ukIUDiF/BfEXgRiGEw8NgkffYGYwCi808fpn/6OvfUfsDr/Vc1IfRf8sKnFVqeiVQfDu0tf/nWH9gAAAABJRU5ErkJggg==');
+}
+
+.tui-image-editor-container .tui-image-editor-selectlist-wrap select {
+    width: 100%;
+    height: 25px;
+    margin-top: 9px;
+    border: 0;
+    outline: 0;
+    border-radius: 0;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+.tui-image-editor-container .tui-image-editor-selectlist-wrap select::-ms-expand {
+    display:none;
+}
 
 /* VIRTUAL RANGE */
 .tui-image-editor-container .tui-image-editor-range {
     position: relative;
     top: 7px;
     width: 166px;
-    height: 20px;
+    height: 17px;
     display: inline-block;
 }
+
 .tui-image-editor-container .tui-image-editor-virtual-range-bar {
     top: 7px;
     position: absolute;
@@ -231,15 +317,33 @@
     left: 0;
     width: 12px;
     height: 12px;
-    background-color: #333;
+    background-color: #fff;
     border-radius: 100%;
 }
+.tui-image-editor-container .tui-image-editor-range-wrap {
+    display: inline-block;
+}
+.tui-image-editor-container .tui-image-editor-range-wrap.short .tui-image-editor-range {
+    width: 100px;
+}
+.tui-image-editor-container .color-picker-control .tui-image-editor-range {
+    width: 108px;
+}
+
+.tui-image-editor-container .color-picker-control .tui-image-editor-virtual-range-pointer {
+    background-color: #333;
+}
+
+.tui-image-editor-container .tui-image-editor-range-wrap.newline.short {
+    margin-left: 17px;
+}
+
 .tui-image-editor-container .tui-image-editor-range-wrap label {
     vertical-align: baseline;
     font-size: 11px;
-    color: #333;
     margin-right: 7px;
 }
+
 .tui-image-editor-container .tui-image-editor-range-value {
     width: 40px;
     height: 24px;
@@ -480,7 +584,8 @@
 .tui-image-editor-container .color-picker-value {
     width: 30px;
     height: 30px;
-    border: 1px solid #d2d2d2;
+    /* border: 1px solid #d2d2d2; */
+    border: 0px;
     border-radius: 100%;
     margin-bottom: 4px;
 }

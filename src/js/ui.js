@@ -9,6 +9,7 @@ import Text from './ui/text';
 import Mask from './ui/mask';
 import Icon from './ui/icon';
 import Draw from './ui/draw';
+import Filter from './ui/filter';
 // import util from './util';
 
 export default class Ui {
@@ -44,7 +45,8 @@ export default class Ui {
             text: this.selectedElement.querySelector('#btn-text'),
             mask: this.selectedElement.querySelector('#btn-mask'),
             icon: this.selectedElement.querySelector('#btn-icon'),
-            draw: this.selectedElement.querySelector('#btn-draw')
+            draw: this.selectedElement.querySelector('#btn-draw'),
+            filter: this.selectedElement.querySelector('#btn-filter')
         };
 
         this.submenu = false;
@@ -58,6 +60,7 @@ export default class Ui {
         this.text = new Text(this._subMenuElement);
         this.icon = new Icon(this._subMenuElement);
         this.draw = new Draw(this._subMenuElement);
+        this.filter = new Filter(this._subMenuElement);
     }
 
     menuAddEvent() {
@@ -94,6 +97,10 @@ export default class Ui {
             this.changeMenu('draw');
             changeMode('draw');
         });
+        this._btnElement.filter.addEventListener('click', () => {
+            this.changeMenu('filter');
+            changeMode('filter');
+        });
     }
 
     subMenuAddEvent() {
@@ -105,6 +112,7 @@ export default class Ui {
         this.mask.addEvent(this._actions.mask);
         this.icon.addEvent(this._actions.icon);
         this.draw.addEvent(this._actions.draw);
+        this.filter.addEvent(this._actions.filter);
     }
 
     initializeOption(options) {

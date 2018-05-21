@@ -70,7 +70,6 @@ class Colorpicker {
         colorpickerElement.addEventListener('click', () => {
             this.show = !this.show;
             const display = this.show ? 'block' : 'none';
-
             this.pickerControl.style.display = display;
         });
     }
