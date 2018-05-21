@@ -24,7 +24,11 @@ export default class Shape {
         this._btnElement = {
             shapeSelectButton: selector('#shape-button'),
             shapeColorButton: selector('#shape-color-button'),
-            strokeRange: new Range(selector('#stroke-range'), 3),
+            strokeRange: new Range(selector('#stroke-range'), {
+                min: 0,
+                max: 300,
+                value: 3
+            }),
             strokeRangeValue: selector('#stroke-range-value'),
             fillColorpicker: new Colorpicker(selector('#color-fill'), ''),
             strokeColorpicker: new Colorpicker(selector('#color-stroke'), '#ffbb3b')

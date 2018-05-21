@@ -1,24 +1,24 @@
 import snippet from 'tui-code-snippet';
 
 class Range {
-    constructor(rangeElement, defaultValue = 0) {
-        this.value = defaultValue;
+    constructor(rangeElement, options = {}) {
+        this.value = options.value || 0;
         this.rangeElement = rangeElement;
         this.drawRangeElement();
         this.rangeWidth = parseInt(window.getComputedStyle(rangeElement, null).width, 10) - 12;
-        this.min = Number(rangeElement.getAttribute('min'));
-        this.max = Number(rangeElement.getAttribute('max'));
+        this.min = options.min || 0;
+        this.max = options.max || 100;
         this.absMax = (this.min * -1) + this.max;
 
         this.addClickEvent();
         this.addDragEvent();
-        this.setValue(defaultValue);
+        this.setValue(options.value);
     }
 
     setValue(value) {
         this.value = value;
-        const absValue = value + Math.abs(this.min);
-        const leftPosition = absValue * this.rangeWidth / this.absMax;
+        const absValue = value - Math.abs(this.min);
+        const leftPosition = (absValue * this.rangeWidth) / this.absMax;
         this.pointer.style.left = `${leftPosition}px`;
 
         setTimeout(() => {

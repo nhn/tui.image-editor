@@ -9,7 +9,11 @@ export default class Draw {
         this._btnElement = {
             lineSelectButton: selector('#draw-line-select-button'),
             drawColorpicker: new Colorpicker(selector('#draw-color')),
-            drawRange: new Range(selector('#draw-range'), 12),
+            drawRange: new Range(selector('#draw-range'), {
+                min: 5,
+                max: 30,
+                value: 12
+            }),
             drawRangeValue: selector('#draw-range-value')
         };
 

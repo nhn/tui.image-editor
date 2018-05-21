@@ -5,7 +5,11 @@ export default class Rotate {
 
         this._btnElement = {
             rotateButton: selector('#retate-button'),
-            rotateRange: new Range(selector('#rotate-range'), 0),
+            rotateRange: new Range(selector('#rotate-range'), {
+                min: -360,
+                max: 360,
+                value: 0
+            }),
             rotateRangeValue: selector('#ratate-range-value')
         };
     }

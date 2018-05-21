@@ -58,11 +58,11 @@ export default `
                                 </div>
                                 <div class="newline tui-image-editor-range-wrap short">
                                     <label>Threshold</label>
-                                    <div id="threshold-range" min="5" max="30"></div>
+                                    <div id="threshold-range"></div>
                                 </div>
                                 <div class="newline tui-image-editor-range-wrap short">
                                     <label>Distance</label>
-                                    <div id="distance-range" min="5" max="30"></div>
+                                    <div id="distance-range"></div>
                                 </div>
                             </div>
                             <div>
@@ -74,7 +74,7 @@ export default `
                                 </div>
                                 <div class="newline tui-image-editor-range-wrap short">
                                     <label>Value</label>
-                                    <div id="gradient-transparency-range" min="5" max="30"></div>
+                                    <div id="gradient-transparency-range"></div>
                                 </div>
                             </div>
                         </li>
@@ -85,7 +85,7 @@ export default `
                                     <label for="brightness">Brightness</label>
                                 </div>
                                 <div class="tui-image-editor-range-wrap short">
-                                    <div id="brightness-range" min="5" max="30"></div>
+                                    <div id="brightness-range"></div>
                                 </div>
                             </div>
                             <div>
@@ -94,7 +94,7 @@ export default `
                                     <label for="noise">Noise</label>
                                 </div>
                                 <div class="tui-image-editor-range-wrap short">
-                                    <div id="noise-range" min="5" max="30"></div>
+                                    <div id="noise-range"></div>
                                 </div>
                             </div>
                             <div>
@@ -103,7 +103,7 @@ export default `
                                     <label for="pixelate">Pixelate</label>
                                 </div>
                                 <div class="tui-image-editor-range-wrap short">
-                                    <div id="pixelate-range" min="5" max="30"></div>
+                                    <div id="pixelate-range"></div>
                                 </div>
                             </div>
                             <div>
@@ -115,7 +115,7 @@ export default `
                                 </div>
                                 <div class="newline tui-image-editor-range-wrap short">
                                     <label>Threshole</label>
-                                    <div id="colorfilter-threshole-range" min="5" max="30"></div>
+                                    <div id="colorfilter-threshole-range"></div>
                                 </div>
                             </div>
                         </li>
@@ -182,7 +182,7 @@ export default `
 
                         <li class="newline tui-image-editor-range-wrap">
                             <label>Range</label>
-                            <div id="draw-range" min="5" max="30"></div>
+                            <div id="draw-range"></div>
                             <input id="draw-range-value" class="tui-image-editor-range-value" value="0" />
                         </li>
                     </ul>
@@ -347,7 +347,7 @@ export default `
                         </li>
                         <li class="newline tui-image-editor-range-wrap">
                             <label>Range</label>
-                            <div id="rotate-range" min="-360" max="360"></div>
+                            <div id="rotate-range"></div>
                             <input id="ratate-range-value" class="tui-image-editor-range-value" value="0" />
                         </li>
                     </ul>
@@ -515,7 +515,7 @@ export default `
                         </li>
                         <li class="newline tui-image-editor-range-wrap">
                             <label>Text size</label>
-                            <div id="text-range" min="10" max="100"></div>
+                            <div id="text-range"></div>
                             <input id="text-range-value" class="tui-image-editor-range-value" value="0" />
                         </li>
                     </ul>
@@ -560,7 +560,7 @@ export default `
                         </li>
                         <li class="newline tui-image-editor-range-wrap">
                             <label>Stroke</label>
-                            <div id="stroke-range" min="0" max="300"></div>
+                            <div id="stroke-range"></div>
                             <input id="stroke-range-value" class="tui-image-editor-range-value" value="0" />
                         </li>
                     </ul>

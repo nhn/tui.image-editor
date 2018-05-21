@@ -24,7 +24,11 @@ export default class Text {
             textEffectButton: selector('#text-effect-button'),
             textAlignButton: selector('#text-align-button'),
             textColorpicker: new Colorpicker(selector('#text-color'), '#ffbb3b'),
-            textRange: new Range(selector('#text-range'), 10),
+            textRange: new Range(selector('#text-range'), {
+                min: 10,
+                max: 100,
+                value: 10
+            }),
             textRangeValue: selector('#text-range-value')
         };
     }
