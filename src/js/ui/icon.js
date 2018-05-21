@@ -5,7 +5,7 @@ export default class Icon {
         const selector = str => subMenuElement.querySelector(str);
 
         this._iconMap = {};
-        this._btnElement = {
+        this._el = {
             registIconButton: selector('#icon-image-file'),
             addIconButton: selector('#icon-add-button'),
             iconColorpicker: new Colorpicker(selector('#icon-color'))
@@ -16,12 +16,12 @@ export default class Icon {
         this.actions = actions;
         const {registCustomIcon, addIcon, changeColor} = actions;
 
-        this._btnElement.iconColorpicker.on('change', value => {
+        this._el.iconColorpicker.on('change', value => {
             const color = value.color || 'transparent';
             changeColor(color);
         });
 
-        this._btnElement.registIconButton.addEventListener('change', event => {
+        this._el.registIconButton.addEventListener('change', event => {
             const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
             let imgUrl;
 
@@ -37,7 +37,7 @@ export default class Icon {
             }
         });
 
-        this._btnElement.addIconButton.addEventListener('click', event => {
+        this._el.addIconButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const iconType = button.getAttribute('data-icontype');
             addIcon(iconType);

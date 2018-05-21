@@ -3,7 +3,7 @@ export default class Rotate {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
 
-        this._btnElement = {
+        this._el = {
             rotateButton: selector('#retate-button'),
             rotateRange: new Range(selector('#rotate-range'), {
                 min: -360,
@@ -15,7 +15,7 @@ export default class Rotate {
     }
 
     addEvent({rotate, setAngle}) {
-        this._btnElement.rotateButton.addEventListener('click', event => {
+        this._el.rotateButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const [rotateType] = button.className.match(/(counterclockwise|clockwise)/);
             const rotateAngle = {
@@ -24,9 +24,9 @@ export default class Rotate {
             }[rotateType];
             rotate(rotateAngle);
         });
-        this._btnElement.rotateRange.on('change', value => {
+        this._el.rotateRange.on('change', value => {
             const angle = parseInt(value, 10);
-            this._btnElement.rotateRangeValue.value = angle;
+            this._el.rotateRangeValue.value = angle;
             setAngle(angle);
         });
     }

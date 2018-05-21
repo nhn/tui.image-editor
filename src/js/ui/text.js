@@ -20,7 +20,7 @@ export default class Text {
             padding: 20,
             lineWidth: 2
         };
-        this._btnElement = {
+        this._el = {
             textEffectButton: selector('#text-effect-button'),
             textAlignButton: selector('#text-align-button'),
             textColorpicker: new Colorpicker(selector('#text-color'), '#ffbb3b'),
@@ -33,7 +33,7 @@ export default class Text {
         };
     }
     addEvent({changeTextStyle}) {
-        this._btnElement.textEffectButton.addEventListener('click', event => {
+        this._el.textEffectButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const [styleType] = button.className.match(/(bold|italic|underline)/);
             const styleObj = {
@@ -47,7 +47,7 @@ export default class Text {
 
             changeTextStyle(styleObj);
         });
-        this._btnElement.textAlignButton.addEventListener('click', event => {
+        this._el.textAlignButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const [styleType] = button.className.match(/(left|center|right)/);
             event.currentTarget.classList.remove(this.align);
@@ -59,9 +59,9 @@ export default class Text {
 
             this.align = styleType;
         });
-        this._btnElement.textRange.on('change', value => {
+        this._el.textRange.on('change', value => {
             value = parseInt(value, 10);
-            this._btnElement.textRangeValue.value = value;
+            this._el.textRangeValue.value = value;
 
             clearTimeout(this.rangeTimeout);
             this.rangeTimeout = setTimeout(() => {
@@ -70,7 +70,7 @@ export default class Text {
                 });
             }, 100);
         });
-        this._btnElement.textColorpicker.on('change', value => {
+        this._el.textColorpicker.on('change', value => {
             const color = value.color || 'transparent';
             changeTextStyle({
                 'fill': color

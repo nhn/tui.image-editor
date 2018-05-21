@@ -11,21 +11,21 @@ export default class Crop {
             transparentCorners: false,
             lineWidth: 2
         };
-        this._btnElement = {
+        this._el = {
             apply: selector('#crop-button .apply'),
             cancel: selector('#crop-button .cancel')
         };
     }
 
     addEvent({crop, cancel}) {
-        this._btnElement.apply.addEventListener('click', () => {
+        this._el.apply.addEventListener('click', () => {
             crop();
-            this._btnElement.apply.classList.remove('active');
+            this._el.apply.classList.remove('active');
         });
 
-        this._btnElement.cancel.addEventListener('click', () => {
+        this._el.cancel.addEventListener('click', () => {
             cancel();
-            this._btnElement.apply.classList.remove('active');
+            this._el.apply.classList.remove('active');
         });
     }
 }

@@ -21,7 +21,7 @@ export default class Shape {
             borderColor: '#fff'
         };
 
-        this._btnElement = {
+        this._el = {
             shapeSelectButton: selector('#shape-button'),
             shapeColorButton: selector('#shape-color-button'),
             strokeRange: new Range(selector('#stroke-range'), {
@@ -36,7 +36,7 @@ export default class Shape {
     }
 
     addEvent({changeShape, setDrawingShape}) {
-        this._btnElement.shapeSelectButton.addEventListener('click', event => {
+        this._el.shapeSelectButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const [shapeType] = button.className.match(/(circle|triangle|rect)/);
 
@@ -47,9 +47,9 @@ export default class Shape {
             setDrawingShape(shapeType);
         });
 
-        this._btnElement.strokeRange.on('change', value => {
+        this._el.strokeRange.on('change', value => {
             this.options.strokeWidth = parseInt(value, 10);
-            this._btnElement.strokeRangeValue.value = parseInt(value, 10);
+            this._el.strokeRangeValue.value = parseInt(value, 10);
 
             changeShape({
                 strokeWidth: value
@@ -58,7 +58,7 @@ export default class Shape {
             setDrawingShape(this.type, this.options);
         });
 
-        this._btnElement.fillColorpicker.on('change', value => {
+        this._el.fillColorpicker.on('change', value => {
             const color = value.color || 'transparent';
             this.options.fill = color;
             changeShape({
@@ -66,7 +66,7 @@ export default class Shape {
             });
         });
 
-        this._btnElement.strokeColorpicker.on('change', value => {
+        this._el.strokeColorpicker.on('change', value => {
             const color = value.color || 'transparent';
             this.options.stroke = color;
             changeShape({

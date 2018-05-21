@@ -241,15 +241,15 @@ export default {
                 this.activeObjectId = obj.id;
 
                 if (obj.type === 'cropzone') {
-                    this.ui.crop._btnElement.apply.classList.add('active');
+                    this.ui.crop._el.apply.classList.add('active');
                 } else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
                     this._changeActivateMode('SHAPE');
                     const strokeColor = obj.stroke;
                     const {strokeWidth} = obj;
                     const fillColor = obj.fill;
-                    this.ui.shape._btnElement.strokeRange.setValue(strokeWidth);
-                    this.ui.shape._btnElement.strokeColorpicker.setColor(strokeColor);
-                    this.ui.shape._btnElement.fillColorpicker.setColor(fillColor);
+                    this.ui.shape._el.strokeRange.setValue(strokeWidth);
+                    this.ui.shape._el.strokeColorpicker.setColor(strokeColor);
+                    this.ui.shape._el.fillColorpicker.setColor(fillColor);
                     this.ui.shape.options.stroke = strokeColor;
                     this.ui.shape.options.fill = fillColor;
                     this.ui.shape.options.strokeWidth = strokeWidth;

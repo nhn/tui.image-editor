@@ -2,13 +2,13 @@ export default class Mask {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
 
-        this._btnElement = {
+        this._el = {
             applyButton: selector('#mask-apply'),
             maskImageButton: selector('#mask-image-file')
         };
     }
     addEvent({loadImageFromURL, applyFilter}) {
-        this._btnElement.maskImageButton.addEventListener('change', event => {
+        this._el.maskImageButton.addEventListener('change', event => {
             const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
             let imgUrl;
 
@@ -24,7 +24,7 @@ export default class Mask {
             }
         });
 
-        this._btnElement.applyButton.addEventListener('click', () => {
+        this._el.applyButton.addEventListener('click', () => {
             applyFilter();
         });
     }

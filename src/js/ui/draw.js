@@ -6,7 +6,7 @@ export default class Draw {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
 
-        this._btnElement = {
+        this._el = {
             lineSelectButton: selector('#draw-line-select-button'),
             drawColorpicker: new Colorpicker(selector('#draw-color')),
             drawRange: new Range(selector('#draw-range'), {
@@ -18,8 +18,8 @@ export default class Draw {
         };
 
         this.type = 'line';
-        this.color = this._btnElement.drawColorpicker.getColor();
-        this.width = this._btnElement.drawRange.getValue();
+        this.color = this._el.drawColorpicker.getColor();
+        this.width = this._el.drawRange.getValue();
     }
 
     setDrawMode() {
@@ -32,22 +32,22 @@ export default class Draw {
     addEvent(actions) {
         this.actions = actions;
 
-        this._btnElement.lineSelectButton.addEventListener('click', event => {
+        this._el.lineSelectButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const [lineType] = button.className.match(/(free|line)/);
             this.type = lineType;
             this.setDrawMode();
         });
 
-        this._btnElement.drawColorpicker.on('change', value => {
+        this._el.drawColorpicker.on('change', value => {
             const color = value.color || 'transparent';
             this.color = color;
             this.setDrawMode();
         });
 
-        this._btnElement.drawRange.on('change', value => {
+        this._el.drawRange.on('change', value => {
             value = parseInt(value, 10);
-            this._btnElement.drawRangeValue.value = value;
+            this._el.drawRangeValue.value = value;
             this.width = value;
             this.setDrawMode();
         });

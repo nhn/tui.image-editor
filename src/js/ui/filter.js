@@ -5,8 +5,10 @@ import Range from './range';
 export default class Filter {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
+        this.selector = selector;
 
-        this._btnElement = {
+        this.checkedMap = {};
+        this._el = {
             thresholdRange: new Range(selector('#threshold-range'), 0),
             distanceRange: new Range(selector('#distance-range'), 0),
             gradientTransparencyRange: new Range(selector('#gradient-transparency-range'), 0),
@@ -18,6 +20,74 @@ export default class Filter {
             filterMultiplyColor: new Colorpicker(selector('#filter-multiply-color'), '#ffbb3b'),
             filterBlendColor: new Colorpicker(selector('#filter-blend-color'), '#ffbb3b')
         };
+        this._el.tintOpacity = this._pickerWithRange(this._el.filterTinyColor.pickerControl);
+        this._el.blendType = this._pickerWithSelectbox(this._el.filterBlendColor.pickerControl);
+    }
+
+    _pickerWithRange(pickerControl) {
+        const rangeWrap = document.createElement('div');
+        const rangelabel = document.createElement('label');
+        const range = document.createElement('div');
+
+        rangeWrap.className = 'tui-image-editor-range-wrap';
+        rangelabel.innerHTML = 'Opacity';
+        range.id = 'filter-tint-opacity';
+        range.title = 'Opacity';
+        rangeWrap.appendChild(rangelabel);
+        rangeWrap.appendChild(range);
+        pickerControl.appendChild(rangeWrap);
+        pickerControl.style.height = '130px';
+
+        return new Range(range);
+    }
+
+    _pickerWithSelectbox(pickerControl) {
+        const selectlistWrap = document.createElement('div');
+        const selectlist = document.createElement('select');
+        selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
+        selectlistWrap.appendChild(selectlist);
+
+        this.getSelectOptionList(selectlist);
+
+        pickerControl.appendChild(selectlistWrap);
+        pickerControl.style.height = '130px';
+
+        return selectlist;
+    }
+
+    getSelectOptionList(selectlist) {
+        const blendOptions = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
+        snippet.forEach(blendOptions, option => {
+            const selectOption = document.createElement('option');
+            selectOption.setAttribute('value', option);
+            selectOption.innerHTML = option.replace(/^[a-z]/, $0 => $0.toUpperCase());
+            selectlist.appendChild(selectOption);
+        });
+    }
+
+    toCamelCase(targetId) {
+        return targetId.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+    }
+
+    getFilterOption(type) {
+        let option = null;
+        switch (type) {
+            case 'blend':
+                option = {
+                    color: this._el.filterBlendColor.getColor(),
+                    mode: this._el.blendType.value
+                };
+                break;
+            default:
+                option = null;
+                break;
+        }
+
+        return option;
+    }
+
+    addEvent(actions) {
+        this.actions = actions;
 
         const filterOptions = [
             'grayscale',
@@ -39,49 +109,24 @@ export default class Filter {
         ];
 
         snippet.forEach(filterOptions, filterName => {
-            selector(`#${filterName}`).addEventListener('change', event => {
+            const filterCheckElement = this.selector(`#${filterName}`);
+            this.checkedMap[filterName] = filterCheckElement;
+            filterCheckElement.addEventListener('change', event => {
                 const apply = event.target.checked;
                 const type = this.toCamelCase(event.target.id);
-                this.actions.applyFilter(apply, type, null);
+                this.actions.applyFilter(apply, type, this.getFilterOption(type));
             });
         });
 
-        const rangeWrap = document.createElement('div');
-        rangeWrap.className = 'tui-image-editor-range-wrap';
-        const rangelabel = document.createElement('label');
-        rangelabel.innerHTML = 'Opacity';
-        const rangeaa = document.createElement('div');
-        rangeaa.id = 'filter-tint-opacity';
-        rangeaa.title = 'Opacity';
-        rangeWrap.appendChild(rangelabel);
-        rangeWrap.appendChild(rangeaa);
-        this._btnElement.filterTinyColor.pickerControl.appendChild(rangeWrap);
-        this._btnElement.filterTinyColor.pickerControl.style.height = '130px';
-        new Range(rangeaa);
+        this._el.blendType.addEventListener('click', event => {
+            event.stopPropagation();
+        });
 
-        const selectlistWrap = document.createElement('div');
-        selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
-        selectlistWrap.innerHTML = this.createSelectList();
-        this._btnElement.filterBlendColor.pickerControl.appendChild(selectlistWrap);
-        this._btnElement.filterBlendColor.pickerControl.style.height = '130px';
-    }
+        this._el.blendType.addEventListener('change', () => {
+            const apply = this.checkedMap.blend.checked;
+            const type = 'blend';
 
-    toCamelCase(targetId) {
-        return targetId.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
-    }
-
-    createSelectList() {
-        return `
-           <div class="tui-image-editor-selectlist-wrap">
-             <select>
-                <option>aa</option>
-                <option>bb</option>
-             </select>
-           </div>
-        `;
-    }
-
-    addEvent(actions) {
-        this.actions = actions;
+            this.actions.applyFilter(apply, type, this.getFilterOption(type));
+        });
     }
 }
