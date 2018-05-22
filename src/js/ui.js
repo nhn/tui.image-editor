@@ -1,6 +1,7 @@
 import snippet from 'tui-code-snippet';
 import mainContainer from './template/mainContainer';
 import controls from './template/controls';
+
 import Shape from './ui/shape';
 import Crop from './ui/crop';
 import Flip from './ui/flip';
@@ -10,15 +11,70 @@ import Mask from './ui/mask';
 import Icon from './ui/icon';
 import Draw from './ui/draw';
 import Filter from './ui/filter';
-import util from './util';
+
+const SUB_UI_COMPONENT = {
+    Shape,
+    Crop,
+    Flip,
+    Rotate,
+    Text,
+    Mask,
+    Icon,
+    Draw,
+    Filter
+};
 
 export default class Ui {
     constructor(element, options, actions) {
-        let selectedElement;
-
-        this.options = this.initializeOption(options);
+        this.options = this._initializeOption(options);
 
         this._actions = actions;
+        this._btnElement = {};
+
+        this.submenu = false;
+        this.imageSize = {};
+
+        this._selectedElement = null;
+        this._mainElement = null;
+        this._editorElementWrap = null;
+        this._editorElement = null;
+        this._menuElement = null;
+        this._subMenuElement = null;
+        this._btnElement = {};
+
+        this._makeUiElement(element);
+        this._makeSubMenu();
+    }
+
+    _initializeOption(options) {
+        return snippet.extend({
+            loadImage: {
+                path: '',
+                name: ''
+            },
+            menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
+            initMenu: false,
+            menuBarPosition: 'bottom'
+        }, options);
+    }
+
+    _makeSubMenu() {
+        snippet.forEach(this.options.menu, menuName => {
+            const SubComponentClass = SUB_UI_COMPONENT[menuName.replace(/^[a-z]/, $0 => $0.toUpperCase())];
+
+            // make menu element
+            this._makeMenuElement(menuName);
+
+            // menu btn element
+            this._btnElement[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
+
+            // submenu ui instance
+            this[menuName] = new SubComponentClass(this._subMenuElement);
+        });
+    }
+
+    _makeUiElement(element) {
+        let selectedElement;
 
         if (element.jquery) {
             [selectedElement] = element;
@@ -29,126 +85,43 @@ export default class Ui {
         }
 
         selectedElement.innerHTML = controls + mainContainer;
-        this.selectedElement = selectedElement;
-        this.selectedElement.classList.add(this.options.menuBarPosition);
-        this._mainElement = this.selectedElement.querySelector('.tui-image-editor-main');
-        this._editorElementWrap = this.selectedElement.querySelector('.tui-image-editor-wrap');
-        this._editorElement = this.selectedElement.querySelector('.tui-image-editor');
-        this._menuElement = this.selectedElement.querySelector('.tui-image-editor-menu');
+        this._selectedElement = selectedElement;
+        this._selectedElement.classList.add(this.options.menuBarPosition);
+        this._mainElement = this._selectedElement.querySelector('.tui-image-editor-main');
+        this._editorElementWrap = this._selectedElement.querySelector('.tui-image-editor-wrap');
+        this._editorElement = this._selectedElement.querySelector('.tui-image-editor');
+        this._menuElement = this._selectedElement.querySelector('.tui-image-editor-menu');
         this._subMenuElement = this._mainElement.querySelector('.tui-image-editor-submenu');
-        this._makeMenuElement();
-
-        this._btnElement = {
-            crop: this._menuElement.querySelector('#btn-crop'),
-            flip: this._menuElement.querySelector('#btn-flip'),
-            rotate: this._menuElement.querySelector('#btn-rotate'),
-            shape: this._menuElement.querySelector('#btn-shape'),
-            text: this._menuElement.querySelector('#btn-text'),
-            mask: this._menuElement.querySelector('#btn-mask'),
-            icon: this._menuElement.querySelector('#btn-icon'),
-            draw: this._menuElement.querySelector('#btn-draw'),
-            filter: this._menuElement.querySelector('#btn-filter')
-        };
-
-        this.submenu = false;
-        this.imageSize = {};
-
-        this.mask = new Mask(this._subMenuElement);
-        this.shape = new Shape(this._subMenuElement);
-        this.crop = new Crop(this._subMenuElement);
-        this.flip = new Flip(this._subMenuElement);
-        this.rotate = new Rotate(this._subMenuElement);
-        this.text = new Text(this._subMenuElement);
-        this.icon = new Icon(this._subMenuElement);
-        this.draw = new Draw(this._subMenuElement);
-        this.filter = new Filter(this._subMenuElement);
     }
 
-    _makeMenuElement() {
-        const menu = ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'];
+    _makeMenuElement(menuName) {
         const menuItemHtml = `
-            <li id="btn-{{menuName}}" class="item">
+            <li id="btn-${menuName}" class="item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-{{menuName}}" class="normal"/>
-                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-{{menuName}}" class="active"/>
+                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-${menuName}" class="normal"/>
+                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-${menuName}" class="active"/>
                 </svg>
             </li>
         `;
+        const btnElement = document.createElement('li');
 
-        snippet.forEach(menu, menuName => {
-            const btnElement = document.createElement('li');
-            btnElement.id = `btn-${menuName}`;
-            btnElement.className = 'item';
+        btnElement.id = `btn-${menuName}`;
+        btnElement.className = 'item';
+        btnElement.innerHTML = menuItemHtml;
 
-            btnElement.innerHTML = util.applyTemplate(menuItemHtml, {
-                menuName
-            });
-
-            this._menuElement.appendChild(btnElement);
-        });
+        this._menuElement.appendChild(btnElement);
     }
 
-    menuAddEvent() {
+    menuAddEvent(menuName) {
         const changeMode = this._actions.main.modeChange;
-        this._btnElement.text.addEventListener('click', () => {
-            this.changeMenu('text');
-            changeMode('text');
-        });
-        this._btnElement.crop.addEventListener('click', () => {
-            this.changeMenu('crop');
-            changeMode('crop');
-        });
-        this._btnElement.flip.addEventListener('click', () => {
-            this.changeMenu('flip');
-            changeMode('flip');
-        });
-        this._btnElement.rotate.addEventListener('click', () => {
-            this.changeMenu('rotate');
-            changeMode('rotate');
-        });
-        this._btnElement.shape.addEventListener('click', () => {
-            this.changeMenu('shape');
-            changeMode('shape');
-        });
-        this._btnElement.mask.addEventListener('click', () => {
-            this.changeMenu('mask');
-            changeMode('mask');
-        });
-        this._btnElement.icon.addEventListener('click', () => {
-            this.changeMenu('icon');
-            changeMode('icon');
-        });
-        this._btnElement.draw.addEventListener('click', () => {
-            this.changeMenu('draw');
-            changeMode('draw');
-        });
-        this._btnElement.filter.addEventListener('click', () => {
-            this.changeMenu('filter');
-            changeMode('filter');
+        this._btnElement[menuName].addEventListener('click', () => {
+            this.changeMenu(menuName);
+            changeMode(menuName);
         });
     }
 
-    subMenuAddEvent() {
-        this.shape.addEvent(this._actions.shape);
-        this.crop.addEvent(this._actions.crop);
-        this.flip.addEvent(this._actions.flip);
-        this.rotate.addEvent(this._actions.rotate);
-        this.text.addEvent(this._actions.text);
-        this.mask.addEvent(this._actions.mask);
-        this.icon.addEvent(this._actions.icon);
-        this.draw.addEvent(this._actions.draw);
-        this.filter.addEvent(this._actions.filter);
-    }
-
-    initializeOption(options) {
-        return snippet.extend({
-            loadImage: {
-                path: '',
-                name: ''
-            },
-            initMenu: false,
-            menuBarPosition: 'bottom'
-        }, options);
+    subMenuAddEvent(menuName) {
+        this[menuName].addEvent(this._actions[menuName]);
     }
 
     getEditorArea() {
@@ -180,8 +153,10 @@ export default class Ui {
         const loadImageInfo = this.getLoadImage();
         this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name);
 
-        this.menuAddEvent();
-        this.subMenuAddEvent();
+        snippet.forEach(this.options.menu, menuName => {
+            this.menuAddEvent(menuName);
+            this.subMenuAddEvent(menuName);
+        });
 
         this._initMenu();
 
@@ -237,7 +212,6 @@ export default class Ui {
         if (this.submenu && menuBarPosition === 'top') {
             top += 150;
         }
-
         if (this.submenu && menuBarPosition === 'left') {
             left += 248;
             right += 248;
