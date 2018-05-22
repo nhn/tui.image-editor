@@ -1,9 +1,11 @@
 import Colorpicker from './colorpicker';
 import Range from './range';
+import shapeHtml from '../template/submenu/shape';
 
 export default class Shape {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
+        this._makeSubMenuElement(subMenuElement);
         this.type = 'rect';
         this.options = {
             stroke: '#ffbb3b',
@@ -33,6 +35,14 @@ export default class Shape {
             fillColorpicker: new Colorpicker(selector('#color-fill'), ''),
             strokeColorpicker: new Colorpicker(selector('#color-stroke'), '#ffbb3b')
         };
+    }
+
+    _makeSubMenuElement(subMenuElement) {
+        const shapeSubMenu = document.createElement('div');
+        shapeSubMenu.className = 'shape';
+        shapeSubMenu.innerHTML = shapeHtml;
+
+        subMenuElement.appendChild(shapeSubMenu);
     }
 
     addEvent({changeShape, setDrawingShape}) {

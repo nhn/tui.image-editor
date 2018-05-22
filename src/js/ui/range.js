@@ -17,7 +17,7 @@ class Range {
 
     setValue(value) {
         this.value = value;
-        const absValue = value - Math.abs(this.min);
+        const absValue = value - this.min;
         const leftPosition = (absValue * this.rangeWidth) / this.absMax;
         this.pointer.style.left = `${leftPosition}px`;
 

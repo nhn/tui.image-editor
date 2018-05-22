@@ -1,13 +1,33 @@
 import snippet from 'tui-code-snippet';
 import Colorpicker from './colorpicker';
 import Range from './range';
+import filterHtml from '../template/submenu/filter';
+
+const FILTER_OPTIONS = [
+    'grayscale',
+    'invert',
+    'sepia',
+    'sepia2',
+    'blur',
+    'sharpen',
+    'emboss',
+    'remove-white',
+    'gradient-transparency',
+    'brightness',
+    'noise',
+    'pixelate',
+    'color-filter',
+    'tint',
+    'multiply',
+    'blend'
+];
 
 export default class Filter {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
-        this.selector = selector;
-
         this.checkedMap = {};
+        this.selector = selector;
+        this._makeSubMenuElement(subMenuElement);
         this._el = {
             thresholdRange: new Range(selector('#threshold-range'), 0),
             distanceRange: new Range(selector('#distance-range'), 0),
@@ -24,13 +44,19 @@ export default class Filter {
         this._el.blendType = this._pickerWithSelectbox(this._el.filterBlendColor.pickerControl);
     }
 
+    _makeSubMenuElement(subMenuElement) {
+        const filterSubMenu = document.createElement('div');
+        filterSubMenu.className = 'filter';
+        filterSubMenu.innerHTML = filterHtml;
+
+        subMenuElement.appendChild(filterSubMenu);
+    }
+
     _pickerWithRange(pickerControl) {
         const rangeWrap = document.createElement('div');
         const rangelabel = document.createElement('label');
         const range = document.createElement('div');
 
-        rangeWrap.className = 'tui-image-editor-range-wrap';
-        rangelabel.innerHTML = 'Opacity';
         range.id = 'filter-tint-opacity';
         range.title = 'Opacity';
         rangeWrap.appendChild(rangelabel);
@@ -86,35 +112,14 @@ export default class Filter {
         return option;
     }
 
-    addEvent(actions) {
-        this.actions = actions;
-
-        const filterOptions = [
-            'grayscale',
-            'invert',
-            'sepia',
-            'sepia2',
-            'blur',
-            'sharpen',
-            'emboss',
-            'remove-white',
-            'gradient-transparency',
-            'brightness',
-            'noise',
-            'pixelate',
-            'color-filter',
-            'tint',
-            'multiply',
-            'blend'
-        ];
-
-        snippet.forEach(filterOptions, filterName => {
+    addEvent({applyFilter}) {
+        snippet.forEach(FILTER_OPTIONS, filterName => {
             const filterCheckElement = this.selector(`#${filterName}`);
             this.checkedMap[filterName] = filterCheckElement;
             filterCheckElement.addEventListener('change', event => {
                 const apply = event.target.checked;
                 const type = this.toCamelCase(event.target.id);
-                this.actions.applyFilter(apply, type, this.getFilterOption(type));
+                applyFilter(apply, type, this.getFilterOption(type));
             });
         });
 
@@ -126,7 +131,7 @@ export default class Filter {
             const apply = this.checkedMap.blend.checked;
             const type = 'blend';
 
-            this.actions.applyFilter(apply, type, this.getFilterOption(type));
+            applyFilter(apply, type, this.getFilterOption(type));
         });
     }
 }

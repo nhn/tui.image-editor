@@ -1,7 +1,10 @@
 import Range from './range';
+import rotateHtml from '../template/submenu/rotate';
+
 export default class Rotate {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
+        this._makeSubMenuElement(subMenuElement);
 
         this._el = {
             rotateButton: selector('#retate-button'),
@@ -12,6 +15,14 @@ export default class Rotate {
             }),
             rotateRangeValue: selector('#ratate-range-value')
         };
+    }
+
+    _makeSubMenuElement(subMenuElement) {
+        const rotateSubMenu = document.createElement('div');
+        rotateSubMenu.className = 'rotate';
+        rotateSubMenu.innerHTML = rotateHtml;
+
+        subMenuElement.appendChild(rotateSubMenu);
     }
 
     addEvent({rotate, setAngle}) {

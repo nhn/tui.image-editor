@@ -10,7 +10,7 @@ import Mask from './ui/mask';
 import Icon from './ui/icon';
 import Draw from './ui/draw';
 import Filter from './ui/filter';
-// import util from './util';
+import util from './util';
 
 export default class Ui {
     constructor(element, options, actions) {
@@ -28,25 +28,26 @@ export default class Ui {
             selectedElement = document.querySelector(element);
         }
 
-        // util.applyTemplate
         selectedElement.innerHTML = controls + mainContainer;
         this.selectedElement = selectedElement;
         this.selectedElement.classList.add(this.options.menuBarPosition);
         this._mainElement = this.selectedElement.querySelector('.tui-image-editor-main');
         this._editorElementWrap = this.selectedElement.querySelector('.tui-image-editor-wrap');
         this._editorElement = this.selectedElement.querySelector('.tui-image-editor');
+        this._menuElement = this.selectedElement.querySelector('.tui-image-editor-menu');
         this._subMenuElement = this._mainElement.querySelector('.tui-image-editor-submenu');
+        this._makeMenuElement();
 
         this._btnElement = {
-            crop: this.selectedElement.querySelector('#btn-crop'),
-            flip: this.selectedElement.querySelector('#btn-flip'),
-            rotate: this.selectedElement.querySelector('#btn-rotate'),
-            shape: this.selectedElement.querySelector('#btn-shape'),
-            text: this.selectedElement.querySelector('#btn-text'),
-            mask: this.selectedElement.querySelector('#btn-mask'),
-            icon: this.selectedElement.querySelector('#btn-icon'),
-            draw: this.selectedElement.querySelector('#btn-draw'),
-            filter: this.selectedElement.querySelector('#btn-filter')
+            crop: this._menuElement.querySelector('#btn-crop'),
+            flip: this._menuElement.querySelector('#btn-flip'),
+            rotate: this._menuElement.querySelector('#btn-rotate'),
+            shape: this._menuElement.querySelector('#btn-shape'),
+            text: this._menuElement.querySelector('#btn-text'),
+            mask: this._menuElement.querySelector('#btn-mask'),
+            icon: this._menuElement.querySelector('#btn-icon'),
+            draw: this._menuElement.querySelector('#btn-draw'),
+            filter: this._menuElement.querySelector('#btn-filter')
         };
 
         this.submenu = false;
@@ -61,6 +62,30 @@ export default class Ui {
         this.icon = new Icon(this._subMenuElement);
         this.draw = new Draw(this._subMenuElement);
         this.filter = new Filter(this._subMenuElement);
+    }
+
+    _makeMenuElement() {
+        const menu = ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'];
+        const menuItemHtml = `
+            <li id="btn-{{menuName}}" class="item">
+                <svg class="svg_ic-menu">
+                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-{{menuName}}" class="normal"/>
+                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-{{menuName}}" class="active"/>
+                </svg>
+            </li>
+        `;
+
+        snippet.forEach(menu, menuName => {
+            const btnElement = document.createElement('li');
+            btnElement.id = `btn-${menuName}`;
+            btnElement.className = 'item';
+
+            btnElement.innerHTML = util.applyTemplate(menuItemHtml, {
+                menuName
+            });
+
+            this._menuElement.appendChild(btnElement);
+        });
     }
 
     menuAddEvent() {

@@ -1,15 +1,26 @@
 import snippet from 'tui-code-snippet';
 import Colorpicker from './colorpicker';
+import iconHtml from '../template/submenu/icon';
+
 export default class Icon {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
-
+        this._makeSubMenuElement(subMenuElement);
         this._iconMap = {};
+
         this._el = {
             registIconButton: selector('#icon-image-file'),
             addIconButton: selector('#icon-add-button'),
             iconColorpicker: new Colorpicker(selector('#icon-color'))
         };
+    }
+
+    _makeSubMenuElement(subMenuElement) {
+        const iconSubMenu = document.createElement('div');
+        iconSubMenu.className = 'icon';
+        iconSubMenu.innerHTML = iconHtml;
+
+        subMenuElement.appendChild(iconSubMenu);
     }
 
     addEvent(actions) {

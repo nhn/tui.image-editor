@@ -1,6 +1,9 @@
+import cropHtml from '../template/submenu/crop';
+
 export default class Crop {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
+        this._makeSubMenuElement(subMenuElement);
         this.status = 'active';
 
         this.controlOption = {
@@ -15,6 +18,14 @@ export default class Crop {
             apply: selector('#crop-button .apply'),
             cancel: selector('#crop-button .cancel')
         };
+    }
+
+    _makeSubMenuElement(subMenuElement) {
+        const cropSubMenu = document.createElement('div');
+        cropSubMenu.className = 'crop';
+        cropSubMenu.innerHTML = cropHtml;
+
+        subMenuElement.appendChild(cropSubMenu);
     }
 
     addEvent({crop, cancel}) {

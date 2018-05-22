@@ -1,8 +1,12 @@
 import Range from './range';
 import Colorpicker from './colorpicker';
+import textHtml from '../template/submenu/text';
+
 export default class Text {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
+        this._makeSubMenuElement(subMenuElement);
+
         this.effect = {
             bold: false,
             italic: false,
@@ -32,6 +36,15 @@ export default class Text {
             textRangeValue: selector('#text-range-value')
         };
     }
+
+    _makeSubMenuElement(subMenuElement) {
+        const textSubMenu = document.createElement('div');
+        textSubMenu.className = 'text';
+        textSubMenu.innerHTML = textHtml;
+
+        subMenuElement.appendChild(textSubMenu);
+    }
+
     addEvent({changeTextStyle}) {
         this._el.textEffectButton.addEventListener('click', event => {
             const button = event.target.closest('.button');

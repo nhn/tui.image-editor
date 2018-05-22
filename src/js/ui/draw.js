@@ -1,10 +1,12 @@
 import util from '../util';
 import Colorpicker from './colorpicker';
 import Range from './range';
+import drawHtml from '../template/submenu/draw';
 
 export default class Draw {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
+        this._makeSubMenuElement(subMenuElement);
 
         this._el = {
             lineSelectButton: selector('#draw-line-select-button'),
@@ -20,6 +22,14 @@ export default class Draw {
         this.type = 'line';
         this.color = this._el.drawColorpicker.getColor();
         this.width = this._el.drawRange.getValue();
+    }
+
+    _makeSubMenuElement(subMenuElement) {
+        const drawSubMenu = document.createElement('div');
+        drawSubMenu.className = 'draw';
+        drawSubMenu.innerHTML = drawHtml;
+
+        subMenuElement.appendChild(drawSubMenu);
     }
 
     setDrawMode() {
