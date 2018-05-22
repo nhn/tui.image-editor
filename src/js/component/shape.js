@@ -250,8 +250,6 @@ class Shape extends Component {
     _createOptions(options) {
         const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
 
-        console.log(this._options, selectionStyles, options);
-
         options = extend({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
 
         if (options.isRegular) {

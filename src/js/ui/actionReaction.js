@@ -25,9 +25,7 @@ export default {
         return {
             applyFilter: (applying, type, options) => {
                 if (applying) {
-                    this.applyFilter(type, options).then(result => {
-                        console.log(result);
-                    });
+                    this.applyFilter(type, options);
                 } else {
                     this.removeFilter(type);
                 }
@@ -75,8 +73,6 @@ export default {
                     this.addIcon(iconType, {
                         left: originPointer.x,
                         top: originPointer.y
-                    }).then(objectProps => {
-                        console.log(objectProps);
                     });
                 });
             },
@@ -97,8 +93,6 @@ export default {
                         this.addIcon(file.name, {
                             left: 100,
                             top: 100
-                        }).then(objectProps => {
-                            console.log(objectProps);
                         });
                     },
                     {
@@ -150,17 +144,14 @@ export default {
         return {
             loadImageFromURL: (imgUrl, file) => {
                 this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
-                    this.addImageObject(imgUrl).then(objectProps => {
+                    this.addImageObject(imgUrl).then(() => {
                         URL.revokeObjectURL(file);
-                        console.log(objectProps);
                     });
                 });
             },
             applyFilter: () => {
                 this.applyFilter('mask', {
                     maskObjId: this.activeObjectId
-                }).then(result => {
-                    console.log(result);
                 });
             }
         };
@@ -221,9 +212,7 @@ export default {
     flipAction() {
         return {
             flip: flipType => {
-                this[flipType]().then(status => {
-                    console.log(status);
-                });
+                this[flipType]();
             }
         };
     },
@@ -261,8 +250,6 @@ export default {
             addText: pos => {
                 this.addText('Double Click', {
                     position: pos.originPosition
-                }).then(objectProps => {
-                    console.log(objectProps);
                 });
             },
             mousedown: (event, originPointer) => {

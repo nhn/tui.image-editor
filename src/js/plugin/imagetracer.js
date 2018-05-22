@@ -1,3 +1,4 @@
+/* eslint-disable */
 export default class ImageTracer {
     constructor() {
         this.versionnumber = '1.2.4';
@@ -100,7 +101,6 @@ export default class ImageTracer {
                     a: 255}]}
         };
 
-        /* eslint-disable */
         this.pathscan_combined_lookup = [
             [[-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1], [-1,-1,-1,-1]],
             [[ 0, 1, 0,-1], [-1,-1,-1,-1], [-1,-1,-1,-1], [ 0, 2,-1, 0]],
@@ -129,7 +129,6 @@ export default class ImageTracer {
 		    {r:128,g:0,b:0,a:255}, {r:128,g:64,b:64,a:255}, {r:128,g:0,b:128,a:255}, {r:168,g:168,b:168,a:255},
 		    {r:192,g:128,b:128,a:255}, {r:192,g:0,b:0,a:255}, {r:255,g:255,b:255,a:255}, {r:0,g:128,b:0,a:255}
 	    ];
-        /* eslint-enable */
     }
 
     imageToSVG(url, callback, options) {
@@ -378,14 +377,12 @@ export default class ImageTracer {
             const rndnum = numberofcolors - (colorqnum * colorqnum * colorqnum);
             for (rcnt = 0; rcnt < colorqnum; rcnt += 1) {
                 for (gcnt = 0; gcnt < colorqnum; gcnt += 1) {
-                    /* eslint-disable */
                     for (bcnt = 0; bcnt < colorqnum; bcnt += 1) {
                         palette.push({r: rcnt * colorstep,
                             g: gcnt * colorstep,
                             b: bcnt * colorstep,
                             a: 255});
                     }
-                    /* eslint-enable */
                 }
             }
             for (rcnt = 0; rcnt < rndnum; rcnt += 1) {
@@ -504,7 +501,6 @@ export default class ImageTracer {
                     holepath = (arr[j][i] === 11);
                     dir = 1;
 
-                    /* eslint-disable */
                     while (!pathfinished) {
                         paths[pacnt].points[pcnt] = {};
                         paths[pacnt].points[pcnt].x = px - 1;
@@ -553,7 +549,6 @@ export default class ImageTracer {
                         }
                         pcnt += 1;
                     }
-                    /* eslint-enable */
                 }
             }
         }
@@ -595,7 +590,6 @@ export default class ImageTracer {
             ins[pacnt].isholepath = paths[pacnt].isholepath;
             palen = paths[pacnt].points.length;
 
-            /* eslint-disable */
             for (pcnt = 0; pcnt < palen; pcnt += 1) {
                 nextidx = (pcnt + 1) % palen; nextidx2 = (pcnt + 2) % palen; previdx = (pcnt - 1 + palen) % palen; previdx2 = (pcnt - 2 + palen) % palen;
 
@@ -632,13 +626,11 @@ export default class ImageTracer {
                     )
                 });
             }
-            /* eslint-enable */
         }
 
         return ins;
     }
 
-    /* eslint-disable */
     testrightangle(path, idx1, idx2, idx3, idx4, idx5) {
         return (((path.points[idx3].x === path.points[idx1].x) &&
 				  (path.points[idx3].x === path.points[idx2].x) &&
@@ -652,7 +644,6 @@ export default class ImageTracer {
 				 )
         );
     }
-    /* eslint-enable */
 
     getdirection(x1, y1, x2, y2) {
         let val = 8;
@@ -706,7 +697,6 @@ export default class ImageTracer {
         smp.holechildren = path.holechildren;
         smp.isholepath = path.isholepath;
 
-        /* eslint-disable */
         while (pcnt < path.points.length) {
             segtype1 = path.points[pcnt].linesegment;
             segtype2 = -1;
@@ -730,12 +720,10 @@ export default class ImageTracer {
                 pcnt = path.points.length;
             }
         }
-        /* eslint-enable */
 
         return smp;
     }
 
-    /* eslint-disable */
     fitseq(path, ltres, qtres, seqstart, seqend) {
         if ((seqend > path.points.length) || (seqend < 0)) {
             return [];
@@ -800,7 +788,6 @@ export default class ImageTracer {
         return this.fitseq(path, ltres, qtres, seqstart, splitpoint).concat(
             this.fitseq(path, ltres, qtres, splitpoint, seqend));
     }
-    /* eslint-enable */
 
     batchtracepaths(internodepaths, ltres, qtres) {
         const btracedpaths = [];
@@ -830,7 +817,6 @@ export default class ImageTracer {
         return Number(val.toFixed(places));
     }
 
-    /* eslint-disable */
     svgpathstring(tracedata, lnum, pathnum, options) {
         let layer = tracedata.layers[lnum], smp = layer[pathnum], str = '', pcnt;
         if (options.linefilter && (smp.segments.length < 3)) {
@@ -923,17 +909,14 @@ export default class ImageTracer {
 
         return str;
     }
-    /* eslint-enable */
 
     getsvgstring(tracedata, options) {
         options = this.checkoptions(options);
         const w = tracedata.width * options.scale;
         const h = tracedata.height * options.scale;
 
-        /* eslint-disable */
         let svgstr = `<svg ${options.viewbox ? (`viewBox="0 0 ${w} ${h}" `) : (`width="${w}" height="${h}" `)
         }version="1.1" xmlns="http://www.w3.org/2000/svg" desc="Created with imagetracer.js version ${this.versionnumber}" >`;
-        /* eslint-enable */
         for (let lcnt = 0; lcnt < tracedata.layers.length; lcnt += 1) {
             for (let pcnt = 0; pcnt < tracedata.layers[lcnt].length; pcnt += 1) {
                 if (!tracedata.layers[lcnt][pcnt].isholepath) {
@@ -955,9 +938,7 @@ export default class ImageTracer {
     }
 
     tosvgcolorstr(c, options) {
-        /* eslint-disable */
         return `fill="rgb(${c.r},${c.g},${c.b})" stroke="rgb(${c.r},${c.g},${c.b})" stroke-width="${options.strokewidth}" opacity="${c.a / 255.0}" `;
-        /* eslint-enable */
     }
 
     appendSVGString(svgstr, parentid) {
@@ -976,7 +957,6 @@ export default class ImageTracer {
         div.innerHTML += svgstr;
     }
 
-    /* eslint-disable */
     blur(imgd, radius, delta) {
         let i, j, k, d, idx, racc, gacc, bacc, aacc, wacc;
         const imgd2 = {width: imgd.width,
@@ -1053,7 +1033,6 @@ export default class ImageTracer {
 
         return imgd2;
     }
-    /* eslint-enable */
 
     loadImage(url, callback, options) {
         const img = new Image();

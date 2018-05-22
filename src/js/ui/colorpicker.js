@@ -1,6 +1,24 @@
 
 import snippet from 'tui-code-snippet';
 import tuiColorPicker from 'tui-color-picker';
+const PICKER_COLOR = [
+    '#000000',
+    '#2a2a2a',
+    '#545454',
+    '#7e7e7e',
+    '#a8a8a8',
+    '#d2d2d2',
+    '#ffffff',
+    '',
+    '#ff4040',
+    '#ff6518',
+    '#ffbb3b',
+    '#03bd9e',
+    '#00a9ff',
+    '#515ce6',
+    '#9e5fff',
+    '#ff5583'
+];
 
 class Colorpicker {
     constructor(colorpickerElement, defaultColor = '#7e7e7e') {
@@ -37,28 +55,11 @@ class Colorpicker {
         colorpickerElement.appendChild(this.colorElement);
         colorpickerElement.appendChild(label);
 
-        this.pickerControl.style.top = `${(parseInt(window.getComputedStyle(this.pickerControl, null).height, 10) + 12) * -1}px`;
-        this.pickerControl.style.left = `${((parseInt(window.getComputedStyle(this.pickerControl, null).width, 10) / 2) - 20) * -1}px`;
+        this._setPickerControlPosition();
+
         this.picker = tuiColorPicker.create({
             container: this.pickerElement,
-            preset: [
-                '#000000',
-                '#2a2a2a',
-                '#545454',
-                '#7e7e7e',
-                '#a8a8a8',
-                '#d2d2d2',
-                '#ffffff',
-                '',
-                '#ff4040',
-                '#ff6518',
-                '#ffbb3b',
-                '#03bd9e',
-                '#00a9ff',
-                '#515ce6',
-                '#9e5fff',
-                '#ff5583'
-            ],
+            preset: PICKER_COLOR,
             color: defaultColor
         });
 
@@ -72,6 +73,15 @@ class Colorpicker {
             const display = this.show ? 'block' : 'none';
             this.pickerControl.style.display = display;
         });
+    }
+
+    _setPickerControlPosition() {
+        const controlStyle = this.pickerControl.style;
+        const top = parseInt(window.getComputedStyle(this.pickerControl, null).height, 10) + 12;
+        const left = (parseInt(window.getComputedStyle(this.pickerControl, null).width, 10) / 2) - 20;
+
+        controlStyle.top = `-${top}px`;
+        controlStyle.left = `-${left}px`;
     }
 
     changeColorElement(color) {

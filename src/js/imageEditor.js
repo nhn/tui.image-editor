@@ -84,14 +84,7 @@ class ImageEditor {
         this._attachInvokerEvents();
         this._attachGraphicsEvents();
         this._attachDomEvents();
-
-        if (option.selectionStyle) {
-            this._setSelectionStyle(option.selectionStyle);
-        }
-
-        if (option.applyCropSelectionStyle) {
-            this._graphics.setCropSelectionStyle(option.selectionStyle);
-        }
+        this._setSelectionStyle(option.selectionStyle, option.applyCropSelectionStyle);
 
         if (option.usageStatistics) {
             sendHostName();
@@ -154,11 +147,18 @@ class ImageEditor {
 
     /**
      * Set selection style by init option
-     * @param {Object} styles - Selection styles
+     * @param {Object} selectionStyle - Selection styles
+     * @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
      * @private
      */
-    _setSelectionStyle(styles) {
-        this._graphics.setSelectionStyle(styles);
+    _setSelectionStyle(selectionStyle, applyCropSelectionStyle) {
+        if (selectionStyle) {
+            this._graphics.setSelectionStyle(selectionStyle);
+        }
+
+        if (applyCropSelectionStyle) {
+            this._graphics.setCropSelectionStyle(selectionStyle);
+        }
     }
 
     /**

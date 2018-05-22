@@ -96,12 +96,10 @@ export default class Ui {
 
     _makeMenuElement(menuName) {
         const menuItemHtml = `
-            <li id="btn-${menuName}" class="item">
-                <svg class="svg_ic-menu">
-                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-${menuName}" class="normal"/>
-                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-${menuName}" class="active"/>
-                </svg>
-            </li>
+            <svg class="svg_ic-menu">
+                <use xlink:href="../dist/icon-a.svg#icon-a-ic-${menuName}" class="normal"/>
+                <use xlink:href="../dist/icon-b.svg#icon-b-ic-${menuName}" class="active"/>
+            </svg>
         `;
         const btnElement = document.createElement('li');
 
@@ -191,37 +189,14 @@ export default class Ui {
         if (imageSize !== this.imageSize) {
             this.imageSize = imageSize;
         }
-
-        const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
-        const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;
-
-        const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
-        const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
-
+        const {width, height} = this._getEditorDimension();
         const editorElementStyle = this._editorElement.style;
         const {menuBarPosition} = this.options;
 
         editorElementStyle.height = `${height}px`;
         editorElementStyle.width = `${width}px`;
 
-        let bottom = 0;
-        let top = 0;
-        let left = 0;
-        let right = 0;
-
-        if (this.submenu && menuBarPosition === 'bottom') {
-            bottom += 150;
-        }
-        if (this.submenu && menuBarPosition === 'top') {
-            top += 150;
-        }
-        if (this.submenu && menuBarPosition === 'left') {
-            left += 248;
-            right += 248;
-        }
-        if (this.submenu && menuBarPosition === 'right') {
-            right += 248;
-        }
+        const {top, bottom, left, right} = this._getEditorPosition(menuBarPosition);
 
         this._editorElementWrap.style.bottom = `${bottom}px`;
         this._editorElementWrap.style.top = `${top}px`;
@@ -231,10 +206,57 @@ export default class Ui {
         const {offsetWidth} = this._editorElementWrap;
         const {offsetHeight} = this._editorElementWrap;
 
-        const editortop = (offsetHeight - height) / 2;
+        const editortop = (offsetHeight > height) ? (offsetHeight - height) / 2 : 0;
         const editorleft = (offsetWidth - width) / 2;
 
         this._editorElement.style.top = `${editortop}px`;
         this._editorElement.style.left = `${editorleft}px`;
+    }
+
+    _getEditorDimension() {
+        const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
+        const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;
+
+        const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
+        const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
+
+        return {
+            width,
+            height
+        };
+    }
+
+    _getEditorPosition(menuBarPosition) {
+        let bottom = 0;
+        let top = 0;
+        let left = 0;
+        let right = 0;
+
+        if (this.submenu) {
+            switch (menuBarPosition) {
+                case 'bottom':
+                    bottom += 150;
+                    break;
+                case 'top':
+                    top += 150;
+                    break;
+                case 'left':
+                    left += 248;
+                    right += 248;
+                    break;
+                case 'right':
+                    right += 248;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        return {
+            top,
+            bottom,
+            left,
+            right
+        };
     }
 }
