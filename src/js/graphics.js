@@ -25,6 +25,7 @@ import util from './util';
 
 const components = consts.componentNames;
 const events = consts.eventNames;
+
 const {drawingModes, fObjectOptions} = consts;
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
 
@@ -48,7 +49,7 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-    constructor(element, {cssMaxWidth, cssMaxHeight, cropControlOption, shapeControlOption, textControlOption}) {
+    constructor(element, {cssMaxWidth, cssMaxHeight}) {
         /**
          * Fabric image instance
          * @type {fabric.Image}
@@ -66,6 +67,12 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
+
+        /**
+         * cropper Selection Style
+         * @type {Object}
+         */
+        this.cropSelectionStyle = {};
 
         /**
          * Image name
@@ -107,10 +114,6 @@ class Graphics {
          * @private
          */
         this._componentMap = {};
-
-        this._cropControlOption = cropControlOption;
-        this._shapeControlOption = shapeControlOption;
-        this._textControlOption = textControlOption;
 
         /**
          * fabric event handlers
@@ -287,6 +290,10 @@ class Graphics {
      */
     setActiveObject(target) {
         this._canvas.setActiveObject(target);
+    }
+
+    setCropSelectionStyle(style) {
+        this.cropSelectionStyle = style;
     }
 
     /**

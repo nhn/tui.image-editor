@@ -48,13 +48,6 @@ class Shape extends Component {
         this._shapeObj = null;
 
         /**
-         * Shape Control Option
-         * @type {Object}
-         * @private
-         */
-        this._shapeControlOption = graphics._shapeControlOption;
-
-        /**
          * Type of the drawing shape
          * @type {string}
          * @private
@@ -231,15 +224,15 @@ class Shape extends Component {
 
         switch (type) {
             case 'rect':
-                instance = new fabric.Rect(extend(options, this._shapeControlOption));
+                instance = new fabric.Rect(options);
                 break;
             case 'circle':
                 instance = new fabric.Ellipse(extend({
                     type: 'circle'
-                }, options, this._shapeControlOption));
+                }, options));
                 break;
             case 'triangle':
-                instance = new fabric.Triangle(extend(options, this._shapeControlOption));
+                instance = new fabric.Triangle(options);
                 break;
             default:
                 instance = {};
@@ -256,6 +249,8 @@ class Shape extends Component {
      */
     _createOptions(options) {
         const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
+
+        console.log(this._options, selectionStyles, options);
 
         options = extend({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
 

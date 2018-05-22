@@ -29,6 +29,7 @@ class ImageEditor {
     constructor(wrapper, option) {
         option = snippet.extend({
             includeUi: false,
+            applyCropSelectionStyle: false,
             usageStatistics: true
         }, option);
 
@@ -52,10 +53,7 @@ class ImageEditor {
          * @type {Graphics}
          * @private
          */
-        this._graphics = new Graphics((this.ui) ? this.ui.getEditorArea() : wrapper, {
-            cropControlOption: this.ui ? this.ui.crop.controlOption : {},
-            shapeControlOption: this.ui ? this.ui.shape.controlOption : {},
-            textControlOption: this.ui ? this.ui.text.controlOption : {},
+        this._graphics = new Graphics(this.ui ? this.ui.getEditorArea() : wrapper, {
             cssMaxWidth: option.cssMaxWidth,
             cssMaxHeight: option.cssMaxHeight
         });
@@ -89,6 +87,10 @@ class ImageEditor {
 
         if (option.selectionStyle) {
             this._setSelectionStyle(option.selectionStyle);
+        }
+
+        if (option.applyCropSelectionStyle) {
+            this._graphics.setCropSelectionStyle(option.selectionStyle);
         }
 
         if (option.usageStatistics) {

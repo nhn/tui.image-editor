@@ -67,13 +67,6 @@ class Text extends Component {
         this._isSelected = false;
 
         /**
-         * Text Control Option
-         * @type {Object}
-         * @private
-         */
-        this._textControlOption = graphics._textControlOption;
-
-        /**
          * Selected text object
          * @type {Object}
          */
@@ -195,7 +188,7 @@ class Text extends Component {
 
             const newText = new fabric.Text(text, styles);
 
-            newText.set(snippet.extend(selectionStyle, this._textControlOption));
+            newText.set(snippet.extend(selectionStyle, this.graphics.controlStyle));
             newText.on({
                 mouseup: this._onFabricMouseUp.bind(this)
             });

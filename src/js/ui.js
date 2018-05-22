@@ -112,6 +112,10 @@ export default class Ui {
         this._menuElement.appendChild(btnElement);
     }
 
+    getControlStyle() {
+        return this.options.controlStyle;
+    }
+
     menuAddEvent(menuName) {
         const changeMode = this._actions.main.modeChange;
         this._btnElement[menuName].addEventListener('click', () => {
@@ -151,14 +155,13 @@ export default class Ui {
 
     initCanvas() {
         const loadImageInfo = this.getLoadImage();
-        this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name);
-
-        snippet.forEach(this.options.menu, menuName => {
-            this.menuAddEvent(menuName);
-            this.subMenuAddEvent(menuName);
+        this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name, () => {
+            snippet.forEach(this.options.menu, menuName => {
+                this.menuAddEvent(menuName);
+                this.subMenuAddEvent(menuName);
+                this._initMenu();
+            });
         });
-
-        this._initMenu();
 
         this.gridVisual = document.createElement('div');
         this.gridVisual.className = 'tui-image-editor-grid-visual';

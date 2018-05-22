@@ -13,16 +13,6 @@ export default class Shape {
             strokeWidth: 3
         };
 
-        this.controlOption = {
-            cornerStyle: 'circle',
-            cornerSize: 20,
-            cornerColor: '#fff',
-            cornerStrokeColor: '#000',
-            transparentCorners: false,
-            lineWidth: 2,
-            borderColor: '#fff'
-        };
-
         this._el = {
             shapeSelectButton: selector('#shape-button'),
             shapeColorButton: selector('#shape-color-button'),

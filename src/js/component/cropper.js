@@ -29,13 +29,6 @@ class Cropper extends Component {
         this._cropzone = null;
 
         /**
-         * Cropzone Control Option
-         * @type {Object}
-         * @private
-         */
-        this._cropControlOption = graphics._cropControlOption;
-
-        /**
          * StartX of Cropzone
          * @type {number}
          * @private
@@ -96,7 +89,7 @@ class Cropper extends Component {
             hasBorders: false,
             lockScalingFlip: true,
             lockRotation: true
-        }, this._cropControlOption);
+        }, this.graphics.cropSelectionStyle);
 
         canvas.deactivateAll();
         canvas.add(this._cropzone);

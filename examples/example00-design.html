@@ -31,13 +31,20 @@
                  },
                  // menu: [],
                  initMenu: 'filter',
-                 menuBarPosition: 'bottom'
+                 menuBarPosition: 'bottom',
+                 applyCropSelectionStyle: true
              },
              cssMaxWidth: 700,
              cssMaxHeight: 500,
+             applyCropSelectionStyle: true,
              selectionStyle: {
+                 cornerStyle: 'circle',
                  cornerSize: 20,
-                 rotatingPointOffset: 70
+                 cornerColor: '#fff',
+                 cornerStrokeColor: '#000',
+                 transparentCorners: false,
+                 lineWidth: 2,
+                 borderColor: '#fff'
              }
          });
 

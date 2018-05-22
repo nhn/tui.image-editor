@@ -12,10 +12,10 @@ class Range {
 
         this.addClickEvent();
         this.addDragEvent();
-        this.setValue(options.value);
+        this.initValue(options.value);
     }
 
-    setValue(value) {
+    initValue(value) {
         this.value = value;
         const absValue = value - this.min;
         const leftPosition = (absValue * this.rangeWidth) / this.absMax;

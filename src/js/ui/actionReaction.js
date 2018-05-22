@@ -37,10 +37,11 @@ export default {
 
     mainAction() {
         return {
-            initLoadImage: (imagePath, imageName) => {
+            initLoadImage: (imagePath, imageName, callback) => {
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
                     this.ui.resizeEditor(sizeValue);
                     this.clearUndoStack();
+                    callback();
                 });
             },
             modeChange: menu => {
