@@ -22,11 +22,23 @@ const PICKER_COLOR = [
 
 class Colorpicker {
     constructor(colorpickerElement, defaultColor = '#7e7e7e') {
+        const title = colorpickerElement.getAttribute('title');
+
         this.show = false;
 
-        /* draw button element */
+        this._makePickerButtonElement(colorpickerElement, defaultColor);
+        this._makePickerLayerElement(colorpickerElement, title);
+        this.picker = tuiColorPicker.create({
+            container: this.pickerElement,
+            preset: PICKER_COLOR,
+            color: defaultColor
+        });
+
+        this._addEvent(colorpickerElement);
+    }
+
+    _makePickerButtonElement(colorpickerElement, defaultColor) {
         colorpickerElement.classList.add('button');
-        const title = colorpickerElement.getAttribute('title');
 
         this.colorElement = document.createElement('div');
         this.colorElement.className = 'color-picker-value';
@@ -35,17 +47,19 @@ class Colorpicker {
         } else {
             this.colorElement.classList.add('transparent');
         }
+    }
 
+    _makePickerLayerElement(colorpickerElement, title) {
         const label = document.createElement('label');
-        label.innerHTML = title;
+        const triangle = document.createElement('div');
 
-        /* draw picker element */
         this.pickerControl = document.createElement('div');
         this.pickerControl.className = 'color-picker-control';
 
         this.pickerElement = document.createElement('div');
         this.pickerElement.className = 'color-picker';
-        const triangle = document.createElement('div');
+
+        label.innerHTML = title;
         triangle.className = 'triangle';
 
         this.pickerControl.appendChild(this.pickerElement);
@@ -56,13 +70,9 @@ class Colorpicker {
         colorpickerElement.appendChild(label);
 
         this._setPickerControlPosition();
+    }
 
-        this.picker = tuiColorPicker.create({
-            container: this.pickerElement,
-            preset: PICKER_COLOR,
-            color: defaultColor
-        });
-
+    _addEvent(colorpickerElement) {
         this.picker.on('selectColor', value => {
             this.changeColorElement(value.color);
             this.fire('change', value);
