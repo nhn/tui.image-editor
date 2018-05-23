@@ -28,6 +28,19 @@ export default class Filter {
         this.checkedMap = {};
         this.selector = selector;
         this._makeSubMenuElement(subMenuElement);
+        this._makeControlElement();
+    }
+
+    _makeSubMenuElement(subMenuElement) {
+        const filterSubMenu = document.createElement('div');
+        filterSubMenu.className = 'filter';
+        filterSubMenu.innerHTML = filterHtml;
+
+        subMenuElement.appendChild(filterSubMenu);
+    }
+
+    _makeControlElement() {
+        const {selector} = this;
         this._el = {
             removewhiteThresholdRange: new Range(selector('#removewhite-threshold-range'), {
                 min: 0,
@@ -71,14 +84,6 @@ export default class Filter {
         };
         this._el.tintOpacity = this._pickerWithRange(this._el.filterTintColor.pickerControl);
         this._el.blendType = this._pickerWithSelectbox(this._el.filterBlendColor.pickerControl);
-    }
-
-    _makeSubMenuElement(subMenuElement) {
-        const filterSubMenu = document.createElement('div');
-        filterSubMenu.className = 'filter';
-        filterSubMenu.innerHTML = filterHtml;
-
-        subMenuElement.appendChild(filterSubMenu);
     }
 
     _pickerWithRange(pickerControl) {
@@ -200,7 +205,6 @@ export default class Filter {
         snippet.forEach(FILTER_OPTIONS, filterName => {
             const filterCheckElement = this.selector(`#${filterName}`);
             const filterNameCamelCase = this.toCamelCase(filterName);
-
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
 
             filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
