@@ -533,11 +533,11 @@
 .tui-image-editor-container .tui-image-editor-controls .active svg > use.active {
     display: block;
 }
-.tui-image-editor-container .tui-image-editor-controls .hover svg > svg.disable {
+.tui-image-editor-container .tui-image-editor-controls .enabled svg > use.enabled {
     display: block;
 }
 .tui-image-editor-container .tui-image-editor-controls .active svg > use.normal,
-.tui-image-editor-container .tui-image-editor-controls .hover svg > use.normal {
+.tui-image-editor-container .tui-image-editor-controls .enabled svg > use.normal {
     display: none;
 }
 
@@ -627,12 +627,28 @@
     display: block;
 }
 
+/* FLIP BUTTON */
+.tui-image-editor-container #flip-button.resetFlip .button.resetFlip svg > use.normal,
+.tui-image-editor-container #flip-button.flipX .button.flipX svg > use.normal,
+.tui-image-editor-container #flip-button.flipY .button.flipY svg use.normal {
+    display: none;
+}
+.tui-image-editor-container #flip-button.flipX .button.flipX svg > use.active {
+    display: block;
+}
+.tui-image-editor-container #flip-button.flipY .button.flipY svg > use.active {
+    display: block;
+}
+.tui-image-editor-container #flip-button.resetFlip .button.resetFlip svg > use.active {
+    display: block;
+}
+
 /* CROP BUTTON */
 .tui-image-editor-container #crop-button .button.apply {
     margin-right: 24px;
 }
-.tui-image-editor-container #crop-button .button.apply.active {
-    color: #000;
+.tui-image-editor-container #crop-button .button.apply.active label {
+    color: #fff;
 }
 .tui-image-editor-container #crop-button .button.apply.active svg > use.normal {
     display: none;
@@ -647,7 +663,6 @@
 .tui-image-editor-container #shape-button.triangle .button.triangle svg use.normal {
     display: none;
 }
-
 .tui-image-editor-container #shape-button.rect .button.rect svg > use.active {
     display: block;
 }

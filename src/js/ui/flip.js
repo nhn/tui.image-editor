@@ -3,6 +3,7 @@ import flipHtml from '../template/submenu/flip';
 export default class Flip {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
+        this.flipStatus = false;
         this._makeSubMenuElement(subMenuElement);
 
         this._el = {

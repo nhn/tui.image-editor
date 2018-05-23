@@ -44,10 +44,14 @@ export default {
                 });
             },
             undo: () => {
-                this.undo();
+                if (!this.isEmptyUndoStack()) {
+                    this.undo();
+                }
             },
             redo: () => {
-                this.redo();
+                if (!this.isEmptyRedoStack()) {
+                    this.redo();
+                }
             },
             reset: () => {
                 const undoRecursiveCall = () => {
@@ -64,10 +68,15 @@ export default {
                 this.ui.resizeEditor();
             },
             delete: () => {
-                this.removeObject(this.activeObjectId);
+                this.ui._btnElement['delete'].classList.remove('enabled');
+                if (!this.activeObjectId) {
+                    this.removeObject(this.activeObjectId);
+                }
             },
             deleteAll: () => {
                 this.clearObjects();
+                this.ui._btnElement['delete'].classList.remove('enabled');
+                this.ui._btnElement.deleteAll.classList.remove('enabled');
             },
             load: file => {
                 const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
@@ -259,11 +268,14 @@ export default {
     cropAction() {
         return {
             crop: () => {
-                this.crop(this.getCropzoneRect()).then(() => {
-                    this.stopDrawingMode();
-                    this.ui.resizeEditor();
-                    this.ui.changeMenu('crop');
-                });
+                const cropRect = this.getCropzoneRect();
+                if (cropRect) {
+                    this.crop(cropRect).then(() => {
+                        this.stopDrawingMode();
+                        this.ui.resizeEditor();
+                        this.ui.changeMenu('crop');
+                    });
+                }
             },
             cancel: () => {
                 this.stopDrawingMode();
@@ -275,7 +287,23 @@ export default {
     flipAction() {
         return {
             flip: flipType => {
-                this[flipType]();
+                if (!this.ui.flip.flipStatus && flipType === 'resetFlip') {
+                    return;
+                }
+
+                this[flipType]().then(flipStatus => {
+                    const flipClassList = this.ui.flip._el.flipButton.classList;
+                    this.ui.flip.flipStatus = false;
+                    flipClassList.remove('resetFlip');
+                    snippet.forEach(['flipX', 'flipY'], type => {
+                        flipClassList.remove(type);
+                        if (flipStatus[type]) {
+                            flipClassList.add(type);
+                            flipClassList.add('resetFlip');
+                            this.ui.flip.flipStatus = true;
+                        }
+                    });
+                });
             }
         };
     },
@@ -284,14 +312,27 @@ export default {
         this.on({
             undoStackChanged: length => {
                 if (length) {
-                    // $btnUndo.removeClass('disabled');
+                    this.ui._btnElement.undo.classList.add('enabled');
+                    this.ui._btnElement.reset.classList.add('enabled');
                 } else {
-                    // $btnUndo.addClass('disabled');
+                    this.ui._btnElement.undo.classList.remove('enabled');
+                    this.ui._btnElement.reset.classList.remove('enabled');
+                }
+                this.ui.resizeEditor();
+            },
+            redoStackChanged: length => {
+                if (length) {
+                    this.ui._btnElement.redo.classList.add('enabled');
+                } else {
+                    this.ui._btnElement.redo.classList.remove('enabled');
                 }
                 this.ui.resizeEditor();
             },
             objectActivated: obj => {
                 this.activeObjectId = obj.id;
+
+                this.ui._btnElement['delete'].classList.add('enabled');
+                this.ui._btnElement.deleteAll.classList.add('enabled');
 
                 if (obj.type === 'cropzone') {
                     this.ui.crop._el.apply.classList.add('active');

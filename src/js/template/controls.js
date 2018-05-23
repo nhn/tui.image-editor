@@ -6,20 +6,20 @@ export default `
         <ul class="tui-image-editor-menu">
             <li id="btn-undo" class="item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-undo" class="normal"/>
-                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-undo" class="active"/>
+                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-undo" class="enabled"/>
+                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-undo" class="normal"/>
                 </svg>
             </li>
             <li id="btn-redo" class="item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-redo" class="normal"/>
-                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-redo" class="active"/>
+                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-redo" class="enabled"/>
+                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-redo" class="normal"/>
                 </svg>
             </li>
             <li id="btn-reset" class="item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-reset" class="normal"/>
-                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-reset" class="active"/>
+                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-reset" class="enabled"/>
+                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-reset" class="normal"/>
                 </svg>
             </li>
             <li class="item">
@@ -27,14 +27,14 @@ export default `
             </li>
             <li id="btn-delete" class="item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-delete" class="normal"/>
-                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-delete" class="active"/>
+                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-delete" class="enabled"/>
+                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-delete" class="normal"/>
                 </svg>
             </li>
             <li id="btn-delete-all" class="item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-delete-all" class="normal"/>
-                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-delete-all" class="active"/>
+                    <use xlink:href="../dist/icon-a.svg#icon-a-ic-delete-all" class="enabled"/>
+                    <use xlink:href="../dist/icon-b.svg#icon-b-ic-delete-all" class="normal"/>
                 </svg>
             </li>
             <li class="item">

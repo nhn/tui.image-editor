@@ -17,6 +17,7 @@ export default class Shape {
             shapeSelectButton: selector('#shape-button'),
             shapeColorButton: selector('#shape-color-button'),
             strokeRange: new Range(selector('#stroke-range'), {
+                realTimeEvent: true,
                 min: 0,
                 max: 300,
                 value: 3

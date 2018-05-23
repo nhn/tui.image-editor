@@ -31,6 +31,78 @@ export default class Filter {
         this._makeControlElement();
     }
 
+    addEvent({applyFilter}) {
+        const changeRangeValue = filterName => {
+            const apply = this.checkedMap[filterName].checked;
+            const type = filterName;
+
+            applyFilter(apply, type, this._getFilterOption(type));
+        };
+
+        snippet.forEach(FILTER_OPTIONS, filterName => {
+            const filterCheckElement = this.selector(`#${filterName}`);
+            const filterNameCamelCase = this._toCamelCase(filterName);
+            this.checkedMap[filterNameCamelCase] = filterCheckElement;
+
+            filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
+        });
+
+        this._el.removewhiteThresholdRange.on('change', () => changeRangeValue('removeWhite'));
+        this._el.removewhiteDistanceRange.on('change', () => changeRangeValue('removeWhite'));
+        this._el.gradientTransparencyRange.on('change', () => changeRangeValue('gradientTransparency'));
+        this._el.colorfilterThresholeRange.on('change', () => changeRangeValue('colorFilter'));
+        this._el.pixelateRange.on('change', () => changeRangeValue('pixelate'));
+        this._el.noiseRange.on('change', () => changeRangeValue('noise'));
+        this._el.brightnessRange.on('change', () => changeRangeValue('brightness'));
+        this._el.blendType.addEventListener('change', () => changeRangeValue('blend'));
+        this._el.filterBlendColor.on('change', () => changeRangeValue('blend'));
+        this._el.filterMultiplyColor.on('change', () => changeRangeValue('multiply'));
+        this._el.tintOpacity.on('change', () => changeRangeValue('tint'));
+        this._el.filterTintColor.on('change', () => changeRangeValue('tint'));
+        this._el.blendType.addEventListener('click', event => event.stopPropagation());
+    }
+
+    _getFilterOption(type) {
+        const option = {};
+        switch (type) {
+            case 'removeWhite':
+                option.threshold = parseInt(this._el.removewhiteThresholdRange.getValue(), 10);
+                option.distance = parseInt(this._el.removewhiteDistanceRange.getValue(), 10);
+                break;
+            case 'gradientTransparency':
+                option.threshold = parseInt(this._el.gradientTransparencyRange.getValue(), 10);
+                break;
+            case 'colorFilter':
+                option.color = '#FFFFFF';
+                option.threshold = this._el.colorfilterThresholeRange.getValue();
+                break;
+            case 'pixelate':
+                option.blocksize = parseInt(this._el.pixelateRange.getValue(), 10);
+                break;
+            case 'noise':
+                option.noise = parseInt(this._el.noiseRange.getValue(), 10);
+                break;
+            case 'brightness':
+                option.brightness = parseInt(this._el.brightnessRange.getValue(), 10);
+                break;
+            case 'blend':
+                option.color = this._el.filterBlendColor.getColor();
+                option.mode = this._el.blendType.value;
+                break;
+            case 'multiply':
+                option.color = this._el.filterMultiplyColor.getColor();
+                break;
+            case 'tint':
+                option.color = this._el.filterTintColor.getColor();
+                option.opacity = this._el.tintOpacity.getValue();
+                break;
+            default:
+                break;
+        }
+
+        return option;
+    }
+
     _makeSubMenuElement(subMenuElement) {
         const filterSubMenu = document.createElement('div');
         filterSubMenu.className = 'filter';
@@ -52,7 +124,6 @@ export default class Filter {
                 max: 255,
                 value: 10
             }),
-
             gradientTransparencyRange: new Range(selector('#gradient-transparency-range'), {
                 min: 0,
                 max: 255,
@@ -112,7 +183,7 @@ export default class Filter {
         selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
         selectlistWrap.appendChild(selectlist);
 
-        this.getSelectOptionList(selectlist);
+        this._getSelectOptionList(selectlist);
 
         pickerControl.appendChild(selectlistWrap);
         pickerControl.style.height = '130px';
@@ -120,7 +191,7 @@ export default class Filter {
         return selectlist;
     }
 
-    getSelectOptionList(selectlist) {
+    _getSelectOptionList(selectlist) {
         const blendOptions = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
         snippet.forEach(blendOptions, option => {
             const selectOption = document.createElement('option');
@@ -130,100 +201,7 @@ export default class Filter {
         });
     }
 
-    toCamelCase(targetId) {
+    _toCamelCase(targetId) {
         return targetId.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
-    }
-
-    getFilterOption(type) {
-        let option = null;
-        switch (type) {
-            case 'removeWhite':
-                option = {
-                    threshold: parseInt(this._el.removewhiteThresholdRange.getValue(), 10),
-                    distance: parseInt(this._el.removewhiteDistanceRange.getValue(), 10)
-                };
-                break;
-            case 'gradientTransparency':
-                option = {
-                    threshold: parseInt(this._el.gradientTransparencyRange.getValue(), 10)
-                };
-                break;
-            case 'colorFilter':
-                option = {
-                    color: '#FFFFFF',
-                    threshold: this._el.colorfilterThresholeRange.getValue()
-                };
-                break;
-            case 'pixelate':
-                option = {
-                    blocksize: parseInt(this._el.pixelateRange.getValue(), 10)
-                };
-                break;
-            case 'noise':
-                option = {
-                    noise: parseInt(this._el.noiseRange.getValue(), 10)
-                };
-                break;
-            case 'brightness':
-                option = {
-                    brightness: parseInt(this._el.brightnessRange.getValue(), 10)
-                };
-                break;
-            case 'blend':
-                option = {
-                    color: this._el.filterBlendColor.getColor(),
-                    mode: this._el.blendType.value
-                };
-                break;
-            case 'multiply':
-                option = {
-                    color: this._el.filterMultiplyColor.getColor()
-                };
-                break;
-            case 'tint':
-                option = {
-                    color: this._el.filterTintColor.getColor(),
-                    opacity: this._el.tintOpacity.getValue()
-                };
-                break;
-            default:
-                option = null;
-                break;
-        }
-
-        return option;
-    }
-
-    addEvent({applyFilter}) {
-        const changeRangeValue = filterName => {
-            const apply = this.checkedMap[filterName].checked;
-            const type = filterName;
-
-            applyFilter(apply, type, this.getFilterOption(type));
-        };
-
-        snippet.forEach(FILTER_OPTIONS, filterName => {
-            const filterCheckElement = this.selector(`#${filterName}`);
-            const filterNameCamelCase = this.toCamelCase(filterName);
-            this.checkedMap[filterNameCamelCase] = filterCheckElement;
-
-            filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
-        });
-
-        this._el.removewhiteThresholdRange.on('change', () => changeRangeValue('removeWhite'));
-        this._el.removewhiteDistanceRange.on('change', () => changeRangeValue('removeWhite'));
-        this._el.gradientTransparencyRange.on('change', () => changeRangeValue('gradientTransparency'));
-        this._el.colorfilterThresholeRange.on('change', () => changeRangeValue('colorFilter'));
-        this._el.pixelateRange.on('change', () => changeRangeValue('pixelate'));
-        this._el.noiseRange.on('change', () => changeRangeValue('noise'));
-        this._el.brightnessRange.on('change', () => changeRangeValue('brightness'));
-        this._el.blendType.addEventListener('change', () => changeRangeValue('blend'));
-        this._el.filterBlendColor.on('change', () => changeRangeValue('blend'));
-        this._el.filterMultiplyColor.on('change', () => changeRangeValue('multiply'));
-        this._el.tintOpacity.on('change', () => changeRangeValue('tint'));
-        this._el.filterTintColor.on('change', () => changeRangeValue('tint'));
-        this._el.blendType.addEventListener('click', event => {
-            event.stopPropagation();
-        });
     }
 }

@@ -13,7 +13,6 @@ export default class Text {
             underline: false
         };
         this.align = 'left';
-        this.rangeTimeout = null;
         this.controlOption = {
             cornerStyle: 'circle',
             cornerSize: 20,
@@ -76,12 +75,9 @@ export default class Text {
             value = parseInt(value, 10);
             this._el.textRangeValue.value = value;
 
-            clearTimeout(this.rangeTimeout);
-            this.rangeTimeout = setTimeout(() => {
-                changeTextStyle({
-                    fontSize: parseInt(value, 10)
-                });
-            }, 100);
+            changeTextStyle({
+                fontSize: parseInt(value, 10)
+            });
         });
         this._el.textRangeValue.value = this._el.textRange.getValue();
 
