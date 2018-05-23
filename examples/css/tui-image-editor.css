@@ -48,6 +48,7 @@
 }
 .tui-image-editor-container .tui-image-editor-header-buttons button,
 .tui-image-editor-container .tui-image-editor-controls-buttons button {
+    position: relative;
     width: 120px;
     height: 40px;
     outline: none;
@@ -59,12 +60,24 @@
     font-weight: bold;
     cursor: pointer;
 }
-.tui-image-editor-container .tui-image-editor-header-buttons button.download,
-.tui-image-editor-container .tui-image-editor-controls-buttons button.download {
+.tui-image-editor-container .tui-image-editor-download-btn {
     background-color: #fdba3b;
     border-color: #fdba3b;
     color: #fff;
 }
+.tui-image-editor-container .tui-image-editor-load-btn {
+    border: 1px solid blue;
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: inline-block;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+}
+
 .tui-image-editor-main-container {
     position: absolute;
     width: 100%;
@@ -145,27 +158,37 @@
 
 
 /* SUBMENU */
-.tui-image-editor-main-container .tui-image-editor-submenu {
+.tui-image-editor-container  .tui-image-editor-submenu {
     display: none;
     position: absolute;
     bottom: 0;
     width:100%;
     height: 150px;
+    white-space: nowrap;
 }
-.tui-image-editor-main-container .tui-image-editor-partition {
+.tui-image-editor-container.left .tui-image-editor-submenu,
+.tui-image-editor-container.right .tui-image-editor-submenu {
+    white-space: initial;
+}
+.tui-image-editor-container .tui-image-editor-partition {
     width: 1px;
     height: 52px;
     border-left: 1px solid #3c3c3c;
     margin: 0 12px 0 14px;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu .menu li {
+.tui-image-editor-container .tui-image-editor-main.filter .tui-image-editor-partition {
+    height: 108px;
+    margin: 0 29px 0 0px;
+}
+.tui-image-editor-container .tui-image-editor-submenu .menu li {
     display: inline-block;
     vertical-align: top;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu .menu .newline {
+.tui-image-editor-container .tui-image-editor-submenu .menu .newline {
     display: block;
+    margin-top: 14px;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu .menu .button {
+.tui-image-editor-container .tui-image-editor-submenu .menu .button {
     position: relative;
     cursor: pointer;
     display: inline-block;
@@ -173,65 +196,67 @@
     font-size: 11px;
     margin: 0 7px 0 7px;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu .menu label {
+.tui-image-editor-container .tui-image-editor-submenu .menu label {
     display: inline-block;
     cursor: pointer;
     padding-top: 5px;
     color: #777;
     font-size: 11px;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu .menu .button.apply label,
-.tui-image-editor-main-container .tui-image-editor-submenu .menu .button.cancel label {
+.tui-image-editor-container .tui-image-editor-submenu .menu .button.apply label,
+.tui-image-editor-container .tui-image-editor-submenu .menu .button.cancel label {
     vertical-align: 7px;
 }
-.tui-image-editor-main-container .tui-image-editor-submenu > div {
+.tui-image-editor-container .tui-image-editor-submenu > div {
     display: none;
     vertical-align: bottom;
 }
 .tui-image-editor-container .tui-image-editor-submenu-align {
     text-align: left;
-    margin-left: 30px;
+    margin-right: 30px;
+}
+.tui-image-editor-container .tui-image-editor-submenu-align:first-child {
+    margin-right: 0;
 }
 .tui-image-editor-container .tui-image-editor-submenu-align label {
     width: 70px;
 }
 
-.tui-image-editor-main-container .tui-image-editor-main.crop .tui-image-editor-submenu > div.crop {
+.tui-image-editor-container .tui-image-editor-main.crop .tui-image-editor-submenu > div.crop {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.flip .tui-image-editor-submenu > div.flip {
+.tui-image-editor-container .tui-image-editor-main.flip .tui-image-editor-submenu > div.flip {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.rotate .tui-image-editor-submenu > div.rotate {
+.tui-image-editor-container .tui-image-editor-main.rotate .tui-image-editor-submenu > div.rotate {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.shape .tui-image-editor-submenu > div.shape {
+.tui-image-editor-container .tui-image-editor-main.shape .tui-image-editor-submenu > div.shape {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.text .tui-image-editor-submenu > div.text {
+.tui-image-editor-container .tui-image-editor-main.text .tui-image-editor-submenu > div.text {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.mask .tui-image-editor-submenu > div.mask {
+.tui-image-editor-container .tui-image-editor-main.mask .tui-image-editor-submenu > div.mask {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.icon .tui-image-editor-submenu > div.icon {
+.tui-image-editor-container .tui-image-editor-main.icon .tui-image-editor-submenu > div.icon {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.draw .tui-image-editor-submenu > div.draw {
+.tui-image-editor-container .tui-image-editor-main.draw .tui-image-editor-submenu > div.draw {
     display: table-cell;
 }
-.tui-image-editor-main-container .tui-image-editor-main.filter .tui-image-editor-submenu > div.filter {
+.tui-image-editor-container .tui-image-editor-main.filter .tui-image-editor-submenu > div.filter {
     display: table-cell;
 }
 
-/* ??? */
+/* FOR FILTER MENU */
 .tui-image-editor-container .filter-color-item {
     display: inline-block;
 }
 .tui-image-editor-container .filter-color-item .tui-image-editor-checkbox {
     display: block;
 }
-
 
 /* VIRTUAL CHECKBOX */
 .tui-image-editor-container .tui-image-editor-checkbox-wrap {
@@ -240,6 +265,7 @@
 }
 .tui-image-editor-container .tui-image-editor-checkbox-wrap.fixed-width {
     width: 187px;
+    white-space: initial;
 }
 
 
@@ -329,12 +355,11 @@
 .tui-image-editor-container .color-picker-control .tui-image-editor-range {
     width: 108px;
 }
-
 .tui-image-editor-container .color-picker-control .tui-image-editor-virtual-range-pointer {
     background-color: #333;
 }
-
 .tui-image-editor-container .tui-image-editor-range-wrap.newline.short {
+    margin-top: 0;
     margin-left: 17px;
 }
 
@@ -469,6 +494,7 @@
     vertical-align: middle;
     white-space: nowrap;
 }
+
 .tui-image-editor-container .tui-image-editor-menu > .item {
     display: inline-block;
     border-radius: 2px;

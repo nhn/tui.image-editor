@@ -49,7 +49,7 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-    constructor(element, {cssMaxWidth, cssMaxHeight}) {
+    constructor(element, cssMaxWidth, cssMaxHeight) {
         /**
          * Fabric image instance
          * @type {fabric.Image}

@@ -40,9 +40,18 @@ export default class Ui {
         this._editorElement = null;
         this._menuElement = null;
         this._subMenuElement = null;
-        this._btnElement = {};
-
         this._makeUiElement(element);
+
+        this._btnElement = {
+            'undo': this._menuElement.querySelector('#btn-undo'),
+            'redo': this._menuElement.querySelector('#btn-redo'),
+            'reset': this._menuElement.querySelector('#btn-reset'),
+            'delete': this._menuElement.querySelector('#btn-delete'),
+            'deleteAll': this._menuElement.querySelector('#btn-delete-all'),
+            'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+            'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
+        };
+
         this._makeSubMenu();
     }
 
@@ -114,15 +123,36 @@ export default class Ui {
         return this.options.controlStyle;
     }
 
-    menuAddEvent(menuName) {
-        const changeMode = this._actions.main.modeChange;
-        this._btnElement[menuName].addEventListener('click', () => {
-            this.changeMenu(menuName);
-            changeMode(menuName);
+    addHelpActionEvent(helpName) {
+        this._btnElement[helpName].addEventListener('click', () => {
+            this._actions.main[helpName]();
         });
     }
 
-    subMenuAddEvent(menuName) {
+    addDownloadEvent() {
+        snippet.forEach(this._btnElement.download, element => {
+            element.addEventListener('click', () => {
+                this._actions.main.download();
+            });
+        });
+    }
+
+    addLoadEvent() {
+        snippet.forEach(this._btnElement.load, element => {
+            element.addEventListener('change', event => {
+                this._actions.main.load(event.target.files[0]);
+            });
+        });
+    }
+
+    addMenuEvent(menuName) {
+        this._btnElement[menuName].addEventListener('click', () => {
+            this.changeMenu(menuName);
+            this._actions.main.modeChange(menuName);
+        });
+    }
+
+    addSubMenuEvent(menuName) {
         this[menuName].addEvent(this._actions[menuName]);
     }
 
@@ -153,12 +183,22 @@ export default class Ui {
 
     initCanvas() {
         const loadImageInfo = this.getLoadImage();
+
         this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name, () => {
+            this.addHelpActionEvent('undo');
+            this.addHelpActionEvent('redo');
+            this.addHelpActionEvent('reset');
+            this.addHelpActionEvent('delete');
+            this.addHelpActionEvent('deleteAll');
+
+            this.addDownloadEvent();
+            this.addLoadEvent();
+
             snippet.forEach(this.options.menu, menuName => {
-                this.menuAddEvent(menuName);
-                this.subMenuAddEvent(menuName);
-                this._initMenu();
+                this.addMenuEvent(menuName);
+                this.addSubMenuEvent(menuName);
             });
+            this._initMenu();
         });
 
         this.gridVisual = document.createElement('div');
@@ -180,7 +220,6 @@ export default class Ui {
             setTimeout(() => {
                 this._btnElement[this.options.initMenu].dispatchEvent(evt);
                 this.icon.registDefaultIcon();
-                this.draw.setDrawMode();
             }, 700);
         }
     }

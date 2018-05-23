@@ -11,7 +11,8 @@ export default class Rotate {
             rotateRange: new Range(selector('#rotate-range'), {
                 min: -360,
                 max: 360,
-                value: 0
+                value: 0,
+                realTimeEvent: true
             }),
             rotateRangeValue: selector('#ratate-range-value')
         };

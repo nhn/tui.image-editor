@@ -53,10 +53,11 @@ class ImageEditor {
          * @type {Graphics}
          * @private
          */
-        this._graphics = new Graphics(this.ui ? this.ui.getEditorArea() : wrapper, {
-            cssMaxWidth: option.cssMaxWidth,
-            cssMaxHeight: option.cssMaxHeight
-        });
+        this._graphics = new Graphics(
+            this.ui ? this.ui.getEditorArea() : wrapper,
+            option.cssMaxWidth,
+            option.cssMaxHeight
+        );
 
         if (this.ui) {
             this.ui.initCanvas();

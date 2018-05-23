@@ -28,6 +28,7 @@ class Colorpicker {
 
         this._makePickerButtonElement(colorpickerElement, defaultColor);
         this._makePickerLayerElement(colorpickerElement, title);
+        this.color = defaultColor;
         this.picker = tuiColorPicker.create({
             container: this.pickerElement,
             preset: PICKER_COLOR,
@@ -75,7 +76,8 @@ class Colorpicker {
     _addEvent(colorpickerElement) {
         this.picker.on('selectColor', value => {
             this.changeColorElement(value.color);
-            this.fire('change', value);
+            this.color = value.color;
+            this.fire('change', value.color);
         });
 
         colorpickerElement.addEventListener('click', () => {
@@ -105,11 +107,12 @@ class Colorpicker {
     }
 
     setColor(color) {
+        this.color = color;
         this.changeColorElement(color);
     }
 
     getColor() {
-        return this.picker.getColor();
+        return this.color;
     }
 }
 

@@ -27,8 +27,8 @@ export default class Icon {
         this.actions = actions;
         const {registCustomIcon, addIcon, changeColor} = actions;
 
-        this._el.iconColorpicker.on('change', value => {
-            const color = value.color || 'transparent';
+        this._el.iconColorpicker.on('change', color => {
+            color = color || 'transparent';
             changeColor(color);
         });
 

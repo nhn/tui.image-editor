@@ -43,8 +43,8 @@ export default `
         </ul>
 
         <div class="tui-image-editor-controls-buttons">
-            <button>Load</button>
-            <button class="download">Download</button>
+            <button class="tui-image-editor-load-btn">Load</button>
+            <button class="tui-image-editor-download-btn download">Download</button>
         </div>
     </div>
 `;

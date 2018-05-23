@@ -1,4 +1,5 @@
 import snippet from 'tui-code-snippet';
+import util from '../util';
 import Imagetracer from '../plugin/imagetracer';
 
 export default {
@@ -42,6 +43,65 @@ export default {
                     callback();
                 });
             },
+            undo: () => {
+                this.undo();
+            },
+            redo: () => {
+                this.redo();
+            },
+            reset: () => {
+                const undoRecursiveCall = () => {
+                    if (this.isEmptyUndoStack()) {
+                        this.clearUndoStack();
+                        this.clearRedoStack();
+                    } else {
+                        this.undo().then(() => {
+                            undoRecursiveCall();
+                        });
+                    }
+                };
+                undoRecursiveCall();
+                this.ui.resizeEditor();
+            },
+            delete: () => {
+                this.removeObject(this.activeObjectId);
+            },
+            deleteAll: () => {
+                this.clearObjects();
+            },
+            load: file => {
+                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
+
+                if (!supportingFileAPI) {
+                    alert('This browser does not support file-api');
+                }
+
+                this.loadImageFromFile(file).then(() => {
+                    this.clearUndoStack();
+                    this.ui.resizeEditor();
+                });
+            },
+            download: () => {
+                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
+                const dataURL = this.toDataURL();
+                let imageName = this.getImageName();
+                let blob, type, w;
+
+                if (supportingFileAPI) {
+                    blob = util.base64ToBlob(dataURL);
+                    type = blob.type.split('/')[1];
+                    if (imageName.split('.').pop() !== type) {
+                        imageName += `.${type}`;
+                    }
+
+                    // Library: FileSaver - saveAs
+                    saveAs(blob, imageName); // eslint-disable-line
+                } else {
+                    alert('This browser needs a file-server');
+                    w = window.open();
+                    w.document.body.innerHTML = `<img src='${dataURL}'>`;
+                }
+            },
             modeChange: menu => {
                 switch (menu) {
                     case 'text':
@@ -54,6 +114,9 @@ export default {
                         this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
                         this.stopDrawingMode();
                         this._changeActivateMode('SHAPE');
+                        break;
+                    case 'draw':
+                        this.ui.draw.setDrawMode();
                         break;
                     default:
                         this.stopDrawingMode();

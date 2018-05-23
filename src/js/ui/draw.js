@@ -49,8 +49,8 @@ export default class Draw {
             this.setDrawMode();
         });
 
-        this._el.drawColorpicker.on('change', value => {
-            const color = value.color || 'transparent';
+        this._el.drawColorpicker.on('change', color => {
+            color = color || 'transparent';
             this.color = color;
             this.setDrawMode();
         });
@@ -61,5 +61,6 @@ export default class Draw {
             this.width = value;
             this.setDrawMode();
         });
+        this._el.drawRangeValue.value = this._el.drawRange.getValue();
     }
 }

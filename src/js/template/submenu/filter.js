@@ -45,11 +45,11 @@ export default `
                 </div>
                 <div class="newline tui-image-editor-range-wrap short">
                     <label>Threshold</label>
-                    <div id="threshold-range"></div>
+                    <div id="removewhite-threshold-range"></div>
                 </div>
                 <div class="newline tui-image-editor-range-wrap short">
                     <label>Distance</label>
-                    <div id="distance-range"></div>
+                    <div id="removewhite-distance-range"></div>
                 </div>
             </div>
             <div>
@@ -111,7 +111,7 @@ export default `
         </li>
         <li>
             <div class="filter-color-item">
-                <div id="filter-tiny-color" title="Tint"></div>
+                <div id="filter-tint-color" title="Tint"></div>
                 <div class="tui-image-editor-checkbox">
                     <input type="checkbox" id="tint">
                     <label for="tint"></label>

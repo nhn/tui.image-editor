@@ -9,21 +9,18 @@ class Range {
         this.min = options.min || 0;
         this.max = options.max || 100;
         this.absMax = (this.min * -1) + this.max;
+        this.realTimeEvent = options.realTimeEvent || false;
 
         this.addClickEvent();
         this.addDragEvent();
-        this.initValue(options.value);
+        this.setValue(options.value);
     }
 
-    initValue(value) {
+    setValue(value) {
         this.value = value;
         const absValue = value - this.min;
         const leftPosition = (absValue * this.rangeWidth) / this.absMax;
         this.pointer.style.left = `${leftPosition}px`;
-
-        setTimeout(() => {
-            this.fire('change', value);
-        });
     }
 
     getValue() {
@@ -74,9 +71,14 @@ class Range {
                 const ratio = touchPx / this.rangeWidth;
                 const value = (this.absMax * ratio) + this.min;
 
-                this.fire('change', value);
+                this.value = value;
+
+                if (this.realTimeEvent) {
+                    this.fire('change', value);
+                }
             };
             const stopChangingAngle = () => {
+                this.fire('change', this.value);
                 document.removeEventListener('mousemove', changeAngle);
                 document.removeEventListener('mouseup', stopChangingAngle);
             };

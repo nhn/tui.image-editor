@@ -83,8 +83,10 @@ export default class Text {
                 });
             }, 100);
         });
-        this._el.textColorpicker.on('change', value => {
-            const color = value.color || 'transparent';
+        this._el.textRangeValue.value = this._el.textRange.getValue();
+
+        this._el.textColorpicker.on('change', color => {
+            color = color || 'transparent';
             changeTextStyle({
                 'fill': color
             });

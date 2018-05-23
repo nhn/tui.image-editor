@@ -57,17 +57,18 @@ export default class Shape {
 
             setDrawingShape(this.type, this.options);
         });
+        this._el.strokeRangeValue.value = this._el.strokeRange.getValue();
 
-        this._el.fillColorpicker.on('change', value => {
-            const color = value.color || 'transparent';
+        this._el.fillColorpicker.on('change', color => {
+            color = color || 'transparent';
             this.options.fill = color;
             changeShape({
                 fill: color
             });
         });
 
-        this._el.strokeColorpicker.on('change', value => {
-            const color = value.color || 'transparent';
+        this._el.strokeColorpicker.on('change', color => {
+            color = color || 'transparent';
             this.options.stroke = color;
             changeShape({
                 stroke: color
