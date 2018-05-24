@@ -6,6 +6,7 @@ export default class Icon {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
         this._makeSubMenuElement(subMenuElement);
+        this.iconType = null;
         this._iconMap = {};
 
         this._el = {
@@ -13,6 +14,11 @@ export default class Icon {
             addIconButton: selector('#icon-add-button'),
             iconColorpicker: new Colorpicker(selector('#icon-color'))
         };
+    }
+
+    clearIconType() {
+        this._el.addIconButton.classList.remove(this.iconType);
+        this.iconType = null;
     }
 
     _makeSubMenuElement(subMenuElement) {
@@ -51,6 +57,10 @@ export default class Icon {
         this._el.addIconButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const iconType = button.getAttribute('data-icontype');
+            this._el.addIconButton.classList.remove(this.iconType);
+            this._el.addIconButton.classList.add(iconType);
+
+            this.iconType = iconType;
             addIcon(iconType);
         });
     }

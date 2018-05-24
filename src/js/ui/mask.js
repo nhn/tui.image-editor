@@ -11,14 +11,6 @@ export default class Mask {
         };
     }
 
-    _makeSubMenuElement(subMenuElement) {
-        const maskSubMenu = document.createElement('div');
-        maskSubMenu.className = 'mask';
-        maskSubMenu.innerHTML = maskHtml;
-
-        subMenuElement.appendChild(maskSubMenu);
-    }
-
     addEvent({loadImageFromURL, applyFilter}) {
         this._el.maskImageButton.addEventListener('change', event => {
             const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
@@ -33,11 +25,21 @@ export default class Mask {
             if (file) {
                 imgUrl = URL.createObjectURL(file);
                 loadImageFromURL(imgUrl, file);
+                this._el.applyButton.classList.add('active');
             }
         });
 
         this._el.applyButton.addEventListener('click', () => {
             applyFilter();
+            this._el.applyButton.classList.remove('active');
         });
+    }
+
+    _makeSubMenuElement(subMenuElement) {
+        const maskSubMenu = document.createElement('div');
+        maskSubMenu.className = 'mask';
+        maskSubMenu.innerHTML = maskHtml;
+
+        subMenuElement.appendChild(maskSubMenu);
     }
 }

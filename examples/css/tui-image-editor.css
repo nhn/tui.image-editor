@@ -77,14 +77,12 @@
     opacity: 0;
     cursor: pointer;
 }
-
 .tui-image-editor-main-container {
     position: absolute;
     width: 100%;
     top: 0;
     bottom: 64px;
 }
-
 .tui-image-editor-container .tui-image-editor-main {
     position: absolute;
     text-align: center;
@@ -158,7 +156,17 @@
 
 
 /* SUBMENU */
-.tui-image-editor-container  .tui-image-editor-submenu {
+.tui-image-editor-container .tui-image-editor-submenu .button:hover > label {
+    color: #fff;
+}
+.tui-image-editor-container .tui-image-editor-submenu .button:hover svg > use.active {
+    display: none;
+}
+.tui-image-editor-container .tui-image-editor-submenu .button:hover svg > use.active {
+    display: block;
+}
+
+.tui-image-editor-container .tui-image-editor-submenu {
     display: none;
     position: absolute;
     bottom: 0;
@@ -192,7 +200,8 @@
     position: relative;
     cursor: pointer;
     display: inline-block;
-    color: #777;
+    color: #8e8e8e;
+    font-weight: normal;
     font-size: 11px;
     margin: 0 7px 0 7px;
 }
@@ -200,8 +209,10 @@
     display: inline-block;
     cursor: pointer;
     padding-top: 5px;
-    color: #777;
+    font-family: sans-serif;
     font-size: 11px;
+    font-weight: lighter;
+    letter-spacing: 0.7px;
 }
 .tui-image-editor-container .tui-image-editor-submenu .menu .button.apply label,
 .tui-image-editor-container .tui-image-editor-submenu .menu .button.cancel label {
@@ -222,30 +233,15 @@
     width: 70px;
 }
 
-.tui-image-editor-container .tui-image-editor-main.crop .tui-image-editor-submenu > div.crop {
-    display: table-cell;
-}
-.tui-image-editor-container .tui-image-editor-main.flip .tui-image-editor-submenu > div.flip {
-    display: table-cell;
-}
-.tui-image-editor-container .tui-image-editor-main.rotate .tui-image-editor-submenu > div.rotate {
-    display: table-cell;
-}
-.tui-image-editor-container .tui-image-editor-main.shape .tui-image-editor-submenu > div.shape {
-    display: table-cell;
-}
-.tui-image-editor-container .tui-image-editor-main.text .tui-image-editor-submenu > div.text {
-    display: table-cell;
-}
-.tui-image-editor-container .tui-image-editor-main.mask .tui-image-editor-submenu > div.mask {
-    display: table-cell;
-}
-.tui-image-editor-container .tui-image-editor-main.icon .tui-image-editor-submenu > div.icon {
-    display: table-cell;
-}
-.tui-image-editor-container .tui-image-editor-main.draw .tui-image-editor-submenu > div.draw {
-    display: table-cell;
-}
+
+.tui-image-editor-container .tui-image-editor-main.crop .tui-image-editor-submenu > div.crop,
+.tui-image-editor-container .tui-image-editor-main.flip .tui-image-editor-submenu > div.flip,
+.tui-image-editor-container .tui-image-editor-main.rotate .tui-image-editor-submenu > div.rotate,
+.tui-image-editor-container .tui-image-editor-main.shape .tui-image-editor-submenu > div.shape,
+.tui-image-editor-container .tui-image-editor-main.text .tui-image-editor-submenu > div.text,
+.tui-image-editor-container .tui-image-editor-main.mask .tui-image-editor-submenu > div.mask,
+.tui-image-editor-container .tui-image-editor-main.icon .tui-image-editor-submenu > div.icon,
+.tui-image-editor-container .tui-image-editor-main.draw .tui-image-editor-submenu > div.draw,
 .tui-image-editor-container .tui-image-editor-main.filter .tui-image-editor-submenu > div.filter {
     display: table-cell;
 }
@@ -279,6 +275,7 @@
     opacity: 0;
 }
 .tui-image-editor-container .tui-image-editor-checkbox input + label {
+    color: #fff;
     height: 14px;
     position: relative;
 }
@@ -311,9 +308,28 @@
     border: 0;
     outline: 0;
     border-radius: 0;
+    border: 1px solid #cbdbdb;
+    background-color: #fff;
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+    padding: 0 7px 0 7px;
+}
+
+.tui-image-editor-container .tui-image-editor-selectlist-wrap {
+    position: relative;
+}
+
+.tui-image-editor-container .tui-image-editor-selectlist-wrap:after {
+    content: '';
+    position: absolute;
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    right: 5px;
+    bottom: 5px;
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAHlJREFUKBVjYBgFOEOAEVkmPDxc89+/f6eAYjzI4kD2FyYmJrOVK1deh4kzwRggGiQBVJCELAZig8SQNYHEmEEEMrh69eo1HR0dfqCYJUickZGxf9WqVf3IakBsFBthklpaWmVA9mEQhrJhUoTp0NBQCRAmrHL4qgAAuu4cWZOZIGsAAAAASUVORK5CYII=');
+    background-size: cover;
 }
 .tui-image-editor-container .tui-image-editor-selectlist-wrap select::-ms-expand {
     display:none;
@@ -362,11 +378,16 @@
     margin-top: 0;
     margin-left: 17px;
 }
+.tui-image-editor-container .tui-image-editor-range-wrap.newline.short label {
+    color: #8e8e8e;
+    font-weight: normal;
+}
 
 .tui-image-editor-container .tui-image-editor-range-wrap label {
     vertical-align: baseline;
     font-size: 11px;
     margin-right: 7px;
+    color: #fff;
 }
 
 .tui-image-editor-container .tui-image-editor-range-value {
@@ -543,7 +564,7 @@
 
 /* SUB MENU */
 .tui-image-editor-container div.tui-colorpicker-clearfix {
-    width: 156px;
+    width: 159px;
     height: 28px;
     border: 1px solid #d5d5d5;
     border-radius: 2px;
@@ -551,6 +572,7 @@
     margin-top: 6px;
     padding: 4px 7px 4px 7px;
 }
+
 .tui-image-editor-container .tui-colorpicker-palette-hex {
     width: 114px;
     background-color: #f5f5f5;
@@ -581,6 +603,14 @@
     padding: 14px;
     border-radius: 2px;
 }
+
+.tui-image-editor-container .filter-color-item .color-picker-control label,
+.tui-image-editor-container .filter-color-item .color-picker-control label {
+    font-color: #333;
+    font-weight: normal;
+    margin-right: 7px;
+}
+
 .tui-image-editor-container .color-picker-control .tui-colorpicker-palette-button {
     border-radius: 100%;
     margin: 2px;
@@ -605,15 +635,15 @@
     width: 100%;
     height: auto;
 }
-
-
 .tui-image-editor-container .color-picker-value {
     width: 30px;
     height: 30px;
-    /* border: 1px solid #d2d2d2; */
     border: 0px;
     border-radius: 100%;
     margin-bottom: 4px;
+}
+.tui-image-editor-container .color-picker-value + label {
+    color: #fff;
 }
 .tui-image-editor-container .color-picker-value.transparent {
     background-size: cover;
@@ -627,19 +657,66 @@
     display: block;
 }
 
+/* ICON BUTTON */
+#icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] svg > use.active,
+#icon-add-button.icon-heart .button[data-icontype="icon-heart"] svg > use.active,
+#icon-add-button.icon-location .button[data-icontype="icon-location"] svg > use.active,
+#icon-add-button.icon-polygon .button[data-icontype="icon-polygon"] svg > use.active,
+#icon-add-button.icon-star .button[data-icontype="icon-star"] svg > use.active,
+#icon-add-button.icon-arrow-3 .button[data-icontype="icon-arrow-3"] svg > use.active,
+#icon-add-button.icon-arrow-2 .button[data-icontype="icon-arrow-2"] svg > use.active,
+#icon-add-button.icon-arrow .button[data-icontype="icon-arrow"] svg > use.active,
+#icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] svg > use.active {
+    display: block;
+}
+#icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label,
+#icon-add-button.icon-heart .button[data-icontype="icon-heart"] label,
+#icon-add-button.icon-location .button[data-icontype="icon-location"] label,
+#icon-add-button.icon-polygon .button[data-icontype="icon-polygon"] label,
+#icon-add-button.icon-star .button[data-icontype="icon-star"] label,
+#icon-add-button.icon-arrow-3 .button[data-icontype="icon-arrow-3"] label,
+#icon-add-button.icon-arrow-2 .button[data-icontype="icon-arrow-2"] label,
+#icon-add-button.icon-arrow .button[data-icontype="icon-arrow"] label,
+#icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label {
+    color: #fff;
+}
+
+/* DRAW BUTTON */
+#draw-line-select-button.line .button.line svg > use.normal,
+#draw-line-select-button.free .button.free svg > use.normal {
+    display: none;
+}
+#draw-line-select-button.line .button.line svg > use.active,
+#draw-line-select-button.free .button.free svg > use.active {
+    display: block;
+}
+#draw-line-select-button.line .button.line label,
+#draw-line-select-button.free .button.free label {
+    color: #fff;
+}
+
 /* FLIP BUTTON */
 .tui-image-editor-container #flip-button.resetFlip .button.resetFlip svg > use.normal,
 .tui-image-editor-container #flip-button.flipX .button.flipX svg > use.normal,
 .tui-image-editor-container #flip-button.flipY .button.flipY svg use.normal {
     display: none;
 }
-.tui-image-editor-container #flip-button.flipX .button.flipX svg > use.active {
-    display: block;
-}
-.tui-image-editor-container #flip-button.flipY .button.flipY svg > use.active {
-    display: block;
-}
+.tui-image-editor-container #flip-button.flipX .button.flipX svg > use.active,
+.tui-image-editor-container #flip-button.flipY .button.flipY svg > use.active,
 .tui-image-editor-container #flip-button.resetFlip .button.resetFlip svg > use.active {
+    display: block;
+}
+.tui-image-editor-container #flip-button.flipX .button.flipX label,
+.tui-image-editor-container #flip-button.flipY .button.flipY label,
+.tui-image-editor-container #flip-button.resetFlip .button.resetFlip label {
+    color: #fff;
+}
+
+/*  MASK BUTTON */
+.tui-image-editor-container #mask-apply.apply.active .button.apply label {
+    color: #fff;
+}
+.tui-image-editor-container #mask-apply.apply.active .button.apply svg > use.active {
     display: block;
 }
 
@@ -650,59 +727,42 @@
 .tui-image-editor-container #crop-button .button.apply.active label {
     color: #fff;
 }
-.tui-image-editor-container #crop-button .button.apply.active svg > use.normal {
-    display: none;
-}
 .tui-image-editor-container #crop-button .button.apply.active svg > use.active {
     display: block;
 }
-
 /* SHAPE BUTTON */
 .tui-image-editor-container #shape-button.rect .button.rect svg > use.normal,
 .tui-image-editor-container #shape-button.circle .button.circle svg use.normal,
 .tui-image-editor-container #shape-button.triangle .button.triangle svg use.normal {
     display: none;
 }
-.tui-image-editor-container #shape-button.rect .button.rect svg > use.active {
-    display: block;
-}
-.tui-image-editor-container #shape-button.circle .button.circle svg > use.active {
-    display: block;
-}
+.tui-image-editor-container #shape-button.rect .button.rect svg > use.active,
+.tui-image-editor-container #shape-button.circle .button.circle svg > use.active,
 .tui-image-editor-container #shape-button.triangle .button.triangle svg > use.active {
     display: block;
 }
+.tui-image-editor-container #shape-button.rect .button.rect label,
+.tui-image-editor-container #shape-button.circle .button.circle label,
+.tui-image-editor-container #shape-button.triangle .button.triangle label {
+    color: #fff;
+}
 
 /* TEXT BUTTON */
-.tui-image-editor-container #text-effect-button .button svg > use.normal {
-    display: block;
-}
-.tui-image-editor-container  #text-effect-button .button svg > use.active {
-    display: none;
-}
-
 .tui-image-editor-container #text-effect-button .button.active svg > use.active {
     display: block;
 }
-.tui-image-editor-container #text-effect-button .button.normal svg > use.active {
-    display: none;
+.tui-image-editor-container #text-effect-button .button.active label {
+    color: #fff;
 }
-
-.tui-image-editor-container #text-align-button .button svg > use.normal {
-    display: block;
-}
-.tui-image-editor-container #text-effect-button .button svg > use.active {
-    display: none;
-}
-
-.tui-image-editor-container #text-align-button.left .button.left svg > use.active {
-    display: block;
-}
-.tui-image-editor-container #text-align-button.center .button.center svg > use.active {
-    display: block;
-}
+.tui-image-editor-container #text-align-button.left .button.left svg > use.active,
+.tui-image-editor-container #text-align-button.center .button.center svg > use.active,
 .tui-image-editor-container #text-align-button.right .button.right svg > use.active {
     display: block;
+}
+.tui-image-editor-container #text-align-button.left .button.left label,
+.tui-image-editor-container #text-align-button.center .button.center label,
+.tui-image-editor-container #text-align-button.right .button.right label {
+    color: #fff;
 }
 .tui-image-editor-container #mask-image-file ,
 .tui-image-editor-container #icon-image-file {

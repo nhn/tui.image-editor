@@ -102,8 +102,6 @@ export default {
                     if (imageName.split('.').pop() !== type) {
                         imageName += `.${type}`;
                     }
-
-                    // Library: FileSaver - saveAs
                     saveAs(blob, imageName); // eslint-disable-line
                 } else {
                     alert('This browser needs a file-server');
@@ -146,6 +144,7 @@ export default {
                         left: originPointer.x,
                         top: originPointer.y
                     });
+                    this.ui.icon.clearIconType();
                 });
             },
             registDefalutIcons: (type, path) => {
@@ -354,7 +353,17 @@ export default {
             addText: pos => {
                 this.addText('Double Click', {
                     position: pos.originPosition
+                }).then(() => {
+                    this.changeTextStyle(this.activeObjectId, {
+                        fill: this.ui.text.getTextColor(),
+                        fontSize: parseInt(this.ui.text.getFontSize(), 10)
+                    });
                 });
+            },
+            objectScaled: obj => {
+                if (obj.type === 'text') {
+                    this.ui.text.setFontSize(parseInt(obj.fontSize, 10));
+                }
             },
             mousedown: (event, originPointer) => {
                 if (this.ui.submenu && this.hasFilter('colorFilter')) {

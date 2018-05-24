@@ -201,16 +201,16 @@ export default class Ui {
             this._initMenu();
         });
 
-        this.gridVisual = document.createElement('div');
-        this.gridVisual.className = 'tui-image-editor-grid-visual';
+        const gridVisual = document.createElement('div');
+        gridVisual.className = 'tui-image-editor-grid-visual';
         const grid = `<table>
            <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>
            <tr><td></td><td></td><td></td></tr>
            <tr><td class="dot left-bottom"></td><td></td><td class="dot right-bottom"></td></tr>
          </table>`;
-        this.gridVisual.innerHTML = grid;
+        gridVisual.innerHTML = grid;
         this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
-        this._editorContainerElement.appendChild(this.gridVisual);
+        this._editorContainerElement.appendChild(gridVisual);
     }
 
     _initMenu() {
@@ -258,7 +258,6 @@ export default class Ui {
 
         const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
         const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
-
         return {
             width,
             height

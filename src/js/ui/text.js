@@ -13,16 +13,6 @@ export default class Text {
             underline: false
         };
         this.align = 'left';
-        this.controlOption = {
-            cornerStyle: 'circle',
-            cornerSize: 20,
-            borderColor: '#fff',
-            cornerColor: '#fff',
-            cornerStrokeColor: '#000',
-            transparentCorners: false,
-            padding: 20,
-            lineWidth: 2
-        };
         this._el = {
             textEffectButton: selector('#text-effect-button'),
             textAlignButton: selector('#text-align-button'),
@@ -30,10 +20,23 @@ export default class Text {
             textRange: new Range(selector('#text-range'), {
                 min: 10,
                 max: 100,
-                value: 10
+                value: 50
             }),
             textRangeValue: selector('#text-range-value')
         };
+    }
+
+    getTextColor() {
+        return this._el.textColorpicker.getColor();
+    }
+
+    getFontSize() {
+        return this._el.textRange.getValue();
+    }
+
+    setFontSize(value) {
+        this._el.textRange.setValue(value, false);
+        this._el.textRangeValue.value = value;
     }
 
     _makeSubMenuElement(subMenuElement) {

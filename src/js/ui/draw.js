@@ -45,6 +45,9 @@ export default class Draw {
         this._el.lineSelectButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
             const [lineType] = button.className.match(/(free|line)/);
+            this._el.lineSelectButton.classList.remove(this.type);
+            this._el.lineSelectButton.classList.add(lineType);
+
             this.type = lineType;
             this.setDrawMode();
         });

@@ -163,7 +163,7 @@ export default class Filter {
         const range = document.createElement('div');
 
         range.id = 'filter-tint-opacity';
-        range.title = 'Opacity';
+        rangelabel.innerHTML = 'Opacity';
         rangeWrap.appendChild(rangelabel);
         rangeWrap.appendChild(range);
         pickerControl.appendChild(rangeWrap);

@@ -16,12 +16,19 @@ class Range {
         this.setValue(options.value);
     }
 
-    setValue(value) {
-        this.value = value;
+    setValue(value, fire = true) {
         const absValue = value - this.min;
-        const leftPosition = (absValue * this.rangeWidth) / this.absMax;
+        let leftPosition = (absValue * this.rangeWidth) / this.absMax;
+
+        if (this.rangeWidth < leftPosition) {
+            leftPosition = this.rangeWidth;
+        }
+
         this.pointer.style.left = `${leftPosition}px`;
-        this.fire('change', value);
+        this.value = value;
+        if (fire) {
+            this.fire('change', value);
+        }
     }
 
     getValue() {

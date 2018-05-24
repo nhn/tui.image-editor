@@ -5,7 +5,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-rotate-clockwise" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-rotate-clockwise" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-rotate-clockwise" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -16,7 +16,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-rotate-counterclockwise" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-rotate-counterclockwise" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-rotate-counterclockwise" class="active"/>
                     </svg>
                 </div>
                 <label>

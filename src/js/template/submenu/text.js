@@ -5,7 +5,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-bold" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-bold" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-bold" class="active"/>
                     </svg>
                 </div>
                 <label> Bold </label>
@@ -14,7 +14,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-italic" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-italic" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-italic" class="active"/>
                     </svg>
                 </div>
                 <label> Italic </label>
@@ -23,7 +23,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-underline" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-underline" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-underline" class="active"/>
                     </svg>
                 </div>
                 <label> Underline </label>
@@ -37,7 +37,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-left" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-align-left" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-align-left" class="active"/>
                     </svg>
                 </div>
                 <label> left </label>
@@ -46,7 +46,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-center" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-align-center" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-align-center" class="active"/>
                     </svg>
                 </div>
                 <label> center </label>
@@ -55,7 +55,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-right" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-text-align-right" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-b-ic-text-align-right" class="active"/>
                     </svg>
                 </div>
                 <label> right </label>

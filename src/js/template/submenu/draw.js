@@ -1,11 +1,11 @@
 export default `
     <ul class="menu">
-        <li id="draw-line-select-button">
+        <li id="draw-line-select-button" class="line">
             <div class="button free">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-draw-free" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-draw-free" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-draw-free" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -16,7 +16,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-draw-line" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-draw-line" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-draw-line" class="active"/>
                     </svg>
                 </div>
                 <label>

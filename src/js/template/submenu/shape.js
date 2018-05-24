@@ -5,7 +5,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-shape-rectangle" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-shape-rectangle" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-shape-rectangle" class="active"/>
                     </svg>
                 </div>
                 <label> Rectangle </label>
@@ -14,7 +14,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-shape-circle" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-shape-circle" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-shape-circle" class="active"/>
                     </svg>
                 </div>
                 <label> Circle </label>
@@ -23,7 +23,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-shape-triangle" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-shape-triangle" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-shape-triangle" class="active"/>
                     </svg>
                 </div>
                 <label> Triangle </label>

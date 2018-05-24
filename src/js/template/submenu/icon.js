@@ -5,7 +5,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-arrow" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-arrow" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-arrow" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -16,7 +16,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-arrow-2" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-arrow-2" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-arrow-2" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -27,7 +27,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-arrow-3" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-arrow-3" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-arrow-3" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -38,7 +38,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-star" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-star" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-star" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -49,7 +49,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-star-2" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-star-2" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-star-2" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -61,7 +61,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-polygon" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-polygon" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-polygon" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -73,7 +73,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-location" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-location" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-location" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -85,7 +85,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-heart" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-heart" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-heart" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -97,7 +97,7 @@ export default `
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-bubble" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-bubble" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-bubble" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -109,12 +109,12 @@ export default `
             <div class="tui-image-editor-partition"></div>
         </li>
         <li id="icon-add-button">
-            <div class="button clockwise">
+            <div class="button">
                 <div>
                     <input type="file" accept="image/*" id="icon-image-file">
                     <svg class="svg_ic-submenu">
                         <use xlink:href="../dist/icon-a.svg#icon-a-ic-icon-load" class="normal"/>
-                        <use xlink:href="../dist/icon-b.svg#icon-b-ic-icon-load" class="active"/>
+                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-icon-load" class="active"/>
                     </svg>
                 </div>
                 <label>
