@@ -29,8 +29,6 @@ export default class Ui {
         this.options = this._initializeOption(options);
 
         this._actions = actions;
-        this._btnElement = {};
-
         this.submenu = false;
         this.imageSize = {};
 
@@ -42,7 +40,7 @@ export default class Ui {
         this._subMenuElement = null;
         this._makeUiElement(element);
 
-        this._btnElement = {
+        this._el = {
             'undo': this._menuElement.querySelector('#btn-undo'),
             'redo': this._menuElement.querySelector('#btn-redo'),
             'reset': this._menuElement.querySelector('#btn-reset'),
@@ -53,6 +51,50 @@ export default class Ui {
         };
 
         this._makeSubMenu();
+    }
+
+    resizeEditor(imageSize = this.imageSize) {
+        if (imageSize !== this.imageSize) {
+            this.imageSize = imageSize;
+        }
+        const {width, height} = this._getEditorDimension();
+        const editorElementStyle = this._editorElement.style;
+        const {menuBarPosition} = this.options;
+
+        editorElementStyle.height = `${height}px`;
+        editorElementStyle.width = `${width}px`;
+
+        const {top, bottom, left, right} = this._getEditorPosition(menuBarPosition);
+
+        this._editorElementWrap.style.bottom = `${bottom}px`;
+        this._editorElementWrap.style.top = `${top}px`;
+        this._editorElementWrap.style.left = `${left}px`;
+        this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
+
+        const {offsetWidth} = this._editorElementWrap;
+        const {offsetHeight} = this._editorElementWrap;
+
+        const editortop = (offsetHeight > height) ? (offsetHeight - height) / 2 : 0;
+        const editorleft = (offsetWidth - width) / 2;
+
+        this._editorElement.style.top = `${editortop}px`;
+        this._editorElement.style.left = `${editorleft}px`;
+    }
+
+    changeDeleteAllButtonEnabled(enableStatus) {
+        if (enableStatus) {
+            this._el.deleteAll.classList.add('enabled');
+        } else {
+            this._el.deleteAll.classList.remove('enabled');
+        }
+    }
+
+    changeDeleteButtonEnabled(enableStatus) {
+        if (enableStatus) {
+            this._el['delete'].classList.add('enabled');
+        } else {
+            this._el['delete'].classList.remove('enabled');
+        }
     }
 
     _initializeOption(options) {
@@ -75,7 +117,7 @@ export default class Ui {
             this._makeMenuElement(menuName);
 
             // menu btn element
-            this._btnElement[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
+            this._el[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement);
@@ -124,13 +166,13 @@ export default class Ui {
     }
 
     addHelpActionEvent(helpName) {
-        this._btnElement[helpName].addEventListener('click', () => {
+        this._el[helpName].addEventListener('click', () => {
             this._actions.main[helpName]();
         });
     }
 
     addDownloadEvent() {
-        snippet.forEach(this._btnElement.download, element => {
+        snippet.forEach(this._el.download, element => {
             element.addEventListener('click', () => {
                 this._actions.main.download();
             });
@@ -138,7 +180,7 @@ export default class Ui {
     }
 
     addLoadEvent() {
-        snippet.forEach(this._btnElement.load, element => {
+        snippet.forEach(this._el.load, element => {
             element.addEventListener('change', event => {
                 this._actions.main.load(event.target.files[0]);
             });
@@ -146,7 +188,7 @@ export default class Ui {
     }
 
     addMenuEvent(menuName) {
-        this._btnElement[menuName].addEventListener('click', () => {
+        this._el[menuName].addEventListener('click', () => {
             this.changeMenu(menuName);
             this._actions.main.modeChange(menuName);
         });
@@ -166,14 +208,14 @@ export default class Ui {
 
     changeMenu(menuName) {
         if (this.submenu) {
-            this._btnElement[this.submenu].classList.remove('active');
+            this._el[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(this.submenu);
         }
 
         if (this.submenu === menuName) {
             this.submenu = '';
         } else {
-            this._btnElement[menuName].classList.add('active');
+            this._el[menuName].classList.add('active');
             this._mainElement.classList.add(menuName);
             this.submenu = menuName;
         }
@@ -218,38 +260,10 @@ export default class Ui {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
             setTimeout(() => {
-                this._btnElement[this.options.initMenu].dispatchEvent(evt);
+                this._el[this.options.initMenu].dispatchEvent(evt);
                 this.icon.registDefaultIcon();
             }, 700);
         }
-    }
-
-    resizeEditor(imageSize = this.imageSize) {
-        if (imageSize !== this.imageSize) {
-            this.imageSize = imageSize;
-        }
-        const {width, height} = this._getEditorDimension();
-        const editorElementStyle = this._editorElement.style;
-        const {menuBarPosition} = this.options;
-
-        editorElementStyle.height = `${height}px`;
-        editorElementStyle.width = `${width}px`;
-
-        const {top, bottom, left, right} = this._getEditorPosition(menuBarPosition);
-
-        this._editorElementWrap.style.bottom = `${bottom}px`;
-        this._editorElementWrap.style.top = `${top}px`;
-        this._editorElementWrap.style.left = `${left}px`;
-        this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
-
-        const {offsetWidth} = this._editorElementWrap;
-        const {offsetHeight} = this._editorElementWrap;
-
-        const editortop = (offsetHeight > height) ? (offsetHeight - height) / 2 : 0;
-        const editorleft = (offsetWidth - width) / 2;
-
-        this._editorElement.style.top = `${editortop}px`;
-        this._editorElement.style.left = `${editorleft}px`;
     }
 
     _getEditorDimension() {

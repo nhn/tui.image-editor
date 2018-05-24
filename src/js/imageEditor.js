@@ -5,7 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Invoker from './invoker';
 import Ui from './ui';
-import ActionReaction from './ui/actionReaction';
+import action from './ui/action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
@@ -1284,7 +1284,7 @@ class ImageEditor {
     }
 }
 
-ActionReaction.mixin(ImageEditor);
+action.mixin(ImageEditor);
 CustomEvents.mixin(ImageEditor);
 
 module.exports = ImageEditor;

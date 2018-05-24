@@ -45,7 +45,7 @@ export default {
             },
             undo: () => {
                 if (!this.isEmptyUndoStack()) {
-                    this.undo();
+                    this.undo().then();
                 }
             },
             redo: () => {
@@ -68,15 +68,16 @@ export default {
                 this.ui.resizeEditor();
             },
             delete: () => {
-                this.ui._btnElement['delete'].classList.remove('enabled');
-                if (!this.activeObjectId) {
+                this.ui.changeDeleteButtonEnabled(false);
+                if (this.activeObjectId) {
                     this.removeObject(this.activeObjectId);
+                    this.activeObjectId = null;
                 }
             },
             deleteAll: () => {
                 this.clearObjects();
-                this.ui._btnElement['delete'].classList.remove('enabled');
-                this.ui._btnElement.deleteAll.classList.remove('enabled');
+                this.ui.changeDeleteButtonEnabled(false);
+                this.ui.changeDeleteAllButtonEnabled(false);
             },
             load: file => {
                 const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
@@ -285,25 +286,7 @@ export default {
 
     flipAction() {
         return {
-            flip: flipType => {
-                if (!this.ui.flip.flipStatus && flipType === 'resetFlip') {
-                    return;
-                }
-
-                this[flipType]().then(flipStatus => {
-                    const flipClassList = this.ui.flip._el.flipButton.classList;
-                    this.ui.flip.flipStatus = false;
-                    flipClassList.remove('resetFlip');
-                    snippet.forEach(['flipX', 'flipY'], type => {
-                        flipClassList.remove(type);
-                        if (flipStatus[type]) {
-                            flipClassList.add(type);
-                            flipClassList.add('resetFlip');
-                            this.ui.flip.flipStatus = true;
-                        }
-                    });
-                });
-            }
+            flip: flipType => this[flipType]()
         };
     },
 
@@ -311,41 +294,37 @@ export default {
         this.on({
             undoStackChanged: length => {
                 if (length) {
-                    this.ui._btnElement.undo.classList.add('enabled');
-                    this.ui._btnElement.reset.classList.add('enabled');
+                    this.ui._el.undo.classList.add('enabled');
+                    this.ui._el.reset.classList.add('enabled');
                 } else {
-                    this.ui._btnElement.undo.classList.remove('enabled');
-                    this.ui._btnElement.reset.classList.remove('enabled');
+                    this.ui._el.undo.classList.remove('enabled');
+                    this.ui._el.reset.classList.remove('enabled');
                 }
                 this.ui.resizeEditor();
             },
             redoStackChanged: length => {
                 if (length) {
-                    this.ui._btnElement.redo.classList.add('enabled');
+                    this.ui._el.redo.classList.add('enabled');
                 } else {
-                    this.ui._btnElement.redo.classList.remove('enabled');
+                    this.ui._el.redo.classList.remove('enabled');
                 }
                 this.ui.resizeEditor();
             },
             objectActivated: obj => {
                 this.activeObjectId = obj.id;
 
-                this.ui._btnElement['delete'].classList.add('enabled');
-                this.ui._btnElement.deleteAll.classList.add('enabled');
+                this.ui._el['delete'].classList.add('enabled');
+                this.ui._el.deleteAll.classList.add('enabled');
 
                 if (obj.type === 'cropzone') {
                     this.ui.crop._el.apply.classList.add('active');
-                } else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
+                } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
                     this._changeActivateMode('SHAPE');
-                    const strokeColor = obj.stroke;
-                    const {strokeWidth} = obj;
-                    const fillColor = obj.fill;
-                    this.ui.shape._el.strokeRange.setValue(strokeWidth);
-                    this.ui.shape._el.strokeColorpicker.setColor(strokeColor);
-                    this.ui.shape._el.fillColorpicker.setColor(fillColor);
-                    this.ui.shape.options.stroke = strokeColor;
-                    this.ui.shape.options.fill = fillColor;
-                    this.ui.shape.options.strokeWidth = strokeWidth;
+                    this.ui.shape.setShapeStatus({
+                        strokeColor: obj.stroke,
+                        strokeWidth: obj.strokeWidth,
+                        fillColor: obj.fill
+                    });
                 } else if (obj.type === 'text') {
                     this._changeActivateMode('TEXT');
                 }

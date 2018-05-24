@@ -28,6 +28,15 @@ export default class Shape {
         };
     }
 
+    setShapeStatus({strokeWidth, strokeColor, fillColor}) {
+        this._el.strokeRange.setValue(strokeWidth);
+        this._el.strokeColorpicker.setColor(strokeColor);
+        this._el.fillColorpicker.setColor(fillColor);
+        this.options.stroke = strokeColor;
+        this.options.fill = fillColor;
+        this.options.strokeWidth = strokeWidth;
+    }
+
     _makeSubMenuElement(subMenuElement) {
         const shapeSubMenu = document.createElement('div');
         shapeSubMenu.className = 'shape';
