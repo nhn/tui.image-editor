@@ -265,9 +265,9 @@
     white-space: normal;
 }
 
-
 .tui-image-editor-container .tui-image-editor-checkbox {
     display: inline-block;
+    margin: 1px 0 1px 0;
 }
 
 .tui-image-editor-container .tui-image-editor-checkbox input {
@@ -454,6 +454,7 @@
     width: 24px;
     height: 1px;
 }
+
 .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition,
 .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition {
     display: block;
@@ -466,6 +467,7 @@
     height:10px;
     border-bottom: 1px solid #3c3c3c;
     width: 100%;
+    margin: 0;
 }
 .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-submenu-align,
 .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-submenu-align {
@@ -498,6 +500,13 @@
     width: 64px;
     height: 100%;
     display: table;
+}
+
+
+/* POSITION TOP & BOTTOM */
+.tui-image-editor-container.top .tui-image-editor-submenu .tui-image-editor-partition.only-left-right,
+.tui-image-editor-container.bottom .tui-image-editor-submenu .tui-image-editor-partition.only-left-right {
+    display: none;
 }
 
 /* POSITION BOTTOM */

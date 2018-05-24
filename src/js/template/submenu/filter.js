@@ -65,6 +65,9 @@ export default `
                 </div>
             </div>
         </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
         <li class="tui-image-editor-submenu-align">
             <div>
                 <div class="tui-image-editor-checkbox">

@@ -12,6 +12,9 @@ export default `
                 <label> Load Mask Image </label>
             </div>
         </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
         <li id="mask-apply" class="newline apply">
             <div class="button apply">
                 <svg class="svg_ic-menu">
