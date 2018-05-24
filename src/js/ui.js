@@ -258,6 +258,7 @@ export default class Ui {
 
         const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
         const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
+
         return {
             width,
             height

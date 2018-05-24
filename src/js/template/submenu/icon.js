@@ -105,8 +105,8 @@ export default `
                 </label>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li id="icon-add-button">
             <div class="button">
@@ -122,8 +122,8 @@ export default `
                 </label>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li>
             <div id="icon-color" title="Color"></div>

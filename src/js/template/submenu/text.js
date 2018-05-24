@@ -29,8 +29,8 @@ export default `
                 <label> Underline </label>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li id="text-align-button">
             <div class="button left">
@@ -61,8 +61,8 @@ export default `
                 <label> right </label>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li>
             <div id="text-color" title="Color"></div>

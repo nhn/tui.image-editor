@@ -29,8 +29,8 @@ export default `
                 <label> Triangle </label>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li id="shape-color-button">
             <div id="color-fill" title="fill"></div>

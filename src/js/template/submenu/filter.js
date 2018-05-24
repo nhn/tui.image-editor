@@ -32,8 +32,8 @@ export default `
                 </div>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li class="tui-image-editor-submenu-align">
             <div>
@@ -84,6 +84,7 @@ export default `
                     <div id="noise-range"></div>
                 </div>
             </div>
+
             <div>
                 <div class="tui-image-editor-checkbox">
                     <input type="checkbox" id="pixelate">
@@ -106,8 +107,8 @@ export default `
                 </div>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li>
             <div class="filter-color-item">

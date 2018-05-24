@@ -24,8 +24,8 @@ export default `
                 </label>
             </div>
         </li>
-        <li>
-            <div class="tui-image-editor-partition"></div>
+        <li class="tui-image-editor-partition">
+            <div></div>
         </li>
         <li>
             <div id="draw-color" title="Color"></div>

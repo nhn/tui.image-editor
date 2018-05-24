@@ -176,15 +176,15 @@
 }
 .tui-image-editor-container.left .tui-image-editor-submenu,
 .tui-image-editor-container.right .tui-image-editor-submenu {
-    white-space: initial;
+    white-space: normal;
 }
-.tui-image-editor-container .tui-image-editor-partition {
+.tui-image-editor-container .tui-image-editor-partition > div {
     width: 1px;
     height: 52px;
     border-left: 1px solid #3c3c3c;
     margin: 0 12px 0 14px;
 }
-.tui-image-editor-container .tui-image-editor-main.filter .tui-image-editor-partition {
+.tui-image-editor-container .tui-image-editor-main.filter .tui-image-editor-partition > div {
     height: 108px;
     margin: 0 29px 0 0px;
 }
@@ -231,6 +231,7 @@
 }
 .tui-image-editor-container .tui-image-editor-submenu-align label {
     width: 70px;
+    white-space: nowrap;
 }
 
 
@@ -261,7 +262,7 @@
 }
 .tui-image-editor-container .tui-image-editor-checkbox-wrap.fixed-width {
     width: 187px;
-    white-space: initial;
+    white-space: normal;
 }
 
 
@@ -438,6 +439,7 @@
     display: table;
 }
 
+
 /* POSITION LEFT & RIGHT */
 .tui-image-editor-container.left .tui-image-editor-controls li,
 .tui-image-editor-container.right .tui-image-editor-controls li {
@@ -452,6 +454,33 @@
     width: 24px;
     height: 1px;
 }
+.tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition,
+.tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition {
+    display: block;
+    width: 84%;
+    margin: auto;
+}
+.tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition  > div,
+.tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition  > div {
+    border-left: 0;
+    height:10px;
+    border-bottom: 1px solid #3c3c3c;
+    width: 100%;
+}
+.tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-submenu-align,
+.tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-submenu-align {
+    margin-right: 0;
+}
+.tui-image-editor-container.left .tui-image-editor-checkbox-wrap.fixed-width,
+.tui-image-editor-container.right .tui-image-editor-checkbox-wrap.fixed-width {
+    width: 198px;
+    white-space: normal;
+}
+.tui-image-editor-container.left .tui-image-editor-submenu .menu li,
+.tui-image-editor-container.right .tui-image-editor-submenu .menu li {
+    margin-top: 15px;
+}
+
 
 /* POSITION RIGIHT */
 .tui-image-editor-container.right .tui-image-editor-submenu {
@@ -608,7 +637,7 @@
 .tui-image-editor-container .filter-color-item .color-picker-control label {
     font-color: #333;
     font-weight: normal;
-    margin-right: 7px;
+    margin-right: 7pxleft
 }
 
 .tui-image-editor-container .color-picker-control .tui-colorpicker-palette-button {
@@ -640,6 +669,7 @@
     height: 30px;
     border: 0px;
     border-radius: 100%;
+    margin: auto;
     margin-bottom: 4px;
 }
 .tui-image-editor-container .color-picker-value + label {
