@@ -6,6 +6,7 @@
 const pkg = require('./package.json');
 const webpack = require('webpack');
 const SafeUmdPlugin = require('safe-umd-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const isProduction = process.argv.indexOf('-p') > -1;
 
@@ -56,11 +57,17 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
                 loader: 'babel'
+            },
+            {
+                test: /\.styl$/,
+                loader: ExtractTextPlugin.extract('css-loader?sourceMap!stylus-loader?paths=src/css/')
             }
+
         ]
     },
     plugins: [
         new webpack.BannerPlugin(BANNER),
+        new ExtractTextPlugin('tui-image-editor.css'),
         new SafeUmdPlugin()
     ],
     devServer: {
