@@ -23,6 +23,14 @@ export default class Crop {
         });
     }
 
+    changeApplyButtonStatus(enableStatus) {
+        if (enableStatus) {
+            this._el.apply.classList.add('active');
+        } else {
+            this._el.apply.classList.remove('active');
+        }
+    }
+
     _makeSubMenuElement(subMenuElement) {
         const cropSubMenu = document.createElement('div');
         cropSubMenu.className = 'crop';

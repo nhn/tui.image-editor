@@ -30,9 +30,11 @@ export default `
         <li>
             <div id="draw-color" title="Color"></div>
         </li>
-
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
         <li class="newline tui-image-editor-range-wrap">
-            <label>Range</label>
+            <label class="range">Range</label>
             <div id="draw-range"></div>
             <input id="draw-range-value" class="tui-image-editor-range-value" value="0" />
         </li>

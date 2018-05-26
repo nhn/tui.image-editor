@@ -24,6 +24,9 @@ export default `
                 </label>
             </div>
         </li>
+        <li class="tui-image-editor-partition">
+            <div></div>
+        </li>
         <li>
             <div class="button resetFlip">
                 <div>

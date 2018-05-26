@@ -71,14 +71,37 @@ export default class Ui {
         this._editorElementWrap.style.left = `${left}px`;
         this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
 
-        const {offsetWidth} = this._editorElementWrap;
-        const {offsetHeight} = this._editorElementWrap;
+        const {offsetWidth, offsetHeight} = this._editorElementWrap;
 
         const editortop = (offsetHeight > height) ? (offsetHeight - height) / 2 : 0;
         const editorleft = (offsetWidth - width) / 2;
 
         this._editorElement.style.top = `${editortop}px`;
         this._editorElement.style.left = `${editorleft}px`;
+    }
+
+    changeUndoButtonStatus(enableStatus) {
+        if (enableStatus) {
+            this._el.undo.classList.add('enabled');
+        } else {
+            this._el.undo.classList.remove('enabled');
+        }
+    }
+
+    changeRedoButtonStatus(enableStatus) {
+        if (enableStatus) {
+            this._el.redo.classList.add('enabled');
+        } else {
+            this._el.redo.classList.remove('enabled');
+        }
+    }
+
+    changeResetButtonStatus(enableStatus) {
+        if (enableStatus) {
+            this._el.reset.classList.add('enabled');
+        } else {
+            this._el.reset.classList.remove('enabled');
+        }
     }
 
     changeDeleteAllButtonEnabled(enableStatus) {

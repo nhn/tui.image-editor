@@ -294,30 +294,30 @@ export default {
         this.on({
             undoStackChanged: length => {
                 if (length) {
-                    this.ui._el.undo.classList.add('enabled');
-                    this.ui._el.reset.classList.add('enabled');
+                    this.ui.changeUndoButtonStatus(true);
+                    this.ui.changeResetButtonStatus(true);
                 } else {
-                    this.ui._el.undo.classList.remove('enabled');
-                    this.ui._el.reset.classList.remove('enabled');
+                    this.ui.changeUndoButtonStatus(false);
+                    this.ui.changeResetButtonStatus(false);
                 }
                 this.ui.resizeEditor();
             },
             redoStackChanged: length => {
                 if (length) {
-                    this.ui._el.redo.classList.add('enabled');
+                    this.ui.changeRedoButtonStatus(true);
                 } else {
-                    this.ui._el.redo.classList.remove('enabled');
+                    this.ui.changeRedoButtonStatus(false);
                 }
                 this.ui.resizeEditor();
             },
             objectActivated: obj => {
                 this.activeObjectId = obj.id;
 
-                this.ui._el['delete'].classList.add('enabled');
-                this.ui._el.deleteAll.classList.add('enabled');
+                this.ui.changeDeleteButtonEnabled(true);
+                this.ui.changeDeleteAllButtonEnabled(true);
 
                 if (obj.type === 'cropzone') {
-                    this.ui.crop._el.apply.classList.add('active');
+                    this.ui.crop.changeApplyButtonStatus(true);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
                     this._changeActivateMode('SHAPE');
                     this.ui.shape.setShapeStatus({

@@ -36,8 +36,11 @@ export default `
             <div id="color-fill" title="fill"></div>
             <div id="color-stroke" title="stroke"></div>
         </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
         <li class="newline tui-image-editor-range-wrap">
-            <label>Stroke</label>
+            <label class="range">Stroke</label>
             <div id="stroke-range"></div>
             <input id="stroke-range-value" class="tui-image-editor-range-value" value="0" />
         </li>

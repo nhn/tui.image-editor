@@ -230,7 +230,7 @@
     margin-right: 0;
 }
 .tui-image-editor-container .tui-image-editor-submenu-align label {
-    width: 70px;
+    width: 55px;
     white-space: nowrap;
 }
 
@@ -399,8 +399,12 @@
     box-shadow: none;
     border: 1px solid #d5d5d5;
     text-align: center;
-    background-color: #f5f5f5;
+    background-color: #1c1c1c;
+    color: #fff;
+    font-weight: lighter;
     vertical-align: baseline;
+    font-family: sans-serif;
+    padding-top: 2px;
 }
 .tui-image-editor-container .tui-image-editor-controls {
     position: absolute;
@@ -458,7 +462,7 @@
 .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition,
 .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition {
     display: block;
-    width: 84%;
+    width: 75%;
     margin: auto;
 }
 .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition  > div,
@@ -475,12 +479,27 @@
 }
 .tui-image-editor-container.left .tui-image-editor-checkbox-wrap.fixed-width,
 .tui-image-editor-container.right .tui-image-editor-checkbox-wrap.fixed-width {
-    width: 198px;
+    width: 182px;
     white-space: normal;
 }
 .tui-image-editor-container.left .tui-image-editor-submenu .menu li,
 .tui-image-editor-container.right .tui-image-editor-submenu .menu li {
     margin-top: 15px;
+}
+.tui-image-editor-container.left .tui-image-editor-range-wrap.newline label.range,
+.tui-image-editor-container.right .tui-image-editor-range-wrap.newline label.range {
+    display: block;
+    text-align: left;
+    width: 75%;
+    margin: auto;
+}
+.tui-image-editor-container.left .tui-image-editor-range,
+.tui-image-editor-container.right .tui-image-editor-range {
+    width: 136px;
+}
+.tui-image-editor-container.left #icon-add-button .button,
+.tui-image-editor-container.right #icon-add-button .button {
+    width: 45px;
 }
 
 

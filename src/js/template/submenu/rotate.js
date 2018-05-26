@@ -24,8 +24,11 @@ export default `
                 </label>
             </div>
         </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
         <li class="newline tui-image-editor-range-wrap">
-            <label>Range</label>
+            <label class="rangeo">Range</label>
             <div id="rotate-range"></div>
             <input id="ratate-range-value" class="tui-image-editor-range-value" value="0" />
         </li>
