@@ -1,7 +1,5 @@
-ie-prefix = 'tui-image-editor-';
-/* +prefix-classes() */
-
-.{ie-prefix}container
+prefix = 'tui-image-editor'
+.{prefix}-container
   marign 0
   padding 0
   box-sizing border-box
@@ -17,12 +15,123 @@ ie-prefix = 'tui-image-editor-';
     margin: 0;
     padding: 0;
 
-  /* BUTTON AND LOGO */
-  .{ie-prefix}header
+/* BUTTON AND LOGO */
+.{prefix}-container
+  .{prefix}-header
     min-width: 533px;
     position: absolute;
     background-color: #151515;
     top: 0;
     width: 100%;
+  .{prefix}-header-buttons, .{prefix}-controls-buttons
+    float: right;
+    margin: 8px;
+  .{prefix}-header-logo, .{prefix}-controls-logo
+    float: left;
+    width: 30%;
+    padding: 17px;
+  .{prefix}-controls-logo, .{prefix}-controls-buttons 
+    width: 270px;
+    height: 100%;
+    display: none;
+  .{prefix}-header-buttons, .{prefix}-controls-buttons
+    button
+      position: relative;
+      width: 120px;
+      height: 40px;
+      outline: none;
+      border-radius: 20px;
+      border: 1px solid #ddd;
+      padding-top: 5px;
+      font-family: NotoSans, sans-serif;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+  .{prefix}-download-btn
+    background-color: #fdba3b;
+    border-color: #fdba3b;
+    color: #fff;
+  .{prefix}-load-btn
+    border: 1px solid blue;
+    position: absolute;
+    left: 0;
+    right: 0;
+    display: inline-block;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    opacity: 0;
+    cursor: pointer;
+  .{prefix}-main-container
+    position: absolute;
+    width: 100%;
+    top: 0;
+    bottom: 64px;
+  .{prefix}-main
+    position: absolute;
+    text-align: center;
+    top: 64px;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  .{prefix}-wrap
+    position: absolute;
+    bottom: 150px;
+    width: 100%;
+    overflow: auto;
+  .{prefix}
+    position: absolute;
+    display: inline-block;
+    transition: all .7s ease;
 
+/* GRID VISUAL OF FLIP AND ROTATE MENU  */
+.{prefix}-container
+  .{prefix}-grid-visual
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    table
+      width: 100%;
+      height: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
+      td
+        border: 1px solid #fff;
+        box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
+      td.dot.left-top:before
+        top: -4px;
+        left: -4px;
+      td.dot.right-top:before
+        top: -4px;
+        right: -4px;
+      td.dot.left-bottom:before
+        bottom: -4px;
+        left: -4px;
+      td.dot.right-bottom:before
+        bottom: -4px;
+        right: -4px;
+  .{prefix}-main.flip, .{prefix}-main.rotate
+    .{prefix}-grid-visual
+      display: block;
 
+/* SUBMENU */
+.{prefix}-container
+  .{prefix}-submenu
+    display: none;
+    position: absolute;
+    bottom: 0;
+    width:100%;
+    height: 150px;
+    white-space: nowrap;
+    .button:hover
+      > label
+        color: #fff;
+      svg > use.active
+        display: block;
+    
+          
+        
+
+      
+                                                                

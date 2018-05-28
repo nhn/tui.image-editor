@@ -157,16 +157,6 @@
 
 
 /* SUBMENU */
-.tui-image-editor-container .tui-image-editor-submenu .button:hover > label {
-    color: #fff;
-}
-.tui-image-editor-container .tui-image-editor-submenu .button:hover svg > use.active {
-    display: none;
-}
-.tui-image-editor-container .tui-image-editor-submenu .button:hover svg > use.active {
-    display: block;
-}
-
 .tui-image-editor-container .tui-image-editor-submenu {
     display: none;
     position: absolute;
@@ -175,10 +165,13 @@
     height: 150px;
     white-space: nowrap;
 }
-.tui-image-editor-container.left .tui-image-editor-submenu,
-.tui-image-editor-container.right .tui-image-editor-submenu {
-    white-space: normal;
+.tui-image-editor-container .tui-image-editor-submenu .button:hover > label {
+    color: #fff;
 }
+.tui-image-editor-container .tui-image-editor-submenu .button:hover svg > use.active {
+    display: block;
+}
+
 .tui-image-editor-container .tui-image-editor-partition > div {
     width: 1px;
     height: 52px;
@@ -446,6 +439,10 @@
 
 
 /* POSITION LEFT & RIGHT */
+.tui-image-editor-container.left .tui-image-editor-submenu,
+.tui-image-editor-container.right .tui-image-editor-submenu {
+    white-space: normal;
+}
 .tui-image-editor-container.left .tui-image-editor-controls li,
 .tui-image-editor-container.right .tui-image-editor-controls li {
     display: block;

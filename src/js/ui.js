@@ -31,8 +31,8 @@ const SUB_UI_COMPONENT = {
  * @param {Object} [options] - Ui setting options
  *   @param {number} option.loadImage - Init default load image
  *   @param {number} option.initMenu - Init start menu
- *   @param {Boolean} [option.menuBarPosition=bottom] - Let 
- *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let 
+ *   @param {Boolean} [option.menuBarPosition=bottom] - Let
+ *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
  * @param {Objecdt} actions - ui action instance
  */
 export default class Ui {
@@ -164,8 +164,8 @@ export default class Ui {
      * @param {Object} [options] - Ui setting options
      *   @param {number} option.loadImage - Init default load image
      *   @param {number} option.initMenu - Init start menu
-     *   @param {Boolean} [option.menuBarPosition=bottom] - Let 
-     *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let 
+     *   @param {Boolean} [option.menuBarPosition=bottom] - Let
+     *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
      * @returns {Object} initialize option
      * @private
      */
@@ -289,7 +289,7 @@ export default class Ui {
      */
     _addMenuEvent(menuName) {
         this._el[menuName].addEventListener('click', () => {
-            this._changeMenu(menuName);
+            this.changeMenu(menuName);
             this._actions.main.modeChange(menuName);
         });
     }
@@ -358,9 +358,8 @@ export default class Ui {
     /**
      * change menu
      * @param {string} menuName - menu name
-     * @privat
      */
-    _changeMenu(menuName) {
+    changeMenu(menuName) {
         if (this.submenu) {
             this._el[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(this.submenu);
@@ -412,7 +411,7 @@ export default class Ui {
 
     /**
      * Get editor position
-     * @param {string} menuBarPosition - top or right or bottom or left 
+     * @param {string} menuBarPosition - top or right or bottom or left
      * @returns {Object} - positions (top, right, bottom, left)
      * @private
      */
