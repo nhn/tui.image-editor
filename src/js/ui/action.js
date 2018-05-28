@@ -32,10 +32,15 @@ export default {
     _mainAction() {
         return {
             initLoadImage: (imagePath, imageName, callback) => {
+                // console.log('kk', this);
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
+                    console.log('jj', sizeValue);
                     this.ui.resizeEditor(sizeValue);
+                    console.log('kk');
                     this.clearUndoStack();
+                    console.log('ll');
                     callback();
+                    console.log('mm');
                 });
             },
             undo: () => {

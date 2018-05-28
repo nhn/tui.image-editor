@@ -143,6 +143,10 @@ module.exports = function(config) {
                         test: /\.js$/,
                         exclude: /(node_modules|bower_components)/,
                         loader: 'babel'
+                    },
+                    {
+                        test: /\.styl$/,
+                        loader: 'css-loader!stylus-loader?paths=src/css/'
                     }
                 ]
             }
