@@ -1,21 +1,38 @@
 import snippet from 'tui-code-snippet';
 
+/**
+ * Range control class
+ * @class
+ */
 class Range {
     constructor(rangeElement, options = {}) {
         this.value = options.value || 0;
         this.rangeElement = rangeElement;
-        this.drawRangeElement();
+        this._drawRangeElement();
         this.rangeWidth = parseInt(window.getComputedStyle(rangeElement, null).width, 10) - 12;
         this.min = options.min || 0;
         this.max = options.max || 100;
         this.absMax = (this.min * -1) + this.max;
         this.realTimeEvent = options.realTimeEvent || false;
 
-        this.addClickEvent();
-        this.addDragEvent();
+        this._addClickEvent();
+        this._addDragEvent();
         this.setValue(options.value);
     }
 
+    /**
+     * Get range value
+     * @returns {Number} range value
+     */
+    getValue() {
+        return this.value;
+    }
+
+    /**
+     * Set range value
+     * @param {Number} value range value
+     * @param {Boolean} fire whether fire custom event or not
+     */
     setValue(value, fire = true) {
         const absValue = value - this.min;
         let leftPosition = (absValue * this.rangeWidth) / this.absMax;
@@ -31,11 +48,11 @@ class Range {
         }
     }
 
-    getValue() {
-        return this.value;
-    }
-
-    drawRangeElement() {
+    /**
+     * Make range element
+     * @private
+     */
+    _drawRangeElement() {
         this.rangeElement.classList.add('tui-image-editor-range');
 
         this.bar = document.createElement('div');
@@ -48,7 +65,11 @@ class Range {
         this.rangeElement.appendChild(this.bar);
     }
 
-    addClickEvent() {
+    /**
+     * Add Range click event
+     * @private
+     */
+    _addClickEvent() {
         this.rangeElement.addEventListener('click', event => {
             event.stopPropagation();
             if (event.target.className !== 'tui-image-editor-range') {
@@ -64,7 +85,11 @@ class Range {
         });
     }
 
-    addDragEvent() {
+    /**
+     * Add Range drag event
+     * @private
+     */
+    _addDragEvent() {
         this.pointer.addEventListener('mousedown', event => {
             const firstPosition = event.screenX;
             const left = parseInt(this.pointer.style.left, 10) || 0;

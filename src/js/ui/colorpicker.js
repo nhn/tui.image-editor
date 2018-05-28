@@ -1,4 +1,3 @@
-
 import snippet from 'tui-code-snippet';
 import tuiColorPicker from 'tui-color-picker';
 const PICKER_COLOR = [
@@ -20,15 +19,19 @@ const PICKER_COLOR = [
     '#ff5583'
 ];
 
+/**
+ * Colorpicker control class
+ * @class
+ */
 class Colorpicker {
     constructor(colorpickerElement, defaultColor = '#7e7e7e') {
         const title = colorpickerElement.getAttribute('title');
 
-        this.show = false;
+        this._show = false;
 
         this._makePickerButtonElement(colorpickerElement, defaultColor);
         this._makePickerLayerElement(colorpickerElement, title);
-        this.color = defaultColor;
+        this._color = defaultColor;
         this.picker = tuiColorPicker.create({
             container: this.pickerElement,
             preset: PICKER_COLOR,
@@ -38,6 +41,44 @@ class Colorpicker {
         this._addEvent(colorpickerElement);
     }
 
+    /**
+     * Get color
+     * @returns {Number} color value
+     */
+    getColor() {
+        return this._color;
+    }
+
+    /**
+     * Set color
+     * @param {string} color color value
+     */
+    setColor(color) {
+        this._color = color;
+        this._changeColorElement(color);
+    }
+
+    /**
+     * Change color element
+     * @param {string} color color value
+     * #private
+     */
+    _changeColorElement(color) {
+        if (color) {
+            this.colorElement.classList.remove('transparent');
+            this.colorElement.style.backgroundColor = color;
+        } else {
+            this.colorElement.style.backgroundColor = '#fff';
+            this.colorElement.classList.add('transparent');
+        }
+    }
+
+    /**
+     * Make picker button element
+     * @param {HTMLElement} colorpickerElement color picker element
+     * @param {string} defaultColor color value
+     * @private
+     */
     _makePickerButtonElement(colorpickerElement, defaultColor) {
         colorpickerElement.classList.add('button');
 
@@ -50,6 +91,12 @@ class Colorpicker {
         }
     }
 
+    /**
+     * Make picker layer element
+     * @param {HTMLElement} colorpickerElement color picker element
+     * @param {string} title picker title
+     * @private
+     */
     _makePickerLayerElement(colorpickerElement, title) {
         const label = document.createElement('label');
         const triangle = document.createElement('div');
@@ -73,20 +120,29 @@ class Colorpicker {
         this._setPickerControlPosition();
     }
 
+    /**
+     * Add event
+     * @param {HTMLElement} colorpickerElement color picker element
+     * @private
+     */
     _addEvent(colorpickerElement) {
         this.picker.on('selectColor', value => {
-            this.changeColorElement(value.color);
-            this.color = value.color;
+            this._changeColorElement(value.color);
+            this._color = value.color;
             this.fire('change', value.color);
         });
 
         colorpickerElement.addEventListener('click', () => {
-            this.show = !this.show;
-            const display = this.show ? 'block' : 'none';
+            this._show = !this._show;
+            const display = this._show ? 'block' : 'none';
             this.pickerControl.style.display = display;
         });
     }
 
+    /**
+     * Set picker control position
+     * @private
+     */
     _setPickerControlPosition() {
         const controlStyle = this.pickerControl.style;
         const top = parseInt(window.getComputedStyle(this.pickerControl, null).height, 10) + 12;
@@ -94,25 +150,6 @@ class Colorpicker {
 
         controlStyle.top = `-${top}px`;
         controlStyle.left = `-${left}px`;
-    }
-
-    changeColorElement(color) {
-        if (color) {
-            this.colorElement.classList.remove('transparent');
-            this.colorElement.style.backgroundColor = color;
-        } else {
-            this.colorElement.style.backgroundColor = '#fff';
-            this.colorElement.classList.add('transparent');
-        }
-    }
-
-    setColor(color) {
-        this.color = color;
-        this.changeColorElement(color);
-    }
-
-    getColor() {
-        return this.color;
     }
 }
 

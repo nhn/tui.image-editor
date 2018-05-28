@@ -22,6 +22,10 @@ const FILTER_OPTIONS = [
     'blend'
 ];
 
+/**
+ * Filter ui class
+ * @class
+ */
 export default class Filter {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
@@ -31,6 +35,11 @@ export default class Filter {
         this._makeControlElement();
     }
 
+    /**
+     * Add event for filter
+     * @param {Object} actions - actions for crop
+     *   @param {Function} applyFilter - apply filter option
+     */
     addEvent({applyFilter}) {
         const changeRangeValue = filterName => {
             const apply = this.checkedMap[filterName].checked;
@@ -62,6 +71,12 @@ export default class Filter {
         this._el.blendType.addEventListener('click', event => event.stopPropagation());
     }
 
+    /**
+     * Get filter option
+     * @param {String} type - filter type
+     * @returns {Object} filter option object
+     * @private
+     */
     _getFilterOption(type) {
         const option = {};
         switch (type) {
@@ -103,6 +118,11 @@ export default class Filter {
         return option;
     }
 
+    /**
+     * Make submenu dom element
+     * @param {HTMLElement} subMenuElement - subment dom element
+     * @private
+     */
     _makeSubMenuElement(subMenuElement) {
         const filterSubMenu = document.createElement('div');
         filterSubMenu.className = 'filter';
@@ -111,6 +131,10 @@ export default class Filter {
         subMenuElement.appendChild(filterSubMenu);
     }
 
+    /**
+     * Make submenu range and colorpicker control
+     * @private
+     */
     _makeControlElement() {
         const {selector} = this;
         this._el = {
@@ -157,6 +181,12 @@ export default class Filter {
         this._el.blendType = this._pickerWithSelectbox(this._el.filterBlendColor.pickerControl);
     }
 
+    /**
+     * Make submenu control for picker & range mixin
+     * @param {HTMLElement} pickerControl - pickerControl dom element
+     * @returns {Range}
+     * @private
+     */
     _pickerWithRange(pickerControl) {
         const rangeWrap = document.createElement('div');
         const rangelabel = document.createElement('label');
@@ -176,6 +206,12 @@ export default class Filter {
         });
     }
 
+    /**
+     * Make submenu control for picker & selectbox
+     * @param {HTMLElement} pickerControl - pickerControl dom element
+     * @returns {HTMLElement}
+     * @private
+     */
     _pickerWithSelectbox(pickerControl) {
         const selectlistWrap = document.createElement('div');
         const selectlist = document.createElement('select');
@@ -183,7 +219,7 @@ export default class Filter {
         selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
         selectlistWrap.appendChild(selectlist);
 
-        this._getSelectOptionList(selectlist);
+        this._makeSelectOptionList(selectlist);
 
         pickerControl.appendChild(selectlistWrap);
         pickerControl.style.height = '130px';
@@ -191,7 +227,12 @@ export default class Filter {
         return selectlist;
     }
 
-    _getSelectOptionList(selectlist) {
+    /**
+     * Make blend select option
+     * @param {HTMLElement} selectlist - blend option select list element
+     * @private
+     */
+    _makeSelectOptionList(selectlist) {
         const blendOptions = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
         snippet.forEach(blendOptions, option => {
             const selectOption = document.createElement('option');
@@ -201,7 +242,13 @@ export default class Filter {
         });
     }
 
-    _toCamelCase(targetId) {
-        return targetId.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+    /**
+     * String to camelcase string
+     * @param {string} targetString - change target
+     * @returns {string}
+     * @private
+     */
+    _toCamelCase(targetString) {
+        return targetString.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
     }
 }

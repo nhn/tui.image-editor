@@ -2,6 +2,10 @@ import snippet from 'tui-code-snippet';
 import Colorpicker from './colorpicker';
 import iconHtml from '../template/submenu/icon';
 
+/**
+ * Icon ui class
+ * @class
+ */
 export default class Icon {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
@@ -16,19 +20,13 @@ export default class Icon {
         };
     }
 
-    clearIconType() {
-        this._el.addIconButton.classList.remove(this.iconType);
-        this.iconType = null;
-    }
-
-    _makeSubMenuElement(subMenuElement) {
-        const iconSubMenu = document.createElement('div');
-        iconSubMenu.className = 'icon';
-        iconSubMenu.innerHTML = iconHtml;
-
-        subMenuElement.appendChild(iconSubMenu);
-    }
-
+    /**
+     * Add event for icon
+     * @param {Object} actions - actions for icon
+     *   @param {Function} registCustomIcon - register icon
+     *   @param {Function} addIcon - add icon
+     *   @param {Function} changeColor - change icon color
+     */
     addEvent(actions) {
         this.actions = actions;
         const {registCustomIcon, addIcon, changeColor} = actions;
@@ -65,6 +63,17 @@ export default class Icon {
         });
     }
 
+    /**
+     * Clear icon type
+     */
+    clearIconType() {
+        this._el.addIconButton.classList.remove(this.iconType);
+        this.iconType = null;
+    }
+
+    /**
+     * Register default icon
+     */
     registDefaultIcon() {
         const defaultIcons = {
             'icon-arrow': 'M40 12V0l24 24-24 24V36H0V12h40z',
@@ -80,5 +89,18 @@ export default class Icon {
         snippet.forEach(defaultIcons, (path, type) => {
             this.actions.registDefalutIcons(type, path);
         });
+    }
+
+    /**
+     * Make submenu dom element
+     * @param {HTMLElement} subMenuElement - subment dom element
+     * @private
+     */
+    _makeSubMenuElement(subMenuElement) {
+        const iconSubMenu = document.createElement('div');
+        iconSubMenu.className = 'icon';
+        iconSubMenu.innerHTML = iconHtml;
+
+        subMenuElement.appendChild(iconSubMenu);
     }
 }

@@ -2,6 +2,10 @@ import Range from './range';
 import Colorpicker from './colorpicker';
 import textHtml from '../template/submenu/text';
 
+/**
+ * Crop ui class
+ * @class
+ */
 export default class Text {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
@@ -26,27 +30,11 @@ export default class Text {
         };
     }
 
-    getTextColor() {
-        return this._el.textColorpicker.getColor();
-    }
-
-    getFontSize() {
-        return this._el.textRange.getValue();
-    }
-
-    setFontSize(value) {
-        this._el.textRange.setValue(value, false);
-        this._el.textRangeValue.value = value;
-    }
-
-    _makeSubMenuElement(subMenuElement) {
-        const textSubMenu = document.createElement('div');
-        textSubMenu.className = 'text';
-        textSubMenu.innerHTML = textHtml;
-
-        subMenuElement.appendChild(textSubMenu);
-    }
-
+    /**
+     * Add event for text
+     * @param {Object} actions - actions for text
+     *   @param {Function} changeTextStyle - change text style
+     */
     addEvent({changeTextStyle}) {
         this._el.textEffectButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
@@ -90,5 +78,43 @@ export default class Text {
                 'fill': color
             });
         });
+    }
+
+    /**
+     * Get text color
+     * @returns {string} - text color
+     */
+    getTextColor() {
+        return this._el.textColorpicker.getColor();
+    }
+
+    /**
+     * Get text size
+     * @returns {string} - text size
+     */
+    getFontSize() {
+        return this._el.textRange.getValue();
+    }
+
+    /**
+     * Set text size
+     * @param {Number} value - text size
+     */
+    setFontSize(value) {
+        this._el.textRange.setValue(value, false);
+        this._el.textRangeValue.value = value;
+    }
+
+    /**
+     * Make submenu dom element
+     * @param {HTMLElement} subMenuElement - subment dom element
+     * @private
+     */
+    _makeSubMenuElement(subMenuElement) {
+        const textSubMenu = document.createElement('div');
+        textSubMenu.className = 'text';
+        textSubMenu.innerHTML = textHtml;
+
+        subMenuElement.appendChild(textSubMenu);
     }
 }

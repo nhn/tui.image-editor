@@ -3,38 +3,33 @@ import util from '../util';
 import Imagetracer from '../plugin/imagetracer';
 
 export default {
-    mixin(ImageEditor) {
-        snippet.extend(ImageEditor.prototype, this);
-    },
 
+    /**
+     * Get ui actions
+     * @returns {Object} actions for ui
+     * @private
+     */
     getActions() {
         return {
-            main: this.mainAction(),
-            shape: this.shapeAction(),
-            crop: this.cropAction(),
-            flip: this.flipAction(),
-            rotate: this.rotateAction(),
-            text: this.textAction(),
-            mask: this.maskAction(),
-            draw: this.drawAction(),
-            icon: this.iconAction(),
-            filter: this.filterAction()
+            main: this._mainAction(),
+            shape: this._shapeAction(),
+            crop: this._cropAction(),
+            flip: this._flipAction(),
+            rotate: this._rotateAction(),
+            text: this._textAction(),
+            mask: this._maskAction(),
+            draw: this._drawAction(),
+            icon: this._iconAction(),
+            filter: this._filterAction()
         };
     },
 
-    filterAction() {
-        return {
-            applyFilter: (applying, type, options) => {
-                if (applying) {
-                    this.applyFilter(type, options);
-                } else {
-                    this.removeFilter(type);
-                }
-            }
-        };
-    },
-
-    mainAction() {
+    /**
+     * Main Action
+     * @returns {Object} actions for ui main
+     * @private
+     */
+    _mainAction() {
         return {
             initLoadImage: (imagePath, imageName, callback) => {
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
@@ -134,7 +129,12 @@ export default {
         };
     },
 
-    iconAction() {
+    /**
+     * Icon Action
+     * @returns {Object} actions for ui icon
+     * @private
+     */
+    _iconAction() {
         return {
             changeColor: color => {
                 this.changeIconColor(this.activeObjectId, color);
@@ -166,35 +166,18 @@ export default {
                             left: 100,
                             top: 100
                         });
-                    },
-                    {
-                        pathomit: 100,
-                        ltres: 0.1,
-                        qtres: 1,
-                        scale: 1,
-                        strokewidth: 5,
-                        viewbox: false,
-                        linefilter: true,
-                        desc: false,
-                        rightangleenhance: false,
-                        pal: [{
-                            r: 0,
-                            g: 0,
-                            b: 0,
-                            a: 255
-                        }, {
-                            r: 255,
-                            g: 255,
-                            b: 255,
-                            a: 255
-                        }]
-                    }
+                    }, Imagetracer.tracerDefaultOption()
                 );
             }
         };
     },
 
-    drawAction() {
+    /**
+     * Draw Action
+     * @returns {Object} actions for ui draw
+     * @private
+     */
+    _drawAction() {
         return {
             setDrawMode: (type, settings) => {
                 this.stopDrawingMode();
@@ -212,7 +195,12 @@ export default {
         };
     },
 
-    maskAction() {
+    /**
+     * Mask Action
+     * @returns {Object} actions for ui mask
+     * @private
+     */
+    _maskAction() {
         return {
             loadImageFromURL: (imgUrl, file) => {
                 this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
@@ -229,7 +217,12 @@ export default {
         };
     },
 
-    textAction() {
+    /**
+     * Text Action
+     * @returns {Object} actions for ui text
+     * @private
+     */
+    _textAction() {
         return {
             changeTextStyle: styleObj => {
                 if (this.activeObjectId) {
@@ -239,7 +232,12 @@ export default {
         };
     },
 
-    rotateAction() {
+    /**
+     * Rotate Action
+     * @returns {Object} actions for ui rotate
+     * @private
+     */
+    _rotateAction() {
         return {
             rotate: angle => {
                 this.rotate(angle);
@@ -252,7 +250,12 @@ export default {
         };
     },
 
-    shapeAction() {
+    /**
+     * Shape Action
+     * @returns {Object} actions for ui shape
+     * @private
+     */
+    _shapeAction() {
         return {
             changeShape: changeShapeObject => {
                 if (this.activeObjectId) {
@@ -265,7 +268,12 @@ export default {
         };
     },
 
-    cropAction() {
+    /**
+     * Crop Action
+     * @returns {Object} actions for ui crop
+     * @private
+     */
+    _cropAction() {
         return {
             crop: () => {
                 const cropRect = this.getCropzoneRect();
@@ -284,12 +292,37 @@ export default {
         };
     },
 
-    flipAction() {
+    /**
+     * Flip Action
+     * @returns {Object} actions for ui flip
+     * @private
+     */
+    _flipAction() {
         return {
             flip: flipType => this[flipType]()
         };
     },
 
+    /**
+     * Filter Action
+     * @returns {Object} actions for ui filter
+     * @private
+     */
+    _filterAction() {
+        return {
+            applyFilter: (applying, type, options) => {
+                if (applying) {
+                    this.applyFilter(type, options);
+                } else {
+                    this.removeFilter(type);
+                }
+            }
+        };
+    },
+
+    /**
+     * Image Editor Event Observer
+     */
     setReAction() {
         this.on({
             undoStackChanged: length => {
@@ -353,5 +386,13 @@ export default {
                 }
             }
         });
+    },
+
+    /**
+     * Mixin
+     * @param {ImageEditor} ImageEditor instance
+     */
+    mixin(ImageEditor) {
+        snippet.extend(ImageEditor.prototype, this);
     }
 };

@@ -2,6 +2,10 @@ import Colorpicker from './colorpicker';
 import Range from './range';
 import shapeHtml from '../template/submenu/shape';
 
+/**
+ * Shape ui class
+ * @class
+ */
 export default class Shape {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
@@ -28,23 +32,12 @@ export default class Shape {
         };
     }
 
-    setShapeStatus({strokeWidth, strokeColor, fillColor}) {
-        this._el.strokeRange.setValue(strokeWidth);
-        this._el.strokeColorpicker.setColor(strokeColor);
-        this._el.fillColorpicker.setColor(fillColor);
-        this.options.stroke = strokeColor;
-        this.options.fill = fillColor;
-        this.options.strokeWidth = strokeWidth;
-    }
-
-    _makeSubMenuElement(subMenuElement) {
-        const shapeSubMenu = document.createElement('div');
-        shapeSubMenu.className = 'shape';
-        shapeSubMenu.innerHTML = shapeHtml;
-
-        subMenuElement.appendChild(shapeSubMenu);
-    }
-
+    /**
+     * Add event for shape
+     * @param {Object} actions - actions for shape
+     *   @param {Function} changeShape - change shape mode
+     *   @param {Function} setDrawingShape - set dreawing shape
+     */
     addEvent({changeShape, setDrawingShape}) {
         this._el.shapeSelectButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
@@ -84,6 +77,35 @@ export default class Shape {
                 stroke: color
             });
         });
+    }
+
+    /**
+     * Set Shape status
+     * @param {Object} options - options of shape status
+     *   @param {string} strokeWidth - stroke width
+     *   @param {string} strokeColor - stroke color
+     *   @param {string} fillColor - fill color
+     */
+    setShapeStatus({strokeWidth, strokeColor, fillColor}) {
+        this._el.strokeRange.setValue(strokeWidth);
+        this._el.strokeColorpicker.setColor(strokeColor);
+        this._el.fillColorpicker.setColor(fillColor);
+        this.options.stroke = strokeColor;
+        this.options.fill = fillColor;
+        this.options.strokeWidth = strokeWidth;
+    }
+
+    /**
+     * Make submenu dom element
+     * @param {HTMLElement} subMenuElement - subment dom element
+     * @private
+     */
+    _makeSubMenuElement(subMenuElement) {
+        const shapeSubMenu = document.createElement('div');
+        shapeSubMenu.className = 'shape';
+        shapeSubMenu.innerHTML = shapeHtml;
+
+        subMenuElement.appendChild(shapeSubMenu);
     }
 }
 

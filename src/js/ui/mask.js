@@ -1,5 +1,9 @@
 import maskHtml from '../template/submenu/mask';
 
+/**
+ * Mask ui class
+ * @class
+ */
 export default class Mask {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
@@ -11,6 +15,12 @@ export default class Mask {
         };
     }
 
+    /**
+     * Add event for mask
+     * @param {Object} actions - actions for crop
+     *   @param {Function} loadImageFromURL - load image action
+     *   @param {Function} applyFilter - apply filter action
+     */
     addEvent({loadImageFromURL, applyFilter}) {
         this._el.maskImageButton.addEventListener('change', event => {
             const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
@@ -35,6 +45,11 @@ export default class Mask {
         });
     }
 
+    /**
+     * Make submenu dom element
+     * @param {HTMLElement} subMenuElement - subment dom element
+     * @private
+     */
     _makeSubMenuElement(subMenuElement) {
         const maskSubMenu = document.createElement('div');
         maskSubMenu.className = 'mask';

@@ -106,7 +106,6 @@ class ImageEditor {
      * @property {boolean} flipY - y axis
      * @property {Number} angle - angle
      */
-
     /**
      * Rotation status
      * @typedef {Number} RotateStatus

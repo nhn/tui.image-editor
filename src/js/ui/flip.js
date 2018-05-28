@@ -1,6 +1,10 @@
 import snippet from 'tui-code-snippet';
 import flipHtml from '../template/submenu/flip';
 
+/**
+ * Flip ui class
+ * @class
+ */
 export default class Flip {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
@@ -12,6 +16,11 @@ export default class Flip {
         };
     }
 
+    /**
+     * Add event for flip
+     * @param {Object} actions - actions for flip
+     *   @param {Function} flip - flip action
+     */
     addEvent({flip}) {
         this._el.flipButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
@@ -38,6 +47,11 @@ export default class Flip {
         });
     }
 
+    /**
+     * Make submenu dom element
+     * @param {HTMLElement} subMenuElement - subment dom element
+     * @private
+     */
     _makeSubMenuElement(subMenuElement) {
         const filpSubMenu = document.createElement('div');
         filpSubMenu.className = 'flip';

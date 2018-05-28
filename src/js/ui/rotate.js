@@ -1,6 +1,10 @@
 import Range from './range';
 import rotateHtml from '../template/submenu/rotate';
 
+/**
+ * Rotate ui class
+ * @class
+ */
 export default class Rotate {
     constructor(subMenuElement) {
         const selector = str => subMenuElement.querySelector(str);
@@ -18,14 +22,12 @@ export default class Rotate {
         };
     }
 
-    _makeSubMenuElement(subMenuElement) {
-        const rotateSubMenu = document.createElement('div');
-        rotateSubMenu.className = 'rotate';
-        rotateSubMenu.innerHTML = rotateHtml;
-
-        subMenuElement.appendChild(rotateSubMenu);
-    }
-
+    /**
+     * Add event for rotate
+     * @param {Object} actions - actions for crop
+     *   @param {Function} rotate - rotate action
+     *   @param {Function} setAngle - set angle action
+     */
     addEvent({rotate, setAngle}) {
         this._el.rotateButton.addEventListener('click', event => {
             const button = event.target.closest('.button');
@@ -41,5 +43,18 @@ export default class Rotate {
             this._el.rotateRangeValue.value = angle;
             setAngle(angle);
         });
+    }
+
+    /**
+     * Make submenu dom element
+     * @param {HTMLElement} subMenuElement - subment dom element
+     * @private
+     */
+    _makeSubMenuElement(subMenuElement) {
+        const rotateSubMenu = document.createElement('div');
+        rotateSubMenu.className = 'rotate';
+        rotateSubMenu.innerHTML = rotateHtml;
+
+        subMenuElement.appendChild(rotateSubMenu);
     }
 }

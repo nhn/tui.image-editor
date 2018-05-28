@@ -1,5 +1,29 @@
 /* eslint-disable */
 export default class ImageTracer {
+    static tracerDefaultOption() {
+        return {
+            pathomit: 100,
+            ltres: 0.1,
+            qtres: 1,
+            scale: 1,
+            strokewidth: 5,
+            viewbox: false,
+            linefilter: true,
+            desc: false,
+            rightangleenhance: false,
+            pal: [{
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 255
+            }, {
+                r: 255,
+                g: 255,
+                b: 255,
+                a: 255
+            }]
+        };
+    }
     constructor() {
         this.versionnumber = '1.2.4';
         this.optionpresets = {
