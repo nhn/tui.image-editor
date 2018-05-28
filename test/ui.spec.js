@@ -26,6 +26,9 @@ describe('Ui', () => {
 
         spyOn(snippet, 'imagePing');
     });
+    afterEach(() => {
+        imageEditorMock.destroy();
+    });
 
     describe('mainAction', () => {
         let mainAction;
@@ -67,7 +70,7 @@ describe('Ui', () => {
             expect(imageEditorMock.redo).toHaveBeenCalled();
         });
         it('removeObject() API should be executed When the delete action occurs', () => {
-            spyOn(imageEditorMock, 'activeObjectId').and.returnValue(true);
+            imageEditorMock.activeObjectId = 10;
             spyOn(imageEditorMock, 'removeObject');
 
             mainAction['delete']();
@@ -148,7 +151,7 @@ describe('Ui', () => {
             shapeAction = actions.shape;
         });
         it('changeShape() API should be executed When the changeShape action occurs', () => {
-            spyOn(imageEditorMock, 'activeObjectId').and.returnValue(true);
+            imageEditorMock.activeObjectId = 10;
             spyOn(imageEditorMock, 'changeShape');
 
             shapeAction.changeShape({
@@ -199,24 +202,162 @@ describe('Ui', () => {
     });
 
     describe('flipAction', () => {
+        let flipAction;
+        beforeEach(() => {
+            flipAction = actions.flip;
+        });
+        it('{flipType}() API should be executed When the flip(fliptype) action occurs', () => {
+            spyOn(imageEditorMock, 'flipX');
+            spyOn(imageEditorMock, 'flipY');
 
+            flipAction.flip('flipX');
+            expect(imageEditorMock.flipX).toHaveBeenCalled();
+
+            flipAction.flip('flipY');
+            expect(imageEditorMock.flipY).toHaveBeenCalled();
+        });
     });
 
     describe('rotateAction', () => {
+        let rotateAction;
+        beforeEach(() => {
+            rotateAction = actions.rotate;
+        });
+
+        it('rotate() API should be executed When the rotate action occurs', () => {
+            spyOn(imageEditorMock, 'rotate');
+            spyOn(imageEditorMock.ui, 'resizeEditor');
+
+            rotateAction.rotate(30);
+            expect(imageEditorMock.rotate).toHaveBeenCalled();
+            expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
+        });
+
+        it('setAngle() API should be executed When the setAngle action occurs', () => {
+            spyOn(imageEditorMock, 'setAngle');
+            spyOn(imageEditorMock.ui, 'resizeEditor');
+
+            rotateAction.setAngle(30);
+            expect(imageEditorMock.setAngle).toHaveBeenCalled();
+            expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
+        });
     });
 
     describe('textAction', () => {
+        let textAction;
+        beforeEach(() => {
+            textAction = actions.text;
+        });
+
+        it('changeTextStyle() API should be executed When the changeTextStyle action occurs', () => {
+            imageEditorMock.activeObjectId = 10;
+            spyOn(imageEditorMock, 'changeTextStyle');
+
+            textAction.changeTextStyle({fontSize: 10});
+            expect(imageEditorMock.changeTextStyle.calls.mostRecent().args[0]).toBe(10);
+            expect(imageEditorMock.changeTextStyle.calls.mostRecent().args[1]).toEqual({fontSize: 10});
+        });
     });
 
     describe('maskAction', () => {
+        let maskAction;
+        beforeEach(() => {
+            maskAction = actions.mask;
+        });
+
+        it('loadImageFromURL(), addImageObject() API should be executed When the changeTextStyle action occurs', () => {
+            const promise = new Promise(resolve => {
+                resolve();
+            });
+            spyOn(imageEditorMock, 'toDataURL').and.returnValue('url');
+            spyOn(imageEditorMock, 'loadImageFromURL').and.returnValue(promise);
+
+            maskAction.loadImageFromURL('path', null);
+            promise.then(() => {
+                spyOn(imageEditorMock, 'addImageObject').and.returnValue(Promise.resolve());
+            });
+        });
+
+        it('applyFilter() API should be executed When the applyFilter action occurs', () => {
+            imageEditorMock.activeObjectId = 10;
+            spyOn(imageEditorMock, 'applyFilter');
+
+            maskAction.applyFilter();
+            expect(imageEditorMock.applyFilter.calls.mostRecent().args[1]).toEqual({maskObjId: 10});
+        });
     });
 
     describe('drawAction', () => {
+        let drawAction, expected;
+        beforeEach(() => {
+            drawAction = actions.draw;
+        });
+
+        it('startDrawingMode("FREE_DRAWING") API should be executed When the setDrawMode("free") action occurs', () => {
+            spyOn(imageEditorMock, 'startDrawingMode');
+            drawAction.setDrawMode('free');
+
+            expected = imageEditorMock.startDrawingMode.calls.mostRecent().args[0];
+            expect(expected).toBe('FREE_DRAWING');
+        });
+
+        it('setBrush() API should be executed When the setColor() action occurs', () => {
+            spyOn(imageEditorMock, 'setBrush');
+            drawAction.setColor('#000000');
+
+            expected = imageEditorMock.setBrush.calls.mostRecent().args[0].color;
+            expect(expected).toBe('#000000');
+        });
     });
 
     describe('iconAction', () => {
+        let iconAction, expected;
+        beforeEach(() => {
+            iconAction = actions.icon;
+        });
+
+        it('add once event mousedown should be executed When the addIcon action occurs', () => {
+            spyOn(imageEditorMock, 'once').and.callThrough();
+            spyOn(imageEditorMock, 'addIcon');
+
+            iconAction.addIcon('iconTypeA');
+            expect(imageEditorMock.once).toHaveBeenCalled();
+
+            imageEditorMock.fire('mousedown', null, {
+                x: 10,
+                y: 10
+            });
+            expected = imageEditorMock.addIcon.calls.mostRecent().args[0];
+            expect(expected).toBe('iconTypeA');
+        });
+
+        it('registerIcons() API should be executed When the registDefalutIcons action occurs', () => {
+            spyOn(imageEditorMock, 'registerIcons');
+            iconAction.registDefalutIcons('testType1', 'M1,20L2,10');
+
+            expected = imageEditorMock.registerIcons.calls.mostRecent().args[0];
+            expect(expected).toEqual({'testType1': 'M1,20L2,10'});
+        });
     });
 
     describe('filterAction', () => {
+        let filterAction;
+        beforeEach(() => {
+            filterAction = actions.filter;
+        });
+
+        it('removeFilter() API should be executed When the type of applyFilter is false', () => {
+            spyOn(imageEditorMock, 'removeFilter');
+            filterAction.applyFilter(false, {});
+
+            expect(imageEditorMock.removeFilter).toHaveBeenCalled();
+        });
+
+        it('applyFilter() API should be executed When the type of applyFilter is true', () => {
+            spyOn(imageEditorMock, 'applyFilter');
+            filterAction.applyFilter(true, {});
+
+            expect(imageEditorMock.applyFilter).toHaveBeenCalled();
+        });
     });
 });
