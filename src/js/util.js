@@ -109,6 +109,20 @@ module.exports = {
         });
     },
 
+    /**
+     * Get selector
+     * @param {HTMLElement} targetElement - target element
+     * @returns {Function} selector
+     */
+    getSelector(targetElement) {
+        return str => targetElement.querySelector(str);
+    },
+
+    /**
+     * Change base64 to blob
+     * @param {String} data - base64 string data
+     * @returns {Blob} Blob Data
+     */
     base64ToBlob(data) {
         const rImageType = /data:(image\/.+);base64,/;
         let mimeString = '';

@@ -14,7 +14,7 @@
     </head>
     <body>
 
-        <div class="tui-image-editor-container"></div>
+        <div id="tui-image-editor-container"></div>
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.7/fabric.js"></script>
         <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.3.0/tui-code-snippet.min.js"></script>
@@ -23,13 +23,13 @@
         <script type="text/javascript" src="../dist/tui-image-editor.js"></script>
         <script>
          // Image editor
-         var imageEditor = new tui.ImageEditor('.tui-image-editor-container', {
+         var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
              includeUi: {
                  loadImage: {
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
-                 initMenu: 'filter',
+                 initMenu: 'text',
                  menuBarPosition: 'bottom',
                  applyCropSelectionStyle: true
              },

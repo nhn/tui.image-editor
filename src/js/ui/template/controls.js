@@ -1,4 +1,4 @@
-export default `
+export default () => (`
     <div class="tui-image-editor-controls">
         <div class="tui-image-editor-controls-logo">
             <img src="img/icon/img-bi.svg" />
@@ -47,4 +47,4 @@ export default `
             <button class="tui-image-editor-download-btn download">Download</button>
         </div>
     </div>
-`;
+`);

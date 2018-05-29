@@ -1,7 +1,9 @@
 import snippet from 'tui-code-snippet';
+import util from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
 
+import Theme from './ui/theme/theme';
 import Shape from './ui/shape';
 import Crop from './ui/crop';
 import Flip from './ui/flip';
@@ -42,6 +44,9 @@ export default class Ui {
         this._actions = actions;
         this.submenu = false;
         this.imageSize = {};
+
+        /* THEME 생성 */
+        this.theme = new Theme(options.theme);
 
         this._selectedElement = null;
         this._mainElement = null;
@@ -215,15 +220,25 @@ export default class Ui {
         } else {
             selectedElement = document.querySelector(element);
         }
+        const selector = util.getSelector(selectedElement);
 
-        selectedElement.innerHTML = controls + mainContainer;
+        selectedElement.classList.add('tui-image-editor-container');
+        selectedElement.innerHTML = controls() + mainContainer({
+            commonStyle: this.theme.getStyle('common'),
+            headerStyle: this.theme.getStyle('header'),
+            loadButtonStyle: this.theme.getStyle('loadButton'),
+            downloadButtonStyle: this.theme.getStyle('downloadButton'),
+            submenuStyle: this.theme.getStyle('submenu')
+        });
+
         this._selectedElement = selectedElement;
         this._selectedElement.classList.add(this.options.menuBarPosition);
-        this._mainElement = this._selectedElement.querySelector('.tui-image-editor-main');
-        this._editorElementWrap = this._selectedElement.querySelector('.tui-image-editor-wrap');
-        this._editorElement = this._selectedElement.querySelector('.tui-image-editor');
-        this._menuElement = this._selectedElement.querySelector('.tui-image-editor-menu');
-        this._subMenuElement = this._mainElement.querySelector('.tui-image-editor-submenu');
+
+        this._mainElement = selector('.tui-image-editor-main');
+        this._editorElementWrap = selector('.tui-image-editor-wrap');
+        this._editorElement = selector('.tui-image-editor');
+        this._menuElement = selector('.tui-image-editor-menu');
+        this._subMenuElement = selector('.tui-image-editor-submenu');
     }
 
     /**
