@@ -45,7 +45,6 @@ export default class Ui {
         this.submenu = false;
         this.imageSize = {};
 
-        /* THEME 생성 */
         this.theme = new Theme(options.theme);
 
         this._selectedElement = null;
@@ -200,16 +199,11 @@ export default class Ui {
             // menu btn element
             this._el[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
 
-
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
-                submenuIcon: this.theme.getStyle('submenu.icon'),
-                submenuLabel: this.theme.getStyle('submenu.label'),
-                styleBuffer: this.theme.styleBuffer
+                submenuIcon: this.theme.getStyle('submenu.icon')
             });
         });
-
-        this.theme.styleLoader();
     }
 
     /**
