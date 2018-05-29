@@ -5,7 +5,7 @@
 import snippet from 'tui-code-snippet';
 import ImageEditor from '../src/js/imageEditor';
 import util from '../src/js/util';
-import action from '../src/js/ui/action';
+import action from '../src/js/action';
 
 describe('Ui', () => {
     let actions;
