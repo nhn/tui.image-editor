@@ -201,7 +201,6 @@
     padding-top: 5px;
     font-family: sans-serif;
     font-size: 11px;
-    font-weight: lighter;
     letter-spacing: 0.7px;
 }
 .tui-image-editor-container .tui-image-editor-submenu .menu .button.apply label,
@@ -724,17 +723,6 @@
 #icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] svg > use.active {
     display: block;
 }
-#icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label,
-#icon-add-button.icon-heart .button[data-icontype="icon-heart"] label,
-#icon-add-button.icon-location .button[data-icontype="icon-location"] label,
-#icon-add-button.icon-polygon .button[data-icontype="icon-polygon"] label,
-#icon-add-button.icon-star .button[data-icontype="icon-star"] label,
-#icon-add-button.icon-arrow-3 .button[data-icontype="icon-arrow-3"] label,
-#icon-add-button.icon-arrow-2 .button[data-icontype="icon-arrow-2"] label,
-#icon-add-button.icon-arrow .button[data-icontype="icon-arrow"] label,
-#icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label {
-    color: #fff;
-}
 
 /* DRAW BUTTON */
 #draw-line-select-button.line .button.line svg > use.normal,
@@ -744,10 +732,6 @@
 #draw-line-select-button.line .button.line svg > use.active,
 #draw-line-select-button.free .button.free svg > use.active {
     display: block;
-}
-#draw-line-select-button.line .button.line label,
-#draw-line-select-button.free .button.free label {
-    color: #fff;
 }
 
 /* FLIP BUTTON */
@@ -761,12 +745,6 @@
 .tui-image-editor-container #flip-button.resetFlip .button.resetFlip svg > use.active {
     display: block;
 }
-.tui-image-editor-container #flip-button.flipX .button.flipX label,
-.tui-image-editor-container #flip-button.flipY .button.flipY label,
-.tui-image-editor-container #flip-button.resetFlip .button.resetFlip label {
-    color: #fff;
-}
-
 /*  MASK BUTTON */
 .tui-image-editor-container #mask-apply.apply.active .button.apply label {
     color: #fff;
@@ -778,9 +756,6 @@
 /* CROP BUTTON */
 .tui-image-editor-container #crop-button .button.apply {
     margin-right: 24px;
-}
-.tui-image-editor-container #crop-button .button.apply.active label {
-    color: #fff;
 }
 .tui-image-editor-container #crop-button .button.apply.active svg > use.active {
     display: block;
@@ -796,28 +771,14 @@
 .tui-image-editor-container #shape-button.triangle .button.triangle svg > use.active {
     display: block;
 }
-.tui-image-editor-container #shape-button.rect .button.rect label,
-.tui-image-editor-container #shape-button.circle .button.circle label,
-.tui-image-editor-container #shape-button.triangle .button.triangle label {
-    color: #fff;
-}
-
 /* TEXT BUTTON */
 .tui-image-editor-container #text-effect-button .button.active svg > use.active {
     display: block;
-}
-.tui-image-editor-container #text-effect-button .button.active label {
-    color: #fff;
 }
 .tui-image-editor-container #text-align-button.left .button.left svg > use.active,
 .tui-image-editor-container #text-align-button.center .button.center svg > use.active,
 .tui-image-editor-container #text-align-button.right .button.right svg > use.active {
     display: block;
-}
-.tui-image-editor-container #text-align-button.left .button.left label,
-.tui-image-editor-container #text-align-button.center .button.center label,
-.tui-image-editor-container #text-align-button.right .button.right label {
-    color: #fff;
 }
 .tui-image-editor-container #mask-image-file ,
 .tui-image-editor-container #icon-image-file {

@@ -200,14 +200,16 @@ export default class Ui {
             // menu btn element
             this._el[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
 
-            console.log(this.theme.getStyle('submenu.label'));
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 submenuIcon: this.theme.getStyle('submenu.icon'),
-                submenuLabel: this.theme.getStyle('submenu.label')
+                submenuLabel: this.theme.getStyle('submenu.label'),
+                styleBuffer: this.theme.styleBuffer
             });
         });
+
+        this.theme.styleLoader();
     }
 
     /**
