@@ -3,6 +3,7 @@
  * @fileoverview Test cases of "src/js/component/cropper.js"
  */
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
 import util from '../src/js/util';
 import action from '../src/js/action';
@@ -108,17 +109,6 @@ describe('Ui', () => {
                 expect(imageEditorMock.clearUndoStack).toHaveBeenCalled();
                 expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
             });
-        });
-
-        it('saveAs() native API should be executed When the download action occurs', () => {
-            spyOn(imageEditorMock, 'toDataURL').and.returnValue('');
-            spyOn(imageEditorMock, 'getImageName').and.returnValue('');
-            spyOn(util, 'base64ToBlob').and.returnValue({type: 'mockImageFile.jpg'});
-            window.saveAs = jasmine.createSpy('saveAs');
-
-            mainAction.download();
-
-            expect(window.saveAs).toHaveBeenCalled();
         });
 
         describe('modeChange()', () => {
