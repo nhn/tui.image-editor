@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
-import Colorpicker from './colorpicker';
-import iconHtml from '../template/submenu/icon';
+import Colorpicker from './tools/colorpicker';
+import iconHtml from './template/submenu/icon';
 
 /**
  * Icon ui class

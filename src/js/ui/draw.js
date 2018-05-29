@@ -1,7 +1,7 @@
 import util from '../util';
-import Colorpicker from './colorpicker';
-import Range from './range';
-import drawHtml from '../template/submenu/draw';
+import Colorpicker from './tools/colorpicker';
+import Range from './tools/range';
+import drawHtml from './template/submenu/draw';
 
 /**
  * Draw ui class

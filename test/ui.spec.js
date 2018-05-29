@@ -16,7 +16,6 @@ describe('Ui', () => {
         imageEditorMock = new ImageEditor(document.createElement('div'), {
             includeUi: {
                 loadImage: false,
-                /* menu: ['shape', 'filter'], */
                 initMenu: 'flip',
                 menuBarPosition: 'bottom',
                 applyCropSelectionStyle: true
@@ -26,6 +25,7 @@ describe('Ui', () => {
 
         spyOn(snippet, 'imagePing');
     });
+
     afterEach(() => {
         imageEditorMock.destroy();
     });
@@ -53,6 +53,7 @@ describe('Ui', () => {
                 expect(callback).toHaveBeenCalled();
             });
         });
+
         it('Undo() API should be executed When the undo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyUndoStack').and.returnValue(false);
             spyOn(imageEditorMock, 'undo');
@@ -61,6 +62,7 @@ describe('Ui', () => {
 
             expect(imageEditorMock.undo).toHaveBeenCalled();
         });
+
         it('Redo() API should be executed When the redo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyRedoStack').and.returnValue(false);
             spyOn(imageEditorMock, 'redo');
@@ -69,6 +71,7 @@ describe('Ui', () => {
 
             expect(imageEditorMock.redo).toHaveBeenCalled();
         });
+
         it('removeObject() API should be executed When the delete action occurs', () => {
             imageEditorMock.activeObjectId = 10;
             spyOn(imageEditorMock, 'removeObject');
@@ -78,6 +81,7 @@ describe('Ui', () => {
             expect(imageEditorMock.removeObject).toHaveBeenCalled();
             expect(imageEditorMock.activeObjectId).toBe(null);
         });
+
         it('clearObjects() API should be run and the enabled state should be changed When the deleteAll action occurs', () => {
             spyOn(imageEditorMock, 'clearObjects');
             spyOn(imageEditorMock.ui, 'changeDeleteButtonEnabled');
@@ -88,6 +92,7 @@ describe('Ui', () => {
             expect(imageEditorMock.ui.changeDeleteButtonEnabled).toHaveBeenCalled();
             expect(imageEditorMock.ui.changeDeleteAllButtonEnabled).toHaveBeenCalled();
         });
+
         it('loadImageFromFile() API should be executed When the load action occurs', () => {
             const promise = new Promise(resolve => {
                 resolve();
@@ -104,6 +109,7 @@ describe('Ui', () => {
                 expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
             });
         });
+
         it('saveAs() native API should be executed When the download action occurs', () => {
             spyOn(imageEditorMock, 'toDataURL').and.returnValue('');
             spyOn(imageEditorMock, 'getImageName').and.returnValue('');
@@ -114,19 +120,22 @@ describe('Ui', () => {
 
             expect(window.saveAs).toHaveBeenCalled();
         });
-        describe('modeChange Action', () => {
+
+        describe('modeChange()', () => {
             it('_changeActivateMode("TEXT") API should be executed When the modeChange("text") action occurs', () => {
                 spyOn(imageEditorMock, '_changeActivateMode');
 
                 mainAction.modeChange('text');
                 expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
             });
+
             it('startDrawingMode() API should be executed When the modeChange("crop") action occurs', () => {
                 spyOn(imageEditorMock, 'startDrawingMode');
 
                 mainAction.modeChange('crop');
                 expect(imageEditorMock.startDrawingMode).toHaveBeenCalled();
             });
+
             it('stopDrawingMode(), setDrawingShape(), _changeActivateMode()  API should be executed When the modeChange("shape") action occurs', () => {
                 spyOn(imageEditorMock, 'stopDrawingMode');
                 spyOn(imageEditorMock, 'setDrawingShape');
@@ -137,6 +146,7 @@ describe('Ui', () => {
                 expect(imageEditorMock.setDrawingShape).toHaveBeenCalled();
                 expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
             });
+
             it('ui.draw.setDrawMode API should be executed When the modeChange("draw") action occurs', () => {
                 spyOn(imageEditorMock.ui.draw, 'setDrawMode');
 
@@ -145,6 +155,7 @@ describe('Ui', () => {
             });
         });
     });
+
     describe('shapeAction', () => {
         let shapeAction;
         beforeEach(() => {
@@ -193,6 +204,7 @@ describe('Ui', () => {
                 expect(imageEditorMock.ui.changeMenu).toHaveBeenCalled();
             });
         });
+
         it('stopDrawingMode() API should be executed When the cancel action occurs', () => {
             spyOn(imageEditorMock, 'stopDrawingMode');
 

@@ -1,5 +1,5 @@
-import Range from './range';
-import rotateHtml from '../template/submenu/rotate';
+import Range from './tools/range';
+import rotateHtml from './template/submenu/rotate';
 
 /**
  * Rotate ui class

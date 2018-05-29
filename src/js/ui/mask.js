@@ -1,4 +1,4 @@
-import maskHtml from '../template/submenu/mask';
+import maskHtml from './template/submenu/mask';
 
 /**
  * Mask ui class

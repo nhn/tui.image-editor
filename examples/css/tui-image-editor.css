@@ -223,6 +223,9 @@
 .tui-image-editor-container .tui-image-editor-submenu-align:first-child {
     margin-right: 0;
 }
+.tui-image-editor-container .tui-image-editor-submenu-align:first-child label {
+    width: 70px;
+}
 .tui-image-editor-container .tui-image-editor-submenu-align label {
     width: 55px;
     white-space: nowrap;

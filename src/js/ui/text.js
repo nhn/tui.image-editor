@@ -1,6 +1,6 @@
-import Range from './range';
-import Colorpicker from './colorpicker';
-import textHtml from '../template/submenu/text';
+import Range from './tools/range';
+import Colorpicker from './tools/colorpicker';
+import textHtml from './template/submenu/text';
 
 /**
  * Crop ui class

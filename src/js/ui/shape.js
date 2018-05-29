@@ -1,6 +1,6 @@
-import Colorpicker from './colorpicker';
-import Range from './range';
-import shapeHtml from '../template/submenu/shape';
+import Colorpicker from './tools/colorpicker';
+import Range from './tools/range';
+import shapeHtml from './template/submenu/shape';
 
 /**
  * Shape ui class

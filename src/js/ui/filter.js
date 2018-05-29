@@ -1,7 +1,7 @@
 import snippet from 'tui-code-snippet';
-import Colorpicker from './colorpicker';
-import Range from './range';
-import filterHtml from '../template/submenu/filter';
+import Colorpicker from './tools/colorpicker';
+import Range from './tools/range';
+import filterHtml from './template/submenu/filter';
 
 const FILTER_OPTIONS = [
     'grayscale',

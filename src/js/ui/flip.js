@@ -1,5 +1,5 @@
 import snippet from 'tui-code-snippet';
-import flipHtml from '../template/submenu/flip';
+import flipHtml from './template/submenu/flip';
 
 /**
  * Flip ui class

@@ -1,4 +1,4 @@
-import cropHtml from '../template/submenu/crop';
+import cropHtml from './template/submenu/crop';
 
 /**
  * Crop ui class

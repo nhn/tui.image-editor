@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
-import mainContainer from './template/mainContainer';
-import controls from './template/controls';
+import mainContainer from './ui/template/mainContainer';
+import controls from './ui/template/controls';
 
 import Shape from './ui/shape';
 import Crop from './ui/crop';

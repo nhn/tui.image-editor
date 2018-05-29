@@ -1,4 +1,5 @@
-if (!Element.prototype.matches)
+// https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/if (!Element.prototype.matches)
     Element.prototype.matches = Element.prototype.msMatchesSelector || 
     Element.prototype.webkitMatchesSelector;
 
