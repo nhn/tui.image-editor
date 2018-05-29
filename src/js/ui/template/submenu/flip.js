@@ -1,11 +1,11 @@
-export default `
+export default ({submenuIcon: {normal, active}}) => (`
     <ul id="flip-button" class="menu">
         <li>
             <div class="button flipX">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-flip-x" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-flip-x" class="active"/>
+                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-x" class="normal"/>
+                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-flip-x" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -15,8 +15,8 @@ export default `
             <div class="button flipY">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-flip-y" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-flip-y" class="active"/>
+                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-y" class="normal"/>
+                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-flip-y" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -31,8 +31,10 @@ export default `
             <div class="button resetFlip">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-flip-reset" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-flip-reset" class="active"/>
+                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-reset"
+                            class="normal"/>
+                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-flip-reset"
+                            class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -41,4 +43,4 @@ export default `
             </div>
         </li>
     </ul>
-`;
+`);

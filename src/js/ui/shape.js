@@ -7,9 +7,9 @@ import shapeHtml from './template/submenu/shape';
  * @class
  */
 export default class Shape {
-    constructor(subMenuElement) {
+    constructor(subMenuElement, {submenuIcon}) {
         const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement);
+        this._makeSubMenuElement(subMenuElement, submenuIcon);
         this.type = 'rect';
         this.options = {
             stroke: '#ffbb3b',
@@ -98,12 +98,13 @@ export default class Shape {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
+     * @param {Object} submenuIcon - subment icon
      * @private
      */
-    _makeSubMenuElement(subMenuElement) {
+    _makeSubMenuElement(subMenuElement, submenuIcon) {
         const shapeSubMenu = document.createElement('div');
         shapeSubMenu.className = 'shape';
-        shapeSubMenu.innerHTML = shapeHtml;
+        shapeSubMenu.innerHTML = shapeHtml({submenuIcon});
 
         subMenuElement.appendChild(shapeSubMenu);
     }

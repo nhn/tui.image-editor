@@ -1,11 +1,13 @@
-export default `
+export default ({submenuIcon: {normal, active}}) => (`
     <ul class="menu">
         <li id="retate-button">
             <div class="button clockwise">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-rotate-clockwise" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-rotate-clockwise" class="active"/>
+                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-rotate-clockwise"
+                            class="normal"/>
+                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-rotate-clockwise"
+                            class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -15,8 +17,10 @@ export default `
             <div class="button counterclockwise">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-rotate-counterclockwise" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-rotate-counterclockwise" class="active"/>
+                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-rotate-counterclockwise"
+                            class="normal"/>
+                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-rotate-counterclockwise"
+                            class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -33,4 +37,4 @@ export default `
             <input id="ratate-range-value" class="tui-image-editor-range-value" value="0" />
         </li>
     </ul>
-`;
+`);

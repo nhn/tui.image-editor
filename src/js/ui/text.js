@@ -7,8 +7,9 @@ import textHtml from './template/submenu/text';
  * @class
  */
 export default class Text {
-    constructor(subMenuElement) {
+    constructor(subMenuElement, theme) {
         const selector = str => subMenuElement.querySelector(str);
+        this.theme = theme;
         this._makeSubMenuElement(subMenuElement);
 
         this.effect = {
@@ -28,6 +29,32 @@ export default class Text {
             }),
             textRangeValue: selector('#text-range-value')
         };
+        this._styleLoader();
+    }
+    _styleLoader() {
+        console.log('aa');
+        const myStringOfstyles = `
+            .tui-image-editor-container .tui-image-editor-submenu .button:hover > label {
+                color: #fff;
+            }
+            .tui-image-editor-container .tui-image-editor-submenu .menu .button {
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                color: #8e8e8e;
+                font-weight: normal;
+                font-size: 11px;
+                margin: 0 7px 0 7px;
+            }
+        `;
+
+        const head = document.getElementsByTagName('head')[0];
+        const linkElement = document.createElement('link');
+        // myStringOfstyles
+        linkElement.setAttribute('rel', 'stylesheet');
+        linkElement.setAttribute('type', 'text/css');
+        linkElement.setAttribute('href', 'data:text/css;charset=UTF-8,' + encodeURIComponent(myStringOfstyles));
+        head.appendChild(linkElement);
     }
 
     /**
@@ -113,7 +140,9 @@ export default class Text {
     _makeSubMenuElement(subMenuElement) {
         const textSubMenu = document.createElement('div');
         textSubMenu.className = 'text';
-        textSubMenu.innerHTML = textHtml;
+        textSubMenu.innerHTML = textHtml({
+            submenuIcon: this.theme.submenuIcon
+        });
 
         subMenuElement.appendChild(textSubMenu);
     }

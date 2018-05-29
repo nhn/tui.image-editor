@@ -27,11 +27,11 @@ const FILTER_OPTIONS = [
  * @class
  */
 export default class Filter {
-    constructor(subMenuElement) {
+    constructor(subMenuElement, {submenuIcon}) {
         const selector = str => subMenuElement.querySelector(str);
         this.checkedMap = {};
         this.selector = selector;
-        this._makeSubMenuElement(subMenuElement);
+        this._makeSubMenuElement(subMenuElement, submenuIcon);
         this._makeControlElement();
     }
 
@@ -121,12 +121,13 @@ export default class Filter {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
+     * @param {Object} submenuIcon - subment icon
      * @private
      */
-    _makeSubMenuElement(subMenuElement) {
+    _makeSubMenuElement(subMenuElement, submenuIcon) {
         const filterSubMenu = document.createElement('div');
         filterSubMenu.className = 'filter';
-        filterSubMenu.innerHTML = filterHtml;
+        filterSubMenu.innerHTML = filterHtml({submenuIcon});
 
         subMenuElement.appendChild(filterSubMenu);
     }

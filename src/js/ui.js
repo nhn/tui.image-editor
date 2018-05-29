@@ -200,8 +200,13 @@ export default class Ui {
             // menu btn element
             this._el[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
 
+            console.log(this.theme.getStyle('submenu.label'));
+
             // submenu ui instance
-            this[menuName] = new SubComponentClass(this._subMenuElement);
+            this[menuName] = new SubComponentClass(this._subMenuElement, {
+                submenuIcon: this.theme.getStyle('submenu.icon'),
+                submenuLabel: this.theme.getStyle('submenu.label')
+            });
         });
     }
 
@@ -212,6 +217,8 @@ export default class Ui {
      */
     _makeUiElement(element) {
         let selectedElement;
+
+        window.snippet = snippet;
 
         if (element.jquery) {
             [selectedElement] = element;

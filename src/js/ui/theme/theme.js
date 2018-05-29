@@ -25,16 +25,24 @@ const defaultStyle = {
         fontSize: '12px'
     },
     submenu: {
-        backgroundColor: 'transparent'
-    },
-    submenuIcon: {
-        normal: {
-            iconName: 'icon-a',
-            iconPath: '../dist'
+        backgroundColor: 'transparent',
+        label: {
+            normal: {
+                color: '#8e8e8e'
+            },
+            active: {
+                color: 'red'
+            }
         },
-        active: {
-            iconName: 'icon-a',
-            iconPath: '../dist'
+        icon: {
+            normal: {
+                path: '../dist',
+                name: 'icon-a'
+            },
+            active: {
+                path: '../dist',
+                name: 'icon-d'
+            }
         }
     }
 };
@@ -45,8 +53,15 @@ export default class Theme {
     }
 
     getStyle(type) {
-        if (type === 'submenuIcon') {
-            return this.styles[type];
+        if (type === 'submenu.icon') {
+            return this.styles.submenu.icon;
+        } else if (type === 'submenu.label') {
+            const result = {};
+            snippet.forEach(this.styles.submenu.label, (labelValue, labelType) => {
+                result[labelType] = this._serialize(labelValue);
+            });
+
+            return result;
         }
 
         return this._serialize(this.styles[type]);
@@ -56,6 +71,10 @@ export default class Theme {
         const converterStack = [];
 
         snippet.forEach(styleObject, (value, key) => {
+            if (typeof value === 'object') {
+                return;
+            }
+
             if (['backgroundImage'].indexOf(key) > -1 && value !== 'none') {
                 value = `url(${value})`;
             }

@@ -1,11 +1,11 @@
-export default `
+export default ({submenuIcon: {normal, active}}) => (`
     <ul class="menu">
         <li id="text-effect-button">
             <div class="button bold">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-bold" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-bold" class="active"/>
+                    <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-bold" class="normal"/>
+                    <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-text-bold" class="active"/>
                     </svg>
                 </div>
                 <label> Bold </label>
@@ -13,8 +13,8 @@ export default `
             <div class="button italic">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-italic" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-italic" class="active"/>
+                    <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-italic" class="normal"/>
+                    <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-text-italic" class="active"/>
                     </svg>
                 </div>
                 <label> Italic </label>
@@ -22,8 +22,10 @@ export default `
             <div class="button underline">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-underline" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-underline" class="active"/>
+                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-underline"
+                            class="normal"/>
+                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-text-underline"
+                            class="active"/>
                     </svg>
                 </div>
                 <label> Underline </label>
@@ -36,8 +38,10 @@ export default `
             <div class="button left">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-left" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-align-left" class="active"/>
+                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-align-left"
+                        class="normal"/>
+                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-text-align-left"
+                        class="active"/>
                     </svg>
                 </div>
                 <label> left </label>
@@ -45,8 +49,10 @@ export default `
             <div class="button center">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-center" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-c-ic-text-align-center" class="active"/>
+                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-align-center"
+                        class="normal"/>
+                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-text-align-center"
+                        class="active"/>
                     </svg>
                 </div>
                 <label> center </label>
@@ -54,8 +60,10 @@ export default `
             <div class="button right">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="../dist/icon-a.svg#icon-a-ic-text-align-right" class="normal"/>
-                        <use xlink:href="../dist/icon-c.svg#icon-b-ic-text-align-right" class="active"/>
+                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-align-right"
+                        class="normal"/>
+                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-text-align-right"
+                        class="active"/>
                     </svg>
                 </div>
                 <label> right </label>
@@ -76,4 +84,4 @@ export default `
             <input id="text-range-value" class="tui-image-editor-range-value" value="0" />
         </li>
     </ul>
-`;
+`);

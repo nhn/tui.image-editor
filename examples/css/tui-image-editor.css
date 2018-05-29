@@ -164,9 +164,6 @@
     height: 150px;
     white-space: nowrap;
 }
-.tui-image-editor-container .tui-image-editor-submenu .button:hover > label {
-    color: #fff;
-}
 .tui-image-editor-container .tui-image-editor-submenu .button:hover svg > use.active {
     display: block;
 }
@@ -189,11 +186,11 @@
     display: block;
     margin-top: 14px;
 }
+
 .tui-image-editor-container .tui-image-editor-submenu .menu .button {
     position: relative;
     cursor: pointer;
     display: inline-block;
-    color: #8e8e8e;
     font-weight: normal;
     font-size: 11px;
     margin: 0 7px 0 7px;

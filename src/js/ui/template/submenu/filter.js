@@ -1,4 +1,4 @@
-export default `
+export default () => (`
     <ul class="menu">
         <li class="tui-image-editor-submenu-align">
             <div class="tui-image-editor-checkbox-wrap fixed-width">
@@ -137,4 +137,4 @@ export default `
             </div>
         </li>
     </ul>
-`;
+`);

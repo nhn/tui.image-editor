@@ -7,9 +7,9 @@ import iconHtml from './template/submenu/icon';
  * @class
  */
 export default class Icon {
-    constructor(subMenuElement) {
+    constructor(subMenuElement, {submenuIcon}) {
         const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement);
+        this._makeSubMenuElement(subMenuElement, submenuIcon);
         this.iconType = null;
         this._iconMap = {};
 
@@ -94,12 +94,13 @@ export default class Icon {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
+     * @param {Object} submenuIcon - subment icon
      * @private
      */
-    _makeSubMenuElement(subMenuElement) {
+    _makeSubMenuElement(subMenuElement, submenuIcon) {
         const iconSubMenu = document.createElement('div');
         iconSubMenu.className = 'icon';
-        iconSubMenu.innerHTML = iconHtml;
+        iconSubMenu.innerHTML = iconHtml({submenuIcon});
 
         subMenuElement.appendChild(iconSubMenu);
     }
