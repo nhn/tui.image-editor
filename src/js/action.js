@@ -32,13 +32,12 @@ export default {
      */
     _mainAction() {
         return {
-            initLoadImage: (imagePath, imageName, callback) => {
+            initLoadImage: (imagePath, imageName) => (
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
                     this.ui.resizeEditor(sizeValue);
                     this.clearUndoStack();
-                    callback();
-                });
-            },
+                })
+            ),
             undo: () => {
                 if (!this.isEmptyUndoStack()) {
                     this.undo();
@@ -57,7 +56,9 @@ export default {
                     } else {
                         this.undo().then(() => {
                             undoRecursiveCall();
-                        });
+                        })['catch'](message => (
+                            Promise.reject(message)
+                        ));
                     }
                 };
                 undoRecursiveCall();
@@ -85,7 +86,9 @@ export default {
                 this.loadImageFromFile(file).then(() => {
                     this.clearUndoStack();
                     this.ui.resizeEditor();
-                });
+                })['catch'](message => (
+                    Promise.reject(message)
+                ));
             },
             download: () => {
                 const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
@@ -203,13 +206,13 @@ export default {
      */
     _maskAction() {
         return {
-            loadImageFromURL: (imgUrl, file) => {
+            loadImageFromURL: (imgUrl, file) => (
                 this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
                     this.addImageObject(imgUrl).then(() => {
                         URL.revokeObjectURL(file);
                     });
-                });
-            },
+                })
+            ),
             applyFilter: () => {
                 this.applyFilter('mask', {
                     maskObjId: this.activeObjectId
@@ -283,7 +286,9 @@ export default {
                         this.stopDrawingMode();
                         this.ui.resizeEditor();
                         this.ui.changeMenu('crop');
-                    });
+                    })['catch'](message => (
+                        Promise.reject(message)
+                    ));
                 }
             },
             cancel: () => {
@@ -371,7 +376,9 @@ export default {
                         fill: this.ui.text.getTextColor(),
                         fontSize: parseInt(this.ui.text.getFontSize(), 10)
                     });
-                });
+                })['catch'](message => (
+                    Promise.reject(message)
+                ));
             },
             objectScaled: obj => {
                 if (obj.type === 'text') {

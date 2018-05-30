@@ -338,23 +338,24 @@ export default class Ui {
      */
     initCanvas() {
         const loadImageInfo = this._getLoadImage();
+        if (loadImageInfo) {
+            this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(() => {
+                this._addHelpActionEvent('undo');
+                this._addHelpActionEvent('redo');
+                this._addHelpActionEvent('reset');
+                this._addHelpActionEvent('delete');
+                this._addHelpActionEvent('deleteAll');
 
-        this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name, () => {
-            this._addHelpActionEvent('undo');
-            this._addHelpActionEvent('redo');
-            this._addHelpActionEvent('reset');
-            this._addHelpActionEvent('delete');
-            this._addHelpActionEvent('deleteAll');
+                this._addDownloadEvent();
+                this._addLoadEvent();
 
-            this._addDownloadEvent();
-            this._addLoadEvent();
-
-            snippet.forEach(this.options.menu, menuName => {
-                this._addMenuEvent(menuName);
-                this._addSubMenuEvent(menuName);
+                snippet.forEach(this.options.menu, menuName => {
+                    this._addMenuEvent(menuName);
+                    this._addSubMenuEvent(menuName);
+                });
+                this._initMenu();
             });
-            this._initMenu();
-        });
+        }
 
         const gridVisual = document.createElement('div');
         gridVisual.className = 'tui-image-editor-grid-visual';

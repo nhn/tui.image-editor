@@ -5,7 +5,6 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
-import util from '../src/js/util';
 import action from '../src/js/action';
 
 describe('Ui', () => {
@@ -36,8 +35,8 @@ describe('Ui', () => {
         beforeEach(() => {
             mainAction = actions.main;
         });
-        it('LoadImageFromURL() API should be executed When the initLoadImage action occurs', () => {
-            const callback = jasmine.createSpy('callback');
+
+        it('LoadImageFromURL() API should be executed When the initLoadImage action occurs', done => {
             const promise = new Promise(resolve => {
                 resolve(300);
             });
@@ -45,13 +44,11 @@ describe('Ui', () => {
             spyOn(imageEditorMock, 'clearUndoStack');
             spyOn(imageEditorMock.ui, 'resizeEditor');
 
-            mainAction.initLoadImage('path', 'imageName', callback);
-
-            expect(imageEditorMock.loadImageFromURL).toHaveBeenCalled();
-            promise.then(() => {
+            mainAction.initLoadImage('path', 'imageName').then(() => {
                 expect(imageEditorMock.clearUndoStack).toHaveBeenCalled();
                 expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
-                expect(callback).toHaveBeenCalled();
+                expect(imageEditorMock.loadImageFromURL).toHaveBeenCalled();
+                done();
             });
         });
 
@@ -94,7 +91,7 @@ describe('Ui', () => {
             expect(imageEditorMock.ui.changeDeleteAllButtonEnabled).toHaveBeenCalled();
         });
 
-        it('loadImageFromFile() API should be executed When the load action occurs', () => {
+        it('loadImageFromFile() API should be executed When the load action occurs', done => {
             const promise = new Promise(resolve => {
                 resolve();
             });
@@ -104,10 +101,11 @@ describe('Ui', () => {
 
             mainAction.load();
 
-            expect(imageEditorMock.loadImageFromFile).toHaveBeenCalled();
             promise.then(() => {
+                expect(imageEditorMock.loadImageFromFile).toHaveBeenCalled();
                 expect(imageEditorMock.clearUndoStack).toHaveBeenCalled();
                 expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
+                done();
             });
         });
 
@@ -174,7 +172,7 @@ describe('Ui', () => {
         beforeEach(() => {
             cropAction = actions.crop;
         });
-        it('getCropzoneRect(), stopDrawingMode(), ui.resizeEditor(), ui.changeMenu() API should be executed When the crop action occurs', () => {
+        it('getCropzoneRect(), stopDrawingMode(), ui.resizeEditor(), ui.changeMenu() API should be executed When the crop action occurs', done => {
             const promise = new Promise(resolve => {
                 resolve();
             });
@@ -192,6 +190,7 @@ describe('Ui', () => {
                 expect(imageEditorMock.stopDrawingMode).toHaveBeenCalled();
                 expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
                 expect(imageEditorMock.ui.changeMenu).toHaveBeenCalled();
+                done();
             });
         });
 
@@ -265,19 +264,6 @@ describe('Ui', () => {
         let maskAction;
         beforeEach(() => {
             maskAction = actions.mask;
-        });
-
-        it('loadImageFromURL(), addImageObject() API should be executed When the changeTextStyle action occurs', () => {
-            const promise = new Promise(resolve => {
-                resolve();
-            });
-            spyOn(imageEditorMock, 'toDataURL').and.returnValue('url');
-            spyOn(imageEditorMock, 'loadImageFromURL').and.returnValue(promise);
-
-            maskAction.loadImageFromURL('path', null);
-            promise.then(() => {
-                spyOn(imageEditorMock, 'addImageObject').and.returnValue(Promise.resolve());
-            });
         });
 
         it('applyFilter() API should be executed When the applyFilter action occurs', () => {
