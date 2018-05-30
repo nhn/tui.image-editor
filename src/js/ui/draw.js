@@ -8,9 +8,9 @@ import drawHtml from './template/submenu/draw';
  * @class
  */
 export default class Draw {
-    constructor(subMenuElement, {submenuIcon}) {
+    constructor(subMenuElement, {iconStyle}) {
         const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, submenuIcon);
+        this._makeSubMenuElement(subMenuElement, iconStyle);
 
         this._el = {
             lineSelectButton: selector('#draw-line-select-button'),
@@ -74,13 +74,13 @@ export default class Draw {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} submenuIcon - subment icon
+     * @param {Object} iconStyle -  icon style
      * @private
      */
-    _makeSubMenuElement(subMenuElement, submenuIcon) {
+    _makeSubMenuElement(subMenuElement, iconStyle) {
         const drawSubMenu = document.createElement('div');
         drawSubMenu.className = 'draw';
-        drawSubMenu.innerHTML = drawHtml({submenuIcon});
+        drawSubMenu.innerHTML = drawHtml({iconStyle});
 
         subMenuElement.appendChild(drawSubMenu);
     }

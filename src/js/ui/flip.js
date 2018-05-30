@@ -6,10 +6,10 @@ import flipHtml from './template/submenu/flip';
  * @class
  */
 export default class Flip {
-    constructor(subMenuElement, {submenuIcon}) {
+    constructor(subMenuElement, {iconStyle}) {
         const selector = str => subMenuElement.querySelector(str);
         this.flipStatus = false;
-        this._makeSubMenuElement(subMenuElement, submenuIcon);
+        this._makeSubMenuElement(subMenuElement, iconStyle);
 
         this._el = {
             flipButton: selector('#flip-button')
@@ -50,13 +50,13 @@ export default class Flip {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} submenuIcon - subment icon
+     * @param {Object} iconStyle -  icon style
      * @private
      */
-    _makeSubMenuElement(subMenuElement, submenuIcon) {
+    _makeSubMenuElement(subMenuElement, iconStyle) {
         const filpSubMenu = document.createElement('div');
         filpSubMenu.className = 'flip';
-        filpSubMenu.innerHTML = flipHtml({submenuIcon});
+        filpSubMenu.innerHTML = flipHtml({iconStyle});
 
         subMenuElement.appendChild(filpSubMenu);
     }

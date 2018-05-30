@@ -27,11 +27,11 @@ const FILTER_OPTIONS = [
  * @class
  */
 export default class Filter {
-    constructor(subMenuElement, {submenuIcon}) {
+    constructor(subMenuElement, {iconStyle}) {
         const selector = str => subMenuElement.querySelector(str);
         this.checkedMap = {};
         this.selector = selector;
-        this._makeSubMenuElement(subMenuElement, submenuIcon);
+        this._makeSubMenuElement(subMenuElement, iconStyle);
         this._makeControlElement();
     }
 
@@ -77,7 +77,7 @@ export default class Filter {
      * @returns {Object} filter option object
      * @private
      */
-    _getFilterOption(type) {
+    _getFilterOption(type) { // eslint-disable-line
         const option = {};
         switch (type) {
             case 'removeWhite':
@@ -121,13 +121,13 @@ export default class Filter {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} submenuIcon - subment icon
+     * @param {Object} iconStyle -  icon style
      * @private
      */
-    _makeSubMenuElement(subMenuElement, submenuIcon) {
+    _makeSubMenuElement(subMenuElement, iconStyle) {
         const filterSubMenu = document.createElement('div');
         filterSubMenu.className = 'filter';
-        filterSubMenu.innerHTML = filterHtml({submenuIcon});
+        filterSubMenu.innerHTML = filterHtml({iconStyle});
 
         subMenuElement.appendChild(filterSubMenu);
     }

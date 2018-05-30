@@ -6,9 +6,9 @@ import rotateHtml from './template/submenu/rotate';
  * @class
  */
 export default class Rotate {
-    constructor(subMenuElement, {submenuIcon}) {
+    constructor(subMenuElement, {iconStyle}) {
         const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, submenuIcon);
+        this._makeSubMenuElement(subMenuElement, iconStyle);
 
         this._el = {
             rotateButton: selector('#retate-button'),
@@ -48,13 +48,13 @@ export default class Rotate {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} submenuIcon - subment icon
+     * @param {Object} iconStyle -  icon style
      * @private
      */
-    _makeSubMenuElement(subMenuElement, submenuIcon) {
+    _makeSubMenuElement(subMenuElement, iconStyle) {
         const rotateSubMenu = document.createElement('div');
         rotateSubMenu.className = 'rotate';
-        rotateSubMenu.innerHTML = rotateHtml({submenuIcon});
+        rotateSubMenu.innerHTML = rotateHtml({iconStyle});
 
         subMenuElement.appendChild(rotateSubMenu);
     }

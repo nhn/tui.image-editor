@@ -1,4 +1,4 @@
-export default ({submenuIcon: {normal, active}}) => (`
+export default ({iconStyle: {normal, active}}) => (`
     <ul class="menu">
         <li id="shape-button" class="rect">
             <div class="button rect">

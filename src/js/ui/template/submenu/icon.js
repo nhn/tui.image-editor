@@ -1,4 +1,4 @@
-export default ({submenuIcon: {normal, active}}) => (`
+export default ({iconStyle: {normal, active}}) => (`
     <ul class="menu">
         <li id="icon-add-button">
             <div class="button" data-icontype="icon-arrow">

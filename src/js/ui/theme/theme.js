@@ -1,83 +1,113 @@
-import snippet from 'tui-code-snippet';
-import style from '../template/style';
-const defaultStyle = {
-    common: {
-        backgroundImage: './img/bg.png',
-        backgroundColor: '#fff',
-        border: '0px'
-    },
-    header: {
-        backgroundImage: 'none',
-        backgroundColor: 'transparent',
-        border: '0px'
-    },
-    loadButton: {
-        backgroundColor: '#fff',
-        border: '1px solid #ddd',
-        color: '#222',
-        fontFamily: 'NotoSans, sans-serif',
-        fontSize: '12px'
-    },
-    downloadButton: {
-        backgroundColor: '#fdba3b',
-        border: '1px solid #fdba3b',
-        color: '#fff',
-        fontFamily: 'NotoSans, sans-serif',
-        fontSize: '12px'
-    },
-    submenu: {
-        backgroundColor: 'transparent',
-        partition: {
-            color: '#858585'
-        },
-        label: {
-            normal: {
-                color: '#858585',
-                fontWeight: 'normal'
-            },
-            active: {
-                color: '#000',
-                fontWeight: 'normal'
-            }
-        },
-        icon: {
-            normal: {
-                path: '../dist',
-                name: 'icon-a'
-            },
-            active: {
-                path: '../dist',
-                name: 'icon-d'
-            }
-        },
-        checkbox: {
-            border: '1px solid #ccc',
-            backgroundColor: '#fff'
-        },
-        range: {
-            pointer: {
-                color: '#333'
-            },
-            value: {
-                color: '#000',
-                fontWeight: 'normal',
-                backgroundColor: '#f5f5f5'
-            },
-            title: {
-                color: '#000'
-            }
-        }
-    }
-};
+import {extend, forEach} from 'tui-code-snippet';
+import style from '../template//style';
+import standardTheme from './standard';
 
+/**
+ * Theme manager
+ * @class
+ * @param {Object} customTheme - custom theme
+ */
 export default class Theme {
-    constructor(themeOption) {
-        this.styles = snippet.extend(defaultStyle, themeOption);
-        this.styleBuffer = '';
-        this._styleMaker();
-        this._styleLoader();
+    constructor(customTheme) {
+        this.styles = extend(standardTheme, customTheme);
+        this._styleLoad(this._styleMaker());
     }
 
+    /**
+     * Get a Style cssText or StyleObject
+     * @param {string} type - style type
+     * @returns {string|object} - cssText or StyleObject
+     */
+    getStyle(type) { // eslint-disable-line
+        const option = this._getTargetOption(type);
+        let result = null;
+
+        switch (type) {
+            case 'menu.icon':
+            case 'submenu.icon':
+                result = option;
+                break;
+            case 'submenu.colorpicker':
+                result = {
+                    button: this._makeCssText(option.button),
+                    title: this._makeCssText(option.title)
+                };
+                break;
+            case 'submenu.range':
+                option.pointer.backgroundColor = option.pointer.color;
+
+                result = {
+                    pointer: this._makeCssText(option.pointer),
+                    title: this._makeCssText(option.title),
+                    value: this._makeCssText(option.value)
+                };
+                break;
+            case 'submenu.partition':
+                result = {
+                    vertical: this._makeCssText(extend({}, option, {borderLeft: `1px solid ${option.color}`})),
+                    horizontal: this._makeCssText(extend({}, option, {borderBottom: `1px solid ${option.color}`}))
+                };
+                break;
+            case 'submenu.label':
+                result = {
+                    normal: this._makeCssText(option.normal),
+                    active: this._makeCssText(option.active)
+                };
+                break;
+            default:
+                result = this._makeCssText(option);
+                break;
+        }
+
+        return result;
+    }
+
+    /**
+     * Apply css resource
+     * @param {string} styleBuffer - serialized css text
+     * @private
+     */
+    _styleLoad(styleBuffer) {
+        const [head] = document.getElementsByTagName('head');
+        const linkElement = document.createElement('link');
+        const styleData = encodeURIComponent(styleBuffer);
+        linkElement.setAttribute('rel', 'stylesheet');
+        linkElement.setAttribute('type', 'text/css');
+        linkElement.setAttribute('href', `data:text/css;charset=UTF-8,${styleData}`);
+        head.appendChild(linkElement);
+    }
+
+    /**
+     * Make css resource
+     * @returns {string} - serialized css text
+     * @private
+     */
+    _styleMaker() {
+        const submenuLabelStyle = this.getStyle('submenu.label');
+        const submenuPartitionStyle = this.getStyle('submenu.partition');
+        const submenuRangeStyle = this.getStyle('submenu.range');
+        const submenuColorpickerStyle = this.getStyle('submenu.colorpicker');
+
+        return style({
+            subMenuLabelActive: submenuLabelStyle.active,
+            subMenuLabelNormal: submenuLabelStyle.normal,
+            subMenuRangeTitle: submenuRangeStyle.title,
+            submenuPartitionVertical: submenuPartitionStyle.vertical,
+            submenuPartitionHorizontal: submenuPartitionStyle.horizontal,
+            submenuRangePointer: submenuRangeStyle.pointer,
+            submenuRangeValue: submenuRangeStyle.value,
+            submenuColorpickerTitle: submenuColorpickerStyle.title,
+            submenuColorpickerButton: submenuColorpickerStyle.button,
+            submenuCheckbox: this.getStyle('submenu.checkbox')
+        });
+    }
+
+    /**
+     * Find Target Object for max 2depth
+     * @param {string} type - style type
+     * @returns {object} - style object
+     * @private
+     */
     _getTargetOption(type) {
         let option = null;
 
@@ -91,53 +121,20 @@ export default class Theme {
         return option;
     }
 
-    getStyle(type) {
-        const option = this._getTargetOption(type);
-        let result = null;
-
-        switch (type) {
-            case 'submenu.icon':
-                result = option;
-                break;
-            case 'submenu.checkbox':
-                result = this._serialize(this.styles.submenu.checkbox);
-                break;
-            case 'submenu.range':
-                option.pointer.backgroundColor = option.pointer.color;
-
-                result = {
-                    pointer: this._serialize(option.pointer),
-                    title: this._serialize(option.title),
-                    value: this._serialize(option.value)
-                };
-                break;
-            case 'submenu.partition':
-                result = {
-                    vertical: this._serialize(snippet.extend({}, option, {borderLeft: `1px solid ${option.color}`})),
-                    horizontal: this._serialize(snippet.extend({}, option, {borderBottom: `1px solid ${option.color}`}))
-                };
-                break;
-            case 'submenu.label':
-                result = {
-                    normal: this._serialize(option.normal),
-                    active: this._serialize(option.active)
-                };
-                break;
-            default:
-                result = this._serialize(option);
-                break;
-        }
-
-        return result;
-    }
-
-    _serialize(styleObject) {
+    /**
+     * Style object to Csstext serialize
+     * @param {object} styleObject - style object
+     * @returns {string} - css text string
+     * @private
+     */
+    _makeCssText(styleObject) {
         const converterStack = [];
 
-        snippet.forEach(styleObject, (value, key) => {
+        forEach(styleObject, (value, key) => {
             if (typeof value === 'object') {
                 return;
-            } else if (['backgroundImage'].indexOf(key) > -1 && value !== 'none') {
+            }
+            if (['backgroundImage'].indexOf(key) > -1 && value !== 'none') {
                 value = `url(${value})`;
             }
             converterStack.push(`${this._toUnderScore(key)}: ${value}`);
@@ -147,35 +144,12 @@ export default class Theme {
     }
 
     /**
-     * String to camelcase string
+     * Camel key string to Underscore string
      * @param {string} targetString - change target
      * @returns {string}
      * @private
      */
     _toUnderScore(targetString) {
         return targetString.replace(/([A-Z])/g, ($0, $1) => `-${$1.toLowerCase()}`);
-    }
-
-    _styleLoader() {
-        const [head] = document.getElementsByTagName('head');
-        const linkElement = document.createElement('link');
-        const styleData = encodeURIComponent(this.styleBuffer);
-        linkElement.setAttribute('rel', 'stylesheet');
-        linkElement.setAttribute('type', 'text/css');
-        linkElement.setAttribute('href', `data:text/css;charset=UTF-8,${styleData}`);
-        head.appendChild(linkElement);
-    }
-
-    _styleMaker() {
-        this.styleBuffer = style({
-            subMenuLabelActive: this.getStyle('submenu.label').active,
-            subMenuLabelNormal: this.getStyle('submenu.label').normal,
-            subMenuRangeTitle: this.getStyle('submenu.range').title,
-            submenuPartitionVertical: this.getStyle('submenu.partition').vertical,
-            submenuPartitionHorizontal: this.getStyle('submenu.partition').horizontal,
-            submenuCheckbox: this.getStyle('submenu.checkbox'),
-            submenuRangePointer: this.getStyle('submenu.range').pointer,
-            submenuRangeValue: this.getStyle('submenu.range').value
-        });
     }
 }

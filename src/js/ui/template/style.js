@@ -6,7 +6,9 @@ export default ({
     submenuPartitionHorizontal,
     submenuCheckbox,
     submenuRangePointer,
-    submenuRangeValue
+    submenuRangeValue,
+    submenuColorpickerTitle,
+    submenuColorpickerButton
 }) => (`
     .tui-image-editor-container #icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label,
     .tui-image-editor-container #icon-add-button.icon-heart .button[data-icontype="icon-heart"] label,
@@ -56,5 +58,11 @@ export default ({
     }
     .tui-image-editor-container .tui-image-editor-range-value {
         ${submenuRangeValue}
+    }
+    .tui-image-editor-container .tui-image-editor-submenu .button .color-picker-value + label {
+        ${submenuColorpickerTitle}
+    }
+    .tui-image-editor-container .tui-image-editor-submenu .button .color-picker-value {
+        ${submenuColorpickerButton}
     }
 `);

@@ -5,9 +5,9 @@ import maskHtml from './template/submenu/mask';
  * @class
  */
 export default class Mask {
-    constructor(subMenuElement, {submenuIcon}) {
+    constructor(subMenuElement, {iconStyle}) {
         const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, submenuIcon);
+        this._makeSubMenuElement(subMenuElement, iconStyle);
 
         this._el = {
             applyButton: selector('#mask-apply'),
@@ -48,13 +48,13 @@ export default class Mask {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} submenuIcon - subment icon
+     * @param {Object} iconStyle -  icon style
      * @private
      */
-    _makeSubMenuElement(subMenuElement, submenuIcon) {
+    _makeSubMenuElement(subMenuElement, iconStyle) {
         const maskSubMenu = document.createElement('div');
         maskSubMenu.className = 'mask';
-        maskSubMenu.innerHTML = maskHtml({submenuIcon});
+        maskSubMenu.innerHTML = maskHtml({iconStyle});
 
         subMenuElement.appendChild(maskSubMenu);
     }

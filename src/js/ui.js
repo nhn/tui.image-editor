@@ -201,7 +201,7 @@ export default class Ui {
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
-                submenuIcon: this.theme.getStyle('submenu.icon')
+                iconStyle: this.theme.getStyle('submenu.icon')
             });
         });
     }
@@ -226,7 +226,10 @@ export default class Ui {
         const selector = util.getSelector(selectedElement);
 
         selectedElement.classList.add('tui-image-editor-container');
-        selectedElement.innerHTML = controls() + mainContainer({
+        selectedElement.innerHTML = controls({
+            iconStyle: this.theme.getStyle('menu.icon')
+        }) +
+        mainContainer({
             commonStyle: this.theme.getStyle('common'),
             headerStyle: this.theme.getStyle('header'),
             loadButtonStyle: this.theme.getStyle('loadButton'),
@@ -250,13 +253,14 @@ export default class Ui {
      * @private
      */
     _makeMenuElement(menuName) {
+        const btnElement = document.createElement('li');
+        const {normal, active} = this.theme.getStyle('menu.icon');
         const menuItemHtml = `
             <svg class="svg_ic-menu">
-                <use xlink:href="../dist/icon-a.svg#icon-a-ic-${menuName}" class="normal"/>
-                <use xlink:href="../dist/icon-b.svg#icon-b-ic-${menuName}" class="active"/>
+                <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-${menuName}" class="normal"/>
+                <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-${menuName}" class="active"/>
             </svg>
         `;
-        const btnElement = document.createElement('li');
 
         btnElement.id = `btn-${menuName}`;
         btnElement.className = 'item';

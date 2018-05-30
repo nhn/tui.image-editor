@@ -5,9 +5,9 @@ import cropHtml from './template/submenu/crop';
  * @class
  */
 export default class Crop {
-    constructor(subMenuElement, {submenuIcon}) {
+    constructor(subMenuElement, {iconStyle}) {
         const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, submenuIcon);
+        this._makeSubMenuElement(subMenuElement, iconStyle);
         this.status = 'active';
         this._el = {
             apply: selector('#crop-button .apply'),
@@ -48,13 +48,13 @@ export default class Crop {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} submenuIcon - subment icon
+     * @param {Object} iconStyle -  icon style
      * @private
      */
-    _makeSubMenuElement(subMenuElement, submenuIcon) {
+    _makeSubMenuElement(subMenuElement, iconStyle) {
         const cropSubMenu = document.createElement('div');
         cropSubMenu.className = 'crop';
-        cropSubMenu.innerHTML = cropHtml({submenuIcon});
+        cropSubMenu.innerHTML = cropHtml({iconStyle});
 
         subMenuElement.appendChild(cropSubMenu);
     }

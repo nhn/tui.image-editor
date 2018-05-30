@@ -7,10 +7,9 @@ import textHtml from './template/submenu/text';
  * @class
  */
 export default class Text {
-    constructor(subMenuElement, theme) {
+    constructor(subMenuElement, {iconStyle}) {
         const selector = str => subMenuElement.querySelector(str);
-        this.theme = theme;
-        this._makeSubMenuElement(subMenuElement);
+        this._makeSubMenuElement(subMenuElement, iconStyle);
 
         this.effect = {
             bold: false,
@@ -109,14 +108,13 @@ export default class Text {
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
+     * @param {Object} iconStyle -  icon style
      * @private
      */
-    _makeSubMenuElement(subMenuElement) {
+    _makeSubMenuElement(subMenuElement, iconStyle) {
         const textSubMenu = document.createElement('div');
         textSubMenu.className = 'text';
-        textSubMenu.innerHTML = textHtml({
-            submenuIcon: this.theme.submenuIcon
-        });
+        textSubMenu.innerHTML = textHtml({iconStyle});
 
         subMenuElement.appendChild(textSubMenu);
     }
