@@ -1,8 +1,4 @@
-/**
- * @fileoverview The standard theme
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- */
-export default {
+var blackTheme = {
     common: {
         backgroundImage: 'none',
         backgroundColor: '#1e1e1e',

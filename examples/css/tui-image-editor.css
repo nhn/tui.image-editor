@@ -60,6 +60,7 @@
     font-weight: bold;
     cursor: pointer;
 }
+
 .tui-image-editor-container .tui-image-editor-download-btn {
     background-color: #fdba3b;
     border-color: #fdba3b;
@@ -77,6 +78,7 @@
     opacity: 0;
     cursor: pointer;
 }
+
 .tui-image-editor-main-container {
     position: absolute;
     width: 100%;
@@ -91,7 +93,6 @@
     right: 0;
     left: 0;
 }
-
 .tui-image-editor-container .tui-image-editor-wrap {
     /* border: 1px solid green;*/
     position: absolute;
@@ -99,7 +100,6 @@
     width: 100%;
     overflow: auto;
 }
-
 .tui-image-editor-container .tui-image-editor {
     position: absolute;
     display: inline-block;
@@ -137,6 +137,7 @@
     border-radius: 100%;
     background-color: #fff;
 }
+
 .tui-image-editor-container .tui-image-editor-grid-visual table td.dot.left-top:before {
     top: -4px;
     left: -4px;
@@ -182,6 +183,11 @@
     display: inline-block;
     vertical-align: top;
 }
+
+
+
+
+
 .tui-image-editor-container .tui-image-editor-submenu .menu .newline {
     display: block;
     margin-top: 14px;
@@ -203,6 +209,10 @@
     font-size: 11px;
     letter-spacing: 0.7px;
 }
+
+
+
+
 .tui-image-editor-container .tui-image-editor-submenu .menu .button.apply label,
 .tui-image-editor-container .tui-image-editor-submenu .menu .button.cancel label {
     vertical-align: 7px;
@@ -238,6 +248,10 @@
 .tui-image-editor-container .tui-image-editor-main.filter .tui-image-editor-submenu > div.filter {
     display: table-cell;
 }
+
+
+
+
 
 /* FOR FILTER MENU */
 .tui-image-editor-container .filter-color-item {
@@ -328,6 +342,11 @@
     display:none;
 }
 
+
+
+
+
+
 /* VIRTUAL RANGE */
 .tui-image-editor-container .tui-image-editor-range {
     position: relative;
@@ -414,11 +433,11 @@
     height: 24px;
 }
 
+
+
+
+
 /* POSITION LEFT */
-.tui-image-editor-container.left .tui-image-editor-submenu > div,
-.tui-image-editor-container.right .tui-image-editor-submenu > div {
-    vertical-align: middle;
-}
 .tui-image-editor-container.left .tui-image-editor-submenu {
     left: 0;
     height: 100%;
@@ -437,6 +456,10 @@
 
 
 /* POSITION LEFT & RIGHT */
+.tui-image-editor-container.left .tui-image-editor-submenu > div,
+.tui-image-editor-container.right .tui-image-editor-submenu > div {
+    vertical-align: middle;
+}
 .tui-image-editor-container.left .tui-image-editor-submenu,
 .tui-image-editor-container.right .tui-image-editor-submenu {
     white-space: normal;
@@ -454,7 +477,6 @@
     width: 24px;
     height: 1px;
 }
-
 .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition,
 .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition {
     display: block;
@@ -557,10 +579,6 @@
     top: 0;
     bottom: inherit;
 }
-.tui-image-editor-container.top .tui-image-editor-controls {
-    top: 0;
-    bottom: inherit;
-}
 
 /* BIG MENU */
 .tui-image-editor-container .tui-image-editor-menu {
@@ -593,7 +611,6 @@
     width: 24px;
     height: 24px;
 }
-
 .tui-image-editor-container .svg_ic-submenu {
     width: 32px;
     height: 32px;
@@ -602,7 +619,6 @@
     width: 257px;
     height: 26px;
 }
-
 .tui-image-editor-container .tui-image-editor-controls svg > use {
     display: none;
 }

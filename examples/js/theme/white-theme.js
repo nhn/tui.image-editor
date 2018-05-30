@@ -1,11 +1,7 @@
-/**
- * @fileoverview The standard theme
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- */
-export default {
+var whiteTheme = {
     common: {
-        backgroundImage: 'none',
-        backgroundColor: '#1e1e1e',
+        backgroundImage: './img/bg.png',
+        backgroundColor: '#fff',
         border: '0px'
     },
     header: {
@@ -51,17 +47,17 @@ export default {
             },
             active: {
                 path: '../dist',
-                name: 'icon-c'
+                name: 'icon-d'
             }
         },
         label: {
             normal: {
                 color: '#858585',
-                fontWeight: 'lighter'
+                fontWeight: 'normal'
             },
             active: {
-                color: '#fff',
-                fontWeight: 'lighter'
+                color: '#000',
+                fontWeight: 'normal'
             }
         },
         checkbox: {
@@ -70,25 +66,23 @@ export default {
         },
         range: {
             pointer: {
-                color: '#fff'
+                color: '#333'
             },
             value: {
-                color: '#fff',
-                fontWeight: 'lighter',
-                border: '1px solid #353535',
-                backgroundColor: '#151515'
+                color: '#000',
+                fontWeight: 'normal',
+                backgroundColor: '#f5f5f5'
             },
             title: {
-                color: '#fff',
-                fontWeight: 'lighter'
+                color: '#000'
             }
         },
         colorpicker: {
             button: {
-                border: '1px solid #1e1e1e'
+                border: '1px solid #cbdbdb'
             },
             title: {
-                color: '#fff'
+                color: '#000'
             }
         }
     }

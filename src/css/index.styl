@@ -1,137 +1,688 @@
 prefix = 'tui-image-editor'
-.{prefix}-container
-  marign 0
-  padding 0
-  box-sizing border-box
-  min-height 300px
-  height 100%
-  position relative
-  background-color #282828
-  border 1px solid #000
-  overflow hidden
 
-  div, ul, label, input, li
-    box-sizing: border-box;
-    margin: 0;
++prefix-classes(prefix)
+  .-container
+    marign: 0;
     padding: 0;
-
-/* BUTTON AND LOGO */
-.{prefix}-container
-  .{prefix}-header
-    min-width: 533px;
-    position: absolute;
-    background-color: #151515;
-    top: 0;
-    width: 100%;
-  .{prefix}-header-buttons, .{prefix}-controls-buttons
-    float: right;
-    margin: 8px;
-  .{prefix}-header-logo, .{prefix}-controls-logo
-    float: left;
-    width: 30%;
-    padding: 17px;
-  .{prefix}-controls-logo, .{prefix}-controls-buttons 
-    width: 270px;
+    box-sizing: border-box;
+    min-height: 300px;
     height: 100%;
-    display: none;
-  .{prefix}-header-buttons, .{prefix}-controls-buttons
-    button
-      position: relative;
-      width: 120px;
-      height: 40px;
-      outline: none;
-      border-radius: 20px;
-      border: 1px solid #ddd;
-      padding-top: 5px;
-      font-family: NotoSans, sans-serif;
-      font-size: 12px;
-      font-weight: bold;
-      cursor: pointer;
-  .{prefix}-download-btn
-    background-color: #fdba3b;
-    border-color: #fdba3b;
-    color: #fff;
-  .{prefix}-load-btn
-    border: 1px solid blue;
-    position: absolute;
-    left: 0;
-    right: 0;
-    display: inline-block;
-    top: 0;
-    bottom: 0;
-    width: 100%;
-    opacity: 0;
-    cursor: pointer;
-  .{prefix}-main-container
-    position: absolute;
-    width: 100%;
-    top: 0;
-    bottom: 64px;
-  .{prefix}-main
-    position: absolute;
-    text-align: center;
-    top: 64px;
-    bottom: 0;
-    right: 0;
-    left: 0;
-  .{prefix}-wrap
-    position: absolute;
-    bottom: 150px;
-    width: 100%;
-    overflow: auto;
-  .{prefix}
-    position: absolute;
-    display: inline-block;
-    transition: all .7s ease;
+    position: relative;
+    background-color: #282828;
+    border: 1px solid #000;
+    overflow: hidden;
+  
+    div, ul, label, input, li
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+  
+    .-header
+        /* BUTTON AND LOGO */
+        min-width: 533px;
+        position: absolute;
+        background-color: #151515;
+        top: 0;
+        width: 100%;
+    .-header-buttons,
+    .-controls-buttons
+        float: right;
+        margin: 8px;
+
+    .-header-logo,
+    .-controls-logo
+        float: left;
+        width: 30%;
+        padding: 17px;
+
+    .-controls-logo,
+    .-controls-buttons
+        width: 270px;
+        height: 100%;
+        display: none;
+
+    .-header-buttons button,
+    .-controls-buttons button
+        position: relative;
+        width: 120px;
+        height: 40px;
+        outline: none;
+        border-radius: 20px;
+        border: 1px solid #ddd;
+        padding-top: 5px;
+        font-family: NotoSans, sans-serif;
+        font-size: 12px;
+        font-weight: bold;
+        cursor: pointer;
+
+    .-download-btn
+        background-color: #fdba3b;
+        border-color: #fdba3b;
+        color: #fff;
+    .-load-btn
+        border: 1px solid blue;
+        position: absolute;
+        left: 0;
+        right: 0;
+        display: inline-block;
+        top: 0;
+        bottom: 0;
+        width: 100%;
+        opacity: 0;
+        cursor: pointer;
+    .-main-container
+        position: absolute;
+        width: 100%;
+        top: 0;
+        bottom: 64px;
+    .-main
+        position: absolute;
+        text-align: center;
+        top: 64px;
+        bottom: 0;
+        right: 0;
+        left: 0;
+    .-wrap
+        position: absolute;
+        bottom: 150px;
+        width: 100%;
+        overflow: auto;
+    .
+        position: absolute;
+        display: inline-block;
+        transition: all .7s ease;
+
 
 /* GRID VISUAL OF FLIP AND ROTATE MENU  */
 .{prefix}-container
-  .{prefix}-grid-visual
-    display: none;
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    table
-      width: 100%;
-      height: 100%;
-      border-collapse: collapse;
-      box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
-      td
-        border: 1px solid #fff;
-        box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
-      td.dot.left-top:before
-        top: -4px;
-        left: -4px;
-      td.dot.right-top:before
-        top: -4px;
-        right: -4px;
-      td.dot.left-bottom:before
-        bottom: -4px;
-        left: -4px;
-      td.dot.right-bottom:before
-        bottom: -4px;
-        right: -4px;
-  .{prefix}-main.flip, .{prefix}-main.rotate
     .{prefix}-grid-visual
-      display: block;
+        display: none;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    .{prefix}.-main.flip .{prefix}-grid-visual,
+    .{prefix}-main.rotate ..{prefix}-grid-visual
+        display: block;
+    .{prefix}-grid-visual 
+        table
+            width: 100%;
+            height: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
+            td
+                border: 1px solid #fff;
+                box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
+            td.dot:before
+                content: '';
+                position: absolute;
+                width: 8px;
+                height: 8px;
+                border: 1px solid #cdcdcd;
+                border-radius: 100%;
+                background-color: #fff;
+            td.dot.left-top:before
+                top: -4px;
+                left: -4px;
+            td.dot.right-top:before
+                top: -4px;
+                right: -4px;
+            td.dot.left-bottom:before
+                bottom: -4px;
+                left: -4px;
+            td.dot.right-bottom:before
+                bottom: -4px;
+                right: -4px;
 
 /* SUBMENU */
 .{prefix}-container
-  .{prefix}-submenu
-    display: none;
-    position: absolute;
-    bottom: 0;
-    width:100%;
-    height: 150px;
-    white-space: nowrap;
-    .button:hover
-      > label
-        color: #fff;
-      svg > use.active
-        display: block;
-    
-          
-        
+    .{prefix}-submenu
+        display: none;
+        position: absolute;
+        bottom: 0;
+        width:100%;
+        height: 150px;
+        white-space: nowrap;
+        .button:hover svg > use.active
+            display: block;
+        .menu
+            li
+                display: inline-block;
+                vertical-align: top;
+            .newline
+                display: block;
+                margin-top: 14px;
+            .button
+                position: relative;
+                cursor: pointer;
+                display: inline-block;
+                font-weight: normal;
+                font-size: 11px;
+                margin: 0 7px 0 7px;
+            label
+                display: inline-block;
+                cursor: pointer;
+                padding-top: 5px;
+                font-family: sans-serif;
+                font-size: 11px;
+                letter-spacing: 0.7px;
+            .button.apply label,
+            .button.cancel label
+                vertical-align: 7px;
+        > div
+            display: none;
+            vertical-align: bottom;
 
-      
-                                                                
+    .{prefix}-partition > div
+        width: 1px;
+        height: 52px;
+        border-left: 1px solid #3c3c3c;
+        margin: 0 12px 0 14px;
+    .{prefix}-main.filter .tui-image-editor-partition > div
+        height: 108px;
+        margin: 0 29px 0 0px;
+    .{prefix}-submenu-align
+        text-align: left;
+        margin-right: 30px;
+        label
+            width: 55px;
+            white-space: nowrap;
+    .{prefix}-submenu-align:first-child
+        margin-right: 0;
+        label
+            width: 70px;
+    .{prefix}-main.crop .{prefix}-submenu > div.crop,
+    .{prefix}-main.flip .{prefix}-submenu > div.flip,
+    .{prefix}-main.rotate .{prefix}-submenu > div.rotate,
+    .{prefix}-main.shape .{prefix}-submenu > div.shape,
+    .{prefix}-main.text .{prefix}-submenu > div.text,
+    .{prefix}-main.mask .{prefix}-submenu > div.mask,
+    .{prefix}-main.icon .{prefix}-submenu > div.icon,
+    .{prefix}-main.draw .{prefix}-submenu > div.draw,
+    .{prefix}-main.filter .{prefix}-submenu > div.filter
+        display: table-cell;
+
+/* FOR FILTER MENU */
+.{prefix}-container
+  .filter-color-item
+    display: inline-block;
+    .tui-image-editor-checkbox
+        display: block;
+
+/* VIRTUAL CHECKBOX */
+  .{prefix}-container
+    .{prefix}-checkbox-wrap
+        display: inline-block !important;
+        text-align: left;
+    .{prefix}-checkbox-wrap.fixed-width
+        width: 187px;
+        white-space: normal;
+    .{prefix}-checkbox
+        display: inline-block;
+        margin: 1px 0 1px 0;
+        input
+            width: 14px;
+            height: 14px;
+            opacity: 0;
+        input + label
+            color: #fff;
+            height: 14px;
+            position: relative;
+        input + label:before
+            content: '';
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background-color: #fff;
+            top: 4px;
+            left: -19px;
+            display: inline-block;
+            margin: 0;
+            text-align: center;
+            font-size: 11px;
+            border: 0;
+            border-radius: 2px;
+            padding-top: 1px;
+            box-sizing: border-box;
+        input[type='checkbox']:checked + label:before
+            background-size: cover;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAMBJREFUKBWVkjEOwjAMRe2WgZW7IIHEDdhghhuwcQ42rlJugAQS54Cxa5cq1QM5TUpByZfS2j9+dlJVt/tX5ZxbS4ZU9VLkQvSHKTIGRaVJYFmKrBbTCJxE2UgCdDzMZDkHrOV6b95V0US6UmgKodujEZbJg0B0ZgEModO5lrY1TMQf1TpyJGBEjD+E2NPN7ukIUDiF/BfEXgRiGEw8NgkffYGYwCi808fpn/6OvfUfsDr/Vc1IfRf8sKnFVqeiVQfDu0tf/nWH9gAAAABJRU5ErkJggg==');
+
+    .{prefix}-selectlist-wrap
+        position: relative;
+        select
+            width: 100%;
+            height: 25px;
+            margin-top: 9px;
+            border: 0;
+            outline: 0;
+            border-radius: 0;
+            border: 1px solid #cbdbdb;
+            background-color: #fff;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 0 7px 0 7px;
+    .{prefix}-selectlist-wrap:after
+        content: '';
+        position: absolute;
+        display: inline-block;
+        width: 14px;
+        height: 14px;
+        right: 5px;
+        bottom: 5px;
+        background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAHlJREFUKBVjYBgFOEOAEVkmPDxc89+/f6eAYjzI4kD2FyYmJrOVK1deh4kzwRggGiQBVJCELAZig8SQNYHEmEEEMrh69eo1HR0dfqCYJUickZGxf9WqVf3IakBsFBthklpaWmVA9mEQhrJhUoTp0NBQCRAmrHL4qgAAuu4cWZOZIGsAAAAASUVORK5CYII=');
+        background-size: cover;
+    .{prefix}-selectlist-wrap select::-ms-expand
+        display:none;
+
+
+/* VIRTUAL RANGE */
+.{prefix}-container
+    .{prefix}-range
+        position: relative;
+        top: 7px;
+        width: 166px;
+        height: 17px;
+        display: inline-block;
+    .{prefix}-virtual-range-bar
+        top: 7px;
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background-color: #bcbcbc;
+    .{prefix}-virtual-range-pointer
+        position: absolute;
+        cursor: pointer;
+        top: -5px;
+        left: 0;
+        width: 12px;
+        height: 12px;
+        background-color: #fff;
+        border-radius: 100%;
+    .{prefix}-range-wrap
+        display: inline-block;
+        &.short .tui-image-editor-range
+            width: 100px;
+    .color-picker-control
+        .{prefix}-range
+            width: 108px;
+        .{prefix}-virtual-range-pointer
+            background-color: #333;
+    .{prefix}-range-wrap.newline.short
+        margin-top: 0;
+        margin-left: 17px;
+        label
+            color: #8e8e8e;
+            font-weight: normal;
+    .{prefix}-range-wrap label
+        vertical-align: baseline;
+        font-size: 11px;
+        margin-right: 7px;
+        color: #fff;
+    .{prefix}-range-value
+        width: 40px;
+        height: 24px;
+        outline: none;
+        border-radius: 2px;
+        box-shadow: none;
+        border: 1px solid #d5d5d5;
+        text-align: center;
+        background-color: #1c1c1c;
+        color: #fff;
+        font-weight: lighter;
+        vertical-align: baseline;
+        font-family: sans-serif;
+        padding-top: 2px;
+    .{prefix}-controls
+        position: absolute;
+        background-color: #151515;
+        width: 100%;
+        height: 64px;
+        display: table;
+        bottom: 0;
+        z-index: 1;
+    .{prefix}-icpartition
+        display: inline-block;
+        background-color: #282828;
+        width: 1px;
+        height: 24px;
+
+
+/* POSITION LEFT */
+.{prefix}-container
+  &.left
+    .{prefix}-submenu
+        left: 0;
+        height: 100%;
+        width: 248px;
+    .{prefix}-main-container
+        left: 64px;
+        width: calc(100% - 64px);
+        height: 100%;
+    .{prefix}-controls
+        width: 64px;
+        height: 100%;
+        display: table;
+
+/* POSITION LEFT & RIGHT */
+.{prefix}-container
+  &.left, &.right
+    .{prefix}-submenu
+        white-space: normal;
+        > div
+            vertical-align: middle;
+    .{prefix}-controls li
+        display: block;
+        width: 39px;
+        margin: 4px 0 4px 12px;
+    .{prefix}-icpartition
+        position: relative;
+        top: -7px;
+        width: 24px;
+        height: 1px;
+    .{prefix}-submenu
+        .{prefix}-partition
+            display: block;
+            width: 75%;
+            margin: auto;
+            > div
+                border-left: 0;
+                height:10px;
+                border-bottom: 1px solid #3c3c3c;
+                width: 100%;
+                margin: 0;
+        .{prefix}-submenu-align
+            margin-right: 0;
+        .menu
+            li
+                margin-top: 15px;
+            .tui-colorpicker-clearfix li
+                margin-top: 0;
+
+    .{prefix}-checkbox-wrap.fixed-width
+        width: 182px;
+        white-space: normal;
+    .{prefix}-range-wrap.newline label.range
+        display: block;
+        text-align: left;
+        width: 75%;
+        margin: auto;
+    .{prefix}-range
+        width: 136px;
+    #icon-add-button .button
+        width: 45px;
+
+
+/* POSITION RIGIHT */
+.{prefix}-container
+  &.right
+    .{prefix}-submenu
+        right: 0;
+        height: 100%;
+        width: 248px;
+    .{prefix}-main-container 
+        right: 64px;
+        width: calc(100% - 64px);
+        height: 100%;
+    .{prefix}-controls
+        right: 0;
+        width: 64px;
+        height: 100%;
+        display: table;
+
+
+/* POSITION TOP & BOTTOM */
+.{prefix}-container
+  &.top, &.bottom
+    .{prefix}-submenu
+        .{prefix}-partition.only-left-right
+            display: none;
+
+
+/* POSITION BOTTOM */
+.{prefix}-container
+    &.bottom .tui-image-editor-submenu > div
+        padding-bottom: 24px;
+
+/* POSITION TOP */
+.{prefix}-container
+  &.top
+    .{prefix}-submenu
+        top: 0;
+        bottom: inherit;
+        > div
+            padding-top: 24px;
+            vertical-align: top;
+    .{prefix}-controls-logo
+        display: table-cell;
+    .{prefix}-controls-buttons
+        display: table-cell;
+    .{prefix}-main
+        top: 64px;
+        height: 100%;
+    .{prefix}-controls
+        top: 0;
+        bottom: inherit;
+
+/* BIG MENU */
+.{prefix}-container
+    .{prefix}-menu
+        width: auto;
+        list-style: none;
+        padding: 0;
+        margin: 0 auto;
+        display: table-cell;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        > .item
+            display: inline-block;
+            border-radius: 2px;
+            padding: 7px 8px 3px 8px;
+            cursor: pointer;
+        > .item.active
+            background-color: #fff;
+            transition: all .3s ease;
+    .{prefix}-wrap
+        position: absolute;
+
+
+/* ICON */
+.{prefix}-container
+    .svg_ic-menu
+        width: 24px;
+        height: 24px;
+    .svg_ic-submenu
+        width: 32px;
+        height: 32px;
+    .svg_img-bi
+        width: 257px;
+        height: 26px;
+
+    .{prefix}-controls
+        svg > use
+            display: none;
+        svg > use.normal
+            display: block;
+        .active svg > use.active
+            display: block;
+        .enabled svg > use.enabled
+            display: block;
+        .active svg > use.normal,
+        .enabled svg > use.normal
+            display: none;
+
+
+/* SUB MENU */
+.{prefix}-container
+    div.tui-colorpicker-clearfix
+        width: 159px;
+        height: 28px;
+        border: 1px solid #d5d5d5;
+        border-radius: 2px;
+        background-color: #f5f5f5;
+        margin-top: 6px;
+        padding: 4px 7px 4px 7px;
+    .tui-colorpicker-palette-hex
+        width: 114px;
+        background-color: #f5f5f5;
+        border: 0;
+        font-size: 11px;
+        margin-top: 2px;
+
+    .tui-colorpicker-palette-preview
+        border-radius: 100%;
+        float: left;
+        width: 16px;
+        height: 16px;
+
+    .color-picker-control
+        position: absolute;
+        display: none;
+        z-index: 99;
+        width: 188px;
+        height: 112px;
+        background-color: #fff;
+        box-shadow: 0 3px 22px 0px #000;
+        padding: 14px;
+        border-radius: 2px;
+        .tui-colorpicker-palette-toggle-slider
+            display: none;
+        .tui-colorpicker-palette-button
+            border-radius: 100%;
+            margin: 2px;
+        .triangle
+            margin: 32px auto 0;
+            width: 0;
+            height: 0;
+            border-right: 12px solid transparent;
+            border-top: 12px solid #fff;
+            border-left: 12px solid transparent;
+            position: absolute;
+            bottom: -11px;
+            left: 77px;
+        .tui-colorpicker-container,
+        .tui-colorpicker-palette-container ul,
+        .tui-colorpicker-palette-container
+            width: 100%;
+            height: auto;
+
+
+    .filter-color-item .color-picker-control label
+        font-color: #333;
+        font-weight: normal;
+        margin-right: 7pxleft
+    .color-picker
+        width: 100%;
+        height: auto;
+    .color-picker-value 
+        width: 30px;
+        height: 30px;
+        border: 0px;
+        border-radius: 100%;
+        margin: auto;
+        margin-bottom: 4px;
+        &.transparent
+            border: 1px solid #cbcbcb;
+            background-size: cover;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAdBJREFUWAnFl0FuwjAQRZ0ukiugHqFSOQNdseuKW3ALzkA4BateICvUGyCxrtRFd4WuunH/TzykaYJrnLEYaTJJsP2+x8GZZCbQrLU5mj7Bn+EP8HvnCObd+R7xBV5lWfaNON4AnsA38E94qLEt+0yiFaBzAV/Bv+Cxxr4co7hKCDpw1q9wLeNYYdlAwyn8TYt8Hme3+8D5ozcTaMCZ68PXa2tnM2sbEcOZAJhrrpl2DAcTOGNjZPSfCdzkw6JrfbiMv+osBe4y9WOedhm4jZfhbENWuxS44H9Wz/xw4WzqLOAqh1+zycgAwzEMzr5k5gaHOa9ULBwuuDkFlHI1Kl4PJ66kgIpnoywOTmRFAYcbwYk9UMApWkD8zAV5ihcwHk4Rx7gl0IFTQL0EFc+CTQ9OZHWH3YhlVJiVpTHbrTGLhTHLZVgff6s9lyBsI9KduSS83oj+34rTwJutmBmCnMsvozRwZqB5GTkBw6/jdPDu69iJ6BYk6eCcfbcgcQIK/MByaaiMqm8rHcjol2TnpWDhyAKSGdA3FrxtJUToX0ODqatetfGE+8tyEUOV8GY5dGRwLP/MBS4RHQr4bT7NRAQjlcOTfZxmv2G+c4hI8nn+Ax5PG/zhI393AAAAAElFTkSuQmCC');
+
+    .color-picker-value + label
+        color: #fff;
+
+    .{prefix}-submenu svg > use
+        display: none;
+    .{prefix}-submenu svg > use.normal
+        display: block;
+
+/* ICON BUTTON */
+.{prefix}-container
+    #icon-add-button
+        &.icon-bubble .button[data-icontype="icon-bubble"] svg > use.active,
+        &.icon-heart .button[data-icontype="icon-heart"] svg > use.active,
+        &.icon-location .button[data-icontype="icon-location"] svg > use.active,
+        &.icon-polygon .button[data-icontype="icon-polygon"] svg > use.active,
+        &.icon-star .button[data-icontype="icon-star"] svg > use.active,
+        &.icon-arrow-3 .button[data-icontype="icon-arrow-3"] svg > use.active,
+        &.icon-arrow-2 .button[data-icontype="icon-arrow-2"] svg > use.active,
+        &.icon-arrow .button[data-icontype="icon-arrow"] svg > use.active,
+        &.icon-bubble .button[data-icontype="icon-bubble"] svg > use.active
+            display: block;
+
+/* DRAW BUTTON */
+.{prefix}-container
+    #draw-line-select-button
+      &.line .button.line svg > use.normal,
+      &.free .button.free svg > use.normal
+        display: none;
+
+      &.line .button.line svg > use.active,
+      &.free .button.free svg > use.active
+        display: block;
+
+/* FLIP BUTTON */
+.{prefix}-container
+    #flip-button
+      &.resetFlip .button.resetFlip,
+      &.flipX .button.flipX,
+      &.flipY .button.flipY
+        svg > use.normal
+            display: none;
+        svg > use.active
+            display: block;
+        
+/*  MASK BUTTON */
+.{prefix}-container
+    #mask-apply.apply.active .button.apply
+        label
+            color: #fff;
+        svg > use.active
+            display: block;
+  
+/* CROP BUTTON */
+.{prefix}-container
+    #crop-button
+        .button.apply
+            margin-right: 24px;
+        .button.apply.active svg > use.active
+            display: block;
+
+
+/* SHAPE BUTTON */
+.{prefix}-container
+    #shape-button
+      &.rect .button.rect,
+      &.circle .button.circle,
+      &.triangle .button.triangle 
+        svg > use.normal
+            display: none;
+        svg > use.active
+            display: block;
+
+/* TEXT BUTTON */
+.{prefix}-container
+    #text-effect-button
+        .button.active svg > use.active
+            display: block;
+        &.left .button.left svg > use.active,
+        &.center .button.center svg > use.active,
+        &.right .button.right svg > use.active
+            display: block;
+    #mask-image-file,
+    #icon-image-file
+        opacity: 0;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 1px solid green;
+        cursor: inherit;
+        left: 0;
+        top: 0;
+
+@media screen and (max-width: 1234px)
+    .{prefix}-container.top
+        .{prefix}-controls ul
+            text-align: right;
+        .{prefix}-controls-logo
+            display: none;
+
