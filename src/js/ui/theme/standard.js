@@ -30,11 +30,11 @@ export default {
     menu: {
         icon: {
             normal: {
-                path: '../dist',
+                path: '../dist/svg',
                 name: 'icon-a'
             },
             active: {
-                path: '../dist',
+                path: '../dist/svg',
                 name: 'icon-b'
             }
         }
@@ -46,11 +46,11 @@ export default {
         },
         icon: {
             normal: {
-                path: '../dist',
+                path: '../dist/svg',
                 name: 'icon-a'
             },
             active: {
-                path: '../dist',
+                path: '../dist/svg',
                 name: 'icon-c'
             }
         },

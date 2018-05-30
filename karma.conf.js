@@ -84,7 +84,7 @@ function setConfig(defaultConfig, server) {
         };
     } else {
         defaultConfig.browsers = [
-            'FirefoxHeadless'
+            'ChromeHeadless'
         ];
     }
 }
