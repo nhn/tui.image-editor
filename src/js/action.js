@@ -122,9 +122,8 @@ export default {
                         this.startDrawingMode('CROPPER');
                         break;
                     case 'shape':
-                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
-                        this.stopDrawingMode();
                         this._changeActivateMode('SHAPE');
+                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
                         break;
                     case 'draw':
                         this.ui.draw.setDrawMode();
@@ -362,6 +361,7 @@ export default {
                 if (obj.type === 'cropzone') {
                     this.ui.crop.changeApplyButtonStatus(true);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+                    this.ui.changeMenu('shape', false);
                     this._changeActivateMode('SHAPE');
                     this.ui.shape.setShapeStatus({
                         strokeColor: obj.stroke,
@@ -369,7 +369,11 @@ export default {
                         fillColor: obj.fill
                     });
                 } else if (obj.type === 'text') {
+                    this.ui.changeMenu('text', false);
                     this._changeActivateMode('TEXT');
+                } else if (obj.type === 'icon') {
+                    this.ui.changeMenu('icon', false);
+                    this._changeActivateMode('ICON');
                 }
             },
             addText: pos => {

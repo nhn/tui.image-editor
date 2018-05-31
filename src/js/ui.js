@@ -380,14 +380,15 @@ export default class Ui {
     /**
      * change menu
      * @param {string} menuName - menu name
+     * @param {boolean} toggle - whether toogle or not
      */
-    changeMenu(menuName) {
+    changeMenu(menuName, toggle = true) {
         if (this.submenu) {
             this._el[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(this.submenu);
         }
 
-        if (this.submenu === menuName) {
+        if (this.submenu === menuName && toggle) {
             this.submenu = '';
         } else {
             this._el[menuName].classList.add('active');

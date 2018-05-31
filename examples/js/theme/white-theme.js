@@ -68,6 +68,12 @@ var whiteTheme = {
             pointer: {
                 color: '#333'
             },
+            bar: {
+                color: '#ccc'
+            },
+            subbar: {
+                color: '#606060'
+            },
             value: {
                 color: '#000',
                 fontWeight: 'normal',

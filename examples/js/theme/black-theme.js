@@ -68,6 +68,12 @@ var blackTheme = {
             pointer: {
                 color: '#fff'
             },
+            bar: {
+                color: '#666'
+            },
+            subbar: {
+                color: '#d1d1d1'
+            },
             value: {
                 color: '#fff',
                 fontWeight: 'lighter',

@@ -35,9 +35,13 @@ export default class Theme {
                 break;
             case 'submenu.range':
                 option.pointer.backgroundColor = option.pointer.color;
+                option.bar.backgroundColor = option.bar.color;
+                option.subbar.backgroundColor = option.subbar.color;
 
                 result = {
                     pointer: this._makeCssText(option.pointer),
+                    bar: this._makeCssText(option.bar),
+                    subbar: this._makeCssText(option.subbar),
                     title: this._makeCssText(option.title),
                     value: this._makeCssText(option.value)
                 };
@@ -96,6 +100,8 @@ export default class Theme {
             submenuPartitionVertical: submenuPartitionStyle.vertical,
             submenuPartitionHorizontal: submenuPartitionStyle.horizontal,
             submenuRangePointer: submenuRangeStyle.pointer,
+            submenuRangeBar: submenuRangeStyle.bar,
+            submenuRangeSubbar: submenuRangeStyle.subbar,
             submenuRangeValue: submenuRangeStyle.value,
             submenuColorpickerTitle: submenuColorpickerStyle.title,
             submenuColorpickerButton: submenuColorpickerStyle.button,

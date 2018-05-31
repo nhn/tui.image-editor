@@ -9,6 +9,7 @@ class Range {
         this.value = options.value || 0;
         this.rangeElement = rangeElement;
         this._drawRangeElement();
+
         this.rangeWidth = parseInt(window.getComputedStyle(rangeElement, null).width, 10) - 12;
         this.min = options.min || 0;
         this.max = options.max || 100;
@@ -42,6 +43,7 @@ class Range {
         }
 
         this.pointer.style.left = `${leftPosition}px`;
+        this.subbar.style.right = `${this.rangeWidth - leftPosition}px`;
         this.value = value;
         if (fire) {
             this.fire('change', value);
@@ -58,9 +60,13 @@ class Range {
         this.bar = document.createElement('div');
         this.bar.className = 'tui-image-editor-virtual-range-bar';
 
+        this.subbar = document.createElement('div');
+        this.subbar.className = 'tui-image-editor-virtual-range-subbar';
+
         this.pointer = document.createElement('div');
         this.pointer.className = 'tui-image-editor-virtual-range-pointer';
 
+        this.bar.appendChild(this.subbar);
         this.bar.appendChild(this.pointer);
         this.rangeElement.appendChild(this.bar);
     }
@@ -79,6 +85,7 @@ class Range {
             const ratio = touchPx / this.rangeWidth;
             const value = (this.absMax * ratio) + this.min;
             this.pointer.style.left = `${ratio * this.rangeWidth}px`;
+            this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
             this.value = value;
 
             this.fire('change', value);
@@ -101,6 +108,7 @@ class Range {
                 touchPx = touchPx < 0 ? 0 : touchPx;
 
                 this.pointer.style.left = `${touchPx}px`;
+                this.subbar.style.right = `${this.rangeWidth - touchPx}px`;
                 const ratio = touchPx / this.rangeWidth;
                 const value = (this.absMax * ratio) + this.min;
 
