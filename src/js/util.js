@@ -75,6 +75,21 @@ module.exports = {
     },
 
     /**
+     * hex to rgb
+     * @param {string} color - hex color
+     * @param {string} alpha - color alpha value
+     * @returns {string} rgb expression
+     */
+    getRgb(color, alpha) {
+        const r = parseInt(color.slice(1, 3), 16);
+        const g = parseInt(color.slice(3, 5), 16);
+        const b = parseInt(color.slice(5, 7), 16);
+        const a = alpha || 1;
+
+        return `rgba(${r}, ${g}, ${b}, ${a})`;
+    },
+
+    /**
      * send hostname
      */
     sendHostName() {
@@ -92,5 +107,41 @@ module.exports = {
             dp: hostname,
             dh: 'image-editor'
         });
+    },
+
+    /**
+     * Get selector
+     * @param {HTMLElement} targetElement - target element
+     * @returns {Function} selector
+     */
+    getSelector(targetElement) {
+        return str => targetElement.querySelector(str);
+    },
+
+    /**
+     * Change base64 to blob
+     * @param {String} data - base64 string data
+     * @returns {Blob} Blob Data
+     */
+    base64ToBlob(data) {
+        const rImageType = /data:(image\/.+);base64,/;
+        let mimeString = '';
+        let raw, uInt8Array, i;
+
+        raw = data.replace(rImageType, (header, imageType) => {
+            mimeString = imageType;
+
+            return '';
+        });
+
+        raw = atob(raw);
+        const rawLength = raw.length;
+        uInt8Array = new Uint8Array(rawLength); // eslint-disable-line
+
+        for (i = 0; i < rawLength; i += 1) {
+            uInt8Array[i] = raw.charCodeAt(i);
+        }
+
+        return new Blob([uInt8Array], {type: mimeString});
     }
 };
