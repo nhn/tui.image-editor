@@ -336,6 +336,7 @@ describe('Ui', () => {
 
         it('removeFilter() API should be executed When the type of applyFilter is false', () => {
             spyOn(imageEditorMock, 'removeFilter');
+            spyOn(imageEditorMock, 'hasFilter').and.returnValue(true);
             filterAction.applyFilter(false, {});
 
             expect(imageEditorMock.removeFilter).toHaveBeenCalled();
