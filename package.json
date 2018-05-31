@@ -58,8 +58,8 @@
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "KARMA_SERVER=ne karma start",
-    "bundle": "webpack && webpack -p",
-    "bundle:svg": "mkdir -p dist && node makesvg.js",
+    "bundle": "webpack && webpack -p && npm run bundle:svg",
+    "bundle:svg": "mkdir -p dist/svg && node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
     "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",

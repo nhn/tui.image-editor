@@ -110,6 +110,10 @@ export default {
                 }
             },
             modeChange: menu => {
+                this.stopDrawingMode();
+                if (this.ui.submenu === menu) {
+                    return;
+                }
                 switch (menu) {
                     case 'text':
                         this._changeActivateMode('TEXT');
@@ -126,7 +130,6 @@ export default {
                         this.ui.draw.setDrawMode();
                         break;
                     default:
-                        this.stopDrawingMode();
                         break;
                 }
             }

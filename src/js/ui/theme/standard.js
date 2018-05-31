@@ -31,11 +31,11 @@ export default {
         icon: {
             normal: {
                 path: '../dist/svg',
-                name: 'icon-a'
+                name: 'icon-b'
             },
             active: {
                 path: '../dist/svg',
-                name: 'icon-b'
+                name: 'icon-a'
             }
         }
     },

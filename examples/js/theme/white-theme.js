@@ -27,11 +27,11 @@ var whiteTheme = {
         icon: {
             normal: {
                 path: '../dist',
-                name: 'icon-a'
+                name: 'icon-b'
             },
             active: {
                 path: '../dist',
-                name: 'icon-b'
+                name: 'icon-a'
             }
         }
     },
