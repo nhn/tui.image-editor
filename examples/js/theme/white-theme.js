@@ -26,11 +26,11 @@ var whiteTheme = {
     menu: {
         icon: {
             normal: {
-                path: '../dist',
+                path: './svg',
                 name: 'icon-b'
             },
             active: {
-                path: '../dist',
+                path: './svg',
                 name: 'icon-a'
             }
         }
@@ -42,11 +42,11 @@ var whiteTheme = {
         },
         icon: {
             normal: {
-                path: '../dist',
+                path: './svg',
                 name: 'icon-a'
             },
             active: {
-                path: '../dist',
+                path: './svg',
                 name: 'icon-d'
             }
         },

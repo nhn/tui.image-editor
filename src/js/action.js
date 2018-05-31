@@ -147,6 +147,7 @@ export default {
                 this.changeIconColor(this.activeObjectId, color);
             },
             addIcon: iconType => {
+                this.off('mousedown');
                 this.once('mousedown', (e, originPointer) => {
                     this.addIcon(iconType, {
                         left: originPointer.x,
