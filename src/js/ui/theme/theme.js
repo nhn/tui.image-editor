@@ -71,6 +71,7 @@ export default class Theme {
         const [head] = document.getElementsByTagName('head');
         const linkElement = document.createElement('link');
         const styleData = encodeURIComponent(styleBuffer);
+        linkElement.id = 'tui-image-editor-theme-style';
         linkElement.setAttribute('rel', 'stylesheet');
         linkElement.setAttribute('type', 'text/css');
         linkElement.setAttribute('href', `data:text/css;charset=UTF-8,${styleData}`);

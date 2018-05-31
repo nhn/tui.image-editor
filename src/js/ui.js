@@ -198,7 +198,6 @@ export default class Ui {
 
             // menu btn element
             this._el[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
-
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 iconStyle: this.theme.getStyle('submenu.icon')
