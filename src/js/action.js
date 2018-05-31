@@ -322,7 +322,7 @@ export default {
             applyFilter: (applying, type, options) => {
                 if (applying) {
                     this.applyFilter(type, options);
-                } else {
+                } else if (this.hasFilter(type)) {
                     this.removeFilter(type);
                 }
             }
