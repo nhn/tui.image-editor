@@ -55,16 +55,18 @@ export default class Text extends Submenu {
             changeTextStyle(styleObj);
         });
         this._el.textAlignButton.addEventListener('click', event => {
-            const styleType = this.getButton(event.target, ['left', 'center', 'right']);
+            const button = event.target.closest('.button');
+            if (button) {
+                const styleType = this.getButtonType(button, ['left', 'center', 'right']);
 
-            event.currentTarget.classList.remove(this.align);
-            if (this.align !== styleType) {
-                event.currentTarget.classList.add(styleType);
+                event.currentTarget.classList.remove(this.align);
+                if (this.align !== styleType) {
+                    event.currentTarget.classList.add(styleType);
+                }
+                changeTextStyle({textAlign: styleType});
+
+                this.align = styleType;
             }
-
-            changeTextStyle({textAlign: styleType});
-
-            this.align = styleType;
         });
         this._el.textRange.on('change', value => {
             value = toInteger(value);

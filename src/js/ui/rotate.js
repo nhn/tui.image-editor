@@ -35,12 +35,15 @@ export default class Rotate extends Submenu {
      */
     addEvent({rotate, setAngle}) {
         this._el.rotateButton.addEventListener('click', event => {
-            const rotateType = this.getButton(event.target, ['counterclockwise', 'clockwise']);
-            const rotateAngle = {
-                'clockwise': 30,
-                'counterclockwise': -30
-            }[rotateType];
-            rotate(rotateAngle);
+            const button = event.target.closest('.button');
+            if (button) {
+                const rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);
+                const rotateAngle = {
+                    'clockwise': 30,
+                    'counterclockwise': -30
+                }[rotateType];
+                rotate(rotateAngle);
+            }
         });
         this._el.rotateRange.on('change', value => {
             const angle = toInteger(value);

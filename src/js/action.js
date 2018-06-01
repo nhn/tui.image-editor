@@ -30,24 +30,35 @@ export default {
      * @private
      */
     _mainAction() {
+        const exitCropOnAction = () => {
+            if (this.ui.submenu === 'crop') {
+                this.stopDrawingMode();
+                this.ui.changeMenu('crop');
+            }
+        };
+
         return {
             initLoadImage: (imagePath, imageName) => (
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
+                    exitCropOnAction();
                     this.ui.resizeEditor(sizeValue);
                     this.clearUndoStack();
                 })
             ),
             undo: () => {
                 if (!this.isEmptyUndoStack()) {
+                    exitCropOnAction();
                     this.undo();
                 }
             },
             redo: () => {
                 if (!this.isEmptyRedoStack()) {
+                    exitCropOnAction();
                     this.redo();
                 }
             },
             reset: () => {
+                exitCropOnAction();
                 const undoRecursiveCall = () => {
                     if (this.isEmptyUndoStack()) {
                         this.clearUndoStack();
@@ -66,11 +77,13 @@ export default {
             delete: () => {
                 this.ui.changeDeleteButtonEnabled(false);
                 if (this.activeObjectId) {
+                    exitCropOnAction();
                     this.removeObject(this.activeObjectId);
                     this.activeObjectId = null;
                 }
             },
             deleteAll: () => {
+                exitCropOnAction();
                 this.clearObjects();
                 this.ui.changeDeleteButtonEnabled(false);
                 this.ui.changeDeleteAllButtonEnabled(false);
@@ -83,6 +96,7 @@ export default {
                 }
 
                 this.loadImageFromFile(file).then(() => {
+                    exitCropOnAction();
                     this.clearUndoStack();
                     this.ui.resizeEditor();
                 })['catch'](message => (

@@ -41,11 +41,14 @@ export default class Draw extends Submenu {
         this.actions = actions;
 
         this._el.lineSelectButton.addEventListener('click', event => {
-            const lineType = this.getButton(event.target, ['free', 'line']);
-            this.changeClass(this._el.lineSelectButton, this.type, lineType);
+            const button = event.target.closest('.button');
+            if (button) {
+                const lineType = this.getButtonType(button, ['free', 'line']);
+                this.changeClass(this._el.lineSelectButton, this.type, lineType);
 
-            this.type = lineType;
-            this.setDrawMode();
+                this.type = lineType;
+                this.setDrawMode();
+            }
         });
 
         this._el.drawColorpicker.on('change', color => {

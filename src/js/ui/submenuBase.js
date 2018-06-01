@@ -14,12 +14,11 @@ export default class Submenu {
 
     /**
      * Get butten type
-     * @param {HTMLElement} target - event target element
+     * @param {HTMLElement} button - event target element
      * @param {array} buttonNames - Array of button names
      * @returns {string} - button type
      */
-    getButton(target, buttonNames) {
-        const button = target.closest('.button');
+    getButtonType(button, buttonNames) {
         const [buttonType] = button.className.match(RegExp(`(${buttonNames.join('|')})`));
 
         return buttonType;

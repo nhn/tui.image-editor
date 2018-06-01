@@ -27,26 +27,28 @@ export default class Flip extends Submenu {
      */
     addEvent({flip}) {
         this._el.flipButton.addEventListener('click', event => {
-            const flipType = this.getButton(event.target, ['flipX', 'flipY', 'resetFlip']);
+            const button = event.target.closest('.button');
+            if (button) {
+                const flipType = this.getButtonType(button, ['flipX', 'flipY', 'resetFlip']);
+                if (!this.flipStatus && flipType === 'resetFlip') {
+                    return;
+                }
 
-            if (!this.flipStatus && flipType === 'resetFlip') {
-                return;
-            }
+                flip(flipType).then(flipStatus => {
+                    const flipClassList = this._el.flipButton.classList;
+                    this.flipStatus = false;
 
-            flip(flipType).then(flipStatus => {
-                const flipClassList = this._el.flipButton.classList;
-                this.flipStatus = false;
-
-                flipClassList.remove('resetFlip');
-                snippet.forEach(['flipX', 'flipY'], type => {
-                    flipClassList.remove(type);
-                    if (flipStatus[type]) {
-                        flipClassList.add(type);
-                        flipClassList.add('resetFlip');
-                        this.flipStatus = true;
-                    }
+                    flipClassList.remove('resetFlip');
+                    snippet.forEach(['flipX', 'flipY'], type => {
+                        flipClassList.remove(type);
+                        if (flipStatus[type]) {
+                            flipClassList.add(type);
+                            flipClassList.add('resetFlip');
+                            this.flipStatus = true;
+                        }
+                    });
                 });
-            });
+            }
         });
     }
 }

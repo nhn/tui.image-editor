@@ -132,11 +132,15 @@ class Colorpicker {
             this._color = value.color;
             this.fire('change', value.color);
         });
-
-        colorpickerElement.addEventListener('click', () => {
+        colorpickerElement.addEventListener('click', event => {
             this._show = !this._show;
             const display = this._show ? 'block' : 'none';
             this.pickerControl.style.display = display;
+            event.stopPropagation();
+        });
+        document.body.addEventListener('click', () => {
+            this._show = false;
+            this.pickerControl.style.display = 'none';
         });
     }
 
