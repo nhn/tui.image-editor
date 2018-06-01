@@ -1,4 +1,5 @@
 import snippet from 'tui-code-snippet';
+import {toInteger} from '../../util';
 
 /**
  * Range control class
@@ -10,7 +11,7 @@ class Range {
         this.rangeElement = rangeElement;
         this._drawRangeElement();
 
-        this.rangeWidth = parseInt(window.getComputedStyle(rangeElement, null).width, 10) - 12;
+        this.rangeWidth = toInteger(window.getComputedStyle(rangeElement, null).width) - 12;
         this.min = options.min || 0;
         this.max = options.max || 100;
         this.absMax = (this.min * -1) + this.max;
@@ -99,7 +100,7 @@ class Range {
     _addDragEvent() {
         this.pointer.addEventListener('mousedown', event => {
             const firstPosition = event.screenX;
-            const left = parseInt(this.pointer.style.left, 10) || 0;
+            const left = toInteger(this.pointer.style.left) || 0;
             const changeAngle = changeEvent => {
                 const changePosition = changeEvent.screenX;
                 const diffPosition = changePosition - firstPosition;

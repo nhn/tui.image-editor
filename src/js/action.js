@@ -11,7 +11,6 @@ export default {
      */
     getActions() {
         return {
-
             main: this._mainAction(),
             shape: this._shapeAction(),
             crop: this._cropAction(),
@@ -382,7 +381,7 @@ export default {
                 }).then(() => {
                     this.changeTextStyle(this.activeObjectId, {
                         fill: this.ui.text.getTextColor(),
-                        fontSize: parseInt(this.ui.text.getFontSize(), 10)
+                        fontSize: util.toInteger(this.ui.text.getFontSize())
                     });
                 })['catch'](message => (
                     Promise.reject(message)
@@ -390,14 +389,14 @@ export default {
             },
             objectScaled: obj => {
                 if (obj.type === 'text') {
-                    this.ui.text.setFontSize(parseInt(obj.fontSize, 10));
+                    this.ui.text.setFontSize(util.toInteger(obj.fontSize));
                 }
             },
             mousedown: (event, originPointer) => {
                 if (this.ui.submenu && this.hasFilter('colorFilter')) {
                     this.applyFilter('colorFilter', {
-                        x: parseInt(originPointer.x, 10),
-                        y: parseInt(originPointer.y, 10)
+                        x: util.toInteger(originPointer.x),
+                        y: util.toInteger(originPointer.y)
                     });
                 }
             }

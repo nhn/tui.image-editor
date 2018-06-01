@@ -1,25 +1,29 @@
-import maskHtml from './template/submenu/mask';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/mask';
 
 /**
  * Mask ui class
  * @class
  */
-export default class Mask {
+export default class Mask extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, iconStyle);
+        super(subMenuElement, {
+            name: 'mask',
+            iconStyle,
+            templateHtml
+        });
 
         this._el = {
-            applyButton: selector('#mask-apply'),
-            maskImageButton: selector('#mask-image-file')
+            applyButton: this.selector('#mask-apply'),
+            maskImageButton: this.selector('#mask-image-file')
         };
     }
 
     /**
      * Add event for mask
      * @param {Object} actions - actions for crop
-     *   @param {Function} loadImageFromURL - load image action
-     *   @param {Function} applyFilter - apply filter action
+     *   @param {Function} actions.loadImageFromURL - load image action
+     *   @param {Function} actions.applyFilter - apply filter action
      */
     addEvent({loadImageFromURL, applyFilter}) {
         this._el.maskImageButton.addEventListener('change', event => {
@@ -43,19 +47,5 @@ export default class Mask {
             applyFilter();
             this._el.applyButton.classList.remove('active');
         });
-    }
-
-    /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
-     */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const maskSubMenu = document.createElement('div');
-        maskSubMenu.className = 'mask';
-        maskSubMenu.innerHTML = maskHtml({iconStyle});
-
-        subMenuElement.appendChild(maskSubMenu);
     }
 }

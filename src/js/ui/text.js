@@ -1,16 +1,20 @@
 import Range from './tools/range';
 import Colorpicker from './tools/colorpicker';
-import textHtml from './template/submenu/text';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/text';
+import {toInteger} from '../util';
 
 /**
  * Crop ui class
  * @class
  */
-export default class Text {
+export default class Text extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, iconStyle);
-
+        super(subMenuElement, {
+            name: 'text',
+            iconStyle,
+            templateHtml
+        });
         this.effect = {
             bold: false,
             italic: false,
@@ -18,22 +22,22 @@ export default class Text {
         };
         this.align = 'left';
         this._el = {
-            textEffectButton: selector('#text-effect-button'),
-            textAlignButton: selector('#text-align-button'),
-            textColorpicker: new Colorpicker(selector('#text-color'), '#ffbb3b'),
-            textRange: new Range(selector('#text-range'), {
+            textEffectButton: this.selector('#text-effect-button'),
+            textAlignButton: this.selector('#text-align-button'),
+            textColorpicker: new Colorpicker(this.selector('#text-color'), '#ffbb3b'),
+            textRange: new Range(this.selector('#text-range'), {
                 min: 10,
                 max: 100,
                 value: 50
             }),
-            textRangeValue: selector('#text-range-value')
+            textRangeValue: this.selector('#text-range-value')
         };
     }
 
     /**
      * Add event for text
      * @param {Object} actions - actions for text
-     *   @param {Function} changeTextStyle - change text style
+     *   @param {Function} actions.changeTextStyle - change text style
      */
     addEvent({changeTextStyle}) {
         this._el.textEffectButton.addEventListener('click', event => {
@@ -63,11 +67,11 @@ export default class Text {
             this.align = styleType;
         });
         this._el.textRange.on('change', value => {
-            value = parseInt(value, 10);
+            value = toInteger(value);
             this._el.textRangeValue.value = value;
 
             changeTextStyle({
-                fontSize: parseInt(value, 10)
+                fontSize: toInteger(value)
             });
         });
         this._el.textRangeValue.value = this._el.textRange.getValue();
@@ -103,19 +107,5 @@ export default class Text {
     setFontSize(value) {
         this._el.textRange.setValue(value, false);
         this._el.textRangeValue.value = value;
-    }
-
-    /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
-     */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const textSubMenu = document.createElement('div');
-        textSubMenu.className = 'text';
-        textSubMenu.innerHTML = textHtml({iconStyle});
-
-        subMenuElement.appendChild(textSubMenu);
     }
 }

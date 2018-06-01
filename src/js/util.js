@@ -75,6 +75,34 @@ module.exports = {
     },
 
     /**
+     * ParseInt simpliment
+     * @param {number} value - Value
+     * @returns {number} 
+     */
+    toInteger(value) {
+        return parseInt(value, 10);
+    },
+
+    /**
+     * String to camelcase string
+     * @param {string} targetString - change target
+     * @returns {string}
+     * @private
+     */
+    toCamelCase(targetString) {
+        return targetString.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+    },
+
+    /**
+     * Check browser file api support
+     * @returns {boolean}
+     * @private
+     */
+    isSupportFileApi() {
+        return !!(window.File && window.FileList && window.FileReader);
+    },
+
+    /**
      * hex to rgb
      * @param {string} color - hex color
      * @param {string} alpha - color alpha value

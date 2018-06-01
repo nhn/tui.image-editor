@@ -14,7 +14,7 @@ describe('Ui', () => {
     beforeEach(() => {
         action.mixin(ImageEditor);
         imageEditorMock = new ImageEditor(document.createElement('div'), {
-            includeUi: {
+            includeUI: {
                 loadImage: false,
                 initMenu: 'flip',
                 menuBarPosition: 'bottom',

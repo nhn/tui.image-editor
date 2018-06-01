@@ -292,6 +292,10 @@ class Graphics {
         this._canvas.setActiveObject(target);
     }
 
+    /**
+     * Set Crop selection style
+     * @param {Object} style - Selection styles
+     */
     setCropSelectionStyle(style) {
         this.cropSelectionStyle = style;
     }

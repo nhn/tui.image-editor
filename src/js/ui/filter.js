@@ -1,8 +1,11 @@
 import snippet from 'tui-code-snippet';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
-import filterHtml from './template/submenu/filter';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/filter';
+import {toInteger, toCamelCase} from '../util';
 
+const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
 const FILTER_OPTIONS = [
     'grayscale',
     'invert',
@@ -26,19 +29,22 @@ const FILTER_OPTIONS = [
  * Filter ui class
  * @class
  */
-export default class Filter {
+export default class Filter extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
+        super(subMenuElement, {
+            name: 'filter',
+            iconStyle,
+            templateHtml
+        });
+
         this.checkedMap = {};
-        this.selector = selector;
-        this._makeSubMenuElement(subMenuElement, iconStyle);
         this._makeControlElement();
     }
 
     /**
      * Add event for filter
      * @param {Object} actions - actions for crop
-     *   @param {Function} applyFilter - apply filter option
+     *   @param {Function} actions.applyFilter - apply filter option
      */
     addEvent({applyFilter}) {
         const changeRangeValue = filterName => {
@@ -50,7 +56,7 @@ export default class Filter {
 
         snippet.forEach(FILTER_OPTIONS, filterName => {
             const filterCheckElement = this.selector(`#${filterName}`);
-            const filterNameCamelCase = this._toCamelCase(filterName);
+            const filterNameCamelCase = toCamelCase(filterName);
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
 
             filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
@@ -81,24 +87,24 @@ export default class Filter {
         const option = {};
         switch (type) {
             case 'removeWhite':
-                option.threshold = parseInt(this._el.removewhiteThresholdRange.getValue(), 10);
-                option.distance = parseInt(this._el.removewhiteDistanceRange.getValue(), 10);
+                option.threshold = toInteger(this._el.removewhiteThresholdRange.getValue());
+                option.distance = toInteger(this._el.removewhiteDistanceRange.getValue());
                 break;
             case 'gradientTransparency':
-                option.threshold = parseInt(this._el.gradientTransparencyRange.getValue(), 10);
+                option.threshold = toInteger(this._el.gradientTransparencyRange.getValue());
                 break;
             case 'colorFilter':
                 option.color = '#FFFFFF';
                 option.threshold = this._el.colorfilterThresholeRange.getValue();
                 break;
             case 'pixelate':
-                option.blocksize = parseInt(this._el.pixelateRange.getValue(), 10);
+                option.blocksize = toInteger(this._el.pixelateRange.getValue());
                 break;
             case 'noise':
-                option.noise = parseInt(this._el.noiseRange.getValue(), 10);
+                option.noise = toInteger(this._el.noiseRange.getValue());
                 break;
             case 'brightness':
-                option.brightness = parseInt(this._el.brightnessRange.getValue(), 10);
+                option.brightness = toInteger(this._el.brightnessRange.getValue());
                 break;
             case 'blend':
                 option.color = this._el.filterBlendColor.getColor();
@@ -116,20 +122,6 @@ export default class Filter {
         }
 
         return option;
-    }
-
-    /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
-     */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const filterSubMenu = document.createElement('div');
-        filterSubMenu.className = 'filter';
-        filterSubMenu.innerHTML = filterHtml({iconStyle});
-
-        subMenuElement.appendChild(filterSubMenu);
     }
 
     /**
@@ -234,22 +226,11 @@ export default class Filter {
      * @private
      */
     _makeSelectOptionList(selectlist) {
-        const blendOptions = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
-        snippet.forEach(blendOptions, option => {
+        snippet.forEach(BLEND_OPTIONS, option => {
             const selectOption = document.createElement('option');
             selectOption.setAttribute('value', option);
             selectOption.innerHTML = option.replace(/^[a-z]/, $0 => $0.toUpperCase());
             selectlist.appendChild(selectOption);
         });
-    }
-
-    /**
-     * String to camelcase string
-     * @param {string} targetString - change target
-     * @returns {string}
-     * @private
-     */
-    _toCamelCase(targetString) {
-        return targetString.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
     }
 }

@@ -1,26 +1,30 @@
 import util from '../util';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
-import drawHtml from './template/submenu/draw';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/draw';
 
 /**
  * Draw ui class
  * @class
  */
-export default class Draw {
+export default class Draw extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, iconStyle);
+        super(subMenuElement, {
+            name: 'draw',
+            iconStyle,
+            templateHtml
+        });
 
         this._el = {
-            lineSelectButton: selector('#draw-line-select-button'),
-            drawColorpicker: new Colorpicker(selector('#draw-color')),
-            drawRange: new Range(selector('#draw-range'), {
+            lineSelectButton: this.selector('#draw-line-select-button'),
+            drawColorpicker: new Colorpicker(this.selector('#draw-color')),
+            drawRange: new Range(this.selector('#draw-range'), {
                 min: 5,
                 max: 30,
                 value: 12
             }),
-            drawRangeValue: selector('#draw-range-value')
+            drawRangeValue: this.selector('#draw-range-value')
         };
 
         this.type = 'line';
@@ -31,7 +35,7 @@ export default class Draw {
     /**
      * Add event for draw
      * @param {Object} actions - actions for crop
-     *   @param {Function} setDrawMode - set draw mode
+     *   @param {Function} actions.setDrawMode - set draw mode
      */
     addEvent(actions) {
         this.actions = actions;
@@ -53,7 +57,7 @@ export default class Draw {
         });
 
         this._el.drawRange.on('change', value => {
-            value = parseInt(value, 10);
+            value = util.toInteger(value);
             this._el.drawRangeValue.value = value;
             this.width = value;
             this.setDrawMode();
@@ -69,19 +73,5 @@ export default class Draw {
             width: this.width,
             color: util.getRgb(this.color, 0.7)
         });
-    }
-
-    /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
-     */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const drawSubMenu = document.createElement('div');
-        drawSubMenu.className = 'draw';
-        drawSubMenu.innerHTML = drawHtml({iconStyle});
-
-        subMenuElement.appendChild(drawSubMenu);
     }
 }

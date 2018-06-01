@@ -1,15 +1,20 @@
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
-import shapeHtml from './template/submenu/shape';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/shape';
+import {toInteger} from '../util';
 
 /**
  * Shape ui class
  * @class
  */
-export default class Shape {
+export default class Shape extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, iconStyle);
+        super(subMenuElement, {
+            name: 'shape',
+            iconStyle,
+            templateHtml
+        });
         this.type = 'rect';
         this.options = {
             stroke: '#ffbb3b',
@@ -18,25 +23,25 @@ export default class Shape {
         };
 
         this._el = {
-            shapeSelectButton: selector('#shape-button'),
-            shapeColorButton: selector('#shape-color-button'),
-            strokeRange: new Range(selector('#stroke-range'), {
+            shapeSelectButton: this.selector('#shape-button'),
+            shapeColorButton: this.selector('#shape-color-button'),
+            strokeRange: new Range(this.selector('#stroke-range'), {
                 realTimeEvent: true,
                 min: 0,
                 max: 300,
                 value: 3
             }),
-            strokeRangeValue: selector('#stroke-range-value'),
-            fillColorpicker: new Colorpicker(selector('#color-fill'), ''),
-            strokeColorpicker: new Colorpicker(selector('#color-stroke'), '#ffbb3b')
+            strokeRangeValue: this.selector('#stroke-range-value'),
+            fillColorpicker: new Colorpicker(this.selector('#color-fill'), ''),
+            strokeColorpicker: new Colorpicker(this.selector('#color-stroke'), '#ffbb3b')
         };
     }
 
     /**
      * Add event for shape
      * @param {Object} actions - actions for shape
-     *   @param {Function} changeShape - change shape mode
-     *   @param {Function} setDrawingShape - set dreawing shape
+     *   @param {Function} actions.changeShape - change shape mode
+     *   @param {Function} actions.setDrawingShape - set dreawing shape
      */
     addEvent({changeShape, setDrawingShape}) {
         this._el.shapeSelectButton.addEventListener('click', event => {
@@ -51,8 +56,8 @@ export default class Shape {
         });
 
         this._el.strokeRange.on('change', value => {
-            this.options.strokeWidth = parseInt(value, 10);
-            this._el.strokeRangeValue.value = parseInt(value, 10);
+            this.options.strokeWidth = toInteger(value);
+            this._el.strokeRangeValue.value = toInteger(value);
 
             changeShape({
                 strokeWidth: value
@@ -93,20 +98,6 @@ export default class Shape {
         this.options.stroke = strokeColor;
         this.options.fill = fillColor;
         this.options.strokeWidth = strokeWidth;
-    }
-
-    /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
-     */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const shapeSubMenu = document.createElement('div');
-        shapeSubMenu.className = 'shape';
-        shapeSubMenu.innerHTML = shapeHtml({iconStyle});
-
-        subMenuElement.appendChild(shapeSubMenu);
     }
 }
 

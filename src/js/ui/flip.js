@@ -1,25 +1,29 @@
 import snippet from 'tui-code-snippet';
-import flipHtml from './template/submenu/flip';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/flip';
 
 /**
  * Flip ui class
  * @class
  */
-export default class Flip {
+export default class Flip extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
+        super(subMenuElement, {
+            name: 'flip',
+            iconStyle,
+            templateHtml
+        });
         this.flipStatus = false;
-        this._makeSubMenuElement(subMenuElement, iconStyle);
 
         this._el = {
-            flipButton: selector('#flip-button')
+            flipButton: this.selector('#flip-button')
         };
     }
 
     /**
      * Add event for flip
      * @param {Object} actions - actions for flip
-     *   @param {Function} flip - flip action
+     *   @param {Function} actions.flip - flip action
      */
     addEvent({flip}) {
         this._el.flipButton.addEventListener('click', event => {
@@ -45,19 +49,5 @@ export default class Flip {
                 });
             });
         });
-    }
-
-    /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
-     */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const filpSubMenu = document.createElement('div');
-        filpSubMenu.className = 'flip';
-        filpSubMenu.innerHTML = flipHtml({iconStyle});
-
-        subMenuElement.appendChild(filpSubMenu);
     }
 }
