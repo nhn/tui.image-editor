@@ -13,6 +13,30 @@ export default class Submenu {
     }
 
     /**
+     * Get butten type
+     * @param {HTMLElement} target - event target element
+     * @param {array} buttonNames - Array of button names
+     * @returns {string} - button type
+     */
+    getButton(target, buttonNames) {
+        const button = target.closest('.button');
+        const [buttonType] = button.className.match(RegExp(`(${buttonNames.join('|')})`));
+
+        return buttonType;
+    }
+
+    /**
+     * Get butten type
+     * @param {HTMLElement} target - event target element
+     * @param {string} removeClass - remove class name
+     * @param {string} addClass - add class name
+     */
+    changeClass(target, removeClass, addClass) {
+        target.classList.remove(removeClass);
+        target.classList.add(addClass);
+    }
+
+    /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
      * @param {Object} iconStyle -  icon style

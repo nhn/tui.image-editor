@@ -55,8 +55,8 @@ export default class Text extends Submenu {
             changeTextStyle(styleObj);
         });
         this._el.textAlignButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            const [styleType] = button.className.match(/(left|center|right)/);
+            const styleType = this.getButton(event.target, ['left', 'center', 'right']);
+
             event.currentTarget.classList.remove(this.align);
             if (this.align !== styleType) {
                 event.currentTarget.classList.add(styleType);

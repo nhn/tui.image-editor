@@ -27,8 +27,7 @@ export default class Flip extends Submenu {
      */
     addEvent({flip}) {
         this._el.flipButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            const [flipType] = button.className.match(/(flipX|flipY|resetFlip)/);
+            const flipType = this.getButton(event.target, ['flipX', 'flipY', 'resetFlip']);
 
             if (!this.flipStatus && flipType === 'resetFlip') {
                 return;

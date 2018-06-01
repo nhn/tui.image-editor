@@ -45,11 +45,8 @@ export default class Shape extends Submenu {
      */
     addEvent({changeShape, setDrawingShape}) {
         this._el.shapeSelectButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            const [shapeType] = button.className.match(/(circle|triangle|rect)/);
-
-            event.currentTarget.classList.remove(this.type);
-            event.currentTarget.classList.add(shapeType);
+            const shapeType = this.getButton(event.target, ['circle', 'triangle', 'rect']);
+            this.changeClass(event.currentTarget, this.type, shapeType);
 
             this.type = shapeType;
             setDrawingShape(shapeType);
