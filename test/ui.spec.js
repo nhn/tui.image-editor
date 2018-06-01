@@ -1,6 +1,6 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview Test cases of "src/js/component/cropper.js"
+ * @fileoverview Test cases of "src/js/ui.js"
  */
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';

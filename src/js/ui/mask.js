@@ -25,27 +25,38 @@ export default class Mask extends Submenu {
      *   @param {Function} actions.loadImageFromURL - load image action
      *   @param {Function} actions.applyFilter - apply filter action
      */
-    addEvent({loadImageFromURL, applyFilter}) {
-        this._el.maskImageButton.addEventListener('change', event => {
-            const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
-            let imgUrl;
+    addEvent(actions) {
+        this.actions = actions;
+        this._el.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
+        this._el.applyButton.addEventListener('click', this._applyMask.bind(this));
+    }
 
-            if (!supportingFileAPI) {
-                alert('This browser does not support file-api');
-            }
+    /**
+     * Apply mask
+     */
+    _applyMask() {
+        this.actions.applyFilter();
+        this._el.applyButton.classList.remove('active');
+    }
 
-            const [file] = event.target.files;
+    /**
+     * Load mask file
+     * @param {object} event - File change event object
+     */
+    _loadMaskFile(event) {
+        const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
+        let imgUrl;
 
-            if (file) {
-                imgUrl = URL.createObjectURL(file);
-                loadImageFromURL(imgUrl, file);
-                this._el.applyButton.classList.add('active');
-            }
-        });
+        if (!supportingFileAPI) {
+            alert('This browser does not support file-api');
+        }
 
-        this._el.applyButton.addEventListener('click', () => {
-            applyFilter();
-            this._el.applyButton.classList.remove('active');
-        });
+        const [file] = event.target.files;
+
+        if (file) {
+            imgUrl = URL.createObjectURL(file);
+            this.actions.loadImageFromURL(imgUrl, file);
+            this._el.applyButton.classList.add('active');
+        }
     }
 }

@@ -99,35 +99,50 @@ class Range {
      */
     _addDragEvent() {
         this.pointer.addEventListener('mousedown', event => {
-            const firstPosition = event.screenX;
-            const left = toInteger(this.pointer.style.left) || 0;
-            const changeAngle = changeEvent => {
-                const changePosition = changeEvent.screenX;
-                const diffPosition = changePosition - firstPosition;
-                let touchPx = left + diffPosition;
-                touchPx = touchPx > this.rangeWidth ? this.rangeWidth : touchPx;
-                touchPx = touchPx < 0 ? 0 : touchPx;
-
-                this.pointer.style.left = `${touchPx}px`;
-                this.subbar.style.right = `${this.rangeWidth - touchPx}px`;
-                const ratio = touchPx / this.rangeWidth;
-                const value = (this.absMax * ratio) + this.min;
-
-                this.value = value;
-
-                if (this.realTimeEvent) {
-                    this.fire('change', value);
-                }
-            };
-            const stopChangingAngle = () => {
-                this.fire('change', this.value);
-                document.removeEventListener('mousemove', changeAngle);
-                document.removeEventListener('mouseup', stopChangingAngle);
+            this.firstPosition = event.screenX;
+            this.firstLeft = toInteger(this.pointer.style.left) || 0;
+            this.dragEventHandler = {
+                changeAngle: this._changeAngle.bind(this),
+                stopChangingAngle: this._stopChangingAngle.bind(this)
             };
 
-            document.addEventListener('mousemove', changeAngle);
-            document.addEventListener('mouseup', stopChangingAngle);
+            document.addEventListener('mousemove', this.dragEventHandler.changeAngle);
+            document.addEventListener('mouseup', this.dragEventHandler.stopChangingAngle);
         });
+    }
+
+    /**
+     * change angle event
+     * @param {object} event - change event
+     * @private
+     */
+    _changeAngle(event) {
+        const changePosition = event.screenX;
+        const diffPosition = changePosition - this.firstPosition;
+        let touchPx = this.firstLeft + diffPosition;
+        touchPx = touchPx > this.rangeWidth ? this.rangeWidth : touchPx;
+        touchPx = touchPx < 0 ? 0 : touchPx;
+
+        this.pointer.style.left = `${touchPx}px`;
+        this.subbar.style.right = `${this.rangeWidth - touchPx}px`;
+        const ratio = touchPx / this.rangeWidth;
+        const value = (this.absMax * ratio) + this.min;
+
+        this.value = value;
+
+        if (this.realTimeEvent) {
+            this.fire('change', value);
+        }
+    }
+
+    /**
+     * stop change angle event
+     * @private
+     */
+    _stopChangingAngle() {
+        this.fire('change', this.value);
+        document.removeEventListener('mousemove', this.dragEventHandler.changeAngle);
+        document.removeEventListener('mouseup', this.dragEventHandler.stopChangingAngle);
     }
 }
 

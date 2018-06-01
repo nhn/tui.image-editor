@@ -43,45 +43,15 @@ export default class Shape extends Submenu {
      *   @param {Function} actions.changeShape - change shape mode
      *   @param {Function} actions.setDrawingShape - set dreawing shape
      */
-    addEvent({changeShape, setDrawingShape}) {
-        this._el.shapeSelectButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            if (button) {
-                const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
-                this.changeClass(event.currentTarget, this.type, shapeType);
+    addEvent(actions) {
+        this.actions = actions;
 
-                this.type = shapeType;
-                setDrawingShape(shapeType);
-            }
-        });
+        this._el.shapeSelectButton.addEventListener('click', this._changeShape.bind(this));
+        this._el.strokeRange.on('change', this._changeStrokeRange.bind(this));
+        this._el.fillColorpicker.on('change', this._changeFillColor.bind(this));
+        this._el.strokeColorpicker.on('change', this._changeStrokeColor.bind(this));
 
-        this._el.strokeRange.on('change', value => {
-            this.options.strokeWidth = toInteger(value);
-            this._el.strokeRangeValue.value = toInteger(value);
-
-            changeShape({
-                strokeWidth: value
-            });
-
-            setDrawingShape(this.type, this.options);
-        });
         this._el.strokeRangeValue.value = this._el.strokeRange.getValue();
-
-        this._el.fillColorpicker.on('change', color => {
-            color = color || 'transparent';
-            this.options.fill = color;
-            changeShape({
-                fill: color
-            });
-        });
-
-        this._el.strokeColorpicker.on('change', color => {
-            color = color || 'transparent';
-            this.options.stroke = color;
-            changeShape({
-                stroke: color
-            });
-        });
     }
 
     /**
@@ -98,6 +68,60 @@ export default class Shape extends Submenu {
         this.options.stroke = strokeColor;
         this.options.fill = fillColor;
         this.options.strokeWidth = strokeWidth;
+    }
+
+    /**
+     * Change icon color
+     * @param {object} event - add button event object
+     */
+    _changeShape(event) {
+        const button = event.target.closest('.button');
+        if (button) {
+            const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
+            this.changeClass(event.currentTarget, this.type, shapeType);
+
+            this.type = shapeType;
+            this.actions.setDrawingShape(shapeType);
+        }
+    }
+
+    /**
+     * Change stroke range
+     * @param {number} value - stroke range value
+     */
+    _changeStrokeRange(value) {
+        this.options.strokeWidth = toInteger(value);
+        this._el.strokeRangeValue.value = toInteger(value);
+
+        this.actions.changeShape({
+            strokeWidth: value
+        });
+
+        this.actions.setDrawingShape(this.type, this.options);
+    }
+
+    /**
+     * Change shape color
+     * @param {string} color - fill color
+     */
+    _changeFillColor(color) {
+        color = color || 'transparent';
+        this.options.fill = color;
+        this.actions.changeShape({
+            fill: color
+        });
+    }
+
+    /**
+     * Change shape stroke color
+     * @param {string} color - fill color
+     */
+    _changeStrokeColor(color) {
+        color = color || 'transparent';
+        this.options.stroke = color;
+        this.actions.changeShape({
+            stroke: color
+        });
     }
 }
 

@@ -138,6 +138,25 @@ module.exports = {
     },
 
     /**
+     * Apply css resource
+     * @param {string} styleBuffer - serialized css text
+     * @param {string} tagId - style tag id
+     */
+    styleLoad(styleBuffer, tagId) {
+        const [head] = document.getElementsByTagName('head');
+        const linkElement = document.createElement('link');
+        const styleData = encodeURIComponent(styleBuffer);
+        if (tagId) {
+            linkElement.id = tagId;
+            // linkElement.id = 'tui-image-editor-theme-style';
+        }
+        linkElement.setAttribute('rel', 'stylesheet');
+        linkElement.setAttribute('type', 'text/css');
+        linkElement.setAttribute('href', `data:text/css;charset=UTF-8,${styleData}`);
+        head.appendChild(linkElement);
+    },
+
+    /**
      * Get selector
      * @param {HTMLElement} targetElement - target element
      * @returns {Function} selector

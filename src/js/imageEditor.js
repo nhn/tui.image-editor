@@ -40,7 +40,9 @@ class ImageEditor {
          * UI instance
          * @type {Ui}
          */
-        this.ui = option.includeUI ? new UI(wrapper, option.includeUI, this.getActions()) : null;
+        if (option.includeUI) {
+            this.ui = new UI(wrapper, option.includeUI, this.getActions());
+        }
 
         /**
          * Invoker

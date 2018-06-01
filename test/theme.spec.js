@@ -11,20 +11,6 @@ describe('Theme', () => {
         theme = new Theme(defaultTheme);
     });
 
-    describe('_styleLoad()', () => {
-        it('Style links with custom styles should be added to the head.', () => {
-            const expected = 'data:text/css;charset=UTF-8,color%3A%20%23000%3B%20border%3A%201px';
-            const head = {
-                appendChild: jasmine.createSpy('head')
-            };
-            spyOn(document, 'getElementsByTagName').and.returnValue([head]);
-
-            theme._styleLoad('color: #000; border: 1px');
-
-            expect(head.appendChild.calls.mostRecent().args[0].getAttribute('href')).toBe(expected);
-        });
-    });
-
     describe('_getTargetOption()', () => {
         it('If the key contains a dot, you will need to find the object under 2depth.', () => {
             theme.styles = {

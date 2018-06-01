@@ -39,51 +39,13 @@ export default class Text extends Submenu {
      * @param {Object} actions - actions for text
      *   @param {Function} actions.changeTextStyle - change text style
      */
-    addEvent({changeTextStyle}) {
-        this._el.textEffectButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            const [styleType] = button.className.match(/(bold|italic|underline)/);
-            const styleObj = {
-                'bold': {fontWeight: 'bold'},
-                'italic': {fontStyle: 'italic'},
-                'underline': {textDecoration: 'underline'}
-            }[styleType];
-
-            this.effect[styleType] = !this.effect[styleType];
-            button.classList.toggle('active');
-
-            changeTextStyle(styleObj);
-        });
-        this._el.textAlignButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            if (button) {
-                const styleType = this.getButtonType(button, ['left', 'center', 'right']);
-
-                event.currentTarget.classList.remove(this.align);
-                if (this.align !== styleType) {
-                    event.currentTarget.classList.add(styleType);
-                }
-                changeTextStyle({textAlign: styleType});
-
-                this.align = styleType;
-            }
-        });
-        this._el.textRange.on('change', value => {
-            value = toInteger(value);
-            this._el.textRangeValue.value = value;
-
-            changeTextStyle({
-                fontSize: toInteger(value)
-            });
-        });
+    addEvent(actions) {
+        this.actions = actions;
+        this._el.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
+        this._el.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
+        this._el.textRange.on('change', this._changeTextRnageHandler.bind(this));
         this._el.textRangeValue.value = this._el.textRange.getValue();
-
-        this._el.textColorpicker.on('change', color => {
-            color = color || 'transparent';
-            changeTextStyle({
-                'fill': color
-            });
-        });
+        this._el.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
     /**
@@ -109,5 +71,67 @@ export default class Text extends Submenu {
     setFontSize(value) {
         this._el.textRange.setValue(value, false);
         this._el.textRangeValue.value = value;
+    }
+
+    /**
+     * text effect set handler
+     * @param {object} event - add button event object
+     */
+    _setTextEffectHandler(event) {
+        const button = event.target.closest('.button');
+        const [styleType] = button.className.match(/(bold|italic|underline)/);
+        const styleObj = {
+            'bold': {fontWeight: 'bold'},
+            'italic': {fontStyle: 'italic'},
+            'underline': {textDecoration: 'underline'}
+        }[styleType];
+
+        this.effect[styleType] = !this.effect[styleType];
+        button.classList.toggle('active');
+
+        this.actions.changeTextStyle(styleObj);
+    }
+
+    /**
+     * text effect set handler
+     * @param {object} event - add button event object
+     */
+    _setTextAlignHandler(event) {
+        const button = event.target.closest('.button');
+        if (button) {
+            const styleType = this.getButtonType(button, ['left', 'center', 'right']);
+
+            event.currentTarget.classList.remove(this.align);
+            if (this.align !== styleType) {
+                event.currentTarget.classList.add(styleType);
+            }
+            this.actions.changeTextStyle({textAlign: styleType});
+
+            this.align = styleType;
+        }
+    }
+
+    /**
+     * text align set handler
+     * @param {number} value - range value
+     */
+    _changeTextRnageHandler(value) {
+        value = toInteger(value);
+        this._el.textRangeValue.value = value;
+
+        this.actions.changeTextStyle({
+            fontSize: toInteger(value)
+        });
+    }
+
+    /**
+     * change color handler
+     * @param {string} color - change color string
+     */
+    _changeColorHandler(color) {
+        color = color || 'transparent';
+        this.actions.changeTextStyle({
+            'fill': color
+        });
     }
 }

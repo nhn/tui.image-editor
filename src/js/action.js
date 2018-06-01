@@ -41,6 +41,7 @@ export default {
             initLoadImage: (imagePath, imageName) => (
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
                     exitCropOnAction();
+                    this.ui.initializeImgUrl = imagePath;
                     this.ui.resizeEditor(sizeValue);
                     this.clearUndoStack();
                 })
@@ -59,20 +60,11 @@ export default {
             },
             reset: () => {
                 exitCropOnAction();
-                const undoRecursiveCall = () => {
-                    if (this.isEmptyUndoStack()) {
-                        this.clearUndoStack();
-                        this.clearRedoStack();
-                    } else {
-                        this.undo().then(() => {
-                            undoRecursiveCall();
-                        })['catch'](message => (
-                            Promise.reject(message)
-                        ));
-                    }
-                };
-                undoRecursiveCall();
-                this.ui.resizeEditor();
+                this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then(sizeValue => {
+                    exitCropOnAction();
+                    this.ui.resizeEditor(sizeValue);
+                    this.clearUndoStack();
+                });
             },
             delete: () => {
                 this.ui.changeDeleteButtonEnabled(false);
@@ -89,12 +81,11 @@ export default {
                 this.ui.changeDeleteAllButtonEnabled(false);
             },
             load: file => {
-                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
-
-                if (!supportingFileAPI) {
+                if (!util.isSupportFileApi()) {
                     alert('This browser does not support file-api');
                 }
 
+                this.ui.initializeImgUrl = URL.createObjectURL(file);
                 this.loadImageFromFile(file).then(() => {
                     exitCropOnAction();
                     this.clearUndoStack();
@@ -104,12 +95,11 @@ export default {
                 ));
             },
             download: () => {
-                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
                 const dataURL = this.toDataURL();
                 let imageName = this.getImageName();
                 let blob, type, w;
 
-                if (supportingFileAPI) {
+                if (!util.isSupportFileApi()) {
                     blob = util.base64ToBlob(dataURL);
                     type = blob.type.split('/')[1];
                     if (imageName.split('.').pop() !== type) {

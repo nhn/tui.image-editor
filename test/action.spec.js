@@ -1,6 +1,6 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
- * @fileoverview Test cases of "src/js/component/cropper.js"
+ * @fileoverview Test cases of "src/js/action.js"
  */
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
@@ -98,6 +98,9 @@ describe('Ui', () => {
             spyOn(imageEditorMock, 'loadImageFromFile').and.returnValue(promise);
             spyOn(imageEditorMock, 'clearUndoStack');
             spyOn(imageEditorMock.ui, 'resizeEditor');
+            window.URL = {
+                createObjectURL: jasmine.createSpy('URL')
+            };
 
             mainAction.load();
 

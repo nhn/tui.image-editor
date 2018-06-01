@@ -25,30 +25,37 @@ export default class Flip extends Submenu {
      * @param {Object} actions - actions for flip
      *   @param {Function} actions.flip - flip action
      */
-    addEvent({flip}) {
-        this._el.flipButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            if (button) {
-                const flipType = this.getButtonType(button, ['flipX', 'flipY', 'resetFlip']);
-                if (!this.flipStatus && flipType === 'resetFlip') {
-                    return;
-                }
+    addEvent(actions) {
+        this._actions = actions;
+        this._el.flipButton.addEventListener('click', this._changeFlip.bind(this));
+    }
 
-                flip(flipType).then(flipStatus => {
-                    const flipClassList = this._el.flipButton.classList;
-                    this.flipStatus = false;
-
-                    flipClassList.remove('resetFlip');
-                    snippet.forEach(['flipX', 'flipY'], type => {
-                        flipClassList.remove(type);
-                        if (flipStatus[type]) {
-                            flipClassList.add(type);
-                            flipClassList.add('resetFlip');
-                            this.flipStatus = true;
-                        }
-                    });
-                });
+    /**
+     * change Flip status
+     * @param {object} event - change event
+     */
+    _changeFlip(event) {
+        const button = event.target.closest('.button');
+        if (button) {
+            const flipType = this.getButtonType(button, ['flipX', 'flipY', 'resetFlip']);
+            if (!this.flipStatus && flipType === 'resetFlip') {
+                return;
             }
-        });
+
+            this._actions.flip(flipType).then(flipStatus => {
+                const flipClassList = this._el.flipButton.classList;
+                this.flipStatus = false;
+
+                flipClassList.remove('resetFlip');
+                snippet.forEach(['flipX', 'flipY'], type => {
+                    flipClassList.remove(type);
+                    if (flipStatus[type]) {
+                        flipClassList.add(type);
+                        flipClassList.add('resetFlip');
+                        this.flipStatus = true;
+                    }
+                });
+            });
+        }
     }
 }

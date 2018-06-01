@@ -1,5 +1,6 @@
 import {extend, forEach} from 'tui-code-snippet';
-import style from '../template//style';
+import {styleLoad} from '../../util';
+import style from '../template/style';
 import standardTheme from './standard';
 
 /**
@@ -10,7 +11,7 @@ import standardTheme from './standard';
 export default class Theme {
     constructor(customTheme) {
         this.styles = extend(standardTheme, customTheme);
-        this._styleLoad(this._styleMaker());
+        styleLoad(this._styleMaker());
     }
 
     /**
@@ -64,22 +65,6 @@ export default class Theme {
         }
 
         return result;
-    }
-
-    /**
-     * Apply css resource
-     * @param {string} styleBuffer - serialized css text
-     * @private
-     */
-    _styleLoad(styleBuffer) {
-        const [head] = document.getElementsByTagName('head');
-        const linkElement = document.createElement('link');
-        const styleData = encodeURIComponent(styleBuffer);
-        linkElement.id = 'tui-image-editor-theme-style';
-        linkElement.setAttribute('rel', 'stylesheet');
-        linkElement.setAttribute('type', 'text/css');
-        linkElement.setAttribute('href', `data:text/css;charset=UTF-8,${styleData}`);
-        head.appendChild(linkElement);
     }
 
     /**

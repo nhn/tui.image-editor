@@ -36,37 +36,10 @@ export default class Icon extends Submenu {
      */
     addEvent(actions) {
         this.actions = actions;
-        const {registCustomIcon, addIcon, changeColor} = actions;
 
-        this._el.iconColorpicker.on('change', color => {
-            color = color || 'transparent';
-            changeColor(color);
-        });
-
-        this._el.registIconButton.addEventListener('change', event => {
-            let imgUrl;
-
-            if (!isSupportFileApi) {
-                alert('This browser does not support file-api');
-            }
-
-            const [file] = event.target.files;
-
-            if (file) {
-                imgUrl = URL.createObjectURL(file);
-                registCustomIcon(imgUrl, file);
-            }
-        });
-
-        this._el.addIconButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            const iconType = button.getAttribute('data-icontype');
-            this._el.addIconButton.classList.remove(this.iconType);
-            this._el.addIconButton.classList.add(iconType);
-
-            this.iconType = iconType;
-            addIcon(iconType);
-        });
+        this._el.iconColorpicker.on('change', this._changeColor.bind(this));
+        this._el.registIconButton.addEventListener('change', this._registeIcon.bind(this));
+        this._el.addIconButton.addEventListener('click', this._addIcon.bind(this));
     }
 
     /**
@@ -84,5 +57,47 @@ export default class Icon extends Submenu {
         snippet.forEach(defaultIconPath, (path, type) => {
             this.actions.registDefalutIcons(type, path);
         });
+    }
+
+    /**
+     * Change icon color
+     * @param {string} color - color for change
+     */
+    _changeColor(color) {
+        color = color || 'transparent';
+        this.actions.changeColor(color);
+    }
+
+    /**
+     * Change icon color
+     * @param {object} event - add button event object
+     */
+    _addIcon(event) {
+        const button = event.target.closest('.button');
+        const iconType = button.getAttribute('data-icontype');
+        this._el.addIconButton.classList.remove(this.iconType);
+        this._el.addIconButton.classList.add(iconType);
+
+        this.iconType = iconType;
+        this.actions.addIcon(iconType);
+    }
+
+    /**
+     * register icon
+     * @param {object} event - file change event object
+     */
+    _registeIcon(event) {
+        let imgUrl;
+
+        if (!isSupportFileApi) {
+            alert('This browser does not support file-api');
+        }
+
+        const [file] = event.target.files;
+
+        if (file) {
+            imgUrl = URL.createObjectURL(file);
+            this.actions.registCustomIcon(imgUrl, file);
+        }
     }
 }

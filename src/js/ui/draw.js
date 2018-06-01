@@ -40,29 +40,9 @@ export default class Draw extends Submenu {
     addEvent(actions) {
         this.actions = actions;
 
-        this._el.lineSelectButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            if (button) {
-                const lineType = this.getButtonType(button, ['free', 'line']);
-                this.changeClass(this._el.lineSelectButton, this.type, lineType);
-
-                this.type = lineType;
-                this.setDrawMode();
-            }
-        });
-
-        this._el.drawColorpicker.on('change', color => {
-            color = color || 'transparent';
-            this.color = color;
-            this.setDrawMode();
-        });
-
-        this._el.drawRange.on('change', value => {
-            value = util.toInteger(value);
-            this._el.drawRangeValue.value = value;
-            this.width = value;
-            this.setDrawMode();
-        });
+        this._el.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
+        this._el.drawColorpicker.on('change', this._changeDrawColor.bind(this));
+        this._el.drawRange.on('change', this._changeDrawRange.bind(this));
         this._el.drawRangeValue.value = this._el.drawRange.getValue();
     }
 
@@ -74,5 +54,41 @@ export default class Draw extends Submenu {
             width: this.width,
             color: util.getRgb(this.color, 0.7)
         });
+    }
+
+    /**
+     * Change draw type event
+     * @param {object} event - line select event
+     */
+    _changeDrawType(event) {
+        const button = event.target.closest('.button');
+        if (button) {
+            const lineType = this.getButtonType(button, ['free', 'line']);
+            this.changeClass(this._el.lineSelectButton, this.type, lineType);
+
+            this.type = lineType;
+            this.setDrawMode();
+        }
+    }
+
+    /**
+     * Change drawing color
+     * @param {string} color - select drawing color
+     */
+    _changeDrawColor(color) {
+        color = color || 'transparent';
+        this.color = color;
+        this.setDrawMode();
+    }
+
+    /**
+     * Change drawing Range
+     * @param {number} value - select drawing range
+     */
+    _changeDrawRange(value) {
+        value = util.toInteger(value);
+        this._el.drawRangeValue.value = value;
+        this.width = value;
+        this.setDrawMode();
     }
 }
