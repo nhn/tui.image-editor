@@ -77,7 +77,7 @@ module.exports = {
     /**
      * ParseInt simpliment
      * @param {number} value - Value
-     * @returns {number} 
+     * @returns {number}
      */
     toInteger(value) {
         return parseInt(value, 10);

@@ -11,70 +11,49 @@ describe('Theme', () => {
         theme = new Theme(defaultTheme);
     });
 
-    describe('_getTargetOption()', () => {
-        it('If the key contains a dot, you will need to find the object under 2depth.', () => {
-            theme.styles = {
-                range: {
-                    value: {
-                        color: '#000',
-                        fontWeight: 'normal',
-                        backgroundColor: '#f5f5f5'
-                    }
-                }
-            };
-            expect(theme._getTargetOption('range.value')).toEqual({
-                color: '#000',
-                fontWeight: 'normal',
-                backgroundColor: '#f5f5f5'
-            });
-        });
-    });
-
     describe('getStyle()', () => {
         it('In case of icon type, the object should be returned as it is.', () => {
-            const resources = {
-                normal: {
-                    path: '../dist',
+            const expected = {
+                active: {
+                    path: '../dist/svg',
                     name: 'icon-a'
                 },
-                active: {
-                    path: '../dist',
-                    name: 'icon-d'
+                normal: {
+                    path: '../dist/svg',
+                    name: 'icon-b'
                 }
             };
-            spyOn(theme, '_getTargetOption').and.returnValue(resources);
-            expect(theme.getStyle('menu.icon')).toBe(resources);
+
+            expect(theme.getStyle('menu.icon')).toEqual(expected);
         });
 
         it('In normal types, cssText should be returned.', () => {
-            const resources = {
+            theme.styles.normal = {
                 backgroundColor: '#fdba3b',
                 border: '1px solid #fdba3b',
                 color: '#fff',
                 fontFamily: 'NotoSans, sans-serif',
                 fontSize: '12px'
             };
+
             const expected = 'background-color: #fdba3b;border: 1px solid #fdba3b;color: #fff;font-family: NotoSans, sans-serif;font-size: 12px';
-            spyOn(theme, '_getTargetOption').and.returnValue(resources);
             expect(theme.getStyle('normal')).toBe(expected);
         });
 
         it('If all members are objects, you must leave the structure intact and return cssText.', () => {
-            const resources = {
-                normal: {
-                    color: '#858585',
-                    fontWeight: 'normal'
-                },
-                active: {
-                    color: '#000',
-                    fontWeight: 'normal'
-                }
+            theme.styles['submenu.normalLabel'] = {
+                color: '#858585',
+                fontWeight: 'normal'
             };
+            theme.styles['submenu.activeLabel'] = {
+                color: '#000',
+                fontWeight: 'normal'
+            };
+
             const expected = {
                 normal: 'color: #858585;font-weight: normal',
                 active: 'color: #000;font-weight: normal'
             };
-            spyOn(theme, '_getTargetOption').and.returnValue(resources);
             expect(theme.getStyle('submenu.label')).toEqual(expected);
         });
     });
@@ -90,20 +69,6 @@ describe('Theme', () => {
                 fontSize: '12px'
             };
             const expected = 'background-color: #fff;background-image: url(./img/bg.png);border: 1px solid #ddd;color: #222;font-family: NotoSans, sans-serif;font-size: 12px';
-            expect(theme._makeCssText(styleObject)).toBe(expected);
-        });
-        it('objects inside objects should be ignored.', () => {
-            const styleObject = {
-                backgroundColor: '#fff',
-                border: '1px solid #ddd',
-                color: '#222',
-                fontFamily: 'NotoSans, sans-serif',
-                fontSize: '12px',
-                subMenu: {
-                    fontSize: '12px'
-                }
-            };
-            const expected = 'background-color: #fff;border: 1px solid #ddd;color: #222;font-family: NotoSans, sans-serif;font-size: 12px';
             expect(theme._makeCssText(styleObject)).toBe(expected);
         });
     });

@@ -10,7 +10,7 @@ import standardTheme from './standard';
  */
 export default class Theme {
     constructor(customTheme) {
-        this.styles = extend(standardTheme, customTheme);
+        this.styles = this._changeToObject(extend(standardTheme, customTheme));
         styleLoad(this._styleMaker());
     }
 
@@ -20,31 +20,21 @@ export default class Theme {
      * @returns {string|object} - cssText or StyleObject
      */
     getStyle(type) { // eslint-disable-line
-        const option = this._getTargetOption(type);
         let result = null;
-
+        const firstProperty = type.replace(/\..+$/, '');
+        const option = this.styles[type];
         switch (type) {
             case 'menu.icon':
             case 'submenu.icon':
-                result = option;
-                break;
-            case 'submenu.colorpicker':
                 result = {
-                    button: this._makeCssText(option.button),
-                    title: this._makeCssText(option.title)
+                    active: this.styles[`${firstProperty}.activeIcon`],
+                    normal: this.styles[`${firstProperty}.normalIcon`]
                 };
                 break;
-            case 'submenu.range':
-                option.pointer.backgroundColor = option.pointer.color;
-                option.bar.backgroundColor = option.bar.color;
-                option.subbar.backgroundColor = option.subbar.color;
-
+            case 'submenu.label':
                 result = {
-                    pointer: this._makeCssText(option.pointer),
-                    bar: this._makeCssText(option.bar),
-                    subbar: this._makeCssText(option.subbar),
-                    title: this._makeCssText(option.title),
-                    value: this._makeCssText(option.value)
+                    active: this._makeCssText(this.styles[`${firstProperty}.activeLabel`]),
+                    normal: this._makeCssText(this.styles[`${firstProperty}.normalLabel`])
                 };
                 break;
             case 'submenu.partition':
@@ -53,11 +43,11 @@ export default class Theme {
                     horizontal: this._makeCssText(extend({}, option, {borderBottom: `1px solid ${option.color}`}))
                 };
                 break;
-            case 'submenu.label':
-                result = {
-                    normal: this._makeCssText(option.normal),
-                    active: this._makeCssText(option.active)
-                };
+            case 'range.pointer':
+            case 'range.bar':
+            case 'range.subbar':
+                option.backgroundColor = option.color;
+                result = this._makeCssText(option);
                 break;
             default:
                 result = this._makeCssText(option);
@@ -75,42 +65,42 @@ export default class Theme {
     _styleMaker() {
         const submenuLabelStyle = this.getStyle('submenu.label');
         const submenuPartitionStyle = this.getStyle('submenu.partition');
-        const submenuRangeStyle = this.getStyle('submenu.range');
-        const submenuColorpickerStyle = this.getStyle('submenu.colorpicker');
 
         return style({
             subMenuLabelActive: submenuLabelStyle.active,
             subMenuLabelNormal: submenuLabelStyle.normal,
-            subMenuRangeTitle: submenuRangeStyle.title,
             submenuPartitionVertical: submenuPartitionStyle.vertical,
             submenuPartitionHorizontal: submenuPartitionStyle.horizontal,
-            submenuRangePointer: submenuRangeStyle.pointer,
-            submenuRangeBar: submenuRangeStyle.bar,
-            submenuRangeSubbar: submenuRangeStyle.subbar,
-            submenuRangeValue: submenuRangeStyle.value,
-            submenuColorpickerTitle: submenuColorpickerStyle.title,
-            submenuColorpickerButton: submenuColorpickerStyle.button,
-            submenuCheckbox: this.getStyle('submenu.checkbox')
+            subMenuRangeTitle: this.getStyle('range.title'),
+            submenuRangePointer: this.getStyle('range.pointer'),
+            submenuRangeBar: this.getStyle('range.bar'),
+            submenuRangeSubbar: this.getStyle('range.subbar'),
+            submenuRangeValue: this.getStyle('range.value'),
+            submenuColorpickerTitle: this.getStyle('colorpicker.title'),
+            submenuColorpickerButton: this.getStyle('colorpicker.button'),
+            submenuCheckbox: this.getStyle('checkbox')
         });
     }
 
     /**
-     * Find Target Object for max 2depth
-     * @param {string} type - style type
-     * @returns {object} - style object
+     * Change to low dimensional object.
+     * @param {object} styleOptions - style object of user interface
+     * @returns {object} low level object for style apply
      * @private
      */
-    _getTargetOption(type) {
-        let option = null;
+    _changeToObject(styleOptions) {
+        const styleObject = {};
+        forEach(styleOptions, (value, key) => {
+            const keyExplode = key.match(/^(.+)\.([a-z]+)$/i);
+            const [, property, subProperty] = keyExplode;
 
-        if (type.indexOf('.') > -1) {
-            const explodeType = type.split('.');
-            option = this.styles[explodeType[0]][explodeType[1]];
-        } else {
-            option = this.styles[type];
-        }
+            if (!styleObject[property]) {
+                styleObject[property] = {};
+            }
+            styleObject[property][subProperty] = value;
+        });
 
-        return option;
+        return styleObject;
     }
 
     /**
@@ -123,9 +113,6 @@ export default class Theme {
         const converterStack = [];
 
         forEach(styleObject, (value, key) => {
-            if (typeof value === 'object') {
-                return;
-            }
             if (['backgroundImage'].indexOf(key) > -1 && value !== 'none') {
                 value = `url(${value})`;
             }
