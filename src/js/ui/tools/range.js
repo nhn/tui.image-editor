@@ -7,7 +7,7 @@ import {toInteger} from '../../util';
  */
 class Range {
     constructor(rangeElement, options = {}) {
-        this.value = options.value || 0;
+        this._value = options.value || 0;
         this.rangeElement = rangeElement;
         this._drawRangeElement();
 
@@ -19,15 +19,16 @@ class Range {
 
         this._addClickEvent();
         this._addDragEvent();
-        this.setValue(options.value);
+        this.value = options.value;
+        this.trigger('change');
     }
 
     /**
      * Get range value
      * @returns {Number} range value
      */
-    getValue() {
-        return this.value;
+    get value() {
+        return this._value;
     }
 
     /**
@@ -35,7 +36,7 @@ class Range {
      * @param {Number} value range value
      * @param {Boolean} fire whether fire custom event or not
      */
-    setValue(value, fire = true) {
+    set value(value) {
         const absValue = value - this.min;
         let leftPosition = (absValue * this.rangeWidth) / this.absMax;
 
@@ -45,10 +46,15 @@ class Range {
 
         this.pointer.style.left = `${leftPosition}px`;
         this.subbar.style.right = `${this.rangeWidth - leftPosition}px`;
-        this.value = value;
-        if (fire) {
-            this.fire('change', value);
-        }
+        this._value = value;
+    }
+
+    /**
+     * event tirigger
+     * @param {string} type - type
+     */
+    trigger(type) {
+        this.fire(type, this._value);
     }
 
     /**
@@ -87,7 +93,7 @@ class Range {
             const value = (this.absMax * ratio) + this.min;
             this.pointer.style.left = `${ratio * this.rangeWidth}px`;
             this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
-            this.value = value;
+            this._value = value;
 
             this.fire('change', value);
         });
@@ -128,7 +134,7 @@ class Range {
         const ratio = touchPx / this.rangeWidth;
         const value = (this.absMax * ratio) + this.min;
 
-        this.value = value;
+        this._value = value;
 
         if (this.realTimeEvent) {
             this.fire('change', value);
@@ -140,7 +146,7 @@ class Range {
      * @private
      */
     _stopChangingAngle() {
-        this.fire('change', this.value);
+        this.fire('change', this._value);
         document.removeEventListener('mousemove', this.dragEventHandler.changeAngle);
         document.removeEventListener('mouseup', this.dragEventHandler.stopChangingAngle);
     }

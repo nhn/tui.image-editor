@@ -44,7 +44,7 @@ export default class Text extends Submenu {
         this._el.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
         this._el.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
         this._el.textRange.on('change', this._changeTextRnageHandler.bind(this));
-        this._el.textRangeValue.value = this._el.textRange.getValue();
+        this._el.textRangeValue.value = this._el.textRange.value;
         this._el.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
@@ -52,24 +52,24 @@ export default class Text extends Submenu {
      * Get text color
      * @returns {string} - text color
      */
-    getTextColor() {
-        return this._el.textColorpicker.getColor();
+    get textColor() {
+        return this._el.textColorpicker.color;
     }
 
     /**
      * Get text size
      * @returns {string} - text size
      */
-    getFontSize() {
-        return this._el.textRange.getValue();
+    get fontSize() {
+        return this._el.textRange.value;
     }
 
     /**
      * Set text size
      * @param {Number} value - text size
      */
-    setFontSize(value) {
-        this._el.textRange.setValue(value, false);
+    set fontSize(value) {
+        this._el.textRange.value = value;
         this._el.textRangeValue.value = value;
     }
 

@@ -46,7 +46,7 @@ class Colorpicker {
      * Get color
      * @returns {Number} color value
      */
-    getColor() {
+    get color() {
         return this._color;
     }
 
@@ -54,7 +54,7 @@ class Colorpicker {
      * Set color
      * @param {string} color color value
      */
-    setColor(color) {
+    set color(color) {
         this._color = color;
         this._changeColorElement(color);
     }

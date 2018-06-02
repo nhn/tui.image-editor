@@ -28,8 +28,8 @@ export default class Draw extends Submenu {
         };
 
         this.type = 'line';
-        this.color = this._el.drawColorpicker.getColor();
-        this.width = this._el.drawRange.getValue();
+        this.color = this._el.drawColorpicker.color;
+        this.width = this._el.drawRange.value;
     }
 
     /**
@@ -43,7 +43,7 @@ export default class Draw extends Submenu {
         this._el.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
         this._el.drawColorpicker.on('change', this._changeDrawColor.bind(this));
         this._el.drawRange.on('change', this._changeDrawRange.bind(this));
-        this._el.drawRangeValue.value = this._el.drawRange.getValue();
+        this._el.drawRangeValue.value = this._el.drawRange.value;
     }
 
     /**

@@ -384,8 +384,8 @@ export default {
                     position: pos.originPosition
                 }).then(() => {
                     this.changeTextStyle(this.activeObjectId, {
-                        fill: this.ui.text.getTextColor(),
-                        fontSize: util.toInteger(this.ui.text.getFontSize())
+                        fill: this.ui.text.textColor,
+                        fontSize: util.toInteger(this.ui.text.fontSize)
                     });
                 })['catch'](message => (
                     Promise.reject(message)
@@ -393,7 +393,7 @@ export default {
             },
             objectScaled: obj => {
                 if (obj.type === 'text') {
-                    this.ui.text.setFontSize(util.toInteger(obj.fontSize));
+                    this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 }
             },
             mousedown: (event, originPointer) => {

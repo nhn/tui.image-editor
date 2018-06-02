@@ -87,35 +87,35 @@ export default class Filter extends Submenu {
         const option = {};
         switch (type) {
             case 'removeWhite':
-                option.threshold = toInteger(this._el.removewhiteThresholdRange.getValue());
-                option.distance = toInteger(this._el.removewhiteDistanceRange.getValue());
+                option.threshold = toInteger(this._el.removewhiteThresholdRange.value);
+                option.distance = toInteger(this._el.removewhiteDistanceRange.value);
                 break;
             case 'gradientTransparency':
-                option.threshold = toInteger(this._el.gradientTransparencyRange.getValue());
+                option.threshold = toInteger(this._el.gradientTransparencyRange.value);
                 break;
             case 'colorFilter':
                 option.color = '#FFFFFF';
-                option.threshold = this._el.colorfilterThresholeRange.getValue();
+                option.threshold = this._el.colorfilterThresholeRange.value;
                 break;
             case 'pixelate':
-                option.blocksize = toInteger(this._el.pixelateRange.getValue());
+                option.blocksize = toInteger(this._el.pixelateRange.value);
                 break;
             case 'noise':
-                option.noise = toInteger(this._el.noiseRange.getValue());
+                option.noise = toInteger(this._el.noiseRange.value);
                 break;
             case 'brightness':
-                option.brightness = toInteger(this._el.brightnessRange.getValue());
+                option.brightness = toInteger(this._el.brightnessRange.value);
                 break;
             case 'blend':
-                option.color = this._el.filterBlendColor.getColor();
+                option.color = this._el.filterBlendColor.color;
                 option.mode = this._el.blendType.value;
                 break;
             case 'multiply':
-                option.color = this._el.filterMultiplyColor.getColor();
+                option.color = this._el.filterMultiplyColor.color;
                 break;
             case 'tint':
-                option.color = this._el.filterTintColor.getColor();
-                option.opacity = this._el.tintOpacity.getValue();
+                option.color = this._el.filterTintColor.color;
+                option.opacity = this._el.tintOpacity.value;
                 break;
             default:
                 break;
