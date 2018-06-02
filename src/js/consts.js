@@ -139,5 +139,69 @@ module.exports = {
         'icon-location': 'M24 62C8 45.503 0 32.837 0 24 0 10.745 10.745 0 24 0s24 10.745 24 24c0 8.837-8 21.503-24 38zm0-28c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10z',
         'icon-heart': 'M49.994999,91.349998 l-6.96,-6.333 C18.324001,62.606995 2.01,47.829002 2.01,29.690998 C2.01,14.912998 13.619999,3.299999 28.401001,3.299999 c8.349,0 16.362,5.859 21.594,12 c5.229,-6.141 13.242001,-12 21.591,-12 c14.778,0 26.390999,11.61 26.390999,26.390999 c0,18.138 -16.314001,32.916 -41.025002,55.374001 l-6.96,6.285  z ',
         'icon-bubble': 'M44 48L34 58V48H12C5.373 48 0 42.627 0 36V12C0 5.373 5.373 0 12 0h40c6.627 0 12 5.373 12 12v24c0 6.627-5.373 12-12 12h-8z'
+    },
+
+    defaultRotateRangeValus: {
+        min: -360,
+        max: 360,
+        value: 0,
+        realTimeEvent: true
+    },
+
+    defaultDrawRangeValus: {
+        min: 5,
+        max: 30,
+        value: 12
+    },
+
+    defaultShapeStrokeValus: {
+        realTimeEvent: true,
+        min: 0,
+        max: 300,
+        value: 3
+    },
+
+    defaultTextRangeValus: {
+        min: 10,
+        max: 100,
+        value: 50
+    },
+
+    defaultFilterRangeValus: {
+        removewhiteThresholdRange: {
+            min: 0,
+            max: 255,
+            value: 60
+        },
+        removewhiteDistanceRange: {
+            min: 0,
+            max: 255,
+            value: 10
+        },
+        gradientTransparencyRange: {
+            min: 0,
+            max: 255,
+            value: 100
+        },
+        brightnessRange: {
+            min: -255,
+            max: 255,
+            value: 100
+        },
+        noiseRange: {
+            min: 0,
+            max: 1000,
+            value: 100
+        },
+        pixelateRange: {
+            min: 2,
+            max: 20,
+            value: 4
+        },
+        colorfilterThresholeRange: {
+            min: 0,
+            max: 255,
+            value: 45
+        }
     }
 };

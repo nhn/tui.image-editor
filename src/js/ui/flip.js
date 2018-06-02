@@ -15,7 +15,7 @@ export default class Flip extends Submenu {
         });
         this.flipStatus = false;
 
-        this._el = {
+        this._els = {
             flipButton: this.selector('#flip-button')
         };
     }
@@ -27,7 +27,7 @@ export default class Flip extends Submenu {
      */
     addEvent(actions) {
         this._actions = actions;
-        this._el.flipButton.addEventListener('click', this._changeFlip.bind(this));
+        this._els.flipButton.addEventListener('click', this._changeFlip.bind(this));
     }
 
     /**
@@ -43,7 +43,7 @@ export default class Flip extends Submenu {
             }
 
             this._actions.flip(flipType).then(flipStatus => {
-                const flipClassList = this._el.flipButton.classList;
+                const flipClassList = this._els.flipButton.classList;
                 this.flipStatus = false;
 
                 flipClassList.remove('resetFlip');

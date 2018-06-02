@@ -13,7 +13,7 @@ export default class Mask extends Submenu {
             templateHtml
         });
 
-        this._el = {
+        this._els = {
             applyButton: this.selector('#mask-apply'),
             maskImageButton: this.selector('#mask-image-file')
         };
@@ -27,8 +27,8 @@ export default class Mask extends Submenu {
      */
     addEvent(actions) {
         this.actions = actions;
-        this._el.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
-        this._el.applyButton.addEventListener('click', this._applyMask.bind(this));
+        this._els.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
+        this._els.applyButton.addEventListener('click', this._applyMask.bind(this));
     }
 
     /**
@@ -36,7 +36,7 @@ export default class Mask extends Submenu {
      */
     _applyMask() {
         this.actions.applyFilter();
-        this._el.applyButton.classList.remove('active');
+        this._els.applyButton.classList.remove('active');
     }
 
     /**
@@ -56,7 +56,7 @@ export default class Mask extends Submenu {
         if (file) {
             imgUrl = URL.createObjectURL(file);
             this.actions.loadImageFromURL(imgUrl, file);
-            this._el.applyButton.classList.add('active');
+            this._els.applyButton.classList.add('active');
         }
     }
 }

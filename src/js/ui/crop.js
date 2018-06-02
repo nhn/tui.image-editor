@@ -14,7 +14,7 @@ export default class Crop extends Submenu {
         });
 
         this.status = 'active';
-        this._el = {
+        this._els = {
             apply: this.selector('#crop-button .apply'),
             cancel: this.selector('#crop-button .cancel')
         };
@@ -27,14 +27,14 @@ export default class Crop extends Submenu {
      *   @param {Function} actions.cancel - cancel action
      */
     addEvent({crop, cancel}) {
-        this._el.apply.addEventListener('click', () => {
+        this._els.apply.addEventListener('click', () => {
             crop();
             this._el.apply.classList.remove('active');
         });
 
-        this._el.cancel.addEventListener('click', () => {
+        this._els.cancel.addEventListener('click', () => {
             cancel();
-            this._el.apply.classList.remove('active');
+            this._els.apply.classList.remove('active');
         });
     }
 
@@ -44,9 +44,9 @@ export default class Crop extends Submenu {
      */
     changeApplyButtonStatus(enableStatus) {
         if (enableStatus) {
-            this._el.apply.classList.add('active');
+            this._els.apply.classList.add('active');
         } else {
-            this._el.apply.classList.remove('active');
+            this._els.apply.classList.remove('active');
         }
     }
 }

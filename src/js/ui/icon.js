@@ -20,7 +20,7 @@ export default class Icon extends Submenu {
         this.iconType = null;
         this._iconMap = {};
 
-        this._el = {
+        this._els = {
             registIconButton: this.selector('#icon-image-file'),
             addIconButton: this.selector('#icon-add-button'),
             iconColorpicker: new Colorpicker(this.selector('#icon-color'))
@@ -37,16 +37,16 @@ export default class Icon extends Submenu {
     addEvent(actions) {
         this.actions = actions;
 
-        this._el.iconColorpicker.on('change', this._changeColor.bind(this));
-        this._el.registIconButton.addEventListener('change', this._registeIcon.bind(this));
-        this._el.addIconButton.addEventListener('click', this._addIcon.bind(this));
+        this._els.iconColorpicker.on('change', this._changeColor.bind(this));
+        this._els.registIconButton.addEventListener('change', this._registeIcon.bind(this));
+        this._els.addIconButton.addEventListener('click', this._addIcon.bind(this));
     }
 
     /**
      * Clear icon type
      */
     clearIconType() {
-        this._el.addIconButton.classList.remove(this.iconType);
+        this._els.addIconButton.classList.remove(this.iconType);
         this.iconType = null;
     }
 
@@ -75,8 +75,8 @@ export default class Icon extends Submenu {
     _addIcon(event) {
         const button = event.target.closest('.button');
         const iconType = button.getAttribute('data-icontype');
-        this._el.addIconButton.classList.remove(this.iconType);
-        this._el.addIconButton.classList.add(iconType);
+        this._els.addIconButton.classList.remove(this.iconType);
+        this._els.addIconButton.classList.add(iconType);
 
         this.iconType = iconType;
         this.actions.addIcon(iconType);

@@ -3,6 +3,7 @@ import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/draw';
+import {defaultDrawRangeValus} from '../consts';
 
 /**
  * Draw ui class
@@ -16,20 +17,16 @@ export default class Draw extends Submenu {
             templateHtml
         });
 
-        this._el = {
+        this._els = {
             lineSelectButton: this.selector('#draw-line-select-button'),
             drawColorpicker: new Colorpicker(this.selector('#draw-color')),
-            drawRange: new Range(this.selector('#draw-range'), {
-                min: 5,
-                max: 30,
-                value: 12
-            }),
+            drawRange: new Range(this.selector('#draw-range'), defaultDrawRangeValus),
             drawRangeValue: this.selector('#draw-range-value')
         };
 
         this.type = 'line';
-        this.color = this._el.drawColorpicker.color;
-        this.width = this._el.drawRange.value;
+        this.color = this._els.drawColorpicker.color;
+        this.width = this._els.drawRange.value;
     }
 
     /**
@@ -40,10 +37,11 @@ export default class Draw extends Submenu {
     addEvent(actions) {
         this.actions = actions;
 
-        this._el.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
-        this._el.drawColorpicker.on('change', this._changeDrawColor.bind(this));
-        this._el.drawRange.on('change', this._changeDrawRange.bind(this));
-        this._el.drawRangeValue.value = this._el.drawRange.value;
+        this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
+        this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
+        this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+        this._els.drawRangeValue.value = this._els.drawRange.value;
+        this._els.drawRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -64,7 +62,7 @@ export default class Draw extends Submenu {
         const button = event.target.closest('.button');
         if (button) {
             const lineType = this.getButtonType(button, ['free', 'line']);
-            this.changeClass(this._el.lineSelectButton, this.type, lineType);
+            this.changeClass(this._els.lineSelectButton, this.type, lineType);
 
             this.type = lineType;
             this.setDrawMode();
@@ -87,7 +85,7 @@ export default class Draw extends Submenu {
      */
     _changeDrawRange(value) {
         value = util.toInteger(value);
-        this._el.drawRangeValue.value = value;
+        this._els.drawRangeValue.value = value;
         this.width = value;
         this.setDrawMode();
     }

@@ -3,6 +3,7 @@ import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/shape';
 import {toInteger} from '../util';
+import {defaultShapeStrokeValus} from '../consts';
 
 /**
  * Shape ui class
@@ -22,15 +23,10 @@ export default class Shape extends Submenu {
             strokeWidth: 3
         };
 
-        this._el = {
+        this._els = {
             shapeSelectButton: this.selector('#shape-button'),
             shapeColorButton: this.selector('#shape-color-button'),
-            strokeRange: new Range(this.selector('#stroke-range'), {
-                realTimeEvent: true,
-                min: 0,
-                max: 300,
-                value: 3
-            }),
+            strokeRange: new Range(this.selector('#stroke-range'), defaultShapeStrokeValus),
             strokeRangeValue: this.selector('#stroke-range-value'),
             fillColorpicker: new Colorpicker(this.selector('#color-fill'), ''),
             strokeColorpicker: new Colorpicker(this.selector('#color-stroke'), '#ffbb3b')
@@ -46,12 +42,12 @@ export default class Shape extends Submenu {
     addEvent(actions) {
         this.actions = actions;
 
-        this._el.shapeSelectButton.addEventListener('click', this._changeShape.bind(this));
-        this._el.strokeRange.on('change', this._changeStrokeRange.bind(this));
-        this._el.fillColorpicker.on('change', this._changeFillColor.bind(this));
-        this._el.strokeColorpicker.on('change', this._changeStrokeColor.bind(this));
-
-        this._el.strokeRangeValue.value = this._el.strokeRange.value;
+        this._els.shapeSelectButton.addEventListener('click', this._changeShape.bind(this));
+        this._els.strokeRange.on('change', this._changeStrokeRange.bind(this));
+        this._els.fillColorpicker.on('change', this._changeFillColor.bind(this));
+        this._els.strokeColorpicker.on('change', this._changeStrokeColor.bind(this));
+        this._els.strokeRangeValue.value = this._els.strokeRange.value;
+        this._els.strokeRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -62,11 +58,11 @@ export default class Shape extends Submenu {
      *   @param {string} fillColor - fill color
      */
     setShapeStatus({strokeWidth, strokeColor, fillColor}) {
-        this._el.strokeRange.value = strokeWidth;
-        this._el.strokeRange.trigger('change');
+        this._els.strokeRange.value = strokeWidth;
+        this._els.strokeRange.trigger('change');
 
-        this._el.strokeColorpicker.color = strokeColor;
-        this._el.fillColorpicker.color = fillColor;
+        this._els.strokeColorpicker.color = strokeColor;
+        this._els.fillColorpicker.color = fillColor;
         this.options.stroke = strokeColor;
         this.options.fill = fillColor;
         this.options.strokeWidth = strokeWidth;
@@ -93,7 +89,7 @@ export default class Shape extends Submenu {
      */
     _changeStrokeRange(value) {
         this.options.strokeWidth = toInteger(value);
-        this._el.strokeRangeValue.value = toInteger(value);
+        this._els.strokeRangeValue.value = toInteger(value);
 
         this.actions.changeShape({
             strokeWidth: value

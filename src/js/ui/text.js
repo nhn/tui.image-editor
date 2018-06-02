@@ -3,6 +3,7 @@ import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/text';
 import {toInteger} from '../util';
+import {defaultTextRangeValus} from '../consts';
 
 /**
  * Crop ui class
@@ -21,15 +22,11 @@ export default class Text extends Submenu {
             underline: false
         };
         this.align = 'left';
-        this._el = {
+        this._els = {
             textEffectButton: this.selector('#text-effect-button'),
             textAlignButton: this.selector('#text-align-button'),
             textColorpicker: new Colorpicker(this.selector('#text-color'), '#ffbb3b'),
-            textRange: new Range(this.selector('#text-range'), {
-                min: 10,
-                max: 100,
-                value: 50
-            }),
+            textRange: new Range(this.selector('#text-range'), defaultTextRangeValus),
             textRangeValue: this.selector('#text-range-value')
         };
     }
@@ -41,11 +38,12 @@ export default class Text extends Submenu {
      */
     addEvent(actions) {
         this.actions = actions;
-        this._el.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
-        this._el.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
-        this._el.textRange.on('change', this._changeTextRnageHandler.bind(this));
-        this._el.textRangeValue.value = this._el.textRange.value;
-        this._el.textColorpicker.on('change', this._changeColorHandler.bind(this));
+        this._els.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
+        this._els.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
+        this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
+        this._els.textRangeValue.value = this._els.textRange.value;
+        this._els.textRangeValue.setAttribute('readonly', true);
+        this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
     /**
@@ -53,7 +51,7 @@ export default class Text extends Submenu {
      * @returns {string} - text color
      */
     get textColor() {
-        return this._el.textColorpicker.color;
+        return this._els.textColorpicker.color;
     }
 
     /**
@@ -61,7 +59,7 @@ export default class Text extends Submenu {
      * @returns {string} - text size
      */
     get fontSize() {
-        return this._el.textRange.value;
+        return this._els.textRange.value;
     }
 
     /**
@@ -69,8 +67,8 @@ export default class Text extends Submenu {
      * @param {Number} value - text size
      */
     set fontSize(value) {
-        this._el.textRange.value = value;
-        this._el.textRangeValue.value = value;
+        this._els.textRange.value = value;
+        this._els.textRangeValue.value = value;
     }
 
     /**
@@ -117,7 +115,7 @@ export default class Text extends Submenu {
      */
     _changeTextRnageHandler(value) {
         value = toInteger(value);
-        this._el.textRangeValue.value = value;
+        this._els.textRangeValue.value = value;
 
         this.actions.changeTextStyle({
             fontSize: toInteger(value)

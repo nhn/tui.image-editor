@@ -2,6 +2,7 @@ import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/rotate';
 import {toInteger} from '../util';
+import {defaultRotateRangeValus} from '../consts';
 
 /**
  * Rotate ui class
@@ -15,14 +16,9 @@ export default class Rotate extends Submenu {
             templateHtml
         });
 
-        this._el = {
+        this._els = {
             rotateButton: this.selector('#retate-button'),
-            rotateRange: new Range(this.selector('#rotate-range'), {
-                min: -360,
-                max: 360,
-                value: 0,
-                realTimeEvent: true
-            }),
+            rotateRange: new Range(this.selector('#rotate-range'), defaultRotateRangeValus),
             rotateRangeValue: this.selector('#ratate-range-value')
         };
     }
@@ -36,8 +32,9 @@ export default class Rotate extends Submenu {
     addEvent(actions) {
         // {rotate, setAngle}
         this.actions = actions;
-        this._el.rotateButton.addEventListener('click', this._changeRotateForButton.bind(this));
-        this._el.rotateRange.on('change', this._changeRotateForRange.bind(this));
+        this._els.rotateButton.addEventListener('click', this._changeRotateForButton.bind(this));
+        this._els.rotateRange.on('change', this._changeRotateForRange.bind(this));
+        this._els.rotateRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -46,7 +43,7 @@ export default class Rotate extends Submenu {
      */
     _changeRotateForRange(value) {
         const angle = toInteger(value);
-        this._el.rotateRangeValue.value = angle;
+        this._els.rotateRangeValue.value = angle;
         this.actions.setAngle(angle);
     }
 
