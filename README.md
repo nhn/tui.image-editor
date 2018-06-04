@@ -39,6 +39,49 @@
 | :---------: | :---------: | :---------: | :---------: | :---------: |
 | Yes | 9+ | Yes | Yes | Yes |
 
+
+## 🌈 원하는 페이지에 원하는 기능을 손쉽게 적용 가능.
+
+### Every where
+  - canvas를 지원하는 최하위 브라우저 IE9부터 지원합니다.
+  - menu옵션으로 아이콘을 최소한으로 표현하고 cssMaxWidth, cssMaxHeight을 통해 켄버스 크기를 조절하면
+    최소 550 * 450 크기 이상에 웹페이지에 에디터 기능을 사용할 수 있습니다.
+    
+    ![2018-06-04 5 35 25](https://user-images.githubusercontent.com/35218826/40907369-9221f482-681e-11e8-801c-78d6f2e246a8.png)
+
+
+### 손쉬운 커스터마이징 및 기본 테마 지원
+  - 기본 white, black테마를 가지고 있으며 theme 파일을 수정해 customizing 할 수 있습니다.
+  - 심지어 includeUI옵션을 제거하면, UI 자체를 사용자 마음대로 새롭게 구현 가능합니다.
+
+| black - top | black - bottom |  white - left | white - right |
+| --- | --- | --- | --- | 
+| | | | |
+
+### 기본에 충실한 기능
+
+  - 기본에 충실한 다양한 기능들을 갖추고 있으면서, 또한 menu 옵션을 통해 필요한 기능만 사용되도록 할 수 있습니다.
+ 
+```javascripot
+         var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
+             includeUI: {
+                 menu: ['shape', 'crop']
+                 ...
+             },
+             ...
+```
+
+| Crop | Flip | rotation | Drawing | Shpae |
+| --- | --- | --- | --- | --- |
+| ![2018-06-04 4 33 16](https://user-images.githubusercontent.com/35218826/40904241-0c28ec68-6815-11e8-8296-89a1716b22d8.png) | ![2018-06-04 4 40 06](https://user-images.githubusercontent.com/35218826/40904521-f7c6e184-6815-11e8-8ba3-c94664da69a2.png) | ![2018-06-04 4 43 02](https://user-images.githubusercontent.com/35218826/40904664-656aa748-6816-11e8-9943-6607c209deac.png) | ![2018-06-04 4 47 40](https://user-images.githubusercontent.com/35218826/40904850-0f26ebde-6817-11e8-97d0-d3a7e4bc02da.png) | ![2018-06-04 4 51 45](https://user-images.githubusercontent.com/35218826/40905037-a026296a-6817-11e8-9d28-9e1ca7bc58c4.png) | 
+
+| Icon | Text | Mask | download | undo, rodo |
+| --- | --- | --- | --- | --- |
+
+
+
+
+
 ## Feature
 * Load image to canvas
 * Undo/Redo (With shortcut)
