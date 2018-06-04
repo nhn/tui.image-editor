@@ -1,10 +1,10 @@
 # ![Toast UI ImageEditor](https://user-images.githubusercontent.com/35218826/40895380-0b9f4cd6-67ea-11e8-982f-18121daa3a04.png)
-> Canvas image editor
+> Now edit the image in your web browser. Image editor using canvas.
 
 
 [![github version](https://img.shields.io/github/release/nhnent/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-image-editor.svg)](https://www.npmjs.com/package/tui-image-editor) [![bower version](https://img.shields.io/bower/v/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22) [![code with hearth by NHN ent.](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Ent.-brightgreen.svg)](https://github.com/nhnent)
 
-
+![6 -04-2018 14-45-55](https://user-images.githubusercontent.com/35218826/40900350-208aa7c8-6806-11e8-929a-b959c278f5d7.gif)
 
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
