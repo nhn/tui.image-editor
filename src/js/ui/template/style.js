@@ -8,7 +8,9 @@ export default ({
     submenuRangePointer,
     submenuRangeValue,
     submenuColorpickerTitle,
-    submenuColorpickerButton
+    submenuColorpickerButton,
+    submenuRangeBar,
+    submenuRangeSubbar
 }) => (`
     .tui-image-editor-container #icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label,
     .tui-image-editor-container #icon-add-button.icon-heart .button[data-icontype="icon-heart"] label,
@@ -55,6 +57,12 @@ export default ({
     }
     .tui-image-editor-container .tui-image-editor-virtual-range-pointer {
         ${submenuRangePointer}
+    }
+    .tui-image-editor-container .tui-image-editor-virtual-range-bar {
+        ${submenuRangeBar}
+    }
+    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {
+        ${submenuRangeSubbar}
     }
     .tui-image-editor-container .tui-image-editor-range-value {
         ${submenuRangeValue}

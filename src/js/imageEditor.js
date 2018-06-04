@@ -5,7 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Invoker from './invoker';
-import Ui from './ui';
+import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
@@ -29,7 +29,7 @@ const {isUndefined, forEach, CustomEvents} = snippet;
 class ImageEditor {
     constructor(wrapper, option) {
         option = snippet.extend({
-            includeUi: false,
+            includeUI: false,
             applyCropSelectionStyle: false,
             usageStatistics: true
         }, option);
@@ -37,10 +37,12 @@ class ImageEditor {
         this.activeObjectId = null;
 
         /**
-         * Ui instance
+         * UI instance
          * @type {Ui}
          */
-        this.ui = option.includeUi ? new Ui(wrapper, option.includeUi, this.getActions()) : null;
+        if (option.includeUI) {
+            this.ui = new UI(wrapper, option.includeUI, this.getActions());
+        }
 
         /**
          * Invoker

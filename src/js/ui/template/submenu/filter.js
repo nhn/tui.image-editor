@@ -105,7 +105,7 @@ export default () => (`
                     </div>
                 </div>
                 <div class="newline tui-image-editor-range-wrap short">
-                    <label>Threshole</label>
+                    <label>Threshold</label>
                     <div id="colorfilter-threshole-range"></div>
                 </div>
             </div>

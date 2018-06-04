@@ -1,35 +1,40 @@
-import cropHtml from './template/submenu/crop';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/crop';
 
 /**
  * Crop ui class
  * @class
  */
-export default class Crop {
+export default class Crop extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, iconStyle);
+        super(subMenuElement, {
+            name: 'crop',
+            iconStyle,
+            templateHtml
+        });
+
         this.status = 'active';
-        this._el = {
-            apply: selector('#crop-button .apply'),
-            cancel: selector('#crop-button .cancel')
+        this._els = {
+            apply: this.selector('#crop-button .apply'),
+            cancel: this.selector('#crop-button .cancel')
         };
     }
 
     /**
      * Add event for crop
      * @param {Object} actions - actions for crop
-     *   @param {Function} crop - crop action
-     *   @param {Function} cancel - cancel action
+     *   @param {Function} actions.crop - crop action
+     *   @param {Function} actions.cancel - cancel action
      */
     addEvent({crop, cancel}) {
-        this._el.apply.addEventListener('click', () => {
+        this._els.apply.addEventListener('click', () => {
             crop();
             this._el.apply.classList.remove('active');
         });
 
-        this._el.cancel.addEventListener('click', () => {
+        this._els.cancel.addEventListener('click', () => {
             cancel();
-            this._el.apply.classList.remove('active');
+            this._els.apply.classList.remove('active');
         });
     }
 
@@ -39,23 +44,9 @@ export default class Crop {
      */
     changeApplyButtonStatus(enableStatus) {
         if (enableStatus) {
-            this._el.apply.classList.add('active');
+            this._els.apply.classList.add('active');
         } else {
-            this._el.apply.classList.remove('active');
+            this._els.apply.classList.remove('active');
         }
-    }
-
-    /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
-     */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const cropSubMenu = document.createElement('div');
-        cropSubMenu.className = 'crop';
-        cropSubMenu.innerHTML = cropHtml({iconStyle});
-
-        subMenuElement.appendChild(cropSubMenu);
     }
 }

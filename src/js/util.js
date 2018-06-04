@@ -75,12 +75,43 @@ module.exports = {
     },
 
     /**
+     * ParseInt simpliment
+     * @param {number} value - Value
+     * @returns {number}
+     */
+    toInteger(value) {
+        return parseInt(value, 10);
+    },
+
+    /**
+     * String to camelcase string
+     * @param {string} targetString - change target
+     * @returns {string}
+     * @private
+     */
+    toCamelCase(targetString) {
+        return targetString.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+    },
+
+    /**
+     * Check browser file api support
+     * @returns {boolean}
+     * @private
+     */
+    isSupportFileApi() {
+        return !!(window.File && window.FileList && window.FileReader);
+    },
+
+    /**
      * hex to rgb
      * @param {string} color - hex color
      * @param {string} alpha - color alpha value
      * @returns {string} rgb expression
      */
     getRgb(color, alpha) {
+        if (color.length === 4) {
+            color = `${color}${color.slice(1, 4)}`;
+        }
         const r = parseInt(color.slice(1, 3), 16);
         const g = parseInt(color.slice(3, 5), 16);
         const b = parseInt(color.slice(5, 7), 16);
@@ -107,6 +138,25 @@ module.exports = {
             dp: hostname,
             dh: 'image-editor'
         });
+    },
+
+    /**
+     * Apply css resource
+     * @param {string} styleBuffer - serialized css text
+     * @param {string} tagId - style tag id
+     */
+    styleLoad(styleBuffer, tagId) {
+        const [head] = document.getElementsByTagName('head');
+        const linkElement = document.createElement('link');
+        const styleData = encodeURIComponent(styleBuffer);
+        if (tagId) {
+            linkElement.id = tagId;
+            // linkElement.id = 'tui-image-editor-theme-style';
+        }
+        linkElement.setAttribute('rel', 'stylesheet');
+        linkElement.setAttribute('type', 'text/css');
+        linkElement.setAttribute('href', `data:text/css;charset=UTF-8,${styleData}`);
+        head.appendChild(linkElement);
     },
 
     /**

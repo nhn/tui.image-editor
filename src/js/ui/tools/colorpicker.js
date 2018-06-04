@@ -1,4 +1,5 @@
 import snippet from 'tui-code-snippet';
+import {toInteger} from '../../util';
 import tuiColorPicker from 'tui-color-picker';
 const PICKER_COLOR = [
     '#000000',
@@ -45,7 +46,7 @@ class Colorpicker {
      * Get color
      * @returns {Number} color value
      */
-    getColor() {
+    get color() {
         return this._color;
     }
 
@@ -53,7 +54,7 @@ class Colorpicker {
      * Set color
      * @param {string} color color value
      */
-    setColor(color) {
+    set color(color) {
         this._color = color;
         this._changeColorElement(color);
     }
@@ -131,11 +132,15 @@ class Colorpicker {
             this._color = value.color;
             this.fire('change', value.color);
         });
-
-        colorpickerElement.addEventListener('click', () => {
+        colorpickerElement.addEventListener('click', event => {
             this._show = !this._show;
             const display = this._show ? 'block' : 'none';
             this.pickerControl.style.display = display;
+            event.stopPropagation();
+        });
+        document.body.addEventListener('click', () => {
+            this._show = false;
+            this.pickerControl.style.display = 'none';
         });
     }
 
@@ -145,8 +150,8 @@ class Colorpicker {
      */
     _setPickerControlPosition() {
         const controlStyle = this.pickerControl.style;
-        const top = parseInt(window.getComputedStyle(this.pickerControl, null).height, 10) + 12;
-        const left = (parseInt(window.getComputedStyle(this.pickerControl, null).width, 10) / 2) - 20;
+        const top = toInteger(window.getComputedStyle(this.pickerControl, null).height) + 12;
+        const left = (toInteger(window.getComputedStyle(this.pickerControl, null).width) / 2) - 20;
 
         controlStyle.top = `-${top}px`;
         controlStyle.left = `-${left}px`;

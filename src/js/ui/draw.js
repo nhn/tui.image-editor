@@ -1,64 +1,47 @@
 import util from '../util';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
-import drawHtml from './template/submenu/draw';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/draw';
+import {defaultDrawRangeValus} from '../consts';
 
 /**
  * Draw ui class
  * @class
  */
-export default class Draw {
+export default class Draw extends Submenu {
     constructor(subMenuElement, {iconStyle}) {
-        const selector = str => subMenuElement.querySelector(str);
-        this._makeSubMenuElement(subMenuElement, iconStyle);
+        super(subMenuElement, {
+            name: 'draw',
+            iconStyle,
+            templateHtml
+        });
 
-        this._el = {
-            lineSelectButton: selector('#draw-line-select-button'),
-            drawColorpicker: new Colorpicker(selector('#draw-color')),
-            drawRange: new Range(selector('#draw-range'), {
-                min: 5,
-                max: 30,
-                value: 12
-            }),
-            drawRangeValue: selector('#draw-range-value')
+        this._els = {
+            lineSelectButton: this.selector('#draw-line-select-button'),
+            drawColorpicker: new Colorpicker(this.selector('#draw-color')),
+            drawRange: new Range(this.selector('#draw-range'), defaultDrawRangeValus),
+            drawRangeValue: this.selector('#draw-range-value')
         };
 
         this.type = 'line';
-        this.color = this._el.drawColorpicker.getColor();
-        this.width = this._el.drawRange.getValue();
+        this.color = this._els.drawColorpicker.color;
+        this.width = this._els.drawRange.value;
     }
 
     /**
      * Add event for draw
      * @param {Object} actions - actions for crop
-     *   @param {Function} setDrawMode - set draw mode
+     *   @param {Function} actions.setDrawMode - set draw mode
      */
     addEvent(actions) {
         this.actions = actions;
 
-        this._el.lineSelectButton.addEventListener('click', event => {
-            const button = event.target.closest('.button');
-            const [lineType] = button.className.match(/(free|line)/);
-            this._el.lineSelectButton.classList.remove(this.type);
-            this._el.lineSelectButton.classList.add(lineType);
-
-            this.type = lineType;
-            this.setDrawMode();
-        });
-
-        this._el.drawColorpicker.on('change', color => {
-            color = color || 'transparent';
-            this.color = color;
-            this.setDrawMode();
-        });
-
-        this._el.drawRange.on('change', value => {
-            value = parseInt(value, 10);
-            this._el.drawRangeValue.value = value;
-            this.width = value;
-            this.setDrawMode();
-        });
-        this._el.drawRangeValue.value = this._el.drawRange.getValue();
+        this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
+        this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
+        this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+        this._els.drawRangeValue.value = this._els.drawRange.value;
+        this._els.drawRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -72,16 +55,38 @@ export default class Draw {
     }
 
     /**
-     * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
-     * @param {Object} iconStyle -  icon style
-     * @private
+     * Change draw type event
+     * @param {object} event - line select event
      */
-    _makeSubMenuElement(subMenuElement, iconStyle) {
-        const drawSubMenu = document.createElement('div');
-        drawSubMenu.className = 'draw';
-        drawSubMenu.innerHTML = drawHtml({iconStyle});
+    _changeDrawType(event) {
+        const button = event.target.closest('.button');
+        if (button) {
+            const lineType = this.getButtonType(button, ['free', 'line']);
+            this.changeClass(this._els.lineSelectButton, this.type, lineType);
 
-        subMenuElement.appendChild(drawSubMenu);
+            this.type = lineType;
+            this.setDrawMode();
+        }
+    }
+
+    /**
+     * Change drawing color
+     * @param {string} color - select drawing color
+     */
+    _changeDrawColor(color) {
+        color = color || 'transparent';
+        this.color = color;
+        this.setDrawMode();
+    }
+
+    /**
+     * Change drawing Range
+     * @param {number} value - select drawing range
+     */
+    _changeDrawRange(value) {
+        value = util.toInteger(value);
+        this._els.drawRangeValue.value = value;
+        this.width = value;
+        this.setDrawMode();
     }
 }

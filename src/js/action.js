@@ -11,7 +11,6 @@ export default {
      */
     getActions() {
         return {
-
             main: this._mainAction(),
             shape: this._shapeAction(),
             crop: this._cropAction(),
@@ -31,59 +30,64 @@ export default {
      * @private
      */
     _mainAction() {
+        const exitCropOnAction = () => {
+            if (this.ui.submenu === 'crop') {
+                this.stopDrawingMode();
+                this.ui.changeMenu('crop');
+            }
+        };
+
         return {
             initLoadImage: (imagePath, imageName) => (
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
+                    exitCropOnAction();
+                    this.ui.initializeImgUrl = imagePath;
                     this.ui.resizeEditor(sizeValue);
                     this.clearUndoStack();
                 })
             ),
             undo: () => {
                 if (!this.isEmptyUndoStack()) {
+                    exitCropOnAction();
                     this.undo();
                 }
             },
             redo: () => {
                 if (!this.isEmptyRedoStack()) {
+                    exitCropOnAction();
                     this.redo();
                 }
             },
             reset: () => {
-                const undoRecursiveCall = () => {
-                    if (this.isEmptyUndoStack()) {
-                        this.clearUndoStack();
-                        this.clearRedoStack();
-                    } else {
-                        this.undo().then(() => {
-                            undoRecursiveCall();
-                        })['catch'](message => (
-                            Promise.reject(message)
-                        ));
-                    }
-                };
-                undoRecursiveCall();
-                this.ui.resizeEditor();
+                exitCropOnAction();
+                this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then(sizeValue => {
+                    exitCropOnAction();
+                    this.ui.resizeEditor(sizeValue);
+                    this.clearUndoStack();
+                });
             },
             delete: () => {
                 this.ui.changeDeleteButtonEnabled(false);
                 if (this.activeObjectId) {
+                    exitCropOnAction();
                     this.removeObject(this.activeObjectId);
                     this.activeObjectId = null;
                 }
             },
             deleteAll: () => {
+                exitCropOnAction();
                 this.clearObjects();
                 this.ui.changeDeleteButtonEnabled(false);
                 this.ui.changeDeleteAllButtonEnabled(false);
             },
             load: file => {
-                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
-
-                if (!supportingFileAPI) {
+                if (!util.isSupportFileApi()) {
                     alert('This browser does not support file-api');
                 }
 
+                this.ui.initializeImgUrl = URL.createObjectURL(file);
                 this.loadImageFromFile(file).then(() => {
+                    exitCropOnAction();
                     this.clearUndoStack();
                     this.ui.resizeEditor();
                 })['catch'](message => (
@@ -91,12 +95,11 @@ export default {
                 ));
             },
             download: () => {
-                const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
                 const dataURL = this.toDataURL();
                 let imageName = this.getImageName();
                 let blob, type, w;
 
-                if (supportingFileAPI) {
+                if (!util.isSupportFileApi()) {
                     blob = util.base64ToBlob(dataURL);
                     type = blob.type.split('/')[1];
                     if (imageName.split('.').pop() !== type) {
@@ -110,6 +113,10 @@ export default {
                 }
             },
             modeChange: menu => {
+                this.stopDrawingMode();
+                if (this.ui.submenu === menu) {
+                    return;
+                }
                 switch (menu) {
                     case 'text':
                         this._changeActivateMode('TEXT');
@@ -118,15 +125,13 @@ export default {
                         this.startDrawingMode('CROPPER');
                         break;
                     case 'shape':
-                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
-                        this.stopDrawingMode();
                         this._changeActivateMode('SHAPE');
+                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
                         break;
                     case 'draw':
                         this.ui.draw.setDrawMode();
                         break;
                     default:
-                        this.stopDrawingMode();
                         break;
                 }
             }
@@ -144,6 +149,7 @@ export default {
                 this.changeIconColor(this.activeObjectId, color);
             },
             addIcon: iconType => {
+                this.off('mousedown');
                 this.once('mousedown', (e, originPointer) => {
                     this.addIcon(iconType, {
                         left: originPointer.x,
@@ -319,7 +325,7 @@ export default {
             applyFilter: (applying, type, options) => {
                 if (applying) {
                     this.applyFilter(type, options);
-                } else {
+                } else if (this.hasFilter(type)) {
                     this.removeFilter(type);
                 }
             }
@@ -358,6 +364,7 @@ export default {
                 if (obj.type === 'cropzone') {
                     this.ui.crop.changeApplyButtonStatus(true);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+                    this.ui.changeMenu('shape', false);
                     this._changeActivateMode('SHAPE');
                     this.ui.shape.setShapeStatus({
                         strokeColor: obj.stroke,
@@ -365,7 +372,11 @@ export default {
                         fillColor: obj.fill
                     });
                 } else if (obj.type === 'text') {
+                    this.ui.changeMenu('text', false);
                     this._changeActivateMode('TEXT');
+                } else if (obj.type === 'icon') {
+                    this.ui.changeMenu('icon', false);
+                    this._changeActivateMode('ICON');
                 }
             },
             addText: pos => {
@@ -373,8 +384,8 @@ export default {
                     position: pos.originPosition
                 }).then(() => {
                     this.changeTextStyle(this.activeObjectId, {
-                        fill: this.ui.text.getTextColor(),
-                        fontSize: parseInt(this.ui.text.getFontSize(), 10)
+                        fill: this.ui.text.textColor,
+                        fontSize: util.toInteger(this.ui.text.fontSize)
                     });
                 })['catch'](message => (
                     Promise.reject(message)
@@ -382,14 +393,14 @@ export default {
             },
             objectScaled: obj => {
                 if (obj.type === 'text') {
-                    this.ui.text.setFontSize(parseInt(obj.fontSize, 10));
+                    this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 }
             },
             mousedown: (event, originPointer) => {
                 if (this.ui.submenu && this.hasFilter('colorFilter')) {
                     this.applyFilter('colorFilter', {
-                        x: parseInt(originPointer.x, 10),
-                        y: parseInt(originPointer.y, 10)
+                        x: util.toInteger(originPointer.x),
+                        y: util.toInteger(originPointer.y)
                     });
                 }
             }

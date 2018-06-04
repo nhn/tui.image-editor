@@ -55,7 +55,7 @@ export default class Ui {
         this._subMenuElement = null;
         this._makeUiElement(element);
 
-        this._el = {
+        this._els = {
             'undo': this._menuElement.querySelector('#btn-undo'),
             'redo': this._menuElement.querySelector('#btn-redo'),
             'reset': this._menuElement.querySelector('#btn-reset'),
@@ -109,9 +109,9 @@ export default class Ui {
      */
     changeUndoButtonStatus(enableStatus) {
         if (enableStatus) {
-            this._el.undo.classList.add('enabled');
+            this._els.undo.classList.add('enabled');
         } else {
-            this._el.undo.classList.remove('enabled');
+            this._els.undo.classList.remove('enabled');
         }
     }
 
@@ -121,9 +121,9 @@ export default class Ui {
      */
     changeRedoButtonStatus(enableStatus) {
         if (enableStatus) {
-            this._el.redo.classList.add('enabled');
+            this._els.redo.classList.add('enabled');
         } else {
-            this._el.redo.classList.remove('enabled');
+            this._els.redo.classList.remove('enabled');
         }
     }
 
@@ -133,9 +133,9 @@ export default class Ui {
      */
     changeResetButtonStatus(enableStatus) {
         if (enableStatus) {
-            this._el.reset.classList.add('enabled');
+            this._els.reset.classList.add('enabled');
         } else {
-            this._el.reset.classList.remove('enabled');
+            this._els.reset.classList.remove('enabled');
         }
     }
 
@@ -145,9 +145,9 @@ export default class Ui {
      */
     changeDeleteAllButtonEnabled(enableStatus) {
         if (enableStatus) {
-            this._el.deleteAll.classList.add('enabled');
+            this._els.deleteAll.classList.add('enabled');
         } else {
-            this._el.deleteAll.classList.remove('enabled');
+            this._els.deleteAll.classList.remove('enabled');
         }
     }
 
@@ -157,9 +157,9 @@ export default class Ui {
      */
     changeDeleteButtonEnabled(enableStatus) {
         if (enableStatus) {
-            this._el['delete'].classList.add('enabled');
+            this._els['delete'].classList.add('enabled');
         } else {
-            this._el['delete'].classList.remove('enabled');
+            this._els['delete'].classList.remove('enabled');
         }
     }
 
@@ -197,8 +197,7 @@ export default class Ui {
             this._makeMenuElement(menuName);
 
             // menu btn element
-            this._el[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
-
+            this._els[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 iconStyle: this.theme.getStyle('submenu.icon')
@@ -275,7 +274,7 @@ export default class Ui {
      * @private
      */
     _addHelpActionEvent(helpName) {
-        this._el[helpName].addEventListener('click', () => {
+        this._els[helpName].addEventListener('click', () => {
             this._actions.main[helpName]();
         });
     }
@@ -285,7 +284,7 @@ export default class Ui {
      * @private
      */
     _addDownloadEvent() {
-        snippet.forEach(this._el.download, element => {
+        snippet.forEach(this._els.download, element => {
             element.addEventListener('click', () => {
                 this._actions.main.download();
             });
@@ -297,7 +296,7 @@ export default class Ui {
      * @private
      */
     _addLoadEvent() {
-        snippet.forEach(this._el.load, element => {
+        snippet.forEach(this._els.load, element => {
             element.addEventListener('change', event => {
                 this._actions.main.load(event.target.files[0]);
             });
@@ -310,9 +309,9 @@ export default class Ui {
      * @private
      */
     _addMenuEvent(menuName) {
-        this._el[menuName].addEventListener('click', () => {
-            this.changeMenu(menuName);
+        this._els[menuName].addEventListener('click', () => {
             this._actions.main.modeChange(menuName);
+            this.changeMenu(menuName);
         });
     }
 
@@ -381,17 +380,18 @@ export default class Ui {
     /**
      * change menu
      * @param {string} menuName - menu name
+     * @param {boolean} toggle - whether toogle or not
      */
-    changeMenu(menuName) {
+    changeMenu(menuName, toggle = true) {
         if (this.submenu) {
-            this._el[this.submenu].classList.remove('active');
+            this._els[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(this.submenu);
         }
 
-        if (this.submenu === menuName) {
+        if (this.submenu === menuName && toggle) {
             this.submenu = '';
         } else {
-            this._el[menuName].classList.add('active');
+            this._els[menuName].classList.add('active');
             this._mainElement.classList.add(menuName);
             this.submenu = menuName;
         }
@@ -408,7 +408,7 @@ export default class Ui {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
             setTimeout(() => {
-                this._el[this.options.initMenu].dispatchEvent(evt);
+                this._els[this.options.initMenu].dispatchEvent(evt);
                 this.icon.registDefaultIcon();
             }, 700);
         }
