@@ -25,6 +25,7 @@ import util from './util';
 
 const components = consts.componentNames;
 const events = consts.eventNames;
+
 const {drawingModes, fObjectOptions} = consts;
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
 
@@ -66,6 +67,12 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
+
+        /**
+         * cropper Selection Style
+         * @type {Object}
+         */
+        this.cropSelectionStyle = {};
 
         /**
          * Image name
@@ -174,6 +181,7 @@ class Graphics {
 
         this._canvas.add(...theArgs);
     }
+
     /**
      * Removes the object or group
      * @param {Object} target - graphics object or group
@@ -285,6 +293,14 @@ class Graphics {
     }
 
     /**
+     * Set Crop selection style
+     * @param {Object} style - Selection styles
+     */
+    setCropSelectionStyle(style) {
+        this.cropSelectionStyle = style;
+    }
+
+    /**
      * Get component
      * @param {string} name - Component name
      * @returns {Component}
@@ -326,6 +342,7 @@ class Graphics {
 
         return !!drawingModeInstance;
     }
+
     /**
      * Stop the current drawing mode and back to the 'NORMAL' mode
      */

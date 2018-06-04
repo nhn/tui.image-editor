@@ -3,7 +3,10 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js/library/es6/promise';
 import Invoker from './invoker';
+import UI from './ui';
+import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
@@ -26,8 +29,20 @@ const {isUndefined, forEach, CustomEvents} = snippet;
 class ImageEditor {
     constructor(wrapper, option) {
         option = snippet.extend({
+            includeUI: false,
+            applyCropSelectionStyle: false,
             usageStatistics: true
         }, option);
+
+        this.activeObjectId = null;
+
+        /**
+         * UI instance
+         * @type {Ui}
+         */
+        if (option.includeUI) {
+            this.ui = new UI(wrapper, option.includeUI, this.getActions());
+        }
 
         /**
          * Invoker
@@ -41,7 +56,16 @@ class ImageEditor {
          * @type {Graphics}
          * @private
          */
-        this._graphics = new Graphics(wrapper, option.cssMaxWidth, option.cssMaxHeight);
+        this._graphics = new Graphics(
+            this.ui ? this.ui.getEditorArea() : wrapper,
+            option.cssMaxWidth,
+            option.cssMaxHeight
+        );
+
+        if (this.ui) {
+            this.ui.initCanvas();
+            this.setReAction();
+        }
 
         /**
          * Event handler list
@@ -64,10 +88,7 @@ class ImageEditor {
         this._attachInvokerEvents();
         this._attachGraphicsEvents();
         this._attachDomEvents();
-
-        if (option.selectionStyle) {
-            this._setSelectionStyle(option.selectionStyle);
-        }
+        this._setSelectionStyle(option.selectionStyle, option.applyCropSelectionStyle);
 
         if (option.usageStatistics) {
             sendHostName();
@@ -88,7 +109,6 @@ class ImageEditor {
      * @property {boolean} flipY - y axis
      * @property {Number} angle - angle
      */
-
     /**
      * Rotation status
      * @typedef {Number} RotateStatus
@@ -130,11 +150,18 @@ class ImageEditor {
 
     /**
      * Set selection style by init option
-     * @param {Object} styles - Selection styles
+     * @param {Object} selectionStyle - Selection styles
+     * @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
      * @private
      */
-    _setSelectionStyle(styles) {
-        this._graphics.setSelectionStyle(styles);
+    _setSelectionStyle(selectionStyle, applyCropSelectionStyle) {
+        if (selectionStyle) {
+            this._graphics.setSelectionStyle(selectionStyle);
+        }
+
+        if (applyCropSelectionStyle) {
+            this._graphics.setCropSelectionStyle(selectionStyle);
+        }
     }
 
     /**
@@ -848,6 +875,15 @@ class ImageEditor {
         return this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
     }
 
+    _changeActivateMode(type) {
+        if (type === 'ICON') {
+            this.stopDrawingMode();
+        } else if (this.getDrawingMode() !== type) {
+            this.stopDrawingMode();
+            this.startDrawingMode(type);
+        }
+    }
+
     /**
      * 'textChanged' event handler
      * @param {Object} objectProps changed object properties
@@ -1250,5 +1286,7 @@ class ImageEditor {
     }
 }
 
+action.mixin(ImageEditor);
 CustomEvents.mixin(ImageEditor);
+
 module.exports = ImageEditor;

@@ -177,6 +177,7 @@ class Text extends Component {
     add(text, options) {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
+            const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
             let styles = this._defaultStyles;
 
             this._setInitPos(options.position);
@@ -186,7 +187,8 @@ class Text extends Component {
             }
 
             const newText = new fabric.Text(text, styles);
-            newText.set(consts.fObjectOptions.SELECTION_STYLE);
+
+            newText.set(snippet.extend(selectionStyle, this.graphics.controlStyle));
             newText.on({
                 mouseup: this._onFabricMouseUp.bind(this)
             });
