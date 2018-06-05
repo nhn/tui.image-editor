@@ -13,10 +13,6 @@
     * [Easy customization and basic theme support](#easy-customization-and-basic-theme-support)
 * [Stick to the basic](#-stick-to-the-basic)
 * [Features](#-features)
-    * [single-charts](#single-charts)
-    * [Combo Charts](#combo-charts)
-    * [Customize](#customize)
-    * [And More From Examples](#and-more-from-examples)
 * [Install](#-install)
   * [Via Package Manager](#via-package-manager)
   * [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
@@ -88,7 +84,7 @@ var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
 
 
 
-## 🎨 Feature
+## 🎨 Features
 * Load image to canvas
 * Undo/Redo (With shortcut)
 * Crop
