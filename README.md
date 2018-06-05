@@ -64,8 +64,6 @@
     - Crop, Filp, Rotation, Drawing, Shape, Icon, Text, Mask Filter, Image Filter
   ### Integration function
     - Download, Image Load, Undo, Redo, Reset, Delete Object 
-  ### Select only the desired function
-
 
 | Crop | Flip | rotation | Drawing | Shpae |
 | --- | --- | --- | --- | --- |
@@ -75,6 +73,7 @@
 | --- | --- | --- | --- |
 | ![2018-06-05 2 06 29](https://user-images.githubusercontent.com/35218826/40931205-2d255db6-6865-11e8-98af-ad34c5a01da1.png) | ![2018-06-05 2 14 36](https://user-images.githubusercontent.com/35218826/40931484-46253948-6866-11e8-8a04-fa042920e457.png) | ![2018-06-05 2 20 46](https://user-images.githubusercontent.com/35218826/40931743-21eeb346-6867-11e8-8e31-a59f7a43482b.png) | ![2018-06-05 2 27 10](https://user-images.githubusercontent.com/35218826/40932016-093ed1f4-6868-11e8-8224-a048c3ee8a09.png) |  |
 
+### Select only the desired function
 
 ```javascripot
 var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
@@ -84,7 +83,6 @@ var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
      },
  ...
 ```
-
 
 
 
