@@ -43,7 +43,7 @@ export default class Submenu {
      */
     _makeSubMenuElement(subMenuElement, {name, iconStyle, templateHtml}) {
         const iconSubMenu = document.createElement('div');
-        iconSubMenu.className = name;
+        iconSubMenu.className = `tui-image-editor-menu-${name}`;
         iconSubMenu.innerHTML = templateHtml({iconStyle});
 
         subMenuElement.appendChild(iconSubMenu);

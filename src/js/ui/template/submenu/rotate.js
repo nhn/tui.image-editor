@@ -1,5 +1,5 @@
 export default ({iconStyle: {normal, active}}) => (`
-    <ul class="menu">
+    <ul class="tui-image-editor-submenu-item">
         <li id="retate-button">
             <div class="button clockwise">
                 <div>

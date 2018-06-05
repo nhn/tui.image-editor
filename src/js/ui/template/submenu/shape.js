@@ -1,5 +1,5 @@
 export default ({iconStyle: {normal, active}}) => (`
-    <ul class="menu">
+    <ul class="tui-image-editor-submenu-item">
         <li id="shape-button" class="rect">
             <div class="button rect">
                 <div>

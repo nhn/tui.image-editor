@@ -262,7 +262,7 @@ export default class Ui {
         `;
 
         btnElement.id = `btn-${menuName}`;
-        btnElement.className = 'item';
+        btnElement.className = 'tui-image-editor-item';
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -385,14 +385,14 @@ export default class Ui {
     changeMenu(menuName, toggle = true) {
         if (this.submenu) {
             this._els[this.submenu].classList.remove('active');
-            this._mainElement.classList.remove(this.submenu);
+            this._mainElement.classList.remove(`tui-image-editor-menu-${this.submenu}`);
         }
 
         if (this.submenu === menuName && toggle) {
             this.submenu = '';
         } else {
             this._els[menuName].classList.add('active');
-            this._mainElement.classList.add(menuName);
+            this._mainElement.classList.add(`tui-image-editor-menu-${menuName}`);
             this.submenu = menuName;
         }
         this._subMenuElement.style.display = this.submenu ? 'table' : 'none';

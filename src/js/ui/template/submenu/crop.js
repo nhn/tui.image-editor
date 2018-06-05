@@ -1,5 +1,5 @@
 export default ({iconStyle: {normal, active}}) => (`
-    <ul class="menu">
+    <ul class="tui-image-editor-submenu-item">
         <li id="crop-button" class="apply">
             <div class="button apply">
                 <svg class="svg_ic-menu">

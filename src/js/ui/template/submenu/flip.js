@@ -1,5 +1,5 @@
 export default ({iconStyle: {normal, active}}) => (`
-    <ul id="flip-button" class="menu">
+    <ul id="flip-button" class="tui-image-editor-submenu-item">
         <li>
             <div class="button flipX">
                 <div>

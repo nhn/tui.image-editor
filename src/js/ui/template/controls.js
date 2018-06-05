@@ -4,40 +4,40 @@ export default ({iconStyle: {normal, active}}) => (`
             <img src="img/icon/img-bi.svg" />
         </div>
         <ul class="tui-image-editor-menu">
-            <li id="btn-undo" class="item">
+            <li id="btn-undo" class="tui-image-editor-item">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-undo" class="enabled"/>
                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-undo" class="normal"/>
                 </svg>
             </li>
-            <li id="btn-redo" class="item">
+            <li id="btn-redo" class="tui-image-editor-item">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-redo" class="enabled"/>
                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-redo" class="normal"/>
                 </svg>
             </li>
-            <li id="btn-reset" class="item">
+            <li id="btn-reset" class="tui-image-editor-item">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-reset" class="enabled"/>
                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-reset" class="normal"/>
                 </svg>
             </li>
-            <li class="item">
+            <li class="tui-image-editor-item">
                 <div class="tui-image-editor-icpartition"></div>
             </li>
-            <li id="btn-delete" class="item">
+            <li id="btn-delete" class="tui-image-editor-item">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-delete" class="enabled"/>
                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-delete" class="normal"/>
                 </svg>
             </li>
-            <li id="btn-delete-all" class="item">
+            <li id="btn-delete-all" class="tui-image-editor-item">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-delete-all" class="enabled"/>
                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-delete-all" class="normal"/>
                 </svg>
             </li>
-            <li class="item">
+            <li class="tui-image-editor-item">
                 <div class="tui-image-editor-icpartition"></div>
             </li>
         </ul>
