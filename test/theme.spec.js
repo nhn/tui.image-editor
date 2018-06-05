@@ -8,7 +8,10 @@ import defaultTheme from '../src/js/ui/theme/standard';
 describe('Theme', () => {
     let theme;
     beforeEach(() => {
-        theme = new Theme(defaultTheme);
+        theme = new Theme({
+            customTheme: defaultTheme,
+            menuIconPath: '../dist/svg'
+        });
     });
 
     describe('getStyle()', () => {
