@@ -1,7 +1,7 @@
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="retate-button">
-            <div class="button clockwise">
+        <li id="tie-retate-button">
+            <div class="tui-image-editor-button clockwise">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-rotate-clockwise"
@@ -12,7 +12,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </div>
                 <label> 30 </label>
             </div>
-            <div class="button counterclockwise">
+            <div class="tui-image-editor-button counterclockwise">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-rotate-counterclockwise"
@@ -29,8 +29,8 @@ export default ({iconStyle: {normal, active}}) => (`
         </li>
         <li class="newline tui-image-editor-range-wrap">
             <label class="range">Range</label>
-            <div id="rotate-range"></div>
-            <input id="ratate-range-value" class="tui-image-editor-range-value" value="0" />
+            <div id="tie-rotate-range"></div>
+            <input id="tie-ratate-range-value" class="tui-image-editor-range-value" value="0" />
         </li>
     </ul>
 `);

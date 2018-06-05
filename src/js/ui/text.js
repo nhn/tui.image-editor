@@ -23,11 +23,11 @@ export default class Text extends Submenu {
         };
         this.align = 'left';
         this._els = {
-            textEffectButton: this.selector('#text-effect-button'),
-            textAlignButton: this.selector('#text-align-button'),
-            textColorpicker: new Colorpicker(this.selector('#text-color'), '#ffbb3b'),
-            textRange: new Range(this.selector('#text-range'), defaultTextRangeValus),
-            textRangeValue: this.selector('#text-range-value')
+            textEffectButton: this.selector('#tie-text-effect-button'),
+            textAlignButton: this.selector('#tie-text-align-button'),
+            textColorpicker: new Colorpicker(this.selector('#tie-text-color'), '#ffbb3b'),
+            textRange: new Range(this.selector('#tie-text-range'), defaultTextRangeValus),
+            textRangeValue: this.selector('#tie-text-range-value')
         };
     }
 
@@ -76,7 +76,7 @@ export default class Text extends Submenu {
      * @param {object} event - add button event object
      */
     _setTextEffectHandler(event) {
-        const button = event.target.closest('.button');
+        const button = event.target.closest('.tui-image-editor-button');
         const [styleType] = button.className.match(/(bold|italic|underline)/);
         const styleObj = {
             'bold': {fontWeight: 'bold'},
@@ -95,7 +95,7 @@ export default class Text extends Submenu {
      * @param {object} event - add button event object
      */
     _setTextAlignHandler(event) {
-        const button = event.target.closest('.button');
+        const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const styleType = this.getButtonType(button, ['left', 'center', 'right']);
 

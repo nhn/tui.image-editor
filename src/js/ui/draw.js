@@ -18,10 +18,10 @@ export default class Draw extends Submenu {
         });
 
         this._els = {
-            lineSelectButton: this.selector('#draw-line-select-button'),
-            drawColorpicker: new Colorpicker(this.selector('#draw-color')),
-            drawRange: new Range(this.selector('#draw-range'), defaultDrawRangeValus),
-            drawRangeValue: this.selector('#draw-range-value')
+            lineSelectButton: this.selector('#tie-draw-line-select-button'),
+            drawColorpicker: new Colorpicker(this.selector('#tie-draw-color')),
+            drawRange: new Range(this.selector('#tie-draw-range'), defaultDrawRangeValus),
+            drawRangeValue: this.selector('#tie-draw-range-value')
         };
 
         this.type = 'line';
@@ -59,7 +59,7 @@ export default class Draw extends Submenu {
      * @param {object} event - line select event
      */
     _changeDrawType(event) {
-        const button = event.target.closest('.button');
+        const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const lineType = this.getButtonType(button, ['free', 'line']);
             this.changeClass(this._els.lineSelectButton, this.type, lineType);

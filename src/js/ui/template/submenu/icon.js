@@ -1,7 +1,7 @@
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="icon-add-button">
-            <div class="button" data-icontype="icon-arrow">
+        <li id="tie-icon-add-button">
+            <div class="tui-image-editor-button" data-icontype="icon-arrow">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-arrow"
@@ -14,7 +14,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     Arrow
                 </label>
             </div>
-            <div class="button" data-icontype="icon-arrow-2">
+            <div class="tui-image-editor-button" data-icontype="icon-arrow-2">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-arrow-2"
@@ -27,7 +27,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     Arrow-2
                 </label>
             </div>
-            <div class="button" data-icontype="icon-arrow-3">
+            <div class="tui-image-editor-button" data-icontype="icon-arrow-3">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-arrow-3"
@@ -40,7 +40,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     Arrow-3
                 </label>
             </div>
-            <div class="button" data-icontype="icon-star">
+            <div class="tui-image-editor-button" data-icontype="icon-star">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-star" class="normal"/>
@@ -51,7 +51,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     Star-1
                 </label>
             </div>
-            <div class="button" data-icontype="icon-star-2">
+            <div class="tui-image-editor-button" data-icontype="icon-star-2">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-star-2"
@@ -65,7 +65,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </label>
             </div>
 
-            <div class="button" data-icontype="icon-polygon">
+            <div class="tui-image-editor-button" data-icontype="icon-polygon">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-polygon"
@@ -79,7 +79,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </label>
             </div>
 
-            <div class="button" data-icontype="icon-location">
+            <div class="tui-image-editor-button" data-icontype="icon-location">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-location"
@@ -93,7 +93,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </label>
             </div>
 
-            <div class="button" data-icontype="icon-heart">
+            <div class="tui-image-editor-button" data-icontype="icon-heart">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-heart"
@@ -107,7 +107,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </label>
             </div>
 
-            <div class="button" data-icontype="icon-bubble">
+            <div class="tui-image-editor-button" data-icontype="icon-bubble">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-bubble"
@@ -124,10 +124,10 @@ export default ({iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
-        <li id="icon-add-button">
-            <div class="button">
+        <li id="tie-icon-add-button">
+            <div class="tui-image-editor-button">
                 <div>
-                    <input type="file" accept="image/*" id="icon-image-file">
+                    <input type="file" accept="image/*" id="tie-icon-image-file">
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-icon-load" class="normal"/>
                         <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-icon-load" class="active"/>
@@ -142,7 +142,7 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="icon-color" title="Color"></div>
+            <div id="tie-icon-color" title="Color"></div>
         </li>
     </ul>
 `);

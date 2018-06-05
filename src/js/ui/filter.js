@@ -56,7 +56,7 @@ export default class Filter extends Submenu {
         };
 
         snippet.forEach(FILTER_OPTIONS, filterName => {
-            const filterCheckElement = this.selector(`#${filterName}`);
+            const filterCheckElement = this.selector(`#tie-${filterName}`);
             const filterNameCamelCase = toCamelCase(filterName);
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
 
@@ -133,36 +133,36 @@ export default class Filter extends Submenu {
         const {selector} = this;
         this._els = {
             removewhiteThresholdRange: new Range(
-                selector('#removewhite-threshold-range'),
+                selector('#tie-removewhite-threshold-range'),
                 FILTER_RANGE.removewhiteThresholdRange
             ),
             removewhiteDistanceRange: new Range(
-                selector('#removewhite-distance-range'),
+                selector('#tie-removewhite-distance-range'),
                 FILTER_RANGE.removewhiteDistanceRange
             ),
             gradientTransparencyRange: new Range(
-                selector('#gradient-transparency-range'),
+                selector('#tie-gradient-transparency-range'),
                 FILTER_RANGE.gradientTransparencyRange
             ),
             brightnessRange: new Range(
-                selector('#brightness-range'),
+                selector('#tie-brightness-range'),
                 FILTER_RANGE.brightnessRange
             ),
             noiseRange: new Range(
-                selector('#noise-range'),
+                selector('#tie-noise-range'),
                 FILTER_RANGE.noiseRange
             ),
             pixelateRange: new Range(
-                selector('#pixelate-range'),
+                selector('#tie-pixelate-range'),
                 FILTER_RANGE.pixelateRange
             ),
             colorfilterThresholeRange: new Range(
-                selector('#colorfilter-threshole-range'),
+                selector('#tie-colorfilter-threshole-range'),
                 FILTER_RANGE.colorfilterThresholeRange
             ),
-            filterTintColor: new Colorpicker(selector('#filter-tint-color'), '#03bd9e'),
-            filterMultiplyColor: new Colorpicker(selector('#filter-multiply-color'), '#515ce6'),
-            filterBlendColor: new Colorpicker(selector('#filter-blend-color'), '#ffbb3b')
+            filterTintColor: new Colorpicker(selector('#tie-filter-tint-color'), '#03bd9e'),
+            filterMultiplyColor: new Colorpicker(selector('#tie-filter-multiply-color'), '#515ce6'),
+            filterBlendColor: new Colorpicker(selector('#tie-filter-blend-color'), '#ffbb3b')
         };
         this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
         this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);
@@ -179,7 +179,7 @@ export default class Filter extends Submenu {
         const rangelabel = document.createElement('label');
         const range = document.createElement('div');
 
-        range.id = 'filter-tint-opacity';
+        range.id = 'tie-filter-tint-opacity';
         rangelabel.innerHTML = 'Opacity';
         rangeWrap.appendChild(rangelabel);
         rangeWrap.appendChild(range);

@@ -12,33 +12,33 @@ export default ({
     submenuRangeBar,
     submenuRangeSubbar
 }) => (`
-    .tui-image-editor-container #icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label,
-    .tui-image-editor-container #icon-add-button.icon-heart .button[data-icontype="icon-heart"] label,
-    .tui-image-editor-container #icon-add-button.icon-location .button[data-icontype="icon-location"] label,
-    .tui-image-editor-container #icon-add-button.icon-polygon .button[data-icontype="icon-polygon"] label,
-    .tui-image-editor-container #icon-add-button.icon-star .button[data-icontype="icon-star"] label,
-    .tui-image-editor-container #icon-add-button.icon-arrow-3 .button[data-icontype="icon-arrow-3"] label,
-    .tui-image-editor-container #icon-add-button.icon-arrow-2 .button[data-icontype="icon-arrow-2"] label,
-    .tui-image-editor-container #icon-add-button.icon-arrow .button[data-icontype="icon-arrow"] label,
-    .tui-image-editor-container #icon-add-button.icon-bubble .button[data-icontype="icon-bubble"] label,
-    .tui-image-editor-container #draw-line-select-button.line .button.line label,
-    .tui-image-editor-container #draw-line-select-button.free .button.free label,
-    .tui-image-editor-container #flip-button.flipX .button.flipX label,
-    .tui-image-editor-container #flip-button.flipY .button.flipY label,
-    .tui-image-editor-container #flip-button.resetFlip .button.resetFlip label,
-    .tui-image-editor-container #crop-button .button.apply.active label,
-    .tui-image-editor-container #shape-button.rect .button.rect label,
-    .tui-image-editor-container #shape-button.circle .button.circle label,
-    .tui-image-editor-container #shape-button.triangle .button.triangle label,
-    .tui-image-editor-container #text-effect-button .button.active label,
-    .tui-image-editor-container #text-align-button.left .button.left label,
-    .tui-image-editor-container #text-align-button.center .button.center label,
-    .tui-image-editor-container #text-align-button.right .button.right label,
-    .tui-image-editor-container .tui-image-editor-submenu .button:hover > label,
+    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] label,
+    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] label,
+    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype="icon-location"] label,
+    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype="icon-polygon"] label,
+    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype="icon-star"] label,
+    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype="icon-arrow-3"] label,
+    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype="icon-arrow-2"] label,
+    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype="icon-arrow"] label,
+    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] label,
+    #tie-draw-line-select-button.line .tui-image-editor-button.line label,
+    #tie-draw-line-select-button.free .tui-image-editor-button.free label,
+    #tie-flip-button.flipX .tui-image-editor-button.flipX label,
+    #tie-flip-button.flipY .tui-image-editor-button.flipY label,
+    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,
+    #tie-crop-button .tui-image-editor-button.apply.active label,
+    #tie-shape-button.rect .tui-image-editor-button.rect label,
+    #tie-shape-button.circle .tui-image-editor-button.circle label,
+    #tie-shape-button.triangle .tui-image-editor-button.triangle label,
+    #tie-text-effect-button .tui-image-editor-button.active label,
+    #tie-text-align-button.left .tui-image-editor-button.left label,
+    #tie-text-align-button.center .tui-image-editor-button.center label,
+    #tie-text-align-button.right .tui-image-editor-button.right label,
+    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,
     .tui-image-editor-container .tui-image-editor-checkbox input + label {
         ${subMenuLabelActive}
     }
-    .tui-image-editor-container .tui-image-editor-submenu .button > label,
+    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,
     .tui-image-editor-container .tui-image-editor-range-wrap.newline.short label {
         ${subMenuLabelNormal}
     }
@@ -67,10 +67,10 @@ export default ({
     .tui-image-editor-container .tui-image-editor-range-value {
         ${submenuRangeValue}
     }
-    .tui-image-editor-container .tui-image-editor-submenu .button .color-picker-value + label {
+    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {
         ${submenuColorpickerTitle}
     }
-    .tui-image-editor-container .tui-image-editor-submenu .button .color-picker-value {
+    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {
         ${submenuColorpickerButton}
     }
 `);

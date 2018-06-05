@@ -1,7 +1,7 @@
 export default ({iconStyle: {normal, active}}) => (`
-    <ul id="flip-button" class="tui-image-editor-submenu-item">
+    <ul id="tie-flip-button" class="tui-image-editor-submenu-item">
         <li>
-            <div class="button flipX">
+            <div class="tui-image-editor-button flipX">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-x" class="normal"/>
@@ -12,7 +12,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     Flip X
                 </label>
             </div>
-            <div class="button flipY">
+            <div class="tui-image-editor-button flipY">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-y" class="normal"/>
@@ -28,7 +28,7 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div class="button resetFlip">
+            <div class="tui-image-editor-button resetFlip">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-reset"

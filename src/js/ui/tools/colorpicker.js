@@ -81,7 +81,7 @@ class Colorpicker {
      * @private
      */
     _makePickerButtonElement(colorpickerElement, defaultColor) {
-        colorpickerElement.classList.add('button');
+        colorpickerElement.classList.add('tui-image-editor-button');
 
         this.colorElement = document.createElement('div');
         this.colorElement.className = 'color-picker-value';

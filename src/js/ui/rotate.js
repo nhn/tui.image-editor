@@ -17,9 +17,9 @@ export default class Rotate extends Submenu {
         });
 
         this._els = {
-            rotateButton: this.selector('#retate-button'),
-            rotateRange: new Range(this.selector('#rotate-range'), defaultRotateRangeValus),
-            rotateRangeValue: this.selector('#ratate-range-value')
+            rotateButton: this.selector('#tie-retate-button'),
+            rotateRange: new Range(this.selector('#tie-rotate-range'), defaultRotateRangeValus),
+            rotateRangeValue: this.selector('#tie-ratate-range-value')
         };
     }
 
@@ -52,7 +52,7 @@ export default class Rotate extends Submenu {
      * @param {object} event - add button event object
      */
     _changeRotateForButton(event) {
-        const button = event.target.closest('.button');
+        const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);
             const rotateAngle = {

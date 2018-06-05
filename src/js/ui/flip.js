@@ -16,7 +16,7 @@ export default class Flip extends Submenu {
         this.flipStatus = false;
 
         this._els = {
-            flipButton: this.selector('#flip-button')
+            flipButton: this.selector('#tie-flip-button')
         };
     }
 
@@ -35,7 +35,7 @@ export default class Flip extends Submenu {
      * @param {object} event - change event
      */
     _changeFlip(event) {
-        const button = event.target.closest('.button');
+        const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const flipType = this.getButtonType(button, ['flipX', 'flipY', 'resetFlip']);
             if (!this.flipStatus && flipType === 'resetFlip') {

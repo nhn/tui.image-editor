@@ -15,8 +15,8 @@ export default class Crop extends Submenu {
 
         this.status = 'active';
         this._els = {
-            apply: this.selector('#crop-button .apply'),
-            cancel: this.selector('#crop-button .cancel')
+            apply: this.selector('#tie-crop-button .apply'),
+            cancel: this.selector('#tie-crop-button .cancel')
         };
     }
 
@@ -29,7 +29,7 @@ export default class Crop extends Submenu {
     addEvent({crop, cancel}) {
         this._els.apply.addEventListener('click', () => {
             crop();
-            this._el.apply.classList.remove('active');
+            this._els.apply.classList.remove('active');
         });
 
         this._els.cancel.addEventListener('click', () => {

@@ -1,7 +1,7 @@
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="shape-button" class="rect">
-            <div class="button rect">
+        <li id="tie-shape-button" class="rect">
+            <div class="tui-image-editor-button rect">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-shape-rectangle"
@@ -12,7 +12,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </div>
                 <label> Rectangle </label>
             </div>
-            <div class="button circle">
+            <div class="tui-image-editor-button circle">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-shape-circle"
@@ -23,7 +23,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </div>
                 <label> Circle </label>
             </div>
-            <div class="button triangle">
+            <div class="tui-image-editor-button triangle">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-shape-triangle"
@@ -38,17 +38,17 @@ export default ({iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
-        <li id="shape-color-button">
-            <div id="color-fill" title="fill"></div>
-            <div id="color-stroke" title="stroke"></div>
+        <li id="tie-shape-color-button">
+            <div id="tie-color-fill" title="fill"></div>
+            <div id="tie-color-stroke" title="stroke"></div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
         <li class="newline tui-image-editor-range-wrap">
             <label class="range">Stroke</label>
-            <div id="stroke-range"></div>
-            <input id="stroke-range-value" class="tui-image-editor-range-value" value="0" />
+            <div id="tie-stroke-range"></div>
+            <input id="tie-stroke-range-value" class="tui-image-editor-range-value" value="0" />
         </li>
     </ul>
 `);

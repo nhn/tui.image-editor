@@ -7,7 +7,7 @@
         width:100%;
         height: 150px;
         white-space: nowrap;
-        .button:hover svg > use.active
+        .{prefix}-button:hover svg > use.active
             display: block;
         .tui-image-editor-submenu-item
             li
@@ -16,7 +16,7 @@
             .newline
                 display: block;
                 margin-top: 14px;
-            .button
+            .{prefix}-button
                 position: relative;
                 cursor: pointer;
                 display: inline-block;
@@ -30,8 +30,8 @@
                 font-family: NotoSans, sans-serif;
                 font-size: 11px;
                 letter-spacing: 0.7px;
-            .button.apply label,
-            .button.cancel label
+            .{prefix}-button.apply label,
+            .{prefix}-button.cancel label
                 vertical-align: 7px;
         > div
             display: none;

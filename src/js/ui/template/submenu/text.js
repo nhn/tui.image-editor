@@ -1,7 +1,7 @@
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="text-effect-button">
-            <div class="button bold">
+        <li id="tie-text-effect-button">
+            <div class="tui-image-editor-button bold">
                 <div>
                     <svg class="svg_ic-submenu">
                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-bold" class="normal"/>
@@ -10,7 +10,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </div>
                 <label> Bold </label>
             </div>
-            <div class="button italic">
+            <div class="tui-image-editor-button italic">
                 <div>
                     <svg class="svg_ic-submenu">
                     <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-italic" class="normal"/>
@@ -19,7 +19,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </div>
                 <label> Italic </label>
             </div>
-            <div class="button underline">
+            <div class="tui-image-editor-button underline">
                 <div>
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-underline"
@@ -34,8 +34,8 @@ export default ({iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
-        <li id="text-align-button">
-            <div class="button left">
+        <li id="tie-text-align-button">
+            <div class="tui-image-editor-button left">
                 <div>
                     <svg class="svg_ic-submenu">
                      <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-align-left"
@@ -46,7 +46,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </div>
                 <label> left </label>
             </div>
-            <div class="button center">
+            <div class="tui-image-editor-button center">
                 <div>
                     <svg class="svg_ic-submenu">
                      <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-align-center"
@@ -57,7 +57,7 @@ export default ({iconStyle: {normal, active}}) => (`
                 </div>
                 <label> center </label>
             </div>
-            <div class="button right">
+            <div class="tui-image-editor-button right">
                 <div>
                     <svg class="svg_ic-submenu">
                      <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-text-align-right"
@@ -73,15 +73,15 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="text-color" title="Color"></div>
+            <div id="tie-text-color" title="Color"></div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
         <li class="newline tui-image-editor-range-wrap">
             <label class="range">Text size</label>
-            <div id="text-range"></div>
-            <input id="text-range-value" class="tui-image-editor-range-value" value="0" />
+            <div id="tie-text-range"></div>
+            <input id="tie-text-range-value" class="tui-image-editor-range-value" value="0" />
         </li>
     </ul>
 `);

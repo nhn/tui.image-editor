@@ -59,11 +59,11 @@ export default class Ui {
         this._makeUiElement(element);
 
         this._els = {
-            'undo': this._menuElement.querySelector('#btn-undo'),
-            'redo': this._menuElement.querySelector('#btn-redo'),
-            'reset': this._menuElement.querySelector('#btn-reset'),
-            'delete': this._menuElement.querySelector('#btn-delete'),
-            'deleteAll': this._menuElement.querySelector('#btn-delete-all'),
+            'undo': this._menuElement.querySelector('#tie-btn-undo'),
+            'redo': this._menuElement.querySelector('#tie-btn-redo'),
+            'reset': this._menuElement.querySelector('#tie-btn-reset'),
+            'delete': this._menuElement.querySelector('#tie-btn-delete'),
+            'deleteAll': this._menuElement.querySelector('#tie-btn-delete-all'),
             'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
             'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
         };
@@ -221,7 +221,8 @@ export default class Ui {
             this._makeMenuElement(menuName);
 
             // menu btn element
-            this._els[menuName] = this._menuElement.querySelector(`#btn-${menuName}`);
+            this._els[menuName] = this._menuElement.querySelector(`#tie-btn-${menuName}`);
+
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 iconStyle: this.theme.getStyle('submenu.icon')
@@ -285,7 +286,7 @@ export default class Ui {
             </svg>
         `;
 
-        btnElement.id = `btn-${menuName}`;
+        btnElement.id = `tie-btn-${menuName}`;
         btnElement.className = 'tui-image-editor-item';
         btnElement.innerHTML = menuItemHtml;
 

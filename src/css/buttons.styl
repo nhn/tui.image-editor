@@ -1,34 +1,34 @@
 /* ICON BUTTON */
 .{prefix}-container
-    #icon-add-button
-        &.icon-bubble .button[data-icontype="icon-bubble"] svg > use.active,
-        &.icon-heart .button[data-icontype="icon-heart"] svg > use.active,
-        &.icon-location .button[data-icontype="icon-location"] svg > use.active,
-        &.icon-polygon .button[data-icontype="icon-polygon"] svg > use.active,
-        &.icon-star .button[data-icontype="icon-star"] svg > use.active,
-        &.icon-arrow-3 .button[data-icontype="icon-arrow-3"] svg > use.active,
-        &.icon-arrow-2 .button[data-icontype="icon-arrow-2"] svg > use.active,
-        &.icon-arrow .button[data-icontype="icon-arrow"] svg > use.active,
-        &.icon-bubble .button[data-icontype="icon-bubble"] svg > use.active
+    #tie-icon-add-button
+        &.icon-bubble .{prefix}-button[data-icontype="icon-bubble"] svg > use.active,
+        &.icon-heart .{prefix}-button[data-icontype="icon-heart"] svg > use.active,
+        &.icon-location .{prefix}-button[data-icontype="icon-location"] svg > use.active,
+        &.icon-polygon .{prefix}-button[data-icontype="icon-polygon"] svg > use.active,
+        &.icon-star .{prefix}-button[data-icontype="icon-star"] svg > use.active,
+        &.icon-arrow-3 .{prefix}-button[data-icontype="icon-arrow-3"] svg > use.active,
+        &.icon-arrow-2 .{prefix}-button[data-icontype="icon-arrow-2"] svg > use.active,
+        &.icon-arrow .{prefix}-button[data-icontype="icon-arrow"] svg > use.active,
+        &.icon-bubble .{prefix}-button[data-icontype="icon-bubble"] svg > use.active
             display: block;
 
 /* DRAW BUTTON */
 .{prefix}-container
-    #draw-line-select-button
-      &.line .button.line svg > use.normal,
-      &.free .button.free svg > use.normal
+    #tiedraw-line-select-button
+      &.line .{prefix}-button.line svg > use.normal,
+      &.free .{prefix}-button.free svg > use.normal
         display: none;
 
-      &.line .button.line svg > use.active,
-      &.free .button.free svg > use.active
+      &.line .{prefix}-button.line svg > use.active,
+      &.free .{prefix}-button.free svg > use.active
         display: block;
 
 /* FLIP BUTTON */
 .{prefix}-container
-    #flip-button
-      &.resetFlip .button.resetFlip,
-      &.flipX .button.flipX,
-      &.flipY .button.flipY
+    #tie-flip-button
+      &.resetFlip .{prefix}-button.resetFlip,
+      &.flipX .{prefix}-button.flipX,
+      &.flipY .{prefix}-button.flipY
         svg > use.normal
             display: none;
         svg > use.active
@@ -36,7 +36,7 @@
         
 /*  MASK BUTTON */
 .{prefix}-container
-    #mask-apply.apply.active .button.apply
+    #tie-mask-apply.apply.active .{prefix}-button.apply
         label
             color: #fff;
         svg > use.active
@@ -44,19 +44,19 @@
   
 /* CROP BUTTON */
 .{prefix}-container
-    #crop-button
-        .button.apply
+    #tie-crop-button
+        .{prefix}-button.apply
             margin-right: 24px;
-        .button.apply.active svg > use.active
+        .{prefix}-button.apply.active svg > use.active
             display: block;
 
 
 /* SHAPE BUTTON */
 .{prefix}-container
-    #shape-button
-      &.rect .button.rect,
-      &.circle .button.circle,
-      &.triangle .button.triangle 
+    #tie-shape-button
+      &.rect .{prefix}-button.rect,
+      &.circle .{prefix}-button.circle,
+      &.triangle .{prefix}-button.triangle 
         svg > use.normal
             display: none;
         svg > use.active
@@ -64,16 +64,16 @@
 
 /* TEXT BUTTON */
 .{prefix}-container
-    #text-effect-button
-        .button.active svg > use.active
+    #tie-text-effect-button
+        .{prefix}-button.active svg > use.active
             display: block;
-    #text-align-button
-        &.left .button.left svg > use.active,
-        &.center .button.center svg > use.active,
-        &.right .button.right svg > use.active
+    #tie-text-align-button
+        &.left .{prefix}-button.left svg > use.active,
+        &.center .{prefix}-button.center svg > use.active,
+        &.right .{prefix}-button.right svg > use.active
             display: block;
-    #mask-image-file,
-    #icon-image-file
+    #tie-mask-image-file,
+    #tie-icon-image-file
         opacity: 0;
         position: absolute;
         width: 100%;

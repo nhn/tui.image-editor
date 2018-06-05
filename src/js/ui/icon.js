@@ -21,9 +21,9 @@ export default class Icon extends Submenu {
         this._iconMap = {};
 
         this._els = {
-            registIconButton: this.selector('#icon-image-file'),
-            addIconButton: this.selector('#icon-add-button'),
-            iconColorpicker: new Colorpicker(this.selector('#icon-color'))
+            registIconButton: this.selector('#tie-icon-image-file'),
+            addIconButton: this.selector('#tie-icon-add-button'),
+            iconColorpicker: new Colorpicker(this.selector('#tie-icon-color'))
         };
     }
 
@@ -73,13 +73,15 @@ export default class Icon extends Submenu {
      * @param {object} event - add button event object
      */
     _addIcon(event) {
-        const button = event.target.closest('.button');
-        const iconType = button.getAttribute('data-icontype');
-        this._els.addIconButton.classList.remove(this.iconType);
-        this._els.addIconButton.classList.add(iconType);
+        const button = event.target.closest('.tui-image-editor-button');
+        if (button) {
+            const iconType = button.getAttribute('data-icontype');
+            this._els.addIconButton.classList.remove(this.iconType);
+            this._els.addIconButton.classList.add(iconType);
 
-        this.iconType = iconType;
-        this.actions.addIcon(iconType);
+            this.iconType = iconType;
+            this.actions.addIcon(iconType);
+        }
     }
 
     /**

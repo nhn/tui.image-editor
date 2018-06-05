@@ -24,12 +24,12 @@ export default class Shape extends Submenu {
         };
 
         this._els = {
-            shapeSelectButton: this.selector('#shape-button'),
-            shapeColorButton: this.selector('#shape-color-button'),
-            strokeRange: new Range(this.selector('#stroke-range'), defaultShapeStrokeValus),
-            strokeRangeValue: this.selector('#stroke-range-value'),
-            fillColorpicker: new Colorpicker(this.selector('#color-fill'), ''),
-            strokeColorpicker: new Colorpicker(this.selector('#color-stroke'), '#ffbb3b')
+            shapeSelectButton: this.selector('#tie-shape-button'),
+            shapeColorButton: this.selector('#tie-shape-color-button'),
+            strokeRange: new Range(this.selector('#tie-stroke-range'), defaultShapeStrokeValus),
+            strokeRangeValue: this.selector('#tie-stroke-range-value'),
+            fillColorpicker: new Colorpicker(this.selector('#tie-color-fill'), ''),
+            strokeColorpicker: new Colorpicker(this.selector('#tie-color-stroke'), '#ffbb3b')
         };
     }
 
@@ -73,7 +73,7 @@ export default class Shape extends Submenu {
      * @param {object} event - add button event object
      */
     _changeShape(event) {
-        const button = event.target.closest('.button');
+        const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
             this.changeClass(event.currentTarget, this.type, shapeType);

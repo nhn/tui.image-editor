@@ -14,8 +14,8 @@ export default class Mask extends Submenu {
         });
 
         this._els = {
-            applyButton: this.selector('#mask-apply'),
-            maskImageButton: this.selector('#mask-image-file')
+            applyButton: this.selector('#tie-mask-apply'),
+            maskImageButton: this.selector('#tie-mask-image-file')
         };
     }
 
