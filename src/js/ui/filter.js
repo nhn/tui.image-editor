@@ -6,6 +6,7 @@ import templateHtml from './template/submenu/filter';
 import {toInteger, toCamelCase} from '../util';
 import {defaultFilterRangeValus as FILTER_RANGE} from '../consts';
 
+const PICKER_CONTROL_HEIGHT = '130px';
 const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
 const FILTER_OPTIONS = [
     'grayscale',
@@ -184,13 +185,9 @@ export default class Filter extends Submenu {
         rangeWrap.appendChild(rangelabel);
         rangeWrap.appendChild(range);
         pickerControl.appendChild(rangeWrap);
-        pickerControl.style.height = '130px';
+        pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
-        return new Range(range, {
-            min: 0,
-            max: 1,
-            value: 0.7
-        });
+        return new Range(range, FILTER_RANGE.tintOpacityRange);
     }
 
     /**
@@ -209,7 +206,7 @@ export default class Filter extends Submenu {
         this._makeSelectOptionList(selectlist);
 
         pickerControl.appendChild(selectlistWrap);
-        pickerControl.style.height = '130px';
+        pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
         return selectlist;
     }

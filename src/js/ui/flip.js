@@ -33,6 +33,7 @@ export default class Flip extends Submenu {
     /**
      * change Flip status
      * @param {object} event - change event
+     * @private
      */
     _changeFlip(event) {
         const button = event.target.closest('.tui-image-editor-button');

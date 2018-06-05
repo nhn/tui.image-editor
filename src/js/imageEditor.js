@@ -21,17 +21,17 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  * Image editor
  * @class
  * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
- * @param {Object} [option] - Canvas max width & height of css
- *  @param {number} option.cssMaxWidth - Canvas css-max-width
- *  @param {number} option.cssMaxHeight - Canvas css-max-height
- *  @param {Boolean} [option.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+ * @param {Object} [options] - Canvas max width & height of css
+ *  @param {number} options.cssMaxWidth - Canvas css-max-width
+ *  @param {number} options.cssMaxHeight - Canvas css-max-height
+ *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  */
 class ImageEditor {
-    constructor(wrapper, option) {
-        option = snippet.extend({
+    constructor(wrapper, options) {
+        options = snippet.extend({
             includeUI: false,
             usageStatistics: true
-        }, option);
+        }, options);
 
         this.activeObjectId = null;
 
@@ -39,9 +39,9 @@ class ImageEditor {
          * UI instance
          * @type {Ui}
          */
-        if (option.includeUI) {
-            this.ui = new UI(wrapper, option.includeUI, this.getActions());
-            option = this.ui.setUiDefaultSelectionStyle(option);
+        if (options.includeUI) {
+            this.ui = new UI(wrapper, options.includeUI, this.getActions());
+            options = this.ui.setUiDefaultSelectionStyle(options);
         }
 
         /**
@@ -58,8 +58,8 @@ class ImageEditor {
          */
         this._graphics = new Graphics(
             this.ui ? this.ui.getEditorArea() : wrapper,
-            option.cssMaxWidth,
-            option.cssMaxHeight
+            options.cssMaxWidth,
+            options.cssMaxHeight
         );
 
         if (this.ui) {
@@ -88,9 +88,9 @@ class ImageEditor {
         this._attachInvokerEvents();
         this._attachGraphicsEvents();
         this._attachDomEvents();
-        this._setSelectionStyle(option.selectionStyle, option.applyCropSelectionStyle);
+        this._setSelectionStyle(options.selectionStyle, options.applyCropSelectionStyle);
 
-        if (option.usageStatistics) {
+        if (options.usageStatistics) {
             sendHostName();
         }
     }
@@ -875,6 +875,11 @@ class ImageEditor {
         return this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
     }
 
+    /**
+     * change text mode
+     * @param {string} type - change type
+     * @private
+     */
     _changeActivateMode(type) {
         if (type === 'ICON') {
             this.stopDrawingMode();

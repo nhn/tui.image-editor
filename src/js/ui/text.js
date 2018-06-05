@@ -74,6 +74,7 @@ export default class Text extends Submenu {
     /**
      * text effect set handler
      * @param {object} event - add button event object
+     * @private
      */
     _setTextEffectHandler(event) {
         const button = event.target.closest('.tui-image-editor-button');
@@ -93,6 +94,7 @@ export default class Text extends Submenu {
     /**
      * text effect set handler
      * @param {object} event - add button event object
+     * @private
      */
     _setTextAlignHandler(event) {
         const button = event.target.closest('.tui-image-editor-button');
@@ -112,6 +114,7 @@ export default class Text extends Submenu {
     /**
      * text align set handler
      * @param {number} value - range value
+     * @private
      */
     _changeTextRnageHandler(value) {
         value = toInteger(value);
@@ -125,6 +128,7 @@ export default class Text extends Submenu {
     /**
      * change color handler
      * @param {string} color - change color string
+     * @private
      */
     _changeColorHandler(color) {
         color = color || 'transparent';

@@ -19,9 +19,7 @@ export default class Submenu {
      * @returns {string} - button type
      */
     getButtonType(button, buttonNames) {
-        const [buttonType] = button.className.match(RegExp(`(${buttonNames.join('|')})`));
-
-        return buttonType;
+        return button.className.match(RegExp(`(${buttonNames.join('|')})`))[0];
     }
 
     /**

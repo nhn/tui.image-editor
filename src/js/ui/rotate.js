@@ -4,6 +4,9 @@ import templateHtml from './template/submenu/rotate';
 import {toInteger} from '../util';
 import {defaultRotateRangeValus} from '../consts';
 
+const CLOCKWISE = 30;
+const COUNTERCLOCKWISE = -30;
+
 /**
  * Rotate ui class
  * @class
@@ -40,6 +43,7 @@ export default class Rotate extends Submenu {
     /**
      * Change rotate for range
      * @param {number} value - angle value
+     * @private
      */
     _changeRotateForRange(value) {
         const angle = toInteger(value);
@@ -50,14 +54,15 @@ export default class Rotate extends Submenu {
     /**
      * Change rotate for button
      * @param {object} event - add button event object
+     * @private
      */
     _changeRotateForButton(event) {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);
             const rotateAngle = {
-                'clockwise': 30,
-                'counterclockwise': -30
+                clockwise: CLOCKWISE,
+                counterclockwise: COUNTERCLOCKWISE
             }[rotateType];
             this.actions.rotate(rotateAngle);
         }

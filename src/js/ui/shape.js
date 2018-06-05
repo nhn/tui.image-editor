@@ -5,6 +5,12 @@ import templateHtml from './template/submenu/shape';
 import {toInteger} from '../util';
 import {defaultShapeStrokeValus} from '../consts';
 
+const SHAPE_DEFAULT_OPTION = {
+    stroke: '#ffbb3b',
+    fill: '',
+    strokeWidth: 3
+};
+
 /**
  * Shape ui class
  * @class
@@ -17,11 +23,7 @@ export default class Shape extends Submenu {
             templateHtml
         });
         this.type = 'rect';
-        this.options = {
-            stroke: '#ffbb3b',
-            fill: '',
-            strokeWidth: 3
-        };
+        this.options = SHAPE_DEFAULT_OPTION;
 
         this._els = {
             shapeSelectButton: this.selector('#tie-shape-button'),
@@ -71,6 +73,7 @@ export default class Shape extends Submenu {
     /**
      * Change icon color
      * @param {object} event - add button event object
+     * @private
      */
     _changeShape(event) {
         const button = event.target.closest('.tui-image-editor-button');
@@ -86,6 +89,7 @@ export default class Shape extends Submenu {
     /**
      * Change stroke range
      * @param {number} value - stroke range value
+     * @private
      */
     _changeStrokeRange(value) {
         this.options.strokeWidth = toInteger(value);
@@ -101,6 +105,7 @@ export default class Shape extends Submenu {
     /**
      * Change shape color
      * @param {string} color - fill color
+     * @private
      */
     _changeFillColor(color) {
         color = color || 'transparent';
@@ -113,6 +118,7 @@ export default class Shape extends Submenu {
     /**
      * Change shape stroke color
      * @param {string} color - fill color
+     * @private
      */
     _changeStrokeColor(color) {
         color = color || 'transparent';

@@ -134,8 +134,7 @@ class Colorpicker {
         });
         colorpickerElement.addEventListener('click', event => {
             this._show = !this._show;
-            const display = this._show ? 'block' : 'none';
-            this.pickerControl.style.display = display;
+            this.pickerControl.style.display = this._show ? 'block' : 'none';
             event.stopPropagation();
         });
         document.body.addEventListener('click', () => {

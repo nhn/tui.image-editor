@@ -4,6 +4,7 @@ import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/draw';
 import {defaultDrawRangeValus} from '../consts';
+const DRAW_OPACITY = 0.7;
 
 /**
  * Draw ui class
@@ -50,13 +51,14 @@ export default class Draw extends Submenu {
     setDrawMode() {
         this.actions.setDrawMode(this.type, {
             width: this.width,
-            color: util.getRgb(this.color, 0.7)
+            color: util.getRgb(this.color, DRAW_OPACITY)
         });
     }
 
     /**
      * Change draw type event
      * @param {object} event - line select event
+     * @private
      */
     _changeDrawType(event) {
         const button = event.target.closest('.tui-image-editor-button');
@@ -72,16 +74,17 @@ export default class Draw extends Submenu {
     /**
      * Change drawing color
      * @param {string} color - select drawing color
+     * @private
      */
     _changeDrawColor(color) {
-        color = color || 'transparent';
-        this.color = color;
+        this.color = color || 'transparent';
         this.setDrawMode();
     }
 
     /**
      * Change drawing Range
      * @param {number} value - select drawing range
+     * @private
      */
     _changeDrawRange(value) {
         value = util.toInteger(value);

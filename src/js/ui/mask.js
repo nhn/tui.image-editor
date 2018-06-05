@@ -1,4 +1,5 @@
 import Submenu from './submenuBase';
+import util from '../util';
 import templateHtml from './template/submenu/mask';
 
 /**
@@ -33,6 +34,7 @@ export default class Mask extends Submenu {
 
     /**
      * Apply mask
+     * @private
      */
     _applyMask() {
         this.actions.applyFilter();
@@ -42,12 +44,12 @@ export default class Mask extends Submenu {
     /**
      * Load mask file
      * @param {object} event - File change event object
+     * @private
      */
     _loadMaskFile(event) {
-        const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
         let imgUrl;
 
-        if (!supportingFileAPI) {
+        if (!util.isSupportFileApi()) {
             alert('This browser does not support file-api');
         }
 

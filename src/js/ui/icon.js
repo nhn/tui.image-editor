@@ -62,6 +62,7 @@ export default class Icon extends Submenu {
     /**
      * Change icon color
      * @param {string} color - color for change
+     * @private
      */
     _changeColor(color) {
         color = color || 'transparent';
@@ -71,6 +72,7 @@ export default class Icon extends Submenu {
     /**
      * Change icon color
      * @param {object} event - add button event object
+     * @private
      */
     _addIcon(event) {
         const button = event.target.closest('.tui-image-editor-button');
@@ -87,6 +89,7 @@ export default class Icon extends Submenu {
     /**
      * register icon
      * @param {object} event - file change event object
+     * @private
      */
     _registeIcon(event) {
         let imgUrl;

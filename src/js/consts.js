@@ -168,6 +168,11 @@ module.exports = {
     },
 
     defaultFilterRangeValus: {
+        tintOpacityRange: {
+            min: 0,
+            max: 1,
+            value: 0.7
+        },
         removewhiteThresholdRange: {
             min: 0,
             max: 255,
