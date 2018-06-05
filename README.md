@@ -12,6 +12,9 @@
     * [Every where](#every-where)
     * [Easy customization and basic theme support](#easy-customization-and-basic-theme-support)
 * [Stick to the basic](#-stick-to-the-basic)
+    * [Photo manipulation](#photo-manipulation)
+    * [Integration function](#integration-function)
+    * [Select only the desired function](#select-only-the-desired-function)
 * [Features](#-features)
 * [Install](#-install)
   * [Via Package Manager](#via-package-manager)
@@ -49,18 +52,19 @@
 
 ### Easy customization and basic theme support
   - Has a basic white and black theme, and you can modify the theme file to customize it.
-  - Even the includeUI option can be removed, and the UI itself can be implemented at your own discretion.
+  - Even the `includeUI` option can be removed, and the UI itself can be implemented at your own discretion.
 
 | black - top | black - bottom |  white - left | white - right |
 | --- | --- | --- | --- | 
 | ![2018-06-05 1 41 13](https://user-images.githubusercontent.com/35218826/40930753-8b72502e-6863-11e8-9cff-1719aee9aef0.png) | ![2018-06-05 1 40 24](https://user-images.githubusercontent.com/35218826/40930755-8bcee136-6863-11e8-8e28-0a6722d38c59.png) | ![2018-06-05 1 41 48](https://user-images.githubusercontent.com/35218826/40930756-8bfe0b50-6863-11e8-8682-bab11a0a2289.png) | ![2018-06-05 1 42 27](https://user-images.githubusercontent.com/35218826/40930754-8ba1dba0-6863-11e8-9439-cc059241b675.png) |
 
 
-## 💪 Stick to the basic.
-  * **Photo manipulation**
+## 💪 Stick to the basic
+  ### Photo manipulation
     - Crop, Filp, Rotation, Drawing, Shape, Icon, Text, Mask Filter, Image Filter
-  * **Integration function**
+  ### Integration function
     - Download, Image Load, Undo, Redo, Reset, Delete Object 
+  ### Select only the desired function
 
 
 | Crop | Flip | rotation | Drawing | Shpae |
@@ -263,6 +267,7 @@ $ npm run serve
 ## 🍞 TOAST UI Family
 * [TOAST UI Editor](https://github.com/nhnent/tui.editor)
 * [TOAST UI Grid](https://github.com/nhnent/tui.grid)
+* [TOAST UI Chart](https://github.com/nhnent/tui.chart)
 * [TOAST UI Components](https://github.com/nhnent)
 
 ## 📜 License
