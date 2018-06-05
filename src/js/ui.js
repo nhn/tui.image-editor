@@ -45,7 +45,10 @@ export default class Ui {
         this.submenu = false;
         this.imageSize = {};
 
-        this.theme = new Theme(options.theme);
+        this.theme = new Theme({
+            customTheme: this.options.theme,
+            menuIconPath: this.options.menuIconPath
+        });
 
         this._selectedElement = null;
         this._mainElement = null;
@@ -66,6 +69,26 @@ export default class Ui {
         };
 
         this._makeSubMenu();
+    }
+
+    /**
+     * Set Default Selection for includeUI
+     * @param {Object} option - imageEditor options
+     * @returns {Object} - extends selectionStyle option
+     */
+    setUiDefaultSelectionStyle(option) {
+        return snippet.extend({
+            applyCropSelectionStyle: true,
+            selectionStyle: {
+                cornerStyle: 'circle',
+                cornerSize: 20,
+                cornerColor: '#fff',
+                cornerStrokeColor: '#000',
+                transparentCorners: false,
+                lineWidth: 2,
+                borderColor: '#fff'
+            }
+        }, option);
     }
 
     /**
@@ -179,6 +202,7 @@ export default class Ui {
                 path: '',
                 name: ''
             },
+            menuIconPath: '',
             menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
             initMenu: false,
             menuBarPosition: 'bottom'

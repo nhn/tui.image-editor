@@ -28,9 +28,9 @@ export default {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': '../dist/svg',
+    'menu.normalIcon.path': '',
     'menu.normalIcon.name': 'icon-b',
-    'menu.activeIcon.path': '../dist/svg',
+    'menu.activeIcon.path': '',
     'menu.activeIcon.name': 'icon-a',
 
     // submenu primary color
@@ -38,9 +38,9 @@ export default {
     'submenu.partition.color': '#858585',
 
     // submenu icons
-    'submenu.normalIcon.path': '../dist/svg',
+    'submenu.normalIcon.path': '',
     'submenu.normalIcon.name': 'icon-a',
-    'submenu.activeIcon.path': '../dist/svg',
+    'submenu.activeIcon.path': '',
     'submenu.activeIcon.name': 'icon-c',
 
     // submenu labels

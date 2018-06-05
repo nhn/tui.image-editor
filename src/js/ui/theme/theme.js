@@ -9,8 +9,13 @@ import standardTheme from './standard';
  * @param {Object} customTheme - custom theme
  */
 export default class Theme {
-    constructor(customTheme) {
-        this.styles = this._changeToObject(extend(standardTheme, customTheme));
+    constructor({customTheme, menuIconPath}) {
+        this.styles = this._changeToObject(extend(standardTheme, {
+            'menu.normalIcon.path': menuIconPath,
+            'menu.activeIcon.path': menuIconPath,
+            'submenu.normalIcon.path': menuIconPath,
+            'submenu.activeIcon.path': menuIconPath
+        }, customTheme));
         styleLoad(this._styleMaker());
     }
 

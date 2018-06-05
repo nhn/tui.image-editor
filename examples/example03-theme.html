@@ -33,22 +33,13 @@
                      path: 'img/sampleImage.jpg',
                      name: 'SampleImage'
                  },
+                 menuIconPath: '../dist/svg',
                  // theme: blackTheme, // or whiteTheme
                  initMenu: 'filter',
                  menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,
-             cssMaxHeight: 500,
-             applyCropSelectionStyle: true,
-             selectionStyle: {
-                 cornerStyle: 'circle',
-                 cornerSize: 20,
-                 cornerColor: '#fff',
-                 cornerStrokeColor: '#000',
-                 transparentCorners: false,
-                 lineWidth: 2,
-                 borderColor: '#fff'
-             }
+             cssMaxHeight: 500
          });
 
          window.onresize = function() {

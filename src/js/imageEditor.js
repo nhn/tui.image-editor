@@ -30,7 +30,6 @@ class ImageEditor {
     constructor(wrapper, option) {
         option = snippet.extend({
             includeUI: false,
-            applyCropSelectionStyle: false,
             usageStatistics: true
         }, option);
 
@@ -42,6 +41,7 @@ class ImageEditor {
          */
         if (option.includeUI) {
             this.ui = new UI(wrapper, option.includeUI, this.getActions());
+            option = this.ui.setUiDefaultSelectionStyle(option);
         }
 
         /**
