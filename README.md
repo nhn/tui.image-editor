@@ -40,49 +40,53 @@
 | Yes | 9+ | Yes | Yes | Yes |
 
 
-## 🌈 원하는 페이지에 원하는 기능을 손쉽게 적용 가능.
+## 🙆 Easy to apply the size and design you want
 
 ### Every where
-  - canvas를 지원하는 최하위 브라우저 IE9부터 지원합니다.
-  - menu옵션으로 아이콘을 최소한으로 표현하고 cssMaxWidth, cssMaxHeight을 통해 켄버스 크기를 조절하면
-    최소 550 * 450 크기 이상에 웹페이지에 에디터 기능을 사용할 수 있습니다.
+  - Widely supported in browsers including IE9, which is the minimum requirement to support canvas.
+  - Option allows you to use the editor features on your web pages at least over **550 * 450 sizes**
     
     ![2018-06-04 5 35 25](https://user-images.githubusercontent.com/35218826/40907369-9221f482-681e-11e8-801c-78d6f2e246a8.png)
 
 
-### 손쉬운 커스터마이징 및 기본 테마 지원
-  - 기본 white, black테마를 가지고 있으며 theme 파일을 수정해 customizing 할 수 있습니다.
-  - 심지어 includeUI옵션을 제거하면, UI 자체를 사용자 마음대로 새롭게 구현 가능합니다.
+### Easy customization and basic theme support
+  - Has a basic white and black theme, and you can modify the theme file to customize it.
+  - Even the includeUI option can be removed, and the UI itself can be implemented at your own discretion.
 
 | black - top | black - bottom |  white - left | white - right |
 | --- | --- | --- | --- | 
-| | | | |
+| ![2018-06-05 1 41 13](https://user-images.githubusercontent.com/35218826/40930753-8b72502e-6863-11e8-9cff-1719aee9aef0.png) | ![2018-06-05 1 40 24](https://user-images.githubusercontent.com/35218826/40930755-8bcee136-6863-11e8-8e28-0a6722d38c59.png) | ![2018-06-05 1 41 48](https://user-images.githubusercontent.com/35218826/40930756-8bfe0b50-6863-11e8-8682-bab11a0a2289.png) | ![2018-06-05 1 42 27](https://user-images.githubusercontent.com/35218826/40930754-8ba1dba0-6863-11e8-9439-cc059241b675.png) |
 
-### 기본에 충실한 기능
 
-  - 기본에 충실한 다양한 기능들을 갖추고 있으면서, 또한 menu 옵션을 통해 필요한 기능만 사용되도록 할 수 있습니다.
- 
-```javascripot
-         var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
-             includeUI: {
-                 menu: ['shape', 'crop']
-                 ...
-             },
-             ...
-```
+## 💪 Stick to the basic.
+  * **Photo manipulation**
+    - Crop, Filp, Rotation, Drawing, Shape, Icon, Text, Mask Filter, Image Filter
+  * **Integration function**
+    - Download, Image Load, Undo, Redo, Reset, Delete Object 
+
 
 | Crop | Flip | rotation | Drawing | Shpae |
 | --- | --- | --- | --- | --- |
 | ![2018-06-04 4 33 16](https://user-images.githubusercontent.com/35218826/40904241-0c28ec68-6815-11e8-8296-89a1716b22d8.png) | ![2018-06-04 4 40 06](https://user-images.githubusercontent.com/35218826/40904521-f7c6e184-6815-11e8-8ba3-c94664da69a2.png) | ![2018-06-04 4 43 02](https://user-images.githubusercontent.com/35218826/40904664-656aa748-6816-11e8-9943-6607c209deac.png) | ![2018-06-04 4 47 40](https://user-images.githubusercontent.com/35218826/40904850-0f26ebde-6817-11e8-97d0-d3a7e4bc02da.png) | ![2018-06-04 4 51 45](https://user-images.githubusercontent.com/35218826/40905037-a026296a-6817-11e8-9d28-9e1ca7bc58c4.png) | 
 
-| Icon | Text | Mask | download | undo, rodo |
-| --- | --- | --- | --- | --- |
+| Icon | Text | Mask | Filter |
+| --- | --- | --- | --- |
+| ![2018-06-05 2 06 29](https://user-images.githubusercontent.com/35218826/40931205-2d255db6-6865-11e8-98af-ad34c5a01da1.png) | ![2018-06-05 2 14 36](https://user-images.githubusercontent.com/35218826/40931484-46253948-6866-11e8-8a04-fa042920e457.png) | ![2018-06-05 2 20 46](https://user-images.githubusercontent.com/35218826/40931743-21eeb346-6867-11e8-8e31-a59f7a43482b.png) | ![2018-06-05 2 27 10](https://user-images.githubusercontent.com/35218826/40932016-093ed1f4-6868-11e8-8224-a048c3ee8a09.png) |  |
+
+
+```javascripot
+var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
+     includeUI: {
+         menu: ['shape', 'crop']
+         ...
+     },
+ ...
+```
 
 
 
 
-
-## Feature
+## 🎨 Feature
 * Load image to canvas
 * Undo/Redo (With shortcut)
 * Crop
@@ -242,12 +246,12 @@ $ npm run serve
 * [Issue guideline](ISSUE_TEMPLATE.md)
 * [Commit convention](https://github.com/nhnent/tui.editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
-## Dependency
+## 🔩 Dependency
 * [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7
 * [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
 * [tui.color-picker](https://github.com/nhnent/tui.color-picker/releases/tag/v2.2.0) >=2.2.0
 
-## Test Environment
+## 🎥 Test Environment
 ### PC
    * IE9~11
    * Edge
