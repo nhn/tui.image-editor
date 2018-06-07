@@ -4,8 +4,8 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button free">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-draw-free" class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-draw-free" class="active"/>
+                        <use xlink:href="${normal.path}#${normal.name}-ic-draw-free" class="normal"/>
+                        <use xlink:href="${active.path}#${active.name}-ic-draw-free" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -15,8 +15,8 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button line">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-draw-line" class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-draw-line" class="active"/>
+                        <use xlink:href="${normal.path}#${normal.name}-ic-draw-line" class="normal"/>
+                        <use xlink:href="${active.path}#${active.name}-ic-draw-line" class="active"/>
                     </svg>
                 </div>
                 <label>

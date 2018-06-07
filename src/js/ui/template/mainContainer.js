@@ -1,8 +1,8 @@
-export default ({commonStyle, headerStyle, loadButtonStyle, downloadButtonStyle, submenuStyle}) => (`
+export default ({biImage, commonStyle, headerStyle, loadButtonStyle, downloadButtonStyle, submenuStyle}) => (`
     <div class="tui-image-editor-main-container" style="${commonStyle}">
         <div class="tui-image-editor-header" style="${headerStyle}">
             <div class="tui-image-editor-header-logo">
-                <img src="img/icon/img-bi.svg" />
+                <img src="${biImage}" height="21px" />
             </div>
             <div class="tui-image-editor-header-buttons">
                 <button style="${loadButtonStyle}">

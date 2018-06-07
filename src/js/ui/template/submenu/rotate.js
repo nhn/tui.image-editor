@@ -4,9 +4,9 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button clockwise">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-rotate-clockwise"
+                        <use xlink:href="${normal.path}#${normal.name}-ic-rotate-clockwise"
                             class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-rotate-clockwise"
+                        <use xlink:href="${active.path}#${active.name}-ic-rotate-clockwise"
                             class="active"/>
                     </svg>
                 </div>
@@ -15,9 +15,9 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button counterclockwise">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-rotate-counterclockwise"
+                        <use xlink:href="${normal.path}#${normal.name}-ic-rotate-counterclockwise"
                             class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-rotate-counterclockwise"
+                        <use xlink:href="${active.path}#${active.name}-ic-rotate-counterclockwise"
                             class="active"/>
                     </svg>
                 </div>

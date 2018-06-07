@@ -44,11 +44,9 @@ export default class Ui {
         this._actions = actions;
         this.submenu = false;
         this.imageSize = {};
+        this.uiSize = {};
 
-        this.theme = new Theme({
-            customTheme: this.options.theme,
-            menuIconPath: this.options.menuIconPath
-        });
+        this.theme = new Theme(this.options.theme);
 
         this._selectedElement = null;
         this._mainElement = null;
@@ -57,6 +55,7 @@ export default class Ui {
         this._menuElement = null;
         this._subMenuElement = null;
         this._makeUiElement(element);
+        this._setUiSize();
 
         this._els = {
             'undo': this._menuElement.querySelector('#tie-btn-undo'),
@@ -69,6 +68,11 @@ export default class Ui {
         };
 
         this._makeSubMenu();
+    }
+
+    _setUiSize(uiSize = this.options.uiSize) {
+        this._selectedElement.style.width = uiSize.width;
+        this._selectedElement.style.height = uiSize.height;
     }
 
     /**
@@ -93,15 +97,22 @@ export default class Ui {
 
     /**
      * Change editor size
-     * @param {Objecdt} imageSize - image size dimension
-     *   @param {Number} imageSize.oldWidth - old width
-     *   @param {Number} imageSize.oldHeight - old height
-     *   @param {Number} imageSize.newWidth - new width
-     *   @param {Number} imageSize.newHeight - new height
+     * @param {Object} resizeInfo - ui & image size info
+     *   @param {Object} resizeInfo.uiSize - image size dimension
+     *     @param {Number} resizeInfo.uiSize.width - ui width
+     *     @param {Number} resizeInfo.uiSize.height - ui height
+     *   @param {Object} resizeInfo.imageSize - image size dimension
+     *     @param {Number} resizeInfo.imageSize.oldWidth - old width
+     *     @param {Number} resizeInfo.imageSize.oldHeight - old height
+     *     @param {Number} resizeInfo.imageSize.newWidth - new width
+     *     @param {Number} resizeInfo.imageSize.newHeight - new height
      */
-    resizeEditor(imageSize = this.imageSize) {
+    resizeEditor({uiSize, imageSize = this.imageSize} = {}) {
         if (imageSize !== this.imageSize) {
             this.imageSize = imageSize;
+        }
+        if (uiSize) {
+            this._setUiSize(uiSize);
         }
         const {width, height} = this._getEditorDimension();
         const editorElementStyle = this._editorElement.style;
@@ -205,6 +216,10 @@ export default class Ui {
             menuIconPath: '',
             menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
             initMenu: false,
+            uiSize: {
+                width: '100%',
+                height: '100%'
+            },
             menuBarPosition: 'bottom'
         }, options);
     }
@@ -251,9 +266,11 @@ export default class Ui {
 
         selectedElement.classList.add('tui-image-editor-container');
         selectedElement.innerHTML = controls({
+            biImage: this.theme.getStyle('common.bi'),
             iconStyle: this.theme.getStyle('menu.icon')
         }) +
         mainContainer({
+            biImage: this.theme.getStyle('common.bi'),
             commonStyle: this.theme.getStyle('common'),
             headerStyle: this.theme.getStyle('header'),
             loadButtonStyle: this.theme.getStyle('loadButton'),
@@ -281,8 +298,8 @@ export default class Ui {
         const {normal, active} = this.theme.getStyle('menu.icon');
         const menuItemHtml = `
             <svg class="svg_ic-menu">
-                <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-${menuName}" class="normal"/>
-                <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-${menuName}" class="active"/>
+                <use xlink:href="${normal.path}#${normal.name}-ic-${menuName}" class="normal"/>
+                <use xlink:href="${active.path}#${active.name}-ic-${menuName}" class="active"/>
             </svg>
         `;
 

@@ -1,4 +1,5 @@
 var blackTheme = {
+    'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
     'common.backgroundImage': 'none',
     'common.backgroundColor': '#1e1e1e',
     'common.border': '0px',
@@ -23,9 +24,9 @@ var blackTheme = {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': '../dist/svg',
+    'menu.normalIcon.path': '../dist/svg/icon-b.svg',
     'menu.normalIcon.name': 'icon-b',
-    'menu.activeIcon.path': '../dist/svg',
+    'menu.activeIcon.path': '../dist/svg/icon-a.svg',
     'menu.activeIcon.name': 'icon-a',
 
     // submenu primary color
@@ -33,9 +34,9 @@ var blackTheme = {
     'submenu.partition.color': '#858585',
 
     // submenu icons
-    'submenu.normalIcon.path': '../dist/svg',
+    'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
     'submenu.normalIcon.name': 'icon-a',
-    'submenu.activeIcon.path': '../dist/svg',
+    'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
     'submenu.activeIcon.name': 'icon-c',
 
     // submenu labels

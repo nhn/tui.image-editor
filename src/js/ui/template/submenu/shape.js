@@ -4,9 +4,9 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button rect">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-shape-rectangle"
+                        <use xlink:href="${normal.path}#${normal.name}-ic-shape-rectangle"
                             class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-shape-rectangle"
+                        <use xlink:href="${active.path}#${active.name}-ic-shape-rectangle"
                             class="active"/>
                     </svg>
                 </div>
@@ -15,9 +15,9 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button circle">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-shape-circle"
+                        <use xlink:href="${normal.path}#${normal.name}-ic-shape-circle"
                             class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-shape-circle"
+                        <use xlink:href="${active.path}#${active.name}-ic-shape-circle"
                             class="active"/>
                     </svg>
                 </div>
@@ -26,9 +26,9 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button triangle">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-shape-triangle"
+                        <use xlink:href="${normal.path}#${normal.name}-ic-shape-triangle"
                             class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-shape-triangle"
+                        <use xlink:href="${active.path}#${active.name}-ic-shape-triangle"
                             class="active"/>
                     </svg>
                 </div>

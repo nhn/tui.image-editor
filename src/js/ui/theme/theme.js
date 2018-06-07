@@ -9,13 +9,8 @@ import standardTheme from './standard';
  * @param {Object} customTheme - custom theme
  */
 export default class Theme {
-    constructor({customTheme, menuIconPath}) {
-        this.styles = this._changeToObject(extend(standardTheme, {
-            'menu.normalIcon.path': menuIconPath,
-            'menu.activeIcon.path': menuIconPath,
-            'submenu.normalIcon.path': menuIconPath,
-            'submenu.activeIcon.path': menuIconPath
-        }, customTheme));
+    constructor(customTheme) {
+        this.styles = this._changeToObject(extend(standardTheme, customTheme));
         styleLoad(this._styleMaker());
     }
 
@@ -29,6 +24,9 @@ export default class Theme {
         const firstProperty = type.replace(/\..+$/, '');
         const option = this.styles[type];
         switch (type) {
+            case 'common.bi':
+                result = this.styles[type].image;
+                break;
             case 'menu.icon':
             case 'submenu.icon':
                 result = {

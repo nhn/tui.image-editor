@@ -4,8 +4,8 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button flipX">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-x" class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-flip-x" class="active"/>
+                        <use xlink:href="${normal.path}#${normal.name}-ic-flip-x" class="normal"/>
+                        <use xlink:href="${active.path}#${active.name}-ic-flip-x" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -15,8 +15,8 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button flipY">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-y" class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-flip-y" class="active"/>
+                        <use xlink:href="${normal.path}#${normal.name}-ic-flip-y" class="normal"/>
+                        <use xlink:href="${active.path}#${active.name}-ic-flip-y" class="active"/>
                     </svg>
                 </div>
                 <label>
@@ -31,9 +31,9 @@ export default ({iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button resetFlip">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}/${normal.name}.svg#${normal.name}-ic-flip-reset"
+                        <use xlink:href="${normal.path}#${normal.name}-ic-flip-reset"
                             class="normal"/>
-                        <use xlink:href="${active.path}/${active.name}.svg#${active.name}-ic-flip-reset"
+                        <use xlink:href="${active.path}#${active.name}-ic-flip-reset"
                             class="active"/>
                     </svg>
                 </div>

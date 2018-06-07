@@ -4,6 +4,7 @@
  */
 
 export default {
+    'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
     'common.backgroundImage': 'none',
     'common.backgroundColor': '#1e1e1e',
     'common.border': '0px',
@@ -28,9 +29,9 @@ export default {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': '',
+    'menu.normalIcon.path': 'icon-b.svg',
     'menu.normalIcon.name': 'icon-b',
-    'menu.activeIcon.path': '',
+    'menu.activeIcon.path': 'icon-a.svg',
     'menu.activeIcon.name': 'icon-a',
 
     // submenu primary color
@@ -38,9 +39,9 @@ export default {
     'submenu.partition.color': '#858585',
 
     // submenu icons
-    'submenu.normalIcon.path': '',
+    'submenu.normalIcon.path': 'icon-a.svg',
     'submenu.normalIcon.name': 'icon-a',
-    'submenu.activeIcon.path': '',
+    'submenu.activeIcon.path': 'icon-c.svg',
     'submenu.activeIcon.name': 'icon-c',
 
     // submenu labels

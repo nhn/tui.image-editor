@@ -8,21 +8,18 @@ import defaultTheme from '../src/js/ui/theme/standard';
 describe('Theme', () => {
     let theme;
     beforeEach(() => {
-        theme = new Theme({
-            customTheme: defaultTheme,
-            menuIconPath: '../dist/svg'
-        });
+        theme = new Theme(defaultTheme);
     });
 
     describe('getStyle()', () => {
         it('In case of icon type, the object should be returned as it is.', () => {
             const expected = {
                 active: {
-                    path: '../dist/svg',
+                    path: 'icon-a.svg',
                     name: 'icon-a'
                 },
                 normal: {
-                    path: '../dist/svg',
+                    path: 'icon-b.svg',
                     name: 'icon-b'
                 }
             };

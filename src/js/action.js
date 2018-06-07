@@ -42,7 +42,7 @@ export default {
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
                     exitCropOnAction();
                     this.ui.initializeImgUrl = imagePath;
-                    this.ui.resizeEditor(sizeValue);
+                    this.ui.resizeEditor({imageSize: sizeValue});
                     this.clearUndoStack();
                 })
             ),
@@ -62,7 +62,7 @@ export default {
                 exitCropOnAction();
                 this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then(sizeValue => {
                     exitCropOnAction();
-                    this.ui.resizeEditor(sizeValue);
+                    this.ui.resizeEditor({imageSize: sizeValue});
                     this.clearUndoStack();
                 });
             },
