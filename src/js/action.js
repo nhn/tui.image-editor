@@ -1,4 +1,4 @@
-import snippet from 'tui-code-snippet';
+import {extend} from 'tui-code-snippet';
 import util from './util';
 import Imagetracer from './helper/imagetracer';
 
@@ -24,6 +24,33 @@ export default {
         };
     },
 
+    _commonAction() {
+        return {
+            modeChange: menu => {
+                this.stopDrawingMode();
+                switch (menu) {
+                    case 'text':
+                        this._changeActivateMode('TEXT');
+                        break;
+                    case 'crop':
+                        this.startDrawingMode('CROPPER');
+                        break;
+                    case 'shape':
+                        console.log('mmm');
+                        this._changeActivateMode('SHAPE');
+                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+                        break;
+                    case 'draw':
+                        this.ui.draw.setDrawMode();
+                        break;
+                    default:
+                        break;
+                }
+            },
+            stopDrawingMode: this.stopDrawingMode.bind(this)
+        };
+    },
+
     /**
      * Main Action
      * @returns {Object} actions for ui main
@@ -37,7 +64,7 @@ export default {
             }
         };
 
-        return {
+        return extend({
             initLoadImage: (imagePath, imageName) => (
                 this.loadImageFromURL(imagePath, imageName).then(sizeValue => {
                     exitCropOnAction();
@@ -111,31 +138,8 @@ export default {
                     w = window.open();
                     w.document.body.innerHTML = `<img src='${dataURL}'>`;
                 }
-            },
-            modeChange: menu => {
-                this.stopDrawingMode();
-                if (this.ui.submenu === menu) {
-                    return;
-                }
-                switch (menu) {
-                    case 'text':
-                        this._changeActivateMode('TEXT');
-                        break;
-                    case 'crop':
-                        this.startDrawingMode('CROPPER');
-                        break;
-                    case 'shape':
-                        this._changeActivateMode('SHAPE');
-                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
-                        break;
-                    case 'draw':
-                        this.ui.draw.setDrawMode();
-                        break;
-                    default:
-                        break;
-                }
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -144,7 +148,7 @@ export default {
      * @private
      */
     _iconAction() {
-        return {
+        return extend({
             changeColor: color => {
                 this.changeIconColor(this.activeObjectId, color);
             },
@@ -179,7 +183,7 @@ export default {
                     }, Imagetracer.tracerDefaultOption()
                 );
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -188,7 +192,7 @@ export default {
      * @private
      */
     _drawAction() {
-        return {
+        return extend({
             setDrawMode: (type, settings) => {
                 this.stopDrawingMode();
                 if (type === 'free') {
@@ -202,7 +206,7 @@ export default {
                     color
                 });
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -211,7 +215,7 @@ export default {
      * @private
      */
     _maskAction() {
-        return {
+        return extend({
             loadImageFromURL: (imgUrl, file) => (
                 this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
                     this.addImageObject(imgUrl).then(() => {
@@ -224,7 +228,7 @@ export default {
                     maskObjId: this.activeObjectId
                 });
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -233,13 +237,13 @@ export default {
      * @private
      */
     _textAction() {
-        return {
+        return extend({
             changeTextStyle: styleObj => {
                 if (this.activeObjectId) {
                     this.changeTextStyle(this.activeObjectId, styleObj);
                 }
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -248,7 +252,7 @@ export default {
      * @private
      */
     _rotateAction() {
-        return {
+        return extend({
             rotate: angle => {
                 this.rotate(angle);
                 this.ui.resizeEditor();
@@ -257,7 +261,7 @@ export default {
                 this.setAngle(angle);
                 this.ui.resizeEditor();
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -266,7 +270,7 @@ export default {
      * @private
      */
     _shapeAction() {
-        return {
+        return extend({
             changeShape: changeShapeObject => {
                 if (this.activeObjectId) {
                     this.changeShape(this.activeObjectId, changeShapeObject);
@@ -275,7 +279,7 @@ export default {
             setDrawingShape: shapeType => {
                 this.setDrawingShape(shapeType);
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -284,7 +288,7 @@ export default {
      * @private
      */
     _cropAction() {
-        return {
+        return extend({
             crop: () => {
                 const cropRect = this.getCropzoneRect();
                 if (cropRect) {
@@ -301,7 +305,7 @@ export default {
                 this.stopDrawingMode();
                 this.ui.changeMenu('crop');
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -310,9 +314,9 @@ export default {
      * @private
      */
     _flipAction() {
-        return {
+        return extend({
             flip: flipType => this[flipType]()
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -321,7 +325,7 @@ export default {
      * @private
      */
     _filterAction() {
-        return {
+        return extend({
             applyFilter: (applying, type, options) => {
                 if (applying) {
                     this.applyFilter(type, options);
@@ -329,7 +333,7 @@ export default {
                     this.removeFilter(type);
                 }
             }
-        };
+        }, this._commonAction());
     },
 
     /**
@@ -412,6 +416,6 @@ export default {
      * @param {ImageEditor} ImageEditor instance
      */
     mixin(ImageEditor) {
-        snippet.extend(ImageEditor.prototype, this);
+        extend(ImageEditor.prototype, this);
     }
 };

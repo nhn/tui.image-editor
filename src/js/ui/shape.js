@@ -22,7 +22,7 @@ export default class Shape extends Submenu {
             iconStyle,
             templateHtml
         });
-        this.type = 'rect';
+        this.type = null;
         this.options = SHAPE_DEFAULT_OPTION;
 
         this._els = {
@@ -79,10 +79,20 @@ export default class Shape extends Submenu {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
-            this.changeClass(event.currentTarget, this.type, shapeType);
+
+            if (this.type === shapeType) {
+                event.currentTarget.classList.remove(shapeType);
+                this.actions.stopDrawingMode();
+                this.type = null;
+
+                return;
+            }
 
             this.type = shapeType;
-            this.actions.setDrawingShape(shapeType);
+            event.currentTarget.classList.add(shapeType);
+            // this.actions.setDrawingShape(shapeType);
+
+            this.actions.modeChange('shape');
         }
     }
 

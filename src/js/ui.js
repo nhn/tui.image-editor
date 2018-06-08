@@ -352,7 +352,7 @@ export default class Ui {
      */
     _addMenuEvent(menuName) {
         this._els[menuName].addEventListener('click', () => {
-            this._actions.main.modeChange(menuName);
+            // this._actions.main.modeChange(menuName);
             this.changeMenu(menuName);
         });
     }

@@ -33,6 +33,8 @@ class ImageEditor {
             usageStatistics: true
         }, options);
 
+        this.mode = null;
+
         this.activeObjectId = null;
 
         /**
@@ -517,6 +519,7 @@ class ImageEditor {
      * imageEditor.stopDrawingMode();
      */
     stopDrawingMode() {
+        console.log('alsjdf;lasgdj;lasjdgl');
         this._graphics.stopDrawingMode();
     }
 

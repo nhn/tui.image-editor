@@ -308,10 +308,12 @@ class Shape extends Component {
      * @private
      */
     _onFabricMouseDown(fEvent) {
+        /*
         if (!fEvent.target) {
             this._isSelected = false;
             this._shapeObj = false;
         }
+        */
 
         if (!this._isSelected && !this._shapeObj) {
             const canvas = this.getCanvas();
