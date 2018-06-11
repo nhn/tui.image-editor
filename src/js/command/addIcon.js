@@ -22,10 +22,10 @@ const command = {
      *      @param {string} [options.top] - Icon y position
      * @returns {Promise}
      */
-    execute(graphics, type, options) {
+    execute(graphics, type, options, eventHandler) {
         const iconComp = graphics.getComponent(ICON);
 
-        return iconComp.add(type, options).then(objectProps => {
+        return iconComp.add(type, options, eventHandler).then(objectProps => {
             this.undoData.object = graphics.getObject(objectProps.id);
 
             return objectProps;

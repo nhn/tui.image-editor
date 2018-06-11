@@ -49,7 +49,7 @@ class Icon extends Component {
      *      @param {string} [options.top] - Icon y position
      * @returns {Promise}
      */
-    add(type, options) {
+    add(type, options, eventHandler) {
         return new Promise((resolve, reject) => {
             const canvas = this.getCanvas();
             const path = this._pathMap[type];
@@ -66,7 +66,29 @@ class Icon extends Component {
                 fill: this._oColor
             }, selectionStyle, options, this.graphics.controlStyle));
 
-            canvas.add(icon).setActiveObject(icon);
+            if (eventHandler) {
+                let addIcon = false;
+                canvas.on({
+                    'mouse:move': fEvent => {
+                        if (!addIcon) {
+                            canvas.add(icon).setActiveObject(icon);
+                            addIcon = true;
+                        }
+                        canvas.selection = false;
+                        eventHandler.mousemove(fEvent.e, canvas.getPointer(fEvent.e));
+                    },
+                    'mouse:up': () => {
+                        canvas.defaultCursor = 'default';
+                        eventHandler.mouseup();
+                        canvas.off('mouse:up');
+                        canvas.off('mouse:move');
+                        canvas.selection = true;
+                    }
+                });
+            } else {
+                canvas.add(icon).setActiveObject(icon);
+            }
+
             resolve(this.graphics.createObjectProperties(icon));
         });
     }

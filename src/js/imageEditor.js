@@ -77,8 +77,6 @@ class ImageEditor {
         this._handlers = {
             keydown: this._onKeyDown.bind(this),
             mousedown: this._onMouseDown.bind(this),
-            mouseup: this._onMouseUp.bind(this),
-            mousemove: this._onMouseMove.bind(this),
             objectActivated: this._onObjectActivated.bind(this),
             objectMoved: this._onObjectMoved.bind(this),
             objectScaled: this._onObjectScaled.bind(this),
@@ -208,8 +206,6 @@ class ImageEditor {
     _attachGraphicsEvents() {
         this._graphics.on({
             'mousedown': this._handlers.mousedown,
-            'mouseup': this._handlers.mouseup,
-            'mousemove': this._handlers.mousemove,
             'objectMoved': this._handlers.objectMoved,
             'objectScaled': this._handlers.objectScaled,
             'objectActivated': this._handlers.objectActivated,
@@ -298,14 +294,6 @@ class ImageEditor {
         this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
-    _onMouseUp(event, originPointer) {
-        this.fire(events.MOUSE_UP, event, originPointer);
-    }
-
-    _onMouseMove(event, originPointer) {
-        this.fire(events.MOUSE_MOVE, event, originPointer);
-    }
-
     /**
      * Add a 'addObject' command
      * @param {Object} obj - Fabric object
@@ -374,7 +362,8 @@ class ImageEditor {
         this.fire(events.OBJECT_SCALED, props);
     }
 
-    /**
+    /*
+*
      * Get current drawing mode
      * @returns {string}
      * @example
@@ -996,6 +985,10 @@ class ImageEditor {
         this._graphics.registerPaths(infos);
     }
 
+    readyAddIcon() {
+        this._graphics.readyAddIcon();
+    }
+
     /**
      * Add icon on canvas
      * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
@@ -1014,12 +1007,12 @@ class ImageEditor {
      *     console.log(objectProps.id);
      * });
      */
-    addIcon(type, options) {
+    addIcon(type, options, eventHandler) {
         options = options || {};
 
         this._setPositions(options);
 
-        return this.execute(commands.ADD_ICON, type, options);
+        return this.execute(commands.ADD_ICON, type, options, eventHandler);
     }
 
     /**

@@ -167,28 +167,25 @@ export default {
             this.addIcon(cacheIconType, {
                 left: originPointer.x,
                 top: originPointer.y
+            }, {
+                mouseup: () => {
+                    this.ui.icon.clearIconType();
+                },
+                mousemove: (moveEvent, moveOriginPointer) => {
+                    const scaleX = (moveOriginPointer.x - startX) / iconWidth;
+                    const scaleY = (moveOriginPointer.y - startY) / iconHeight;
+
+                    this.setObjectProperties(objId, {
+                        originX: (scaleX < 0) ? 'right' : 'left',
+                        originY: (scaleY < 0) ? 'bottom' : 'top',
+                        scaleX: Math.abs(scaleX),
+                        scaleY: Math.abs(scaleY)
+                    });
+                }
             }).then(obj => {
                 objId = obj.id;
                 iconWidth = obj.width;
                 iconHeight = obj.height;
-                this.on('mousemove', mouseMove.bind(this));
-            });
-        }
-
-        function mouseUp() {
-            this.ui.icon.clearIconType();
-            this.off('mousemove');
-        }
-
-        function mouseMove(e, originPointer) {
-            const scaleX = (originPointer.x - startX) / iconWidth;
-            const scaleY = (originPointer.y - startY) / iconHeight;
-
-            this.setObjectProperties(objId, {
-                originX: (scaleX < 0) ? 'right' : 'left',
-                originY: (scaleY < 0) ? 'bottom' : 'top',
-                scaleX: Math.abs(scaleX),
-                scaleY: Math.abs(scaleY)
             });
         }
 
@@ -198,8 +195,8 @@ export default {
             },
             addIcon: iconType => {
                 cacheIconType = iconType;
+                this.readyAddIcon();
                 this.off('mousedown');
-                this.once('mouseup', mouseUp.bind(this));
                 this.once('mousedown', mouseDown.bind(this));
             },
             registDefalutIcons: (type, path) => {
