@@ -63,7 +63,8 @@ module.exports = {
         MOUSE_DOWN: 'mousedown',
         // UNDO/REDO Events
         REDO_STACK_CHANGED: 'redoStackChanged',
-        UNDO_STACK_CHANGED: 'undoStackChanged'
+        UNDO_STACK_CHANGED: 'undoStackChanged',
+        SELECTION_CLEARED: 'selectionCleared'
     },
 
     /**

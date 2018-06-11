@@ -126,6 +126,7 @@ class Shape extends Component {
         this._isSelected = false;
 
         canvas.defaultCursor = 'default';
+
         canvas.selection = true;
         canvas.uniScaleTransform = false;
         canvas.off({

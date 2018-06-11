@@ -60,6 +60,8 @@ export default class Shape extends Submenu {
      *   @param {string} fillColor - fill color
      */
     setShapeStatus({strokeWidth, strokeColor, fillColor}) {
+        this.changeStandbyMode();
+
         this._els.strokeRange.value = strokeWidth;
         this._els.strokeRange.trigger('change');
 
@@ -70,6 +72,14 @@ export default class Shape extends Submenu {
         this.options.strokeWidth = strokeWidth;
     }
 
+    changeStandbyMode() {
+        this.type = null;
+        this.actions.changeSelectableAll(true);
+        this._els.shapeSelectButton.classList.remove('circle');
+        this._els.shapeSelectButton.classList.remove('triangle');
+        this._els.shapeSelectButton.classList.remove('rect');
+    }
+
     /**
      * Change icon color
      * @param {object} event - add button event object
@@ -78,10 +88,11 @@ export default class Shape extends Submenu {
     _changeShape(event) {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
+            this.actions.discardSelection();
+            this.changeStandbyMode();
             const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
 
             if (this.type === shapeType) {
-                event.currentTarget.classList.remove(shapeType);
                 this.actions.stopDrawingMode();
                 this.type = null;
 
@@ -90,9 +101,8 @@ export default class Shape extends Submenu {
 
             this.type = shapeType;
             event.currentTarget.classList.add(shapeType);
-            // this.actions.setDrawingShape(shapeType);
-
             this.actions.modeChange('shape');
+            this.actions.changeSelectableAll(false);
         }
     }
 

@@ -33,6 +33,9 @@ export default class Submenu {
         target.classList.add(addClass);
     }
 
+    changeStandbyMode() {
+    }
+
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element

@@ -1,6 +1,6 @@
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-draw-line-select-button" class="line">
+        <li id="tie-draw-line-select-button">
             <div class="tui-image-editor-button free">
                 <div>
                     <svg class="svg_ic-submenu">

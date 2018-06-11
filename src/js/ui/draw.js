@@ -64,11 +64,26 @@ export default class Draw extends Submenu {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const lineType = this.getButtonType(button, ['free', 'line']);
-            this.changeClass(this._els.lineSelectButton, this.type, lineType);
+            this.actions.discardSelection();
+            this.changeStandbyMode();
+
+            if (this.type === lineType) {
+                this.type = null;
+                this.actions.stopDrawingMode();
+
+                return;
+            }
 
             this.type = lineType;
+            this._els.lineSelectButton.classList.add(lineType);
             this.setDrawMode();
         }
+    }
+
+    changeStandbyMode() {
+        this.actions.changeSelectableAll(true);
+        this._els.lineSelectButton.classList.remove('free');
+        this._els.lineSelectButton.classList.remove('line');
     }
 
     /**

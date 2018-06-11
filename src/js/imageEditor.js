@@ -84,7 +84,8 @@ class ImageEditor {
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
             textEditing: this._onTextEditing.bind(this),
-            textChanged: this._onTextChanged.bind(this)
+            textChanged: this._onTextChanged.bind(this),
+            selectionCleared: this._selectionCleared.bind(this)
         };
 
         this._attachInvokerEvents();
@@ -211,7 +212,8 @@ class ImageEditor {
             'addText': this._handlers.addText,
             'addObject': this._handlers.addObject,
             'textEditing': this._handlers.textEditing,
-            'textChanged': this._handlers.textChanged
+            'textChanged': this._handlers.textChanged,
+            'selectionCleared': this._handlers.selectionCleared
         });
     }
 
@@ -400,6 +402,14 @@ class ImageEditor {
         this._graphics.renderAll();
     }
 
+    discardSelection() {
+        this._graphics.discardSelection();
+    }
+
+    changeSelectableAll(selectable) {
+        this._graphics.changeSelectableAll(selectable);
+    }
+
     /**
      * Invoke command
      * @param {String} commandName - Command name
@@ -519,7 +529,6 @@ class ImageEditor {
      * imageEditor.stopDrawingMode();
      */
     stopDrawingMode() {
-        console.log('alsjdf;lasgdj;lasjdgl');
         this._graphics.stopDrawingMode();
     }
 
@@ -956,6 +965,10 @@ class ImageEditor {
     _onAddObject(objectProps) {
         const obj = this._graphics.getObject(objectProps.id);
         this._pushAddObjectCommand(obj);
+    }
+
+    _selectionCleared() {
+        this.fire(events.SELECTION_CLEARED);
     }
 
     /**

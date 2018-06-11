@@ -26,6 +26,13 @@ export default {
 
     _commonAction() {
         return {
+            changeSelectableAll: selectable => {
+                this.changeSelectableAll(selectable);
+            },
+            discardSelection: () => {
+                this.stopDrawingMode();
+                this.discardSelection();
+            },
             modeChange: menu => {
                 this.stopDrawingMode();
                 switch (menu) {
@@ -36,7 +43,6 @@ export default {
                         this.startDrawingMode('CROPPER');
                         break;
                     case 'shape':
-                        console.log('mmm');
                         this._changeActivateMode('SHAPE');
                         this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
                         break;
@@ -368,13 +374,19 @@ export default {
                 if (obj.type === 'cropzone') {
                     this.ui.crop.changeApplyButtonStatus(true);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-                    this.ui.changeMenu('shape', false);
+                    if (this.ui.submenu !== 'shape') {
+                        this.ui.changeMenu('shape', false, false);
+                    }
                     this._changeActivateMode('SHAPE');
                     this.ui.shape.setShapeStatus({
                         strokeColor: obj.stroke,
                         strokeWidth: obj.strokeWidth,
                         fillColor: obj.fill
                     });
+                } else if (obj.type === 'path' || obj.type === 'line') {
+                    if (this.ui.submenu) {
+                        this.ui.changeMenu(this.ui.submenu, true);
+                    }
                 } else if (obj.type === 'text') {
                     this.ui.changeMenu('text', false);
                     this._changeActivateMode('TEXT');
@@ -400,12 +412,10 @@ export default {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 }
             },
-            mousedown: (event, originPointer) => {
-                if (this.ui.submenu && this.hasFilter('colorFilter')) {
-                    this.applyFilter('colorFilter', {
-                        x: util.toInteger(originPointer.x),
-                        y: util.toInteger(originPointer.y)
-                    });
+            selectionCleared: () => {
+                if (this.ui.submenu !== 'draw') {
+                    this.stopDrawingMode();
+                    this.activeObjectId = null;
                 }
             }
         });

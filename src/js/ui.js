@@ -352,7 +352,6 @@ export default class Ui {
      */
     _addMenuEvent(menuName) {
         this._els[menuName].addEventListener('click', () => {
-            // this._actions.main.modeChange(menuName);
             this.changeMenu(menuName);
         });
     }
@@ -424,10 +423,16 @@ export default class Ui {
      * @param {string} menuName - menu name
      * @param {boolean} toggle - whether toogle or not
      */
-    changeMenu(menuName, toggle = true) {
+    changeMenu(menuName, toggle = true, discardSelection = true) {
         if (this.submenu) {
             this._els[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(`tui-image-editor-menu-${this.submenu}`);
+            if (discardSelection) {
+                this._actions.main.discardSelection();
+            }
+            this._actions.main.changeSelectableAll(true);
+
+            this[this.submenu].changeStandbyMode();
         }
 
         if (this.submenu === menuName && toggle) {
@@ -437,6 +442,7 @@ export default class Ui {
             this._mainElement.classList.add(`tui-image-editor-menu-${menuName}`);
             this.submenu = menuName;
         }
+
         this._subMenuElement.style.display = this.submenu ? 'table' : 'none';
         this.resizeEditor();
     }

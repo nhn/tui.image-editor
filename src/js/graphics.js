@@ -127,7 +127,8 @@ class Graphics {
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
-            onPathCreated: this._onPathCreated.bind(this)
+            onPathCreated: this._onPathCreated.bind(this),
+            onSelectionCleared: this._onSelectionCleared.bind(this)
         };
 
         this._setCanvasElement(element);
@@ -848,7 +849,8 @@ class Graphics {
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
             'object:selected': handler.onObjectSelected,
-            'path:created': handler.onPathCreated
+            'path:created': handler.onPathCreated,
+            'selection:cleared': handler.onSelectionCleared
         });
     }
 
@@ -934,6 +936,27 @@ class Graphics {
         const params = this.createObjectProperties(obj.path);
 
         this.fire(events.ADD_OBJECT, params);
+    }
+
+    _onSelectionCleared() {
+        this.fire(events.SELECTION_CLEARED);
+    }
+
+    discardSelection() {
+        this._canvas.discardActiveGroup();
+        this._canvas.discardActiveObject();
+        this._canvas.renderAll();
+    }
+
+    changeSelectableAll(selectable) {
+        this._canvas.forEachObject(obj => {
+            obj.selectable = selectable;
+            if (selectable) {
+                obj.hoverCursor = 'move';
+            } else {
+                obj.hoverCursor = 'crosshair';
+            }
+        });
     }
 
     /**
