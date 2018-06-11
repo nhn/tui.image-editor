@@ -1,7 +1,6 @@
 import {extend} from 'tui-code-snippet';
 import util from './util';
 import Imagetracer from './helper/imagetracer';
-import resizeHelper from './helper/shapeResizeHelper';
 
 export default {
 
@@ -155,21 +154,53 @@ export default {
      * @private
      */
     _iconAction() {
+        let cacheIconType;
+        let startX;
+        let startY;
+        let iconWidth;
+        let iconHeight;
+        let objId;
+
+        function mouseDown(e, originPointer) {
+            startX = originPointer.x;
+            startY = originPointer.y;
+            this.addIcon(cacheIconType, {
+                left: originPointer.x,
+                top: originPointer.y
+            }).then(obj => {
+                objId = obj.id;
+                iconWidth = obj.width;
+                iconHeight = obj.height;
+                this.on('mousemove', mouseMove.bind(this));
+            });
+        }
+
+        function mouseUp() {
+            this.ui.icon.clearIconType();
+            this.off('mousemove');
+        }
+
+        function mouseMove(e, originPointer) {
+            const scaleX = (originPointer.x - startX) / iconWidth;
+            const scaleY = (originPointer.y - startY) / iconHeight;
+
+            this.setObjectProperties(objId, {
+                originX: (scaleX < 0) ? 'right' : 'left',
+                originY: (scaleY < 0) ? 'bottom' : 'top',
+                scaleX: Math.abs(scaleX),
+                scaleY: Math.abs(scaleY)
+            });
+        }
+
         return extend({
             changeColor: color => {
                 this.changeIconColor(this.activeObjectId, color);
             },
             addIcon: iconType => {
+                cacheIconType = iconType;
                 this.off('mousedown');
-                this.once('mousedown', (e, originPointer) => {
-                    this.addIcon(iconType, {
-                        left: originPointer.x,
-                        top: originPointer.y
-                    }).then(obj => {
-                        console.log('SSS', obj);
-                    });
-                    this.ui.icon.clearIconType();
-                });
+                this.once('mouseup', mouseUp.bind(this));
+                this.once('mousedown', mouseDown.bind(this));
             },
             registDefalutIcons: (type, path) => {
                 const iconObj = {};
@@ -413,8 +444,7 @@ export default {
                     Promise.reject(message)
                 ));
             },
-            objectScaled: obj => {
-                console.log('OBJECTSCALED');
+            objectScaled: (obj, s) => {
                 if (obj.type === 'text') {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 }

@@ -61,6 +61,8 @@ module.exports = {
         ADD_TEXT: 'addText',
         ADD_OBJECT: 'addObject',
         MOUSE_DOWN: 'mousedown',
+        MOUSE_UP: 'mouseup',
+        MOUSE_MOVE: 'mousemove',
         // UNDO/REDO Events
         REDO_STACK_CHANGED: 'redoStackChanged',
         UNDO_STACK_CHANGED: 'undoStackChanged',
