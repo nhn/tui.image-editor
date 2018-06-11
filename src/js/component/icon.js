@@ -6,6 +6,7 @@ import fabric from 'fabric/dist/fabric.require';
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
+import resizeHelper from '../helper/shapeResizeHelper';
 import consts from '../consts';
 
 const {rejectMessages} = consts;
@@ -60,6 +61,14 @@ class Icon extends Component {
             }
 
             const icon = this._createIcon(path);
+            icon.startPoint = {
+                x: 30,
+                y: 30
+            };
+            resizeHelper.resize(icon, {
+                x: 700,
+                y: 700
+            });
 
             icon.set(snippet.extend({
                 type: 'icon',

@@ -1,6 +1,7 @@
 import {extend} from 'tui-code-snippet';
 import util from './util';
 import Imagetracer from './helper/imagetracer';
+import resizeHelper from './helper/shapeResizeHelper';
 
 export default {
 
@@ -164,6 +165,8 @@ export default {
                     this.addIcon(iconType, {
                         left: originPointer.x,
                         top: originPointer.y
+                    }).then(obj => {
+                        console.log('SSS', obj);
                     });
                     this.ui.icon.clearIconType();
                 });
@@ -391,7 +394,10 @@ export default {
                     this.ui.changeMenu('text', false);
                     this._changeActivateMode('TEXT');
                 } else if (obj.type === 'icon') {
-                    this.ui.changeMenu('icon', false);
+                    if (this.ui.submenu !== 'icon') {
+                        this.ui.changeMenu('icon', false, false);
+                    }
+
                     this._changeActivateMode('ICON');
                 }
             },
@@ -408,6 +414,7 @@ export default {
                 ));
             },
             objectScaled: obj => {
+                console.log('OBJECTSCALED');
                 if (obj.type === 'text') {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 }

@@ -11,6 +11,7 @@ import {extend, inArray} from 'tui-code-snippet';
 
 const {rejectMessages, eventNames} = consts;
 const KEY_CODES = consts.keyCodes;
+
 const DEFAULT_TYPE = 'rect';
 const DEFAULT_OPTIONS = {
     strokeWidth: 1,
@@ -79,7 +80,7 @@ class Shape extends Component {
          * Using shortcut on drawing shape
          * @type {boolean}
          * @private
-         */
+         *
         this._withShiftKey = false;
 
         /**

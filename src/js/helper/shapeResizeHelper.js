@@ -19,6 +19,10 @@ const DIMENSION_KEYS = {
     triangle: {
         w: 'width',
         h: 'height'
+    },
+    path: {
+        w: 'width',
+        h: 'height'
     }
 };
 
@@ -155,6 +159,8 @@ function adjustDimensionOnMouseMove(pointer, shape) {
     let width = Math.abs(origin.x - pointer.x) / divisor;
     let height = Math.abs(origin.y - pointer.y) / divisor;
 
+    console.log(width, height);
+
     if (width > strokeWidth) {
         width -= strokeWidth / divisor;
     }
@@ -223,6 +229,7 @@ module.exports = {
      */
     adjustOriginToCenter(shape) {
         const centerPoint = shape.getPointByOrigin('center', 'center');
+        console.log("SHAPE",shape);
         const originX = shape.getOriginX();
         const originY = shape.getOriginY();
         const origin = shape.getPointByOrigin(originX, originY);
