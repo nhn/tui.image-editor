@@ -68,6 +68,9 @@ export default class Icon extends Submenu {
         this.actions.cancelAddIcon();
     }
 
+    changeStartMode() {
+    }
+
     /**
      * Change icon color
      * @param {string} color - color for change

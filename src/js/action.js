@@ -200,6 +200,7 @@ export default {
 
         return extend({
             changeColor: color => {
+                console.log(this.activeObjectId);
                 if (this.activeObjectId) {
                     this.changeIconColor(this.activeObjectId, color);
                 }
@@ -447,13 +448,11 @@ export default {
                 } else if (obj.type === 'text') {
                     if (this.ui.submenu !== 'text') {
                         this.ui.changeMenu('text', false, false);
-                        // this._changeActivateMode('TEXT');
                     }
                 } else if (obj.type === 'icon') {
                     if (this.ui.submenu !== 'icon') {
                         this.ui.changeMenu('icon', false, false);
                     }
-                    this._changeActivateMode('ICON');
                     this.ui.icon.setIconStatus({
                         iconColor: obj.fill
                     });
