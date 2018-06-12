@@ -46,6 +46,11 @@ export default class Text extends Submenu {
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
+    changeStartMode() {
+        this.actions.modeChange('text');
+        this.actions.mouseDownListener();
+    }
+
     /**
      * Get text color
      * @returns {string} - text color
@@ -87,7 +92,6 @@ export default class Text extends Submenu {
 
         this.effect[styleType] = !this.effect[styleType];
         button.classList.toggle('active');
-
         this.actions.changeTextStyle(styleObj);
     }
 

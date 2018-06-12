@@ -84,6 +84,7 @@ class ImageEditor {
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
             textEditing: this._onTextEditing.bind(this),
+            textExit: this._onTextExit.bind(this),
             textChanged: this._onTextChanged.bind(this),
             selectionCleared: this._selectionCleared.bind(this)
         };
@@ -212,6 +213,7 @@ class ImageEditor {
             'addText': this._handlers.addText,
             'addObject': this._handlers.addObject,
             'textEditing': this._handlers.textEditing,
+            'textExit': this._handlers.textExit,
             'textChanged': this._handlers.textChanged,
             'selectionCleared': this._handlers.selectionCleared
         });
@@ -530,12 +532,14 @@ class ImageEditor {
      * imageEditor.stopDrawingMode();
      */
     stopDrawingMode() {
+        console.log('STOPDRAWINGMODE');
         this._graphics.stopDrawingMode();
     }
 
     /**
      * Crop this image with rect
-     * @param {Object} rect crop rect
+     * @param {Object}
+ rect crop rect
      *  @param {Number} rect.left left position
      *  @param {Number} rect.top top position
      *  @param {Number} rect.width width
@@ -895,9 +899,15 @@ class ImageEditor {
      */
     _changeActivateMode(type) {
         if (type === 'ICON') {
-            this.stopDrawingMode();
+            if (this.activeObjectId) {
+                this.activeObjectId = null;
+                this.stopDrawingMode();
+            }
         } else if (this.getDrawingMode() !== type) {
-            this.stopDrawingMode();
+            if (this.activeObjectId) {
+                this.activeObjectId = null;
+                this.stopDrawingMode();
+            }
             this.startDrawingMode(type);
         }
     }
@@ -925,6 +935,18 @@ class ImageEditor {
          * });
          */
         this.fire(events.TEXT_EDITING);
+    }
+
+    _onTextExit() {
+        /**
+         * The event which starts to edit text object
+         * @event ImageEditor#textEditing
+         * @example
+         * imageEditor.on('textEditing', function() {
+         *     console.log('text editing');
+         * });
+         */
+        this.fire(events.TEXT_EXIT);
     }
 
     /**

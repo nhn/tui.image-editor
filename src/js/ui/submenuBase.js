@@ -37,6 +37,10 @@ export default class Submenu {
         console.warn('CHANGESTANDBYMODE');
     }
 
+    changeStartMode() {
+        console.warn('CHANGESTARTMODE');
+    }
+
     /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element

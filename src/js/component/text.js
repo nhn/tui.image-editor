@@ -177,7 +177,6 @@ class Text extends Component {
     add(text, options) {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
-            const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
             let styles = this._defaultStyles;
 
             this._setInitPos(options.position);
@@ -187,8 +186,7 @@ class Text extends Component {
             }
 
             const newText = new fabric.Text(text, styles);
-
-            newText.set(snippet.extend(selectionStyle, this.graphics.controlStyle));
+            newText.set(consts.fObjectOptions.SELECTION_STYLE);
             newText.on({
                 mouseup: this._onFabricMouseUp.bind(this)
             });
@@ -495,6 +493,14 @@ class Text extends Component {
      */
     _onFabricMouseDown(fEvent) {
         const obj = fEvent.target;
+
+        if (!obj && this.isPrevEditing) {
+            this.isPrevEditing = false;
+            this.fire(events.TEXT_EXIT);
+            console.log("TEXT_EXIT_EVENT_FIRE");
+            return;
+        }
+
         if (obj && !obj.isType('text')) {
             return;
         }

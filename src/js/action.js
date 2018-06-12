@@ -30,13 +30,16 @@ export default {
                 this.changeSelectableAll(selectable);
             },
             discardSelection: () => {
-                this.stopDrawingMode();
+                if (this.activeObjectId) {
+                    this.activeObjectId = null;
+                    this.stopDrawingMode();
+                }
                 this.discardSelection();
             },
             modeChange: menu => {
-                this.stopDrawingMode();
                 switch (menu) {
                     case 'text':
+                        console.log('uuu');
                         this._changeActivateMode('TEXT');
                         break;
                     case 'crop':
@@ -287,6 +290,12 @@ export default {
      */
     _textAction() {
         return extend({
+            mouseDownListener: () => {
+                this.on('textExit', () => {
+                    this.stopDrawingMode();
+                    // this.ui.changeMenu('text', false, false);
+                });
+            },
             changeTextStyle: styleObj => {
                 if (this.activeObjectId) {
                     this.changeTextStyle(this.activeObjectId, styleObj);
@@ -351,7 +360,10 @@ export default {
                 }
             },
             cancel: () => {
-                this.stopDrawingMode();
+                if (this.activeObjectId) {
+                    this.activeObjectId = null;
+                    this.stopDrawingMode();
+                }
                 this.ui.changeMenu('crop');
             }
         }, this._commonAction());
@@ -410,6 +422,8 @@ export default {
             },
             objectActivated: obj => {
                 this.activeObjectId = obj.id;
+                console.log("OBJECTACTIVAQYTEA",this.activeObjectId);
+
 
                 this.ui.changeDeleteButtonEnabled(true);
                 this.ui.changeDeleteAllButtonEnabled(true);
@@ -431,8 +445,9 @@ export default {
                         this.ui.changeMenu(this.ui.submenu, true);
                     }
                 } else if (obj.type === 'text') {
-                    this.ui.changeMenu('text', false);
-                    this._changeActivateMode('TEXT');
+                    if (this.ui.submenu !== 'text') {
+                        this.ui.changeMenu('text', false, false);
+                    }
                 } else if (obj.type === 'icon') {
                     if (this.ui.submenu !== 'icon') {
                         this.ui.changeMenu('icon', false, false);
@@ -455,15 +470,18 @@ export default {
                     Promise.reject(message)
                 ));
             },
-            objectScaled: (obj, s) => {
+            objectScaled: obj => {
                 if (obj.type === 'text') {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 }
             },
             selectionCleared: () => {
-                if (this.ui.submenu !== 'draw') {
-                    this.stopDrawingMode();
-                    this.activeObjectId = null;
+                if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'text') {
+                    if (this.activeObjectId) {
+                        console.log('JJJJ', this.activeObjectId);
+                        this.activeObjectId = null;
+                        this.stopDrawingMode();
+                    }
                 }
             }
         });

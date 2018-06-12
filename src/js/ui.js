@@ -442,6 +442,7 @@ export default class Ui {
             this._els[menuName].classList.add('active');
             this._mainElement.classList.add(`tui-image-editor-menu-${menuName}`);
             this.submenu = menuName;
+            this[this.submenu].changeStartMode();
         }
 
         this._subMenuElement.style.display = this.submenu ? 'table' : 'none';
