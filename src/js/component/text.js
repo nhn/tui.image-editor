@@ -144,11 +144,12 @@ class Text extends Component {
      * End input text mode
      */
     end() {
+        console.log('end');
         const canvas = this.getCanvas();
 
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        canvas.deactivateAllWithDispatch(); // action for undo stack
+        // canvas.deactivateAllWithDispatch(); // action for undo stack
         canvas.off({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
@@ -461,6 +462,8 @@ class Text extends Component {
      * @private
      */
     _onFabricSelectClear(fEvent) {
+
+        console.log('---ONFABRICSELECTCLEAR');
         const obj = this.getSelectedObj();
 
         this.isPrevEditing = true;
@@ -544,6 +547,7 @@ class Text extends Component {
      * @private
      */
     _onFabricMouseUp(fEvent) {
+        console.log('ONFABRICMOUSEUP');
         const newClickTime = (new Date()).getTime();
 
         if (this._isDoubleClick(newClickTime)) {

@@ -26,7 +26,11 @@ export default {
 
     _commonAction() {
         return {
+            deactivateAll: () => {
+                this.deactivateAll();
+            },
             changeSelectableAll: selectable => {
+                console.log('changeSelectable', selectable);
                 this.changeSelectableAll(selectable);
             },
             discardSelection: () => {
@@ -39,7 +43,6 @@ export default {
             modeChange: menu => {
                 switch (menu) {
                     case 'text':
-                        console.log('uuu');
                         this._changeActivateMode('TEXT');
                         break;
                     case 'crop':
@@ -290,10 +293,10 @@ export default {
      */
     _textAction() {
         return extend({
-            mouseDownListener: () => {
-                this.on('textExit', () => {
+            textExitListener: () => {
+                this.once('textExit', () => {
                     this.stopDrawingMode();
-                    // this.ui.changeMenu('text', false, false);
+                    this.ui.changeMenu('text', true);
                 });
             },
             changeTextStyle: styleObj => {
@@ -422,8 +425,6 @@ export default {
             },
             objectActivated: obj => {
                 this.activeObjectId = obj.id;
-                console.log("OBJECTACTIVAQYTEA",this.activeObjectId);
-
 
                 this.ui.changeDeleteButtonEnabled(true);
                 this.ui.changeDeleteAllButtonEnabled(true);
@@ -434,7 +435,6 @@ export default {
                     if (this.ui.submenu !== 'shape') {
                         this.ui.changeMenu('shape', false, false);
                     }
-                    this._changeActivateMode('SHAPE');
                     this.ui.shape.setShapeStatus({
                         strokeColor: obj.stroke,
                         strokeWidth: obj.strokeWidth,
@@ -447,6 +447,7 @@ export default {
                 } else if (obj.type === 'text') {
                     if (this.ui.submenu !== 'text') {
                         this.ui.changeMenu('text', false, false);
+                        // this._changeActivateMode('TEXT');
                     }
                 } else if (obj.type === 'icon') {
                     if (this.ui.submenu !== 'icon') {

@@ -401,6 +401,7 @@ class ImageEditor {
      * imageEditor.deactivateAll();
      */
     deactivateAll() {
+        console.log('deactivateall');
         this._graphics.deactivateAll();
         this._graphics.renderAll();
     }

@@ -34,11 +34,9 @@ export default class Submenu {
     }
 
     changeStandbyMode() {
-        console.warn('CHANGESTANDBYMODE');
     }
 
     changeStartMode() {
-        console.warn('CHANGESTARTMODE');
     }
 
     /**
