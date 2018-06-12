@@ -580,6 +580,12 @@ class Graphics {
         canvas.renderAll();
     }
 
+    cancelAddIcon() {
+        const canvas = this.getCanvas();
+        canvas.defaultCursor = 'default';
+        canvas.renderAll();
+    }
+
     /**
      * Whether it has the filter or not
      * @param {string} type - Filter type

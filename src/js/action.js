@@ -155,6 +155,7 @@ export default {
      */
     _iconAction() {
         let cacheIconType;
+        let cacheIconColor;
         let startX;
         let startY;
         let iconWidth;
@@ -166,10 +167,12 @@ export default {
             startY = originPointer.y;
             this.addIcon(cacheIconType, {
                 left: originPointer.x,
-                top: originPointer.y
+                top: originPointer.y,
+                fill: cacheIconColor
             }, {
                 mouseup: () => {
                     this.ui.icon.clearIconType();
+                    this.changeSelectableAll(true);
                 },
                 mousemove: (moveEvent, moveOriginPointer) => {
                     const scaleX = (moveOriginPointer.x - startX) / iconWidth;
@@ -191,13 +194,22 @@ export default {
 
         return extend({
             changeColor: color => {
-                this.changeIconColor(this.activeObjectId, color);
+                if (this.activeObjectId) {
+                    this.changeIconColor(this.activeObjectId, color);
+                }
             },
-            addIcon: iconType => {
+            addIcon: (iconType, iconColor) => {
                 cacheIconType = iconType;
+                cacheIconColor = iconColor;
                 this.readyAddIcon();
                 this.off('mousedown');
                 this.once('mousedown', mouseDown.bind(this));
+            },
+            cancelAddIcon: () => {
+                this.off('mousedown');
+                this.ui.icon.clearIconType();
+                this.changeSelectableAll(true);
+                this.cancelAddIcon();
             },
             registDefalutIcons: (type, path) => {
                 const iconObj = {};
@@ -425,8 +437,10 @@ export default {
                     if (this.ui.submenu !== 'icon') {
                         this.ui.changeMenu('icon', false, false);
                     }
-
                     this._changeActivateMode('ICON');
+                    this.ui.icon.setIconStatus({
+                        iconColor: obj.fill
+                    });
                 }
             },
             addText: pos => {

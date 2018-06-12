@@ -34,6 +34,7 @@ export default class Submenu {
     }
 
     changeStandbyMode() {
+        console.warn('CHANGESTANDBYMODE');
     }
 
     /**

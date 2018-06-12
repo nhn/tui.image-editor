@@ -456,10 +456,8 @@ export default class Ui {
         if (this.options.initMenu) {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
-            setTimeout(() => {
-                this._els[this.options.initMenu].dispatchEvent(evt);
-                this.icon.registDefaultIcon();
-            }, 700);
+            this._els[this.options.initMenu].dispatchEvent(evt);
+            this.icon.registDefaultIcon();
         }
     }
 

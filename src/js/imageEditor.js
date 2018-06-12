@@ -989,6 +989,10 @@ class ImageEditor {
         this._graphics.readyAddIcon();
     }
 
+    cancelAddIcon() {
+        this._graphics.cancelAddIcon();
+    }
+
     /**
      * Add icon on canvas
      * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
