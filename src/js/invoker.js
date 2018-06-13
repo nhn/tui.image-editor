@@ -164,6 +164,8 @@ class Invoker {
         let promise;
         let message = '';
 
+        console.log(command);
+
         if (command && this._isLocked) {
             this.pushUndoStack(command, true);
             command = null;

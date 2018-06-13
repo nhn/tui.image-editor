@@ -49,7 +49,7 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-    constructor(element, cssMaxWidth, cssMaxHeight) {
+    constructor(element, cssMaxWidth, cssMaxHeight, useItext = false, useDragAddIcon = false) {
         /**
          * Fabric image instance
          * @type {fabric.Image}
@@ -67,6 +67,13 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
+
+        /**
+         * Use Itext mode for text component
+         * @type {number}
+         */
+        this.useItext = useItext;
+        this.useDragAddIcon = useDragAddIcon;
 
         /**
          * cropper Selection Style

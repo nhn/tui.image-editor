@@ -61,7 +61,9 @@ class ImageEditor {
         this._graphics = new Graphics(
             this.ui ? this.ui.getEditorArea() : wrapper,
             options.cssMaxWidth,
-            options.cssMaxHeight
+            options.cssMaxHeight,
+            !!this.ui,
+            !!this.ui
         );
 
         if (this.ui) {
@@ -85,6 +87,8 @@ class ImageEditor {
             addObject: this._onAddObject.bind(this),
             textEditing: this._onTextEditing.bind(this),
             textChanged: this._onTextChanged.bind(this),
+            iconCreateResize: this._onIconCreateResize.bind(this),
+            iconCreateEnd: this._onIconCreateEnd.bind(this),
             selectionCleared: this._selectionCleared.bind(this)
         };
 
@@ -213,6 +217,8 @@ class ImageEditor {
             'addObject': this._handlers.addObject,
             'textEditing': this._handlers.textEditing,
             'textChanged': this._handlers.textChanged,
+            'iconCreateResize': this._handlers.iconCreateResize,
+            'iconCreateEnd': this._handlers.iconCreateEnd,
             'selectionCleared': this._handlers.selectionCleared
         });
     }
@@ -399,15 +405,24 @@ class ImageEditor {
      * imageEditor.deactivateAll();
      */
     deactivateAll() {
-        console.log('deactivateall');
         this._graphics.deactivateAll();
         this._graphics.renderAll();
     }
 
+    /**
+     * discard selction
+     * @example
+     * imageEditor.discardSelection();
+     */
     discardSelection() {
         this._graphics.discardSelection();
     }
 
+    /**
+     * selectable status change
+     * @param {boolean} selectable - selctable status
+     * imageEditor.changeSelectableAll();
+     */
     changeSelectableAll(selectable) {
         this._graphics.changeSelectableAll(selectable);
     }
@@ -420,6 +435,7 @@ class ImageEditor {
      * @private
      */
     execute(commandName, ...args) {
+        console.log(commandName);
         // Inject an Graphics instance as first parameter
         const theArgs = [this._graphics].concat(args);
 
@@ -896,7 +912,6 @@ class ImageEditor {
      * @private
      */
     _changeActivateMode(type) {
-        console.log("JINWOO", this.getDrawingMode(), type);
         if (type !== 'ICON' && this.getDrawingMode() !== type) {
             this.startDrawingMode(type);
         }
@@ -909,6 +924,14 @@ class ImageEditor {
      */
     _onTextChanged(objectProps) {
         this.changeText(objectProps.id, objectProps.text);
+    }
+
+    _onIconCreateResize(resizeInfo) {
+        this.fire(events.ICON_CREATE_RESIZE, resizeInfo);
+    }
+
+    _onIconCreateEnd(resizeInfo) {
+        this.fire(events.ICON_CREATE_END, resizeInfo);
     }
 
     /**
@@ -1011,12 +1034,12 @@ class ImageEditor {
      *     console.log(objectProps.id);
      * });
      */
-    addIcon(type, options, eventHandler) {
+    addIcon(type, options) {
         options = options || {};
 
         this._setPositions(options);
 
-        return this.execute(commands.ADD_ICON, type, options, eventHandler);
+        return this.execute(commands.ADD_ICON, type, options);
     }
 
     /**
@@ -1208,6 +1231,10 @@ class ImageEditor {
      */
     setObjectProperties(id, keyValue) {
         return this.execute(commands.SET_OBJECT_PROPERTIES, id, keyValue);
+    }
+
+    setObjectPropertiesQuietly(id, keyValue) {
+        this._graphics.setObjectProperties(id, keyValue);
     }
 
     /**

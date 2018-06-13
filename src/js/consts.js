@@ -58,6 +58,8 @@ module.exports = {
         OBJECT_SCALED: 'objectScaled',
         TEXT_EDITING: 'textEditing',
         TEXT_CHANGED: 'textChanged',
+        ICON_CREATE_RESIZE: 'iconCreateResize',
+        ICON_CREATE_END: 'iconCreateEnd',
         ADD_TEXT: 'addText',
         ADD_OBJECT: 'addObject',
         MOUSE_DOWN: 'mousedown',

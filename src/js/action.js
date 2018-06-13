@@ -47,9 +47,6 @@ export default {
                         this._changeActivateMode('SHAPE');
                         this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
                         break;
-                    case 'draw':
-                        this.ui.draw.setDrawMode();
-                        break;
                     default:
                         break;
                 }
@@ -163,27 +160,30 @@ export default {
         let iconHeight;
         let objId;
 
+        this.on({
+            'iconCreateResize': ({moveOriginPointer}) => {
+                const scaleX = (moveOriginPointer.x - startX) / iconWidth;
+                const scaleY = (moveOriginPointer.y - startY) / iconHeight;
+
+                this.setObjectPropertiesQuietly(objId, {
+                    scaleX: Math.abs(scaleX * 2),
+                    scaleY: Math.abs(scaleY * 2)
+                });
+            },
+            'iconCreateEnd': () => {
+                this.ui.icon.clearIconType();
+                this.changeSelectableAll(true);
+            }
+        });
+
         function mouseDown(e, originPointer) {
             startX = originPointer.x;
             startY = originPointer.y;
+
             this.addIcon(cacheIconType, {
                 left: originPointer.x,
                 top: originPointer.y,
                 fill: cacheIconColor
-            }, {
-                mouseup: () => {
-                    this.ui.icon.clearIconType();
-                    this.changeSelectableAll(true);
-                },
-                mousemove: (moveEvent, moveOriginPointer) => {
-                    const scaleX = (moveOriginPointer.x - startX) / iconWidth;
-                    const scaleY = (moveOriginPointer.y - startY) / iconHeight;
-
-                    this.setObjectProperties(objId, {
-                        scaleX: Math.abs(scaleX * 2),
-                        scaleY: Math.abs(scaleY * 2)
-                    });
-                }
             }).then(obj => {
                 objId = obj.id;
                 iconWidth = obj.width;

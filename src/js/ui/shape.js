@@ -79,6 +79,7 @@ export default class Shape extends Submenu {
         this._els.shapeSelectButton.classList.remove('triangle');
         this._els.shapeSelectButton.classList.remove('rect');
     }
+
     changeStartMode() {
         this.actions.stopDrawingMode();
     }
