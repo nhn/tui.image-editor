@@ -30,14 +30,9 @@ export default {
                 this.deactivateAll();
             },
             changeSelectableAll: selectable => {
-                console.log('changeSelectable', selectable);
                 this.changeSelectableAll(selectable);
             },
             discardSelection: () => {
-                if (this.activeObjectId) {
-                    this.activeObjectId = null;
-                    this.stopDrawingMode();
-                }
                 this.discardSelection();
             },
             modeChange: menu => {
@@ -185,10 +180,8 @@ export default {
                     const scaleY = (moveOriginPointer.y - startY) / iconHeight;
 
                     this.setObjectProperties(objId, {
-                        originX: (scaleX < 0) ? 'right' : 'left',
-                        originY: (scaleY < 0) ? 'bottom' : 'top',
-                        scaleX: Math.abs(scaleX),
-                        scaleY: Math.abs(scaleY)
+                        scaleX: Math.abs(scaleX * 2),
+                        scaleY: Math.abs(scaleY * 2)
                     });
                 }
             }).then(obj => {
@@ -200,7 +193,6 @@ export default {
 
         return extend({
             changeColor: color => {
-                console.log(this.activeObjectId);
                 if (this.activeObjectId) {
                     this.changeIconColor(this.activeObjectId, color);
                 }
@@ -294,13 +286,8 @@ export default {
      */
     _textAction() {
         return extend({
-            textExitListener: () => {
-                this.once('textExit', () => {
-                    this.stopDrawingMode();
-                    this.ui.changeMenu('text', true);
-                });
-            },
             changeTextStyle: styleObj => {
+                console.log(this.activeObjectId, 'ss3');
                 if (this.activeObjectId) {
                     this.changeTextStyle(this.activeObjectId, styleObj);
                 }
@@ -364,10 +351,7 @@ export default {
                 }
             },
             cancel: () => {
-                if (this.activeObjectId) {
-                    this.activeObjectId = null;
-                    this.stopDrawingMode();
-                }
+                this.stopDrawingMode();
                 this.ui.changeMenu('crop');
             }
         }, this._commonAction());
@@ -431,8 +415,10 @@ export default {
                 this.ui.changeDeleteAllButtonEnabled(true);
 
                 if (obj.type === 'cropzone') {
+                    this.stopDrawingMode();
                     this.ui.crop.changeApplyButtonStatus(true);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+                    this.stopDrawingMode();
                     if (this.ui.submenu !== 'shape') {
                         this.ui.changeMenu('shape', false, false);
                     }
@@ -442,14 +428,16 @@ export default {
                         fillColor: obj.fill
                     });
                 } else if (obj.type === 'path' || obj.type === 'line') {
+                    this.stopDrawingMode();
                     if (this.ui.submenu) {
                         this.ui.changeMenu(this.ui.submenu, true);
                     }
-                } else if (obj.type === 'text') {
+                } else if (obj.type === 'i-text') {
                     if (this.ui.submenu !== 'text') {
                         this.ui.changeMenu('text', false, false);
                     }
                 } else if (obj.type === 'icon') {
+                    this.stopDrawingMode();
                     if (this.ui.submenu !== 'icon') {
                         this.ui.changeMenu('icon', false, false);
                     }
@@ -471,17 +459,16 @@ export default {
                 ));
             },
             objectScaled: obj => {
-                if (obj.type === 'text') {
+                if (obj.type === 'i-text') {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 }
             },
             selectionCleared: () => {
-                if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'text') {
-                    if (this.activeObjectId) {
-                        console.log('JJJJ', this.activeObjectId);
-                        this.activeObjectId = null;
-                        this.stopDrawingMode();
-                    }
+                if (this.ui.submenu !== 'draw') {
+                    this.stopDrawingMode();
+                }
+                if (this.ui.submenu === 'text') {
+                    this.ui.changeMenu('text', true, false);
                 }
             }
         });

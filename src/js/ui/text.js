@@ -48,7 +48,6 @@ export default class Text extends Submenu {
 
     changeStartMode() {
         this.actions.modeChange('text');
-        this.actions.textExitListener();
     }
 
     /**

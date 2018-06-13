@@ -128,15 +128,25 @@ class Text extends Component {
 
         canvas.selection = false;
         canvas.defaultCursor = 'text';
+        canvas.forEachObject(obj => {
+            if (obj.type === 'i-text') {
+                obj.set({
+                    left: obj.left - (obj.width / 2),
+                    top: obj.top - (obj.height / 2),
+                    originX: 'left',
+                    originY: 'top'
+                });
+            }
+        });
         canvas.on({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
-            'object:scaling': this._listeners.scaling
+            'object:scaling': this._listeners.scaling,
+            'text:editing': this._listeners.modify
         });
 
-        this._createTextarea();
-
+        // this._createTextarea();
         this.setCanvasRatio();
     }
 
@@ -144,20 +154,33 @@ class Text extends Component {
      * End input text mode
      */
     end() {
-        console.log('end');
         const canvas = this.getCanvas();
 
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        // canvas.deactivateAllWithDispatch(); // action for undo stack
+        canvas.forEachObject(obj => {
+            if (obj.type === 'i-text') {
+                if (obj.text === '') {
+                    obj.remove();
+                } else {
+                    obj.set({
+                        left: obj.left + (obj.width / 2),
+                        top: obj.top + (obj.height / 2),
+                        originX: 'center',
+                        originY: 'center'
+                    });
+                }
+            }
+        });
         canvas.off({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
-            'object:scaling': this._listeners.scaling
+            'object:scaling': this._listeners.scaling,
+            'text:editing': this._listeners.modify
         });
 
-        this._removeTextarea();
+        // this._removeTextarea();
     }
 
     /**
@@ -186,8 +209,11 @@ class Text extends Component {
                 styles = snippet.extend(options.styles, styles);
             }
 
-            const newText = new fabric.Text(text, styles);
-            newText.set(consts.fObjectOptions.SELECTION_STYLE);
+            const newText = new fabric.IText(text, styles);
+            newText.set(snippet.extend({}, consts.fObjectOptions.SELECTION_STYLE, {
+                originX: 'left',
+                originY: 'top'
+            }));
             newText.on({
                 mouseup: this._onFabricMouseUp.bind(this)
             });
@@ -462,8 +488,6 @@ class Text extends Component {
      * @private
      */
     _onFabricSelectClear(fEvent) {
-
-        console.log('---ONFABRICSELECTCLEAR');
         const obj = this.getSelectedObj();
 
         this.isPrevEditing = true;
@@ -496,13 +520,6 @@ class Text extends Component {
      */
     _onFabricMouseDown(fEvent) {
         const obj = fEvent.target;
-
-        if (!obj && this.isPrevEditing) {
-            this.isPrevEditing = false;
-            this.fire(events.TEXT_EXIT);
-            console.log("TEXT_EXIT_EVENT_FIRE");
-            return;
-        }
 
         if (obj && !obj.isType('text')) {
             return;
@@ -547,11 +564,10 @@ class Text extends Component {
      * @private
      */
     _onFabricMouseUp(fEvent) {
-        console.log('ONFABRICMOUSEUP');
         const newClickTime = (new Date()).getTime();
 
         if (this._isDoubleClick(newClickTime)) {
-            this._changeToEditingMode(fEvent.target);
+            // this._changeToEditingMode(fEvent.target);
             this.fire(events.TEXT_EDITING); // fire editing text event
         }
 

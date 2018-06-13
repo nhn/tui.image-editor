@@ -91,12 +91,12 @@ export default class Shape extends Submenu {
     _changeShape(event) {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
+            this.actions.stopDrawingMode();
             this.actions.discardSelection();
             this.changeStandbyMode();
             const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
 
             if (this.type === shapeType) {
-                this.actions.stopDrawingMode();
                 this.type = null;
 
                 return;
@@ -104,8 +104,8 @@ export default class Shape extends Submenu {
 
             this.type = shapeType;
             event.currentTarget.classList.add(shapeType);
-            this.actions.modeChange('shape');
             this.actions.changeSelectableAll(false);
+            this.actions.modeChange('shape');
         }
     }
 

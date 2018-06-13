@@ -43,6 +43,7 @@ export default class Ui {
 
         this._actions = actions;
         this.submenu = false;
+        this.submenuTransection = false;
         this.imageSize = {};
         this.uiSize = {};
 
@@ -425,6 +426,11 @@ export default class Ui {
      * @param {boolean} discardSelection - discard selection
      */
     changeMenu(menuName, toggle = true, discardSelection = true) {
+        if (this.submenuTransection) {
+            return;
+        }
+        this.submenuTransection = true;
+
         if (this.submenu) {
             this._els[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(`tui-image-editor-menu-${this.submenu}`);
@@ -432,12 +438,11 @@ export default class Ui {
                 this._actions.main.discardSelection();
             }
             this._actions.main.changeSelectableAll(true);
-
             this[this.submenu].changeStandbyMode();
         }
 
         if (this.submenu === menuName && toggle) {
-            this.submenu = '';
+            this.submenu = null;
         } else {
             this._els[menuName].classList.add('active');
             this._mainElement.classList.add(`tui-image-editor-menu-${menuName}`);
@@ -447,6 +452,8 @@ export default class Ui {
 
         this._subMenuElement.style.display = this.submenu ? 'table' : 'none';
         this.resizeEditor();
+
+        this.submenuTransection = false;
     }
 
     /**
