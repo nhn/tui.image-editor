@@ -20,20 +20,25 @@ export default class Crop extends Submenu {
         };
     }
 
+    changeStartMode() {
+        this.actions.modeChange('crop');
+    }
+
     /**
      * Add event for crop
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.crop - crop action
      *   @param {Function} actions.cancel - cancel action
      */
-    addEvent({crop, cancel}) {
+    addEvent(actions) {
+        this.actions = actions;
         this._els.apply.addEventListener('click', () => {
-            crop();
+            this.actions.crop();
             this._els.apply.classList.remove('active');
         });
 
         this._els.cancel.addEventListener('click', () => {
-            cancel();
+            this.actions.cancel();
             this._els.apply.classList.remove('active');
         });
     }

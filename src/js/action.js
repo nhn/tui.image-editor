@@ -382,7 +382,6 @@ export default {
                 this.ui.changeDeleteAllButtonEnabled(true);
 
                 if (obj.type === 'cropzone') {
-                    this.stopDrawingMode();
                     this.ui.crop.changeApplyButtonStatus(true);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
                     this.stopDrawingMode();
@@ -449,7 +448,7 @@ export default {
                 }
             },
             selectionCleared: () => {
-                if (this.ui.submenu !== 'draw') {
+                if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop') {
                     this.stopDrawingMode();
                 }
                 if (this.ui.submenu === 'text') {
