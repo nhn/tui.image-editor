@@ -30,7 +30,7 @@ var blackTheme = {
     'menu.activeIcon.name': 'icon-a',
 
     // submenu primary color
-    'submenu.backgroundColor': 'transparent',
+    'submenu.backgroundColor': '#1e1e1e',
     'submenu.partition.color': '#858585',
 
     // submenu icons

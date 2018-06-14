@@ -92,6 +92,15 @@ export default class Shape extends Submenu {
         this._els.strokeRange.max = strokeMaxValue;
     }
 
+    getStrokeValue() {
+        return this._els.strokeRange.value;
+    }
+
+    setStrokeValue(value) {
+        this._els.strokeRange.value = value;
+        this._els.strokeRange.trigger('change');
+    }
+
     /**
      * Change icon color
      * @param {object} event - add button event object

@@ -33,6 +33,10 @@ class Range {
         this.value = this._value;
     }
 
+    get max() {
+        return this._max;
+    }
+
     /**
      * Get range value
      * @returns {Number} range value

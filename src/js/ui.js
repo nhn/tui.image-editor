@@ -128,14 +128,6 @@ export default class Ui {
         this._editorElementWrap.style.top = `${top}px`;
         this._editorElementWrap.style.left = `${left}px`;
         this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
-
-        const {offsetWidth, offsetHeight} = this._editorElementWrap;
-
-        const editortop = (offsetHeight > height) ? (offsetHeight - height) / 2 : 0;
-        const editorleft = (offsetWidth - width) / 2;
-
-        this._editorElement.style.top = `${editortop}px`;
-        this._editorElement.style.left = `${editorleft}px`;
     }
 
     /**
@@ -460,7 +452,6 @@ export default class Ui {
             this[this.submenu].changeStartMode();
         }
 
-        this._subMenuElement.style.display = this.submenu ? 'table' : 'none';
         this.resizeEditor();
     }
 

@@ -437,9 +437,15 @@ export default {
                 if (obj.type === 'i-text') {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
-                    this.ui.shape._els.strokeRange.max = Math.min(obj.width, obj.height) - 1;
-                    this.ui.shape.setMaxStrokeValue(obj);
-                    // here job remaining
+                    const {width, height} = obj;
+                    const strokeValue = this.ui.shape.getStrokeValue();
+
+                    if (width < strokeValue) {
+                        this.ui.shape.setStrokeValue(width);
+                    }
+                    if (height < strokeValue) {
+                        this.ui.shape.setStrokeValue(height);
+                    }
                 }
             },
             selectionCleared: () => {
