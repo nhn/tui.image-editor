@@ -72,11 +72,11 @@ describe('Ui', () => {
 
         it('removeObject() API should be executed When the delete action occurs', () => {
             imageEditorMock.activeObjectId = 10;
-            spyOn(imageEditorMock, 'removeObject');
+            spyOn(imageEditorMock, 'reomveActiveObject');
 
             mainAction['delete']();
 
-            expect(imageEditorMock.removeObject).toHaveBeenCalled();
+            expect(imageEditorMock.reomveActiveObject).toHaveBeenCalled();
             expect(imageEditorMock.activeObjectId).toBe(null);
         });
 
@@ -128,21 +128,12 @@ describe('Ui', () => {
             });
 
             it('stopDrawingMode(), setDrawingShape(), _changeActivateMode()  API should be executed When the modeChange("shape") action occurs', () => {
-                spyOn(imageEditorMock, 'stopDrawingMode');
                 spyOn(imageEditorMock, 'setDrawingShape');
                 spyOn(imageEditorMock, '_changeActivateMode');
 
                 mainAction.modeChange('shape');
-                expect(imageEditorMock.stopDrawingMode).toHaveBeenCalled();
                 expect(imageEditorMock.setDrawingShape).toHaveBeenCalled();
                 expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
-            });
-
-            it('ui.draw.setDrawMode API should be executed When the modeChange("draw") action occurs', () => {
-                spyOn(imageEditorMock.ui.draw, 'setDrawMode');
-
-                mainAction.modeChange('draw');
-                expect(imageEditorMock.ui.draw.setDrawMode).toHaveBeenCalled();
             });
         });
     });
@@ -199,9 +190,11 @@ describe('Ui', () => {
 
         it('stopDrawingMode() API should be executed When the cancel action occurs', () => {
             spyOn(imageEditorMock, 'stopDrawingMode');
+            spyOn(imageEditorMock.ui, 'changeMenu');
 
             cropAction.cancel();
             expect(imageEditorMock.stopDrawingMode).toHaveBeenCalled();
+            expect(imageEditorMock.ui.changeMenu).toHaveBeenCalled();
         });
     });
 
@@ -308,11 +301,15 @@ describe('Ui', () => {
         });
 
         it('add once event mousedown should be executed When the addIcon action occurs', () => {
-            spyOn(imageEditorMock, 'once').and.callThrough();
-            spyOn(imageEditorMock, 'addIcon');
+            const promise = new Promise(resolve => {
+                resolve(300);
+            });
+
+            spyOn(imageEditorMock, 'readyAddIcon');
+            spyOn(imageEditorMock, 'addIcon').and.returnValue(promise);
 
             iconAction.addIcon('iconTypeA');
-            expect(imageEditorMock.once).toHaveBeenCalled();
+            expect(imageEditorMock.readyAddIcon).toHaveBeenCalled();
 
             imageEditorMock.fire('mousedown', null, {
                 x: 10,
@@ -320,14 +317,6 @@ describe('Ui', () => {
             });
             expected = imageEditorMock.addIcon.calls.mostRecent().args[0];
             expect(expected).toBe('iconTypeA');
-        });
-
-        it('registerIcons() API should be executed When the registDefalutIcons action occurs', () => {
-            spyOn(imageEditorMock, 'registerIcons');
-            iconAction.registDefalutIcons('testType1', 'M1,20L2,10');
-
-            expected = imageEditorMock.registerIcons.calls.mostRecent().args[0];
-            expect(expected).toEqual({'testType1': 'M1,20L2,10'});
         });
     });
 
