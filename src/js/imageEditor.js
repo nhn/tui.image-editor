@@ -85,6 +85,7 @@ class ImageEditor {
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
+            addObjectAfter: this._onAddObjectAfter.bind(this),
             textEditing: this._onTextEditing.bind(this),
             textChanged: this._onTextChanged.bind(this),
             iconCreateResize: this._onIconCreateResize.bind(this),
@@ -234,7 +235,8 @@ class ImageEditor {
             'iconCreateResize': this._handlers.iconCreateResize,
             'iconCreateEnd': this._handlers.iconCreateEnd,
             'selectionCleared': this._handlers.selectionCleared,
-            'selectionCreated': this._handlers.selectionCreated
+            'selectionCreated': this._handlers.selectionCreated,
+            'addObjectAfter': this._handlers.addObjectAfter
         });
     }
 
@@ -1033,6 +1035,10 @@ class ImageEditor {
     _onAddObject(objectProps) {
         const obj = this._graphics.getObject(objectProps.id);
         this._pushAddObjectCommand(obj);
+    }
+
+    _onAddObjectAfter(objectProps) {
+        this.fire(events.ADD_OBJECT_AFTER, objectProps);
     }
 
     _selectionCleared() {

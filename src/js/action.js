@@ -24,37 +24,6 @@ export default {
         };
     },
 
-    _commonAction() {
-        return {
-            deactivateAll: () => {
-                this.deactivateAll();
-            },
-            changeSelectableAll: selectable => {
-                this.changeSelectableAll(selectable);
-            },
-            discardSelection: () => {
-                this.discardSelection();
-            },
-            modeChange: menu => {
-                switch (menu) {
-                    case 'text':
-                        this._changeActivateMode('TEXT');
-                        break;
-                    case 'crop':
-                        this.startDrawingMode('CROPPER');
-                        break;
-                    case 'shape':
-                        this._changeActivateMode('SHAPE');
-                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
-                        break;
-                    default:
-                        break;
-                }
-            },
-            stopDrawingMode: this.stopDrawingMode.bind(this)
-        };
-    },
-
     /**
      * Main Action
      * @returns {Object} actions for ui main
@@ -425,6 +394,8 @@ export default {
                         strokeWidth: obj.strokeWidth,
                         fillColor: obj.fill
                     });
+
+                    this.ui.shape.setMaxStrokeValue(obj);
                 } else if (obj.type === 'path' || obj.type === 'line') {
                     this.stopDrawingMode();
                     if (this.ui.submenu) {
@@ -457,9 +428,18 @@ export default {
                     Promise.reject(message)
                 ));
             },
+            addObjectAfter: obj => {
+                if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+                    this.ui.shape.setMaxStrokeValue(obj);
+                }
+            },
             objectScaled: obj => {
                 if (obj.type === 'i-text') {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
+                } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
+                    this.ui.shape._els.strokeRange.max = Math.min(obj.width, obj.height) - 1;
+                    this.ui.shape.setMaxStrokeValue(obj);
+                    // here job remaining
                 }
             },
             selectionCleared: () => {
@@ -471,6 +451,36 @@ export default {
                 }
             }
         });
+    },
+
+    /**
+     * Common Action
+     * @returns {Object} common actions for ui
+     * @private
+     */
+    _commonAction() {
+        return {
+            modeChange: menu => {
+                switch (menu) {
+                    case 'text':
+                        this._changeActivateMode('TEXT');
+                        break;
+                    case 'crop':
+                        this.startDrawingMode('CROPPER');
+                        break;
+                    case 'shape':
+                        this._changeActivateMode('SHAPE');
+                        this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+                        break;
+                    default:
+                        break;
+                }
+            },
+            deactivateAll: this.deactivateAll.bind(this),
+            changeSelectableAll: this.changeSelectableAll.bind(this),
+            discardSelection: this.discardSelection.bind(this),
+            stopDrawingMode: this.stopDrawingMode.bind(this)
+        };
     },
 
     /**

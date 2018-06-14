@@ -56,12 +56,14 @@ module.exports = {
         OBJECT_ACTIVATED: 'objectActivated',
         OBJECT_MOVED: 'objectMoved',
         OBJECT_SCALED: 'objectScaled',
+        OBJECT_CREATED: 'objectCreated',
         TEXT_EDITING: 'textEditing',
         TEXT_CHANGED: 'textChanged',
         ICON_CREATE_RESIZE: 'iconCreateResize',
         ICON_CREATE_END: 'iconCreateEnd',
         ADD_TEXT: 'addText',
         ADD_OBJECT: 'addObject',
+        ADD_OBJECT_AFTER: 'addObjectAfter',
         MOUSE_DOWN: 'mousedown',
         MOUSE_UP: 'mouseup',
         MOUSE_MOVE: 'mousemove',
@@ -162,7 +164,7 @@ module.exports = {
 
     defaultShapeStrokeValus: {
         realTimeEvent: true,
-        min: 0,
+        min: 2,
         max: 300,
         value: 3
     },

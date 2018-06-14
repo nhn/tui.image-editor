@@ -44,10 +44,10 @@ export default class Shape extends Submenu {
     addEvent(actions) {
         this.actions = actions;
 
-        this._els.shapeSelectButton.addEventListener('click', this._changeShape.bind(this));
-        this._els.strokeRange.on('change', this._changeStrokeRange.bind(this));
-        this._els.fillColorpicker.on('change', this._changeFillColor.bind(this));
-        this._els.strokeColorpicker.on('change', this._changeStrokeColor.bind(this));
+        this._els.shapeSelectButton.addEventListener('click', this._changeShapeHandler.bind(this));
+        this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
+        this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
+        this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
         this._els.strokeRangeValue.value = this._els.strokeRange.value;
         this._els.strokeRangeValue.setAttribute('readonly', true);
     }
@@ -84,12 +84,20 @@ export default class Shape extends Submenu {
         this.actions.stopDrawingMode();
     }
 
+    setMaxStrokeValue(obj) {
+        let strokeMaxValue = Math.min(obj.width, obj.height);
+        if (strokeMaxValue <= 0) {
+            strokeMaxValue = defaultShapeStrokeValus.max;
+        }
+        this._els.strokeRange.max = strokeMaxValue;
+    }
+
     /**
      * Change icon color
      * @param {object} event - add button event object
      * @private
      */
-    _changeShape(event) {
+    _changeShapeHandler(event) {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             this.actions.stopDrawingMode();
@@ -115,7 +123,7 @@ export default class Shape extends Submenu {
      * @param {number} value - stroke range value
      * @private
      */
-    _changeStrokeRange(value) {
+    _changeStrokeRangeHandler(value) {
         this.options.strokeWidth = toInteger(value);
         this._els.strokeRangeValue.value = toInteger(value);
 
@@ -131,7 +139,7 @@ export default class Shape extends Submenu {
      * @param {string} color - fill color
      * @private
      */
-    _changeFillColor(color) {
+    _changeFillColorHandler(color) {
         color = color || 'transparent';
         this.options.fill = color;
         this.actions.changeShape({
@@ -144,7 +152,7 @@ export default class Shape extends Submenu {
      * @param {string} color - fill color
      * @private
      */
-    _changeStrokeColor(color) {
+    _changeStrokeColorHandler(color) {
         color = color || 'transparent';
         this.options.stroke = color;
         this.actions.changeShape({
