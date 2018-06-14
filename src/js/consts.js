@@ -68,7 +68,8 @@ module.exports = {
         // UNDO/REDO Events
         REDO_STACK_CHANGED: 'redoStackChanged',
         UNDO_STACK_CHANGED: 'undoStackChanged',
-        SELECTION_CLEARED: 'selectionCleared'
+        SELECTION_CLEARED: 'selectionCleared',
+        SELECTION_CREATED: 'selectionCreated'
     },
 
     /**

@@ -135,7 +135,8 @@ class Graphics {
             onObjectScaled: this._onObjectScaled.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
             onPathCreated: this._onPathCreated.bind(this),
-            onSelectionCleared: this._onSelectionCleared.bind(this)
+            onSelectionCleared: this._onSelectionCleared.bind(this),
+            onSelectionCreated: this._onSelectionCreated.bind(this)
         };
 
         this._setCanvasElement(element);
@@ -290,6 +291,10 @@ class Graphics {
      */
     getActiveObject() {
         return this._canvas.getActiveObject();
+    }
+
+    getActiveGroup() {
+        return this._canvas.getActiveGroup();
     }
 
     /**
@@ -869,7 +874,8 @@ class Graphics {
             'object:scaling': handler.onObjectScaled,
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
-            'selection:cleared': handler.onSelectionCleared
+            'selection:cleared': handler.onSelectionCleared,
+            'selection:created': handler.onSelectionCreated
         });
     }
 
@@ -959,6 +965,12 @@ class Graphics {
 
     _onSelectionCleared() {
         this.fire(events.SELECTION_CLEARED);
+    }
+
+    _onSelectionCreated(fEvent) {
+        const {target} = fEvent;
+
+        this.fire(events.SELECTION_CREATED, target);
     }
 
     discardSelection() {

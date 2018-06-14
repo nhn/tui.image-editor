@@ -99,11 +99,9 @@ export default {
             },
             delete: () => {
                 this.ui.changeDeleteButtonEnabled(false);
-                if (this.activeObjectId) {
-                    exitCropOnAction();
-                    this.removeObject(this.activeObjectId);
-                    this.activeObjectId = null;
-                }
+                exitCropOnAction();
+                this.reomveActiveObject();
+                this.activeObjectId = null;
             },
             deleteAll: () => {
                 exitCropOnAction();
@@ -176,7 +174,7 @@ export default {
             }
         });
 
-        function mouseDown(e, originPointer) {
+        const mouseDown = (e, originPointer) => {
             startX = originPointer.x;
             startY = originPointer.y;
 
@@ -189,7 +187,7 @@ export default {
                 iconWidth = obj.width;
                 iconHeight = obj.height;
             });
-        }
+        };
 
         return extend({
             changeColor: color => {
@@ -287,7 +285,6 @@ export default {
     _textAction() {
         return extend({
             changeTextStyle: styleObj => {
-                console.log(this.activeObjectId, 'ss3');
                 if (this.activeObjectId) {
                     this.changeTextStyle(this.activeObjectId, styleObj);
                 }
@@ -408,6 +405,7 @@ export default {
                 }
                 this.ui.resizeEditor();
             },
+            /* eslint-disable complexity */
             objectActivated: obj => {
                 this.activeObjectId = obj.id;
 
@@ -446,6 +444,7 @@ export default {
                     });
                 }
             },
+            /* eslint-enable complexity */
             addText: pos => {
                 this.addText('Double Click', {
                     position: pos.originPosition

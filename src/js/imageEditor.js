@@ -89,13 +89,17 @@ class ImageEditor {
             textChanged: this._onTextChanged.bind(this),
             iconCreateResize: this._onIconCreateResize.bind(this),
             iconCreateEnd: this._onIconCreateEnd.bind(this),
-            selectionCleared: this._selectionCleared.bind(this)
+            selectionCleared: this._selectionCleared.bind(this),
+            selectionCreated: this._selectionCreated.bind(this)
         };
 
         this._attachInvokerEvents();
         this._attachGraphicsEvents();
         this._attachDomEvents();
-        this._setSelectionStyle(options.selectionStyle, options.applyCropSelectionStyle);
+        this._setSelectionStyle(options.selectionStyle, {
+            applyCropSelectionStyle: options.applyCropSelectionStyle,
+            applyGroupSelectionStyle: options.applyGroupSelectionStyle
+        });
 
         if (options.usageStatistics) {
             sendHostName();
@@ -158,16 +162,26 @@ class ImageEditor {
     /**
      * Set selection style by init option
      * @param {Object} selectionStyle - Selection styles
-     * @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
+     * @param {Object} applyTargets - Selection apply targets
+     *   @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
+     *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
      * @private
      */
-    _setSelectionStyle(selectionStyle, applyCropSelectionStyle) {
+    _setSelectionStyle(selectionStyle, {applyCropSelectionStyle, applyGroupSelectionStyle}) {
         if (selectionStyle) {
             this._graphics.setSelectionStyle(selectionStyle);
         }
 
         if (applyCropSelectionStyle) {
             this._graphics.setCropSelectionStyle(selectionStyle);
+        }
+
+        if (applyGroupSelectionStyle) {
+            this.on('selectionCreated', eventTarget => {
+                if (eventTarget.type === 'group') {
+                    eventTarget.set(selectionStyle);
+                }
+            });
         }
     }
 
@@ -219,7 +233,8 @@ class ImageEditor {
             'textChanged': this._handlers.textChanged,
             'iconCreateResize': this._handlers.iconCreateResize,
             'iconCreateEnd': this._handlers.iconCreateEnd,
-            'selectionCleared': this._handlers.selectionCleared
+            'selectionCleared': this._handlers.selectionCleared,
+            'selectionCreated': this._handlers.selectionCreated
         });
     }
 
@@ -248,9 +263,6 @@ class ImageEditor {
      */
     /* eslint-disable complexity */
     _onKeyDown(e) {
-        const activeObject = this._graphics.getActiveObject();
-        const activeObjectId = this._graphics.getObjectId(activeObject);
-
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             // There is no error message on shortcut when it's empty
             this.undo()['catch'](() => {});
@@ -261,13 +273,45 @@ class ImageEditor {
             this.redo()['catch'](() => {});
         }
 
-        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
-            activeObject) {
+        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL)) {
             e.preventDefault();
-            this.removeObject(activeObjectId);
+            this.reomveActiveObject();
         }
     }
     /* eslint-enable complexity */
+
+    /**
+     * Remove Active Object
+     */
+    reomveActiveObject() {
+        const activeObject = this._graphics.getActiveObject();
+        const activeObjectGroup = this._graphics.getActiveGroup();
+
+        if (activeObjectGroup) {
+            const objects = activeObjectGroup.getObjects();
+            this.discardSelection();
+            this._removeObjectStream(objects);
+        } else if (activeObject) {
+            const activeObjectId = this._graphics.getObjectId(activeObject);
+            this.removeObject(activeObjectId);
+        }
+    }
+
+    /**
+     * RemoveObject Sequential processing for prevent invoke lock
+     * @param {Array.<Object>} targetObjects - target Objects for remove
+     * @private
+     */
+    _removeObjectStream(targetObjects) {
+        if (targetObjects.length === 0) {
+            return;
+        }
+
+        const targetObject = targetObjects.pop();
+        this.removeObject(this._graphics.getObjectId(targetObject)).then(() => {
+            this._removeObjectStream(targetObjects);
+        });
+    }
 
     /**
      * mouse down event handler
@@ -993,6 +1037,10 @@ class ImageEditor {
 
     _selectionCleared() {
         this.fire(events.SELECTION_CLEARED);
+    }
+
+    _selectionCreated(eventTarget) {
+        this.fire(events.SELECTION_CREATED, eventTarget);
     }
 
     /**

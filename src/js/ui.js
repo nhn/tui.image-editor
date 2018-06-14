@@ -43,12 +43,11 @@ export default class Ui {
 
         this._actions = actions;
         this.submenu = false;
-        this.submenuTransection = false;
         this.imageSize = {};
         this.uiSize = {};
-
         this.theme = new Theme(this.options.theme);
 
+        this._submenuChangeTransection = false;
         this._selectedElement = null;
         this._mainElement = null;
         this._editorElementWrap = null;
@@ -84,6 +83,7 @@ export default class Ui {
     setUiDefaultSelectionStyle(option) {
         return snippet.extend({
             applyCropSelectionStyle: true,
+            applyGroupSelectionStyle: true,
             selectionStyle: {
                 cornerStyle: 'circle',
                 cornerSize: 20,
@@ -426,11 +426,21 @@ export default class Ui {
      * @param {boolean} discardSelection - discard selection
      */
     changeMenu(menuName, toggle = true, discardSelection = true) {
-        if (this.submenuTransection) {
-            return;
+        if (!this._submenuChangeTransection) {
+            this._submenuChangeTransection = true;
+            this._changeMenu(menuName, toggle, discardSelection);
+            this._submenuChangeTransection = false;
         }
-        this.submenuTransection = true;
+    }
 
+    /**
+     * change menu
+     * @param {string} menuName - menu name
+     * @param {boolean} toggle - whether toogle or not
+     * @param {boolean} discardSelection - discard selection
+     * @private
+     */
+    _changeMenu(menuName, toggle, discardSelection) {
         if (this.submenu) {
             this._els[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(`tui-image-editor-menu-${this.submenu}`);
@@ -452,8 +462,6 @@ export default class Ui {
 
         this._subMenuElement.style.display = this.submenu ? 'table' : 'none';
         this.resizeEditor();
-
-        this.submenuTransection = false;
     }
 
     /**
