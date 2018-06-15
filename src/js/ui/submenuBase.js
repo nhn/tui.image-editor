@@ -33,11 +33,17 @@ export default class Submenu {
         target.classList.add(addClass);
     }
 
-    changeStandbyMode() {
-    }
+    /**
+     * Interface method whose implementation is optional.
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {}
 
-    changeStartMode() {
-    }
+    /**
+     * Interface method whose implementation is optional.
+     * Executed when the menu starts.
+     */
+    changeStartMode() {}
 
     /**
      * Make submenu dom element

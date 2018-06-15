@@ -18,8 +18,8 @@ export default ({biImage, commonStyle, headerStyle, loadButtonStyle, downloadBut
             <div class="tui-image-editor-submenu" style="${submenuStyle}">
             </div>
             <div class="tui-image-editor-wrap">
-                <div style="display: table;vertical-align: middle; width: 100%; height: 100%">
-                    <div style="display: table-cell;vertical-align: middle;">
+                <div class="tui-image-editor-size-wrap">
+                    <div class="tui-image-editor-align-wrap">
                         <div class="tui-image-editor"></div>
                     </div>
                 </div>

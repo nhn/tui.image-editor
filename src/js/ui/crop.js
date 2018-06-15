@@ -20,14 +20,6 @@ export default class Crop extends Submenu {
         };
     }
 
-    changeStartMode() {
-        this.actions.modeChange('crop');
-    }
-
-    changeStandbyMode() {
-        this.actions.stopDrawingMode();
-    }
-
     /**
      * Add event for crop
      * @param {Object} actions - actions for crop
@@ -45,6 +37,20 @@ export default class Crop extends Submenu {
             this.actions.cancel();
             this._els.apply.classList.remove('active');
         });
+    }
+
+    /**
+     * Executed when the menu starts.
+     */
+    changeStartMode() {
+        this.actions.modeChange('crop');
+    }
+
+    /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.actions.stopDrawingMode();
     }
 
     /**

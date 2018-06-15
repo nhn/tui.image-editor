@@ -70,11 +70,6 @@ export default class Ui {
         this._makeSubMenu();
     }
 
-    _setUiSize(uiSize = this.options.uiSize) {
-        this._selectedElement.style.width = uiSize.width;
-        this._selectedElement.style.height = uiSize.height;
-    }
-
     /**
      * Set Default Selection for includeUI
      * @param {Object} option - imageEditor options
@@ -215,6 +210,18 @@ export default class Ui {
             },
             menuBarPosition: 'bottom'
         }, options);
+    }
+
+    /**
+     * Set ui container size
+     * @param {Object} uiSize - ui dimension
+     *   @param {number} width - width
+     *   @param {number} height - height
+     * @private
+     */
+    _setUiSize(uiSize = this.options.uiSize) {
+        this._selectedElement.style.width = uiSize.width;
+        this._selectedElement.style.height = uiSize.height;
     }
 
     /**

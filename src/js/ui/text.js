@@ -46,6 +46,9 @@ export default class Text extends Submenu {
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
+    /**
+     * Executed when the menu starts.
+     */
     changeStartMode() {
         this.actions.modeChange('text');
     }

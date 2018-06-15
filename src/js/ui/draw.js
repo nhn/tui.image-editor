@@ -56,6 +56,15 @@ export default class Draw extends Submenu {
     }
 
     /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.actions.changeSelectableAll(true);
+        this._els.lineSelectButton.classList.remove('free');
+        this._els.lineSelectButton.classList.remove('line');
+    }
+
+    /**
      * Change draw type event
      * @param {object} event - line select event
      * @private
@@ -78,12 +87,6 @@ export default class Draw extends Submenu {
             this._els.lineSelectButton.classList.add(lineType);
             this.setDrawMode();
         }
-    }
-
-    changeStandbyMode() {
-        this.actions.changeSelectableAll(true);
-        this._els.lineSelectButton.classList.remove('free');
-        this._els.lineSelectButton.classList.remove('line');
     }
 
     /**

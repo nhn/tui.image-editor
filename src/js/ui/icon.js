@@ -59,16 +59,20 @@ export default class Icon extends Submenu {
         });
     }
 
-    setIconStatus({iconColor}) {
+    /**
+     * Set icon picker color
+     * @param {string} iconColor - rgb color string
+     */
+    setIconPickerColor(iconColor) {
         this._els.iconColorpicker.color = iconColor;
     }
 
+    /**
+     * Returns the menu to its default state.
+     */
     changeStandbyMode() {
         this.clearIconType();
         this.actions.cancelAddIcon();
-    }
-
-    changeStartMode() {
     }
 
     /**

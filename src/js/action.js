@@ -396,7 +396,7 @@ export default {
                         fillColor: obj.fill
                     });
 
-                    this.ui.shape.setMaxStrokeValue(obj);
+                    this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
                 } else if (obj.type === 'path' || obj.type === 'line') {
                     this.stopDrawingMode();
                     if (this.ui.submenu) {
@@ -411,9 +411,7 @@ export default {
                     if (this.ui.submenu !== 'icon') {
                         this.ui.changeMenu('icon', false, false);
                     }
-                    this.ui.icon.setIconStatus({
-                        iconColor: obj.fill
-                    });
+                    this.ui.icon.setIconPickerColor(obj.fill);
                 }
             },
             /* eslint-enable complexity */
@@ -431,7 +429,7 @@ export default {
             },
             addObjectAfter: obj => {
                 if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-                    this.ui.shape.setMaxStrokeValue(obj);
+                    this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
                 }
             },
             objectScaled: obj => {

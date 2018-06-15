@@ -72,6 +72,16 @@ export default class Shape extends Submenu {
         this.options.strokeWidth = strokeWidth;
     }
 
+    /**
+     * Executed when the menu starts.
+     */
+    changeStartMode() {
+        this.actions.stopDrawingMode();
+    }
+
+    /**
+     * Returns the menu to its default state.
+     */
     changeStandbyMode() {
         this.type = null;
         this.actions.changeSelectableAll(true);
@@ -80,25 +90,33 @@ export default class Shape extends Submenu {
         this._els.shapeSelectButton.classList.remove('rect');
     }
 
-    changeStartMode() {
-        this.actions.stopDrawingMode();
-    }
-
-    setMaxStrokeValue(obj) {
-        let strokeMaxValue = Math.min(obj.width, obj.height);
+    /**
+     * set range stroke max value
+     * @param {number} maxValue - expect max value for change
+     */
+    setMaxStrokeValue(maxValue) {
+        let strokeMaxValue = maxValue;
         if (strokeMaxValue <= 0) {
             strokeMaxValue = defaultShapeStrokeValus.max;
         }
         this._els.strokeRange.max = strokeMaxValue;
     }
 
-    getStrokeValue() {
-        return this._els.strokeRange.value;
-    }
-
+    /**
+     * Set stroke value
+     * @param {number} value - expect value for strokeRange change
+     */
     setStrokeValue(value) {
         this._els.strokeRange.value = value;
         this._els.strokeRange.trigger('change');
+    }
+
+    /**
+     * Get stroke value
+     * @returns {number} - stroke range value
+     */
+    getStrokeValue() {
+        return this._els.strokeRange.value;
     }
 
     /**
