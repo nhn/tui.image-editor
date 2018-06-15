@@ -24,6 +24,10 @@ export default class Crop extends Submenu {
         this.actions.modeChange('crop');
     }
 
+    changeStandbyMode() {
+        this.actions.stopDrawingMode();
+    }
+
     /**
      * Add event for crop
      * @param {Object} actions - actions for crop

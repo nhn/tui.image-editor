@@ -68,9 +68,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         if (this.options.lineWidth) {
             this._fillInnerRect(ctx);
-            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
-                lineWidth: this.options.lineWidth
-            });
         } else {
             // Black dash line
             this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
@@ -122,11 +119,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         // Outer rectangle
         // Numbers are +/-1 so that overlay edges don't get blurry.
-        ctx.moveTo(x[0] - 1, y[0] - 2);
-        ctx.lineTo(x[3] + 1, y[0] - 2);
+        ctx.moveTo(x[0] - 1, y[0] - 1);
+        ctx.lineTo(x[3] + 1, y[0] - 1);
         ctx.lineTo(x[3] + 1, y[3] + 1);
         ctx.lineTo(x[0] - 1, y[3] + 1);
-        ctx.lineTo(x[0] - 1, y[0] + 1);
+        ctx.lineTo(x[0] - 1, y[0] - 1);
         ctx.closePath();
 
         // Inner rectangle
@@ -154,18 +151,22 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         ctx.save();
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.lineWidth = this.options.lineWidth;
+        ctx.beginPath();
 
         ctx.moveTo(x[0], y[1]);
         ctx.lineTo(x[3], y[1]);
+
         ctx.moveTo(x[0], y[2]);
         ctx.lineTo(x[3], y[2]);
+
         ctx.moveTo(x[1], y[0]);
         ctx.lineTo(x[1], y[3]);
+
         ctx.moveTo(x[2], y[0]);
         ctx.lineTo(x[2], y[3]);
+        ctx.stroke();
         ctx.closePath();
 
-        ctx.stroke();
         ctx.restore();
     },
 
