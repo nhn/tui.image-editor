@@ -111,10 +111,39 @@ body > textarea
         vertical-align: middle;
         white-space: nowrap;
         > .{prefix}-item
+            position: relative;
             display: inline-block;
             border-radius: 2px;
             padding: 7px 8px 3px 8px;
             cursor: pointer;
+        > .{prefix}-item[title]:hover
+            &:before
+                content: '';
+                position: absolute;
+                display: inline-block;
+                margin: 0 auto 0;
+                width: 0;
+                height: 0;
+                border-right: 7px solid transparent;
+                border-top: 7px solid #2f2f2f;
+                border-left: 7px solid transparent;
+                position: absolute;
+                left: 13px;
+                top: -2px;
+            &:after
+                content: attr(title);
+                position: absolute;
+                display: inline-block;
+                background-color: #2f2f2f;
+                color: #fff;
+                padding: 5px 8px;
+                font-size: 11px;
+                font-weight: lighter;
+                border-radius: 3px;
+                max-height: 23px;
+                top: -22px;
+                left: 0;
+                right: 0;
         > .{prefix}-item.active
             background-color: #fff;
             transition: all .3s ease;

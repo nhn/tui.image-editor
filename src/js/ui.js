@@ -298,6 +298,7 @@ export default class Ui {
 
         btnElement.id = `tie-btn-${menuName}`;
         btnElement.className = 'tui-image-editor-item';
+        btnElement.title = menuName;
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
