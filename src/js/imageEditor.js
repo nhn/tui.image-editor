@@ -481,7 +481,6 @@ class ImageEditor {
      * @private
      */
     execute(commandName, ...args) {
-        console.log(commandName);
         // Inject an Graphics instance as first parameter
         const theArgs = [this._graphics].concat(args);
 
