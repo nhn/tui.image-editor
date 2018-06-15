@@ -303,17 +303,19 @@ class ImageEditor {
     /**
      * RemoveObject Sequential processing for prevent invoke lock
      * @param {Array.<Object>} targetObjects - target Objects for remove
+     * @returns {object} targetObjects
      * @private
      */
     _removeObjectStream(targetObjects) {
         if (targetObjects.length === 0) {
-            return;
+            return true;
         }
 
         const targetObject = targetObjects.pop();
-        this.removeObject(this._graphics.getObjectId(targetObject)).then(() => {
-            this._removeObjectStream(targetObjects);
-        });
+
+        return this.removeObject(this._graphics.getObjectId(targetObject)).then(() => (
+            this._removeObjectStream(targetObjects)
+        ));
     }
 
     /**

@@ -34,5 +34,57 @@ describe('ImageEditor', () => {
 
             expect(snippet.imagePing).not.toHaveBeenCalled();
         });
+
+        it('그룹이 존재할때 removeActiveObject()', () => {
+            spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue({
+                activeObjectGroup: () => [1, 2, 3]
+            });
+            spyOn(imageEditor, '_removeObjectStream');
+            spyOn(imageEditor, 'discardSelection');
+
+            imageEditor = new ImageEditor(el, {
+                usageStatistics: false
+            });
+            imageEditor._reomveActiveObject();
+
+            expect(imageEditor._removeObjectStream).toHaveHeenCalled();
+        });
+        /*
+        it('그룹이 존재하지 않을때 removeActiveObject()', () => {
+            spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue(null);
+            spyOn(imageEditor, '_removeObjectStream');
+            spyOn(imageEditor, 'getActiveObject');
+            //spyOn(imageEditor, 'getActiveObject');
+
+            imageEditor = new ImageEditor(el, {
+                usageStatistics: false
+            });
+            imageEditor._reomveActiveObject();
+
+            expect(imageEditor._removeObjectStream).toHaveHeenCalled();
+        });
+        */
+
+        it('_removeObjectStream()', done => {
+            const promise = new Promise(resolve => {
+                resolve();
+            });
+
+            imageEditor = new ImageEditor(el, {
+                usageStatistics: false
+            });
+
+            spyOn(imageEditor, '_removeObjectStream').and.callThrough();
+            spyOn(imageEditor, 'removeObject').and.returnValue(promise);
+
+            const removeJobsSequens = [1, 2, 3, 4];
+            const removeObjectStremPromise = imageEditor._removeObjectStream(removeJobsSequens);
+            const expected = removeJobsSequens.length + 1;
+
+            removeObjectStremPromise.then(() => {
+                expect(imageEditor._removeObjectStream.calls.count()).toBe(expected);
+                done();
+            });
+        });
     });
 });

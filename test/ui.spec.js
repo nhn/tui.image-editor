@@ -21,6 +21,13 @@ describe('UI', () => {
         };
         ui = new UI(document.createElement('div'), uiOptions, {});
     });
+    describe('_changeMenu()', () => {
+        it('메뉴가 변경되면 변경되는 메뉴 인스턴스의 changeStartMode()가 실행 되어야 한다.', () => {
+        });
+
+        it('메뉴가 변경되면 기존 메뉴 인스턴스의 changeStandbyMode()가 실행 되어야 한다.', () => {
+        });
+    });
 
     describe('_makeSubMenu()', () => {
         it('MakeMenuElement should be executed for the number of menus specified in the option.', () => {

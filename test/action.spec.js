@@ -112,30 +112,6 @@ describe('Ui', () => {
             });
         });
 
-        describe('modeChange()', () => {
-            it('_changeActivateMode("TEXT") API should be executed When the modeChange("text") action occurs', () => {
-                spyOn(imageEditorMock, '_changeActivateMode');
-
-                mainAction.modeChange('text');
-                expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
-            });
-
-            it('startDrawingMode() API should be executed When the modeChange("crop") action occurs', () => {
-                spyOn(imageEditorMock, 'startDrawingMode');
-
-                mainAction.modeChange('crop');
-                expect(imageEditorMock.startDrawingMode).toHaveBeenCalled();
-            });
-
-            it('stopDrawingMode(), setDrawingShape(), _changeActivateMode()  API should be executed When the modeChange("shape") action occurs', () => {
-                spyOn(imageEditorMock, 'setDrawingShape');
-                spyOn(imageEditorMock, '_changeActivateMode');
-
-                mainAction.modeChange('shape');
-                expect(imageEditorMock.setDrawingShape).toHaveBeenCalled();
-                expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
-            });
-        });
     });
 
     describe('shapeAction', () => {
@@ -340,5 +316,49 @@ describe('Ui', () => {
 
             expect(imageEditorMock.applyFilter).toHaveBeenCalled();
         });
+    });
+
+    describe('commonAction', () => {
+        it('getActions 메소드에 리턴되는 각각의 액션은 commonAction을 포함하고 있어야 한다.', () => {
+        });
+
+        /*
+        describe('modeChange()', () => {
+            it('_changeActivateMode("TEXT") API should be executed When the modeChange("text") action occurs', () => {
+                spyOn(imageEditorMock, '_changeActivateMode');
+
+                mainAction.modeChange('text');
+                expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
+            });
+
+            it('startDrawingMode() API should be executed When the modeChange("crop") action occurs', () => {
+                spyOn(imageEditorMock, 'startDrawingMode');
+
+                mainAction.modeChange('crop');
+                expect(imageEditorMock.startDrawingMode).toHaveBeenCalled();
+            });
+
+            it('stopDrawingMode(), setDrawingShape(), _changeActivateMode()  API should be executed When the modeChange("shape") action occurs', () => {
+                spyOn(imageEditorMock, 'setDrawingShape');
+                spyOn(imageEditorMock, '_changeActivateMode');
+
+                mainAction.modeChange('shape');
+                expect(imageEditorMock.setDrawingShape).toHaveBeenCalled();
+                expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
+            });
+        });
+        */
+    });
+
+    describe('reAction', () => {
+        /*
+        undoStackChanged
+        redoStackChanged
+        objectActivated
+        addText
+        addObjectAfter
+        objectScaled
+        selectionCleared
+        */
     });
 });
