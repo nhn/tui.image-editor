@@ -59,17 +59,13 @@ class ImageEditor {
          * @private
          */
         this._graphics = new Graphics(
-            this.ui ? this.ui.getEditorArea() : wrapper,
-            options.cssMaxWidth,
-            options.cssMaxHeight,
-            !!this.ui,
-            !!this.ui
+            this.ui ? this.ui.getEditorArea() : wrapper, {
+                cssMaxWidth: options.cssMaxWidth,
+                cssMaxHeight: options.cssMaxHeight,
+                useItext: !!this.ui,
+                useDragAddIcon: !!this.ui
+            }
         );
-
-        if (this.ui) {
-            this.ui.initCanvas();
-            this.setReAction();
-        }
 
         /**
          * Event handler list
@@ -104,6 +100,11 @@ class ImageEditor {
 
         if (options.usageStatistics) {
             sendHostName();
+        }
+
+        if (this.ui) {
+            this.ui.initCanvas();
+            this.setReAction();
         }
     }
 
@@ -287,7 +288,7 @@ class ImageEditor {
      */
     reomveActiveObject() {
         const activeObject = this._graphics.getActiveObject();
-        const activeObjectGroup = this._graphics.getActiveGroup();
+        const activeObjectGroup = this._graphics.getActiveGroupObject();
 
         if (activeObjectGroup) {
             const objects = activeObjectGroup.getObjects();
@@ -414,8 +415,7 @@ class ImageEditor {
         this.fire(events.OBJECT_SCALED, props);
     }
 
-    /*
-*
+    /**
      * Get current drawing mode
      * @returns {string}
      * @example
@@ -467,7 +467,8 @@ class ImageEditor {
     /**
      * selectable status change
      * @param {boolean} selectable - selctable status
-     * imageEditor.changeSelectableAll();
+     * @example
+     * imageEditor.changeSelectableAll(false); // or true
      */
     changeSelectableAll(selectable) {
         this._graphics.changeSelectableAll(selectable);
@@ -597,8 +598,7 @@ class ImageEditor {
 
     /**
      * Crop this image with rect
-     * @param {Object}
- rect crop rect
+     * @param {Object} rect crop rect
      *  @param {Number} rect.left left position
      *  @param {Number} rect.top top position
      *  @param {Number} rect.width width
@@ -971,12 +971,26 @@ class ImageEditor {
         this.changeText(objectProps.id, objectProps.text);
     }
 
-    _onIconCreateResize(resizeInfo) {
-        this.fire(events.ICON_CREATE_RESIZE, resizeInfo);
+    /**
+     * 'iconCreateResize' event handler
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
+     * @private
+     */
+    _onIconCreateResize(originPointer) {
+        this.fire(events.ICON_CREATE_RESIZE, originPointer);
     }
 
-    _onIconCreateEnd(resizeInfo) {
-        this.fire(events.ICON_CREATE_END, resizeInfo);
+    /**
+     * 'iconCreateEnd' event handler
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
+     * @private
+     */
+    _onIconCreateEnd(originPointer) {
+        this.fire(events.ICON_CREATE_END, originPointer);
     }
 
     /**
@@ -1036,14 +1050,28 @@ class ImageEditor {
         this._pushAddObjectCommand(obj);
     }
 
+    /**
+     * 'addObjectAfter' event handler
+     * @param {Object} objectProps added object properties
+     * @private
+     */
     _onAddObjectAfter(objectProps) {
         this.fire(events.ADD_OBJECT_AFTER, objectProps);
     }
 
+    /**
+     * 'selectionCleared' event handler
+     * @private
+     */
     _selectionCleared() {
         this.fire(events.SELECTION_CLEARED);
     }
 
+    /**
+     * 'selectionCreated' event handler
+     * @param {Object} eventTarget - Fabric object
+     * @private
+     */
     _selectionCreated(eventTarget) {
         this.fire(events.SELECTION_CREATED, eventTarget);
     }
@@ -1061,12 +1089,14 @@ class ImageEditor {
         this._graphics.registerPaths(infos);
     }
 
-    readyAddIcon() {
-        this._graphics.readyAddIcon();
-    }
-
-    cancelAddIcon() {
-        this._graphics.cancelAddIcon();
+    /**
+     * Change canvas cursor type
+     * @param {string} cursorType - cursor type
+     * @example
+     * imageEditor.changeCursor('crosshair');
+     */
+    changeCursor(cursorType) {
+        this._graphics.changeCursor(cursorType);
     }
 
     /**
@@ -1286,6 +1316,19 @@ class ImageEditor {
         return this.execute(commands.SET_OBJECT_PROPERTIES, id, keyValue);
     }
 
+    /**
+     * Set properties of active object, Do not leave an invoke history.
+     * @param {number} id - object id
+     * @param {Object} keyValue - key & value
+     * @example
+     * imageEditor.setObjectPropertiesQuietly(id, {
+     *     left:100,
+     *     top:100,
+     *     width: 200,
+     *     height: 200,
+     *     opacity: 0.5
+     * });
+     */
     setObjectPropertiesQuietly(id, keyValue) {
         this._graphics.setObjectProperties(id, keyValue);
     }

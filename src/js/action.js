@@ -167,7 +167,8 @@ export default {
             addIcon: (iconType, iconColor) => {
                 cacheIconType = iconType;
                 cacheIconColor = iconColor;
-                this.readyAddIcon();
+                // this.readyAddIcon();
+                this.changeCursor('crosshair');
                 this.off('mousedown');
                 this.once('mousedown', mouseDown.bind(this));
             },
@@ -176,6 +177,7 @@ export default {
                 this.ui.icon.clearIconType();
                 this.changeSelectableAll(true);
                 this.cancelAddIcon();
+                this.changeCursor('default');
             },
             registDefalutIcons: (type, path) => {
                 const iconObj = {};

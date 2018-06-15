@@ -46,10 +46,12 @@ const backstoreOnly = {
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
+ *  @param {boolean} option.useItext - Use IText in text mode
+ *  @param {boolean} option.useDragAddIcon - Use dragable add in icon mode
  * @ignore
  */
 class Graphics {
-    constructor(element, cssMaxWidth, cssMaxHeight, useItext = false, useDragAddIcon = false) {
+    constructor(element, {cssMaxWidth, cssMaxHeight, useItext = false, useDragAddIcon = false} = {}) {
         /**
          * Fabric image instance
          * @type {fabric.Image}
@@ -73,6 +75,11 @@ class Graphics {
          * @type {number}
          */
         this.useItext = useItext;
+
+        /**
+         * Use add drag icon mode for icon component
+         * @type {number}
+         */
         this.useDragAddIcon = useDragAddIcon;
 
         /**
@@ -293,7 +300,11 @@ class Graphics {
         return this._canvas.getActiveObject();
     }
 
-    getActiveGroup() {
+    /**
+     * Gets an active group object
+     * @returns {Object} active group object instance
+     */
+    getActiveGroupObject() {
         return this._canvas.getActiveGroup();
     }
 
@@ -586,15 +597,13 @@ class Graphics {
         this.getComponent(components.ICON).registerPaths(pathInfos);
     }
 
-    readyAddIcon() {
+    /**
+     * Change cursor style
+     * @param {string} cursorType - cursor type
+     */
+    changeCursor(cursorType) {
         const canvas = this.getCanvas();
-        canvas.defaultCursor = 'crosshair';
-        canvas.renderAll();
-    }
-
-    cancelAddIcon() {
-        const canvas = this.getCanvas();
-        canvas.defaultCursor = 'default';
+        canvas.defaultCursor = cursorType;
         canvas.renderAll();
     }
 
@@ -963,22 +972,38 @@ class Graphics {
         this.fire(events.ADD_OBJECT, params);
     }
 
+    /**
+     * "selction:cleared" canvas event handler
+     * @private
+     */
     _onSelectionCleared() {
         this.fire(events.SELECTION_CLEARED);
     }
 
+    /**
+     * "selction:created" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
     _onSelectionCreated(fEvent) {
         const {target} = fEvent;
 
         this.fire(events.SELECTION_CREATED, target);
     }
 
+    /**
+     * Canvas discard selection all
+     */
     discardSelection() {
         this._canvas.discardActiveGroup();
         this._canvas.discardActiveObject();
         this._canvas.renderAll();
     }
 
+    /**
+     * Canvas Selectable status change
+     * @param {boolean} selectable - expect status
+     */
     changeSelectableAll(selectable) {
         this._canvas.forEachObject(obj => {
             obj.selectable = selectable;
