@@ -33,6 +33,8 @@ export default {
     'menu.normalIcon.name': 'icon-b',
     'menu.activeIcon.path': 'icon-a.svg',
     'menu.activeIcon.name': 'icon-a',
+    'menu.iconSize.width': '24px',
+    'menu.iconSize.height': '24px',
 
     // submenu primary color
     'submenu.backgroundColor': 'transparent',
@@ -43,6 +45,8 @@ export default {
     'submenu.normalIcon.name': 'icon-a',
     'submenu.activeIcon.path': 'icon-c.svg',
     'submenu.activeIcon.name': 'icon-c',
+    'submenu.iconSize.width': '32px',
+    'submenu.iconSize.height': '32px',
 
     // submenu labels
     'submenu.normalLabel.color': '#858585',

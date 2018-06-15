@@ -29,14 +29,15 @@
 /* POSITION LEFT & RIGHT */
 .{prefix}-container
   &.left, &.right
+    .{prefix}-menu
+        white-space: initial;
     .{prefix}-submenu
         white-space: normal;
         > div
             vertical-align: middle;
     .{prefix}-controls li
-        display: block;
-        width: 39px;
-        margin: 4px 0 4px 12px;
+        display: inline-block;
+        margin: 4px auto;
     .{prefix}-icpartition
         position: relative;
         top: -7px;

@@ -10,7 +10,9 @@ export default ({
     submenuColorpickerTitle,
     submenuColorpickerButton,
     submenuRangeBar,
-    submenuRangeSubbar
+    submenuRangeSubbar,
+    submenuIconSize,
+    menuIconSize
 }) => (`
     #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] label,
     #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] label,
@@ -73,5 +75,11 @@ export default ({
     }
     .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {
         ${submenuColorpickerButton}
+    }
+    .tui-image-editor-container .svg_ic-menu {
+        ${menuIconSize}
+    }
+    .tui-image-editor-container .svg_ic-submenu {
+        ${submenuIconSize}
     }
 `);

@@ -28,6 +28,8 @@ var whiteTheme = {
     'menu.normalIcon.name': 'icon-b',
     'menu.activeIcon.path': '../dist/svg/icon-a.svg',
     'menu.activeIcon.name': 'icon-a',
+    'menu.iconSize.width': '24px',
+    'menu.iconSize.height': '24px',
 
     // submenu primary color
     'submenu.backgroundColor': 'transparent',
@@ -38,6 +40,8 @@ var whiteTheme = {
     'submenu.normalIcon.name': 'icon-a',
     'submenu.activeIcon.path': '../dist/svg/icon-d.svg',
     'submenu.activeIcon.name': 'icon-d',
+    'submenu.iconSize.width': '32px',
+    'submenu.iconSize.height': '32px',
 
     // submenu labels
     'submenu.normalLabel.color': '#858585',
