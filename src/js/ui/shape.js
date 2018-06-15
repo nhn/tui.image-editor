@@ -111,15 +111,14 @@ export default class Shape extends Submenu {
         if (button) {
             this.actions.stopDrawingMode();
             this.actions.discardSelection();
-            this.changeStandbyMode();
             const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
 
             if (this.type === shapeType) {
-                this.type = null;
+                this.changeStandbyMode();
 
                 return;
             }
-
+            this.changeStandbyMode();
             this.type = shapeType;
             event.currentTarget.classList.add(shapeType);
             this.actions.changeSelectableAll(false);
