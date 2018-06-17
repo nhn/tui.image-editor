@@ -176,7 +176,6 @@ export default {
                 this.off('mousedown');
                 this.ui.icon.clearIconType();
                 this.changeSelectableAll(true);
-                this.cancelAddIcon();
                 this.changeCursor('default');
             },
             registDefalutIcons: (type, path) => {
@@ -422,11 +421,14 @@ export default {
                         fill: this.ui.text.textColor,
                         fontSize: util.toInteger(this.ui.text.fontSize)
                     }
+                }).then(() => {
+                    this.changeCursor('default');
                 });
             },
             addObjectAfter: obj => {
                 if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
                     this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+                    this.ui.shape.changeStandbyMode();
                 }
             },
             objectScaled: obj => {
@@ -445,6 +447,7 @@ export default {
                 }
             },
             selectionCleared: () => {
+                this.activeObjectId = null;
                 if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop') {
                     this.stopDrawingMode();
                 }

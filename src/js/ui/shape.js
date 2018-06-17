@@ -60,8 +60,6 @@ export default class Shape extends Submenu {
      *   @param {string} fillColor - fill color
      */
     setShapeStatus({strokeWidth, strokeColor, fillColor}) {
-        this.changeStandbyMode();
-
         this._els.strokeRange.value = strokeWidth;
         this._els.strokeRange.trigger('change');
 
