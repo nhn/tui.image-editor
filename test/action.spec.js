@@ -72,11 +72,11 @@ describe('Ui', () => {
 
         it('removeObject() API should be executed When the delete action occurs', () => {
             imageEditorMock.activeObjectId = 10;
-            spyOn(imageEditorMock, 'reomveActiveObject');
+            spyOn(imageEditorMock, 'removeActiveObject');
 
             mainAction['delete']();
 
-            expect(imageEditorMock.reomveActiveObject).toHaveBeenCalled();
+            expect(imageEditorMock.removeActiveObject).toHaveBeenCalled();
             expect(imageEditorMock.activeObjectId).toBe(null);
         });
 
@@ -111,7 +111,6 @@ describe('Ui', () => {
                 done();
             });
         });
-
     });
 
     describe('shapeAction', () => {
@@ -281,11 +280,11 @@ describe('Ui', () => {
                 resolve(300);
             });
 
-            spyOn(imageEditorMock, 'readyAddIcon');
+            spyOn(imageEditorMock, 'changeCursor');
             spyOn(imageEditorMock, 'addIcon').and.returnValue(promise);
 
             iconAction.addIcon('iconTypeA');
-            expect(imageEditorMock.readyAddIcon).toHaveBeenCalled();
+            expect(imageEditorMock.changeCursor).toHaveBeenCalled();
 
             imageEditorMock.fire('mousedown', null, {
                 x: 10,
@@ -319,22 +318,34 @@ describe('Ui', () => {
     });
 
     describe('commonAction', () => {
-        it('getActions 메소드에 리턴되는 각각의 액션은 commonAction을 포함하고 있어야 한다.', () => {
+        it('Each action returned to the getActions method must contain commonAction.', () => {
+            const submenus = ['shape', 'crop', 'flip', 'rotate', 'text', 'mask', 'draw', 'icon', 'filter'];
+            snippet.forEach(submenus, submenu => {
+                expect(actions[submenu].modeChange).toBeDefined();
+                expect(actions[submenu].deactivateAll).toBeDefined();
+                expect(actions[submenu].changeSelectableAll).toBeDefined();
+                expect(actions[submenu].discardSelection).toBeDefined();
+                expect(actions[submenu].stopDrawingMode).toBeDefined();
+            });
         });
 
-        /*
         describe('modeChange()', () => {
+            let commonAction;
+            beforeEach(() => {
+                commonAction = actions.main;
+            });
+
             it('_changeActivateMode("TEXT") API should be executed When the modeChange("text") action occurs', () => {
                 spyOn(imageEditorMock, '_changeActivateMode');
 
-                mainAction.modeChange('text');
+                commonAction.modeChange('text');
                 expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
             });
 
             it('startDrawingMode() API should be executed When the modeChange("crop") action occurs', () => {
                 spyOn(imageEditorMock, 'startDrawingMode');
 
-                mainAction.modeChange('crop');
+                commonAction.modeChange('crop');
                 expect(imageEditorMock.startDrawingMode).toHaveBeenCalled();
             });
 
@@ -342,23 +353,164 @@ describe('Ui', () => {
                 spyOn(imageEditorMock, 'setDrawingShape');
                 spyOn(imageEditorMock, '_changeActivateMode');
 
-                mainAction.modeChange('shape');
+                commonAction.modeChange('shape');
                 expect(imageEditorMock.setDrawingShape).toHaveBeenCalled();
                 expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
             });
         });
-        */
     });
 
     describe('reAction', () => {
-        /*
-        undoStackChanged
-        redoStackChanged
-        objectActivated
-        addText
-        addObjectAfter
-        objectScaled
-        selectionCleared
-        */
+        beforeEach(() => {
+            imageEditorMock.setReAction();
+        });
+
+        describe('undoStackChanged', () => {
+            it('If the undo stack has a length greater than zero, the state of changeUndoButtonStatus, changeResetButtonStatus should be true.', () => {
+                spyOn(imageEditorMock.ui, 'changeUndoButtonStatus');
+                spyOn(imageEditorMock.ui, 'changeResetButtonStatus');
+                imageEditorMock.fire('undoStackChanged', 1);
+
+                expect(imageEditorMock.ui.changeUndoButtonStatus.calls.mostRecent().args[0]).toBe(true);
+                expect(imageEditorMock.ui.changeResetButtonStatus.calls.mostRecent().args[0]).toBe(true);
+            });
+
+            it('If the undo stack has a length of 0, the state of changeUndoButtonStatus, changeResetButtonStatus should be false.', () => {
+                spyOn(imageEditorMock.ui, 'changeUndoButtonStatus');
+                spyOn(imageEditorMock.ui, 'changeResetButtonStatus');
+                imageEditorMock.fire('undoStackChanged', 0);
+
+                expect(imageEditorMock.ui.changeUndoButtonStatus.calls.mostRecent().args[0]).toBe(false);
+                expect(imageEditorMock.ui.changeResetButtonStatus.calls.mostRecent().args[0]).toBe(false);
+            });
+        });
+
+        describe('redoStackChanged', () => {
+            it('If the redo stack is greater than zero length, the state of changeRedoButtonStatus should be true.', () => {
+                spyOn(imageEditorMock.ui, 'changeRedoButtonStatus');
+                imageEditorMock.fire('redoStackChanged', 1);
+                expect(imageEditorMock.ui.changeRedoButtonStatus.calls.mostRecent().args[0]).toBe(true);
+            });
+
+            it('If the redo stack has a length of zero, the state of changeRedoButtonStatus should be false.', () => {
+                spyOn(imageEditorMock.ui, 'changeRedoButtonStatus');
+                imageEditorMock.fire('redoStackChanged', 0);
+                expect(imageEditorMock.ui.changeRedoButtonStatus.calls.mostRecent().args[0]).toBe(false);
+            });
+        });
+
+        describe('objectActivated', () => {
+            it('When objectActivated occurs, the state of the delete button should be enabled.', () => {
+                spyOn(imageEditorMock.ui, 'changeDeleteButtonEnabled');
+                spyOn(imageEditorMock.ui, 'changeDeleteAllButtonEnabled');
+                imageEditorMock.fire('objectActivated', {id: 1});
+                expect(imageEditorMock.ui.changeDeleteButtonEnabled.calls.mostRecent().args[0]).toBe(true);
+                expect(imageEditorMock.ui.changeDeleteAllButtonEnabled.calls.mostRecent().args[0]).toBe(true);
+            });
+
+            it('When objectActivated\'s target is cropzone, changeApplyButtonStatus should be enabled.', () => {
+                spyOn(imageEditorMock.ui.crop, 'changeApplyButtonStatus');
+                imageEditorMock.fire('objectActivated', {
+                    id: 1,
+                    type: 'cropzone'
+                });
+                expect(imageEditorMock.ui.crop.changeApplyButtonStatus.calls.mostRecent().args[0]).toBe(true);
+            });
+
+            it('If the target of objectActivated is shape and the existing menu is not shpe, the menu should be changed to shape.', () => {
+                imageEditorMock.ui.submenu = 'crop';
+                spyOn(imageEditorMock.ui, 'changeMenu');
+                spyOn(imageEditorMock.ui.shape, 'setShapeStatus');
+                spyOn(imageEditorMock.ui.shape, 'setMaxStrokeValue');
+                imageEditorMock.fire('objectActivated', {
+                    id: 1,
+                    type: 'circle'
+                });
+
+                expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('shape');
+                expect(imageEditorMock.ui.shape.setMaxStrokeValue).toHaveBeenCalled();
+            });
+
+            it('If the target of objectActivated is text and the existing menu is not text, the menu should be changed to text.', () => {
+                imageEditorMock.ui.submenu = 'crop';
+                spyOn(imageEditorMock.ui, 'changeMenu');
+                imageEditorMock.fire('objectActivated', {
+                    id: 1,
+                    type: 'i-text'
+                });
+
+                expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('text');
+            });
+
+            it('If the target of objectActivated is icon and the existing menu is not icon, the menu should be changed to icon.', () => {
+                imageEditorMock.ui.submenu = 'crop';
+                spyOn(imageEditorMock.ui, 'changeMenu');
+                spyOn(imageEditorMock.ui.icon, 'setIconPickerColor');
+                imageEditorMock.fire('objectActivated', {
+                    id: 1,
+                    type: 'icon'
+                });
+
+                expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('icon');
+                expect(imageEditorMock.ui.icon.setIconPickerColor).toHaveBeenCalled();
+            });
+        });
+
+        describe('addText', () => {
+            it('When addText occurs, the addText () method should be executed.', () => {
+                spyOn(imageEditorMock, 'addText');
+                imageEditorMock.fire('addText', {
+                    x: 10,
+                    y: 10
+                });
+                expect(imageEditorMock.addText).toHaveBeenCalled();
+            });
+        });
+
+        describe('addObjectAfter', () => {
+            it('When addObjectAfter occurs, the shape\'s maxStrokeValue should be changed to match the size of the added object.', () => {
+                spyOn(imageEditorMock.ui.shape, 'setMaxStrokeValue');
+                imageEditorMock.fire('addObjectAfter', {
+                    type: 'circle',
+                    width: 100,
+                    height: 200
+                });
+
+                expect(imageEditorMock.ui.shape.setMaxStrokeValue.calls.mostRecent().args[0]).toBe(100);
+            });
+        });
+
+        describe('objectScaled', () => {
+            it('If objectScaled occurs on an object of type text, fontSize must be changed.', () => {
+                imageEditorMock.ui.text.fontSize = 0;
+                imageEditorMock.fire('objectScaled', {
+                    type: 'i-text',
+                    fontSize: 20
+                });
+
+                expect(imageEditorMock.ui.text.fontSize).toBe(20);
+            });
+
+            it('If objectScaled is for a shape type object and strokeValue is greater than the size of the object, the value should change.', () => {
+                spyOn(imageEditorMock.ui.shape, 'getStrokeValue').and.returnValue(20);
+                spyOn(imageEditorMock.ui.shape, 'setStrokeValue');
+                imageEditorMock.fire('objectScaled', {
+                    type: 'rect',
+                    width: 10,
+                    height: 10
+                });
+                expect(imageEditorMock.ui.shape.setStrokeValue.calls.mostRecent().args[0]).toBe(10);
+            });
+        });
+
+        describe('selectionCleared', () => {
+            it('If selectionCleared occurs in the text menu state, the menu should be closed.', () => {
+                imageEditorMock.ui.submenu = 'text';
+                spyOn(imageEditorMock.ui, 'changeMenu');
+
+                imageEditorMock.fire('selectionCleared');
+                expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('text');
+            });
+        });
     });
 });

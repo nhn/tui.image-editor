@@ -278,7 +278,7 @@ class ImageEditor {
 
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL)) {
             e.preventDefault();
-            this.reomveActiveObject();
+            this.removeActiveObject();
         }
     }
     /* eslint-enable complexity */
@@ -286,7 +286,7 @@ class ImageEditor {
     /**
      * Remove Active Object
      */
-    reomveActiveObject() {
+    removeActiveObject() {
         const activeObject = this._graphics.getActiveObject();
         const activeObjectGroup = this._graphics.getActiveGroupObject();
 

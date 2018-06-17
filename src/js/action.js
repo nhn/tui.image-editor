@@ -69,7 +69,7 @@ export default {
             delete: () => {
                 this.ui.changeDeleteButtonEnabled(false);
                 exitCropOnAction();
-                this.reomveActiveObject();
+                this.removeActiveObject();
                 this.activeObjectId = null;
             },
             deleteAll: () => {
@@ -417,15 +417,12 @@ export default {
             /* eslint-enable complexity */
             addText: pos => {
                 this.addText('Double Click', {
-                    position: pos.originPosition
-                }).then(() => {
-                    this.changeTextStyle(this.activeObjectId, {
+                    position: pos.originPosition,
+                    styles: {
                         fill: this.ui.text.textColor,
                         fontSize: util.toInteger(this.ui.text.fontSize)
-                    });
-                })['catch'](message => (
-                    Promise.reject(message)
-                ));
+                    }
+                });
             },
             addObjectAfter: obj => {
                 if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {

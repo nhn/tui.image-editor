@@ -15,6 +15,10 @@ describe('ImageEditor', () => {
         beforeEach(() => {
             el = document.createElement('div');
             spyOn(snippet, 'imagePing');
+
+            imageEditor = new ImageEditor(el, {
+                usageStatistics: false
+            });
         });
 
         afterEach(() => {
@@ -35,55 +39,47 @@ describe('ImageEditor', () => {
             expect(snippet.imagePing).not.toHaveBeenCalled();
         });
 
-        it('그룹이 존재할때 removeActiveObject()', () => {
-            spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue({
-                activeObjectGroup: () => [1, 2, 3]
-            });
-            spyOn(imageEditor, '_removeObjectStream');
-            spyOn(imageEditor, 'discardSelection');
-
-            imageEditor = new ImageEditor(el, {
-                usageStatistics: false
-            });
-            imageEditor._reomveActiveObject();
-
-            expect(imageEditor._removeObjectStream).toHaveHeenCalled();
-        });
-        /*
-        it('그룹이 존재하지 않을때 removeActiveObject()', () => {
-            spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue(null);
-            spyOn(imageEditor, '_removeObjectStream');
-            spyOn(imageEditor, 'getActiveObject');
-            //spyOn(imageEditor, 'getActiveObject');
-
-            imageEditor = new ImageEditor(el, {
-                usageStatistics: false
-            });
-            imageEditor._reomveActiveObject();
-
-            expect(imageEditor._removeObjectStream).toHaveHeenCalled();
-        });
-        */
-
-        it('_removeObjectStream()', done => {
+        it('removeObjectStream () must be executed as many times as the length of the Object array.', done => {
             const promise = new Promise(resolve => {
                 resolve();
-            });
-
-            imageEditor = new ImageEditor(el, {
-                usageStatistics: false
             });
 
             spyOn(imageEditor, '_removeObjectStream').and.callThrough();
             spyOn(imageEditor, 'removeObject').and.returnValue(promise);
 
             const removeJobsSequens = [1, 2, 3, 4];
-            const removeObjectStremPromise = imageEditor._removeObjectStream(removeJobsSequens);
             const expected = removeJobsSequens.length + 1;
+            const removeObjectStremPromise = imageEditor._removeObjectStream(removeJobsSequens);
 
             removeObjectStremPromise.then(() => {
                 expect(imageEditor._removeObjectStream.calls.count()).toBe(expected);
                 done();
+            });
+        });
+
+        describe('removeActiveObject()', () => {
+            it('_removeObjectStream should be executed when group exists.', () => {
+                spyOn(imageEditor._graphics, 'getActiveObject');
+                spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue({
+                    getObjects: () => [1, 2, 3]
+                });
+                spyOn(imageEditor, '_removeObjectStream');
+                spyOn(imageEditor, 'discardSelection');
+
+                imageEditor.removeActiveObject();
+
+                expect(imageEditor.discardSelection).toHaveBeenCalled();
+                expect(imageEditor._removeObjectStream).toHaveBeenCalled();
+            });
+
+            it('removeObject must be executed when group does not exist.', () => {
+                spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue(null);
+                spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(jasmine.any(Object));
+                spyOn(imageEditor._graphics, 'getObjectId');
+                spyOn(imageEditor, 'removeObject');
+
+                imageEditor.removeActiveObject();
+                expect(imageEditor.removeObject).toHaveBeenCalled();
             });
         });
     });

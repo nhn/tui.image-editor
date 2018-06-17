@@ -223,7 +223,7 @@ class Text extends Component {
             this._setInitPos(options.position);
 
             if (options.styles) {
-                styles = snippet.extend(options.styles, styles);
+                styles = snippet.extend(styles, options.styles);
             }
 
             if (this.useItext) {
