@@ -117,9 +117,11 @@ describe('Ui', () => {
 
     describe('shapeAction', () => {
         let shapeAction;
+
         beforeEach(() => {
             shapeAction = actions.shape;
         });
+
         it('changeShape() API should be executed When the changeShape action occurs', () => {
             imageEditorMock.activeObjectId = 10;
             spyOn(imageEditorMock, 'changeShape');
