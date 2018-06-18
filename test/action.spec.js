@@ -95,6 +95,7 @@ describe('Ui', () => {
             const promise = new Promise(resolve => {
                 resolve();
             });
+
             spyOn(imageEditorMock, 'loadImageFromFile').and.returnValue(promise);
             spyOn(imageEditorMock, 'clearUndoStack');
             spyOn(imageEditorMock.ui, 'resizeEditor');
