@@ -99,6 +99,7 @@ describe('Ui', () => {
             spyOn(imageEditorMock, 'loadImageFromFile').and.returnValue(promise);
             spyOn(imageEditorMock, 'clearUndoStack');
             spyOn(imageEditorMock.ui, 'resizeEditor');
+
             window.URL = {
                 createObjectURL: jasmine.createSpy('URL')
             };
