@@ -456,21 +456,6 @@ describe('Ui', () => {
             });
         });
 
-        describe('addText', () => {
-            it('When addText occurs, the addText () method should be executed.', () => {
-                const promise = new Promise(resolve => {
-                    resolve(300);
-                });
-
-                spyOn(imageEditorMock, 'addText').and.returnValue(promise);
-                imageEditorMock.fire('addText', {
-                    x: 10,
-                    y: 10
-                });
-                expect(imageEditorMock.addText).toHaveBeenCalled();
-            });
-        });
-
         describe('addObjectAfter', () => {
             it('When addObjectAfter occurs, the shape\'s maxStrokeValue should be changed to match the size of the added object.', () => {
                 spyOn(imageEditorMock.ui.shape, 'setMaxStrokeValue');

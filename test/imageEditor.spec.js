@@ -4,6 +4,7 @@
  */
 
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
 
 describe('ImageEditor', () => {
