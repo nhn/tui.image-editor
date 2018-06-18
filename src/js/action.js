@@ -397,9 +397,9 @@ export default {
 
                     this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
                 } else if (obj.type === 'path' || obj.type === 'line') {
-                    this.stopDrawingMode();
-                    if (this.ui.submenu) {
-                        this.ui.changeMenu(this.ui.submenu, true);
+                    if (this.ui.submenu !== 'draw') {
+                        this.ui.changeMenu('draw', false, false);
+                        this.ui.draw.changeStandbyMode();
                     }
                 } else if (obj.type === 'i-text') {
                     if (this.ui.submenu !== 'text') {
@@ -448,11 +448,10 @@ export default {
             },
             selectionCleared: () => {
                 this.activeObjectId = null;
-                if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop') {
-                    this.stopDrawingMode();
-                }
                 if (this.ui.submenu === 'text') {
-                    this.ui.changeMenu('text', true, false);
+                    this.changeCursor('text');
+                } else if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop') {
+                    this.stopDrawingMode();
                 }
             }
         });

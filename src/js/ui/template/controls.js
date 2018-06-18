@@ -31,7 +31,7 @@ export default ({biImage, iconStyle: {normal, active}}) => (`
                     <use xlink:href="${normal.path}#${normal.name}-ic-delete" class="normal"/>
                 </svg>
             </li>
-            <li id="tie-btn-delete-all" class="tui-image-editor-item" title="d-all">
+            <li id="tie-btn-delete-all" class="tui-image-editor-item" title="delete-all">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${active.path}#${active.name}-ic-delete-all" class="enabled"/>
                     <use xlink:href="${normal.path}#${normal.name}-ic-delete-all" class="normal"/>

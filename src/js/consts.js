@@ -150,10 +150,10 @@ module.exports = {
     },
 
     defaultRotateRangeValus: {
+        realTimeEvent: true,
         min: -360,
         max: 360,
-        value: 0,
-        realTimeEvent: true
+        value: 0
     },
 
     defaultDrawRangeValus: {
@@ -170,6 +170,7 @@ module.exports = {
     },
 
     defaultTextRangeValus: {
+        realTimeEvent: true,
         min: 10,
         max: 100,
         value: 50

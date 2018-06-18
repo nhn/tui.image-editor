@@ -501,10 +501,10 @@ describe('Ui', () => {
         describe('selectionCleared', () => {
             it('If selectionCleared occurs in the text menu state, the menu should be closed.', () => {
                 imageEditorMock.ui.submenu = 'text';
-                spyOn(imageEditorMock.ui, 'changeMenu');
+                spyOn(imageEditorMock, 'changeCursor');
 
                 imageEditorMock.fire('selectionCleared');
-                expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('text');
+                expect(imageEditorMock.changeCursor.calls.mostRecent().args[0]).toBe('text');
             });
         });
     });
