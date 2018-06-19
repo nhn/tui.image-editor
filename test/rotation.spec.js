@@ -6,6 +6,7 @@ import fabric from 'fabric/dist/fabric.require';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Rotation from '../src/js/component/rotation';
+import 'core-js/library/es6/promise';
 
 describe('Rotation', () => {
     let graphics, rotationModule, mockImage, canvas;
