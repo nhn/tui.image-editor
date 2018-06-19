@@ -80,7 +80,7 @@ class Shape extends Component {
          * Using shortcut on drawing shape
          * @type {boolean}
          * @private
-         *
+         */
         this._withShiftKey = false;
 
         /**
