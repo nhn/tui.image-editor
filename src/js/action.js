@@ -401,7 +401,7 @@ export default {
                         this.ui.changeMenu('draw', false, false);
                         this.ui.draw.changeStandbyMode();
                     }
-                } else if (obj.type === 'i-text') {
+                } else if (['i-text', 'text'].indexOf(obj.type) > -1) {
                     if (this.ui.submenu !== 'text') {
                         this.ui.changeMenu('text', false, false);
                     }
@@ -432,7 +432,7 @@ export default {
                 }
             },
             objectScaled: obj => {
-                if (obj.type === 'i-text') {
+                if (['i-text', 'text'].indexOf(obj.type) > -1) {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
                     const {width, height} = obj;

@@ -1038,7 +1038,7 @@ class Graphics {
 
         extend(props, util.getProperties(obj, predefinedKeys));
 
-        if (obj.type === 'i-text') {
+        if (['i-text', 'text'].indexOf(obj.type) > -1) {
             extend(props, this._createTextProperties(obj, props));
         }
 
