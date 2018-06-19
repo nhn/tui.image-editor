@@ -123,6 +123,12 @@ export default class Ui {
         this._editorElementWrap.style.top = `${top}px`;
         this._editorElementWrap.style.left = `${left}px`;
         this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
+
+        if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < 1235) {
+            this._selectedElement.classList.add('tui-image-editor-top-optimization');
+        } else {
+            this._selectedElement.classList.remove('tui-image-editor-top-optimization');
+        }
     }
 
     /**
@@ -267,7 +273,9 @@ export default class Ui {
         selectedElement.classList.add('tui-image-editor-container');
         selectedElement.innerHTML = controls({
             biImage: this.theme.getStyle('common.bi'),
-            iconStyle: this.theme.getStyle('menu.icon')
+            iconStyle: this.theme.getStyle('menu.icon'),
+            loadButtonStyle: this.theme.getStyle('loadButton'),
+            downloadButtonStyle: this.theme.getStyle('downloadButton')
         }) +
         mainContainer({
             biImage: this.theme.getStyle('common.bi'),

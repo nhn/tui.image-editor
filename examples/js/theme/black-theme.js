@@ -59,6 +59,7 @@ var blackTheme = {
     'range.subbar.color': '#d1d1d1',
     'range.value.color': '#fff',
     'range.value.fontWeight': 'lighter',
+    'range.value.fontSize': '11px',
     'range.value.border': '1px solid #353535',
     'range.value.backgroundColor': '#151515',
     'range.title.color': '#fff',

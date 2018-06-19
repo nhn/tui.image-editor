@@ -122,6 +122,10 @@
 /* POSITION TOP */
 .{prefix}-container
   &.top
+    .{prefix}-size-wrap
+        height: calc(100% - 64px);
+    .{prefix}-main-container
+        bottom: 0;
     .{prefix}-menu
         > .{prefix}-item[title]
             &:before

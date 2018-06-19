@@ -1,4 +1,4 @@
-export default ({biImage, iconStyle: {normal, active}}) => (`
+export default ({biImage, iconStyle: {normal, active}, loadButtonStyle, downloadButtonStyle}) => (`
     <div class="tui-image-editor-controls">
         <div class="tui-image-editor-controls-logo">
             <img src="${biImage}" height="21px" />
@@ -43,8 +43,13 @@ export default ({biImage, iconStyle: {normal, active}}) => (`
         </ul>
 
         <div class="tui-image-editor-controls-buttons">
-            <button class="tui-image-editor-load-btn">Load</button>
-            <button class="tui-image-editor-download-btn download">Download</button>
+            <button style="${loadButtonStyle}">
+                Load
+                <input type="file" class="tui-image-editor-load-btn" />
+            </button>
+            <button class="tui-image-editor-download-btn" style="${downloadButtonStyle}">
+                Download
+            </button>
         </div>
     </div>
 `);

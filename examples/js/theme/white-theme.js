@@ -2,7 +2,7 @@ var whiteTheme = {
     'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
     'common.backgroundImage': './img/bg.png',
     'common.backgroundColor': '#fff',
-    'common.border': '0px',
+    'common.border': '1px solid #c1c1c1',
 
     // header
     'header.backgroundImage': 'none',
@@ -59,6 +59,7 @@ var whiteTheme = {
     'range.subbar.color': '#606060',
     'range.value.color': '#000',
     'range.value.fontWeight': 'normal',
+    'range.value.fontSize': '11px',
     'range.value.border': '0',
     'range.value.backgroundColor': '#f5f5f5',
     'range.title.color': '#000',
