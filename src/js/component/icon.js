@@ -8,6 +8,7 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
+const events = consts.eventNames;
 const {rejectMessages} = consts;
 
 const pathMap = {
@@ -38,6 +39,12 @@ class Icon extends Component {
          * @type {Object}
          */
         this._pathMap = pathMap;
+
+        /**
+         * Option to add icon to drag.
+         * @type {boolean}
+         */
+        this.useDragAddIcon = graphics.useDragAddIcon;
     }
 
     /**
@@ -66,7 +73,31 @@ class Icon extends Component {
                 fill: this._oColor
             }, selectionStyle, options, this.graphics.controlStyle));
 
-            canvas.add(icon).setActiveObject(icon);
+            if (this.useDragAddIcon) {
+                canvas.add(icon).setActiveObject(icon);
+                canvas.on({
+                    'mouse:move': fEvent => {
+                        canvas.selection = false;
+
+                        this.fire(events.ICON_CREATE_RESIZE, {
+                            moveOriginPointer: canvas.getPointer(fEvent.e)
+                        });
+                    },
+                    'mouse:up': fEvent => {
+                        this.fire(events.ICON_CREATE_END, {
+                            moveOriginPointer: canvas.getPointer(fEvent.e)
+                        });
+
+                        canvas.defaultCursor = 'default';
+                        canvas.off('mouse:up');
+                        canvas.off('mouse:move');
+                        canvas.selection = true;
+                    }
+                });
+            } else {
+                canvas.add(icon).setActiveObject(icon);
+            }
+
             resolve(this.graphics.createObjectProperties(icon));
         });
     }

@@ -11,6 +11,7 @@ import {extend, inArray} from 'tui-code-snippet';
 
 const {rejectMessages, eventNames} = consts;
 const KEY_CODES = consts.keyCodes;
+
 const DEFAULT_TYPE = 'rect';
 const DEFAULT_OPTIONS = {
     strokeWidth: 1,
@@ -126,6 +127,7 @@ class Shape extends Component {
         this._isSelected = false;
 
         canvas.defaultCursor = 'default';
+
         canvas.selection = true;
         canvas.uniScaleTransform = false;
         canvas.off({
@@ -367,6 +369,8 @@ class Shape extends Component {
         if (shape) {
             resizeHelper.adjustOriginToCenter(shape);
         }
+
+        this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
 
         canvas.off({
             'mouse:move': this._handlers.mousemove,

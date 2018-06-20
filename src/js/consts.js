@@ -56,14 +56,22 @@ module.exports = {
         OBJECT_ACTIVATED: 'objectActivated',
         OBJECT_MOVED: 'objectMoved',
         OBJECT_SCALED: 'objectScaled',
+        OBJECT_CREATED: 'objectCreated',
         TEXT_EDITING: 'textEditing',
         TEXT_CHANGED: 'textChanged',
+        ICON_CREATE_RESIZE: 'iconCreateResize',
+        ICON_CREATE_END: 'iconCreateEnd',
         ADD_TEXT: 'addText',
         ADD_OBJECT: 'addObject',
+        ADD_OBJECT_AFTER: 'addObjectAfter',
         MOUSE_DOWN: 'mousedown',
+        MOUSE_UP: 'mouseup',
+        MOUSE_MOVE: 'mousemove',
         // UNDO/REDO Events
         REDO_STACK_CHANGED: 'redoStackChanged',
-        UNDO_STACK_CHANGED: 'undoStackChanged'
+        UNDO_STACK_CHANGED: 'undoStackChanged',
+        SELECTION_CLEARED: 'selectionCleared',
+        SELECTION_CREATED: 'selectionCreated'
     },
 
     /**
@@ -142,10 +150,10 @@ module.exports = {
     },
 
     defaultRotateRangeValus: {
+        realTimeEvent: true,
         min: -360,
         max: 360,
-        value: 0,
-        realTimeEvent: true
+        value: 0
     },
 
     defaultDrawRangeValus: {
@@ -155,13 +163,14 @@ module.exports = {
     },
 
     defaultShapeStrokeValus: {
-        realTimeEvent: true,
-        min: 0,
+        realTimeEvent: false,
+        min: 2,
         max: 300,
         value: 3
     },
 
     defaultTextRangeValus: {
+        realTimeEvent: true,
         min: 10,
         max: 100,
         value: 50

@@ -1,6 +1,6 @@
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-draw-line-select-button" class="line">
+        <li id="tie-draw-line-select-button">
             <div class="tui-image-editor-button free">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -33,7 +33,7 @@ export default ({iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
-        <li class="newline tui-image-editor-range-wrap">
+        <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">Range</label>
             <div id="tie-draw-range"></div>
             <input id="tie-draw-range-value" class="tui-image-editor-range-value" value="0" />

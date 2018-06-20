@@ -2,7 +2,7 @@ var whiteTheme = {
     'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
     'common.backgroundImage': './img/bg.png',
     'common.backgroundColor': '#fff',
-    'common.border': '0px',
+    'common.border': '1px solid #c1c1c1',
 
     // header
     'header.backgroundImage': 'none',
@@ -28,6 +28,8 @@ var whiteTheme = {
     'menu.normalIcon.name': 'icon-b',
     'menu.activeIcon.path': '../dist/svg/icon-a.svg',
     'menu.activeIcon.name': 'icon-a',
+    'menu.iconSize.width': '24px',
+    'menu.iconSize.height': '24px',
 
     // submenu primary color
     'submenu.backgroundColor': 'transparent',
@@ -38,6 +40,8 @@ var whiteTheme = {
     'submenu.normalIcon.name': 'icon-a',
     'submenu.activeIcon.path': '../dist/svg/icon-d.svg',
     'submenu.activeIcon.name': 'icon-d',
+    'submenu.iconSize.width': '32px',
+    'submenu.iconSize.height': '32px',
 
     // submenu labels
     'submenu.normalLabel.color': '#858585',
@@ -55,6 +59,7 @@ var whiteTheme = {
     'range.subbar.color': '#606060',
     'range.value.color': '#000',
     'range.value.fontWeight': 'normal',
+    'range.value.fontSize': '11px',
     'range.value.border': '0',
     'range.value.backgroundColor': '#f5f5f5',
     'range.title.color': '#000',

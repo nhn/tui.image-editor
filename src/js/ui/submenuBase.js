@@ -34,6 +34,18 @@ export default class Submenu {
     }
 
     /**
+     * Interface method whose implementation is optional.
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {}
+
+    /**
+     * Interface method whose implementation is optional.
+     * Executed when the menu starts.
+     */
+    changeStartMode() {}
+
+    /**
      * Make submenu dom element
      * @param {HTMLElement} subMenuElement - subment dom element
      * @param {Object} iconStyle -  icon style

@@ -47,6 +47,20 @@ export default class Text extends Submenu {
     }
 
     /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.actions.stopDrawingMode();
+    }
+
+    /**
+     * Executed when the menu starts.
+     */
+    changeStartMode() {
+        this.actions.modeChange('text');
+    }
+
+    /**
      * Get text color
      * @returns {string} - text color
      */
@@ -87,7 +101,6 @@ export default class Text extends Submenu {
 
         this.effect[styleType] = !this.effect[styleType];
         button.classList.toggle('active');
-
         this.actions.changeTextStyle(styleObj);
     }
 
@@ -118,11 +131,12 @@ export default class Text extends Submenu {
      */
     _changeTextRnageHandler(value) {
         value = toInteger(value);
-        this._els.textRangeValue.value = value;
-
-        this.actions.changeTextStyle({
-            fontSize: toInteger(value)
-        });
+        if (toInteger(this._els.textRangeValue.value) !== value) {
+            this.actions.changeTextStyle({
+                fontSize: value
+            });
+            this._els.textRangeValue.value = value;
+        }
     }
 
     /**

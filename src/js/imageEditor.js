@@ -33,6 +33,8 @@ class ImageEditor {
             usageStatistics: true
         }, options);
 
+        this.mode = null;
+
         this.activeObjectId = null;
 
         /**
@@ -57,15 +59,13 @@ class ImageEditor {
          * @private
          */
         this._graphics = new Graphics(
-            this.ui ? this.ui.getEditorArea() : wrapper,
-            options.cssMaxWidth,
-            options.cssMaxHeight
+            this.ui ? this.ui.getEditorArea() : wrapper, {
+                cssMaxWidth: options.cssMaxWidth,
+                cssMaxHeight: options.cssMaxHeight,
+                useItext: !!this.ui,
+                useDragAddIcon: !!this.ui
+            }
         );
-
-        if (this.ui) {
-            this.ui.initCanvas();
-            this.setReAction();
-        }
 
         /**
          * Event handler list
@@ -81,17 +81,30 @@ class ImageEditor {
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
+            addObjectAfter: this._onAddObjectAfter.bind(this),
             textEditing: this._onTextEditing.bind(this),
-            textChanged: this._onTextChanged.bind(this)
+            textChanged: this._onTextChanged.bind(this),
+            iconCreateResize: this._onIconCreateResize.bind(this),
+            iconCreateEnd: this._onIconCreateEnd.bind(this),
+            selectionCleared: this._selectionCleared.bind(this),
+            selectionCreated: this._selectionCreated.bind(this)
         };
 
         this._attachInvokerEvents();
         this._attachGraphicsEvents();
         this._attachDomEvents();
-        this._setSelectionStyle(options.selectionStyle, options.applyCropSelectionStyle);
+        this._setSelectionStyle(options.selectionStyle, {
+            applyCropSelectionStyle: options.applyCropSelectionStyle,
+            applyGroupSelectionStyle: options.applyGroupSelectionStyle
+        });
 
         if (options.usageStatistics) {
             sendHostName();
+        }
+
+        if (this.ui) {
+            this.ui.initCanvas();
+            this.setReAction();
         }
     }
 
@@ -151,16 +164,26 @@ class ImageEditor {
     /**
      * Set selection style by init option
      * @param {Object} selectionStyle - Selection styles
-     * @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
+     * @param {Object} applyTargets - Selection apply targets
+     *   @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
+     *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
      * @private
      */
-    _setSelectionStyle(selectionStyle, applyCropSelectionStyle) {
+    _setSelectionStyle(selectionStyle, {applyCropSelectionStyle, applyGroupSelectionStyle}) {
         if (selectionStyle) {
             this._graphics.setSelectionStyle(selectionStyle);
         }
 
         if (applyCropSelectionStyle) {
             this._graphics.setCropSelectionStyle(selectionStyle);
+        }
+
+        if (applyGroupSelectionStyle) {
+            this.on('selectionCreated', eventTarget => {
+                if (eventTarget.type === 'group') {
+                    eventTarget.set(selectionStyle);
+                }
+            });
         }
     }
 
@@ -209,7 +232,12 @@ class ImageEditor {
             'addText': this._handlers.addText,
             'addObject': this._handlers.addObject,
             'textEditing': this._handlers.textEditing,
-            'textChanged': this._handlers.textChanged
+            'textChanged': this._handlers.textChanged,
+            'iconCreateResize': this._handlers.iconCreateResize,
+            'iconCreateEnd': this._handlers.iconCreateEnd,
+            'selectionCleared': this._handlers.selectionCleared,
+            'selectionCreated': this._handlers.selectionCreated,
+            'addObjectAfter': this._handlers.addObjectAfter
         });
     }
 
@@ -238,9 +266,6 @@ class ImageEditor {
      */
     /* eslint-disable complexity */
     _onKeyDown(e) {
-        const activeObject = this._graphics.getActiveObject();
-        const activeObjectId = this._graphics.getObjectId(activeObject);
-
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             // There is no error message on shortcut when it's empty
             this.undo()['catch'](() => {});
@@ -251,13 +276,47 @@ class ImageEditor {
             this.redo()['catch'](() => {});
         }
 
-        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
-            activeObject) {
+        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL)) {
             e.preventDefault();
-            this.removeObject(activeObjectId);
+            this.removeActiveObject();
         }
     }
     /* eslint-enable complexity */
+
+    /**
+     * Remove Active Object
+     */
+    removeActiveObject() {
+        const activeObject = this._graphics.getActiveObject();
+        const activeObjectGroup = this._graphics.getActiveGroupObject();
+
+        if (activeObjectGroup) {
+            const objects = activeObjectGroup.getObjects();
+            this.discardSelection();
+            this._removeObjectStream(objects);
+        } else if (activeObject) {
+            const activeObjectId = this._graphics.getObjectId(activeObject);
+            this.removeObject(activeObjectId);
+        }
+    }
+
+    /**
+     * RemoveObject Sequential processing for prevent invoke lock
+     * @param {Array.<Object>} targetObjects - target Objects for remove
+     * @returns {object} targetObjects
+     * @private
+     */
+    _removeObjectStream(targetObjects) {
+        if (!targetObjects.length) {
+            return true;
+        }
+
+        const targetObject = targetObjects.pop();
+
+        return this.removeObject(this._graphics.getObjectId(targetObject)).then(() => (
+            this._removeObjectStream(targetObjects)
+        ));
+    }
 
     /**
      * mouse down event handler
@@ -396,6 +455,25 @@ class ImageEditor {
     deactivateAll() {
         this._graphics.deactivateAll();
         this._graphics.renderAll();
+    }
+
+    /**
+     * discard selction
+     * @example
+     * imageEditor.discardSelection();
+     */
+    discardSelection() {
+        this._graphics.discardSelection();
+    }
+
+    /**
+     * selectable status change
+     * @param {boolean} selectable - selctable status
+     * @example
+     * imageEditor.changeSelectableAll(false); // or true
+     */
+    changeSelectableAll(selectable) {
+        this._graphics.changeSelectableAll(selectable);
     }
 
     /**
@@ -881,10 +959,7 @@ class ImageEditor {
      * @private
      */
     _changeActivateMode(type) {
-        if (type === 'ICON') {
-            this.stopDrawingMode();
-        } else if (this.getDrawingMode() !== type) {
-            this.stopDrawingMode();
+        if (type !== 'ICON' && this.getDrawingMode() !== type) {
             this.startDrawingMode(type);
         }
     }
@@ -896,6 +971,28 @@ class ImageEditor {
      */
     _onTextChanged(objectProps) {
         this.changeText(objectProps.id, objectProps.text);
+    }
+
+    /**
+     * 'iconCreateResize' event handler
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
+     * @private
+     */
+    _onIconCreateResize(originPointer) {
+        this.fire(events.ICON_CREATE_RESIZE, originPointer);
+    }
+
+    /**
+     * 'iconCreateEnd' event handler
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
+     * @private
+     */
+    _onIconCreateEnd(originPointer) {
+        this.fire(events.ICON_CREATE_END, originPointer);
     }
 
     /**
@@ -956,6 +1053,32 @@ class ImageEditor {
     }
 
     /**
+     * 'addObjectAfter' event handler
+     * @param {Object} objectProps added object properties
+     * @private
+     */
+    _onAddObjectAfter(objectProps) {
+        this.fire(events.ADD_OBJECT_AFTER, objectProps);
+    }
+
+    /**
+     * 'selectionCleared' event handler
+     * @private
+     */
+    _selectionCleared() {
+        this.fire(events.SELECTION_CLEARED);
+    }
+
+    /**
+     * 'selectionCreated' event handler
+     * @param {Object} eventTarget - Fabric object
+     * @private
+     */
+    _selectionCreated(eventTarget) {
+        this.fire(events.SELECTION_CREATED, eventTarget);
+    }
+
+    /**
      * Register custom icons
      * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
      * @example
@@ -966,6 +1089,16 @@ class ImageEditor {
      */
     registerIcons(infos) {
         this._graphics.registerPaths(infos);
+    }
+
+    /**
+     * Change canvas cursor type
+     * @param {string} cursorType - cursor type
+     * @example
+     * imageEditor.changeCursor('crosshair');
+     */
+    changeCursor(cursorType) {
+        this._graphics.changeCursor(cursorType);
     }
 
     /**
@@ -1183,6 +1316,23 @@ class ImageEditor {
      */
     setObjectProperties(id, keyValue) {
         return this.execute(commands.SET_OBJECT_PROPERTIES, id, keyValue);
+    }
+
+    /**
+     * Set properties of active object, Do not leave an invoke history.
+     * @param {number} id - object id
+     * @param {Object} keyValue - key & value
+     * @example
+     * imageEditor.setObjectPropertiesQuietly(id, {
+     *     left:100,
+     *     top:100,
+     *     width: 200,
+     *     height: 200,
+     *     opacity: 0.5
+     * });
+     */
+    setObjectPropertiesQuietly(id, keyValue) {
+        this._graphics.setObjectProperties(id, keyValue);
     }
 
     /**

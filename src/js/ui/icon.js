@@ -23,7 +23,7 @@ export default class Icon extends Submenu {
         this._els = {
             registIconButton: this.selector('#tie-icon-image-file'),
             addIconButton: this.selector('#tie-icon-add-button'),
-            iconColorpicker: new Colorpicker(this.selector('#tie-icon-color'))
+            iconColorpicker: new Colorpicker(this.selector('#tie-icon-color'), '#ffbb3b')
         };
     }
 
@@ -37,9 +37,9 @@ export default class Icon extends Submenu {
     addEvent(actions) {
         this.actions = actions;
 
-        this._els.iconColorpicker.on('change', this._changeColor.bind(this));
-        this._els.registIconButton.addEventListener('change', this._registeIcon.bind(this));
-        this._els.addIconButton.addEventListener('click', this._addIcon.bind(this));
+        this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
+        this._els.registIconButton.addEventListener('change', this._registeIconHandler.bind(this));
+        this._els.addIconButton.addEventListener('click', this._addIconHandler.bind(this));
     }
 
     /**
@@ -60,11 +60,27 @@ export default class Icon extends Submenu {
     }
 
     /**
+     * Set icon picker color
+     * @param {string} iconColor - rgb color string
+     */
+    setIconPickerColor(iconColor) {
+        this._els.iconColorpicker.color = iconColor;
+    }
+
+    /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.clearIconType();
+        this.actions.cancelAddIcon();
+    }
+
+    /**
      * Change icon color
      * @param {string} color - color for change
      * @private
      */
-    _changeColor(color) {
+    _changeColorHandler(color) {
         color = color || 'transparent';
         this.actions.changeColor(color);
     }
@@ -74,15 +90,23 @@ export default class Icon extends Submenu {
      * @param {object} event - add button event object
      * @private
      */
-    _addIcon(event) {
+    _addIconHandler(event) {
         const button = event.target.closest('.tui-image-editor-button');
+
         if (button) {
             const iconType = button.getAttribute('data-icontype');
+            const iconColor = this._els.iconColorpicker.color;
+            this.actions.discardSelection();
+            this.actions.changeSelectableAll(false);
             this._els.addIconButton.classList.remove(this.iconType);
             this._els.addIconButton.classList.add(iconType);
 
-            this.iconType = iconType;
-            this.actions.addIcon(iconType);
+            if (this.iconType === iconType) {
+                this.changeStandbyMode();
+            } else {
+                this.actions.addIcon(iconType, iconColor);
+                this.iconType = iconType;
+            }
         }
     }
 
@@ -91,7 +115,7 @@ export default class Icon extends Submenu {
      * @param {object} event - file change event object
      * @private
      */
-    _registeIcon(event) {
+    _registeIconHandler(event) {
         let imgUrl;
 
         if (!isSupportFileApi) {

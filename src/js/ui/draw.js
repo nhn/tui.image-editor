@@ -25,7 +25,7 @@ export default class Draw extends Submenu {
             drawRangeValue: this.selector('#tie-draw-range-value')
         };
 
-        this.type = 'line';
+        this.type = null;
         this.color = this._els.drawColorpicker.color;
         this.width = this._els.drawRange.value;
     }
@@ -56,6 +56,26 @@ export default class Draw extends Submenu {
     }
 
     /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.type = null;
+        this.actions.stopDrawingMode();
+        this.actions.changeSelectableAll(true);
+        this._els.lineSelectButton.classList.remove('free');
+        this._els.lineSelectButton.classList.remove('line');
+    }
+
+    /**
+     * Executed when the menu starts.
+     */
+    changeStartMode() {
+        this.type = 'free';
+        this._els.lineSelectButton.classList.add('free');
+        this.setDrawMode();
+    }
+
+    /**
      * Change draw type event
      * @param {object} event - line select event
      * @private
@@ -64,9 +84,17 @@ export default class Draw extends Submenu {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
             const lineType = this.getButtonType(button, ['free', 'line']);
-            this.changeClass(this._els.lineSelectButton, this.type, lineType);
+            this.actions.discardSelection();
 
+            if (this.type === lineType) {
+                this.changeStandbyMode();
+
+                return;
+            }
+
+            this.changeStandbyMode();
             this.type = lineType;
+            this._els.lineSelectButton.classList.add(lineType);
             this.setDrawMode();
         }
     }
@@ -78,7 +106,11 @@ export default class Draw extends Submenu {
      */
     _changeDrawColor(color) {
         this.color = color || 'transparent';
-        this.setDrawMode();
+        if (!this.type) {
+            this.changeStartMode();
+        } else {
+            this.setDrawMode();
+        }
     }
 
     /**
@@ -90,6 +122,10 @@ export default class Draw extends Submenu {
         value = util.toInteger(value);
         this._els.drawRangeValue.value = value;
         this.width = value;
-        this.setDrawMode();
+        if (!this.type) {
+            this.changeStartMode();
+        } else {
+            this.setDrawMode();
+        }
     }
 }

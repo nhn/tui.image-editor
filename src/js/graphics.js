@@ -46,10 +46,17 @@ const backstoreOnly = {
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
+ *  @param {boolean} option.useItext - Use IText in text mode
+ *  @param {boolean} option.useDragAddIcon - Use dragable add in icon mode
  * @ignore
  */
 class Graphics {
-    constructor(element, cssMaxWidth, cssMaxHeight) {
+    constructor(element, {
+        cssMaxWidth,
+        cssMaxHeight,
+        useItext = false,
+        useDragAddIcon = false
+    } = {}) {
         /**
          * Fabric image instance
          * @type {fabric.Image}
@@ -67,6 +74,18 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
+
+        /**
+         * Use Itext mode for text component
+         * @type {boolean}
+         */
+        this.useItext = useItext;
+
+        /**
+         * Use add drag icon mode for icon component
+         * @type {boolean}
+         */
+        this.useDragAddIcon = useDragAddIcon;
 
         /**
          * cropper Selection Style
@@ -127,7 +146,9 @@ class Graphics {
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
-            onPathCreated: this._onPathCreated.bind(this)
+            onPathCreated: this._onPathCreated.bind(this),
+            onSelectionCleared: this._onSelectionCleared.bind(this),
+            onSelectionCreated: this._onSelectionCreated.bind(this)
         };
 
         this._setCanvasElement(element);
@@ -282,6 +303,14 @@ class Graphics {
      */
     getActiveObject() {
         return this._canvas.getActiveObject();
+    }
+
+    /**
+     * Gets an active group object
+     * @returns {Object} active group object instance
+     */
+    getActiveGroupObject() {
+        return this._canvas.getActiveGroup();
     }
 
     /**
@@ -574,6 +603,16 @@ class Graphics {
     }
 
     /**
+     * Change cursor style
+     * @param {string} cursorType - cursor type
+     */
+    changeCursor(cursorType) {
+        const canvas = this.getCanvas();
+        canvas.defaultCursor = cursorType;
+        canvas.renderAll();
+    }
+
+    /**
      * Whether it has the filter or not
      * @param {string} type - Filter type
      * @returns {boolean} true if it has the filter
@@ -848,7 +887,9 @@ class Graphics {
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
             'object:selected': handler.onObjectSelected,
-            'path:created': handler.onPathCreated
+            'path:created': handler.onPathCreated,
+            'selection:cleared': handler.onSelectionCleared,
+            'selection:created': handler.onSelectionCreated
         });
     }
 
@@ -937,6 +978,43 @@ class Graphics {
     }
 
     /**
+     * "selction:cleared" canvas event handler
+     * @private
+     */
+    _onSelectionCleared() {
+        this.fire(events.SELECTION_CLEARED);
+    }
+
+    /**
+     * "selction:created" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onSelectionCreated(fEvent) {
+        this.fire(events.SELECTION_CREATED, fEvent.target);
+    }
+
+    /**
+     * Canvas discard selection all
+     */
+    discardSelection() {
+        this._canvas.discardActiveGroup();
+        this._canvas.discardActiveObject();
+        this._canvas.renderAll();
+    }
+
+    /**
+     * Canvas Selectable status change
+     * @param {boolean} selectable - expect status
+     */
+    changeSelectableAll(selectable) {
+        this._canvas.forEachObject(obj => {
+            obj.selectable = selectable;
+            obj.hoverCursor = selectable ? 'move' : 'crosshair';
+        });
+    }
+
+    /**
      * Return object's properties
      * @param {fabric.Object} obj - fabric object
      * @returns {Object} properties object
@@ -959,7 +1037,7 @@ class Graphics {
 
         extend(props, util.getProperties(obj, predefinedKeys));
 
-        if (obj.type === 'text') {
+        if (['i-text', 'text'].indexOf(obj.type) > -1) {
             extend(props, this._createTextProperties(obj, props));
         }
 

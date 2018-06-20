@@ -12,15 +12,29 @@ class Range {
         this._drawRangeElement();
 
         this.rangeWidth = toInteger(window.getComputedStyle(rangeElement, null).width) - 12;
-        this.min = options.min || 0;
-        this.max = options.max || 100;
-        this.absMax = (this.min * -1) + this.max;
+        this._min = options.min || 0;
+        this._max = options.max || 100;
+        this._absMax = (this._min * -1) + this._max;
         this.realTimeEvent = options.realTimeEvent || false;
 
         this._addClickEvent();
         this._addDragEvent();
         this.value = options.value;
         this.trigger('change');
+    }
+
+    /**
+     * Set range max value and re position cursor
+     * @param {number} maxValue - max value
+     */
+    set max(maxValue) {
+        this._max = maxValue;
+        this._absMax = (this._min * -1) + this._max;
+        this.value = this._value;
+    }
+
+    get max() {
+        return this._max;
     }
 
     /**
@@ -37,8 +51,8 @@ class Range {
      * @param {Boolean} fire whether fire custom event or not
      */
     set value(value) {
-        const absValue = value - this.min;
-        let leftPosition = (absValue * this.rangeWidth) / this.absMax;
+        const absValue = value - this._min;
+        let leftPosition = (absValue * this.rangeWidth) / this._absMax;
 
         if (this.rangeWidth < leftPosition) {
             leftPosition = this.rangeWidth;
@@ -90,7 +104,7 @@ class Range {
             }
             const touchPx = event.offsetX;
             const ratio = touchPx / this.rangeWidth;
-            const value = (this.absMax * ratio) + this.min;
+            const value = (this._absMax * ratio) + this._min;
             this.pointer.style.left = `${ratio * this.rangeWidth}px`;
             this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
             this._value = value;
@@ -132,7 +146,7 @@ class Range {
         this.pointer.style.left = `${touchPx}px`;
         this.subbar.style.right = `${this.rangeWidth - touchPx}px`;
         const ratio = touchPx / this.rangeWidth;
-        const value = (this.absMax * ratio) + this.min;
+        const value = (this._absMax * ratio) + this._min;
 
         this._value = value;
 

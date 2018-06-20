@@ -26,6 +26,8 @@ const SUB_UI_COMPONENT = {
     Filter
 };
 
+const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
+
 /**
  * Ui class
  * @class
@@ -45,9 +47,9 @@ export default class Ui {
         this.submenu = false;
         this.imageSize = {};
         this.uiSize = {};
-
         this.theme = new Theme(this.options.theme);
 
+        this._submenuChangeTransection = false;
         this._selectedElement = null;
         this._mainElement = null;
         this._editorElementWrap = null;
@@ -70,11 +72,6 @@ export default class Ui {
         this._makeSubMenu();
     }
 
-    _setUiSize(uiSize = this.options.uiSize) {
-        this._selectedElement.style.width = uiSize.width;
-        this._selectedElement.style.height = uiSize.height;
-    }
-
     /**
      * Set Default Selection for includeUI
      * @param {Object} option - imageEditor options
@@ -83,6 +80,7 @@ export default class Ui {
     setUiDefaultSelectionStyle(option) {
         return snippet.extend({
             applyCropSelectionStyle: true,
+            applyGroupSelectionStyle: true,
             selectionStyle: {
                 cornerStyle: 'circle',
                 cornerSize: 20,
@@ -127,14 +125,13 @@ export default class Ui {
         this._editorElementWrap.style.top = `${top}px`;
         this._editorElementWrap.style.left = `${left}px`;
         this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
+        const selectElementClassList = this._selectedElement.classList;
 
-        const {offsetWidth, offsetHeight} = this._editorElementWrap;
-
-        const editortop = (offsetHeight > height) ? (offsetHeight - height) / 2 : 0;
-        const editorleft = (offsetWidth - width) / 2;
-
-        this._editorElement.style.top = `${editortop}px`;
-        this._editorElement.style.left = `${editorleft}px`;
+        if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION) {
+            selectElementClassList.add('tui-image-editor-top-optimization');
+        } else {
+            selectElementClassList.remove('tui-image-editor-top-optimization');
+        }
     }
 
     /**
@@ -225,6 +222,19 @@ export default class Ui {
     }
 
     /**
+     * Set ui container size
+     * @param {Object} uiSize - ui dimension
+     *   @param {number} width - width
+     *   @param {number} height - height
+     * @private
+     */
+    _setUiSize(uiSize = this.options.uiSize) {
+        const elementDimension = this._selectedElement.style;
+        elementDimension.width = uiSize.width;
+        elementDimension.height = uiSize.height;
+    }
+
+    /**
      * Make submenu dom element
      * @private
      */
@@ -267,7 +277,9 @@ export default class Ui {
         selectedElement.classList.add('tui-image-editor-container');
         selectedElement.innerHTML = controls({
             biImage: this.theme.getStyle('common.bi'),
-            iconStyle: this.theme.getStyle('menu.icon')
+            iconStyle: this.theme.getStyle('menu.icon'),
+            loadButtonStyle: this.theme.getStyle('loadButton'),
+            downloadButtonStyle: this.theme.getStyle('downloadButton')
         }) +
         mainContainer({
             biImage: this.theme.getStyle('common.bi'),
@@ -305,6 +317,7 @@ export default class Ui {
 
         btnElement.id = `tie-btn-${menuName}`;
         btnElement.className = 'tui-image-editor-item';
+        btnElement.title = menuName;
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -352,7 +365,6 @@ export default class Ui {
      */
     _addMenuEvent(menuName) {
         this._els[menuName].addEventListener('click', () => {
-            this._actions.main.modeChange(menuName);
             this.changeMenu(menuName);
         });
     }
@@ -423,21 +435,43 @@ export default class Ui {
      * change menu
      * @param {string} menuName - menu name
      * @param {boolean} toggle - whether toogle or not
+     * @param {boolean} discardSelection - discard selection
      */
-    changeMenu(menuName, toggle = true) {
+    changeMenu(menuName, toggle = true, discardSelection = true) {
+        if (!this._submenuChangeTransection) {
+            this._submenuChangeTransection = true;
+            this._changeMenu(menuName, toggle, discardSelection);
+            this._submenuChangeTransection = false;
+        }
+    }
+
+    /**
+     * change menu
+     * @param {string} menuName - menu name
+     * @param {boolean} toggle - whether toogle or not
+     * @param {boolean} discardSelection - discard selection
+     * @private
+     */
+    _changeMenu(menuName, toggle, discardSelection) {
         if (this.submenu) {
             this._els[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(`tui-image-editor-menu-${this.submenu}`);
+            if (discardSelection) {
+                this._actions.main.discardSelection();
+            }
+            this._actions.main.changeSelectableAll(true);
+            this[this.submenu].changeStandbyMode();
         }
 
         if (this.submenu === menuName && toggle) {
-            this.submenu = '';
+            this.submenu = null;
         } else {
             this._els[menuName].classList.add('active');
             this._mainElement.classList.add(`tui-image-editor-menu-${menuName}`);
             this.submenu = menuName;
+            this[this.submenu].changeStartMode();
         }
-        this._subMenuElement.style.display = this.submenu ? 'table' : 'none';
+
         this.resizeEditor();
     }
 
@@ -449,10 +483,8 @@ export default class Ui {
         if (this.options.initMenu) {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
-            setTimeout(() => {
-                this._els[this.options.initMenu].dispatchEvent(evt);
-                this.icon.registDefaultIcon();
-            }, 700);
+            this._els[this.options.initMenu].dispatchEvent(evt);
+            this.icon.registDefaultIcon();
         }
     }
 

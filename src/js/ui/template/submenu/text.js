@@ -78,7 +78,7 @@ export default ({iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
-        <li class="newline tui-image-editor-range-wrap">
+        <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">Text size</label>
             <div id="tie-text-range"></div>
             <input id="tie-text-range-value" class="tui-image-editor-range-value" value="0" />

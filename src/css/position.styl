@@ -1,6 +1,18 @@
 /* POSITION LEFT */
 .{prefix}-container
   &.left
+    .{prefix}-menu
+        > .{prefix}-item[title]
+            &:before
+                left: 28px;
+                top: 11px;
+                border-right: 7px solid #2f2f2f;
+                border-top: 7px solid transparent;
+                border-bottom: 7px solid transparent;
+            &:after
+                top: 7px;
+                left: 39px;
+                width: 27px;
     .{prefix}-submenu
         left: 0;
         height: 100%;
@@ -17,14 +29,15 @@
 /* POSITION LEFT & RIGHT */
 .{prefix}-container
   &.left, &.right
+    .{prefix}-menu
+        white-space: initial;
     .{prefix}-submenu
         white-space: normal;
         > div
             vertical-align: middle;
     .{prefix}-controls li
-        display: block;
-        width: 39px;
-        margin: 4px 0 4px 12px;
+        display: inline-block;
+        margin: 4px auto;
     .{prefix}-icpartition
         position: relative;
         top: -7px;
@@ -52,7 +65,7 @@
     .{prefix}-checkbox-wrap.fixed-width
         width: 182px;
         white-space: normal;
-    .{prefix}-range-wrap.newline label.range
+    .{prefix}-range-wrap.{prefix}-newline label.range
         display: block;
         text-align: left;
         width: 75%;
@@ -66,6 +79,18 @@
 /* POSITION RIGIHT */
 .{prefix}-container
   &.right
+    .{prefix}-menu
+        > .{prefix}-item[title]
+            &:before
+                left: -3px;
+                top: 11px;
+                border-left: 7px solid #2f2f2f;
+                border-top: 7px solid transparent;
+                border-bottom: 7px solid transparent;
+            &:after
+                top: 7px;
+                left: -44px;
+                width: 27px;
     .{prefix}-submenu
         right: 0;
         height: 100%;
@@ -97,6 +122,19 @@
 /* POSITION TOP */
 .{prefix}-container
   &.top
+    .{prefix}-size-wrap
+        height: calc(100% - 64px);
+    .{prefix}-main-container
+        bottom: 0;
+    .{prefix}-menu
+        > .{prefix}-item[title]
+            &:before
+                left: 13px;
+                border-top: 0;
+                border-bottom: 7px solid #2f2f2f;
+                top: 33px;
+            &:after
+                top: 38px;
     .{prefix}-submenu
         top: 0;
         bottom: inherit;

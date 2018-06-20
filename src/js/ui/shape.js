@@ -22,7 +22,7 @@ export default class Shape extends Submenu {
             iconStyle,
             templateHtml
         });
-        this.type = 'rect';
+        this.type = null;
         this.options = SHAPE_DEFAULT_OPTION;
 
         this._els = {
@@ -44,10 +44,10 @@ export default class Shape extends Submenu {
     addEvent(actions) {
         this.actions = actions;
 
-        this._els.shapeSelectButton.addEventListener('click', this._changeShape.bind(this));
-        this._els.strokeRange.on('change', this._changeStrokeRange.bind(this));
-        this._els.fillColorpicker.on('change', this._changeFillColor.bind(this));
-        this._els.strokeColorpicker.on('change', this._changeStrokeColor.bind(this));
+        this._els.shapeSelectButton.addEventListener('click', this._changeShapeHandler.bind(this));
+        this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
+        this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
+        this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
         this._els.strokeRangeValue.value = this._els.strokeRange.value;
         this._els.strokeRangeValue.setAttribute('readonly', true);
     }
@@ -71,18 +71,74 @@ export default class Shape extends Submenu {
     }
 
     /**
+     * Executed when the menu starts.
+     */
+    changeStartMode() {
+        this.actions.stopDrawingMode();
+    }
+
+    /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.type = null;
+        this.actions.changeSelectableAll(true);
+        this._els.shapeSelectButton.classList.remove('circle');
+        this._els.shapeSelectButton.classList.remove('triangle');
+        this._els.shapeSelectButton.classList.remove('rect');
+    }
+
+    /**
+     * set range stroke max value
+     * @param {number} maxValue - expect max value for change
+     */
+    setMaxStrokeValue(maxValue) {
+        let strokeMaxValue = maxValue;
+        if (strokeMaxValue <= 0) {
+            strokeMaxValue = defaultShapeStrokeValus.max;
+        }
+        this._els.strokeRange.max = strokeMaxValue;
+    }
+
+    /**
+     * Set stroke value
+     * @param {number} value - expect value for strokeRange change
+     */
+    setStrokeValue(value) {
+        this._els.strokeRange.value = value;
+        this._els.strokeRange.trigger('change');
+    }
+
+    /**
+     * Get stroke value
+     * @returns {number} - stroke range value
+     */
+    getStrokeValue() {
+        return this._els.strokeRange.value;
+    }
+
+    /**
      * Change icon color
      * @param {object} event - add button event object
      * @private
      */
-    _changeShape(event) {
+    _changeShapeHandler(event) {
         const button = event.target.closest('.tui-image-editor-button');
         if (button) {
+            this.actions.stopDrawingMode();
+            this.actions.discardSelection();
             const shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
-            this.changeClass(event.currentTarget, this.type, shapeType);
 
+            if (this.type === shapeType) {
+                this.changeStandbyMode();
+
+                return;
+            }
+            this.changeStandbyMode();
             this.type = shapeType;
-            this.actions.setDrawingShape(shapeType);
+            event.currentTarget.classList.add(shapeType);
+            this.actions.changeSelectableAll(false);
+            this.actions.modeChange('shape');
         }
     }
 
@@ -91,7 +147,7 @@ export default class Shape extends Submenu {
      * @param {number} value - stroke range value
      * @private
      */
-    _changeStrokeRange(value) {
+    _changeStrokeRangeHandler(value) {
         this.options.strokeWidth = toInteger(value);
         this._els.strokeRangeValue.value = toInteger(value);
 
@@ -107,7 +163,7 @@ export default class Shape extends Submenu {
      * @param {string} color - fill color
      * @private
      */
-    _changeFillColor(color) {
+    _changeFillColorHandler(color) {
         color = color || 'transparent';
         this.options.fill = color;
         this.actions.changeShape({
@@ -120,7 +176,7 @@ export default class Shape extends Submenu {
      * @param {string} color - fill color
      * @private
      */
-    _changeStrokeColor(color) {
+    _changeStrokeColorHandler(color) {
         color = color || 'transparent';
         this.options.stroke = color;
         this.actions.changeShape({

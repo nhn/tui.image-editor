@@ -33,6 +33,8 @@ export default {
     'menu.normalIcon.name': 'icon-b',
     'menu.activeIcon.path': 'icon-a.svg',
     'menu.activeIcon.name': 'icon-a',
+    'menu.iconSize.width': '24px',
+    'menu.iconSize.height': '24px',
 
     // submenu primary color
     'submenu.backgroundColor': 'transparent',
@@ -43,6 +45,8 @@ export default {
     'submenu.normalIcon.name': 'icon-a',
     'submenu.activeIcon.path': 'icon-c.svg',
     'submenu.activeIcon.name': 'icon-c',
+    'submenu.iconSize.width': '32px',
+    'submenu.iconSize.height': '32px',
 
     // submenu labels
     'submenu.normalLabel.color': '#858585',
@@ -60,6 +64,7 @@ export default {
     'range.subbar.color': '#d1d1d1',
     'range.value.color': '#fff',
     'range.value.fontWeight': 'lighter',
+    'range.value.fontSize': '11px',
     'range.value.border': '1px solid #353535',
     'range.value.backgroundColor': '#151515',
     'range.title.color': '#fff',

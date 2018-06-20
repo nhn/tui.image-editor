@@ -26,16 +26,31 @@ export default class Crop extends Submenu {
      *   @param {Function} actions.crop - crop action
      *   @param {Function} actions.cancel - cancel action
      */
-    addEvent({crop, cancel}) {
+    addEvent(actions) {
+        this.actions = actions;
         this._els.apply.addEventListener('click', () => {
-            crop();
+            this.actions.crop();
             this._els.apply.classList.remove('active');
         });
 
         this._els.cancel.addEventListener('click', () => {
-            cancel();
+            this.actions.cancel();
             this._els.apply.classList.remove('active');
         });
+    }
+
+    /**
+     * Executed when the menu starts.
+     */
+    changeStartMode() {
+        this.actions.modeChange('crop');
+    }
+
+    /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.actions.stopDrawingMode();
     }
 
     /**

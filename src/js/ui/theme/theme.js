@@ -81,7 +81,9 @@ export default class Theme {
             submenuRangeValue: this.getStyle('range.value'),
             submenuColorpickerTitle: this.getStyle('colorpicker.title'),
             submenuColorpickerButton: this.getStyle('colorpicker.button'),
-            submenuCheckbox: this.getStyle('checkbox')
+            submenuCheckbox: this.getStyle('checkbox'),
+            menuIconSize: this.getStyle('menu.iconSize'),
+            submenuIconSize: this.getStyle('submenu.iconSize')
         });
     }
 

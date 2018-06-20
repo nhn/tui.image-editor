@@ -9,11 +9,11 @@
         white-space: nowrap;
         .{prefix}-button:hover svg > use.active
             display: block;
-        .tui-image-editor-submenu-item
+        .{prefix}-submenu-item
             li
                 display: inline-block;
                 vertical-align: top;
-            .newline
+            .{prefix}-newline
                 display: block;
                 margin-top: 14px;
             .{prefix}-button
@@ -42,7 +42,7 @@
         height: 52px;
         border-left: 1px solid #3c3c3c;
         margin: 0 12px 0 14px;
-    .{prefix}-main.filter .tui-image-editor-partition > div
+    .{prefix}-main.{prefix}-menu-filter .{prefix}-partition > div
         height: 108px;
         margin: 0 29px 0 0px;
     .{prefix}-submenu-align
@@ -55,13 +55,25 @@
         margin-right: 0;
         label
             width: 70px;
-    .{prefix}-main.tui-image-editor-menu-crop .{prefix}-submenu > div.tui-image-editor-menu-crop,
-    .{prefix}-main.tui-image-editor-menu-flip .{prefix}-submenu > div.tui-image-editor-menu-flip,
-    .{prefix}-main.tui-image-editor-menu-rotate .{prefix}-submenu > div.tui-image-editor-menu-rotate,
-    .{prefix}-main.tui-image-editor-menu-shape .{prefix}-submenu > div.tui-image-editor-menu-shape,
-    .{prefix}-main.tui-image-editor-menu-text .{prefix}-submenu > div.tui-image-editor-menu-text,
-    .{prefix}-main.tui-image-editor-menu-mask .{prefix}-submenu > div.tui-image-editor-menu-mask,
-    .{prefix}-main.tui-image-editor-menu-icon .{prefix}-submenu > div.tui-image-editor-menu-icon,
-    .{prefix}-main.tui-image-editor-menu-draw .{prefix}-submenu > div.tui-image-editor-menu-draw,
-    .{prefix}-main.tui-image-editor-menu-filter .{prefix}-submenu > div.tui-image-editor-menu-filter
+    .{prefix}-main.{prefix}-menu-crop .{prefix}-submenu > div.{prefix}-menu-crop,
+    .{prefix}-main.{prefix}-menu-flip .{prefix}-submenu > div.{prefix}-menu-flip,
+    .{prefix}-main.{prefix}-menu-rotate .{prefix}-submenu > div.{prefix}-menu-rotate,
+    .{prefix}-main.{prefix}-menu-shape .{prefix}-submenu > div.{prefix}-menu-shape,
+    .{prefix}-main.{prefix}-menu-text .{prefix}-submenu > div.{prefix}-menu-text,
+    .{prefix}-main.{prefix}-menu-mask .{prefix}-submenu > div.{prefix}-menu-mask,
+    .{prefix}-main.{prefix}-menu-icon .{prefix}-submenu > div.{prefix}-menu-icon,
+    .{prefix}-main.{prefix}-menu-draw .{prefix}-submenu > div.{prefix}-menu-draw,
+    .{prefix}-main.{prefix}-menu-filter .{prefix}-submenu > div.{prefix}-menu-filter
         display: table-cell;
+    .{prefix}-main.{prefix}-menu-crop,
+    .{prefix}-main.{prefix}-menu-flip,
+    .{prefix}-main.{prefix}-menu-rotate,
+    .{prefix}-main.{prefix}-menu-shape,
+    .{prefix}-main.{prefix}-menu-text,
+    .{prefix}-main.{prefix}-menu-mask,
+    .{prefix}-main.{prefix}-menu-icon,
+    .{prefix}-main.{prefix}-menu-draw,
+    .{prefix}-main.{prefix}-menu-filter
+      .{prefix}-submenu
+        display: table;
+

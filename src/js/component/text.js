@@ -118,6 +118,12 @@ class Text extends Component {
          * @type {boolean}
          */
         this.isPrevEditing = false;
+
+        /**
+         * use itext
+         * @type {boolean}
+         */
+        this.useItext = graphics.useItext;
     }
 
     /**
@@ -132,10 +138,24 @@ class Text extends Component {
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
-            'object:scaling': this._listeners.scaling
+            'object:scaling': this._listeners.scaling,
+            'text:editing': this._listeners.modify
         });
 
-        this._createTextarea();
+        if (this.useItext) {
+            canvas.forEachObject(obj => {
+                if (obj.type === 'i-text') {
+                    obj.set({
+                        left: obj.left - (obj.width / 2),
+                        top: obj.top - (obj.height / 2),
+                        originX: 'left',
+                        originY: 'top'
+                    });
+                }
+            });
+        } else {
+            this._createTextarea();
+        }
 
         this.setCanvasRatio();
     }
@@ -148,15 +168,34 @@ class Text extends Component {
 
         canvas.selection = true;
         canvas.defaultCursor = 'default';
-        canvas.deactivateAllWithDispatch(); // action for undo stack
+
+        if (this.useItext) {
+            canvas.forEachObject(obj => {
+                if (obj.type === 'i-text') {
+                    if (obj.text === '') {
+                        obj.remove();
+                    } else {
+                        obj.set({
+                            left: obj.left + (obj.width / 2),
+                            top: obj.top + (obj.height / 2),
+                            originX: 'center',
+                            originY: 'center'
+                        });
+                    }
+                }
+            });
+        } else {
+            canvas.deactivateAllWithDispatch();
+            this._removeTextarea();
+        }
+
         canvas.off({
             'mouse:down': this._listeners.mousedown,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
-            'object:scaling': this._listeners.scaling
+            'object:scaling': this._listeners.scaling,
+            'text:editing': this._listeners.modify
         });
-
-        this._removeTextarea();
     }
 
     /**
@@ -177,18 +216,27 @@ class Text extends Component {
     add(text, options) {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
-            const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
+            let newText = null;
+            let selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
             let styles = this._defaultStyles;
 
             this._setInitPos(options.position);
 
             if (options.styles) {
-                styles = snippet.extend(options.styles, styles);
+                styles = snippet.extend(styles, options.styles);
             }
 
-            const newText = new fabric.Text(text, styles);
+            if (this.useItext) {
+                newText = new fabric.IText(text, styles);
+                selectionStyle = snippet.extend({}, selectionStyle, {
+                    originX: 'left',
+                    originY: 'top'
+                });
+            } else {
+                newText = new fabric.Text(text, styles);
+            }
 
-            newText.set(snippet.extend(selectionStyle, this.graphics.controlStyle));
+            newText.set(selectionStyle);
             newText.on({
                 mouseup: this._onFabricMouseUp.bind(this)
             });
@@ -495,6 +543,7 @@ class Text extends Component {
      */
     _onFabricMouseDown(fEvent) {
         const obj = fEvent.target;
+
         if (obj && !obj.isType('text')) {
             return;
         }
@@ -541,7 +590,9 @@ class Text extends Component {
         const newClickTime = (new Date()).getTime();
 
         if (this._isDoubleClick(newClickTime)) {
-            this._changeToEditingMode(fEvent.target);
+            if (!this.useItext) {
+                this._changeToEditingMode(fEvent.target);
+            }
             this.fire(events.TEXT_EDITING); // fire editing text event
         }
 

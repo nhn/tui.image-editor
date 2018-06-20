@@ -10,7 +10,9 @@ export default ({
     submenuColorpickerTitle,
     submenuColorpickerButton,
     submenuRangeBar,
-    submenuRangeSubbar
+    submenuRangeSubbar,
+    submenuIconSize,
+    menuIconSize
 }) => (`
     #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] label,
     #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] label,
@@ -34,12 +36,13 @@ export default ({
     #tie-text-align-button.left .tui-image-editor-button.left label,
     #tie-text-align-button.center .tui-image-editor-button.center label,
     #tie-text-align-button.right .tui-image-editor-button.right label,
+    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,
     .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,
     .tui-image-editor-container .tui-image-editor-checkbox input + label {
         ${subMenuLabelActive}
     }
     .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,
-    .tui-image-editor-container .tui-image-editor-range-wrap.newline.short label {
+    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {
         ${subMenuLabelNormal}
     }
     .tui-image-editor-container .tui-image-editor-range-wrap label {
@@ -72,5 +75,11 @@ export default ({
     }
     .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {
         ${submenuColorpickerButton}
+    }
+    .tui-image-editor-container .svg_ic-menu {
+        ${menuIconSize}
+    }
+    .tui-image-editor-container .svg_ic-submenu {
+        ${submenuIconSize}
     }
 `);
