@@ -307,7 +307,7 @@ class ImageEditor {
      * @private
      */
     _removeObjectStream(targetObjects) {
-        if (targetObjects.length === 0) {
+        if (!targetObjects.length) {
             return true;
         }
 

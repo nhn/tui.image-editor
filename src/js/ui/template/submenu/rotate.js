@@ -27,7 +27,7 @@ export default ({iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
-        <li class="newline tui-image-editor-range-wrap">
+        <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">Range</label>
             <div id="tie-rotate-range"></div>
             <input id="tie-ratate-range-value" class="tui-image-editor-range-value" value="0" />

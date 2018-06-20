@@ -26,6 +26,8 @@ const SUB_UI_COMPONENT = {
     Filter
 };
 
+const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
+
 /**
  * Ui class
  * @class
@@ -123,11 +125,12 @@ export default class Ui {
         this._editorElementWrap.style.top = `${top}px`;
         this._editorElementWrap.style.left = `${left}px`;
         this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
+        const selectElementClassList = this._selectedElement.classList;
 
-        if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < 1235) {
-            this._selectedElement.classList.add('tui-image-editor-top-optimization');
+        if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION) {
+            selectElementClassList.add('tui-image-editor-top-optimization');
         } else {
-            this._selectedElement.classList.remove('tui-image-editor-top-optimization');
+            selectElementClassList.remove('tui-image-editor-top-optimization');
         }
     }
 
@@ -226,8 +229,9 @@ export default class Ui {
      * @private
      */
     _setUiSize(uiSize = this.options.uiSize) {
-        this._selectedElement.style.width = uiSize.width;
-        this._selectedElement.style.height = uiSize.height;
+        const elementDimension = this._selectedElement.style;
+        elementDimension.width = uiSize.width;
+        elementDimension.height = uiSize.height;
     }
 
     /**

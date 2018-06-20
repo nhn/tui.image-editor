@@ -42,7 +42,7 @@ export default ({
         ${subMenuLabelActive}
     }
     .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,
-    .tui-image-editor-container .tui-image-editor-range-wrap.newline.short label {
+    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {
         ${subMenuLabelNormal}
     }
     .tui-image-editor-container .tui-image-editor-range-wrap label {

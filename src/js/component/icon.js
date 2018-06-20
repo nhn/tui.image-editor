@@ -39,7 +39,11 @@ class Icon extends Component {
          * @type {Object}
          */
         this._pathMap = pathMap;
-        // this.useDragAddIcon = graphics.useDragAddIcon;
+
+        /**
+         * Option to add icon to drag.
+         * @type {boolean}
+         */
         this.useDragAddIcon = graphics.useDragAddIcon;
     }
 

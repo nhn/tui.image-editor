@@ -43,23 +43,23 @@ export default () => (`
                         <label for="tie-remove-white">Remove White</label>
                     </div>
                 </div>
-                <div class="newline tui-image-editor-range-wrap short">
+                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
                     <label>Threshold</label>
                     <div id="tie-removewhite-threshold-range"></div>
                 </div>
-                <div class="newline tui-image-editor-range-wrap short">
+                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
                     <label>Distance</label>
                     <div id="tie-removewhite-distance-range"></div>
                 </div>
             </div>
             <div>
-                <div class="newline tui-image-editor-checkbox-wrap">
+                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">
                     <div class="tui-image-editor-checkbox">
                         <input type="checkbox" id="tie-gradient-transparency">
                         <label for="tie-gradient-transparency">Grayscale</label>
                     </div>
                 </div>
-                <div class="newline tui-image-editor-range-wrap short">
+                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
                     <label>Value</label>
                     <div id="tie-gradient-transparency-range"></div>
                 </div>
@@ -98,13 +98,13 @@ export default () => (`
                 </div>
             </div>
             <div>
-                <div class="newline tui-image-editor-checkbox-wrap">
+                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">
                     <div class="tui-image-editor-checkbox">
                         <input type="checkbox" id="tie-color-filter">
                         <label for="tie-color-filter">Color Filter</label>
                     </div>
                 </div>
-                <div class="newline tui-image-editor-range-wrap short">
+                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
                     <label>Threshold</label>
                     <div id="tie-colorfilter-threshole-range"></div>
                 </div>

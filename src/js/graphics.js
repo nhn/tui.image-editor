@@ -51,7 +51,12 @@ const backstoreOnly = {
  * @ignore
  */
 class Graphics {
-    constructor(element, {cssMaxWidth, cssMaxHeight, useItext = false, useDragAddIcon = false} = {}) {
+    constructor(element, {
+        cssMaxWidth,
+        cssMaxHeight,
+        useItext = false,
+        useDragAddIcon = false
+    } = {}) {
         /**
          * Fabric image instance
          * @type {fabric.Image}
@@ -72,13 +77,13 @@ class Graphics {
 
         /**
          * Use Itext mode for text component
-         * @type {number}
+         * @type {boolean}
          */
         this.useItext = useItext;
 
         /**
          * Use add drag icon mode for icon component
-         * @type {number}
+         * @type {boolean}
          */
         this.useDragAddIcon = useDragAddIcon;
 
@@ -986,9 +991,7 @@ class Graphics {
      * @private
      */
     _onSelectionCreated(fEvent) {
-        const {target} = fEvent;
-
-        this.fire(events.SELECTION_CREATED, target);
+        this.fire(events.SELECTION_CREATED, fEvent.target);
     }
 
     /**
@@ -1007,11 +1010,7 @@ class Graphics {
     changeSelectableAll(selectable) {
         this._canvas.forEachObject(obj => {
             obj.selectable = selectable;
-            if (selectable) {
-                obj.hoverCursor = 'move';
-            } else {
-                obj.hoverCursor = 'crosshair';
-            }
+            obj.hoverCursor = selectable ? 'move' : 'crosshair';
         });
     }
 
