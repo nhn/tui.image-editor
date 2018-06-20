@@ -7,10 +7,11 @@ import templateHtml from './template/submenu/mask';
  * @class
  */
 export default class Mask extends Submenu {
-    constructor(subMenuElement, {iconStyle}) {
+    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'mask',
             iconStyle,
+            menuBarPosition,
             templateHtml
         });
 

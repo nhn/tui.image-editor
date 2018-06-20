@@ -32,10 +32,11 @@ const FILTER_OPTIONS = [
  * @class
  */
 export default class Filter extends Submenu {
-    constructor(subMenuElement, {iconStyle}) {
+    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'filter',
             iconStyle,
+            menuBarPosition,
             templateHtml
         });
 

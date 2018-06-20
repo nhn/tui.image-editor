@@ -6,10 +6,11 @@ import templateHtml from './template/submenu/crop';
  * @class
  */
 export default class Crop extends Submenu {
-    constructor(subMenuElement, {iconStyle}) {
+    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'crop',
             iconStyle,
+            menuBarPosition,
             templateHtml
         });
 

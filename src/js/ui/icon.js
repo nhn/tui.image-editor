@@ -10,10 +10,11 @@ import {defaultIconPath} from '../consts';
  * @class
  */
 export default class Icon extends Submenu {
-    constructor(subMenuElement, {iconStyle}) {
+    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'icon',
             iconStyle,
+            menuBarPosition,
             templateHtml
         });
 

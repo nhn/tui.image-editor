@@ -10,10 +10,11 @@ import {defaultTextRangeValus} from '../consts';
  * @class
  */
 export default class Text extends Submenu {
-    constructor(subMenuElement, {iconStyle}) {
+    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'text',
             iconStyle,
+            menuBarPosition,
             templateHtml
         });
         this.effect = {

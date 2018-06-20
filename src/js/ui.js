@@ -250,7 +250,8 @@ export default class Ui {
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
-                iconStyle: this.theme.getStyle('submenu.icon')
+                iconStyle: this.theme.getStyle('submenu.icon'),
+                menuBarPosition: this.options.menuBarPosition
             });
         });
     }
