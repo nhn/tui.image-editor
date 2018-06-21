@@ -61,7 +61,7 @@ CommandFactory.register(command);
 module.export = command;
 ```
 
-#### Command 생성 및 실행
+#### Command creation and execution.
 ```js
 const command = commandFactory.create('commandName', param1, param2);
 command.execute(...command.args).then(value => {
@@ -107,16 +107,16 @@ Execute `Command` and manage Undo / Redo.
 
 | Name | Need mode | Usage |
 | --- | ----- | --- |
-| Cropper | O | Crop 모듈, Crop용 UI와 이벤트 처리 필요 |
-| filter | X | 이미지 필터 모듈 |
-| flip | X | 이미지 뒤집기 모듈 |
-| freeDrawing | O | 자유 그리기 모듈 |
-| icon | X | 아이콘 추가 모듈 |
-| imageLoader | X | 메인 이미지 로딩 모듈 |
-| line | O | 직선 그리기 모듈 |
-| rotation | X | 메인 이미지 및 오브젝트들 회전 모듈 |
-| shape | O | 도형 그리기 모듈 |
-| text | O | 텍스트 오브젝트 입력 모듈 |
+| Cropper | O | Crop module, event handling for Crop. |
+| filter | X | Image filter module |
+| flip | X | Image flip Module. |
+| freeDrawing | O | free drawing module |
+| icon | X | Add Icon Module |
+| imageLoader | X | Main image loading module |
+| line | O | Straight line drawing module |
+| rotation | X | Main image and objects rotation module |
+| shape | O | Shape drawing module |
+| text | O | Text object input module. |
 
 # The drawing mode is mutually exclusive, and Command operation is the user's part.
 - Only one drawing mode should be activated at a time, because the events and UI used for each mode are different. Therefore, the drawing mode is mutually exclusive.
