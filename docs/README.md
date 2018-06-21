@@ -1,10 +1,13 @@
 ## Tutorials
 - [Getting Started](Basic-Tutorial.md)
+- [Understand the structure](Structure.md)
+- [Simple Reference](Reference.md)
+- [Mobile Version](Apply-Mobile-Version.md)
+- [Mobile Version - Image Load and Save](Apply-Mobile-Version-Image.md)
 
 
 ## Documents
-
-- [Code of Conducting](../CODE_OF_CONDUCTING.md)
+- [Code of Conducting](../CODE_OF_CONDUCT.md)
 - [Contributing Guide](../CONTRIBUTING.md)
 - [Commit Message Convention](COMMIT_MESSAGE_CONVENTION.md)
 - [API & Examples](http://nhnent.github.io/tui.image-editor/latest/)
