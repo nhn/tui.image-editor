@@ -16,16 +16,28 @@ describe('UI', () => {
                 name: ''
             },
             menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
-            initMenu: false,
+            initMenu: 'shape',
             menuBarPosition: 'bottom'
         };
         ui = new UI(document.createElement('div'), uiOptions, {});
     });
     describe('_changeMenu()', () => {
-        it('메뉴가 변경되면 변경되는 메뉴 인스턴스의 changeStartMode()가 실행 되어야 한다.', () => {
+        beforeEach(() => {
+            ui.submenu = 'shape';
+            spyOn(ui, 'resizeEditor');
+            spyOn(ui.shape, 'changeStandbyMode');
+            spyOn(ui.filter, 'changeStartMode');
+            ui._actions.main = {
+                changeSelectableAll: jasmine.createSpy('changeSelectableAll')
+            };
+            ui._changeMenu('filter', false, false);
+        });
+        it('When the menu changes, the changeStartMode () of the menu instance to be changed must be executed.', () => {
+            expect(ui.shape.changeStandbyMode).toHaveBeenCalled();
         });
 
-        it('메뉴가 변경되면 기존 메뉴 인스턴스의 changeStandbyMode()가 실행 되어야 한다.', () => {
+        it('When the menu changes, the changeStandbyMode () of the existing menu instance must be executed.', () => {
+            expect(ui.filter.changeStartMode).toHaveBeenCalled();
         });
     });
 
