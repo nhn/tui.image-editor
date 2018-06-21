@@ -4,7 +4,7 @@
 
 [![github version](https://img.shields.io/github/release/nhnent/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-image-editor.svg)](https://www.npmjs.com/package/tui-image-editor) [![bower version](https://img.shields.io/bower/v/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
-![5b14dd4471e10255073796](https://user-images.githubusercontent.com/35218826/40901811-c682fdb4-680c-11e8-8569-01609816240e.gif)
+![6 -20-2018 17-45-54](https://user-images.githubusercontent.com/35218826/41647896-7b218ae0-74b2-11e8-90db-d7805cc23e8c.gif)
 
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
@@ -46,13 +46,38 @@
   ### Integration function
     - Download, Image Load, Undo, Redo, Reset, Delete Object(Shape, Line, Mask Image...)
 
-| Crop | Flip | Rotation | Drawing | Shape |
-| --- | --- | --- | --- | --- |
-| ![2018-06-04 4 33 16](https://user-images.githubusercontent.com/35218826/40904241-0c28ec68-6815-11e8-8296-89a1716b22d8.png) | ![2018-06-04 4 40 06](https://user-images.githubusercontent.com/35218826/40904521-f7c6e184-6815-11e8-8ba3-c94664da69a2.png) | ![2018-06-04 4 43 02](https://user-images.githubusercontent.com/35218826/40904664-656aa748-6816-11e8-9943-6607c209deac.png) | ![2018-06-04 4 47 40](https://user-images.githubusercontent.com/35218826/40904850-0f26ebde-6817-11e8-97d0-d3a7e4bc02da.png) | ![2018-06-04 4 51 45](https://user-images.githubusercontent.com/35218826/40905037-a026296a-6817-11e8-9d28-9e1ca7bc58c4.png) | 
+<table>
+        <tr>
+            <th width="20%">Crop</th>
+            <th width="20%">Flip</th>
+            <th width="20%">Rotation</th>
+            <th width="20%">Drawing</th>
+            <th width="20%">Shape</th>
+        </tr>
+        <tr>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40904241-0c28ec68-6815-11e8-8296-89a1716b22d8.png" alt="2018-06-04 4 33 16" style="max-width:100%;"></td>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40904521-f7c6e184-6815-11e8-8ba3-c94664da69a2.png" alt="2018-06-04 4 40 06" style="max-width:100%;"></td>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40904664-656aa748-6816-11e8-9943-6607c209deac.png" alt="2018-06-04 4 43 02" style="max-width:100%;"></td>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40904850-0f26ebde-6817-11e8-97d0-d3a7e4bc02da.png" alt="2018-06-04 4 47 40" style="max-width:100%;"></td>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40905037-a026296a-6817-11e8-9d28-9e1ca7bc58c4.png" alt="2018-06-04 4 51 45" style="max-width:100%;"></td>
+        </tr>
+        <tr>
+            <th>Icon</th>
+            <th>Text</th>
+            <th>Mask</th>
+            <th>Filter</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40931205-2d255db6-6865-11e8-98af-ad34c5a01da1.png" alt="2018-06-05 2 06 29" style="max-width:100%;"></td>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40931484-46253948-6866-11e8-8a04-fa042920e457.png" alt="2018-06-05 2 14 36" style="max-width:100%;"></td>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40931743-21eeb346-6867-11e8-8e31-a59f7a43482b.png" alt="2018-06-05 2 20 46" style="max-width:100%;"></td>
+            <td><img src="https://user-images.githubusercontent.com/35218826/40932016-093ed1f4-6868-11e8-8224-a048c3ee8a09.png" alt="2018-06-05 2 27 10" style="max-width:100%;"></td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
 
-| Icon | Text | Mask | Filter |
-| --- | --- | --- | --- |
-| ![2018-06-05 2 06 29](https://user-images.githubusercontent.com/35218826/40931205-2d255db6-6865-11e8-98af-ad34c5a01da1.png) | ![2018-06-05 2 14 36](https://user-images.githubusercontent.com/35218826/40931484-46253948-6866-11e8-8a04-fa042920e457.png) | ![2018-06-05 2 20 46](https://user-images.githubusercontent.com/35218826/40931743-21eeb346-6867-11e8-8e31-a59f7a43482b.png) | ![2018-06-05 2 27 10](https://user-images.githubusercontent.com/35218826/40932016-093ed1f4-6868-11e8-8224-a048c3ee8a09.png) |  |
 
 ### Select only the desired function
 
