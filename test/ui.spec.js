@@ -81,6 +81,7 @@ describe('UI', () => {
             spyOn(ui, '_addMenuEvent');
             spyOn(ui, '_addSubMenuEvent');
             spyOn(ui, '_addHelpActionEvent');
+            spyOn(ui, '_initMenu');
 
             ui.initCanvas();
             promise.then(() => {
