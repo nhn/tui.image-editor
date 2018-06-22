@@ -41,10 +41,11 @@
 
 
 ## 💪 Has full features that stick to the basic.
-  ### Photo manipulation
-    - Crop, Flip, Rotation, Drawing, Shape, Icon, Text, Mask Filter, Image Filter
-  ### Integration function
-    - Download, Image Load, Undo, Redo, Reset, Delete Object(Shape, Line, Mask Image...)
+### Photo manipulation
+- Crop, Flip, Rotation, Drawing, Shape, Icon, Text, Mask Filter, Image Filter
+    
+### Integration function    
+- Download, Image Load, Undo, Redo, Reset, Delete Object(Shape, Line, Mask Image...)
 
 <table>
         <tr>
@@ -77,6 +78,24 @@
         </tr>
     </tbody>
 </table>
+
+### Powerful filter function
+- Grayscale, Invert, Sepia, Blur Sharpen, Emboss, RemoveWhite, GradientTransparency, Brightness, Noise, Pixelate, ColorFilter, Tint, Multiply, Blend
+
+| Grayscale | Noise | Gradient | Emboss | Pixelate | 
+| --- | --- | --- | --- | --- | 
+| ![grayscale](https://user-images.githubusercontent.com/35218826/41753470-930fb7b0-7608-11e8-9966-1c890e73d131.png) | ![noise](https://user-images.githubusercontent.com/35218826/41753458-9013bc82-7608-11e8-91d9-74dcc3ffce31.png) | ![gradient-transparency](https://user-images.githubusercontent.com/35218826/41753459-903fe640-7608-11e8-87f4-cc0bff43b4ee.png) | ![emboss](https://user-images.githubusercontent.com/35218826/41753460-906c018a-7608-11e8-8861-c135c0117cea.png) | ![pixelate](https://user-images.githubusercontent.com/35218826/41753461-90a614a6-7608-11e8-97a7-0d3b7bb4aec4.png) |
+
+
+| Sepia | Sepia2 | Blend-righten | Blend-diff | Invert | 
+| --- | --- | --- | --- | --- | 
+| ![sepia](https://user-images.githubusercontent.com/35218826/41753464-91acc41c-7608-11e8-8652-572f935ea704.png) | ![sepia2](https://user-images.githubusercontent.com/35218826/41753640-91e57248-7609-11e8-8960-145e0de57e39.png) | ![blend-righten](https://user-images.githubusercontent.com/35218826/41753462-9114bc3a-7608-11e8-9ab4-16ce20a34321.png) | ![blend-diff](https://user-images.githubusercontent.com/35218826/41753465-91e4baf2-7608-11e8-9b8f-79e1b956d387.png) | ![invert](https://user-images.githubusercontent.com/35218826/41753466-9260b224-7608-11e8-848a-73231a02ae3a.png) |
+
+| Multifly | Tint | Brightness | Remove-white | Sharpen |
+| --- | --- | --- | --- | --- | 
+| ![multifly](https://user-images.githubusercontent.com/35218826/41753467-92baae28-7608-11e8-80d2-187a310213f5.png) | ![tint](https://user-images.githubusercontent.com/35218826/41753468-92e6391c-7608-11e8-8977-651366ebe693.png) | ![brightness](https://user-images.githubusercontent.com/35218826/41753457-8fb3d3c6-7608-11e8-9e1d-10c6e4aeba68.png) | ![remove-white](https://user-images.githubusercontent.com/35218826/41753463-917feeb0-7608-11e8-862d-eb3af84e120a.png) | ![sharpen](https://user-images.githubusercontent.com/35218826/41753639-91b8470a-7609-11e8-8d13-48ac3232365b.png) |
+
+
 
 
 ### Select only the desired function
