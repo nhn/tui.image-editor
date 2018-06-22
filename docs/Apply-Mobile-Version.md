@@ -3,7 +3,8 @@
 ## Image editor How to apply a mobile device
 
 - Some settings are required to use Image Editor components on mobile devices.
-- Please refer to the [sample page](http://nhnent.github.io/tui.component.image-editor/latest/tutorial-mobile.html) first to check the UI configuration and operation.
+- Please refer to the [sample page](http://nhnent.github.io/tui.image-editor/latest/tutorial-example03-mobile.html) first to check the UI configuration and operation.
+ 
 #### Step 1. Include the dependency file on the page. (PC version same)
 ```html
 <script src="libs/code-snippet.min.js"></script>
@@ -66,8 +67,8 @@ It is recommended to customize image, CSS, and markup files when applying the se
 
 
 #### Step 6. Apply the image editor API to the UI
-- API : [http://nhnent.github.io/tui.component.image-editor/latest/](http://nhnent.github.io/tui.component.image-editor/latest/)
-- Sample Page : [http://nhnent.github.io/tui.component.image-editor/latest/tutorial-mobile.html](http://nhnent.github.io/tui.component.image-editor/latest/tutorial-mobile.html)
+- API : [http://nhnent.github.io/tui.image-editor/latest/](http://nhnent.github.io/tui.image-editor/latest/)
+- Sample Page : [http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html)
 
 ![all_feature_small](https://cloud.githubusercontent.com/assets/18183560/17803706/034ea17c-6633-11e6-914d-6602d12888f9.gif)
 ![text_feature_small](https://cloud.githubusercontent.com/assets/18183560/17803707/03530636-6633-11e6-8c03-cd5523716b9b.gif)

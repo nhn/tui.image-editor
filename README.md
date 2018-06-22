@@ -285,8 +285,8 @@ $ npm run serve
 ```
 
 ## 📙 Documents
-* **Tutorial** : [https://github.com/nhnent/tui.image-editor/wiki/Tutorial](https://github.com/nhnent/tui.image-editor/wiki/Tutorial)
-* **Example** : [http://nhnent.github.io/tui.image-editor/latest/tutorial-example03-theme.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example03-theme.html)
+* **Tutorial** : [https://github.com/nhnent/tui.image-editor/tree/master/docs](https://github.com/nhnent/tui.image-editor/tree/master/docs)
+* **Example** : [http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html)
 * **API** : [http://nhnent.github.io/tui.image-editor/latest/](http://nhnent.github.io/tui.image-editor/latest/)
 
 ## 💬 Contributing
