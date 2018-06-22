@@ -8,13 +8,14 @@
 
 ## 🚩 Table of Contents
 * [Browser Support](#-browser-support)
-* [Stick to the basic](#-stick-to-the-basic)
+* [Has full features that stick to the basic.](#-has-full-features-that-stick-to-the-basic)
     * [Photo manipulation](#photo-manipulation)
     * [Integration function](#integration-function)
+    * [Powerful filter function](#powerful-filter-function)
     * [Select only the desired function](#select-only-the-desired-function)
 * [Easy to apply the size and design you want](#-easy-to-apply-the-size-and-design-you-want)
-    * [Every where](#every-where)
-    * [Easy customization and basic theme support](#easy-customization-and-basic-theme-support)
+    * [Can be used everywhere](#can-be-used-everywhere)
+    * [Nice default & Fully customizable Themes](#nice-default--fully-customizable-themes)
 * [Features](#-features)
 * [Install](#-install)
   * [Via Package Manager](#via-package-manager)
