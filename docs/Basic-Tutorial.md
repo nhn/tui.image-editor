@@ -42,5 +42,5 @@ imageEditor.loadImageFromURL('img/sampleImage.jpg', 'My sample image')
 ## More..
 
 See the API page and the sample page
-* API: http://nhnent.github.io/tui.component.image-editor/latest/
-* Sample: http://nhnent.github.io/tui.component.image-editor/latest/tutorial-basic.html
+* API: http://nhnent.github.io/tui.image-editor/latest/
+* Sample: http://nhnent.github.io/tui.image-editor/latest/tutorial-example03-theme.html
