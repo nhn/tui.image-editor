@@ -30,8 +30,9 @@ const FILTER_OPTIONS = [
 /**
  * Filter ui class
  * @class
+ * @ignore
  */
-export default class Filter extends Submenu {
+class Filter extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'filter',
@@ -226,3 +227,5 @@ export default class Filter extends Submenu {
         });
     }
 }
+
+export default Filter;

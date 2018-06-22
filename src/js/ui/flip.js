@@ -5,8 +5,9 @@ import templateHtml from './template/submenu/flip';
 /**
  * Flip ui class
  * @class
+ * @ignore
  */
-export default class Flip extends Submenu {
+class Flip extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'flip',
@@ -61,3 +62,5 @@ export default class Flip extends Submenu {
         }
     }
 }
+
+export default Flip;

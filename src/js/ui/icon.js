@@ -8,8 +8,9 @@ import {defaultIconPath} from '../consts';
 /**
  * Icon ui class
  * @class
+ * @ignore
  */
-export default class Icon extends Submenu {
+class Icon extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'icon',
@@ -131,3 +132,5 @@ export default class Icon extends Submenu {
         }
     }
 }
+
+export default Icon;

@@ -38,8 +38,9 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
  *   @param {Boolean} [option.menuBarPosition=bottom] - Let
  *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
  * @param {Objecdt} actions - ui action instance
+ * @ignore
  */
-export default class Ui {
+class Ui {
     constructor(element, options, actions) {
         this.options = this._initializeOption(options);
 
@@ -485,7 +486,9 @@ export default class Ui {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
             this._els[this.options.initMenu].dispatchEvent(evt);
-            this.icon.registDefaultIcon();
+            if (this.icon) {
+                this.icon.registDefaultIcon();
+            }
         }
     }
 
@@ -547,3 +550,5 @@ export default class Ui {
         };
     }
 }
+
+export default Ui;

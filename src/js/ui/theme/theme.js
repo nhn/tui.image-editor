@@ -7,8 +7,9 @@ import standardTheme from './standard';
  * Theme manager
  * @class
  * @param {Object} customTheme - custom theme
+ * @ignore
  */
-export default class Theme {
+class Theme {
     constructor(customTheme) {
         this.styles = this._changeToObject(extend(standardTheme, customTheme));
         styleLoad(this._styleMaker());
@@ -137,3 +138,5 @@ export default class Theme {
         return targetString.replace(/([A-Z])/g, ($0, $1) => `-${$1.toLowerCase()}`);
     }
 }
+
+export default Theme;

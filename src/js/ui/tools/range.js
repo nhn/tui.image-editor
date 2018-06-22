@@ -4,6 +4,7 @@ import {toInteger} from '../../util';
 /**
  * Range control class
  * @class
+ * @ignore
  */
 class Range {
     constructor(rangeElement, options = {}) {

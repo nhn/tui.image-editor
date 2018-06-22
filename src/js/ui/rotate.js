@@ -10,8 +10,9 @@ const COUNTERCLOCKWISE = -30;
 /**
  * Rotate ui class
  * @class
+ * @ignore
  */
-export default class Rotate extends Submenu {
+class Rotate extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'rotate',
@@ -69,3 +70,5 @@ export default class Rotate extends Submenu {
         }
     }
 }
+
+export default Rotate;

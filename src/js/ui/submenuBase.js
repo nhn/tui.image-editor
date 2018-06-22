@@ -1,8 +1,9 @@
 /**
  * Submenu Base Class
  * @class
+ * @ignore
  */
-export default class Submenu {
+class Submenu {
     constructor(subMenuElement, {name, iconStyle, menuBarPosition, templateHtml}) {
         this.selector = str => subMenuElement.querySelector(str);
         this.menuBarPosition = menuBarPosition;
@@ -60,3 +61,5 @@ export default class Submenu {
         subMenuElement.appendChild(iconSubMenu);
     }
 }
+
+export default Submenu;

@@ -4,8 +4,9 @@ import templateHtml from './template/submenu/crop';
 /**
  * Crop ui class
  * @class
+ * @ignore
  */
-export default class Crop extends Submenu {
+class Crop extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'crop',
@@ -66,3 +67,5 @@ export default class Crop extends Submenu {
         }
     }
 }
+
+export default Crop;

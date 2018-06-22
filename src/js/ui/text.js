@@ -8,8 +8,9 @@ import {defaultTextRangeValus} from '../consts';
 /**
  * Crop ui class
  * @class
+ * @ignore
  */
-export default class Text extends Submenu {
+class Text extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'text',
@@ -152,3 +153,5 @@ export default class Text extends Submenu {
         });
     }
 }
+
+export default Text;

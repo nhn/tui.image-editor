@@ -23,6 +23,7 @@ const PICKER_COLOR = [
 /**
  * Colorpicker control class
  * @class
+ * @ignore
  */
 class Colorpicker {
     constructor(colorpickerElement, defaultColor = '#7e7e7e') {

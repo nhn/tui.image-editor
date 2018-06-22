@@ -14,8 +14,9 @@ const SHAPE_DEFAULT_OPTION = {
 /**
  * Shape ui class
  * @class
+ * @ignore
  */
-export default class Shape extends Submenu {
+class Shape extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'shape',
@@ -186,3 +187,4 @@ export default class Shape extends Submenu {
     }
 }
 
+export default Shape;

@@ -22,9 +22,38 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  * @class
  * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
  * @param {Object} [options] - Canvas max width & height of css
+ *  @param {number} [options.includeUI] - Use the provided UI
+ *    @param {Object} [options.includeUI.loadImage] - Basic editing image
+ *      @param {string} options.includeUI.loadImage.path - image path
+ *      @param {string} options.includeUI.loadImage.name - image name
+ *    @param {Object} [options.includeUI.theme] - Theme object
+ *    @param {Array} [options.includeUI.menu] - It can be selected when only specific menu is used. [default all]
+ *    @param {string} [options.includeUI.initMenu] - The first menu to be selected and started.
+ *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
  *  @param {number} options.cssMaxWidth - Canvas css-max-width
  *  @param {number} options.cssMaxHeight - Canvas css-max-height
  *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+ * @example
+ * var ImageEditor = require('tui-image-editor');
+ * var blackTheme = require('./js/theme/black-theme.js');
+ * var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+ *   includeUI: {
+ *     loadImage: {
+ *       path: 'img/sampleImage.jpg',
+ *       name: 'SampleImage'
+ *     },
+ *     theme: blackTheme, // or whiteTheme
+ *     menu: ['shape', 'filter'],
+ *     initMenu: 'filter',
+ *     menuBarPosition: 'bottom'
+ *   },
+ *   cssMaxWidth: 700,
+ *   cssMaxHeight: 500,
+ *   selectionStyle: {
+ *     cornerSize: 20,
+ *     rotatingPointOffset: 70
+ *   }
+ * });
  */
 class ImageEditor {
     constructor(wrapper, options) {

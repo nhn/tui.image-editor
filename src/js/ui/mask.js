@@ -5,8 +5,9 @@ import templateHtml from './template/submenu/mask';
 /**
  * Mask ui class
  * @class
+ * @ignore
  */
-export default class Mask extends Submenu {
+class Mask extends Submenu {
     constructor(subMenuElement, {iconStyle, menuBarPosition}) {
         super(subMenuElement, {
             name: 'mask',
@@ -63,3 +64,5 @@ export default class Mask extends Submenu {
         }
     }
 }
+
+export default Mask;
