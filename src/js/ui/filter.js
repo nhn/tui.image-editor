@@ -163,9 +163,9 @@ class Filter extends Submenu {
                 selector('#tie-colorfilter-threshole-range'),
                 FILTER_RANGE.colorfilterThresholeRange
             ),
-            filterTintColor: new Colorpicker(selector('#tie-filter-tint-color'), '#03bd9e'),
-            filterMultiplyColor: new Colorpicker(selector('#tie-filter-multiply-color'), '#515ce6'),
-            filterBlendColor: new Colorpicker(selector('#tie-filter-blend-color'), '#ffbb3b')
+            filterTintColor: new Colorpicker(selector('#tie-filter-tint-color'), '#03bd9e', this.toggleDirection),
+            filterMultiplyColor: new Colorpicker(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection),
+            filterBlendColor: new Colorpicker(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection)
         };
         this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
         this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);

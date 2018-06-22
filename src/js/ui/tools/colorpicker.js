@@ -26,11 +26,12 @@ const PICKER_COLOR = [
  * @ignore
  */
 class Colorpicker {
-    constructor(colorpickerElement, defaultColor = '#7e7e7e') {
+    constructor(colorpickerElement, defaultColor = '#7e7e7e', toggleDirection = 'up') {
         const title = colorpickerElement.getAttribute('title');
 
         this._show = false;
 
+        this._toggleDirection = toggleDirection;
         this._makePickerButtonElement(colorpickerElement, defaultColor);
         this._makePickerLayerElement(colorpickerElement, title);
         this._color = defaultColor;
@@ -150,10 +151,14 @@ class Colorpicker {
      */
     _setPickerControlPosition() {
         const controlStyle = this.pickerControl.style;
-        const top = toInteger(window.getComputedStyle(this.pickerControl, null).height) + 12;
         const left = (toInteger(window.getComputedStyle(this.pickerControl, null).width) / 2) - 20;
+        let top = (toInteger(window.getComputedStyle(this.pickerControl, null).height) + 12) * -1;
 
-        controlStyle.top = `-${top}px`;
+        if (this._toggleDirection === 'down') {
+            top = 30;
+        }
+
+        controlStyle.top = `${top}px`;
         controlStyle.left = `-${left}px`;
     }
 }

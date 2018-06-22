@@ -7,6 +7,7 @@ class Submenu {
     constructor(subMenuElement, {name, iconStyle, menuBarPosition, templateHtml}) {
         this.selector = str => subMenuElement.querySelector(str);
         this.menuBarPosition = menuBarPosition;
+        this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
         this._makeSubMenuElement(subMenuElement, {
             name,
             iconStyle,
