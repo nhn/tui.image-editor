@@ -2,7 +2,7 @@ export default ({biImage, commonStyle, headerStyle, loadButtonStyle, downloadBut
     <div class="tui-image-editor-main-container" style="${commonStyle}">
         <div class="tui-image-editor-header" style="${headerStyle}">
             <div class="tui-image-editor-header-logo">
-                <img src="${biImage}" height="21px" />
+                <img src="${biImage}" />
             </div>
             <div class="tui-image-editor-header-buttons">
                 <button style="${loadButtonStyle}">

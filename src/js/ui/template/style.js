@@ -12,7 +12,8 @@ export default ({
     submenuRangeBar,
     submenuRangeSubbar,
     submenuIconSize,
-    menuIconSize
+    menuIconSize,
+    biSize
 }) => (`
     #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] label,
     #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] label,
@@ -82,4 +83,9 @@ export default ({
     .tui-image-editor-container .svg_ic-submenu {
         ${submenuIconSize}
     }
+    .tui-image-editor-container .tui-image-editor-controls-logo > img,
+    .tui-image-editor-container .tui-image-editor-header-logo > img {
+        ${biSize}
+    }
+
 `);

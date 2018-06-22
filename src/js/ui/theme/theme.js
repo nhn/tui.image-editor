@@ -75,6 +75,7 @@ class Theme {
             subMenuLabelNormal: submenuLabelStyle.normal,
             submenuPartitionVertical: submenuPartitionStyle.vertical,
             submenuPartitionHorizontal: submenuPartitionStyle.horizontal,
+            biSize: this.getStyle('common.bisize'),
             subMenuRangeTitle: this.getStyle('range.title'),
             submenuRangePointer: this.getStyle('range.pointer'),
             submenuRangeBar: this.getStyle('range.bar'),

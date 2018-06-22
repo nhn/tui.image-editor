@@ -1,7 +1,7 @@
 export default ({biImage, iconStyle: {normal, active}, loadButtonStyle, downloadButtonStyle}) => (`
     <div class="tui-image-editor-controls">
         <div class="tui-image-editor-controls-logo">
-            <img src="${biImage}" height="21px" />
+            <img src="${biImage}" />
         </div>
         <ul class="tui-image-editor-menu">
             <li id="tie-btn-undo" class="tui-image-editor-item" title="undo">
