@@ -6,7 +6,6 @@ import fabric from 'fabric/dist/fabric.require';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Rotation from '../src/js/component/rotation';
-import 'core-js/library/es6/promise';
 
 describe('Rotation', () => {
     let graphics, rotationModule, mockImage, canvas;
@@ -45,9 +44,10 @@ describe('Rotation', () => {
         expect(rotationModule.getCurrentAngle()).toBe(current + 20);
     });
 
-    it('"rotate()" should add angle value modular 360(===2*PI)', () => {
+    it('"rotate()" should add angle value modular 360(===2*PI)', done => {
         rotationModule.setAngle(10).then(() => rotationModule.rotate(380)).then(() => {
             expect(rotationModule.getCurrentAngle()).toBe(30);
+            done();
         });
     });
 
