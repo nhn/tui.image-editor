@@ -10,9 +10,9 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const isProduction = process.argv.indexOf('-p') > -1;
 
-const FILENAME = pkg.name + (isProduction ? '.min.js' : '.js');
+const FILENAME = pkg.name + (isProduction ? '.min' : '');
 const BANNER = [
-    FILENAME,
+    `${FILENAME}.js`,
     `@version ${pkg.version}`,
     `@author ${pkg.author}`,
     `@license ${pkg.license}`
@@ -28,7 +28,7 @@ module.exports = {
         libraryTarget: 'umd',
         path: 'dist',
         publicPath: 'dist',
-        filename: FILENAME
+        filename: `${FILENAME}.js`
     },
     externals: {
         'tui-code-snippet': {
@@ -67,7 +67,7 @@ module.exports = {
     },
     plugins: [
         new webpack.BannerPlugin(BANNER),
-        new ExtractTextPlugin('tui-image-editor.css'),
+        new ExtractTextPlugin(`${FILENAME}.css`),
         new SafeUmdPlugin()
     ],
     devServer: {
