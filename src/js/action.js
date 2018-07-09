@@ -97,7 +97,7 @@ export default {
                 let imageName = this.getImageName();
                 let blob, type, w;
 
-                if (util.isSupportFileApi()) {
+                if (util.isSupportFileApi() && window.saveAs) {
                     blob = util.base64ToBlob(dataURL);
                     type = blob.type.split('/')[1];
                     if (imageName.split('.').pop() !== type) {
@@ -105,7 +105,6 @@ export default {
                     }
                     saveAs(blob, imageName); // eslint-disable-line
                 } else {
-                    alert('This browser needs a file-server');
                     w = window.open();
                     w.document.body.innerHTML = `<img src='${dataURL}'>`;
                 }
