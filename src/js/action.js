@@ -97,7 +97,7 @@ export default {
                 let imageName = this.getImageName();
                 let blob, type, w;
 
-                if (!util.isSupportFileApi()) {
+                if (util.isSupportFileApi()) {
                     blob = util.base64ToBlob(dataURL);
                     type = blob.type.split('/')[1];
                     if (imageName.split('.').pop() !== type) {
