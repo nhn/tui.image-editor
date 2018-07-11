@@ -15,5 +15,11 @@ module.exports = {
     },
     "parserOptions": {
         "sourceType": "module"
+    },
+    'rules': {
+        'prefer-destructuring': ['error', {
+            VariableDeclarator: {array: true, object: true},
+            AssignmentExpression: {array: false, object: false}
+        }]
     }
 };

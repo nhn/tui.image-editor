@@ -29,9 +29,14 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @param {Object} options Options object
      * @override
      */
-    initialize(options) {
+    initialize(options, extendsOptions) {
+        options = snippet.extend(options, extendsOptions);
         options.type = 'cropzone';
+
         this.callSuper('initialize', options);
+
+        this.options = options;
+
         this.on({
             'moving': this._onMoving,
             'scaling': this._onScaling
@@ -61,11 +66,20 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         // Render outer rect
         this._fillOuterRect(ctx, 'rgba(0, 0, 0, 0.55)');
 
-        // Black dash line
-        this._strokeBorder(ctx, 'rgb(0, 0, 0)', cropzoneDashLineWidth);
+        if (this.options.lineWidth) {
+            this._fillInnerRect(ctx);
+        } else {
+            // Black dash line
+            this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
+                lineDashWidth: cropzoneDashLineWidth
+            });
 
-        // White dash line
-        this._strokeBorder(ctx, 'rgb(255, 255, 255)', cropzoneDashLineWidth, cropzoneDashLineOffset);
+            // White dash line
+            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+                lineDashWidth: cropzoneDashLineWidth,
+                lineDashOffset: cropzoneDashLineOffset
+            });
+        }
 
         // Reset scale
         ctx.scale(1 / originalScaleX, 1 / originalScaleY);
@@ -108,7 +122,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         ctx.moveTo(x[0] - 1, y[0] - 1);
         ctx.lineTo(x[3] + 1, y[0] - 1);
         ctx.lineTo(x[3] + 1, y[3] + 1);
-        ctx.lineTo(x[0] - 1, y[3] - 1);
+        ctx.lineTo(x[0] - 1, y[3] + 1);
         ctx.lineTo(x[0] - 1, y[0] - 1);
         ctx.closePath();
 
@@ -122,6 +136,55 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         ctx.fill();
         ctx.restore();
+    },
+
+    /**
+     * Draw Inner grid line
+     * @param {CanvasRenderingContext2D} ctx - Context
+     * @private
+     */
+    _fillInnerRect(ctx) {
+        const {x: outerX, y: outerY} = this._getCoordinates(ctx);
+        const x = this._caculateInnerPosition(outerX, (outerX[2] - outerX[1]) / 3);
+        const y = this._caculateInnerPosition(outerY, (outerY[2] - outerY[1]) / 3);
+
+        ctx.save();
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.lineWidth = this.options.lineWidth;
+        ctx.beginPath();
+
+        ctx.moveTo(x[0], y[1]);
+        ctx.lineTo(x[3], y[1]);
+
+        ctx.moveTo(x[0], y[2]);
+        ctx.lineTo(x[3], y[2]);
+
+        ctx.moveTo(x[1], y[0]);
+        ctx.lineTo(x[1], y[3]);
+
+        ctx.moveTo(x[2], y[0]);
+        ctx.lineTo(x[2], y[3]);
+        ctx.stroke();
+        ctx.closePath();
+
+        ctx.restore();
+    },
+
+    /**
+     * Calculate Inner Position
+     * @param {Array} outer - outer position
+     * @param {number} size - interval for calcaulate
+     * @returns {Array} - inner position
+     * @private
+     */
+    _caculateInnerPosition(outer, size) {
+        const position = [];
+        position[0] = outer[1];
+        position[1] = outer[1] + size;
+        position[2] = outer[1] + (size * 2);
+        position[3] = outer[2];
+
+        return position;
     },
 
     /**
@@ -163,17 +226,21 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @param {number} [lineDashOffset] - Dash offset
      * @private
      */
-    _strokeBorder(ctx, strokeStyle, lineDashWidth, lineDashOffset) {
+    _strokeBorder(ctx, strokeStyle, {lineDashWidth, lineDashOffset, lineWidth}) {
         const halfWidth = this.getWidth() / 2,
             halfHeight = this.getHeight() / 2;
 
         ctx.save();
         ctx.strokeStyle = strokeStyle;
+
         if (ctx.setLineDash) {
             ctx.setLineDash([lineDashWidth, lineDashWidth]);
         }
         if (lineDashOffset) {
             ctx.lineDashOffset = lineDashOffset;
+        }
+        if (lineWidth) {
+            ctx.lineWidth = lineWidth;
         }
 
         ctx.beginPath();

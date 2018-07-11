@@ -6,12 +6,13 @@
 const pkg = require('./package.json');
 const webpack = require('webpack');
 const SafeUmdPlugin = require('safe-umd-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 const isProduction = process.argv.indexOf('-p') > -1;
 
-const FILENAME = pkg.name + (isProduction ? '.min.js' : '.js');
+const FILENAME = pkg.name + (isProduction ? '.min' : '');
 const BANNER = [
-    FILENAME,
+    `${FILENAME}.js`,
     `@version ${pkg.version}`,
     `@author ${pkg.author}`,
     `@license ${pkg.license}`
@@ -27,7 +28,7 @@ module.exports = {
         libraryTarget: 'umd',
         path: 'dist',
         publicPath: 'dist',
-        filename: FILENAME
+        filename: `${FILENAME}.js`
     },
     externals: {
         'tui-code-snippet': {
@@ -56,11 +57,17 @@ module.exports = {
                 test: /\.js$/,
                 exclude: /(node_modules|bower_components)/,
                 loader: 'babel'
+            },
+            {
+                test: /\.styl$/,
+                loader: ExtractTextPlugin.extract('css-loader?sourceMap!stylus-loader?paths=src/css/')
             }
+
         ]
     },
     plugins: [
         new webpack.BannerPlugin(BANNER),
+        new ExtractTextPlugin(`${FILENAME}.css`),
         new SafeUmdPlugin()
     ],
     devServer: {

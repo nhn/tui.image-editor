@@ -17,7 +17,10 @@ describe('Graphics', () => {
     let graphics, canvas;
 
     beforeEach(() => {
-        graphics = new Graphics($('<canvas>'), cssMaxWidth, cssMaxHeight);
+        graphics = new Graphics($('<canvas>'), {
+            cssMaxWidth,
+            cssMaxHeight
+        });
         canvas = graphics.getCanvas();
     });
 
