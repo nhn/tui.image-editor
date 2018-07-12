@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.1.0
+ * @version 3.2.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["ImageEditor"] = factory(require("tui-code-snippet"), require("fabric/dist/fabric.require"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["ImageEditor"] = factory((root["tui"] && root["tui"]["util"]), root["fabric"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_2__, __WEBPACK_EXTERNAL_MODULE_74__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_105__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -62,47 +62,51 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var _imageEditor = __webpack_require__(1);
+	__webpack_require__(1);
+
+	var _imageEditor = __webpack_require__(2);
 
 	var _imageEditor2 = _interopRequireDefault(_imageEditor);
 
-	__webpack_require__(99);
+	__webpack_require__(130);
 
-	__webpack_require__(100);
+	__webpack_require__(132);
 
-	__webpack_require__(101);
+	__webpack_require__(133);
 
-	__webpack_require__(102);
+	__webpack_require__(134);
 
-	__webpack_require__(103);
+	__webpack_require__(135);
 
-	__webpack_require__(104);
+	__webpack_require__(136);
 
-	__webpack_require__(105);
+	__webpack_require__(137);
 
-	__webpack_require__(106);
+	__webpack_require__(138);
 
-	__webpack_require__(107);
+	__webpack_require__(139);
 
-	__webpack_require__(108);
+	__webpack_require__(140);
 
-	__webpack_require__(109);
+	__webpack_require__(141);
 
-	__webpack_require__(110);
+	__webpack_require__(142);
 
-	__webpack_require__(111);
+	__webpack_require__(143);
 
-	__webpack_require__(112);
+	__webpack_require__(144);
 
-	__webpack_require__(113);
+	__webpack_require__(145);
 
-	__webpack_require__(114);
+	__webpack_require__(146);
 
-	__webpack_require__(115);
+	__webpack_require__(147);
 
-	__webpack_require__(116);
+	__webpack_require__(148);
 
-	__webpack_require__(117);
+	__webpack_require__(149);
+
+	__webpack_require__(150);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -112,6 +116,473 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ }),
 /* 1 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	// https://developer.mozilla.org/en-US/docs/Web/API/Element/closest
+	// Any copyright is dedicated to the Public Domain. http://creativecommons.org/publicdomain/zero/1.0/if (!Element.prototype.matches)
+	Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
+
+	if (!Element.prototype.closest) Element.prototype.closest = function (s) {
+	    var el = this;
+	    if (!document.documentElement.contains(el)) return null;
+	    do {
+	        if (el.matches(s)) return el;
+	        el = el.parentElement || el.parentNode;
+	    } while (el !== null && el.nodeType === 1);
+	    return null;
+	};
+
+	/*
+	 * classList.js: Cross-browser full element.classList implementation.
+	 * 1.1.20170427
+	 *
+	 * By Eli Grey, http://eligrey.com
+	 * License: Dedicated to the public domain.
+	 *   See https://github.com/eligrey/classList.js/blob/master/LICENSE.md
+	 */
+
+	/*global self, document, DOMException */
+
+	/*! @source http://purl.eligrey.com/github/classList.js/blob/master/classList.js */
+
+	if ("document" in window.self) {
+
+	    // Full polyfill for browsers with no classList support
+	    // Including IE < Edge missing SVGElement.classList
+	    if (!("classList" in document.createElement("_")) || document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg", "g"))) {
+
+	        (function (view) {
+
+	            "use strict";
+
+	            if (!('Element' in view)) return;
+
+	            var classListProp = "classList",
+	                protoProp = "prototype",
+	                elemCtrProto = view.Element[protoProp],
+	                objCtr = Object,
+	                strTrim = String[protoProp].trim || function () {
+	                return this.replace(/^\s+|\s+$/g, "");
+	            },
+	                arrIndexOf = Array[protoProp].indexOf || function (item) {
+	                var i = 0,
+	                    len = this.length;
+	                for (; i < len; i++) {
+	                    if (i in this && this[i] === item) {
+	                        return i;
+	                    }
+	                }
+	                return -1;
+	            }
+	            // Vendors: please allow content code to instantiate DOMExceptions
+	            ,
+	                DOMEx = function DOMEx(type, message) {
+	                this.name = type;
+	                this.code = DOMException[type];
+	                this.message = message;
+	            },
+	                checkTokenAndGetIndex = function checkTokenAndGetIndex(classList, token) {
+	                if (token === "") {
+	                    throw new DOMEx("SYNTAX_ERR", "An invalid or illegal string was specified");
+	                }
+	                if (/\s/.test(token)) {
+	                    throw new DOMEx("INVALID_CHARACTER_ERR", "String contains an invalid character");
+	                }
+	                return arrIndexOf.call(classList, token);
+	            },
+	                ClassList = function ClassList(elem) {
+	                var trimmedClasses = strTrim.call(elem.getAttribute("class") || ""),
+	                    classes = trimmedClasses ? trimmedClasses.split(/\s+/) : [],
+	                    i = 0,
+	                    len = classes.length;
+	                for (; i < len; i++) {
+	                    this.push(classes[i]);
+	                }
+	                this._updateClassName = function () {
+	                    elem.setAttribute("class", this.toString());
+	                };
+	            },
+	                classListProto = ClassList[protoProp] = [],
+	                classListGetter = function classListGetter() {
+	                return new ClassList(this);
+	            };
+	            // Most DOMException implementations don't allow calling DOMException's toString()
+	            // on non-DOMExceptions. Error's toString() is sufficient here.
+	            DOMEx[protoProp] = Error[protoProp];
+	            classListProto.item = function (i) {
+	                return this[i] || null;
+	            };
+	            classListProto.contains = function (token) {
+	                token += "";
+	                return checkTokenAndGetIndex(this, token) !== -1;
+	            };
+	            classListProto.add = function () {
+	                var tokens = arguments,
+	                    i = 0,
+	                    l = tokens.length,
+	                    token,
+	                    updated = false;
+	                do {
+	                    token = tokens[i] + "";
+	                    if (checkTokenAndGetIndex(this, token) === -1) {
+	                        this.push(token);
+	                        updated = true;
+	                    }
+	                } while (++i < l);
+
+	                if (updated) {
+	                    this._updateClassName();
+	                }
+	            };
+	            classListProto.remove = function () {
+	                var tokens = arguments,
+	                    i = 0,
+	                    l = tokens.length,
+	                    token,
+	                    updated = false,
+	                    index;
+	                do {
+	                    token = tokens[i] + "";
+	                    index = checkTokenAndGetIndex(this, token);
+	                    while (index !== -1) {
+	                        this.splice(index, 1);
+	                        updated = true;
+	                        index = checkTokenAndGetIndex(this, token);
+	                    }
+	                } while (++i < l);
+
+	                if (updated) {
+	                    this._updateClassName();
+	                }
+	            };
+	            classListProto.toggle = function (token, force) {
+	                token += "";
+
+	                var result = this.contains(token),
+	                    method = result ? force !== true && "remove" : force !== false && "add";
+
+	                if (method) {
+	                    this[method](token);
+	                }
+
+	                if (force === true || force === false) {
+	                    return force;
+	                } else {
+	                    return !result;
+	                }
+	            };
+	            classListProto.toString = function () {
+	                return this.join(" ");
+	            };
+
+	            if (objCtr.defineProperty) {
+	                var classListPropDesc = {
+	                    get: classListGetter,
+	                    enumerable: true,
+	                    configurable: true
+	                };
+	                try {
+	                    objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+	                } catch (ex) {
+	                    // IE 8 doesn't support enumerable:true
+	                    // adding undefined to fight this issue https://github.com/eligrey/classList.js/issues/36
+	                    // modernie IE8-MSW7 machine has IE8 8.0.6001.18702 and is affected
+	                    if (ex.number === undefined || ex.number === -0x7FF5EC54) {
+	                        classListPropDesc.enumerable = false;
+	                        objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+	                    }
+	                }
+	            } else if (objCtr[protoProp].__defineGetter__) {
+	                elemCtrProto.__defineGetter__(classListProp, classListGetter);
+	            }
+	        })(window.self);
+	    }
+
+	    // There is full or partial native classList support, so just check if we need
+	    // to normalize the add/remove and toggle APIs.
+
+	    (function () {
+	        "use strict";
+
+	        var testElement = document.createElement("_");
+
+	        testElement.classList.add("c1", "c2");
+
+	        // Polyfill for IE 10/11 and Firefox <26, where classList.add and
+	        // classList.remove exist but support only one argument at a time.
+	        if (!testElement.classList.contains("c2")) {
+	            var createMethod = function createMethod(method) {
+	                var original = DOMTokenList.prototype[method];
+
+	                DOMTokenList.prototype[method] = function (token) {
+	                    var i,
+	                        len = arguments.length;
+
+	                    for (i = 0; i < len; i++) {
+	                        token = arguments[i];
+	                        original.call(this, token);
+	                    }
+	                };
+	            };
+	            createMethod('add');
+	            createMethod('remove');
+	        }
+
+	        testElement.classList.toggle("c3", false);
+
+	        // Polyfill for IE 10 and Firefox <24, where classList.toggle does not
+	        // support the second argument.
+	        if (testElement.classList.contains("c3")) {
+	            var _toggle = DOMTokenList.prototype.toggle;
+
+	            DOMTokenList.prototype.toggle = function (token, force) {
+	                if (1 in arguments && !this.contains(token) === !force) {
+	                    return force;
+	                } else {
+	                    return _toggle.call(this, token);
+	                }
+	            };
+	        }
+
+	        testElement = null;
+	    })();
+	}
+
+	/*!
+	 * @copyright Copyright (c) 2017 IcoMoon.io
+	 * @license   Licensed under MIT license
+	 *            See https://github.com/Keyamoon/svgxuse
+	 * @version   1.2.6
+	 */
+	/*jslint browser: true */
+	/*global XDomainRequest, MutationObserver, window */
+	(function () {
+	    "use strict";
+
+	    if (typeof window !== "undefined" && window.addEventListener) {
+	        var cache = Object.create(null); // holds xhr objects to prevent multiple requests
+	        var checkUseElems;
+	        var tid; // timeout id
+	        var debouncedCheck = function debouncedCheck() {
+	            clearTimeout(tid);
+	            tid = setTimeout(checkUseElems, 100);
+	        };
+	        var unobserveChanges = function unobserveChanges() {
+	            return;
+	        };
+	        var observeChanges = function observeChanges() {
+	            var observer;
+	            window.addEventListener("resize", debouncedCheck, false);
+	            window.addEventListener("orientationchange", debouncedCheck, false);
+	            if (window.MutationObserver) {
+	                observer = new MutationObserver(debouncedCheck);
+	                observer.observe(document.documentElement, {
+	                    childList: true,
+	                    subtree: true,
+	                    attributes: true
+	                });
+	                unobserveChanges = function unobserveChanges() {
+	                    try {
+	                        observer.disconnect();
+	                        window.removeEventListener("resize", debouncedCheck, false);
+	                        window.removeEventListener("orientationchange", debouncedCheck, false);
+	                    } catch (ignore) {}
+	                };
+	            } else {
+	                document.documentElement.addEventListener("DOMSubtreeModified", debouncedCheck, false);
+	                unobserveChanges = function unobserveChanges() {
+	                    document.documentElement.removeEventListener("DOMSubtreeModified", debouncedCheck, false);
+	                    window.removeEventListener("resize", debouncedCheck, false);
+	                    window.removeEventListener("orientationchange", debouncedCheck, false);
+	                };
+	            }
+	        };
+	        var createRequest = function createRequest(url) {
+	            // In IE 9, cross origin requests can only be sent using XDomainRequest.
+	            // XDomainRequest would fail if CORS headers are not set.
+	            // Therefore, XDomainRequest should only be used with cross origin requests.
+	            function getOrigin(loc) {
+	                var a;
+	                if (loc.protocol !== undefined) {
+	                    a = loc;
+	                } else {
+	                    a = document.createElement("a");
+	                    a.href = loc;
+	                }
+	                return a.protocol.replace(/:/g, "") + a.host;
+	            }
+	            var Request;
+	            var origin;
+	            var origin2;
+	            if (window.XMLHttpRequest) {
+	                Request = new XMLHttpRequest();
+	                origin = getOrigin(location);
+	                origin2 = getOrigin(url);
+	                if (Request.withCredentials === undefined && origin2 !== "" && origin2 !== origin) {
+	                    Request = XDomainRequest || undefined;
+	                } else {
+	                    Request = XMLHttpRequest;
+	                }
+	            }
+	            return Request;
+	        };
+	        var xlinkNS = "http://www.w3.org/1999/xlink";
+	        checkUseElems = function checkUseElems() {
+	            var base;
+	            var bcr;
+	            var fallback = ""; // optional fallback URL in case no base path to SVG file was given and no symbol definition was found.
+	            var hash;
+	            var href;
+	            var i;
+	            var inProgressCount = 0;
+	            var isHidden;
+	            var Request;
+	            var url;
+	            var uses;
+	            var xhr;
+	            function observeIfDone() {
+	                // If done with making changes, start watching for chagnes in DOM again
+	                inProgressCount -= 1;
+	                if (inProgressCount === 0) {
+	                    // if all xhrs were resolved
+	                    unobserveChanges(); // make sure to remove old handlers
+	                    observeChanges(); // watch for changes to DOM
+	                }
+	            }
+	            function attrUpdateFunc(spec) {
+	                return function () {
+	                    if (cache[spec.base] !== true) {
+	                        spec.useEl.setAttributeNS(xlinkNS, "xlink:href", "#" + spec.hash);
+	                        if (spec.useEl.hasAttribute("href")) {
+	                            spec.useEl.setAttribute("href", "#" + spec.hash);
+	                        }
+	                    }
+	                };
+	            }
+	            function onloadFunc(xhr) {
+	                return function () {
+	                    var body = document.body;
+	                    var x = document.createElement("x");
+	                    var svg;
+	                    xhr.onload = null;
+	                    x.innerHTML = xhr.responseText;
+	                    svg = x.getElementsByTagName("svg")[0];
+	                    if (svg) {
+	                        svg.setAttribute("aria-hidden", "true");
+	                        svg.style.position = "absolute";
+	                        svg.style.width = 0;
+	                        svg.style.height = 0;
+	                        svg.style.overflow = "hidden";
+	                        body.insertBefore(svg, body.firstChild);
+	                    }
+	                    observeIfDone();
+	                };
+	            }
+	            function onErrorTimeout(xhr) {
+	                return function () {
+	                    xhr.onerror = null;
+	                    xhr.ontimeout = null;
+	                    observeIfDone();
+	                };
+	            }
+	            unobserveChanges(); // stop watching for changes to DOM
+	            // find all use elements
+	            uses = document.getElementsByTagName("use");
+	            for (i = 0; i < uses.length; i += 1) {
+	                try {
+	                    bcr = uses[i].getBoundingClientRect();
+	                } catch (ignore) {
+	                    // failed to get bounding rectangle of the use element
+	                    bcr = false;
+	                }
+	                href = uses[i].getAttribute("href") || uses[i].getAttributeNS(xlinkNS, "href") || uses[i].getAttribute("xlink:href");
+	                if (href && href.split) {
+	                    url = href.split("#");
+	                } else {
+	                    url = ["", ""];
+	                }
+	                base = url[0];
+	                hash = url[1];
+	                isHidden = bcr && bcr.left === 0 && bcr.right === 0 && bcr.top === 0 && bcr.bottom === 0;
+	                if (bcr && bcr.width === 0 && bcr.height === 0 && !isHidden) {
+	                    // the use element is empty
+	                    // if there is a reference to an external SVG, try to fetch it
+	                    // use the optional fallback URL if there is no reference to an external SVG
+	                    if (fallback && !base.length && hash && !document.getElementById(hash)) {
+	                        base = fallback;
+	                    }
+	                    if (uses[i].hasAttribute("href")) {
+	                        uses[i].setAttributeNS(xlinkNS, "xlink:href", href);
+	                    }
+	                    if (base.length) {
+	                        // schedule updating xlink:href
+	                        xhr = cache[base];
+	                        if (xhr !== true) {
+	                            // true signifies that prepending the SVG was not required
+	                            setTimeout(attrUpdateFunc({
+	                                useEl: uses[i],
+	                                base: base,
+	                                hash: hash
+	                            }), 0);
+	                        }
+	                        if (xhr === undefined) {
+	                            Request = createRequest(base);
+	                            if (Request !== undefined) {
+	                                xhr = new Request();
+	                                cache[base] = xhr;
+	                                xhr.onload = onloadFunc(xhr);
+	                                xhr.onerror = onErrorTimeout(xhr);
+	                                xhr.ontimeout = onErrorTimeout(xhr);
+	                                xhr.open("GET", base);
+	                                xhr.send();
+	                                inProgressCount += 1;
+	                            }
+	                        }
+	                    }
+	                } else {
+	                    if (!isHidden) {
+	                        if (cache[base] === undefined) {
+	                            // remember this URL if the use element was not empty and no request was sent
+	                            cache[base] = true;
+	                        } else if (cache[base].onload) {
+	                            // if it turns out that prepending the SVG is not necessary,
+	                            // abort the in-progress xhr.
+	                            cache[base].abort();
+	                            delete cache[base].onload;
+	                            cache[base] = true;
+	                        }
+	                    } else if (base.length && cache[base]) {
+	                        setTimeout(attrUpdateFunc({
+	                            useEl: uses[i],
+	                            base: base,
+	                            hash: hash
+	                        }), 0);
+	                    }
+	                }
+	            }
+	            uses = "";
+	            inProgressCount += 1;
+	            observeIfDone();
+	        };
+	        var _winLoad;
+	        _winLoad = function winLoad() {
+	            window.removeEventListener("load", _winLoad, false); // to prevent memory leaks
+	            tid = setTimeout(checkUseElems, 0);
+	        };
+	        if (document.readyState !== "complete") {
+	            // The load event fires when all resources have finished loading, which allows detecting whether SVG use elements are empty.
+	            window.addEventListener("load", _winLoad, false);
+	        } else {
+	            // No need to add a listener if the document is already loaded, initialize immediately.
+	            _winLoad();
+	        }
+	    }
+	})();
+
+/***/ }),
+/* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -122,27 +593,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _invoker2 = __webpack_require__(3);
+	var _promise = __webpack_require__(4);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
+	var _invoker2 = __webpack_require__(68);
 
 	var _invoker3 = _interopRequireDefault(_invoker2);
 
-	var _command = __webpack_require__(68);
+	var _ui = __webpack_require__(74);
+
+	var _ui2 = _interopRequireDefault(_ui);
+
+	var _action = __webpack_require__(102);
+
+	var _action2 = _interopRequireDefault(_action);
+
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
-	var _graphics = __webpack_require__(73);
+	var _graphics = __webpack_require__(104);
 
 	var _graphics2 = _interopRequireDefault(_graphics);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
-	var _util = __webpack_require__(71);
+	var _util = __webpack_require__(72);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -160,19 +643,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * Image editor
 	 * @class
 	 * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
-	 * @param {Object} [option] - Canvas max width & height of css
-	 *  @param {number} option.cssMaxWidth - Canvas css-max-width
-	 *  @param {number} option.cssMaxHeight - Canvas css-max-height
-	 *  @param {Boolean} [option.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+	 * @param {Object} [options] - Canvas max width & height of css
+	 *  @param {number} [options.includeUI] - Use the provided UI
+	 *    @param {Object} [options.includeUI.loadImage] - Basic editing image
+	 *      @param {string} options.includeUI.loadImage.path - image path
+	 *      @param {string} options.includeUI.loadImage.name - image name
+	 *    @param {Object} [options.includeUI.theme] - Theme object
+	 *    @param {Array} [options.includeUI.menu] - It can be selected when only specific menu is used. [default all]
+	 *    @param {string} [options.includeUI.initMenu] - The first menu to be selected and started.
+	 *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
+	 *  @param {number} options.cssMaxWidth - Canvas css-max-width
+	 *  @param {number} options.cssMaxHeight - Canvas css-max-height
+	 *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+	 * @example
+	 * var ImageEditor = require('tui-image-editor');
+	 * var blackTheme = require('./js/theme/black-theme.js');
+	 * var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+	 *   includeUI: {
+	 *     loadImage: {
+	 *       path: 'img/sampleImage.jpg',
+	 *       name: 'SampleImage'
+	 *     },
+	 *     theme: blackTheme, // or whiteTheme
+	 *     menu: ['shape', 'filter'],
+	 *     initMenu: 'filter',
+	 *     menuBarPosition: 'bottom'
+	 *   },
+	 *   cssMaxWidth: 700,
+	 *   cssMaxHeight: 500,
+	 *   selectionStyle: {
+	 *     cornerSize: 20,
+	 *     rotatingPointOffset: 70
+	 *   }
+	 * });
 	 */
 
 	var ImageEditor = function () {
-	    function ImageEditor(wrapper, option) {
+	    function ImageEditor(wrapper, options) {
 	        _classCallCheck(this, ImageEditor);
 
-	        option = _tuiCodeSnippet2.default.extend({
+	        options = _tuiCodeSnippet2.default.extend({
+	            includeUI: false,
 	            usageStatistics: true
-	        }, option);
+	        }, options);
+
+	        this.mode = null;
+
+	        this.activeObjectId = null;
+
+	        /**
+	         * UI instance
+	         * @type {Ui}
+	         */
+	        if (options.includeUI) {
+	            this.ui = new _ui2.default(wrapper, options.includeUI, this.getActions());
+	            options = this.ui.setUiDefaultSelectionStyle(options);
+	        }
 
 	        /**
 	         * Invoker
@@ -186,7 +712,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {Graphics}
 	         * @private
 	         */
-	        this._graphics = new _graphics2.default(wrapper, option.cssMaxWidth, option.cssMaxHeight);
+	        this._graphics = new _graphics2.default(this.ui ? this.ui.getEditorArea() : wrapper, {
+	            cssMaxWidth: options.cssMaxWidth,
+	            cssMaxHeight: options.cssMaxHeight,
+	            useItext: !!this.ui,
+	            useDragAddIcon: !!this.ui
+	        });
 
 	        /**
 	         * Event handler list
@@ -202,20 +733,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	            createdPath: this._onCreatedPath,
 	            addText: this._onAddText.bind(this),
 	            addObject: this._onAddObject.bind(this),
+	            addObjectAfter: this._onAddObjectAfter.bind(this),
 	            textEditing: this._onTextEditing.bind(this),
-	            textChanged: this._onTextChanged.bind(this)
+	            textChanged: this._onTextChanged.bind(this),
+	            iconCreateResize: this._onIconCreateResize.bind(this),
+	            iconCreateEnd: this._onIconCreateEnd.bind(this),
+	            selectionCleared: this._selectionCleared.bind(this),
+	            selectionCreated: this._selectionCreated.bind(this)
 	        };
 
 	        this._attachInvokerEvents();
 	        this._attachGraphicsEvents();
 	        this._attachDomEvents();
+	        this._setSelectionStyle(options.selectionStyle, {
+	            applyCropSelectionStyle: options.applyCropSelectionStyle,
+	            applyGroupSelectionStyle: options.applyGroupSelectionStyle
+	        });
 
-	        if (option.selectionStyle) {
-	            this._setSelectionStyle(option.selectionStyle);
+	        if (options.usageStatistics) {
+	            (0, _util.sendHostName)();
 	        }
 
-	        if (option.usageStatistics) {
-	            (0, _util.sendHostName)();
+	        if (this.ui) {
+	            this.ui.initCanvas();
+	            this.setReAction();
 	        }
 	    }
 
@@ -233,7 +774,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @property {boolean} flipY - y axis
 	     * @property {Number} angle - angle
 	     */
-
 	    /**
 	     * Rotation status
 	     * @typedef {Number} RotateStatus
@@ -275,15 +815,35 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    /**
 	     * Set selection style by init option
-	     * @param {Object} styles - Selection styles
+	     * @param {Object} selectionStyle - Selection styles
+	     * @param {Object} applyTargets - Selection apply targets
+	     *   @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
+	     *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
 	     * @private
 	     */
 
 
 	    _createClass(ImageEditor, [{
 	        key: '_setSelectionStyle',
-	        value: function _setSelectionStyle(styles) {
-	            this._graphics.setSelectionStyle(styles);
+	        value: function _setSelectionStyle(selectionStyle, _ref) {
+	            var applyCropSelectionStyle = _ref.applyCropSelectionStyle,
+	                applyGroupSelectionStyle = _ref.applyGroupSelectionStyle;
+
+	            if (selectionStyle) {
+	                this._graphics.setSelectionStyle(selectionStyle);
+	            }
+
+	            if (applyCropSelectionStyle) {
+	                this._graphics.setCropSelectionStyle(selectionStyle);
+	            }
+
+	            if (applyGroupSelectionStyle) {
+	                this.on('selectionCreated', function (eventTarget) {
+	                    if (eventTarget.type === 'group') {
+	                        eventTarget.set(selectionStyle);
+	                    }
+	                });
+	            }
 	        }
 
 	        /**
@@ -336,7 +896,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'addText': this._handlers.addText,
 	                'addObject': this._handlers.addObject,
 	                'textEditing': this._handlers.textEditing,
-	                'textChanged': this._handlers.textChanged
+	                'textChanged': this._handlers.textChanged,
+	                'iconCreateResize': this._handlers.iconCreateResize,
+	                'iconCreateEnd': this._handlers.iconCreateEnd,
+	                'selectionCleared': this._handlers.selectionCleared,
+	                'selectionCreated': this._handlers.selectionCreated,
+	                'addObjectAfter': this._handlers.addObjectAfter
 	            });
 	        }
 
@@ -374,9 +939,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_onKeyDown',
 	        value: function _onKeyDown(e) {
-	            var activeObject = this._graphics.getActiveObject();
-	            var activeObjectId = this._graphics.getObjectId(activeObject);
-
 	            if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
 	                // There is no error message on shortcut when it's empty
 	                this.undo()['catch'](function () {});
@@ -387,12 +949,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.redo()['catch'](function () {});
 	            }
 
-	            if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) && activeObject) {
+	            if (e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) {
 	                e.preventDefault();
-	                this.removeObject(activeObjectId);
+	                this.removeActiveObject();
 	            }
 	        }
 	        /* eslint-enable complexity */
+
+	        /**
+	         * Remove Active Object
+	         */
+
+	    }, {
+	        key: 'removeActiveObject',
+	        value: function removeActiveObject() {
+	            var activeObject = this._graphics.getActiveObject();
+	            var activeObjectGroup = this._graphics.getActiveGroupObject();
+
+	            if (activeObjectGroup) {
+	                var objects = activeObjectGroup.getObjects();
+	                this.discardSelection();
+	                this._removeObjectStream(objects);
+	            } else if (activeObject) {
+	                var activeObjectId = this._graphics.getObjectId(activeObject);
+	                this.removeObject(activeObjectId);
+	            }
+	        }
+
+	        /**
+	         * RemoveObject Sequential processing for prevent invoke lock
+	         * @param {Array.<Object>} targetObjects - target Objects for remove
+	         * @returns {object} targetObjects
+	         * @private
+	         */
+
+	    }, {
+	        key: '_removeObjectStream',
+	        value: function _removeObjectStream(targetObjects) {
+	            var _this = this;
+
+	            if (!targetObjects.length) {
+	                return true;
+	            }
+
+	            var targetObject = targetObjects.pop();
+
+	            return this.removeObject(this._graphics.getObjectId(targetObject)).then(function () {
+	                return _this._removeObjectStream(targetObjects);
+	            });
+	        }
 
 	        /**
 	         * mouse down event handler
@@ -558,6 +1163,31 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * discard selction
+	         * @example
+	         * imageEditor.discardSelection();
+	         */
+
+	    }, {
+	        key: 'discardSelection',
+	        value: function discardSelection() {
+	            this._graphics.discardSelection();
+	        }
+
+	        /**
+	         * selectable status change
+	         * @param {boolean} selectable - selctable status
+	         * @example
+	         * imageEditor.changeSelectableAll(false); // or true
+	         */
+
+	    }, {
+	        key: 'changeSelectableAll',
+	        value: function changeSelectableAll(selectable) {
+	            this._graphics.changeSelectableAll(selectable);
+	        }
+
+	        /**
 	         * Invoke command
 	         * @param {String} commandName - Command name
 	         * @param {...*} args - Arguments for creating command
@@ -622,7 +1252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'loadImageFromFile',
 	        value: function loadImageFromFile(imgFile, imageName) {
 	            if (!imgFile) {
-	                return Promise.reject(rejectMessages.invalidParameters);
+	                return _promise2.default.reject(rejectMessages.invalidParameters);
 	            }
 
 	            var imgUrl = URL.createObjectURL(imgFile);
@@ -651,7 +1281,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'loadImageFromURL',
 	        value: function loadImageFromURL(url, imageName) {
 	            if (!imageName || !url) {
-	                return Promise.reject(rejectMessages.invalidParameters);
+	                return _promise2.default.reject(rejectMessages.invalidParameters);
 	            }
 
 	            return this.execute(commands.LOAD_IMAGE, imageName, url);
@@ -671,7 +1301,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'addImageObject',
 	        value: function addImageObject(imgUrl) {
 	            if (!imgUrl) {
-	                return Promise.reject(rejectMessages.invalidParameters);
+	                return _promise2.default.reject(rejectMessages.invalidParameters);
 	            }
 
 	            return this.execute(commands.ADD_IMAGE_OBJECT, imgUrl);
@@ -726,7 +1356,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function crop(rect) {
 	            var data = this._graphics.getCroppedImageData(rect);
 	            if (!data) {
-	                return Promise.reject(rejectMessages.invalidParameters);
+	                return _promise2.default.reject(rejectMessages.invalidParameters);
 	            }
 
 	            return this.loadImageFromURL(data.url, data.imageName);
@@ -1113,6 +1743,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * change text mode
+	         * @param {string} type - change type
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeActivateMode',
+	        value: function _changeActivateMode(type) {
+	            if (type !== 'ICON' && this.getDrawingMode() !== type) {
+	                this.startDrawingMode(type);
+	            }
+	        }
+
+	        /**
 	         * 'textChanged' event handler
 	         * @param {Object} objectProps changed object properties
 	         * @private
@@ -1122,6 +1766,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: '_onTextChanged',
 	        value: function _onTextChanged(objectProps) {
 	            this.changeText(objectProps.id, objectProps.text);
+	        }
+
+	        /**
+	         * 'iconCreateResize' event handler
+	         * @param {Object} originPointer origin pointer
+	         *  @param {Number} originPointer.x x position
+	         *  @param {Number} originPointer.y y position
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onIconCreateResize',
+	        value: function _onIconCreateResize(originPointer) {
+	            this.fire(events.ICON_CREATE_RESIZE, originPointer);
+	        }
+
+	        /**
+	         * 'iconCreateEnd' event handler
+	         * @param {Object} originPointer origin pointer
+	         *  @param {Number} originPointer.x x position
+	         *  @param {Number} originPointer.y y position
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onIconCreateEnd',
+	        value: function _onIconCreateEnd(originPointer) {
+	            this.fire(events.ICON_CREATE_END, originPointer);
 	        }
 
 	        /**
@@ -1191,6 +1863,41 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * 'addObjectAfter' event handler
+	         * @param {Object} objectProps added object properties
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onAddObjectAfter',
+	        value: function _onAddObjectAfter(objectProps) {
+	            this.fire(events.ADD_OBJECT_AFTER, objectProps);
+	        }
+
+	        /**
+	         * 'selectionCleared' event handler
+	         * @private
+	         */
+
+	    }, {
+	        key: '_selectionCleared',
+	        value: function _selectionCleared() {
+	            this.fire(events.SELECTION_CLEARED);
+	        }
+
+	        /**
+	         * 'selectionCreated' event handler
+	         * @param {Object} eventTarget - Fabric object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_selectionCreated',
+	        value: function _selectionCreated(eventTarget) {
+	            this.fire(events.SELECTION_CREATED, eventTarget);
+	        }
+
+	        /**
 	         * Register custom icons
 	         * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
 	         * @example
@@ -1204,6 +1911,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'registerIcons',
 	        value: function registerIcons(infos) {
 	            this._graphics.registerPaths(infos);
+	        }
+
+	        /**
+	         * Change canvas cursor type
+	         * @param {string} cursorType - cursor type
+	         * @example
+	         * imageEditor.changeCursor('crosshair');
+	         */
+
+	    }, {
+	        key: 'changeCursor',
+	        value: function changeCursor(cursorType) {
+	            this._graphics.changeCursor(cursorType);
 	        }
 
 	        /**
@@ -1407,7 +2127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'resizeCanvasDimension',
 	        value: function resizeCanvasDimension(dimension) {
 	            if (!dimension) {
-	                return Promise.reject(rejectMessages.invalidParameters);
+	                return _promise2.default.reject(rejectMessages.invalidParameters);
 	            }
 
 	            return this.execute(commands.RESIZE_CANVAS_DIMENSION, dimension);
@@ -1420,7 +2140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'destroy',
 	        value: function destroy() {
-	            var _this = this;
+	            var _this2 = this;
 
 	            this.stopDrawingMode();
 	            this._detachDomEvents();
@@ -1428,7 +2148,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._graphics = null;
 
 	            forEach(this, function (value, key) {
-	                _this[key] = null;
+	                _this2[key] = null;
 	            }, this);
 	        }
 
@@ -1471,6 +2191,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'setObjectProperties',
 	        value: function setObjectProperties(id, keyValue) {
 	            return this.execute(commands.SET_OBJECT_PROPERTIES, id, keyValue);
+	        }
+
+	        /**
+	         * Set properties of active object, Do not leave an invoke history.
+	         * @param {number} id - object id
+	         * @param {Object} keyValue - key & value
+	         * @example
+	         * imageEditor.setObjectPropertiesQuietly(id, {
+	         *     left:100,
+	         *     top:100,
+	         *     width: 200,
+	         *     height: 200,
+	         *     opacity: 0.5
+	         * });
+	         */
+
+	    }, {
+	        key: 'setObjectPropertiesQuietly',
+	        value: function setObjectPropertiesQuietly(id, keyValue) {
+	            this._graphics.setObjectProperties(id, keyValue);
 	        }
 
 	        /**
@@ -1594,381 +2334,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return ImageEditor;
 	}();
 
+	_action2.default.mixin(ImageEditor);
 	CustomEvents.mixin(ImageEditor);
+
 	module.exports = ImageEditor;
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_2__;
-
-/***/ }),
-/* 3 */
-/***/ (function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Invoker - invoke commands
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-
-	var _tuiCodeSnippet = __webpack_require__(2);
-
-	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
-
-	var _promise = __webpack_require__(4);
-
-	var _promise2 = _interopRequireDefault(_promise);
-
-	var _command = __webpack_require__(68);
-
-	var _command2 = _interopRequireDefault(_command);
-
-	var _consts = __webpack_require__(72);
-
-	var _consts2 = _interopRequireDefault(_consts);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var eventNames = _consts2.default.eventNames,
-	    rejectMessages = _consts2.default.rejectMessages;
-	var isFunction = _tuiCodeSnippet2.default.isFunction,
-	    isString = _tuiCodeSnippet2.default.isString,
-	    CustomEvents = _tuiCodeSnippet2.default.CustomEvents;
-
-	/**
-	 * Invoker
-	 * @class
-	 * @ignore
-	 */
-
-	var Invoker = function () {
-	    function Invoker() {
-	        _classCallCheck(this, Invoker);
-
-	        /**
-	         * Undo stack
-	         * @type {Array.<Command>}
-	         * @private
-	         */
-	        this._undoStack = [];
-
-	        /**
-	         * Redo stack
-	         * @type {Array.<Command>}
-	         * @private
-	         */
-	        this._redoStack = [];
-
-	        /**
-	         * Lock-flag for executing command
-	         * @type {boolean}
-	         * @private
-	         */
-	        this._isLocked = false;
-	    }
-
-	    /**
-	     * Invoke command execution
-	     * @param {Command} command - Command
-	     * @returns {Promise}
-	     * @private
-	     */
-
-
-	    _createClass(Invoker, [{
-	        key: '_invokeExecution',
-	        value: function _invokeExecution(command) {
-	            var _this = this;
-
-	            this.lock();
-
-	            var args = command.args;
-
-	            if (!args) {
-	                args = [];
-	            }
-
-	            return command.execute.apply(command, args).then(function (value) {
-	                _this.pushUndoStack(command);
-	                _this.unlock();
-	                if (isFunction(command.executeCallback)) {
-	                    command.executeCallback(value);
-	                }
-
-	                return value;
-	            })['catch'](function (message) {
-	                _this.unlock();
-
-	                return _promise2.default.reject(message);
-	            });
-	        }
-
-	        /**
-	         * Invoke command undo
-	         * @param {Command} command - Command
-	         * @returns {Promise}
-	         * @private
-	         */
-
-	    }, {
-	        key: '_invokeUndo',
-	        value: function _invokeUndo(command) {
-	            var _this2 = this;
-
-	            this.lock();
-
-	            var args = command.args;
-
-	            if (!args) {
-	                args = [];
-	            }
-
-	            return command.undo.apply(command, args).then(function (value) {
-	                _this2.pushRedoStack(command);
-	                _this2.unlock();
-	                if (isFunction(command.undoCallback)) {
-	                    command.undoCallback(value);
-	                }
-
-	                return value;
-	            })['catch'](function (message) {
-	                _this2.unlock();
-
-	                return _promise2.default.reject(message);
-	            });
-	        }
-
-	        /**
-	         * fire REDO_STACK_CHANGED event
-	         * @private
-	         */
-
-	    }, {
-	        key: '_fireRedoStackChanged',
-	        value: function _fireRedoStackChanged() {
-	            this.fire(eventNames.REDO_STACK_CHANGED, this._redoStack.length);
-	        }
-
-	        /**
-	         * fire UNDO_STACK_CHANGED event
-	         * @private
-	         */
-
-	    }, {
-	        key: '_fireUndoStackChanged',
-	        value: function _fireUndoStackChanged() {
-	            this.fire(eventNames.UNDO_STACK_CHANGED, this._undoStack.length);
-	        }
-
-	        /**
-	         * Lock this invoker
-	         */
-
-	    }, {
-	        key: 'lock',
-	        value: function lock() {
-	            this._isLocked = true;
-	        }
-
-	        /**
-	         * Unlock this invoker
-	         */
-
-	    }, {
-	        key: 'unlock',
-	        value: function unlock() {
-	            this._isLocked = false;
-	        }
-
-	        /**
-	         * Invoke command
-	         * Store the command to the undoStack
-	         * Clear the redoStack
-	         * @param {String} commandName - Command name
-	         * @param {...*} args - Arguments for creating command
-	         * @returns {Promise}
-	         */
-
-	    }, {
-	        key: 'execute',
-	        value: function execute() {
-	            var _this3 = this;
-
-	            if (this._isLocked) {
-	                return _promise2.default.reject(rejectMessages.isLock);
-	            }
-
-	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	                args[_key] = arguments[_key];
-	            }
-
-	            var command = args[0];
-
-	            if (isString(command)) {
-	                command = _command2.default.create.apply(_command2.default, args);
-	            }
-
-	            return this._invokeExecution(command).then(function (value) {
-	                _this3.clearRedoStack();
-
-	                return value;
-	            });
-	        }
-
-	        /**
-	         * Undo command
-	         * @returns {Promise}
-	         */
-
-	    }, {
-	        key: 'undo',
-	        value: function undo() {
-	            var command = this._undoStack.pop();
-	            var promise = void 0;
-	            var message = '';
-
-	            if (command && this._isLocked) {
-	                this.pushUndoStack(command, true);
-	                command = null;
-	            }
-	            if (command) {
-	                if (this.isEmptyUndoStack()) {
-	                    this._fireUndoStackChanged();
-	                }
-	                promise = this._invokeUndo(command);
-	            } else {
-	                message = rejectMessages.undo;
-	                if (this._isLocked) {
-	                    message = message + ' Because ' + rejectMessages.isLock;
-	                }
-	                promise = _promise2.default.reject(message);
-	            }
-
-	            return promise;
-	        }
-
-	        /**
-	         * Redo command
-	         * @returns {Promise}
-	         */
-
-	    }, {
-	        key: 'redo',
-	        value: function redo() {
-	            var command = this._redoStack.pop();
-	            var promise = void 0;
-	            var message = '';
-
-	            if (command && this._isLocked) {
-	                this.pushRedoStack(command, true);
-	                command = null;
-	            }
-	            if (command) {
-	                if (this.isEmptyRedoStack()) {
-	                    this._fireRedoStackChanged();
-	                }
-	                promise = this._invokeExecution(command);
-	            } else {
-	                message = rejectMessages.redo;
-	                if (this._isLocked) {
-	                    message = message + ' Because ' + rejectMessages.isLock;
-	                }
-	                promise = _promise2.default.reject(message);
-	            }
-
-	            return promise;
-	        }
-
-	        /**
-	         * Push undo stack
-	         * @param {Command} command - command
-	         * @param {boolean} [isSilent] - Fire event or not
-	         */
-
-	    }, {
-	        key: 'pushUndoStack',
-	        value: function pushUndoStack(command, isSilent) {
-	            this._undoStack.push(command);
-	            if (!isSilent) {
-	                this._fireUndoStackChanged();
-	            }
-	        }
-
-	        /**
-	         * Push redo stack
-	         * @param {Command} command - command
-	         * @param {boolean} [isSilent] - Fire event or not
-	         */
-
-	    }, {
-	        key: 'pushRedoStack',
-	        value: function pushRedoStack(command, isSilent) {
-	            this._redoStack.push(command);
-	            if (!isSilent) {
-	                this._fireRedoStackChanged();
-	            }
-	        }
-
-	        /**
-	         * Return whether the redoStack is empty
-	         * @returns {boolean}
-	         */
-
-	    }, {
-	        key: 'isEmptyRedoStack',
-	        value: function isEmptyRedoStack() {
-	            return this._redoStack.length === 0;
-	        }
-
-	        /**
-	         * Return whether the undoStack is empty
-	         * @returns {boolean}
-	         */
-
-	    }, {
-	        key: 'isEmptyUndoStack',
-	        value: function isEmptyUndoStack() {
-	            return this._undoStack.length === 0;
-	        }
-
-	        /**
-	         * Clear undoStack
-	         */
-
-	    }, {
-	        key: 'clearUndoStack',
-	        value: function clearUndoStack() {
-	            if (!this.isEmptyUndoStack()) {
-	                this._undoStack = [];
-	                this._fireUndoStackChanged();
-	            }
-	        }
-
-	        /**
-	         * Clear redoStack
-	         */
-
-	    }, {
-	        key: 'clearRedoStack',
-	        value: function clearRedoStack() {
-	            if (!this.isEmptyRedoStack()) {
-	                this._redoStack = [];
-	                this._fireRedoStackChanged();
-	            }
-	        }
-	    }]);
-
-	    return Invoker;
-	}();
-
-	CustomEvents.mixin(Invoker);
-	module.exports = Invoker;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_3__;
 
 /***/ }),
 /* 4 */
@@ -3427,7 +3802,374 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Invoker - invoke commands
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+	var _promise = __webpack_require__(4);
+
+	var _promise2 = _interopRequireDefault(_promise);
+
 	var _command = __webpack_require__(69);
+
+	var _command2 = _interopRequireDefault(_command);
+
+	var _consts = __webpack_require__(73);
+
+	var _consts2 = _interopRequireDefault(_consts);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var eventNames = _consts2.default.eventNames,
+	    rejectMessages = _consts2.default.rejectMessages;
+	var isFunction = _tuiCodeSnippet2.default.isFunction,
+	    isString = _tuiCodeSnippet2.default.isString,
+	    CustomEvents = _tuiCodeSnippet2.default.CustomEvents;
+
+	/**
+	 * Invoker
+	 * @class
+	 * @ignore
+	 */
+
+	var Invoker = function () {
+	    function Invoker() {
+	        _classCallCheck(this, Invoker);
+
+	        /**
+	         * Undo stack
+	         * @type {Array.<Command>}
+	         * @private
+	         */
+	        this._undoStack = [];
+
+	        /**
+	         * Redo stack
+	         * @type {Array.<Command>}
+	         * @private
+	         */
+	        this._redoStack = [];
+
+	        /**
+	         * Lock-flag for executing command
+	         * @type {boolean}
+	         * @private
+	         */
+	        this._isLocked = false;
+	    }
+
+	    /**
+	     * Invoke command execution
+	     * @param {Command} command - Command
+	     * @returns {Promise}
+	     * @private
+	     */
+
+
+	    _createClass(Invoker, [{
+	        key: '_invokeExecution',
+	        value: function _invokeExecution(command) {
+	            var _this = this;
+
+	            this.lock();
+
+	            var args = command.args;
+
+	            if (!args) {
+	                args = [];
+	            }
+
+	            return command.execute.apply(command, args).then(function (value) {
+	                _this.pushUndoStack(command);
+	                _this.unlock();
+	                if (isFunction(command.executeCallback)) {
+	                    command.executeCallback(value);
+	                }
+
+	                return value;
+	            })['catch'](function (message) {
+	                _this.unlock();
+
+	                return _promise2.default.reject(message);
+	            });
+	        }
+
+	        /**
+	         * Invoke command undo
+	         * @param {Command} command - Command
+	         * @returns {Promise}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_invokeUndo',
+	        value: function _invokeUndo(command) {
+	            var _this2 = this;
+
+	            this.lock();
+
+	            var args = command.args;
+
+	            if (!args) {
+	                args = [];
+	            }
+
+	            return command.undo.apply(command, args).then(function (value) {
+	                _this2.pushRedoStack(command);
+	                _this2.unlock();
+	                if (isFunction(command.undoCallback)) {
+	                    command.undoCallback(value);
+	                }
+
+	                return value;
+	            })['catch'](function (message) {
+	                _this2.unlock();
+
+	                return _promise2.default.reject(message);
+	            });
+	        }
+
+	        /**
+	         * fire REDO_STACK_CHANGED event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_fireRedoStackChanged',
+	        value: function _fireRedoStackChanged() {
+	            this.fire(eventNames.REDO_STACK_CHANGED, this._redoStack.length);
+	        }
+
+	        /**
+	         * fire UNDO_STACK_CHANGED event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_fireUndoStackChanged',
+	        value: function _fireUndoStackChanged() {
+	            this.fire(eventNames.UNDO_STACK_CHANGED, this._undoStack.length);
+	        }
+
+	        /**
+	         * Lock this invoker
+	         */
+
+	    }, {
+	        key: 'lock',
+	        value: function lock() {
+	            this._isLocked = true;
+	        }
+
+	        /**
+	         * Unlock this invoker
+	         */
+
+	    }, {
+	        key: 'unlock',
+	        value: function unlock() {
+	            this._isLocked = false;
+	        }
+
+	        /**
+	         * Invoke command
+	         * Store the command to the undoStack
+	         * Clear the redoStack
+	         * @param {String} commandName - Command name
+	         * @param {...*} args - Arguments for creating command
+	         * @returns {Promise}
+	         */
+
+	    }, {
+	        key: 'execute',
+	        value: function execute() {
+	            var _this3 = this;
+
+	            if (this._isLocked) {
+	                return _promise2.default.reject(rejectMessages.isLock);
+	            }
+
+	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	                args[_key] = arguments[_key];
+	            }
+
+	            var command = args[0];
+
+	            if (isString(command)) {
+	                command = _command2.default.create.apply(_command2.default, args);
+	            }
+
+	            return this._invokeExecution(command).then(function (value) {
+	                _this3.clearRedoStack();
+
+	                return value;
+	            });
+	        }
+
+	        /**
+	         * Undo command
+	         * @returns {Promise}
+	         */
+
+	    }, {
+	        key: 'undo',
+	        value: function undo() {
+	            var command = this._undoStack.pop();
+	            var promise = void 0;
+	            var message = '';
+
+	            if (command && this._isLocked) {
+	                this.pushUndoStack(command, true);
+	                command = null;
+	            }
+	            if (command) {
+	                if (this.isEmptyUndoStack()) {
+	                    this._fireUndoStackChanged();
+	                }
+	                promise = this._invokeUndo(command);
+	            } else {
+	                message = rejectMessages.undo;
+	                if (this._isLocked) {
+	                    message = message + ' Because ' + rejectMessages.isLock;
+	                }
+	                promise = _promise2.default.reject(message);
+	            }
+
+	            return promise;
+	        }
+
+	        /**
+	         * Redo command
+	         * @returns {Promise}
+	         */
+
+	    }, {
+	        key: 'redo',
+	        value: function redo() {
+	            var command = this._redoStack.pop();
+	            var promise = void 0;
+	            var message = '';
+
+	            if (command && this._isLocked) {
+	                this.pushRedoStack(command, true);
+	                command = null;
+	            }
+	            if (command) {
+	                if (this.isEmptyRedoStack()) {
+	                    this._fireRedoStackChanged();
+	                }
+	                promise = this._invokeExecution(command);
+	            } else {
+	                message = rejectMessages.redo;
+	                if (this._isLocked) {
+	                    message = message + ' Because ' + rejectMessages.isLock;
+	                }
+	                promise = _promise2.default.reject(message);
+	            }
+
+	            return promise;
+	        }
+
+	        /**
+	         * Push undo stack
+	         * @param {Command} command - command
+	         * @param {boolean} [isSilent] - Fire event or not
+	         */
+
+	    }, {
+	        key: 'pushUndoStack',
+	        value: function pushUndoStack(command, isSilent) {
+	            this._undoStack.push(command);
+	            if (!isSilent) {
+	                this._fireUndoStackChanged();
+	            }
+	        }
+
+	        /**
+	         * Push redo stack
+	         * @param {Command} command - command
+	         * @param {boolean} [isSilent] - Fire event or not
+	         */
+
+	    }, {
+	        key: 'pushRedoStack',
+	        value: function pushRedoStack(command, isSilent) {
+	            this._redoStack.push(command);
+	            if (!isSilent) {
+	                this._fireRedoStackChanged();
+	            }
+	        }
+
+	        /**
+	         * Return whether the redoStack is empty
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: 'isEmptyRedoStack',
+	        value: function isEmptyRedoStack() {
+	            return this._redoStack.length === 0;
+	        }
+
+	        /**
+	         * Return whether the undoStack is empty
+	         * @returns {boolean}
+	         */
+
+	    }, {
+	        key: 'isEmptyUndoStack',
+	        value: function isEmptyUndoStack() {
+	            return this._undoStack.length === 0;
+	        }
+
+	        /**
+	         * Clear undoStack
+	         */
+
+	    }, {
+	        key: 'clearUndoStack',
+	        value: function clearUndoStack() {
+	            if (!this.isEmptyUndoStack()) {
+	                this._undoStack = [];
+	                this._fireUndoStackChanged();
+	            }
+	        }
+
+	        /**
+	         * Clear redoStack
+	         */
+
+	    }, {
+	        key: 'clearRedoStack',
+	        value: function clearRedoStack() {
+	            if (!this.isEmptyRedoStack()) {
+	                this._redoStack = [];
+	                this._fireRedoStackChanged();
+	            }
+	        }
+	    }]);
+
+	    return Invoker;
+	}();
+
+	CustomEvents.mixin(Invoker);
+	module.exports = Invoker;
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _command = __webpack_require__(70);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -3477,7 +4219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3488,7 +4230,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 
-	var _errorMessage = __webpack_require__(70);
+	var _errorMessage = __webpack_require__(71);
 
 	var _errorMessage2 = _interopRequireDefault(_errorMessage);
 
@@ -3615,16 +4357,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Command;
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _util = __webpack_require__(71);
+	var _util = __webpack_require__(72);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -3662,12 +4404,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var min = Math.min,
 	    max = Math.max; /**
@@ -3755,6 +4497,58 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	    /**
+	     * ParseInt simpliment
+	     * @param {number} value - Value
+	     * @returns {number}
+	     */
+	    toInteger: function toInteger(value) {
+	        return parseInt(value, 10);
+	    },
+
+
+	    /**
+	     * String to camelcase string
+	     * @param {string} targetString - change target
+	     * @returns {string}
+	     * @private
+	     */
+	    toCamelCase: function toCamelCase(targetString) {
+	        return targetString.replace(/-([a-z])/g, function ($0, $1) {
+	            return $1.toUpperCase();
+	        });
+	    },
+
+
+	    /**
+	     * Check browser file api support
+	     * @returns {boolean}
+	     * @private
+	     */
+	    isSupportFileApi: function isSupportFileApi() {
+	        return !!(window.File && window.FileList && window.FileReader);
+	    },
+
+
+	    /**
+	     * hex to rgb
+	     * @param {string} color - hex color
+	     * @param {string} alpha - color alpha value
+	     * @returns {string} rgb expression
+	     */
+	    getRgb: function getRgb(color, alpha) {
+	        if (color.length === 4) {
+	            color = '' + color + color.slice(1, 4);
+	        }
+	        var r = parseInt(color.slice(1, 3), 16);
+	        var g = parseInt(color.slice(3, 5), 16);
+	        var b = parseInt(color.slice(5, 7), 16);
+	        var a = alpha || 1;
+
+	        return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+	    },
+
+
+	    /**
 	     * send hostname
 	     */
 	    sendHostName: function sendHostName() {
@@ -3774,16 +4568,80 @@ return /******/ (function(modules) { // webpackBootstrap
 	            dp: hostname,
 	            dh: 'image-editor'
 	        });
+	    },
+
+
+	    /**
+	     * Apply css resource
+	     * @param {string} styleBuffer - serialized css text
+	     * @param {string} tagId - style tag id
+	     */
+	    styleLoad: function styleLoad(styleBuffer, tagId) {
+	        var _document$getElements = document.getElementsByTagName('head'),
+	            head = _document$getElements[0];
+
+	        var linkElement = document.createElement('link');
+	        var styleData = encodeURIComponent(styleBuffer);
+	        if (tagId) {
+	            linkElement.id = tagId;
+	            // linkElement.id = 'tui-image-editor-theme-style';
+	        }
+	        linkElement.setAttribute('rel', 'stylesheet');
+	        linkElement.setAttribute('type', 'text/css');
+	        linkElement.setAttribute('href', 'data:text/css;charset=UTF-8,' + styleData);
+	        head.appendChild(linkElement);
+	    },
+
+
+	    /**
+	     * Get selector
+	     * @param {HTMLElement} targetElement - target element
+	     * @returns {Function} selector
+	     */
+	    getSelector: function getSelector(targetElement) {
+	        return function (str) {
+	            return targetElement.querySelector(str);
+	        };
+	    },
+
+
+	    /**
+	     * Change base64 to blob
+	     * @param {String} data - base64 string data
+	     * @returns {Blob} Blob Data
+	     */
+	    base64ToBlob: function base64ToBlob(data) {
+	        var rImageType = /data:(image\/.+);base64,/;
+	        var mimeString = '';
+	        var raw = void 0,
+	            uInt8Array = void 0,
+	            i = void 0;
+
+	        raw = data.replace(rImageType, function (header, imageType) {
+	            mimeString = imageType;
+
+	            return '';
+	        });
+
+	        raw = atob(raw);
+	        var rawLength = raw.length;
+	        uInt8Array = new Uint8Array(rawLength); // eslint-disable-line
+
+	        for (i = 0; i < rawLength; i += 1) {
+	            uInt8Array[i] = raw.charCodeAt(i);
+	        }
+
+	        return new Blob([uInt8Array], { type: mimeString });
 	    }
 	};
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _util = __webpack_require__(71);
+	var _util = __webpack_require__(72);
 
 	var _util2 = _interopRequireDefault(_util);
 
@@ -3830,14 +4688,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	        OBJECT_ACTIVATED: 'objectActivated',
 	        OBJECT_MOVED: 'objectMoved',
 	        OBJECT_SCALED: 'objectScaled',
+	        OBJECT_CREATED: 'objectCreated',
 	        TEXT_EDITING: 'textEditing',
 	        TEXT_CHANGED: 'textChanged',
+	        ICON_CREATE_RESIZE: 'iconCreateResize',
+	        ICON_CREATE_END: 'iconCreateEnd',
 	        ADD_TEXT: 'addText',
 	        ADD_OBJECT: 'addObject',
+	        ADD_OBJECT_AFTER: 'addObjectAfter',
 	        MOUSE_DOWN: 'mousedown',
+	        MOUSE_UP: 'mouseup',
+	        MOUSE_MOVE: 'mousemove',
 	        // UNDO/REDO Events
 	        REDO_STACK_CHANGED: 'redoStackChanged',
-	        UNDO_STACK_CHANGED: 'undoStackChanged'
+	        UNDO_STACK_CHANGED: 'undoStackChanged',
+	        SELECTION_CLEARED: 'selectionCleared',
+	        SELECTION_CREATED: 'selectionCreated'
 	    },
 
 	    /**
@@ -3890,6 +4756,92 @@ return /******/ (function(modules) { // webpackBootstrap
 	        unsupportedType: 'Unsupported object type',
 	        noObject: 'The object is not in canvas.',
 	        addedObject: 'The object is already added.'
+	    },
+
+	    /**
+	     * Default icon menu svg path
+	     * @type {Object.<string, string>}
+	     */
+	    defaultIconPath: {
+	        'icon-arrow': 'M40 12V0l24 24-24 24V36H0V12h40z',
+	        'icon-arrow-2': 'M49,32 H3 V22 h46 l-18,-18 h12 l23,23 L43,50 h-12 l18,-18  z ',
+	        'icon-arrow-3': 'M43.349998,27 L17.354,53 H1.949999 l25.996,-26 L1.949999,1 h15.404 L43.349998,27  z ',
+	        'icon-star': 'M35,54.557999 l-19.912001,10.468 l3.804,-22.172001 l-16.108,-15.7 l22.26,-3.236 L35,3.746 l9.956,20.172001 l22.26,3.236 l-16.108,15.7 l3.804,22.172001  z ',
+	        'icon-star-2': 'M17,31.212 l-7.194,4.08 l-4.728,-6.83 l-8.234,0.524 l-1.328,-8.226 l-7.644,-3.14 l2.338,-7.992 l-5.54,-6.18 l5.54,-6.176 l-2.338,-7.994 l7.644,-3.138 l1.328,-8.226 l8.234,0.522 l4.728,-6.83 L17,-24.312 l7.194,-4.08 l4.728,6.83 l8.234,-0.522 l1.328,8.226 l7.644,3.14 l-2.338,7.992 l5.54,6.178 l-5.54,6.178 l2.338,7.992 l-7.644,3.14 l-1.328,8.226 l-8.234,-0.524 l-4.728,6.83  z ',
+	        'icon-polygon': 'M3,31 L19,3 h32 l16,28 l-16,28 H19  z ',
+	        'icon-location': 'M24 62C8 45.503 0 32.837 0 24 0 10.745 10.745 0 24 0s24 10.745 24 24c0 8.837-8 21.503-24 38zm0-28c5.523 0 10-4.477 10-10s-4.477-10-10-10-10 4.477-10 10 4.477 10 10 10z',
+	        'icon-heart': 'M49.994999,91.349998 l-6.96,-6.333 C18.324001,62.606995 2.01,47.829002 2.01,29.690998 C2.01,14.912998 13.619999,3.299999 28.401001,3.299999 c8.349,0 16.362,5.859 21.594,12 c5.229,-6.141 13.242001,-12 21.591,-12 c14.778,0 26.390999,11.61 26.390999,26.390999 c0,18.138 -16.314001,32.916 -41.025002,55.374001 l-6.96,6.285  z ',
+	        'icon-bubble': 'M44 48L34 58V48H12C5.373 48 0 42.627 0 36V12C0 5.373 5.373 0 12 0h40c6.627 0 12 5.373 12 12v24c0 6.627-5.373 12-12 12h-8z'
+	    },
+
+	    defaultRotateRangeValus: {
+	        realTimeEvent: true,
+	        min: -360,
+	        max: 360,
+	        value: 0
+	    },
+
+	    defaultDrawRangeValus: {
+	        min: 5,
+	        max: 30,
+	        value: 12
+	    },
+
+	    defaultShapeStrokeValus: {
+	        realTimeEvent: false,
+	        min: 2,
+	        max: 300,
+	        value: 3
+	    },
+
+	    defaultTextRangeValus: {
+	        realTimeEvent: true,
+	        min: 10,
+	        max: 100,
+	        value: 50
+	    },
+
+	    defaultFilterRangeValus: {
+	        tintOpacityRange: {
+	            min: 0,
+	            max: 1,
+	            value: 0.7
+	        },
+	        removewhiteThresholdRange: {
+	            min: 0,
+	            max: 255,
+	            value: 60
+	        },
+	        removewhiteDistanceRange: {
+	            min: 0,
+	            max: 255,
+	            value: 10
+	        },
+	        gradientTransparencyRange: {
+	            min: 0,
+	            max: 255,
+	            value: 100
+	        },
+	        brightnessRange: {
+	            min: -255,
+	            max: 255,
+	            value: 100
+	        },
+	        noiseRange: {
+	            min: 0,
+	            max: 1000,
+	            value: 100
+	        },
+	        pixelateRange: {
+	            min: 2,
+	            max: 20,
+	            value: 4
+	        },
+	        colorfilterThresholeRange: {
+	            min: 0,
+	            max: 255,
+	            value: 45
+	        }
 	    }
 	}; /**
 	    * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
@@ -3897,7 +4849,8544 @@ return /******/ (function(modules) { // webpackBootstrap
 	    */
 
 /***/ }),
-/* 73 */
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+	var _util = __webpack_require__(72);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	var _mainContainer = __webpack_require__(75);
+
+	var _mainContainer2 = _interopRequireDefault(_mainContainer);
+
+	var _controls = __webpack_require__(76);
+
+	var _controls2 = _interopRequireDefault(_controls);
+
+	var _theme = __webpack_require__(77);
+
+	var _theme2 = _interopRequireDefault(_theme);
+
+	var _shape = __webpack_require__(80);
+
+	var _shape2 = _interopRequireDefault(_shape);
+
+	var _crop = __webpack_require__(86);
+
+	var _crop2 = _interopRequireDefault(_crop);
+
+	var _flip = __webpack_require__(88);
+
+	var _flip2 = _interopRequireDefault(_flip);
+
+	var _rotate = __webpack_require__(90);
+
+	var _rotate2 = _interopRequireDefault(_rotate);
+
+	var _text = __webpack_require__(92);
+
+	var _text2 = _interopRequireDefault(_text);
+
+	var _mask = __webpack_require__(94);
+
+	var _mask2 = _interopRequireDefault(_mask);
+
+	var _icon = __webpack_require__(96);
+
+	var _icon2 = _interopRequireDefault(_icon);
+
+	var _draw = __webpack_require__(98);
+
+	var _draw2 = _interopRequireDefault(_draw);
+
+	var _filter = __webpack_require__(100);
+
+	var _filter2 = _interopRequireDefault(_filter);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var SUB_UI_COMPONENT = {
+	    Shape: _shape2.default,
+	    Crop: _crop2.default,
+	    Flip: _flip2.default,
+	    Rotate: _rotate2.default,
+	    Text: _text2.default,
+	    Mask: _mask2.default,
+	    Icon: _icon2.default,
+	    Draw: _draw2.default,
+	    Filter: _filter2.default
+	};
+
+	var BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
+
+	/**
+	 * Ui class
+	 * @class
+	 * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+	 * @param {Object} [options] - Ui setting options
+	 *   @param {number} option.loadImage - Init default load image
+	 *   @param {number} option.initMenu - Init start menu
+	 *   @param {Boolean} [option.menuBarPosition=bottom] - Let
+	 *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+	 * @param {Objecdt} actions - ui action instance
+	 * @ignore
+	 */
+
+	var Ui = function () {
+	    function Ui(element, options, actions) {
+	        _classCallCheck(this, Ui);
+
+	        this.options = this._initializeOption(options);
+
+	        this._actions = actions;
+	        this.submenu = false;
+	        this.imageSize = {};
+	        this.uiSize = {};
+	        this.theme = new _theme2.default(this.options.theme);
+
+	        this._submenuChangeTransection = false;
+	        this._selectedElement = null;
+	        this._mainElement = null;
+	        this._editorElementWrap = null;
+	        this._editorElement = null;
+	        this._menuElement = null;
+	        this._subMenuElement = null;
+	        this._makeUiElement(element);
+	        this._setUiSize();
+
+	        this._els = {
+	            'undo': this._menuElement.querySelector('#tie-btn-undo'),
+	            'redo': this._menuElement.querySelector('#tie-btn-redo'),
+	            'reset': this._menuElement.querySelector('#tie-btn-reset'),
+	            'delete': this._menuElement.querySelector('#tie-btn-delete'),
+	            'deleteAll': this._menuElement.querySelector('#tie-btn-delete-all'),
+	            'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+	            'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
+	        };
+
+	        this._makeSubMenu();
+	    }
+
+	    /**
+	     * Set Default Selection for includeUI
+	     * @param {Object} option - imageEditor options
+	     * @returns {Object} - extends selectionStyle option
+	     */
+
+
+	    _createClass(Ui, [{
+	        key: 'setUiDefaultSelectionStyle',
+	        value: function setUiDefaultSelectionStyle(option) {
+	            return _tuiCodeSnippet2.default.extend({
+	                applyCropSelectionStyle: true,
+	                applyGroupSelectionStyle: true,
+	                selectionStyle: {
+	                    cornerStyle: 'circle',
+	                    cornerSize: 20,
+	                    cornerColor: '#fff',
+	                    cornerStrokeColor: '#000',
+	                    transparentCorners: false,
+	                    lineWidth: 2,
+	                    borderColor: '#fff'
+	                }
+	            }, option);
+	        }
+
+	        /**
+	         * Change editor size
+	         * @param {Object} resizeInfo - ui & image size info
+	         *   @param {Object} resizeInfo.uiSize - image size dimension
+	         *     @param {Number} resizeInfo.uiSize.width - ui width
+	         *     @param {Number} resizeInfo.uiSize.height - ui height
+	         *   @param {Object} resizeInfo.imageSize - image size dimension
+	         *     @param {Number} resizeInfo.imageSize.oldWidth - old width
+	         *     @param {Number} resizeInfo.imageSize.oldHeight - old height
+	         *     @param {Number} resizeInfo.imageSize.newWidth - new width
+	         *     @param {Number} resizeInfo.imageSize.newHeight - new height
+	         */
+
+	    }, {
+	        key: 'resizeEditor',
+	        value: function resizeEditor() {
+	            var _ref = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+	                uiSize = _ref.uiSize,
+	                _ref$imageSize = _ref.imageSize,
+	                imageSize = _ref$imageSize === undefined ? this.imageSize : _ref$imageSize;
+
+	            if (imageSize !== this.imageSize) {
+	                this.imageSize = imageSize;
+	            }
+	            if (uiSize) {
+	                this._setUiSize(uiSize);
+	            }
+
+	            var _getEditorDimension2 = this._getEditorDimension(),
+	                width = _getEditorDimension2.width,
+	                height = _getEditorDimension2.height;
+
+	            var editorElementStyle = this._editorElement.style;
+	            var menuBarPosition = this.options.menuBarPosition;
+
+
+	            editorElementStyle.height = height + 'px';
+	            editorElementStyle.width = width + 'px';
+
+	            var _getEditorPosition2 = this._getEditorPosition(menuBarPosition),
+	                top = _getEditorPosition2.top,
+	                bottom = _getEditorPosition2.bottom,
+	                left = _getEditorPosition2.left,
+	                right = _getEditorPosition2.right;
+
+	            this._editorElementWrap.style.bottom = bottom + 'px';
+	            this._editorElementWrap.style.top = top + 'px';
+	            this._editorElementWrap.style.left = left + 'px';
+	            this._editorElementWrap.style.width = 'calc(100% - ' + right + 'px)';
+	            var selectElementClassList = this._selectedElement.classList;
+
+	            if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION) {
+	                selectElementClassList.add('tui-image-editor-top-optimization');
+	            } else {
+	                selectElementClassList.remove('tui-image-editor-top-optimization');
+	            }
+	        }
+
+	        /**
+	         * Change undo button status
+	         * @param {Boolean} enableStatus - enabled status
+	         */
+
+	    }, {
+	        key: 'changeUndoButtonStatus',
+	        value: function changeUndoButtonStatus(enableStatus) {
+	            if (enableStatus) {
+	                this._els.undo.classList.add('enabled');
+	            } else {
+	                this._els.undo.classList.remove('enabled');
+	            }
+	        }
+
+	        /**
+	         * Change redo button status
+	         * @param {Boolean} enableStatus - enabled status
+	         */
+
+	    }, {
+	        key: 'changeRedoButtonStatus',
+	        value: function changeRedoButtonStatus(enableStatus) {
+	            if (enableStatus) {
+	                this._els.redo.classList.add('enabled');
+	            } else {
+	                this._els.redo.classList.remove('enabled');
+	            }
+	        }
+
+	        /**
+	         * Change reset button status
+	         * @param {Boolean} enableStatus - enabled status
+	         */
+
+	    }, {
+	        key: 'changeResetButtonStatus',
+	        value: function changeResetButtonStatus(enableStatus) {
+	            if (enableStatus) {
+	                this._els.reset.classList.add('enabled');
+	            } else {
+	                this._els.reset.classList.remove('enabled');
+	            }
+	        }
+
+	        /**
+	         * Change delete-all button status
+	         * @param {Boolean} enableStatus - enabled status
+	         */
+
+	    }, {
+	        key: 'changeDeleteAllButtonEnabled',
+	        value: function changeDeleteAllButtonEnabled(enableStatus) {
+	            if (enableStatus) {
+	                this._els.deleteAll.classList.add('enabled');
+	            } else {
+	                this._els.deleteAll.classList.remove('enabled');
+	            }
+	        }
+
+	        /**
+	         * Change delete button status
+	         * @param {Boolean} enableStatus - enabled status
+	         */
+
+	    }, {
+	        key: 'changeDeleteButtonEnabled',
+	        value: function changeDeleteButtonEnabled(enableStatus) {
+	            if (enableStatus) {
+	                this._els['delete'].classList.add('enabled');
+	            } else {
+	                this._els['delete'].classList.remove('enabled');
+	            }
+	        }
+
+	        /**
+	         * Change delete button status
+	         * @param {Object} [options] - Ui setting options
+	         *   @param {number} option.loadImage - Init default load image
+	         *   @param {number} option.initMenu - Init start menu
+	         *   @param {Boolean} [option.menuBarPosition=bottom] - Let
+	         *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+	         * @returns {Object} initialize option
+	         * @private
+	         */
+
+	    }, {
+	        key: '_initializeOption',
+	        value: function _initializeOption(options) {
+	            return _tuiCodeSnippet2.default.extend({
+	                loadImage: {
+	                    path: '',
+	                    name: ''
+	                },
+	                menuIconPath: '',
+	                menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
+	                initMenu: false,
+	                uiSize: {
+	                    width: '100%',
+	                    height: '100%'
+	                },
+	                menuBarPosition: 'bottom'
+	            }, options);
+	        }
+
+	        /**
+	         * Set ui container size
+	         * @param {Object} uiSize - ui dimension
+	         *   @param {number} width - width
+	         *   @param {number} height - height
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setUiSize',
+	        value: function _setUiSize() {
+	            var uiSize = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.options.uiSize;
+
+	            var elementDimension = this._selectedElement.style;
+	            elementDimension.width = uiSize.width;
+	            elementDimension.height = uiSize.height;
+	        }
+
+	        /**
+	         * Make submenu dom element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makeSubMenu',
+	        value: function _makeSubMenu() {
+	            var _this = this;
+
+	            _tuiCodeSnippet2.default.forEach(this.options.menu, function (menuName) {
+	                var SubComponentClass = SUB_UI_COMPONENT[menuName.replace(/^[a-z]/, function ($0) {
+	                    return $0.toUpperCase();
+	                })];
+
+	                // make menu element
+	                _this._makeMenuElement(menuName);
+
+	                // menu btn element
+	                _this._els[menuName] = _this._menuElement.querySelector('#tie-btn-' + menuName);
+
+	                // submenu ui instance
+	                _this[menuName] = new SubComponentClass(_this._subMenuElement, {
+	                    iconStyle: _this.theme.getStyle('submenu.icon'),
+	                    menuBarPosition: _this.options.menuBarPosition
+	                });
+	            });
+	        }
+
+	        /**
+	         * Make primary ui dom element
+	         * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makeUiElement',
+	        value: function _makeUiElement(element) {
+	            var selectedElement = void 0;
+
+	            window.snippet = _tuiCodeSnippet2.default;
+
+	            if (element.jquery) {
+	                selectedElement = element[0];
+	            } else if (element.nodeType) {
+	                selectedElement = element;
+	            } else {
+	                selectedElement = document.querySelector(element);
+	            }
+	            var selector = _util2.default.getSelector(selectedElement);
+
+	            selectedElement.classList.add('tui-image-editor-container');
+	            selectedElement.innerHTML = (0, _controls2.default)({
+	                biImage: this.theme.getStyle('common.bi'),
+	                iconStyle: this.theme.getStyle('menu.icon'),
+	                loadButtonStyle: this.theme.getStyle('loadButton'),
+	                downloadButtonStyle: this.theme.getStyle('downloadButton')
+	            }) + (0, _mainContainer2.default)({
+	                biImage: this.theme.getStyle('common.bi'),
+	                commonStyle: this.theme.getStyle('common'),
+	                headerStyle: this.theme.getStyle('header'),
+	                loadButtonStyle: this.theme.getStyle('loadButton'),
+	                downloadButtonStyle: this.theme.getStyle('downloadButton'),
+	                submenuStyle: this.theme.getStyle('submenu')
+	            });
+
+	            this._selectedElement = selectedElement;
+	            this._selectedElement.classList.add(this.options.menuBarPosition);
+
+	            this._mainElement = selector('.tui-image-editor-main');
+	            this._editorElementWrap = selector('.tui-image-editor-wrap');
+	            this._editorElement = selector('.tui-image-editor');
+	            this._menuElement = selector('.tui-image-editor-menu');
+	            this._subMenuElement = selector('.tui-image-editor-submenu');
+	        }
+
+	        /**
+	         * Make menu ui dom element
+	         * @param {string} menuName - menu name
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makeMenuElement',
+	        value: function _makeMenuElement(menuName) {
+	            var btnElement = document.createElement('li');
+
+	            var _theme$getStyle = this.theme.getStyle('menu.icon'),
+	                normal = _theme$getStyle.normal,
+	                active = _theme$getStyle.active;
+
+	            var menuItemHtml = '\n            <svg class="svg_ic-menu">\n                <use xlink:href="' + normal.path + '#' + normal.name + '-ic-' + menuName + '" class="normal"/>\n                <use xlink:href="' + active.path + '#' + active.name + '-ic-' + menuName + '" class="active"/>\n            </svg>\n        ';
+
+	            btnElement.id = 'tie-btn-' + menuName;
+	            btnElement.className = 'tui-image-editor-item';
+	            btnElement.title = menuName;
+	            btnElement.innerHTML = menuItemHtml;
+
+	            this._menuElement.appendChild(btnElement);
+	        }
+
+	        /**
+	         * Add help action event
+	         * @param {string} helpName - help menu name
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addHelpActionEvent',
+	        value: function _addHelpActionEvent(helpName) {
+	            var _this2 = this;
+
+	            this._els[helpName].addEventListener('click', function () {
+	                _this2._actions.main[helpName]();
+	            });
+	        }
+
+	        /**
+	         * Add download event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addDownloadEvent',
+	        value: function _addDownloadEvent() {
+	            var _this3 = this;
+
+	            _tuiCodeSnippet2.default.forEach(this._els.download, function (element) {
+	                element.addEventListener('click', function () {
+	                    _this3._actions.main.download();
+	                });
+	            });
+	        }
+
+	        /**
+	         * Add load event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addLoadEvent',
+	        value: function _addLoadEvent() {
+	            var _this4 = this;
+
+	            _tuiCodeSnippet2.default.forEach(this._els.load, function (element) {
+	                element.addEventListener('change', function (event) {
+	                    _this4._actions.main.load(event.target.files[0]);
+	                });
+	            });
+	        }
+
+	        /**
+	         * Add menu event
+	         * @param {string} menuName - menu name
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addMenuEvent',
+	        value: function _addMenuEvent(menuName) {
+	            var _this5 = this;
+
+	            this._els[menuName].addEventListener('click', function () {
+	                _this5.changeMenu(menuName);
+	            });
+	        }
+
+	        /**
+	         * Add menu event
+	         * @param {string} menuName - menu name
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addSubMenuEvent',
+	        value: function _addSubMenuEvent(menuName) {
+	            this[menuName].addEvent(this._actions[menuName]);
+	        }
+
+	        /**
+	         * get editor area element
+	         * @returns {HTMLElement} editor area html element
+	         */
+
+	    }, {
+	        key: 'getEditorArea',
+	        value: function getEditorArea() {
+	            return this._editorElement;
+	        }
+
+	        /**
+	         * Init canvas
+	         */
+
+	    }, {
+	        key: 'initCanvas',
+	        value: function initCanvas() {
+	            var _this6 = this;
+
+	            var loadImageInfo = this._getLoadImage();
+	            if (loadImageInfo) {
+	                this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(function () {
+	                    _this6._addHelpActionEvent('undo');
+	                    _this6._addHelpActionEvent('redo');
+	                    _this6._addHelpActionEvent('reset');
+	                    _this6._addHelpActionEvent('delete');
+	                    _this6._addHelpActionEvent('deleteAll');
+
+	                    _this6._addDownloadEvent();
+	                    _this6._addLoadEvent();
+
+	                    _tuiCodeSnippet2.default.forEach(_this6.options.menu, function (menuName) {
+	                        _this6._addMenuEvent(menuName);
+	                        _this6._addSubMenuEvent(menuName);
+	                    });
+	                    _this6._initMenu();
+	                });
+	            }
+
+	            var gridVisual = document.createElement('div');
+	            gridVisual.className = 'tui-image-editor-grid-visual';
+	            var grid = '<table>\n           <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>\n           <tr><td></td><td></td><td></td></tr>\n           <tr><td class="dot left-bottom"></td><td></td><td class="dot right-bottom"></td></tr>\n         </table>';
+	            gridVisual.innerHTML = grid;
+	            this._editorContainerElement = this._editorElement.querySelector('.tui-image-editor-canvas-container');
+	            this._editorContainerElement.appendChild(gridVisual);
+	        }
+
+	        /**
+	         * get editor area element
+	         * @returns {Object} loadimage optionk
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getLoadImage',
+	        value: function _getLoadImage() {
+	            return this.options.loadImage;
+	        }
+
+	        /**
+	         * change menu
+	         * @param {string} menuName - menu name
+	         * @param {boolean} toggle - whether toogle or not
+	         * @param {boolean} discardSelection - discard selection
+	         */
+
+	    }, {
+	        key: 'changeMenu',
+	        value: function changeMenu(menuName) {
+	            var toggle = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
+	            var discardSelection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
+
+	            if (!this._submenuChangeTransection) {
+	                this._submenuChangeTransection = true;
+	                this._changeMenu(menuName, toggle, discardSelection);
+	                this._submenuChangeTransection = false;
+	            }
+	        }
+
+	        /**
+	         * change menu
+	         * @param {string} menuName - menu name
+	         * @param {boolean} toggle - whether toogle or not
+	         * @param {boolean} discardSelection - discard selection
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeMenu',
+	        value: function _changeMenu(menuName, toggle, discardSelection) {
+	            if (this.submenu) {
+	                this._els[this.submenu].classList.remove('active');
+	                this._mainElement.classList.remove('tui-image-editor-menu-' + this.submenu);
+	                if (discardSelection) {
+	                    this._actions.main.discardSelection();
+	                }
+	                this._actions.main.changeSelectableAll(true);
+	                this[this.submenu].changeStandbyMode();
+	            }
+
+	            if (this.submenu === menuName && toggle) {
+	                this.submenu = null;
+	            } else {
+	                this._els[menuName].classList.add('active');
+	                this._mainElement.classList.add('tui-image-editor-menu-' + menuName);
+	                this.submenu = menuName;
+	                this[this.submenu].changeStartMode();
+	            }
+
+	            this.resizeEditor();
+	        }
+
+	        /**
+	         * Init menu
+	         * @private
+	         */
+
+	    }, {
+	        key: '_initMenu',
+	        value: function _initMenu() {
+	            if (this.options.initMenu) {
+	                var evt = document.createEvent('MouseEvents');
+	                evt.initEvent('click', true, false);
+	                this._els[this.options.initMenu].dispatchEvent(evt);
+	                if (this.icon) {
+	                    this.icon.registDefaultIcon();
+	                }
+	            }
+	        }
+
+	        /**
+	         * Get editor dimension
+	         * @returns {Object} - width & height of editor
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getEditorDimension',
+	        value: function _getEditorDimension() {
+	            var maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
+	            var height = this.imageSize.newHeight > maxHeight ? maxHeight : this.imageSize.newHeight;
+
+	            var maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
+	            var width = this.imageSize.newWidth > maxWidth ? maxWidth : this.imageSize.newWidth;
+
+	            return {
+	                width: width,
+	                height: height
+	            };
+	        }
+
+	        /**
+	         * Get editor position
+	         * @param {string} menuBarPosition - top or right or bottom or left
+	         * @returns {Object} - positions (top, right, bottom, left)
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getEditorPosition',
+	        value: function _getEditorPosition(menuBarPosition) {
+	            var bottom = 0;
+	            var top = 0;
+	            var left = 0;
+	            var right = 0;
+
+	            if (this.submenu) {
+	                switch (menuBarPosition) {
+	                    case 'bottom':
+	                        bottom += 150;
+	                        break;
+	                    case 'top':
+	                        top += 150;
+	                        break;
+	                    case 'left':
+	                        left += 248;
+	                        right += 248;
+	                        break;
+	                    case 'right':
+	                        right += 248;
+	                        break;
+	                    default:
+	                        break;
+	                }
+	            }
+
+	            return {
+	                top: top,
+	                bottom: bottom,
+	                left: left,
+	                right: right
+	            };
+	        }
+	    }]);
+
+	    return Ui;
+	}();
+
+	exports.default = Ui;
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var biImage = _ref.biImage,
+	        commonStyle = _ref.commonStyle,
+	        headerStyle = _ref.headerStyle,
+	        loadButtonStyle = _ref.loadButtonStyle,
+	        downloadButtonStyle = _ref.downloadButtonStyle,
+	        submenuStyle = _ref.submenuStyle;
+	    return "\n    <div class=\"tui-image-editor-main-container\" style=\"" + commonStyle + "\">\n        <div class=\"tui-image-editor-header\" style=\"" + headerStyle + "\">\n            <div class=\"tui-image-editor-header-logo\">\n                <img src=\"" + biImage + "\" />\n            </div>\n            <div class=\"tui-image-editor-header-buttons\">\n                <button style=\"" + loadButtonStyle + "\">\n                    Load\n                    <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                </button>\n                <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                    Download\n                </button>\n            </div>\n        </div>\n        <div class=\"tui-image-editor-main\">\n            <div class=\"tui-image-editor-submenu\" style=\"" + submenuStyle + "\">\n            </div>\n            <div class=\"tui-image-editor-wrap\">\n                <div class=\"tui-image-editor-size-wrap\">\n                    <div class=\"tui-image-editor-align-wrap\">\n                        <div class=\"tui-image-editor\"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n";
+	};
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var biImage = _ref.biImage,
+	        _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active,
+	        loadButtonStyle = _ref.loadButtonStyle,
+	        downloadButtonStyle = _ref.downloadButtonStyle;
+	    return "\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"" + biImage + "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\">\n            <li id=\"tie-btn-undo\" class=\"tui-image-editor-item\" title=\"undo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-undo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-undo\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-redo\" class=\"tui-image-editor-item\" title=\"redo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-redo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-redo\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-reset\" class=\"tui-image-editor-item\" title=\"reset\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-reset\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-reset\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n            <li id=\"tie-btn-delete\" class=\"tui-image-editor-item\" title=\"delete\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-delete\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-delete-all\" class=\"tui-image-editor-item\" title=\"delete-all\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-delete-all\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete-all\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n        </ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <button style=\"" + loadButtonStyle + "\">\n                Load\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </button>\n            <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                Download\n            </button>\n        </div>\n    </div>\n";
+	};
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _util = __webpack_require__(72);
+
+	var _style = __webpack_require__(78);
+
+	var _style2 = _interopRequireDefault(_style);
+
+	var _standard = __webpack_require__(79);
+
+	var _standard2 = _interopRequireDefault(_standard);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * Theme manager
+	 * @class
+	 * @param {Object} customTheme - custom theme
+	 * @ignore
+	 */
+	var Theme = function () {
+	    function Theme(customTheme) {
+	        _classCallCheck(this, Theme);
+
+	        this.styles = this._changeToObject((0, _tuiCodeSnippet.extend)(_standard2.default, customTheme));
+	        (0, _util.styleLoad)(this._styleMaker());
+	    }
+
+	    /**
+	     * Get a Style cssText or StyleObject
+	     * @param {string} type - style type
+	     * @returns {string|object} - cssText or StyleObject
+	     */
+
+
+	    _createClass(Theme, [{
+	        key: 'getStyle',
+	        value: function getStyle(type) {
+	            // eslint-disable-line
+	            var result = null;
+	            var firstProperty = type.replace(/\..+$/, '');
+	            var option = this.styles[type];
+	            switch (type) {
+	                case 'common.bi':
+	                    result = this.styles[type].image;
+	                    break;
+	                case 'menu.icon':
+	                case 'submenu.icon':
+	                    result = {
+	                        active: this.styles[firstProperty + '.activeIcon'],
+	                        normal: this.styles[firstProperty + '.normalIcon']
+	                    };
+	                    break;
+	                case 'submenu.label':
+	                    result = {
+	                        active: this._makeCssText(this.styles[firstProperty + '.activeLabel']),
+	                        normal: this._makeCssText(this.styles[firstProperty + '.normalLabel'])
+	                    };
+	                    break;
+	                case 'submenu.partition':
+	                    result = {
+	                        vertical: this._makeCssText((0, _tuiCodeSnippet.extend)({}, option, { borderLeft: '1px solid ' + option.color })),
+	                        horizontal: this._makeCssText((0, _tuiCodeSnippet.extend)({}, option, { borderBottom: '1px solid ' + option.color }))
+	                    };
+	                    break;
+	                case 'range.pointer':
+	                case 'range.bar':
+	                case 'range.subbar':
+	                    option.backgroundColor = option.color;
+	                    result = this._makeCssText(option);
+	                    break;
+	                default:
+	                    result = this._makeCssText(option);
+	                    break;
+	            }
+
+	            return result;
+	        }
+
+	        /**
+	         * Make css resource
+	         * @returns {string} - serialized css text
+	         * @private
+	         */
+
+	    }, {
+	        key: '_styleMaker',
+	        value: function _styleMaker() {
+	            var submenuLabelStyle = this.getStyle('submenu.label');
+	            var submenuPartitionStyle = this.getStyle('submenu.partition');
+
+	            return (0, _style2.default)({
+	                subMenuLabelActive: submenuLabelStyle.active,
+	                subMenuLabelNormal: submenuLabelStyle.normal,
+	                submenuPartitionVertical: submenuPartitionStyle.vertical,
+	                submenuPartitionHorizontal: submenuPartitionStyle.horizontal,
+	                biSize: this.getStyle('common.bisize'),
+	                subMenuRangeTitle: this.getStyle('range.title'),
+	                submenuRangePointer: this.getStyle('range.pointer'),
+	                submenuRangeBar: this.getStyle('range.bar'),
+	                submenuRangeSubbar: this.getStyle('range.subbar'),
+	                submenuRangeValue: this.getStyle('range.value'),
+	                submenuColorpickerTitle: this.getStyle('colorpicker.title'),
+	                submenuColorpickerButton: this.getStyle('colorpicker.button'),
+	                submenuCheckbox: this.getStyle('checkbox'),
+	                menuIconSize: this.getStyle('menu.iconSize'),
+	                submenuIconSize: this.getStyle('submenu.iconSize')
+	            });
+	        }
+
+	        /**
+	         * Change to low dimensional object.
+	         * @param {object} styleOptions - style object of user interface
+	         * @returns {object} low level object for style apply
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeToObject',
+	        value: function _changeToObject(styleOptions) {
+	            var styleObject = {};
+	            (0, _tuiCodeSnippet.forEach)(styleOptions, function (value, key) {
+	                var keyExplode = key.match(/^(.+)\.([a-z]+)$/i);
+	                var property = keyExplode[1],
+	                    subProperty = keyExplode[2];
+
+
+	                if (!styleObject[property]) {
+	                    styleObject[property] = {};
+	                }
+	                styleObject[property][subProperty] = value;
+	            });
+
+	            return styleObject;
+	        }
+
+	        /**
+	         * Style object to Csstext serialize
+	         * @param {object} styleObject - style object
+	         * @returns {string} - css text string
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makeCssText',
+	        value: function _makeCssText(styleObject) {
+	            var _this = this;
+
+	            var converterStack = [];
+
+	            (0, _tuiCodeSnippet.forEach)(styleObject, function (value, key) {
+	                if (['backgroundImage'].indexOf(key) > -1 && value !== 'none') {
+	                    value = 'url(' + value + ')';
+	                }
+	                converterStack.push(_this._toUnderScore(key) + ': ' + value);
+	            });
+
+	            return converterStack.join(';');
+	        }
+
+	        /**
+	         * Camel key string to Underscore string
+	         * @param {string} targetString - change target
+	         * @returns {string}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_toUnderScore',
+	        value: function _toUnderScore(targetString) {
+	            return targetString.replace(/([A-Z])/g, function ($0, $1) {
+	                return '-' + $1.toLowerCase();
+	            });
+	        }
+	    }]);
+
+	    return Theme;
+	}();
+
+	exports.default = Theme;
+
+/***/ }),
+/* 78 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var subMenuLabelActive = _ref.subMenuLabelActive,
+	        subMenuLabelNormal = _ref.subMenuLabelNormal,
+	        subMenuRangeTitle = _ref.subMenuRangeTitle,
+	        submenuPartitionVertical = _ref.submenuPartitionVertical,
+	        submenuPartitionHorizontal = _ref.submenuPartitionHorizontal,
+	        submenuCheckbox = _ref.submenuCheckbox,
+	        submenuRangePointer = _ref.submenuRangePointer,
+	        submenuRangeValue = _ref.submenuRangeValue,
+	        submenuColorpickerTitle = _ref.submenuColorpickerTitle,
+	        submenuColorpickerButton = _ref.submenuColorpickerButton,
+	        submenuRangeBar = _ref.submenuRangeBar,
+	        submenuRangeSubbar = _ref.submenuRangeSubbar,
+	        submenuIconSize = _ref.submenuIconSize,
+	        menuIconSize = _ref.menuIconSize,
+	        biSize = _ref.biSize;
+	    return "\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    #tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    #tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    #tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    #tie-crop-button .tui-image-editor-button.apply.active label,\n    #tie-shape-button.rect .tui-image-editor-button.rect label,\n    #tie-shape-button.circle .tui-image-editor-button.circle label,\n    #tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    #tie-text-effect-button .tui-image-editor-button.active label,\n    #tie-text-align-button.left .tui-image-editor-button.left label,\n    #tie-text-align-button.center .tui-image-editor-button.center label,\n    #tie-text-align-button.right .tui-image-editor-button.right label,\n    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox input + label {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n\n";
+	};
+
+/***/ }),
+/* 79 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	/**
+	 * @fileoverview The standard theme
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 */
+
+	/**
+	 * Full configuration for theme.<br>
+	 * @typedef {object} themeConfig
+	 * @property {string} common.bi.image - Brand icon image
+	 * @property {string} common.bisize.width - Icon image width
+	 * @property {string} common.bisize.height - Icon Image Height
+	 * @property {string} common.backgroundImage - Background image
+	 * @property {string} common.backgroundColor - Background color
+	 * @property {string} common.border - Full area border style
+	 * @property {string} header.backgroundImage - header area background
+	 * @property {string} header.backgroundColor - header area background color
+	 * @property {string} header.border - header area border style
+	 * @property {string} loadButton.backgroundColor - load button background color
+	 * @property {string} loadButton.border - load button border style
+	 * @property {string} loadButton.color - load button foreground color
+	 * @property {string} loadButton.fontFamily - load button font type
+	 * @property {string} loadButton.fontSize - load button font size
+	 * @property {string} downloadButton.backgroundColor - download button background color
+	 * @property {string} downloadButton.border - download button border style
+	 * @property {string} downloadButton.color - download button foreground color
+	 * @property {string} downloadButton.fontFamily - download button font type
+	 * @property {string} downloadButton.fontSize - download button font size
+	 * @property {string} menu.normalIcon.path - Menu default icon svg bundle file path
+	 * @property {string} menu.normalIcon.name - Menu default icon svg bundle name
+	 * @property {string} menu.activeIcon.path - Menu active icon svg bundle file path
+	 * @property {string} menu.activeIcon.name - Menu active icon svg bundle name
+	 * @property {string} menu.iconSize.width - Menu icon Size Width
+	 * @property {string} menu.iconSize.height - Menu Icon Size Height
+	 * @property {string} submenu.backgroundColor - Sub-menu area background color
+	 * @property {string} submenu.partition.color - Submenu partition line color
+	 * @property {string} submenu.normalIcon.path - Submenu default icon svg bundle file path
+	 * @property {string} submenu.normalIcon.name - Submenu default icon svg bundle name
+	 * @property {string} submenu.activeIcon.path - Submenu active icon svg bundle file path
+	 * @property {string} submenu.activeIcon.name - Submenu active icon svg bundle name
+	 * @property {string} submenu.iconSize.width - Submenu icon Size Width
+	 * @property {string} submenu.iconSize.height - Submenu Icon Size Height
+	 * @property {string} submenu.normalLabel.color - Submenu default label color
+	 * @property {string} submenu.normalLabel.fontWeight - Sub Menu Default Label Font Thickness
+	 * @property {string} submenu.activeLabel.color - Submenu active label color
+	 * @property {string} submenu.activeLabel.fontWeight - Submenu active label Font thickness
+	 * @property {string} checkbox.border - Checkbox border style
+	 * @property {string} checkbox.backgroundColor - Checkbox background color
+	 * @property {string} range.pointer.color - range control pointer color
+	 * @property {string} range.bar.color - range control bar color
+	 * @property {string} range.subbar.color - range control subbar color
+	 * @property {string} range.value.color - range number box font color
+	 * @property {string} range.value.fontWeight - range number box font thickness
+	 * @property {string} range.value.fontSize - range number box font size
+	 * @property {string} range.value.border - range number box border style
+	 * @property {string} range.value.backgroundColor - range number box background color
+	 * @property {string} range.title.color - range title font color
+	 * @property {string} range.title.fontWeight - range title font weight
+	 * @property {string} colorpicker.button.border - colorpicker button border style
+	 * @property {string} colorpicker.title.color - colorpicker button title font color
+	 * @example
+	 // default keys and styles
+	 var customTheme = {
+	    'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
+	    'common.bisize.width': '251px',
+	    'common.bisize.height': '21px',
+	    'common.backgroundImage': 'none',
+	    'common.backgroundColor': '#1e1e1e',
+	    'common.border': '0px',
+
+	    // header
+	    'header.backgroundImage': 'none',
+	    'header.backgroundColor': 'transparent',
+	    'header.border': '0px',
+
+	    // load button
+	    'loadButton.backgroundColor': '#fff',
+	    'loadButton.border': '1px solid #ddd',
+	    'loadButton.color': '#222',
+	    'loadButton.fontFamily': 'NotoSans, sans-serif',
+	    'loadButton.fontSize': '12px',
+
+	    // download button
+	    'downloadButton.backgroundColor': '#fdba3b',
+	    'downloadButton.border': '1px solid #fdba3b',
+	    'downloadButton.color': '#fff',
+	    'downloadButton.fontFamily': 'NotoSans, sans-serif',
+	    'downloadButton.fontSize': '12px',
+
+	    // main icons
+	    'menu.normalIcon.path': '../dist/svg/icon-b.svg',
+	    'menu.normalIcon.name': 'icon-b',
+	    'menu.activeIcon.path': '../dist/svg/icon-a.svg',
+	    'menu.activeIcon.name': 'icon-a',
+	    'menu.iconSize.width': '24px',
+	    'menu.iconSize.height': '24px',
+
+	    // submenu primary color
+	    'submenu.backgroundColor': '#1e1e1e',
+	    'submenu.partition.color': '#858585',
+
+	    // submenu icons
+	    'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
+	    'submenu.normalIcon.name': 'icon-a',
+	    'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
+	    'submenu.activeIcon.name': 'icon-c',
+	    'submenu.iconSize.width': '32px',
+	    'submenu.iconSize.height': '32px',
+
+	    // submenu labels
+	    'submenu.normalLabel.color': '#858585',
+	    'submenu.normalLabel.fontWeight': 'lighter',
+	    'submenu.activeLabel.color': '#fff',
+	    'submenu.activeLabel.fontWeight': 'lighter',
+
+	    // checkbox style
+	    'checkbox.border': '1px solid #ccc',
+	    'checkbox.backgroundColor': '#fff',
+
+	    // rango style
+	    'range.pointer.color': '#fff',
+	    'range.bar.color': '#666',
+	    'range.subbar.color': '#d1d1d1',
+	    'range.value.color': '#fff',
+	    'range.value.fontWeight': 'lighter',
+	    'range.value.fontSize': '11px',
+	    'range.value.border': '1px solid #353535',
+	    'range.value.backgroundColor': '#151515',
+	    'range.title.color': '#fff',
+	    'range.title.fontWeight': 'lighter',
+
+	    // colorpicker style
+	    'colorpicker.button.border': '1px solid #1e1e1e',
+	    'colorpicker.title.color': '#fff'
+	};
+	 */
+	exports.default = {
+	  'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
+	  'common.bisize.width': '251px',
+	  'common.bisize.height': '21px',
+	  'common.backgroundImage': 'none',
+	  'common.backgroundColor': '#1e1e1e',
+	  'common.border': '0px',
+
+	  // header
+	  'header.backgroundImage': 'none',
+	  'header.backgroundColor': 'transparent',
+	  'header.border': '0px',
+
+	  // load button
+	  'loadButton.backgroundColor': '#fff',
+	  'loadButton.border': '1px solid #ddd',
+	  'loadButton.color': '#222',
+	  'loadButton.fontFamily': 'NotoSans, sans-serif',
+	  'loadButton.fontSize': '12px',
+
+	  // download button
+	  'downloadButton.backgroundColor': '#fdba3b',
+	  'downloadButton.border': '1px solid #fdba3b',
+	  'downloadButton.color': '#fff',
+	  'downloadButton.fontFamily': 'NotoSans, sans-serif',
+	  'downloadButton.fontSize': '12px',
+
+	  // main icons
+	  'menu.normalIcon.path': 'icon-b.svg',
+	  'menu.normalIcon.name': 'icon-b',
+	  'menu.activeIcon.path': 'icon-a.svg',
+	  'menu.activeIcon.name': 'icon-a',
+	  'menu.iconSize.width': '24px',
+	  'menu.iconSize.height': '24px',
+
+	  // submenu primary color
+	  'submenu.backgroundColor': 'transparent',
+	  'submenu.partition.color': '#858585',
+
+	  // submenu icons
+	  'submenu.normalIcon.path': 'icon-a.svg',
+	  'submenu.normalIcon.name': 'icon-a',
+	  'submenu.activeIcon.path': 'icon-c.svg',
+	  'submenu.activeIcon.name': 'icon-c',
+	  'submenu.iconSize.width': '32px',
+	  'submenu.iconSize.height': '32px',
+
+	  // submenu labels
+	  'submenu.normalLabel.color': '#858585',
+	  'submenu.normalLabel.fontWeight': 'lighter',
+	  'submenu.activeLabel.color': '#fff',
+	  'submenu.activeLabel.fontWeight': 'lighter',
+
+	  // checkbox style
+	  'checkbox.border': '1px solid #ccc',
+	  'checkbox.backgroundColor': '#fff',
+
+	  // rango style
+	  'range.pointer.color': '#fff',
+	  'range.bar.color': '#666',
+	  'range.subbar.color': '#d1d1d1',
+	  'range.value.color': '#fff',
+	  'range.value.fontWeight': 'lighter',
+	  'range.value.fontSize': '11px',
+	  'range.value.border': '1px solid #353535',
+	  'range.value.backgroundColor': '#151515',
+	  'range.title.color': '#fff',
+	  'range.title.fontWeight': 'lighter',
+
+	  // colorpicker style
+	  'colorpicker.button.border': '1px solid #1e1e1e',
+	  'colorpicker.title.color': '#fff'
+	};
+
+/***/ }),
+/* 80 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _colorpicker = __webpack_require__(81);
+
+	var _colorpicker2 = _interopRequireDefault(_colorpicker);
+
+	var _range = __webpack_require__(83);
+
+	var _range2 = _interopRequireDefault(_range);
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _shape = __webpack_require__(85);
+
+	var _shape2 = _interopRequireDefault(_shape);
+
+	var _util = __webpack_require__(72);
+
+	var _consts = __webpack_require__(73);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var SHAPE_DEFAULT_OPTION = {
+	    stroke: '#ffbb3b',
+	    fill: '',
+	    strokeWidth: 3
+	};
+
+	/**
+	 * Shape ui class
+	 * @class
+	 * @ignore
+	 */
+
+	var Shape = function (_Submenu) {
+	    _inherits(Shape, _Submenu);
+
+	    function Shape(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Shape);
+
+	        var _this = _possibleConstructorReturn(this, (Shape.__proto__ || Object.getPrototypeOf(Shape)).call(this, subMenuElement, {
+	            name: 'shape',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _shape2.default
+	        }));
+
+	        _this.type = null;
+	        _this.options = SHAPE_DEFAULT_OPTION;
+
+	        _this._els = {
+	            shapeSelectButton: _this.selector('#tie-shape-button'),
+	            shapeColorButton: _this.selector('#tie-shape-color-button'),
+	            strokeRange: new _range2.default(_this.selector('#tie-stroke-range'), _consts.defaultShapeStrokeValus),
+	            strokeRangeValue: _this.selector('#tie-stroke-range-value'),
+	            fillColorpicker: new _colorpicker2.default(_this.selector('#tie-color-fill'), '', _this.toggleDirection),
+	            strokeColorpicker: new _colorpicker2.default(_this.selector('#tie-color-stroke'), '#ffbb3b', _this.toggleDirection)
+	        };
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for shape
+	     * @param {Object} actions - actions for shape
+	     *   @param {Function} actions.changeShape - change shape mode
+	     *   @param {Function} actions.setDrawingShape - set dreawing shape
+	     */
+
+
+	    _createClass(Shape, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            this.actions = actions;
+
+	            this._els.shapeSelectButton.addEventListener('click', this._changeShapeHandler.bind(this));
+	            this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
+	            this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
+	            this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
+	            this._els.strokeRangeValue.value = this._els.strokeRange.value;
+	            this._els.strokeRangeValue.setAttribute('readonly', true);
+	        }
+
+	        /**
+	         * Set Shape status
+	         * @param {Object} options - options of shape status
+	         *   @param {string} strokeWidth - stroke width
+	         *   @param {string} strokeColor - stroke color
+	         *   @param {string} fillColor - fill color
+	         */
+
+	    }, {
+	        key: 'setShapeStatus',
+	        value: function setShapeStatus(_ref2) {
+	            var strokeWidth = _ref2.strokeWidth,
+	                strokeColor = _ref2.strokeColor,
+	                fillColor = _ref2.fillColor;
+
+	            this._els.strokeRange.value = strokeWidth;
+	            this._els.strokeRange.trigger('change');
+
+	            this._els.strokeColorpicker.color = strokeColor;
+	            this._els.fillColorpicker.color = fillColor;
+	            this.options.stroke = strokeColor;
+	            this.options.fill = fillColor;
+	            this.options.strokeWidth = strokeWidth;
+	        }
+
+	        /**
+	         * Executed when the menu starts.
+	         */
+
+	    }, {
+	        key: 'changeStartMode',
+	        value: function changeStartMode() {
+	            this.actions.stopDrawingMode();
+	        }
+
+	        /**
+	         * Returns the menu to its default state.
+	         */
+
+	    }, {
+	        key: 'changeStandbyMode',
+	        value: function changeStandbyMode() {
+	            this.type = null;
+	            this.actions.changeSelectableAll(true);
+	            this._els.shapeSelectButton.classList.remove('circle');
+	            this._els.shapeSelectButton.classList.remove('triangle');
+	            this._els.shapeSelectButton.classList.remove('rect');
+	        }
+
+	        /**
+	         * set range stroke max value
+	         * @param {number} maxValue - expect max value for change
+	         */
+
+	    }, {
+	        key: 'setMaxStrokeValue',
+	        value: function setMaxStrokeValue(maxValue) {
+	            var strokeMaxValue = maxValue;
+	            if (strokeMaxValue <= 0) {
+	                strokeMaxValue = _consts.defaultShapeStrokeValus.max;
+	            }
+	            this._els.strokeRange.max = strokeMaxValue;
+	        }
+
+	        /**
+	         * Set stroke value
+	         * @param {number} value - expect value for strokeRange change
+	         */
+
+	    }, {
+	        key: 'setStrokeValue',
+	        value: function setStrokeValue(value) {
+	            this._els.strokeRange.value = value;
+	            this._els.strokeRange.trigger('change');
+	        }
+
+	        /**
+	         * Get stroke value
+	         * @returns {number} - stroke range value
+	         */
+
+	    }, {
+	        key: 'getStrokeValue',
+	        value: function getStrokeValue() {
+	            return this._els.strokeRange.value;
+	        }
+
+	        /**
+	         * Change icon color
+	         * @param {object} event - add button event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeShapeHandler',
+	        value: function _changeShapeHandler(event) {
+	            var button = event.target.closest('.tui-image-editor-button');
+	            if (button) {
+	                this.actions.stopDrawingMode();
+	                this.actions.discardSelection();
+	                var shapeType = this.getButtonType(button, ['circle', 'triangle', 'rect']);
+
+	                if (this.type === shapeType) {
+	                    this.changeStandbyMode();
+
+	                    return;
+	                }
+	                this.changeStandbyMode();
+	                this.type = shapeType;
+	                event.currentTarget.classList.add(shapeType);
+	                this.actions.changeSelectableAll(false);
+	                this.actions.modeChange('shape');
+	            }
+	        }
+
+	        /**
+	         * Change stroke range
+	         * @param {number} value - stroke range value
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeStrokeRangeHandler',
+	        value: function _changeStrokeRangeHandler(value) {
+	            this.options.strokeWidth = (0, _util.toInteger)(value);
+	            this._els.strokeRangeValue.value = (0, _util.toInteger)(value);
+
+	            this.actions.changeShape({
+	                strokeWidth: value
+	            });
+
+	            this.actions.setDrawingShape(this.type, this.options);
+	        }
+
+	        /**
+	         * Change shape color
+	         * @param {string} color - fill color
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeFillColorHandler',
+	        value: function _changeFillColorHandler(color) {
+	            color = color || 'transparent';
+	            this.options.fill = color;
+	            this.actions.changeShape({
+	                fill: color
+	            });
+	        }
+
+	        /**
+	         * Change shape stroke color
+	         * @param {string} color - fill color
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeStrokeColorHandler',
+	        value: function _changeStrokeColorHandler(color) {
+	            color = color || 'transparent';
+	            this.options.stroke = color;
+	            this.actions.changeShape({
+	                stroke: color
+	            });
+	        }
+	    }]);
+
+	    return Shape;
+	}(_submenuBase2.default);
+
+	exports.default = Shape;
+
+/***/ }),
+/* 81 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+	var _util = __webpack_require__(72);
+
+	var _tuiColorPicker = __webpack_require__(82);
+
+	var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	var PICKER_COLOR = ['#000000', '#2a2a2a', '#545454', '#7e7e7e', '#a8a8a8', '#d2d2d2', '#ffffff', '', '#ff4040', '#ff6518', '#ffbb3b', '#03bd9e', '#00a9ff', '#515ce6', '#9e5fff', '#ff5583'];
+
+	/**
+	 * Colorpicker control class
+	 * @class
+	 * @ignore
+	 */
+
+	var Colorpicker = function () {
+	    function Colorpicker(colorpickerElement) {
+	        var defaultColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '#7e7e7e';
+	        var toggleDirection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'up';
+
+	        _classCallCheck(this, Colorpicker);
+
+	        var title = colorpickerElement.getAttribute('title');
+
+	        this._show = false;
+
+	        this._toggleDirection = toggleDirection;
+	        this._makePickerButtonElement(colorpickerElement, defaultColor);
+	        this._makePickerLayerElement(colorpickerElement, title);
+	        this._color = defaultColor;
+	        this.picker = _tuiColorPicker2.default.create({
+	            container: this.pickerElement,
+	            preset: PICKER_COLOR,
+	            color: defaultColor
+	        });
+
+	        this._addEvent(colorpickerElement);
+	    }
+
+	    /**
+	     * Get color
+	     * @returns {Number} color value
+	     */
+
+
+	    _createClass(Colorpicker, [{
+	        key: '_changeColorElement',
+
+
+	        /**
+	         * Change color element
+	         * @param {string} color color value
+	         * #private
+	         */
+	        value: function _changeColorElement(color) {
+	            if (color) {
+	                this.colorElement.classList.remove('transparent');
+	                this.colorElement.style.backgroundColor = color;
+	            } else {
+	                this.colorElement.style.backgroundColor = '#fff';
+	                this.colorElement.classList.add('transparent');
+	            }
+	        }
+
+	        /**
+	         * Make picker button element
+	         * @param {HTMLElement} colorpickerElement color picker element
+	         * @param {string} defaultColor color value
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makePickerButtonElement',
+	        value: function _makePickerButtonElement(colorpickerElement, defaultColor) {
+	            colorpickerElement.classList.add('tui-image-editor-button');
+
+	            this.colorElement = document.createElement('div');
+	            this.colorElement.className = 'color-picker-value';
+	            if (defaultColor) {
+	                this.colorElement.style.backgroundColor = defaultColor;
+	            } else {
+	                this.colorElement.classList.add('transparent');
+	            }
+	        }
+
+	        /**
+	         * Make picker layer element
+	         * @param {HTMLElement} colorpickerElement color picker element
+	         * @param {string} title picker title
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makePickerLayerElement',
+	        value: function _makePickerLayerElement(colorpickerElement, title) {
+	            var label = document.createElement('label');
+	            var triangle = document.createElement('div');
+
+	            this.pickerControl = document.createElement('div');
+	            this.pickerControl.className = 'color-picker-control';
+
+	            this.pickerElement = document.createElement('div');
+	            this.pickerElement.className = 'color-picker';
+
+	            label.innerHTML = title;
+	            triangle.className = 'triangle';
+
+	            this.pickerControl.appendChild(this.pickerElement);
+	            this.pickerControl.appendChild(triangle);
+
+	            colorpickerElement.appendChild(this.pickerControl);
+	            colorpickerElement.appendChild(this.colorElement);
+	            colorpickerElement.appendChild(label);
+
+	            this._setPickerControlPosition();
+	        }
+
+	        /**
+	         * Add event
+	         * @param {HTMLElement} colorpickerElement color picker element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addEvent',
+	        value: function _addEvent(colorpickerElement) {
+	            var _this = this;
+
+	            this.picker.on('selectColor', function (value) {
+	                _this._changeColorElement(value.color);
+	                _this._color = value.color;
+	                _this.fire('change', value.color);
+	            });
+	            colorpickerElement.addEventListener('click', function (event) {
+	                _this._show = !_this._show;
+	                _this.pickerControl.style.display = _this._show ? 'block' : 'none';
+	                event.stopPropagation();
+	            });
+	            document.body.addEventListener('click', function () {
+	                _this._show = false;
+	                _this.pickerControl.style.display = 'none';
+	            });
+	        }
+
+	        /**
+	         * Set picker control position
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setPickerControlPosition',
+	        value: function _setPickerControlPosition() {
+	            var controlStyle = this.pickerControl.style;
+	            var left = (0, _util.toInteger)(window.getComputedStyle(this.pickerControl, null).width) / 2 - 20;
+	            var top = ((0, _util.toInteger)(window.getComputedStyle(this.pickerControl, null).height) + 12) * -1;
+
+	            if (this._toggleDirection === 'down') {
+	                top = 30;
+	            }
+
+	            controlStyle.top = top + 'px';
+	            controlStyle.left = '-' + left + 'px';
+	        }
+	    }, {
+	        key: 'color',
+	        get: function get() {
+	            return this._color;
+	        }
+
+	        /**
+	         * Set color
+	         * @param {string} color color value
+	         */
+	        ,
+	        set: function set(color) {
+	            this._color = color;
+	            this._changeColorElement(color);
+	        }
+	    }]);
+
+	    return Colorpicker;
+	}();
+
+	_tuiCodeSnippet2.default.CustomEvents.mixin(Colorpicker);
+	exports.default = Colorpicker;
+
+/***/ }),
+/* 82 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/*!
+	 * Toast UI Colorpicker
+	 * @version 2.2.0
+	 * @author NHNEnt FE Development Team <dl_javascript@nhnent.com>
+	 * @license MIT
+	 */
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory(__webpack_require__(3));
+		else if(typeof define === 'function' && define.amd)
+			define(["tui-code-snippet"], factory);
+		else if(typeof exports === 'object')
+			exports["colorPicker"] = factory(require("tui-code-snippet"));
+		else
+			root["tui"] = root["tui"] || {}, root["tui"]["colorPicker"] = factory((root["tui"] && root["tui"]["util"]));
+	})(this, function(__WEBPACK_EXTERNAL_MODULE_8__) {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+
+
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "dist";
+
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		__webpack_require__(1);
+		module.exports = __webpack_require__(6);
+
+
+	/***/ }),
+	/* 1 */
+	/***/ (function(module, exports) {
+
+		// removed by extract-text-webpack-plugin
+
+	/***/ }),
+	/* 2 */,
+	/* 3 */,
+	/* 4 */,
+	/* 5 */,
+	/* 6 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var domutil = __webpack_require__(7);
+		var domevent = __webpack_require__(9);
+		var Collection = __webpack_require__(10);
+		var View = __webpack_require__(11);
+		var Drag = __webpack_require__(12);
+		var create = __webpack_require__(13);
+		var Palette = __webpack_require__(16);
+		var Slider = __webpack_require__(18);
+		var colorutil = __webpack_require__(14);
+		var svgvml = __webpack_require__(19);
+
+		var colorPicker = {
+		    domutil: domutil,
+		    domevent: domevent,
+		    Collection: Collection,
+		    View: View,
+		    Drag: Drag,
+
+		    create: create,
+		    Palette: Palette,
+		    Slider: Slider,
+		    colorutil: colorutil,
+		    svgvml: svgvml
+		};
+
+		module.exports = colorPicker;
+
+	/***/ }),
+	/* 7 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview Utility modules for manipulate DOM elements.
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var snippet = __webpack_require__(8);
+		var domevent = __webpack_require__(9);
+		var Collection = __webpack_require__(10);
+
+		var util = snippet,
+		    posKey = '_pos',
+		    supportSelectStart = 'onselectstart' in document,
+		    prevSelectStyle = '',
+		    domutil,
+		    userSelectProperty;
+
+		var CSS_AUTO_REGEX = /^auto$|^$|%/;
+
+		function trim(str) {
+		    return str.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+		}
+
+		domutil = {
+		    /**
+		     * Create DOM element and return it.
+		     * @param {string} tagName Tag name to append.
+		     * @param {HTMLElement} [container] HTML element will be parent to created element.
+		     * if not supplied, will use **document.body**
+		     * @param {string} [className] Design class names to appling created element.
+		     * @returns {HTMLElement} HTML element created.
+		     */
+		    appendHTMLElement: function (tagName, container, className) {
+		        var el;
+
+		        className = className || '';
+
+		        el = document.createElement(tagName);
+		        el.className = className;
+
+		        if (container) {
+		            container.appendChild(el);
+		        } else {
+		            document.body.appendChild(el);
+		        }
+
+		        return el;
+		    },
+
+		    /**
+		     * Remove element from parent node.
+		     * @param {HTMLElement} el - element to remove.
+		     */
+		    remove: function (el) {
+		        if (el && el.parentNode) {
+		            el.parentNode.removeChild(el);
+		        }
+		    },
+
+		    /**
+		     * Get element by id
+		     * @param {string} id element id attribute
+		     * @returns {HTMLElement} element
+		     */
+		    get: function (id) {
+		        return document.getElementById(id);
+		    },
+
+		    /**
+		     * Check supplied element is matched selector.
+		     * @param {HTMLElement} el - element to check
+		     * @param {string} selector - selector string to check
+		     * @returns {boolean} match?
+		     */
+		    _matcher: function (el, selector) {
+		        var cssClassSelector = /^\./,
+		            idSelector = /^#/;
+
+		        if (cssClassSelector.test(selector)) {
+		            return domutil.hasClass(el, selector.replace('.', ''));
+		        } else if (idSelector.test(selector)) {
+		            return el.id === selector.replace('#', '');
+		        }
+
+		        return el.nodeName.toLowerCase() === selector.toLowerCase();
+		    },
+
+		    /**
+		     * Find DOM element by specific selectors.
+		     * below three selector only supported.
+		     *
+		     * 1. css selector
+		     * 2. id selector
+		     * 3. nodeName selector
+		     * @param {string} selector selector
+		     * @param {(HTMLElement|string)} [root] You can assign root element to find. if not supplied, document.body will use.
+		     * @param {boolean|function} [multiple=false] - set true then return all elements that meet condition, if set function then use it filter function.
+		     * @returns {HTMLElement} HTML element finded.
+		     */
+		    find: function (selector, root, multiple) {
+		        var result = [],
+		            found = false,
+		            isFirst = util.isUndefined(multiple) || multiple === false,
+		            isFilter = util.isFunction(multiple);
+
+		        if (util.isString(root)) {
+		            root = domutil.get(root);
+		        }
+
+		        root = root || window.document.body;
+
+		        function recurse(el, selector) {
+		            var childNodes = el.childNodes,
+		                i = 0,
+		                len = childNodes.length,
+		                cursor;
+
+		            for (; i < len; i += 1) {
+		                cursor = childNodes[i];
+
+		                if (cursor.nodeName === '#text') {
+		                    continue;
+		                }
+
+		                if (domutil._matcher(cursor, selector)) {
+		                    if (isFilter && multiple(cursor) || !isFilter) {
+		                        result.push(cursor);
+		                    }
+
+		                    if (isFirst) {
+		                        found = true;
+		                        break;
+		                    }
+		                } else if (cursor.childNodes.length > 0) {
+		                    recurse(cursor, selector);
+		                    if (found) {
+		                        break;
+		                    }
+		                }
+		            }
+		        }
+
+		        recurse(root, selector);
+
+		        return isFirst ? result[0] || null : result;
+		    },
+
+		    /**
+		     * Find parent element recursively.
+		     * @param {HTMLElement} el - base element to start find.
+		     * @param {string} selector - selector string for find
+		     * @returns {HTMLElement} - element finded or undefined.
+		     */
+		    closest: function (el, selector) {
+		        var parent = el.parentNode;
+
+		        if (domutil._matcher(el, selector)) {
+		            return el;
+		        }
+
+		        while (parent && parent !== window.document.body) {
+		            if (domutil._matcher(parent, selector)) {
+		                return parent;
+		            }
+
+		            parent = parent.parentNode;
+		        }
+		    },
+
+		    /**
+		     * Return texts inside element.
+		     * @param {HTMLElement} el target element
+		     * @returns {string} text inside node
+		     */
+		    text: function (el) {
+		        var ret = '',
+		            i = 0,
+		            nodeType = el.nodeType;
+
+		        if (nodeType) {
+		            if (nodeType === 1 || nodeType === 9 || nodeType === 11) {
+		                // nodes that available contain other nodes
+		                if (typeof el.textContent === 'string') {
+		                    return el.textContent;
+		                }
+
+		                for (el = el.firstChild; el; el = el.nextSibling) {
+		                    ret += domutil.text(el);
+		                }
+		            } else if (nodeType === 3 || nodeType === 4) {
+		                // TEXT, CDATA SECTION
+		                return el.nodeValue;
+		            }
+		        } else {
+		            for (; el[i]; i += 1) {
+		                ret += domutil.text(el[i]);
+		            }
+		        }
+
+		        return ret;
+		    },
+
+		    /**
+		     * Set data attribute to target element
+		     * @param {HTMLElement} el - element to set data attribute
+		     * @param {string} key - key
+		     * @param {string|number} data - data value
+		     */
+		    setData: function (el, key, data) {
+		        if ('dataset' in el) {
+		            el.dataset[key] = data;
+
+		            return;
+		        }
+
+		        el.setAttribute('data-' + key, data);
+		    },
+
+		    /**
+		     * Get data value from data-attribute
+		     * @param {HTMLElement} el - target element
+		     * @param {string} key - key
+		     * @returns {string} value
+		     */
+		    getData: function (el, key) {
+		        if ('dataset' in el) {
+		            return el.dataset[key];
+		        }
+
+		        return el.getAttribute('data-' + key);
+		    },
+
+		    /**
+		     * Check element has specific design class name.
+		     * @param {HTMLElement} el target element
+		     * @param {string} name css class
+		     * @returns {boolean} return true when element has that css class name
+		     */
+		    hasClass: function (el, name) {
+		        var className;
+
+		        if (!util.isUndefined(el.classList)) {
+		            return el.classList.contains(name);
+		        }
+
+		        className = domutil.getClass(el);
+
+		        return className.length > 0 && new RegExp('(^|\\s)' + name + '(\\s|$)').test(className);
+		    },
+
+		    /**
+		     * Add design class to HTML element.
+		     * @param {HTMLElement} el target element
+		     * @param {string} name css class name
+		     */
+		    addClass: function (el, name) {
+		        var className;
+
+		        if (!util.isUndefined(el.classList)) {
+		            util.forEachArray(name.split(' '), function (value) {
+		                el.classList.add(value);
+		            });
+		        } else if (!domutil.hasClass(el, name)) {
+		            className = domutil.getClass(el);
+		            domutil.setClass(el, (className ? className + ' ' : '') + name);
+		        }
+		    },
+
+		    /**
+		     *
+		     * Overwrite design class to HTML element.
+		     * @param {HTMLElement} el target element
+		     * @param {string} name css class name
+		     */
+		    setClass: function (el, name) {
+		        if (util.isUndefined(el.className.baseVal)) {
+		            el.className = name;
+		        } else {
+		            el.className.baseVal = name;
+		        }
+		    },
+
+		    /**
+		     * Element에 cssClass속성을 제거하는 메서드
+		     * Remove specific design class from HTML element.
+		     * @param {HTMLElement} el target element
+		     * @param {string} name class name to remove
+		     */
+		    removeClass: function (el, name) {
+		        var removed = '';
+
+		        if (!util.isUndefined(el.classList)) {
+		            el.classList.remove(name);
+		        } else {
+		            removed = (' ' + domutil.getClass(el) + ' ').replace(' ' + name + ' ', ' ');
+		            domutil.setClass(el, trim(removed));
+		        }
+		    },
+
+		    /**
+		     * Get HTML element's design classes.
+		     * @param {HTMLElement} el target element
+		     * @returns {string} element css class name
+		     */
+		    getClass: function (el) {
+		        if (!el || !el.className) {
+		            return '';
+		        }
+
+		        return util.isUndefined(el.className.baseVal) ? el.className : el.className.baseVal;
+		    },
+
+		    /**
+		     * Get specific CSS style value from HTML element.
+		     * @param {HTMLElement} el target element
+		     * @param {string} style css attribute name
+		     * @returns {(string|null)} css style value
+		     */
+		    getStyle: function (el, style) {
+		        var value = el.style[style] || el.currentStyle && el.currentStyle[style],
+		            css;
+
+		        if ((!value || value === 'auto') && document.defaultView) {
+		            css = document.defaultView.getComputedStyle(el, null);
+		            value = css ? css[style] : null;
+		        }
+
+		        return value === 'auto' ? null : value;
+		    },
+
+		    /**
+		     * get element's computed style values.
+		     *
+		     * in lower IE8. use polyfill function that return object. it has only one function 'getPropertyValue'
+		     * @param {HTMLElement} el - element want to get style.
+		     * @returns {object} virtual CSSStyleDeclaration object.
+		     */
+		    getComputedStyle: function (el) {
+		        var defaultView = document.defaultView;
+
+		        if (!defaultView || !defaultView.getComputedStyle) {
+		            return {
+		                getPropertyValue: function (prop) {
+		                    var re = /(\-([a-z]){1})/g;
+		                    if (prop === 'float') {
+		                        prop = 'styleFloat';
+		                    }
+
+		                    if (re.test(prop)) {
+		                        prop = prop.replace(re, function () {
+		                            return arguments[2].toUpperCase();
+		                        });
+		                    }
+
+		                    return el.currentStyle[prop] ? el.currentStyle[prop] : null;
+		                }
+		            };
+		        }
+
+		        return document.defaultView.getComputedStyle(el);
+		    },
+
+		    /**
+		     * Set position CSS style.
+		     * @param {HTMLElement} el target element
+		     * @param {number} [x=0] left pixel value.
+		     * @param {number} [y=0] top pixel value.
+		     */
+		    setPosition: function (el, x, y) {
+		        x = util.isUndefined(x) ? 0 : x;
+		        y = util.isUndefined(y) ? 0 : y;
+
+		        el[posKey] = [x, y];
+
+		        el.style.left = x + 'px';
+		        el.style.top = y + 'px';
+		    },
+
+		    /**
+		     * Get position from HTML element.
+		     * @param {HTMLElement} el target element
+		     * @param {boolean} [clear=false] clear cache before calculating position.
+		     * @returns {number[]} point
+		     */
+		    getPosition: function (el, clear) {
+		        var left, top, bound;
+
+		        if (clear) {
+		            el[posKey] = null;
+		        }
+
+		        if (el[posKey]) {
+		            return el[posKey];
+		        }
+
+		        left = 0;
+		        top = 0;
+
+		        if ((CSS_AUTO_REGEX.test(el.style.left) || CSS_AUTO_REGEX.test(el.style.top)) && 'getBoundingClientRect' in el) {
+		            // 엘리먼트의 left또는 top이 'auto'일 때 수단
+		            bound = el.getBoundingClientRect();
+
+		            left = bound.left;
+		            top = bound.top;
+		        } else {
+		            left = parseFloat(el.style.left || 0);
+		            top = parseFloat(el.style.top || 0);
+		        }
+
+		        return [left, top];
+		    },
+
+		    /**
+		     * Return element's size
+		     * @param {HTMLElement} el target element
+		     * @returns {number[]} width, height
+		     */
+		    getSize: function (el) {
+		        var bound,
+		            width = domutil.getStyle(el, 'width'),
+		            height = domutil.getStyle(el, 'height');
+
+		        if ((CSS_AUTO_REGEX.test(width) || CSS_AUTO_REGEX.test(height)) && 'getBoundingClientRect' in el) {
+		            bound = el.getBoundingClientRect();
+		            width = bound.width;
+		            height = bound.height;
+		        } else {
+		            width = parseFloat(width || 0);
+		            height = parseFloat(height || 0);
+		        }
+
+		        return [width, height];
+		    },
+
+		    /**
+		     * Check specific CSS style is available.
+		     * @param {array} props property name to testing
+		     * @returns {(string|boolean)} return true when property is available
+		     * @example
+		     * var props = ['transform', '-webkit-transform'];
+		     * domutil.testProp(props);    // 'transform'
+		     */
+		    testProp: function (props) {
+		        var style = document.documentElement.style,
+		            i = 0,
+		            len = props.length;
+
+		        for (; i < len; i += 1) {
+		            if (props[i] in style) {
+		                return props[i];
+		            }
+		        }
+
+		        return false;
+		    },
+
+		    /**
+		     * Get form data
+		     * @param {HTMLFormElement} formElement - form element to extract data
+		     * @returns {object} form data
+		     */
+		    getFormData: function (formElement) {
+		        var groupedByName = new Collection(function () {
+		            return this.length;
+		        }),
+		            noDisabledFilter = function (el) {
+		            return !el.disabled;
+		        },
+		            output = {};
+
+		        groupedByName.add.apply(groupedByName, domutil.find('input', formElement, noDisabledFilter).concat(domutil.find('select', formElement, noDisabledFilter)).concat(domutil.find('textarea', formElement, noDisabledFilter)));
+
+		        groupedByName = groupedByName.groupBy(function (el) {
+		            return el && el.getAttribute('name') || '_other';
+		        });
+
+		        util.forEach(groupedByName, function (elements, name) {
+		            if (name === '_other') {
+		                return;
+		            }
+
+		            elements.each(function (el) {
+		                var nodeName = el.nodeName.toLowerCase(),
+		                    type = el.type,
+		                    result = [];
+
+		                if (type === 'radio') {
+		                    result = [elements.find(function (el) {
+		                        return el.checked;
+		                    }).toArray().pop()];
+		                } else if (type === 'checkbox') {
+		                    result = elements.find(function (el) {
+		                        return el.checked;
+		                    }).toArray();
+		                } else if (nodeName === 'select') {
+		                    elements.find(function (el) {
+		                        return !!el.childNodes.length;
+		                    }).each(function (el) {
+		                        result = result.concat(domutil.find('option', el, function (opt) {
+		                            return opt.selected;
+		                        }));
+		                    });
+		                } else {
+		                    result = elements.find(function (el) {
+		                        return el.value !== '';
+		                    }).toArray();
+		                }
+
+		                result = util.map(result, function (el) {
+		                    return el.value;
+		                });
+
+		                if (!result.length) {
+		                    result = '';
+		                } else if (result.length === 1) {
+		                    result = result[0];
+		                }
+
+		                output[name] = result;
+		            });
+		        });
+
+		        return output;
+		    }
+		};
+
+		userSelectProperty = domutil.testProp(['userSelect', 'WebkitUserSelect', 'OUserSelect', 'MozUserSelect', 'msUserSelect']);
+
+		/**
+		 * Disable browser's text selection behaviors.
+		 * @method
+		 */
+		domutil.disableTextSelection = function () {
+		    if (supportSelectStart) {
+		        return function () {
+		            domevent.on(window, 'selectstart', domevent.preventDefault);
+		        };
+		    }
+
+		    return function () {
+		        var style = document.documentElement.style;
+		        prevSelectStyle = style[userSelectProperty];
+		        style[userSelectProperty] = 'none';
+		    };
+		}();
+
+		/**
+		 * Enable browser's text selection behaviors.
+		 * @method
+		 */
+		domutil.enableTextSelection = function () {
+		    if (supportSelectStart) {
+		        return function () {
+		            domevent.off(window, 'selectstart', domevent.preventDefault);
+		        };
+		    }
+
+		    return function () {
+		        document.documentElement.style[userSelectProperty] = prevSelectStyle;
+		    };
+		}();
+
+		/**
+		 * Disable browser's image drag behaviors.
+		 */
+		domutil.disableImageDrag = function () {
+		    domevent.on(window, 'dragstart', domevent.preventDefault);
+		};
+
+		/**
+		 * Enable browser's image drag behaviors.
+		 */
+		domutil.enableImageDrag = function () {
+		    domevent.off(window, 'dragstart', domevent.preventDefault);
+		};
+
+		/**
+		 * Replace matched property with template
+		 * @param {string} template - String of template
+		 * @param {Object} propObj - Properties
+		 * @returns {string} Replaced template string
+		 */
+		domutil.applyTemplate = function (template, propObj) {
+		    var newTemplate = template.replace(/\{\{(\w*)\}\}/g, function (value, prop) {
+		        return propObj.hasOwnProperty(prop) ? propObj[prop] : '';
+		    });
+
+		    return newTemplate;
+		};
+
+		module.exports = domutil;
+
+	/***/ }),
+	/* 8 */
+	/***/ (function(module, exports) {
+
+		module.exports = __WEBPACK_EXTERNAL_MODULE_8__;
+
+	/***/ }),
+	/* 9 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview Utility module for handling DOM events.
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var snippet = __webpack_require__(8);
+
+		var util = snippet,
+		    browser = util.browser,
+		    eventKey = '_evt',
+		    DRAG = {
+		    START: ['touchstart', 'mousedown'],
+		    END: {
+		        mousedown: 'mouseup',
+		        touchstart: 'touchend',
+		        pointerdown: 'touchend',
+		        MSPointerDown: 'touchend'
+		    },
+		    MOVE: {
+		        mousedown: 'mousemove',
+		        touchstart: 'touchmove',
+		        pointerdown: 'touchmove',
+		        MSPointerDown: 'touchmove'
+		    }
+		};
+
+		var domevent = {
+		    /**
+		     * Bind dom events.
+		     * @param {HTMLElement} obj HTMLElement to bind events.
+		     * @param {(string|object)} types Space splitted events names or eventName:handler object.
+		     * @param {*} fn handler function or context for handler method.
+		     * @param {*} [context] context object for handler method.
+		     */
+		    on: function (obj, types, fn, context) {
+		        if (util.isString(types)) {
+		            util.forEach(types.split(' '), function (type) {
+		                domevent._on(obj, type, fn, context);
+		            });
+
+		            return;
+		        }
+
+		        util.forEachOwnProperties(types, function (handler, type) {
+		            domevent._on(obj, type, handler, fn);
+		        });
+		    },
+
+		    /**
+		     * DOM event binding.
+		     * @param {HTMLElement} obj HTMLElement to bind events.
+		     * @param {String} type The name of events.
+		     * @param {*} fn handler function
+		     * @param {*} [context] context object for handler method.
+		     * @private
+		     */
+		    _on: function (obj, type, fn, context) {
+		        var id, handler, originHandler;
+
+		        id = type + util.stamp(fn) + (context ? '_' + util.stamp(context) : '');
+
+		        if (obj[eventKey] && obj[eventKey][id]) {
+		            return;
+		        }
+
+		        handler = function (e) {
+		            fn.call(context || obj, e || window.event);
+		        };
+
+		        originHandler = handler;
+
+		        if ('addEventListener' in obj) {
+		            if (type === 'mouseenter' || type === 'mouseleave') {
+		                handler = function (e) {
+		                    e = e || window.event;
+		                    if (!domevent._checkMouse(obj, e)) {
+		                        return;
+		                    }
+		                    originHandler(e);
+		                };
+		                obj.addEventListener(type === 'mouseenter' ? 'mouseover' : 'mouseout', handler, false);
+		            } else {
+		                if (type === 'mousewheel') {
+		                    obj.addEventListener('DOMMouseScroll', handler, false);
+		                }
+
+		                obj.addEventListener(type, handler, false);
+		            }
+		        } else if ('attachEvent' in obj) {
+		            obj.attachEvent('on' + type, handler);
+		        }
+
+		        obj[eventKey] = obj[eventKey] || {};
+		        obj[eventKey][id] = handler;
+		    },
+
+		    /**
+		     * Unbind DOM Event handler.
+		     * @param {HTMLElement} obj HTMLElement to unbind.
+		     * @param {(string|object)} types Space splitted events names or eventName:handler object.
+		     * @param {*} fn handler function or context for handler method.
+		     * @param {*} [context] context object for handler method.
+		     */
+		    off: function (obj, types, fn, context) {
+		        if (util.isString(types)) {
+		            util.forEach(types.split(' '), function (type) {
+		                domevent._off(obj, type, fn, context);
+		            });
+
+		            return;
+		        }
+
+		        util.forEachOwnProperties(types, function (handler, type) {
+		            domevent._off(obj, type, handler, fn);
+		        });
+		    },
+
+		    /**
+		     * Unbind DOM event handler.
+		     * @param {HTMLElement} obj HTMLElement to unbind.
+		     * @param {String} type The name of event to unbind.
+		     * @param {function()} fn Event handler that supplied when binding.
+		     * @param {*} context context object that supplied when binding.
+		     * @private
+		     */
+		    _off: function (obj, type, fn, context) {
+		        var id = type + util.stamp(fn) + (context ? '_' + util.stamp(context) : ''),
+		            handler = obj[eventKey] && obj[eventKey][id];
+
+		        if (!handler) {
+		            return;
+		        }
+
+		        if ('removeEventListener' in obj) {
+		            if (type === 'mouseenter' || type === 'mouseleave') {
+		                obj.removeEventListener(type === 'mouseenter' ? 'mouseover' : 'mouseout', handler, false);
+		            } else {
+		                if (type === 'mousewheel') {
+		                    obj.removeEventListener('DOMMouseScroll', handler, false);
+		                }
+
+		                obj.removeEventListener(type, handler, false);
+		            }
+		        } else if ('detachEvent' in obj) {
+		            try {
+		                obj.detachEvent('on' + type, handler);
+		            } catch (e) {} //eslint-disable-line
+		        }
+
+		        delete obj[eventKey][id];
+
+		        if (util.keys(obj[eventKey]).length) {
+		            return;
+		        }
+
+		        // throw exception when deleting host object's property in below IE8
+		        if (util.browser.msie && util.browser.version < 9) {
+		            obj[eventKey] = null;
+
+		            return;
+		        }
+
+		        delete obj[eventKey];
+		    },
+
+		    /**
+		     * Bind DOM event. this event will unbind after invokes.
+		     * @param {HTMLElement} obj HTMLElement to bind events.
+		     * @param {(string|object)} types Space splitted events names or eventName:handler object.
+		     * @param {*} fn handler function or context for handler method.
+		     * @param {*} [context] context object for handler method.
+		     */
+		    once: function (obj, types, fn, context) {
+		        var that = this;
+
+		        if (util.isObject(types)) {
+		            util.forEachOwnProperties(types, function (handler, type) {
+		                domevent.once(obj, type, handler, fn);
+		            });
+
+		            return;
+		        }
+
+		        function onceHandler() {
+		            fn.apply(context || obj, arguments);
+		            that._off(obj, types, onceHandler, context);
+		        }
+
+		        domevent.on(obj, types, onceHandler, context);
+		    },
+
+		    /**
+		     * Cancel event bubbling.
+		     * @param {Event} e Event object.
+		     */
+		    stopPropagation: function (e) {
+		        if (e.stopPropagation) {
+		            e.stopPropagation();
+		        } else {
+		            e.cancelBubble = true;
+		        }
+		    },
+
+		    /**
+		     * Cancel browser default actions.
+		     * @param {Event} e Event object.
+		     */
+		    preventDefault: function (e) {
+		        if (e.preventDefault) {
+		            e.preventDefault();
+		        } else {
+		            e.returnValue = false;
+		        }
+		    },
+
+		    /**
+		     * Syntatic sugar of stopPropagation and preventDefault
+		     * @param {Event} e Event object.
+		     */
+		    stop: function (e) {
+		        domevent.preventDefault(e);
+		        domevent.stopPropagation(e);
+		    },
+
+		    /**
+		     * Stop scroll events.
+		     * @param {HTMLElement} el HTML element to prevent scroll.
+		     */
+		    disableScrollPropagation: function (el) {
+		        domevent.on(el, 'mousewheel MozMousePixelScroll', domevent.stopPropagation);
+		    },
+
+		    /**
+		     * Stop all events related with click.
+		     * @param {HTMLElement} el HTML element to prevent all event related with click.
+		     */
+		    disableClickPropagation: function (el) {
+		        domevent.on(el, DRAG.START.join(' ') + ' click dblclick', domevent.stopPropagation);
+		    },
+
+		    /**
+		     * Get mouse position from mouse event.
+		     *
+		     * If supplied relatveElement parameter then return relative position based on element.
+		     * @param {Event} mouseEvent Mouse event object
+		     * @param {HTMLElement} relativeElement HTML element that calculate relative position.
+		     * @returns {number[]} mouse position.
+		     */
+		    getMousePosition: function (mouseEvent, relativeElement) {
+		        var rect;
+
+		        if (!relativeElement) {
+		            return [mouseEvent.clientX, mouseEvent.clientY];
+		        }
+
+		        rect = relativeElement.getBoundingClientRect();
+
+		        return [mouseEvent.clientX - rect.left - relativeElement.clientLeft, mouseEvent.clientY - rect.top - relativeElement.clientTop];
+		    },
+
+		    /**
+		     * Normalize mouse wheel event that different each browsers.
+		     * @param {MouseEvent} e Mouse wheel event.
+		     * @returns {Number} delta
+		     */
+		    getWheelDelta: function (e) {
+		        var delta = 0;
+
+		        if (e.wheelDelta) {
+		            delta = e.wheelDelta / 120;
+		        }
+
+		        if (e.detail) {
+		            delta = -e.detail / 3;
+		        }
+
+		        return delta;
+		    },
+
+		    /**
+		     * prevent firing mouseleave event when mouse entered child elements.
+		     * @param {HTMLElement} el HTML element
+		     * @param {MouseEvent} e Mouse event
+		     * @returns {Boolean} leave?
+		     * @private
+		     */
+		    _checkMouse: function (el, e) {
+		        var related = e.relatedTarget;
+
+		        if (!related) {
+		            return true;
+		        }
+
+		        try {
+		            while (related && related !== el) {
+		                related = related.parentNode;
+		            }
+		        } catch (err) {
+		            return false;
+		        }
+
+		        return related !== el;
+		    },
+
+		    /**
+		     * Trigger specific events to html element.
+		     * @param {HTMLElement} obj HTMLElement
+		     * @param {string} type Event type name
+		     * @param {object} [eventData] Event data
+		     */
+		    trigger: function (obj, type, eventData) {
+		        var rMouseEvent = /(mouse|click)/;
+		        if (util.isUndefined(eventData) && rMouseEvent.exec(type)) {
+		            eventData = domevent.mouseEvent(type);
+		        }
+
+		        if (obj.dispatchEvent) {
+		            obj.dispatchEvent(eventData);
+		        } else if (obj.fireEvent) {
+		            obj.fireEvent('on' + type, eventData);
+		        }
+		    },
+
+		    /**
+		     * Create virtual mouse event.
+		     *
+		     * Tested at
+		     *
+		     * - IE7 ~ IE11
+		     * - Chrome
+		     * - Firefox
+		     * - Safari
+		     * @param {string} type Event type
+		     * @param {object} [eventObj] Event data
+		     * @returns {MouseEvent} Virtual mouse event.
+		     */
+		    mouseEvent: function (type, eventObj) {
+		        var evt, e;
+
+		        e = util.extend({
+		            bubbles: true,
+		            cancelable: type !== 'mousemove',
+		            view: window,
+		            wheelDelta: 0,
+		            detail: 0,
+		            screenX: 0,
+		            screenY: 0,
+		            clientX: 0,
+		            clientY: 0,
+		            ctrlKey: false,
+		            altKey: false,
+		            shiftKey: false,
+		            metaKey: false,
+		            button: 0,
+		            relatedTarget: undefined // eslint-disable-line
+		        }, eventObj);
+
+		        // prevent throw error when inserting wheelDelta property to mouse event on below IE8
+		        if (browser.msie && browser.version < 9) {
+		            delete e.wheelDelta;
+		        }
+
+		        if (typeof document.createEvent === 'function') {
+		            evt = document.createEvent('MouseEvents');
+		            evt.initMouseEvent(type, e.bubbles, e.cancelable, e.view, e.detail, e.screenX, e.screenY, e.clientX, e.clientY, e.ctrlKey, e.altKey, e.shiftKey, e.metaKey, e.button, document.body.parentNode);
+		        } else if (document.createEventObject) {
+		            evt = document.createEventObject();
+
+		            util.forEach(e, function (value, propName) {
+		                evt[propName] = value;
+		            }, this);
+		            evt.button = {
+		                0: 1,
+		                1: 4,
+		                2: 2
+		            }[evt.button] || evt.button;
+		        }
+
+		        return evt;
+		    },
+
+		    /**
+		     * Normalize mouse event's button attributes.
+		     *
+		     * Can detect which button is clicked by this method.
+		     *
+		     * Meaning of return numbers
+		     *
+		     * - 0: primary mouse button
+		     * - 1: wheel button or center button
+		     * - 2: secondary mouse button
+		     * @param {MouseEvent} mouseEvent - The mouse event object want to know.
+		     * @returns {number} - The value of meaning which button is clicked?
+		     */
+		    getMouseButton: function (mouseEvent) {
+		        var button,
+		            primary = '0,1,3,5,7',
+		            secondary = '2,6',
+		            wheel = '4';
+
+		        /* istanbul ignore else */
+		        if (document.implementation.hasFeature('MouseEvents', '2.0')) {
+		            return mouseEvent.button;
+		        }
+
+		        button = mouseEvent.button + '';
+		        if (~primary.indexOf(button)) {
+		            return 0;
+		        } else if (~secondary.indexOf(button)) {
+		            return 2;
+		        } else if (~wheel.indexOf(button)) {
+		            return 1;
+		        }
+		    }
+		};
+
+		module.exports = domevent;
+
+	/***/ }),
+	/* 10 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview Common collections.
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var snippet = __webpack_require__(8);
+
+		var util = snippet,
+		    forEachProp = util.forEachOwnProperties,
+		    forEachArr = util.forEachArray,
+		    isFunc = util.isFunction,
+		    isObj = util.isObject;
+
+		var aps = Array.prototype.slice;
+
+		/**
+		 * Common collection.
+		 *
+		 * It need function for get model's unique id.
+		 *
+		 * if the function is not supplied then it use default function {@link Collection#getItemID}
+		 * @constructor
+		 * @param {function} [getItemIDFn] function for get model's id.
+		 * @ignore
+		 */
+		function Collection(getItemIDFn) {
+		    /**
+		     * @type {object.<string, *>}
+		     */
+		    this.items = {};
+
+		    /**
+		     * @type {number}
+		     */
+		    this.length = 0;
+
+		    if (isFunc(getItemIDFn)) {
+		        /**
+		         * @type {function}
+		         */
+		        this.getItemID = getItemIDFn;
+		    }
+		}
+
+		/**********
+		 * static props
+		 **********/
+
+		/**
+		 * Combind supplied function filters and condition.
+		 * @param {...function} filters - function filters
+		 * @returns {function} combined filter
+		 */
+		Collection.and = function (filters) {
+		    var cnt;
+
+		    filters = aps.call(arguments);
+		    cnt = filters.length;
+
+		    return function (item) {
+		        var i = 0;
+
+		        for (; i < cnt; i += 1) {
+		            if (!filters[i].call(null, item)) {
+		                return false;
+		            }
+		        }
+
+		        return true;
+		    };
+		};
+
+		/**
+		 * Combine multiple function filters with OR clause.
+		 * @param {...function} filters - function filters
+		 * @returns {function} combined filter
+		 */
+		Collection.or = function (filters) {
+		    var cnt;
+
+		    filters = aps.call(arguments);
+		    cnt = filters.length;
+
+		    return function (item) {
+		        var i = 1,
+		            result = filters[0].call(null, item);
+
+		        for (; i < cnt; i += 1) {
+		            result = result || filters[i].call(null, item);
+		        }
+
+		        return result;
+		    };
+		};
+
+		/**
+		 * Merge several collections.
+		 *
+		 * You can\'t merge collections different _getEventID functions. Take case of use.
+		 * @param {...Collection} collections collection arguments to merge
+		 * @returns {Collection} merged collection.
+		 */
+		Collection.merge = function (collections) {
+		    // eslint-disable-line
+		    var cols = aps.call(arguments),
+		        newItems = {},
+		        merged = new Collection(cols[0].getItemID),
+		        extend = util.extend;
+
+		    forEachArr(cols, function (col) {
+		        extend(newItems, col.items);
+		    });
+
+		    merged.items = newItems;
+		    merged.length = util.keys(merged.items).length;
+
+		    return merged;
+		};
+
+		/**********
+		 * prototype props
+		 **********/
+
+		/**
+		 * get model's unique id.
+		 * @param {object} item model instance.
+		 * @returns {number} model unique id.
+		 */
+		Collection.prototype.getItemID = function (item) {
+		    return item._id + '';
+		};
+
+		/**
+		 * add models.
+		 * @param {...*} item models to add this collection.
+		 */
+		Collection.prototype.add = function (item) {
+		    var id, ownItems;
+
+		    if (arguments.length > 1) {
+		        forEachArr(aps.call(arguments), function (o) {
+		            this.add(o);
+		        }, this);
+
+		        return;
+		    }
+
+		    id = this.getItemID(item);
+		    ownItems = this.items;
+
+		    if (!ownItems[id]) {
+		        this.length += 1;
+		    }
+		    ownItems[id] = item;
+		};
+
+		/**
+		 * remove models.
+		 * @param {...(object|string|number)} id model instance or unique id to delete.
+		 * @returns {array} deleted model list.
+		 */
+		Collection.prototype.remove = function (id) {
+		    var removed = [],
+		        ownItems,
+		        itemToRemove;
+
+		    if (!this.length) {
+		        return removed;
+		    }
+
+		    if (arguments.length > 1) {
+		        removed = util.map(aps.call(arguments), function (id) {
+		            return this.remove(id);
+		        }, this);
+
+		        return removed;
+		    }
+
+		    ownItems = this.items;
+
+		    if (isObj(id)) {
+		        id = this.getItemID(id);
+		    }
+
+		    if (!ownItems[id]) {
+		        return removed;
+		    }
+
+		    this.length -= 1;
+		    itemToRemove = ownItems[id];
+		    delete ownItems[id];
+
+		    return itemToRemove;
+		};
+
+		/**
+		 * remove all models in collection.
+		 */
+		Collection.prototype.clear = function () {
+		    this.items = {};
+		    this.length = 0;
+		};
+
+		/**
+		 * check collection has specific model.
+		 * @param {(object|string|number|function)} id model instance or id or filter function to check
+		 * @returns {boolean} is has model?
+		 */
+		Collection.prototype.has = function (id) {
+		    var isFilter, has;
+
+		    if (!this.length) {
+		        return false;
+		    }
+
+		    isFilter = isFunc(id);
+		    has = false;
+
+		    if (isFilter) {
+		        this.each(function (item) {
+		            if (id(item) === true) {
+		                has = true;
+
+		                return false;
+		            }
+
+		            return true;
+		        });
+		    } else {
+		        id = isObj(id) ? this.getItemID(id) : id;
+		        has = util.isExisty(this.items[id]);
+		    }
+
+		    return has;
+		};
+
+		/**
+		 * invoke callback when model exist in collection.
+		 * @param {(string|number)} id model unique id.
+		 * @param {function} fn the callback.
+		 * @param {*} [context] callback context.
+		 */
+		Collection.prototype.doWhenHas = function (id, fn, context) {
+		    var item = this.items[id];
+
+		    if (!util.isExisty(item)) {
+		        return;
+		    }
+
+		    fn.call(context || this, item);
+		};
+
+		/**
+		 * Search model. and return new collection.
+		 * @param {function} filter filter function.
+		 * @returns {Collection} new collection with filtered models.
+		 * @example
+		 * collection.find(function(item) {
+		 *     return item.edited === true;
+		 * });
+		 *
+		 * function filter1(item) {
+		 *     return item.edited === false;
+		 * }
+		 *
+		 * function filter2(item) {
+		 *     return item.disabled === false;
+		 * }
+		 *
+		 * collection.find(Collection.and(filter1, filter2));
+		 *
+		 * collection.find(Collection.or(filter1, filter2));
+		 */
+		Collection.prototype.find = function (filter) {
+		    var result = new Collection();
+
+		    if (this.hasOwnProperty('getItemID')) {
+		        result.getItemID = this.getItemID;
+		    }
+
+		    this.each(function (item) {
+		        if (filter(item) === true) {
+		            result.add(item);
+		        }
+		    });
+
+		    return result;
+		};
+
+		/**
+		 * Group element by specific key values.
+		 *
+		 * if key parameter is function then invoke it and use returned value.
+		 * @param {(string|number|function|array)} key key property or getter function. if string[] supplied, create each collection before grouping.
+		 * @param {function} [groupFunc] - function that return each group's key
+		 * @returns {object.<string, Collection>} grouped object
+		 * @example
+		 *
+		 * // pass `string`, `number`, `boolean` type value then group by property value.
+		 * collection.groupBy('gender');    // group by 'gender' property value.
+		 * collection.groupBy(50);          // group by '50' property value.
+		 *
+		 * // pass `function` then group by return value. each invocation `function` is called with `(item)`.
+		 * collection.groupBy(function(item) {
+		 *     if (item.score > 60) {
+		 *         return 'pass';
+		 *     }
+		 *     return 'fail';
+		 * });
+		 *
+		 * // pass `array` with first arguments then create each collection before grouping.
+		 * collection.groupBy(['go', 'ruby', 'javascript']);
+		 * // result: { 'go': empty Collection, 'ruby': empty Collection, 'javascript': empty Collection }
+		 *
+		 * // can pass `function` with `array` then group each elements.
+		 * collection.groupBy(['go', 'ruby', 'javascript'], function(item) {
+		 *     if (item.isFast) {
+		 *         return 'go';
+		 *     }
+		 *
+		 *     return item.name;
+		 * });
+		 */
+		Collection.prototype.groupBy = function (key, groupFunc) {
+		    var result = {},
+		        collection,
+		        baseValue,
+		        keyIsFunc = isFunc(key),
+		        getItemIDFn = this.getItemID;
+
+		    if (util.isArray(key)) {
+		        util.forEachArray(key, function (k) {
+		            result[k + ''] = new Collection(getItemIDFn);
+		        });
+
+		        if (!groupFunc) {
+		            return result;
+		        }
+
+		        key = groupFunc;
+		        keyIsFunc = true;
+		    }
+
+		    this.each(function (item) {
+		        if (keyIsFunc) {
+		            baseValue = key(item);
+		        } else {
+		            baseValue = item[key];
+
+		            if (isFunc(baseValue)) {
+		                baseValue = baseValue.apply(item);
+		            }
+		        }
+
+		        collection = result[baseValue];
+
+		        if (!collection) {
+		            collection = result[baseValue] = new Collection(getItemIDFn);
+		        }
+
+		        collection.add(item);
+		    });
+
+		    return result;
+		};
+
+		/**
+		 * Return single item in collection.
+		 *
+		 * Returned item is inserted in this collection firstly.
+		 * @returns {object} item.
+		 */
+		Collection.prototype.single = function () {
+		    var result;
+
+		    this.each(function (item) {
+		        result = item;
+
+		        return false;
+		    }, this);
+
+		    return result;
+		};
+
+		/**
+		 * sort a basis of supplied compare function.
+		 * @param {function} compareFunction compareFunction
+		 * @returns {array} sorted array.
+		 */
+		Collection.prototype.sort = function (compareFunction) {
+		    var arr = [];
+
+		    this.each(function (item) {
+		        arr.push(item);
+		    });
+
+		    if (isFunc(compareFunction)) {
+		        arr = arr.sort(compareFunction);
+		    }
+
+		    return arr;
+		};
+
+		/**
+		 * iterate each model element.
+		 *
+		 * when iteratee return false then break the loop.
+		 * @param {function} iteratee iteratee(item, index, items)
+		 * @param {*} [context] context
+		 */
+		Collection.prototype.each = function (iteratee, context) {
+		    forEachProp(this.items, iteratee, context || this);
+		};
+
+		/**
+		 * return new array with collection items.
+		 * @returns {array} new array.
+		 */
+		Collection.prototype.toArray = function () {
+		    if (!this.length) {
+		        return [];
+		    }
+
+		    return util.map(this.items, function (item) {
+		        return item;
+		    });
+		};
+
+		module.exports = Collection;
+
+	/***/ }),
+	/* 11 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview The base class of views.
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+		var domutil = __webpack_require__(7);
+		var Collection = __webpack_require__(10);
+
+		/**
+		 * Base class of views.
+		 *
+		 * All views create own container element inside supplied container element.
+		 * @constructor
+		 * @param {options} options The object for describe view's specs.
+		 * @param {HTMLElement} container Default container element for view. you can use this element for this.container syntax.
+		 * @ignore
+		 */
+		function View(options, container) {
+		    var id = util.stamp(this);
+
+		    options = options || {};
+
+		    if (util.isUndefined(container)) {
+		        container = domutil.appendHTMLElement('div');
+		    }
+
+		    domutil.addClass(container, 'tui-view-' + id);
+
+		    /**
+		     * unique id
+		     * @type {number}
+		     */
+		    this.id = id;
+
+		    /**
+		     * base element of view.
+		     * @type {HTMLDIVElement}
+		     */
+		    this.container = container;
+
+		    /**
+		     * child views.
+		     * @type {Collection}
+		     */
+		    this.childs = new Collection(function (view) {
+		        return util.stamp(view);
+		    });
+
+		    /**
+		     * parent view instance.
+		     * @type {View}
+		     */
+		    this.parent = null;
+		}
+
+		/**
+		 * Add child views.
+		 * @param {View} view The view instance to add.
+		 * @param {function} [fn] Function for invoke before add. parent view class is supplied first arguments.
+		 */
+		View.prototype.addChild = function (view, fn) {
+		    if (fn) {
+		        fn.call(view, this);
+		    }
+		    // add parent view
+		    view.parent = this;
+
+		    this.childs.add(view);
+		};
+
+		/**
+		 * Remove added child view.
+		 * @param {(number|View)} id View id or instance itself to remove.
+		 * @param {function} [fn] Function for invoke before remove. parent view class is supplied first arguments.
+		 */
+		View.prototype.removeChild = function (id, fn) {
+		    var view = util.isNumber(id) ? this.childs.items[id] : id;
+
+		    id = util.stamp(view);
+
+		    if (fn) {
+		        fn.call(view, this);
+		    }
+
+		    this.childs.remove(id);
+		};
+
+		/**
+		 * Render view recursively.
+		 */
+		View.prototype.render = function () {
+		    this.childs.each(function (childView) {
+		        childView.render();
+		    });
+		};
+
+		/**
+		 * Invoke function recursively.
+		 * @param {function} fn - function to invoke child view recursively
+		 * @param {boolean} [skipThis=false] - set true then skip invoke with this(root) view.
+		 */
+		View.prototype.recursive = function (fn, skipThis) {
+		    if (!util.isFunction(fn)) {
+		        return;
+		    }
+
+		    if (!skipThis) {
+		        fn(this);
+		    }
+
+		    this.childs.each(function (childView) {
+		        childView.recursive(fn);
+		    });
+		};
+
+		/**
+		 * Resize view recursively to parent.
+		 */
+		View.prototype.resize = function () {
+		    var args = Array.prototype.slice.call(arguments),
+		        parent = this.parent;
+
+		    while (parent) {
+		        if (util.isFunction(parent._onResize)) {
+		            parent._onResize.apply(parent, args);
+		        }
+
+		        parent = parent.parent;
+		    }
+		};
+
+		/**
+		 * Invoking method before destroying.
+		 */
+		View.prototype._beforeDestroy = function () {};
+
+		/**
+		 * Clear properties
+		 */
+		View.prototype._destroy = function () {
+		    this._beforeDestroy();
+		    this.childs.clear();
+		    this.container.innerHTML = '';
+
+		    this.id = this.parent = this.childs = this.container = null;
+		};
+
+		/**
+		 * Destroy child view recursively.
+		 * @param {boolean} isChildView - Whether it is the child view or not
+		 */
+		View.prototype.destroy = function (isChildView) {
+		    this.childs.each(function (childView) {
+		        childView.destroy(true);
+		        childView._destroy();
+		    });
+
+		    if (isChildView) {
+		        return;
+		    }
+
+		    this._destroy();
+		};
+
+		/**
+		 * Calculate view's container element bound.
+		 * @returns {object} The bound of container element.
+		 */
+		View.prototype.getViewBound = function () {
+		    var container = this.container,
+		        position = domutil.getPosition(container),
+		        size = domutil.getSize(container);
+
+		    return {
+		        x: position[0],
+		        y: position[1],
+		        width: size[0],
+		        height: size[1]
+		    };
+		};
+
+		module.exports = View;
+
+	/***/ }),
+	/* 12 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/* WEBPACK VAR INJECTION */(function(global) {/**
+		 * @fileoverview General drag handler
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+		var domutil = __webpack_require__(7);
+		var domevent = __webpack_require__(9);
+
+		/**
+		 * @constructor
+		 * @mixes CustomEvents
+		 * @param {object} options - options for drag handler
+		 * @param {number} [options.distance=10] - distance in pixels after mouse must move before dragging should start
+		 * @param {HTMLElement} container - container element to bind drag events
+		 * @ignore
+		 */
+		function Drag(options, container) {
+		    domevent.on(container, 'mousedown', this._onMouseDown, this);
+
+		    this.options = util.extend({
+		        distance: 10
+		    }, options);
+
+		    /**
+		     * @type {HTMLElement}
+		     */
+		    this.container = container;
+
+		    /**
+		     * @type {boolean}
+		     */
+		    this._isMoved = false;
+
+		    /**
+		     * dragging distance in pixel between mousedown and firing dragStart events
+		     * @type {number}
+		     */
+		    this._distance = 0;
+
+		    /**
+		     * @type {boolean}
+		     */
+		    this._dragStartFired = false;
+
+		    /**
+		     * @type {object}
+		     */
+		    this._dragStartEventData = null;
+		}
+
+		/**
+		 * Destroy method.
+		 */
+		Drag.prototype.destroy = function () {
+		    domevent.off(this.container, 'mousedown', this._onMouseDown, this);
+
+		    this.options = this.container = this._isMoved = this._distance = this._dragStartFired = this._dragStartEventData = null;
+		};
+
+		/**
+		 * Toggle events for mouse dragging.
+		 * @param {boolean} toBind - bind events related with dragging when supplied "true"
+		 */
+		Drag.prototype._toggleDragEvent = function (toBind) {
+		    var container = this.container,
+		        domMethod,
+		        method;
+
+		    if (toBind) {
+		        domMethod = 'on';
+		        method = 'disable';
+		    } else {
+		        domMethod = 'off';
+		        method = 'enable';
+		    }
+
+		    domutil[method + 'TextSelection'](container);
+		    domutil[method + 'ImageDrag'](container);
+		    domevent[domMethod](global.document, {
+		        mousemove: this._onMouseMove,
+		        mouseup: this._onMouseUp
+		    }, this);
+		};
+
+		/**
+		 * Normalize mouse event object.
+		 * @param {MouseEvent} mouseEvent - mouse event object.
+		 * @returns {object} normalized mouse event data.
+		 */
+		Drag.prototype._getEventData = function (mouseEvent) {
+		    return {
+		        target: mouseEvent.target || mouseEvent.srcElement,
+		        originEvent: mouseEvent
+		    };
+		};
+
+		/**
+		 * MouseDown DOM event handler.
+		 * @param {MouseEvent} mouseDownEvent MouseDown event object.
+		 */
+		Drag.prototype._onMouseDown = function (mouseDownEvent) {
+		    // only primary button can start drag.
+		    if (domevent.getMouseButton(mouseDownEvent) !== 0) {
+		        return;
+		    }
+
+		    this._distance = 0;
+		    this._dragStartFired = false;
+		    this._dragStartEventData = this._getEventData(mouseDownEvent);
+
+		    this._toggleDragEvent(true);
+		};
+
+		/**
+		 * MouseMove DOM event handler.
+		 * @emits Drag#drag
+		 * @emits Drag#dragStart
+		 * @param {MouseEvent} mouseMoveEvent MouseMove event object.
+		 */
+		Drag.prototype._onMouseMove = function (mouseMoveEvent) {
+		    var distance = this.options.distance;
+		    // prevent automatic scrolling.
+		    domevent.preventDefault(mouseMoveEvent);
+
+		    this._isMoved = true;
+
+		    if (this._distance < distance) {
+		        this._distance += 1;
+
+		        return;
+		    }
+
+		    if (!this._dragStartFired) {
+		        this._dragStartFired = true;
+
+		        /**
+		         * Drag starts events. cancelable.
+		         * @event Drag#dragStart
+		         * @type {object}
+		         * @property {HTMLElement} target - target element in this event.
+		         * @property {MouseEvent} originEvent - original mouse event object.
+		         */
+		        if (!this.invoke('dragStart', this._dragStartEventData)) {
+		            this._toggleDragEvent(false);
+
+		            return;
+		        }
+		    }
+
+		    /**
+		     * Events while dragging.
+		     * @event Drag#drag
+		     * @type {object}
+		     * @property {HTMLElement} target - target element in this event.
+		     * @property {MouseEvent} originEvent - original mouse event object.
+		     */
+		    this.fire('drag', this._getEventData(mouseMoveEvent));
+		};
+
+		/**
+		 * MouseUp DOM event handler.
+		 * @param {MouseEvent} mouseUpEvent MouseUp event object.
+		 * @emits Drag#dragEnd
+		 * @emits Drag#click
+		 */
+		Drag.prototype._onMouseUp = function (mouseUpEvent) {
+		    this._toggleDragEvent(false);
+
+		    // emit "click" event when not emitted drag event between mousedown and mouseup.
+		    if (this._isMoved) {
+		        this._isMoved = false;
+
+		        /**
+		         * Drag end events.
+		         * @event Drag#dragEnd
+		         * @type {MouseEvent}
+		         * @property {HTMLElement} target - target element in this event.
+		         * @property {MouseEvent} originEvent - original mouse event object.
+		         */
+		        this.fire('dragEnd', this._getEventData(mouseUpEvent));
+
+		        return;
+		    }
+
+		    /**
+		     * Click events.
+		     * @event Drag#click
+		     * @type {MouseEvent}
+		     * @property {HTMLElement} target - target element in this event.
+		     * @property {MouseEvent} originEvent - original mouse event object.
+		     */
+		    this.fire('click', this._getEventData(mouseUpEvent));
+		};
+
+		util.CustomEvents.mixin(Drag);
+
+		module.exports = Drag;
+		/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+	/***/ }),
+	/* 13 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview ColorPicker factory module
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+		var colorutil = __webpack_require__(14);
+		var Layout = __webpack_require__(15);
+		var Palette = __webpack_require__(16);
+		var Slider = __webpack_require__(18);
+
+		var hostnameSent = false;
+
+		/**
+		 * send hostname
+		 * @ignore
+		 */
+		function sendHostname() {
+		    var hostname = location.hostname;
+
+		    if (hostnameSent) {
+		        return;
+		    }
+		    hostnameSent = true;
+
+		    util.imagePing('https://www.google-analytics.com/collect', {
+		        v: 1,
+		        t: 'event',
+		        tid: 'UA-115377265-9',
+		        cid: hostname,
+		        dp: hostname,
+		        dh: 'color-picker'
+		    });
+		}
+
+		/**
+		 * @constructor
+		 * @mixes CustomEvents
+		 * @param {object} options - options for colorpicker component
+		 *  @param {HTMLDivElement} options.container - container element
+		 *  @param {string} [options.color='#ffffff'] - default selected color
+		 *  @param {string[]} [options.preset] - color preset for palette (use base16 palette if not supplied)
+		 *  @param {string} [options.cssPrefix='tui-colorpicker-'] - css prefix text for each child elements
+		 *  @param {string} [options.detailTxt='Detail'] - text for detail button.
+		 *  @param {boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+		 * @example
+		 * var colorPicker = tui.colorPicker; // or require('tui-color-picker')
+		 *
+		 * colorPicker.create({
+		 *   container: document.getElementById('color-picker')
+		 * });
+		 */
+		function ColorPicker(options) {
+		    var layout;
+
+		    if (!(this instanceof ColorPicker)) {
+		        return new ColorPicker(options);
+		    }
+		    /**
+		     * Option object
+		     * @type {object}
+		     * @private
+		     */
+		    options = this.options = util.extend({
+		        container: null,
+		        color: '#f8f8f8',
+		        preset: ['#181818', '#282828', '#383838', '#585858', '#b8b8b8', '#d8d8d8', '#e8e8e8', '#f8f8f8', '#ab4642', '#dc9656', '#f7ca88', '#a1b56c', '#86c1b9', '#7cafc2', '#ba8baf', '#a16946'],
+		        cssPrefix: 'tui-colorpicker-',
+		        detailTxt: 'Detail',
+		        usageStatistics: true
+		    }, options);
+
+		    if (!options.container) {
+		        throw new Error('ColorPicker(): need container option.');
+		    }
+
+		    /**********
+		     * Create layout view
+		     **********/
+
+		    /**
+		     * @type {Layout}
+		     * @private
+		     */
+		    layout = this.layout = new Layout(options, options.container);
+
+		    /**********
+		     * Create palette view
+		     **********/
+		    this.palette = new Palette(options, layout.container);
+		    this.palette.on({
+		        '_selectColor': this._onSelectColorInPalette,
+		        '_toggleSlider': this._onToggleSlider
+		    }, this);
+
+		    /**********
+		     * Create slider view
+		     **********/
+		    this.slider = new Slider(options, layout.container);
+		    this.slider.on('_selectColor', this._onSelectColorInSlider, this);
+
+		    /**********
+		     * Add child views
+		     **********/
+		    layout.addChild(this.palette);
+		    layout.addChild(this.slider);
+
+		    this.render(options.color);
+
+		    if (options.usageStatistics) {
+		        sendHostname();
+		    }
+		}
+
+		/**
+		 * Handler method for Palette#_selectColor event
+		 * @private
+		 * @fires ColorPicker#selectColor
+		 * @param {object} selectColorEventData - event data
+		 */
+		ColorPicker.prototype._onSelectColorInPalette = function (selectColorEventData) {
+		    var color = selectColorEventData.color,
+		        opt = this.options;
+
+		    if (!colorutil.isValidRGB(color) && color !== '') {
+		        this.render();
+
+		        return;
+		    }
+
+		    /**
+		     * @event ColorPicker#selectColor
+		     * @type {object}
+		     * @property {string} color - selected color (hex string)
+		     * @property {string} origin - flags for represent the source of event fires.
+		     */
+		    this.fire('selectColor', {
+		        color: color,
+		        origin: 'palette'
+		    });
+
+		    if (opt.color === color) {
+		        return;
+		    }
+
+		    opt.color = color;
+		    this.render(color);
+		};
+
+		/**
+		 * Handler method for Palette#_toggleSlider event
+		 * @private
+		 */
+		ColorPicker.prototype._onToggleSlider = function () {
+		    this.slider.toggle(!this.slider.isVisible());
+		};
+
+		/**
+		 * Handler method for Slider#_selectColor event
+		 * @private
+		 * @fires ColorPicker#selectColor
+		 * @param {object} selectColorEventData - event data
+		 */
+		ColorPicker.prototype._onSelectColorInSlider = function (selectColorEventData) {
+		    var color = selectColorEventData.color,
+		        opt = this.options;
+
+		    /**
+		     * @event ColorPicker#selectColor
+		     * @type {object}
+		     * @property {string} color - selected color (hex string)
+		     * @property {string} origin - flags for represent the source of event fires.
+		     * @ignore
+		     */
+		    this.fire('selectColor', {
+		        color: color,
+		        origin: 'slider'
+		    });
+
+		    if (opt.color === color) {
+		        return;
+		    }
+
+		    opt.color = color;
+		    this.palette.render(color);
+		};
+
+		/**********
+		 * PUBLIC API
+		 **********/
+
+		/**
+		 * Set color to colorpicker instance.<br>
+		 * The string parameter must be hex color value
+		 * @param {string} hexStr - hex formatted color string
+		 * @example
+		 * colorPicker.setColor('#ffff00');
+		 */
+		ColorPicker.prototype.setColor = function (hexStr) {
+		    if (!colorutil.isValidRGB(hexStr)) {
+		        throw new Error('ColorPicker#setColor(): need valid hex string color value');
+		    }
+
+		    this.options.color = hexStr;
+		    this.render(hexStr);
+		};
+
+		/**
+		 * Get hex color string of current selected color in colorpicker instance.
+		 * @returns {string} hex string formatted color
+		 * @example
+		 * colorPicker.setColor('#ffff00');
+		 * colorPicker.getColor(); // '#ffff00';
+		 */
+		ColorPicker.prototype.getColor = function () {
+		    return this.options.color;
+		};
+
+		/**
+		 * Toggle colorpicker element. set true then reveal colorpicker view.
+		 * @param {boolean} [isShow=false] - A flag to show
+		 * @example
+		 * colorPicker.toggle(false); // hide
+		 * colorPicker.toggle(); // hide
+		 * colorPicker.toggle(true); // show
+		 */
+		ColorPicker.prototype.toggle = function (isShow) {
+		    this.layout.container.style.display = !!isShow ? 'block' : 'none';
+		};
+
+		/**
+		 * Render colorpicker
+		 * @param {string} [color] - selected color
+		 * @ignore
+		 */
+		ColorPicker.prototype.render = function (color) {
+		    this.layout.render(color || this.options.color);
+		};
+
+		/**
+		 * Destroy colorpicker instance.
+		 * @example
+		 * colorPicker.destroy(); // DOM-element is removed
+		 */
+		ColorPicker.prototype.destroy = function () {
+		    this.layout.destroy();
+		    this.options.container.innerHTML = '';
+
+		    this.layout = this.slider = this.palette = this.options = null;
+		};
+
+		util.CustomEvents.mixin(ColorPicker);
+
+		module.exports = ColorPicker;
+
+	/***/ }),
+	/* 14 */
+	/***/ (function(module, exports) {
+
+		/**
+		 * @fileoverview Utility methods to manipulate colors
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var hexRX = /(^#[0-9A-F]{6}$)|(^#[0-9A-F]{3}$)/i;
+
+		var colorutil = {
+		    /**
+		     * pad left zero characters.
+		     * @param {number} number number value to pad zero.
+		     * @param {number} length pad length to want.
+		     * @returns {string} padded string.
+		     */
+		    leadingZero: function (number, length) {
+		        var zero = '',
+		            i = 0;
+
+		        if ((number + '').length > length) {
+		            return number + '';
+		        }
+
+		        for (; i < length - 1; i += 1) {
+		            zero += '0';
+		        }
+
+		        return (zero + number).slice(length * -1);
+		    },
+
+		    /**
+		     * Check validate of hex string value is RGB
+		     * @param {string} str - rgb hex string
+		     * @returns {boolean} return true when supplied str is valid RGB hex string
+		     */
+		    isValidRGB: function (str) {
+		        return hexRX.test(str);
+		    },
+
+		    // @license RGB <-> HSV conversion utilities based off of http://www.cs.rit.edu/~ncs/color/t_convert.html
+
+		    /**
+		     * Convert color hex string to rgb number array
+		     * @param {string} hexStr - hex string
+		     * @returns {number[]} rgb numbers
+		     */
+		    hexToRGB: function (hexStr) {
+		        var r, g, b;
+
+		        if (!colorutil.isValidRGB(hexStr)) {
+		            return false;
+		        }
+
+		        hexStr = hexStr.substring(1);
+
+		        r = parseInt(hexStr.substr(0, 2), 16);
+		        g = parseInt(hexStr.substr(2, 2), 16);
+		        b = parseInt(hexStr.substr(4, 2), 16);
+
+		        return [r, g, b];
+		    },
+
+		    /**
+		     * Convert rgb number to hex string
+		     * @param {number} r - red
+		     * @param {number} g - green
+		     * @param {number} b - blue
+		     * @returns {string|boolean} return false when supplied rgb number is not valid. otherwise, converted hex string
+		     */
+		    rgbToHEX: function (r, g, b) {
+		        var hexStr = '#' + colorutil.leadingZero(r.toString(16), 2) + colorutil.leadingZero(g.toString(16), 2) + colorutil.leadingZero(b.toString(16), 2);
+
+		        if (colorutil.isValidRGB(hexStr)) {
+		            return hexStr;
+		        }
+
+		        return false;
+		    },
+
+		    /**
+		     * Convert rgb number to HSV value
+		     * @param {number} r - red
+		     * @param {number} g - green
+		     * @param {number} b - blue
+		     * @returns {number[]} hsv value
+		     */
+		    rgbToHSV: function (r, g, b) {
+		        var max, min, h, s, v, d;
+
+		        r /= 255;
+		        g /= 255;
+		        b /= 255;
+		        max = Math.max(r, g, b);
+		        min = Math.min(r, g, b);
+		        v = max;
+		        d = max - min;
+		        s = max === 0 ? 0 : d / max;
+
+		        if (max === min) {
+		            h = 0;
+		        } else {
+		            switch (max) {
+		                case r:
+		                    h = (g - b) / d + (g < b ? 6 : 0);break;
+		                case g:
+		                    h = (b - r) / d + 2;break;
+		                case b:
+		                    h = (r - g) / d + 4;break;
+		                // no default
+		            }
+		            h /= 6;
+		        }
+
+		        return [Math.round(h * 360), Math.round(s * 100), Math.round(v * 100)];
+		    },
+
+		    /**
+		     * Convert HSV number to RGB
+		     * @param {number} h - hue
+		     * @param {number} s - saturation
+		     * @param {number} v - value
+		     * @returns {number[]} rgb value
+		     */
+		    hsvToRGB: function (h, s, v) {
+		        var r, g, b;
+		        var i;
+		        var f, p, q, t;
+
+		        h = Math.max(0, Math.min(360, h));
+		        s = Math.max(0, Math.min(100, s));
+		        v = Math.max(0, Math.min(100, v));
+
+		        s /= 100;
+		        v /= 100;
+
+		        if (s === 0) {
+		            // Achromatic (grey)
+		            r = g = b = v;
+
+		            return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+		        }
+
+		        h /= 60; // sector 0 to 5
+		        i = Math.floor(h);
+		        f = h - i; // factorial part of h
+		        p = v * (1 - s);
+		        q = v * (1 - s * f);
+		        t = v * (1 - s * (1 - f));
+
+		        switch (i) {
+		            case 0:
+		                r = v;g = t;b = p;break;
+		            case 1:
+		                r = q;g = v;b = p;break;
+		            case 2:
+		                r = p;g = v;b = t;break;
+		            case 3:
+		                r = p;g = q;b = v;break;
+		            case 4:
+		                r = t;g = p;b = v;break;
+		            default:
+		                r = v;g = p;b = q;break;
+		        }
+
+		        return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)];
+		    }
+		};
+
+		module.exports = colorutil;
+
+	/***/ }),
+	/* 15 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview ColorPicker layout module
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+		var domutil = __webpack_require__(7);
+		var View = __webpack_require__(11);
+
+		/**
+		 * @constructor
+		 * @extends {View}
+		 * @param {object} options - option object
+		 *  @param {string} options.cssPrefix - css prefix for each child elements
+		 * @param {HTMLDivElement} container - container
+		 * @ignore
+		 */
+		function Layout(options, container) {
+		    /**
+		     * option object
+		     * @type {object}
+		     */
+		    this.options = util.extend({
+		        cssPrefix: 'tui-colorpicker-'
+		    }, options);
+
+		    container = domutil.appendHTMLElement('div', container, this.options.cssPrefix + 'container');
+
+		    View.call(this, options, container);
+
+		    this.render();
+		}
+
+		util.inherit(Layout, View);
+
+		/**
+		 * @override
+		 * @param {string} [color] - selected color
+		 */
+		Layout.prototype.render = function (color) {
+		    this.recursive(function (view) {
+		        view.render(color);
+		    }, true);
+		};
+
+		module.exports = Layout;
+
+	/***/ }),
+	/* 16 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview Color palette view
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+		var domutil = __webpack_require__(7);
+		var colorutil = __webpack_require__(14);
+		var domevent = __webpack_require__(9);
+		var View = __webpack_require__(11);
+		var tmpl = __webpack_require__(17);
+
+		/**
+		 * @constructor
+		 * @extends {View}
+		 * @mixes CustomEvents
+		 * @param {object} options - options for color palette view
+		 *  @param {string[]} options.preset - color list
+		 * @param {HTMLDivElement} container - container element
+		 * @ignore
+		 */
+		function Palette(options, container) {
+		    /**
+		     * option object
+		     * @type {object}
+		     */
+		    this.options = util.extend({
+		        cssPrefix: 'tui-colorpicker-',
+		        preset: ['#181818', '#282828', '#383838', '#585858', '#B8B8B8', '#D8D8D8', '#E8E8E8', '#F8F8F8', '#AB4642', '#DC9656', '#F7CA88', '#A1B56C', '#86C1B9', '#7CAFC2', '#BA8BAF', '#A16946'],
+		        detailTxt: 'Detail'
+		    }, options);
+
+		    container = domutil.appendHTMLElement('div', container, this.options.cssPrefix + 'palette-container');
+
+		    View.call(this, options, container);
+		}
+
+		util.inherit(Palette, View);
+
+		/**
+		 * Mouse click event handler
+		 * @fires Palette#_selectColor
+		 * @fires Palette#_toggleSlider
+		 * @param {MouseEvent} clickEvent - mouse event object
+		 */
+		Palette.prototype._onClick = function (clickEvent) {
+		    var options = this.options,
+		        target = clickEvent.srcElement || clickEvent.target,
+		        eventData = {};
+
+		    if (domutil.hasClass(target, options.cssPrefix + 'palette-button')) {
+		        eventData.color = target.value;
+
+		        /**
+		         * @event Palette#_selectColor
+		         * @type {object}
+		         * @property {string} color - selected color value
+		         */
+		        this.fire('_selectColor', eventData);
+
+		        return;
+		    }
+
+		    if (domutil.hasClass(target, options.cssPrefix + 'palette-toggle-slider')) {
+		        /**
+		         * @event Palette#_toggleSlider
+		         */
+		        this.fire('_toggleSlider');
+		    }
+		};
+
+		/**
+		 * Textbox change event handler
+		 * @fires Palette#_selectColor
+		 * @param {Event} changeEvent - change event object
+		 */
+		Palette.prototype._onChange = function (changeEvent) {
+		    var options = this.options,
+		        target = changeEvent.srcElement || changeEvent.target,
+		        eventData = {};
+
+		    if (domutil.hasClass(target, options.cssPrefix + 'palette-hex')) {
+		        eventData.color = target.value;
+
+		        /**
+		         * @event Palette#_selectColor
+		         * @type {object}
+		         * @property {string} color - selected color value
+		         */
+		        this.fire('_selectColor', eventData);
+		    }
+		};
+
+		/**
+		 * Invoke before destory
+		 * @override
+		 */
+		Palette.prototype._beforeDestroy = function () {
+		    this._toggleEvent(false);
+		};
+
+		/**
+		 * Toggle view DOM events
+		 * @param {boolean} [onOff=false] - true to bind event.
+		 */
+		Palette.prototype._toggleEvent = function (onOff) {
+		    var options = this.options,
+		        container = this.container,
+		        method = domevent[!!onOff ? 'on' : 'off'],
+		        hexTextBox;
+
+		    method(container, 'click', this._onClick, this);
+
+		    hexTextBox = domutil.find('.' + options.cssPrefix + 'palette-hex', container);
+
+		    if (hexTextBox) {
+		        method(hexTextBox, 'change', this._onChange, this);
+		    }
+		};
+
+		/**
+		 * Render palette
+		 * @override
+		 */
+		Palette.prototype.render = function (color) {
+		    var options = this.options,
+		        html = '';
+
+		    this._toggleEvent(false);
+
+		    html = tmpl.layout.replace('{{colorList}}', util.map(options.preset, function (itemColor) {
+		        var itemHtml = '';
+		        var style = '';
+
+		        if (colorutil.isValidRGB(itemColor)) {
+		            style = domutil.applyTemplate(tmpl.itemStyle, { color: itemColor });
+		        }
+
+		        itemHtml = domutil.applyTemplate(tmpl.item, {
+		            itemStyle: style,
+		            itemClass: !itemColor ? ' ' + options.cssPrefix + 'color-transparent' : '',
+		            color: itemColor,
+		            cssPrefix: options.cssPrefix,
+		            selected: itemColor === color ? ' ' + options.cssPrefix + 'selected' : ''
+		        });
+
+		        return itemHtml;
+		    }).join(''));
+
+		    html = domutil.applyTemplate(html, {
+		        cssPrefix: options.cssPrefix,
+		        detailTxt: options.detailTxt,
+		        color: color
+		    });
+
+		    this.container.innerHTML = html;
+
+		    this._toggleEvent(true);
+		};
+
+		util.CustomEvents.mixin(Palette);
+
+		module.exports = Palette;
+
+	/***/ }),
+	/* 17 */
+	/***/ (function(module, exports) {
+
+		/**
+		 * @fileoverview Palette view template
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var layout = ['<ul class="{{cssPrefix}}clearfix">{{colorList}}</ul>', '<div class="{{cssPrefix}}clearfix" style="overflow:hidden">', '<input type="button" class="{{cssPrefix}}palette-toggle-slider" value="{{detailTxt}}" />', '<input type="text" class="{{cssPrefix}}palette-hex" value="{{color}}" maxlength="7" />', '<span class="{{cssPrefix}}palette-preview" style="background-color:{{color}};color:{{color}}">{{color}}</span>', '</div>'].join('\n');
+
+		var item = '<li><input class="{{cssPrefix}}palette-button{{selected}}{{itemClass}}" type="button" style="{{itemStyle}}" title="{{color}}" value="{{color}}" /></li>';
+		var itemStyle = 'background-color:{{color}};color:{{color}}';
+
+		module.exports = {
+		    layout: layout,
+		    item: item,
+		    itemStyle: itemStyle
+		};
+
+	/***/ }),
+	/* 18 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview Slider view
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+		var domutil = __webpack_require__(7);
+		var domevent = __webpack_require__(9);
+		var svgvml = __webpack_require__(19);
+		var colorutil = __webpack_require__(14);
+		var View = __webpack_require__(11);
+		var Drag = __webpack_require__(12);
+		var tmpl = __webpack_require__(20);
+
+		// Limitation position of point element inside of colorslider and hue bar
+		// Minimum value can to be negative because that using color point of handle element is center point. not left, top point.
+		var COLORSLIDER_POS_LIMIT_RANGE = [-7, 112];
+		var HUEBAR_POS_LIMIT_RANGE = [-3, 115];
+		var HUE_WHEEL_MAX = 359.99;
+
+		/**
+		 * @constructor
+		 * @extends {View}
+		 * @mixes CustomEvents
+		 * @param {object} options - options for view
+		 *  @param {string} options.cssPrefix - design css prefix
+		 * @param {HTMLElement} container - container element
+		 * @ignore
+		 */
+		function Slider(options, container) {
+		    container = domutil.appendHTMLElement('div', container, options.cssPrefix + 'slider-container');
+		    container.style.display = 'none';
+
+		    View.call(this, options, container);
+
+		    /**
+		     * @type {object}
+		     */
+		    this.options = util.extend({
+		        color: '#f8f8f8',
+		        cssPrefix: 'tui-colorpicker-'
+		    }, options);
+
+		    /**
+		     * Cache immutable data in click, drag events.
+		     *
+		     * (i.e. is event related with colorslider? or huebar?)
+		     * @type {object}
+		     * @property {boolean} isColorSlider
+		     * @property {number[]} containerSize
+		     */
+		    this._dragDataCache = {};
+
+		    /**
+		     * Color slider handle element
+		     * @type {SVG|VML}
+		     */
+		    this.sliderHandleElement = null;
+
+		    /**
+		     * hue bar handle element
+		     * @type {SVG|VML}
+		     */
+		    this.huebarHandleElement = null;
+
+		    /**
+		     * Element that render base color in colorslider part
+		     * @type {SVG|VML}
+		     */
+		    this.baseColorElement = null;
+
+		    /**
+		     * @type {Drag}
+		     */
+		    this.drag = new Drag({
+		        distance: 0
+		    }, container);
+
+		    // bind drag events
+		    this.drag.on({
+		        'dragStart': this._onDragStart,
+		        'drag': this._onDrag,
+		        'dragEnd': this._onDragEnd,
+		        'click': this._onClick
+		    }, this);
+		}
+
+		util.inherit(Slider, View);
+
+		/**
+		 * @override
+		 */
+		Slider.prototype._beforeDestroy = function () {
+		    this.drag.off();
+
+		    this.drag = this.options = this._dragDataCache = this.sliderHandleElement = this.huebarHandleElement = this.baseColorElement = null;
+		};
+
+		/**
+		 * Toggle slider view
+		 * @param {boolean} onOff - set true then reveal slider view
+		 */
+		Slider.prototype.toggle = function (onOff) {
+		    this.container.style.display = !!onOff ? 'block' : 'none';
+		};
+
+		/**
+		 * Get slider display status
+		 * @returns {boolean} return true when slider is visible
+		 */
+		Slider.prototype.isVisible = function () {
+		    return this.container.style.display === 'block';
+		};
+
+		/**
+		 * Render slider view
+		 * @override
+		 * @param {string} colorStr - hex string color from parent view (Layout)
+		 */
+		Slider.prototype.render = function (colorStr) {
+		    var that = this,
+		        container = that.container,
+		        options = that.options,
+		        html = tmpl.layout,
+		        rgb,
+		        hsv;
+
+		    if (!colorutil.isValidRGB(colorStr)) {
+		        return;
+		    }
+
+		    html = html.replace(/{{slider}}/, tmpl.slider);
+		    html = html.replace(/{{huebar}}/, tmpl.huebar);
+		    html = html.replace(/{{cssPrefix}}/g, options.cssPrefix);
+
+		    that.container.innerHTML = html;
+
+		    that.sliderHandleElement = domutil.find('.' + options.cssPrefix + 'slider-handle', container);
+		    that.huebarHandleElement = domutil.find('.' + options.cssPrefix + 'huebar-handle', container);
+		    that.baseColorElement = domutil.find('.' + options.cssPrefix + 'slider-basecolor', container);
+
+		    rgb = colorutil.hexToRGB(colorStr);
+		    hsv = colorutil.rgbToHSV.apply(null, rgb);
+
+		    this.moveHue(hsv[0], true);
+		    this.moveSaturationAndValue(hsv[1], hsv[2], true);
+		};
+
+		/**
+		 * Move colorslider by newLeft(X), newTop(Y) value
+		 * @private
+		 * @param {number} newLeft - left pixel value to move handle
+		 * @param {number} newTop - top pixel value to move handle
+		 * @param {boolean} [silent=false] - set true then not fire custom event
+		 */
+		Slider.prototype._moveColorSliderHandle = function (newLeft, newTop, silent) {
+		    var handle = this.sliderHandleElement,
+		        handleColor;
+
+		    // Check position limitation.
+		    newTop = Math.max(COLORSLIDER_POS_LIMIT_RANGE[0], newTop);
+		    newTop = Math.min(COLORSLIDER_POS_LIMIT_RANGE[1], newTop);
+		    newLeft = Math.max(COLORSLIDER_POS_LIMIT_RANGE[0], newLeft);
+		    newLeft = Math.min(COLORSLIDER_POS_LIMIT_RANGE[1], newLeft);
+
+		    svgvml.setTranslateXY(handle, newLeft, newTop);
+
+		    handleColor = newTop > 50 ? 'white' : 'black';
+		    svgvml.setStrokeColor(handle, handleColor);
+
+		    if (!silent) {
+		        this.fire('_selectColor', {
+		            color: colorutil.rgbToHEX.apply(null, this.getRGB())
+		        });
+		    }
+		};
+
+		/**
+		 * Move colorslider by supplied saturation and values.
+		 *
+		 * The movement of color slider handle follow HSV cylinder model. {@link https://en.wikipedia.org/wiki/HSL_and_HSV}
+		 * @param {number} saturation - the percent of saturation (0% ~ 100%)
+		 * @param {number} value - the percent of saturation (0% ~ 100%)
+		 * @param {boolean} [silent=false] - set true then not fire custom event
+		 */
+		Slider.prototype.moveSaturationAndValue = function (saturation, value, silent) {
+		    var absMin, maxValue, newLeft, newTop;
+
+		    saturation = saturation || 0;
+		    value = value || 0;
+
+		    absMin = Math.abs(COLORSLIDER_POS_LIMIT_RANGE[0]);
+		    maxValue = COLORSLIDER_POS_LIMIT_RANGE[1];
+
+		    // subtract absMin value because current color position is not left, top of handle element.
+		    // The saturation. from left 0 to right 100
+		    newLeft = saturation * maxValue / 100 - absMin;
+		    // The Value. from top 100 to bottom 0. that why newTop subtract by maxValue.
+		    newTop = maxValue - value * maxValue / 100 - absMin;
+
+		    this._moveColorSliderHandle(newLeft, newTop, silent);
+		};
+
+		/**
+		 * Move color slider handle to supplied position
+		 *
+		 * The number of X, Y must be related value from color slider container
+		 * @private
+		 * @param {number} x - the pixel value to move handle
+		 * @param {number} y - the pixel value to move handle
+		 */
+		Slider.prototype._moveColorSliderByPosition = function (x, y) {
+		    var offset = COLORSLIDER_POS_LIMIT_RANGE[0];
+		    this._moveColorSliderHandle(x + offset, y + offset);
+		};
+
+		/**
+		 * Get saturation and value value.
+		 * @returns {number[]} saturation and value
+		 */
+		Slider.prototype.getSaturationAndValue = function () {
+		    var absMin = Math.abs(COLORSLIDER_POS_LIMIT_RANGE[0]),
+		        maxValue = absMin + COLORSLIDER_POS_LIMIT_RANGE[1],
+		        position = svgvml.getTranslateXY(this.sliderHandleElement),
+		        saturation,
+		        value;
+
+		    saturation = (position[1] + absMin) / maxValue * 100;
+		    // The value of HSV color model is inverted. top 100 ~ bottom 0. so subtract by 100
+		    value = 100 - (position[0] + absMin) / maxValue * 100;
+
+		    return [saturation, value];
+		};
+
+		/**
+		 * Move hue handle supplied pixel value
+		 * @private
+		 * @param {number} newTop - pixel to move hue handle
+		 * @param {boolean} [silent=false] - set true then not fire custom event
+		 */
+		Slider.prototype._moveHueHandle = function (newTop, silent) {
+		    var hueHandleElement = this.huebarHandleElement,
+		        baseColorElement = this.baseColorElement,
+		        newGradientColor,
+		        hexStr;
+
+		    newTop = Math.max(HUEBAR_POS_LIMIT_RANGE[0], newTop);
+		    newTop = Math.min(HUEBAR_POS_LIMIT_RANGE[1], newTop);
+
+		    svgvml.setTranslateY(hueHandleElement, newTop);
+
+		    newGradientColor = colorutil.hsvToRGB(this.getHue(), 100, 100);
+		    hexStr = colorutil.rgbToHEX.apply(null, newGradientColor);
+
+		    svgvml.setGradientColorStop(baseColorElement, hexStr);
+
+		    if (!silent) {
+		        this.fire('_selectColor', {
+		            color: colorutil.rgbToHEX.apply(null, this.getRGB())
+		        });
+		    }
+		};
+
+		/**
+		 * Move hue bar handle by supplied degree
+		 * @param {number} degree - (0 ~ 359.9 degree)
+		 * @param {boolean} [silent=false] - set true then not fire custom event
+		 */
+		Slider.prototype.moveHue = function (degree, silent) {
+		    var newTop = 0,
+		        absMin,
+		        maxValue;
+
+		    absMin = Math.abs(HUEBAR_POS_LIMIT_RANGE[0]);
+		    maxValue = absMin + HUEBAR_POS_LIMIT_RANGE[1];
+
+		    degree = degree || 0;
+		    newTop = maxValue * degree / HUE_WHEEL_MAX - absMin;
+
+		    this._moveHueHandle(newTop, silent);
+		};
+
+		/**
+		 * Move hue bar handle by supplied percent
+		 * @private
+		 * @param {number} y - pixel value to move hue handle
+		 */
+		Slider.prototype._moveHueByPosition = function (y) {
+		    var offset = HUEBAR_POS_LIMIT_RANGE[0];
+
+		    this._moveHueHandle(y + offset);
+		};
+
+		/**
+		 * Get huebar handle position by color degree
+		 * @returns {number} degree (0 ~ 359.9 degree)
+		 */
+		Slider.prototype.getHue = function () {
+		    var handle = this.huebarHandleElement,
+		        position = svgvml.getTranslateXY(handle),
+		        absMin,
+		        maxValue;
+
+		    absMin = Math.abs(HUEBAR_POS_LIMIT_RANGE[0]);
+		    maxValue = absMin + HUEBAR_POS_LIMIT_RANGE[1];
+
+		    // maxValue : 359.99 = pos.y : x
+		    return (position[0] + absMin) * HUE_WHEEL_MAX / maxValue;
+		};
+
+		/**
+		 * Get HSV value from slider
+		 * @returns {number[]} hsv values
+		 */
+		Slider.prototype.getHSV = function () {
+		    var sv = this.getSaturationAndValue(),
+		        h = this.getHue();
+
+		    return [h].concat(sv);
+		};
+
+		/**
+		 * Get RGB value from slider
+		 * @returns {number[]} RGB value
+		 */
+		Slider.prototype.getRGB = function () {
+		    return colorutil.hsvToRGB.apply(null, this.getHSV());
+		};
+
+		/**********
+		 * Drag event handler
+		 **********/
+
+		/**
+		 * Cache immutable data when dragging or click view
+		 * @param {object} event - Click, DragStart event.
+		 * @returns {object} cached data.
+		 */
+		Slider.prototype._prepareColorSliderForMouseEvent = function (event) {
+		    var options = this.options,
+		        sliderPart = domutil.closest(event.target, '.' + options.cssPrefix + 'slider-part'),
+		        cache;
+
+		    cache = this._dragDataCache = {
+		        isColorSlider: domutil.hasClass(sliderPart, options.cssPrefix + 'slider-left'),
+		        parentElement: sliderPart
+		    };
+
+		    return cache;
+		};
+
+		/**
+		 * Click event handler
+		 * @param {object} clickEvent - Click event from Drag module
+		 */
+		Slider.prototype._onClick = function (clickEvent) {
+		    var cache = this._prepareColorSliderForMouseEvent(clickEvent),
+		        mousePos = domevent.getMousePosition(clickEvent.originEvent, cache.parentElement);
+
+		    if (cache.isColorSlider) {
+		        this._moveColorSliderByPosition(mousePos[0], mousePos[1]);
+		    } else {
+		        this._moveHueByPosition(mousePos[1]);
+		    }
+
+		    this._dragDataCache = null;
+		};
+
+		/**
+		 * DragStart event handler
+		 * @param {object} dragStartEvent - dragStart event data from Drag#dragStart
+		 */
+		Slider.prototype._onDragStart = function (dragStartEvent) {
+		    this._prepareColorSliderForMouseEvent(dragStartEvent);
+		};
+
+		/**
+		 * Drag event handler
+		 * @param {Drag#drag} dragEvent - drag event data
+		 */
+		Slider.prototype._onDrag = function (dragEvent) {
+		    var cache = this._dragDataCache,
+		        mousePos = domevent.getMousePosition(dragEvent.originEvent, cache.parentElement);
+
+		    if (cache.isColorSlider) {
+		        this._moveColorSliderByPosition(mousePos[0], mousePos[1]);
+		    } else {
+		        this._moveHueByPosition(mousePos[1]);
+		    }
+		};
+
+		/**
+		 * Drag#dragEnd event handler
+		 */
+		Slider.prototype._onDragEnd = function () {
+		    this._dragDataCache = null;
+		};
+
+		util.CustomEvents.mixin(Slider);
+
+		module.exports = Slider;
+
+	/***/ }),
+	/* 19 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/**
+		 * @fileoverview module for manipulate SVG or VML object
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+		var PARSE_TRANSLATE_NUM_REGEX = /[\.\-0-9]+/g;
+		var SVG_HUE_HANDLE_RIGHT_POS = -6;
+
+		/* istanbul ignore next */
+		var svgvml = {
+		    /**
+		     * Return true when browser is below IE8.
+		     * @returns {boolean} is old browser?
+		     */
+		    isOldBrowser: function () {
+		        var _isOldBrowser = svgvml._isOldBrowser;
+
+		        if (!util.isExisty(_isOldBrowser)) {
+		            svgvml._isOldBrowser = _isOldBrowser = util.browser.msie && util.browser.version < 9;
+		        }
+
+		        return _isOldBrowser;
+		    },
+
+		    /**
+		     * Get translate transform value
+		     * @param {SVG|VML} obj - svg or vml object that want to know translate x, y
+		     * @returns {number[]} translated coordinates [x, y]
+		     */
+		    getTranslateXY: function (obj) {
+		        var temp;
+
+		        if (svgvml.isOldBrowser()) {
+		            temp = obj.style;
+
+		            return [parseFloat(temp.top), parseFloat(temp.left)];
+		        }
+
+		        temp = obj.getAttribute('transform');
+
+		        if (!temp) {
+		            return [0, 0];
+		        }
+
+		        temp = temp.match(PARSE_TRANSLATE_NUM_REGEX);
+
+		        // need caution for difference of VML, SVG coordinates system.
+		        // translate command need X coords in first parameter. but VML is use CSS coordinate system(top, left)
+		        return [parseFloat(temp[1]), parseFloat(temp[0])];
+		    },
+
+		    /**
+		     * Set translate transform value
+		     * @param {SVG|VML} obj - SVG or VML object to setting translate transform.
+		     * @param {number} x - translate X value
+		     * @param {number} y - translate Y value
+		     */
+		    setTranslateXY: function (obj, x, y) {
+		        if (svgvml.isOldBrowser()) {
+		            obj.style.left = x + 'px';
+		            obj.style.top = y + 'px';
+		        } else {
+		            obj.setAttribute('transform', 'translate(' + x + ',' + y + ')');
+		        }
+		    },
+
+		    /**
+		     * Set translate only Y value
+		     * @param {SVG|VML} obj - SVG or VML object to setting translate transform.
+		     * @param {number} y - translate Y value
+		     */
+		    setTranslateY: function (obj, y) {
+		        if (svgvml.isOldBrowser()) {
+		            obj.style.top = y + 'px';
+		        } else {
+		            obj.setAttribute('transform', 'translate(' + SVG_HUE_HANDLE_RIGHT_POS + ',' + y + ')');
+		        }
+		    },
+
+		    /**
+		     * Set stroke color to SVG or VML object
+		     * @param {SVG|VML} obj - SVG or VML object to setting stroke color
+		     * @param {string} colorStr - color string
+		     */
+		    setStrokeColor: function (obj, colorStr) {
+		        if (svgvml.isOldBrowser()) {
+		            obj.strokecolor = colorStr;
+		        } else {
+		            obj.setAttribute('stroke', colorStr);
+		        }
+		    },
+
+		    /**
+		     * Set gradient stop color to SVG, VML object.
+		     * @param {SVG|VML} obj - SVG, VML object to applying gradient stop color
+		     * @param {string} colorStr - color string
+		     */
+		    setGradientColorStop: function (obj, colorStr) {
+		        if (svgvml.isOldBrowser()) {
+		            obj.color = colorStr;
+		        } else {
+		            obj.setAttribute('stop-color', colorStr);
+		        }
+		    }
+
+		};
+
+		module.exports = svgvml;
+
+	/***/ }),
+	/* 20 */
+	/***/ (function(module, exports, __webpack_require__) {
+
+		/* WEBPACK VAR INJECTION */(function(global) {/**
+		 * @fileoverview Slider template
+		 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+		 */
+
+		'use strict';
+
+		var util = __webpack_require__(8);
+
+		var layout = ['<div class="{{cssPrefix}}slider-left {{cssPrefix}}slider-part">{{slider}}</div>', '<div class="{{cssPrefix}}slider-right {{cssPrefix}}slider-part">{{huebar}}</div>'].join('\n');
+
+		var SVGSlider = ['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-slider">', '<defs>', '<linearGradient id="{{cssPrefix}}svg-fill-color" x1="0%" y1="0%" x2="100%" y2="0%">', '<stop offset="0%" stop-color="rgb(255,255,255)" />', '<stop class="{{cssPrefix}}slider-basecolor" offset="100%" stop-color="rgb(255,0,0)" />', '</linearGradient>', '<linearGradient id="{{cssPrefix}}svn-fill-black" x1="0%" y1="0%" x2="0%" y2="100%">', '<stop offset="0%" style="stop-color:rgb(0,0,0);stop-opacity:0" />', '<stop offset="100%" style="stop-color:rgb(0,0,0);stop-opacity:1" />', '</linearGradient>', '</defs>', '<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svg-fill-color)"></rect>', '<rect width="100%" height="100%" fill="url(#{{cssPrefix}}svn-fill-black)"></rect>', '<path transform="translate(0,0)" class="{{cssPrefix}}slider-handle" d="M0 7.5 L15 7.5 M7.5 15 L7.5 0 M2 7 a5.5 5.5 0 1 1 0 1 Z" stroke="black" stroke-width="0.75" fill="none" />', '</svg>'].join('\n');
+
+		var VMLSlider = ['<div class="{{cssPrefix}}vml-slider">', '<v:rect strokecolor="none" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">', '<v:fill class="{{cssPrefix}}vml {{cssPrefix}}slider-basecolor" type="gradient" method="none" color="#ff0000" color2="#fff" angle="90" />', '</v:rect>', '<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-slider-bg">', '<v:fill type="gradient" method="none" color="black" color2="white" o:opacity2="0%" class="{{cssPrefix}}vml" />', '</v:rect>', '<v:shape class="{{cssPrefix}}vml {{cssPrefix}}slider-handle" coordsize="1 1" style="width:1px;height:1px;"' + 'path="m 0,7 l 14,7 m 7,14 l 7,0 ar 12,12 2,2 z" filled="false" stroked="true" />', '</div>'].join('\n');
+
+		var SVGHuebar = ['<svg class="{{cssPrefix}}svg {{cssPrefix}}svg-huebar">', '<defs>', '<linearGradient id="g" x1="0%" y1="0%" x2="0%" y2="100%">', '<stop offset="0%" stop-color="rgb(255,0,0)" />', '<stop offset="16.666%" stop-color="rgb(255,255,0)" />', '<stop offset="33.333%" stop-color="rgb(0,255,0)" />', '<stop offset="50%" stop-color="rgb(0,255,255)" />', '<stop offset="66.666%" stop-color="rgb(0,0,255)" />', '<stop offset="83.333%" stop-color="rgb(255,0,255)" />', '<stop offset="100%" stop-color="rgb(255,0,0)" />', '</linearGradient>', '</defs>', '<rect width="18px" height="100%" fill="url(#g)"></rect>', '<path transform="translate(-6,-3)" class="{{cssPrefix}}huebar-handle" d="M0 0 L4 4 L0 8 L0 0 Z" fill="black" stroke="none" />', '</svg>'].join('\n');
+
+		var VMLHuebar = ['<div class="{{cssPrefix}}vml-huebar">', '<v:rect strokecolor="#ccc" class="{{cssPrefix}}vml {{cssPrefix}}vml-huebar-bg">', '<v:fill type="gradient" method="none" colors="' + '0% rgb(255,0,0), 16.666% rgb(255,255,0), 33.333% rgb(0,255,0), 50% rgb(0,255,255), 66.666% rgb(0,0,255), 83.333% rgb(255,0,255), 100% rgb(255,0,0)' + '" angle="180" class="{{cssPrefix}}vml" />', '</v:rect>', '<v:shape class="{{cssPrefix}}vml {{cssPrefix}}huebar-handle" coordsize="1 1" style="width:1px;height:1px;position:absolute;z-index:1;right:22px;top:-3px;"' + 'path="m 0,0 l 4,4 l 0,8 l 0,0 z" filled="true" fillcolor="black" stroked="false" />', '</div>'].join('\n');
+
+		var isOldBrowser = util.browser.msie && util.browser.version < 9;
+
+		if (isOldBrowser) {
+		    global.document.namespaces.add('v', 'urn:schemas-microsoft-com:vml');
+		}
+
+		module.exports = {
+		    layout: layout,
+		    slider: isOldBrowser ? VMLSlider : SVGSlider,
+		    huebar: isOldBrowser ? VMLHuebar : SVGHuebar
+		};
+		/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+	/***/ })
+	/******/ ])
+	});
+	;
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+	var _util = __webpack_require__(72);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * Range control class
+	 * @class
+	 * @ignore
+	 */
+	var Range = function () {
+	    function Range(rangeElement) {
+	        var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+	        _classCallCheck(this, Range);
+
+	        this._value = options.value || 0;
+	        this.rangeElement = rangeElement;
+	        this._drawRangeElement();
+
+	        this.rangeWidth = (0, _util.toInteger)(window.getComputedStyle(rangeElement, null).width) - 12;
+	        this._min = options.min || 0;
+	        this._max = options.max || 100;
+	        this._absMax = this._min * -1 + this._max;
+	        this.realTimeEvent = options.realTimeEvent || false;
+
+	        this._addClickEvent();
+	        this._addDragEvent();
+	        this.value = options.value;
+	        this.trigger('change');
+	    }
+
+	    /**
+	     * Set range max value and re position cursor
+	     * @param {number} maxValue - max value
+	     */
+
+
+	    _createClass(Range, [{
+	        key: 'trigger',
+
+
+	        /**
+	         * event tirigger
+	         * @param {string} type - type
+	         */
+	        value: function trigger(type) {
+	            this.fire(type, this._value);
+	        }
+
+	        /**
+	         * Make range element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_drawRangeElement',
+	        value: function _drawRangeElement() {
+	            this.rangeElement.classList.add('tui-image-editor-range');
+
+	            this.bar = document.createElement('div');
+	            this.bar.className = 'tui-image-editor-virtual-range-bar';
+
+	            this.subbar = document.createElement('div');
+	            this.subbar.className = 'tui-image-editor-virtual-range-subbar';
+
+	            this.pointer = document.createElement('div');
+	            this.pointer.className = 'tui-image-editor-virtual-range-pointer';
+
+	            this.bar.appendChild(this.subbar);
+	            this.bar.appendChild(this.pointer);
+	            this.rangeElement.appendChild(this.bar);
+	        }
+
+	        /**
+	         * Add Range click event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addClickEvent',
+	        value: function _addClickEvent() {
+	            var _this = this;
+
+	            this.rangeElement.addEventListener('click', function (event) {
+	                event.stopPropagation();
+	                if (event.target.className !== 'tui-image-editor-range') {
+	                    return;
+	                }
+	                var touchPx = event.offsetX;
+	                var ratio = touchPx / _this.rangeWidth;
+	                var value = _this._absMax * ratio + _this._min;
+	                _this.pointer.style.left = ratio * _this.rangeWidth + 'px';
+	                _this.subbar.style.right = (1 - ratio) * _this.rangeWidth + 'px';
+	                _this._value = value;
+
+	                _this.fire('change', value);
+	            });
+	        }
+
+	        /**
+	         * Add Range drag event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addDragEvent',
+	        value: function _addDragEvent() {
+	            var _this2 = this;
+
+	            this.pointer.addEventListener('mousedown', function (event) {
+	                _this2.firstPosition = event.screenX;
+	                _this2.firstLeft = (0, _util.toInteger)(_this2.pointer.style.left) || 0;
+	                _this2.dragEventHandler = {
+	                    changeAngle: _this2._changeAngle.bind(_this2),
+	                    stopChangingAngle: _this2._stopChangingAngle.bind(_this2)
+	                };
+
+	                document.addEventListener('mousemove', _this2.dragEventHandler.changeAngle);
+	                document.addEventListener('mouseup', _this2.dragEventHandler.stopChangingAngle);
+	            });
+	        }
+
+	        /**
+	         * change angle event
+	         * @param {object} event - change event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeAngle',
+	        value: function _changeAngle(event) {
+	            var changePosition = event.screenX;
+	            var diffPosition = changePosition - this.firstPosition;
+	            var touchPx = this.firstLeft + diffPosition;
+	            touchPx = touchPx > this.rangeWidth ? this.rangeWidth : touchPx;
+	            touchPx = touchPx < 0 ? 0 : touchPx;
+
+	            this.pointer.style.left = touchPx + 'px';
+	            this.subbar.style.right = this.rangeWidth - touchPx + 'px';
+	            var ratio = touchPx / this.rangeWidth;
+	            var value = this._absMax * ratio + this._min;
+
+	            this._value = value;
+
+	            if (this.realTimeEvent) {
+	                this.fire('change', value);
+	            }
+	        }
+
+	        /**
+	         * stop change angle event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_stopChangingAngle',
+	        value: function _stopChangingAngle() {
+	            this.fire('change', this._value);
+	            document.removeEventListener('mousemove', this.dragEventHandler.changeAngle);
+	            document.removeEventListener('mouseup', this.dragEventHandler.stopChangingAngle);
+	        }
+	    }, {
+	        key: 'max',
+	        set: function set(maxValue) {
+	            this._max = maxValue;
+	            this._absMax = this._min * -1 + this._max;
+	            this.value = this._value;
+	        },
+	        get: function get() {
+	            return this._max;
+	        }
+
+	        /**
+	         * Get range value
+	         * @returns {Number} range value
+	         */
+
+	    }, {
+	        key: 'value',
+	        get: function get() {
+	            return this._value;
+	        }
+
+	        /**
+	         * Set range value
+	         * @param {Number} value range value
+	         * @param {Boolean} fire whether fire custom event or not
+	         */
+	        ,
+	        set: function set(value) {
+	            var absValue = value - this._min;
+	            var leftPosition = absValue * this.rangeWidth / this._absMax;
+
+	            if (this.rangeWidth < leftPosition) {
+	                leftPosition = this.rangeWidth;
+	            }
+
+	            this.pointer.style.left = leftPosition + 'px';
+	            this.subbar.style.right = this.rangeWidth - leftPosition + 'px';
+	            this._value = value;
+	        }
+	    }]);
+
+	    return Range;
+	}();
+
+	_tuiCodeSnippet2.default.CustomEvents.mixin(Range);
+	exports.default = Range;
+
+/***/ }),
+/* 84 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * Submenu Base Class
+	 * @class
+	 * @ignore
+	 */
+	var Submenu = function () {
+	  function Submenu(subMenuElement, _ref) {
+	    var name = _ref.name,
+	        iconStyle = _ref.iconStyle,
+	        menuBarPosition = _ref.menuBarPosition,
+	        templateHtml = _ref.templateHtml;
+
+	    _classCallCheck(this, Submenu);
+
+	    this.selector = function (str) {
+	      return subMenuElement.querySelector(str);
+	    };
+	    this.menuBarPosition = menuBarPosition;
+	    this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
+	    this._makeSubMenuElement(subMenuElement, {
+	      name: name,
+	      iconStyle: iconStyle,
+	      templateHtml: templateHtml
+	    });
+	  }
+
+	  /**
+	   * Get butten type
+	   * @param {HTMLElement} button - event target element
+	   * @param {array} buttonNames - Array of button names
+	   * @returns {string} - button type
+	   */
+
+
+	  _createClass(Submenu, [{
+	    key: 'getButtonType',
+	    value: function getButtonType(button, buttonNames) {
+	      return button.className.match(RegExp('(' + buttonNames.join('|') + ')'))[0];
+	    }
+
+	    /**
+	     * Get butten type
+	     * @param {HTMLElement} target - event target element
+	     * @param {string} removeClass - remove class name
+	     * @param {string} addClass - add class name
+	     */
+
+	  }, {
+	    key: 'changeClass',
+	    value: function changeClass(target, removeClass, addClass) {
+	      target.classList.remove(removeClass);
+	      target.classList.add(addClass);
+	    }
+
+	    /**
+	     * Interface method whose implementation is optional.
+	     * Returns the menu to its default state.
+	     */
+
+	  }, {
+	    key: 'changeStandbyMode',
+	    value: function changeStandbyMode() {}
+
+	    /**
+	     * Interface method whose implementation is optional.
+	     * Executed when the menu starts.
+	     */
+
+	  }, {
+	    key: 'changeStartMode',
+	    value: function changeStartMode() {}
+
+	    /**
+	     * Make submenu dom element
+	     * @param {HTMLElement} subMenuElement - subment dom element
+	     * @param {Object} iconStyle -  icon style
+	     * @private
+	     */
+
+	  }, {
+	    key: '_makeSubMenuElement',
+	    value: function _makeSubMenuElement(subMenuElement, _ref2) {
+	      var name = _ref2.name,
+	          iconStyle = _ref2.iconStyle,
+	          templateHtml = _ref2.templateHtml;
+
+	      var iconSubMenu = document.createElement('div');
+	      iconSubMenu.className = 'tui-image-editor-menu-' + name;
+	      iconSubMenu.innerHTML = templateHtml({ iconStyle: iconStyle });
+
+	      subMenuElement.appendChild(iconSubMenu);
+	    }
+	  }]);
+
+	  return Submenu;
+	}();
+
+	exports.default = Submenu;
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-rectangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-rectangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Rectangle </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-circle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-circle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Circle </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-triangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-triangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Triangle </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-shape-color-button\">\n            <div id=\"tie-color-fill\" title=\"fill\"></div>\n            <div id=\"tie-color-stroke\" title=\"stroke\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Stroke</label>\n            <div id=\"tie-stroke-range\"></div>\n            <input id=\"tie-stroke-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _crop = __webpack_require__(87);
+
+	var _crop2 = _interopRequireDefault(_crop);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Crop ui class
+	 * @class
+	 * @ignore
+	 */
+	var Crop = function (_Submenu) {
+	    _inherits(Crop, _Submenu);
+
+	    function Crop(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Crop);
+
+	        var _this = _possibleConstructorReturn(this, (Crop.__proto__ || Object.getPrototypeOf(Crop)).call(this, subMenuElement, {
+	            name: 'crop',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _crop2.default
+	        }));
+
+	        _this.status = 'active';
+	        _this._els = {
+	            apply: _this.selector('#tie-crop-button .apply'),
+	            cancel: _this.selector('#tie-crop-button .cancel')
+	        };
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for crop
+	     * @param {Object} actions - actions for crop
+	     *   @param {Function} actions.crop - crop action
+	     *   @param {Function} actions.cancel - cancel action
+	     */
+
+
+	    _createClass(Crop, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            var _this2 = this;
+
+	            this.actions = actions;
+	            this._els.apply.addEventListener('click', function () {
+	                _this2.actions.crop();
+	                _this2._els.apply.classList.remove('active');
+	            });
+
+	            this._els.cancel.addEventListener('click', function () {
+	                _this2.actions.cancel();
+	                _this2._els.apply.classList.remove('active');
+	            });
+	        }
+
+	        /**
+	         * Executed when the menu starts.
+	         */
+
+	    }, {
+	        key: 'changeStartMode',
+	        value: function changeStartMode() {
+	            this.actions.modeChange('crop');
+	        }
+
+	        /**
+	         * Returns the menu to its default state.
+	         */
+
+	    }, {
+	        key: 'changeStandbyMode',
+	        value: function changeStandbyMode() {
+	            this.actions.stopDrawingMode();
+	        }
+
+	        /**
+	         * Change apply button status
+	         * @param {Boolean} enableStatus - apply button status
+	         */
+
+	    }, {
+	        key: 'changeApplyButtonStatus',
+	        value: function changeApplyButtonStatus(enableStatus) {
+	            if (enableStatus) {
+	                this._els.apply.classList.add('active');
+	            } else {
+	                this._els.apply.classList.remove('active');
+	            }
+	        }
+	    }]);
+
+	    return Crop;
+	}(_submenuBase2.default);
+
+	exports.default = Crop;
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-crop-button\" class=\"apply\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button cancel\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-cancel\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-cancel\" class=\"active\"/>\n                </svg>\n                <label>\n                    Cancel\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _flip = __webpack_require__(89);
+
+	var _flip2 = _interopRequireDefault(_flip);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Flip ui class
+	 * @class
+	 * @ignore
+	 */
+	var Flip = function (_Submenu) {
+	    _inherits(Flip, _Submenu);
+
+	    function Flip(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Flip);
+
+	        var _this = _possibleConstructorReturn(this, (Flip.__proto__ || Object.getPrototypeOf(Flip)).call(this, subMenuElement, {
+	            name: 'flip',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _flip2.default
+	        }));
+
+	        _this.flipStatus = false;
+
+	        _this._els = {
+	            flipButton: _this.selector('#tie-flip-button')
+	        };
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for flip
+	     * @param {Object} actions - actions for flip
+	     *   @param {Function} actions.flip - flip action
+	     */
+
+
+	    _createClass(Flip, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            this._actions = actions;
+	            this._els.flipButton.addEventListener('click', this._changeFlip.bind(this));
+	        }
+
+	        /**
+	         * change Flip status
+	         * @param {object} event - change event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeFlip',
+	        value: function _changeFlip(event) {
+	            var _this2 = this;
+
+	            var button = event.target.closest('.tui-image-editor-button');
+	            if (button) {
+	                var flipType = this.getButtonType(button, ['flipX', 'flipY', 'resetFlip']);
+	                if (!this.flipStatus && flipType === 'resetFlip') {
+	                    return;
+	                }
+
+	                this._actions.flip(flipType).then(function (flipStatus) {
+	                    var flipClassList = _this2._els.flipButton.classList;
+	                    _this2.flipStatus = false;
+
+	                    flipClassList.remove('resetFlip');
+	                    _tuiCodeSnippet2.default.forEach(['flipX', 'flipY'], function (type) {
+	                        flipClassList.remove(type);
+	                        if (flipStatus[type]) {
+	                            flipClassList.add(type);
+	                            flipClassList.add('resetFlip');
+	                            _this2.flipStatus = true;
+	                        }
+	                    });
+	                });
+	            }
+	        }
+	    }]);
+
+	    return Flip;
+	}(_submenuBase2.default);
+
+	exports.default = Flip;
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul id=\"tie-flip-button\" class=\"tui-image-editor-submenu-item\">\n        <li>\n            <div class=\"tui-image-editor-button flipX\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-flip-x\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-flip-x\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Flip X\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button flipY\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-flip-y\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-flip-y\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Flip Y\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tui-image-editor-button resetFlip\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-flip-reset\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-flip-reset\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Reset\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _range = __webpack_require__(83);
+
+	var _range2 = _interopRequireDefault(_range);
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _rotate = __webpack_require__(91);
+
+	var _rotate2 = _interopRequireDefault(_rotate);
+
+	var _util = __webpack_require__(72);
+
+	var _consts = __webpack_require__(73);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CLOCKWISE = 30;
+	var COUNTERCLOCKWISE = -30;
+
+	/**
+	 * Rotate ui class
+	 * @class
+	 * @ignore
+	 */
+
+	var Rotate = function (_Submenu) {
+	    _inherits(Rotate, _Submenu);
+
+	    function Rotate(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Rotate);
+
+	        var _this = _possibleConstructorReturn(this, (Rotate.__proto__ || Object.getPrototypeOf(Rotate)).call(this, subMenuElement, {
+	            name: 'rotate',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _rotate2.default
+	        }));
+
+	        _this._els = {
+	            rotateButton: _this.selector('#tie-retate-button'),
+	            rotateRange: new _range2.default(_this.selector('#tie-rotate-range'), _consts.defaultRotateRangeValus),
+	            rotateRangeValue: _this.selector('#tie-ratate-range-value')
+	        };
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for rotate
+	     * @param {Object} actions - actions for crop
+	     *   @param {Function} actions.rotate - rotate action
+	     *   @param {Function} actions.setAngle - set angle action
+	     */
+
+
+	    _createClass(Rotate, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            // {rotate, setAngle}
+	            this.actions = actions;
+	            this._els.rotateButton.addEventListener('click', this._changeRotateForButton.bind(this));
+	            this._els.rotateRange.on('change', this._changeRotateForRange.bind(this));
+	            this._els.rotateRangeValue.setAttribute('readonly', true);
+	        }
+
+	        /**
+	         * Change rotate for range
+	         * @param {number} value - angle value
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeRotateForRange',
+	        value: function _changeRotateForRange(value) {
+	            var angle = (0, _util.toInteger)(value);
+	            this._els.rotateRangeValue.value = angle;
+	            this.actions.setAngle(angle);
+	        }
+
+	        /**
+	         * Change rotate for button
+	         * @param {object} event - add button event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeRotateForButton',
+	        value: function _changeRotateForButton(event) {
+	            var button = event.target.closest('.tui-image-editor-button');
+	            if (button) {
+	                var rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);
+	                var rotateAngle = {
+	                    clockwise: CLOCKWISE,
+	                    counterclockwise: COUNTERCLOCKWISE
+	                }[rotateType];
+	                this.actions.rotate(rotateAngle);
+	            }
+	        }
+	    }]);
+
+	    return Rotate;
+	}(_submenuBase2.default);
+
+	exports.default = Rotate;
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-retate-button\">\n            <div class=\"tui-image-editor-button clockwise\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-rotate-clockwise\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-rotate-clockwise\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 30 </label>\n            </div>\n            <div class=\"tui-image-editor-button counterclockwise\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-rotate-counterclockwise\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-rotate-counterclockwise\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> -30 </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Range</label>\n            <div id=\"tie-rotate-range\"></div>\n            <input id=\"tie-ratate-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _range = __webpack_require__(83);
+
+	var _range2 = _interopRequireDefault(_range);
+
+	var _colorpicker = __webpack_require__(81);
+
+	var _colorpicker2 = _interopRequireDefault(_colorpicker);
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _text = __webpack_require__(93);
+
+	var _text2 = _interopRequireDefault(_text);
+
+	var _util = __webpack_require__(72);
+
+	var _consts = __webpack_require__(73);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Crop ui class
+	 * @class
+	 * @ignore
+	 */
+	var Text = function (_Submenu) {
+	    _inherits(Text, _Submenu);
+
+	    function Text(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Text);
+
+	        var _this = _possibleConstructorReturn(this, (Text.__proto__ || Object.getPrototypeOf(Text)).call(this, subMenuElement, {
+	            name: 'text',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _text2.default
+	        }));
+
+	        _this.effect = {
+	            bold: false,
+	            italic: false,
+	            underline: false
+	        };
+	        _this.align = 'left';
+	        _this._els = {
+	            textEffectButton: _this.selector('#tie-text-effect-button'),
+	            textAlignButton: _this.selector('#tie-text-align-button'),
+	            textColorpicker: new _colorpicker2.default(_this.selector('#tie-text-color'), '#ffbb3b', _this.toggleDirection),
+	            textRange: new _range2.default(_this.selector('#tie-text-range'), _consts.defaultTextRangeValus),
+	            textRangeValue: _this.selector('#tie-text-range-value')
+	        };
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for text
+	     * @param {Object} actions - actions for text
+	     *   @param {Function} actions.changeTextStyle - change text style
+	     */
+
+
+	    _createClass(Text, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            this.actions = actions;
+	            this._els.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
+	            this._els.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
+	            this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
+	            this._els.textRangeValue.value = this._els.textRange.value;
+	            this._els.textRangeValue.setAttribute('readonly', true);
+	            this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
+	        }
+
+	        /**
+	         * Returns the menu to its default state.
+	         */
+
+	    }, {
+	        key: 'changeStandbyMode',
+	        value: function changeStandbyMode() {
+	            this.actions.stopDrawingMode();
+	        }
+
+	        /**
+	         * Executed when the menu starts.
+	         */
+
+	    }, {
+	        key: 'changeStartMode',
+	        value: function changeStartMode() {
+	            this.actions.modeChange('text');
+	        }
+
+	        /**
+	         * Get text color
+	         * @returns {string} - text color
+	         */
+
+	    }, {
+	        key: '_setTextEffectHandler',
+
+
+	        /**
+	         * text effect set handler
+	         * @param {object} event - add button event object
+	         * @private
+	         */
+	        value: function _setTextEffectHandler(event) {
+	            var button = event.target.closest('.tui-image-editor-button');
+
+	            var _button$className$mat = button.className.match(/(bold|italic|underline)/),
+	                styleType = _button$className$mat[0];
+
+	            var styleObj = {
+	                'bold': { fontWeight: 'bold' },
+	                'italic': { fontStyle: 'italic' },
+	                'underline': { textDecoration: 'underline' }
+	            }[styleType];
+
+	            this.effect[styleType] = !this.effect[styleType];
+	            button.classList.toggle('active');
+	            this.actions.changeTextStyle(styleObj);
+	        }
+
+	        /**
+	         * text effect set handler
+	         * @param {object} event - add button event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setTextAlignHandler',
+	        value: function _setTextAlignHandler(event) {
+	            var button = event.target.closest('.tui-image-editor-button');
+	            if (button) {
+	                var styleType = this.getButtonType(button, ['left', 'center', 'right']);
+
+	                event.currentTarget.classList.remove(this.align);
+	                if (this.align !== styleType) {
+	                    event.currentTarget.classList.add(styleType);
+	                }
+	                this.actions.changeTextStyle({ textAlign: styleType });
+
+	                this.align = styleType;
+	            }
+	        }
+
+	        /**
+	         * text align set handler
+	         * @param {number} value - range value
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeTextRnageHandler',
+	        value: function _changeTextRnageHandler(value) {
+	            value = (0, _util.toInteger)(value);
+	            if ((0, _util.toInteger)(this._els.textRangeValue.value) !== value) {
+	                this.actions.changeTextStyle({
+	                    fontSize: value
+	                });
+	                this._els.textRangeValue.value = value;
+	            }
+	        }
+
+	        /**
+	         * change color handler
+	         * @param {string} color - change color string
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeColorHandler',
+	        value: function _changeColorHandler(color) {
+	            color = color || 'transparent';
+	            this.actions.changeTextStyle({
+	                'fill': color
+	            });
+	        }
+	    }, {
+	        key: 'textColor',
+	        get: function get() {
+	            return this._els.textColorpicker.color;
+	        }
+
+	        /**
+	         * Get text size
+	         * @returns {string} - text size
+	         */
+
+	    }, {
+	        key: 'fontSize',
+	        get: function get() {
+	            return this._els.textRange.value;
+	        }
+
+	        /**
+	         * Set text size
+	         * @param {Number} value - text size
+	         */
+	        ,
+	        set: function set(value) {
+	            this._els.textRange.value = value;
+	            this._els.textRangeValue.value = value;
+	        }
+	    }]);
+
+	    return Text;
+	}(_submenuBase2.default);
+
+	exports.default = Text;
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-bold\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-bold\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Bold </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-italic\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-italic\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Italic </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-underline\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-underline\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Underline </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-left\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-left\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> left </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-center\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-center\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> center </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-right\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-right\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> right </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-text-color\" title=\"Color\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Text size</label>\n            <div id=\"tie-text-range\"></div>\n            <input id=\"tie-text-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _util = __webpack_require__(72);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	var _mask = __webpack_require__(95);
+
+	var _mask2 = _interopRequireDefault(_mask);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Mask ui class
+	 * @class
+	 * @ignore
+	 */
+	var Mask = function (_Submenu) {
+	    _inherits(Mask, _Submenu);
+
+	    function Mask(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Mask);
+
+	        var _this = _possibleConstructorReturn(this, (Mask.__proto__ || Object.getPrototypeOf(Mask)).call(this, subMenuElement, {
+	            name: 'mask',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _mask2.default
+	        }));
+
+	        _this._els = {
+	            applyButton: _this.selector('#tie-mask-apply'),
+	            maskImageButton: _this.selector('#tie-mask-image-file')
+	        };
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for mask
+	     * @param {Object} actions - actions for crop
+	     *   @param {Function} actions.loadImageFromURL - load image action
+	     *   @param {Function} actions.applyFilter - apply filter action
+	     */
+
+
+	    _createClass(Mask, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            this.actions = actions;
+	            this._els.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
+	            this._els.applyButton.addEventListener('click', this._applyMask.bind(this));
+	        }
+
+	        /**
+	         * Apply mask
+	         * @private
+	         */
+
+	    }, {
+	        key: '_applyMask',
+	        value: function _applyMask() {
+	            this.actions.applyFilter();
+	            this._els.applyButton.classList.remove('active');
+	        }
+
+	        /**
+	         * Load mask file
+	         * @param {object} event - File change event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_loadMaskFile',
+	        value: function _loadMaskFile(event) {
+	            var imgUrl = void 0;
+
+	            if (!_util2.default.isSupportFileApi()) {
+	                alert('This browser does not support file-api');
+	            }
+
+	            var _event$target$files = event.target.files,
+	                file = _event$target$files[0];
+
+
+	            if (file) {
+	                imgUrl = URL.createObjectURL(file);
+	                this.actions.loadImageFromURL(imgUrl, file);
+	                this._els.applyButton.classList.add('active');
+	            }
+	        }
+	    }]);
+
+	    return Mask;
+	}(_submenuBase2.default);
+
+	exports.default = Mask;
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li>\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-mask-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-mask-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-mask-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Load Mask Image </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li id=\"tie-mask-apply\" class=\"tui-image-editor-newline apply\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+	var _colorpicker = __webpack_require__(81);
+
+	var _colorpicker2 = _interopRequireDefault(_colorpicker);
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _icon = __webpack_require__(97);
+
+	var _icon2 = _interopRequireDefault(_icon);
+
+	var _util = __webpack_require__(72);
+
+	var _consts = __webpack_require__(73);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	/**
+	 * Icon ui class
+	 * @class
+	 * @ignore
+	 */
+	var Icon = function (_Submenu) {
+	    _inherits(Icon, _Submenu);
+
+	    function Icon(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Icon);
+
+	        var _this = _possibleConstructorReturn(this, (Icon.__proto__ || Object.getPrototypeOf(Icon)).call(this, subMenuElement, {
+	            name: 'icon',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _icon2.default
+	        }));
+
+	        _this.iconType = null;
+	        _this._iconMap = {};
+
+	        _this._els = {
+	            registIconButton: _this.selector('#tie-icon-image-file'),
+	            addIconButton: _this.selector('#tie-icon-add-button'),
+	            iconColorpicker: new _colorpicker2.default(_this.selector('#tie-icon-color'), '#ffbb3b', _this.toggleDirection)
+	        };
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for icon
+	     * @param {Object} actions - actions for icon
+	     *   @param {Function} actions.registCustomIcon - register icon
+	     *   @param {Function} actions.addIcon - add icon
+	     *   @param {Function} actions.changeColor - change icon color
+	     */
+
+
+	    _createClass(Icon, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            this.actions = actions;
+
+	            this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
+	            this._els.registIconButton.addEventListener('change', this._registeIconHandler.bind(this));
+	            this._els.addIconButton.addEventListener('click', this._addIconHandler.bind(this));
+	        }
+
+	        /**
+	         * Clear icon type
+	         */
+
+	    }, {
+	        key: 'clearIconType',
+	        value: function clearIconType() {
+	            this._els.addIconButton.classList.remove(this.iconType);
+	            this.iconType = null;
+	        }
+
+	        /**
+	         * Register default icon
+	         */
+
+	    }, {
+	        key: 'registDefaultIcon',
+	        value: function registDefaultIcon() {
+	            var _this2 = this;
+
+	            _tuiCodeSnippet2.default.forEach(_consts.defaultIconPath, function (path, type) {
+	                _this2.actions.registDefalutIcons(type, path);
+	            });
+	        }
+
+	        /**
+	         * Set icon picker color
+	         * @param {string} iconColor - rgb color string
+	         */
+
+	    }, {
+	        key: 'setIconPickerColor',
+	        value: function setIconPickerColor(iconColor) {
+	            this._els.iconColorpicker.color = iconColor;
+	        }
+
+	        /**
+	         * Returns the menu to its default state.
+	         */
+
+	    }, {
+	        key: 'changeStandbyMode',
+	        value: function changeStandbyMode() {
+	            this.clearIconType();
+	            this.actions.cancelAddIcon();
+	        }
+
+	        /**
+	         * Change icon color
+	         * @param {string} color - color for change
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeColorHandler',
+	        value: function _changeColorHandler(color) {
+	            color = color || 'transparent';
+	            this.actions.changeColor(color);
+	        }
+
+	        /**
+	         * Change icon color
+	         * @param {object} event - add button event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addIconHandler',
+	        value: function _addIconHandler(event) {
+	            var button = event.target.closest('.tui-image-editor-button');
+
+	            if (button) {
+	                var iconType = button.getAttribute('data-icontype');
+	                var iconColor = this._els.iconColorpicker.color;
+	                this.actions.discardSelection();
+	                this.actions.changeSelectableAll(false);
+	                this._els.addIconButton.classList.remove(this.iconType);
+	                this._els.addIconButton.classList.add(iconType);
+
+	                if (this.iconType === iconType) {
+	                    this.changeStandbyMode();
+	                } else {
+	                    this.actions.addIcon(iconType, iconColor);
+	                    this.iconType = iconType;
+	                }
+	            }
+	        }
+
+	        /**
+	         * register icon
+	         * @param {object} event - file change event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_registeIconHandler',
+	        value: function _registeIconHandler(event) {
+	            var imgUrl = void 0;
+
+	            if (!_util.isSupportFileApi) {
+	                alert('This browser does not support file-api');
+	            }
+
+	            var _event$target$files = event.target.files,
+	                file = _event$target$files[0];
+
+
+	            if (file) {
+	                imgUrl = URL.createObjectURL(file);
+	                this.actions.registCustomIcon(imgUrl, file);
+	            }
+	        }
+	    }]);
+
+	    return Icon;
+	}(_submenuBase2.default);
+
+	exports.default = Icon;
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-2\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-3\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-3\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-3\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-3\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-1\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-2\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-polygon\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Polygon\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-location\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-location\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-location\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Location\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-heart\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-heart\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-heart\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Heart\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-bubble\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-bubble\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-bubble\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Bubble\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-icon-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Custom icon\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-icon-color\" title=\"Color\"></div>\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _util = __webpack_require__(72);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	var _colorpicker = __webpack_require__(81);
+
+	var _colorpicker2 = _interopRequireDefault(_colorpicker);
+
+	var _range = __webpack_require__(83);
+
+	var _range2 = _interopRequireDefault(_range);
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _draw = __webpack_require__(99);
+
+	var _draw2 = _interopRequireDefault(_draw);
+
+	var _consts = __webpack_require__(73);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var DRAW_OPACITY = 0.7;
+
+	/**
+	 * Draw ui class
+	 * @class
+	 * @ignore
+	 */
+
+	var Draw = function (_Submenu) {
+	    _inherits(Draw, _Submenu);
+
+	    function Draw(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Draw);
+
+	        var _this = _possibleConstructorReturn(this, (Draw.__proto__ || Object.getPrototypeOf(Draw)).call(this, subMenuElement, {
+	            name: 'draw',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _draw2.default
+	        }));
+
+	        _this._els = {
+	            lineSelectButton: _this.selector('#tie-draw-line-select-button'),
+	            drawColorpicker: new _colorpicker2.default(_this.selector('#tie-draw-color'), '#00a9ff', _this.toggleDirection),
+	            drawRange: new _range2.default(_this.selector('#tie-draw-range'), _consts.defaultDrawRangeValus),
+	            drawRangeValue: _this.selector('#tie-draw-range-value')
+	        };
+
+	        _this.type = null;
+	        _this.color = _this._els.drawColorpicker.color;
+	        _this.width = _this._els.drawRange.value;
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for draw
+	     * @param {Object} actions - actions for crop
+	     *   @param {Function} actions.setDrawMode - set draw mode
+	     */
+
+
+	    _createClass(Draw, [{
+	        key: 'addEvent',
+	        value: function addEvent(actions) {
+	            this.actions = actions;
+
+	            this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
+	            this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
+	            this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+	            this._els.drawRangeValue.value = this._els.drawRange.value;
+	            this._els.drawRangeValue.setAttribute('readonly', true);
+	        }
+
+	        /**
+	         * set draw mode - action runner
+	         */
+
+	    }, {
+	        key: 'setDrawMode',
+	        value: function setDrawMode() {
+	            this.actions.setDrawMode(this.type, {
+	                width: this.width,
+	                color: _util2.default.getRgb(this.color, DRAW_OPACITY)
+	            });
+	        }
+
+	        /**
+	         * Returns the menu to its default state.
+	         */
+
+	    }, {
+	        key: 'changeStandbyMode',
+	        value: function changeStandbyMode() {
+	            this.type = null;
+	            this.actions.stopDrawingMode();
+	            this.actions.changeSelectableAll(true);
+	            this._els.lineSelectButton.classList.remove('free');
+	            this._els.lineSelectButton.classList.remove('line');
+	        }
+
+	        /**
+	         * Executed when the menu starts.
+	         */
+
+	    }, {
+	        key: 'changeStartMode',
+	        value: function changeStartMode() {
+	            this.type = 'free';
+	            this._els.lineSelectButton.classList.add('free');
+	            this.setDrawMode();
+	        }
+
+	        /**
+	         * Change draw type event
+	         * @param {object} event - line select event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeDrawType',
+	        value: function _changeDrawType(event) {
+	            var button = event.target.closest('.tui-image-editor-button');
+	            if (button) {
+	                var lineType = this.getButtonType(button, ['free', 'line']);
+	                this.actions.discardSelection();
+
+	                if (this.type === lineType) {
+	                    this.changeStandbyMode();
+
+	                    return;
+	                }
+
+	                this.changeStandbyMode();
+	                this.type = lineType;
+	                this._els.lineSelectButton.classList.add(lineType);
+	                this.setDrawMode();
+	            }
+	        }
+
+	        /**
+	         * Change drawing color
+	         * @param {string} color - select drawing color
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeDrawColor',
+	        value: function _changeDrawColor(color) {
+	            this.color = color || 'transparent';
+	            if (!this.type) {
+	                this.changeStartMode();
+	            } else {
+	                this.setDrawMode();
+	            }
+	        }
+
+	        /**
+	         * Change drawing Range
+	         * @param {number} value - select drawing range
+	         * @private
+	         */
+
+	    }, {
+	        key: '_changeDrawRange',
+	        value: function _changeDrawRange(value) {
+	            value = _util2.default.toInteger(value);
+	            this._els.drawRangeValue.value = value;
+	            this.width = value;
+	            if (!this.type) {
+	                this.changeStartMode();
+	            } else {
+	                this.setDrawMode();
+	            }
+	        }
+	    }]);
+
+	    return Draw;
+	}(_submenuBase2.default);
+
+	exports.default = Draw;
+
+/***/ }),
+/* 99 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function (_ref) {
+	    var _ref$iconStyle = _ref.iconStyle,
+	        normal = _ref$iconStyle.normal,
+	        active = _ref$iconStyle.active;
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-draw-line-select-button\">\n            <div class=\"tui-image-editor-button free\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-draw-free\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-draw-free\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Free\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button line\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-draw-line\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-draw-line\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Straight\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-draw-color\" title=\"Color\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Range</label>\n            <div id=\"tie-draw-range\"></div>\n            <input id=\"tie-draw-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
+	var _colorpicker = __webpack_require__(81);
+
+	var _colorpicker2 = _interopRequireDefault(_colorpicker);
+
+	var _range = __webpack_require__(83);
+
+	var _range2 = _interopRequireDefault(_range);
+
+	var _submenuBase = __webpack_require__(84);
+
+	var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+	var _filter = __webpack_require__(101);
+
+	var _filter2 = _interopRequireDefault(_filter);
+
+	var _util = __webpack_require__(72);
+
+	var _consts = __webpack_require__(73);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var PICKER_CONTROL_HEIGHT = '130px';
+	var BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
+	var FILTER_OPTIONS = ['grayscale', 'invert', 'sepia', 'sepia2', 'blur', 'sharpen', 'emboss', 'remove-white', 'gradient-transparency', 'brightness', 'noise', 'pixelate', 'color-filter', 'tint', 'multiply', 'blend'];
+
+	/**
+	 * Filter ui class
+	 * @class
+	 * @ignore
+	 */
+
+	var Filter = function (_Submenu) {
+	    _inherits(Filter, _Submenu);
+
+	    function Filter(subMenuElement, _ref) {
+	        var iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition;
+
+	        _classCallCheck(this, Filter);
+
+	        var _this = _possibleConstructorReturn(this, (Filter.__proto__ || Object.getPrototypeOf(Filter)).call(this, subMenuElement, {
+	            name: 'filter',
+	            iconStyle: iconStyle,
+	            menuBarPosition: menuBarPosition,
+	            templateHtml: _filter2.default
+	        }));
+
+	        _this.checkedMap = {};
+	        _this._makeControlElement();
+	        return _this;
+	    }
+
+	    /**
+	     * Add event for filter
+	     * @param {Object} actions - actions for crop
+	     *   @param {Function} actions.applyFilter - apply filter option
+	     */
+
+
+	    _createClass(Filter, [{
+	        key: 'addEvent',
+	        value: function addEvent(_ref2) {
+	            var _this2 = this;
+
+	            var applyFilter = _ref2.applyFilter;
+
+	            var changeRangeValue = function changeRangeValue(filterName) {
+	                var apply = _this2.checkedMap[filterName].checked;
+	                var type = filterName;
+
+	                applyFilter(apply, type, _this2._getFilterOption(type));
+	            };
+
+	            _tuiCodeSnippet2.default.forEach(FILTER_OPTIONS, function (filterName) {
+	                var filterCheckElement = _this2.selector('#tie-' + filterName);
+	                var filterNameCamelCase = (0, _util.toCamelCase)(filterName);
+	                _this2.checkedMap[filterNameCamelCase] = filterCheckElement;
+
+	                filterCheckElement.addEventListener('change', function () {
+	                    return changeRangeValue(filterNameCamelCase);
+	                });
+	            });
+
+	            this._els.removewhiteThresholdRange.on('change', function () {
+	                return changeRangeValue('removeWhite');
+	            });
+	            this._els.removewhiteDistanceRange.on('change', function () {
+	                return changeRangeValue('removeWhite');
+	            });
+	            this._els.gradientTransparencyRange.on('change', function () {
+	                return changeRangeValue('gradientTransparency');
+	            });
+	            this._els.colorfilterThresholeRange.on('change', function () {
+	                return changeRangeValue('colorFilter');
+	            });
+	            this._els.pixelateRange.on('change', function () {
+	                return changeRangeValue('pixelate');
+	            });
+	            this._els.noiseRange.on('change', function () {
+	                return changeRangeValue('noise');
+	            });
+	            this._els.brightnessRange.on('change', function () {
+	                return changeRangeValue('brightness');
+	            });
+	            this._els.blendType.addEventListener('change', function () {
+	                return changeRangeValue('blend');
+	            });
+	            this._els.filterBlendColor.on('change', function () {
+	                return changeRangeValue('blend');
+	            });
+	            this._els.filterMultiplyColor.on('change', function () {
+	                return changeRangeValue('multiply');
+	            });
+	            this._els.tintOpacity.on('change', function () {
+	                return changeRangeValue('tint');
+	            });
+	            this._els.filterTintColor.on('change', function () {
+	                return changeRangeValue('tint');
+	            });
+	            this._els.blendType.addEventListener('click', function (event) {
+	                return event.stopPropagation();
+	            });
+	        }
+
+	        /**
+	         * Get filter option
+	         * @param {String} type - filter type
+	         * @returns {Object} filter option object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getFilterOption',
+	        value: function _getFilterOption(type) {
+	            // eslint-disable-line
+	            var option = {};
+	            switch (type) {
+	                case 'removeWhite':
+	                    option.threshold = (0, _util.toInteger)(this._els.removewhiteThresholdRange.value);
+	                    option.distance = (0, _util.toInteger)(this._els.removewhiteDistanceRange.value);
+	                    break;
+	                case 'gradientTransparency':
+	                    option.threshold = (0, _util.toInteger)(this._els.gradientTransparencyRange.value);
+	                    break;
+	                case 'colorFilter':
+	                    option.color = '#FFFFFF';
+	                    option.threshold = this._els.colorfilterThresholeRange.value;
+	                    break;
+	                case 'pixelate':
+	                    option.blocksize = (0, _util.toInteger)(this._els.pixelateRange.value);
+	                    break;
+	                case 'noise':
+	                    option.noise = (0, _util.toInteger)(this._els.noiseRange.value);
+	                    break;
+	                case 'brightness':
+	                    option.brightness = (0, _util.toInteger)(this._els.brightnessRange.value);
+	                    break;
+	                case 'blend':
+	                    option.color = this._els.filterBlendColor.color;
+	                    option.mode = this._els.blendType.value;
+	                    break;
+	                case 'multiply':
+	                    option.color = this._els.filterMultiplyColor.color;
+	                    break;
+	                case 'tint':
+	                    option.color = this._els.filterTintColor.color;
+	                    option.opacity = this._els.tintOpacity.value;
+	                    break;
+	                default:
+	                    break;
+	            }
+
+	            return option;
+	        }
+
+	        /**
+	         * Make submenu range and colorpicker control
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makeControlElement',
+	        value: function _makeControlElement() {
+	            var selector = this.selector;
+
+	            this._els = {
+	                removewhiteThresholdRange: new _range2.default(selector('#tie-removewhite-threshold-range'), _consts.defaultFilterRangeValus.removewhiteThresholdRange),
+	                removewhiteDistanceRange: new _range2.default(selector('#tie-removewhite-distance-range'), _consts.defaultFilterRangeValus.removewhiteDistanceRange),
+	                gradientTransparencyRange: new _range2.default(selector('#tie-gradient-transparency-range'), _consts.defaultFilterRangeValus.gradientTransparencyRange),
+	                brightnessRange: new _range2.default(selector('#tie-brightness-range'), _consts.defaultFilterRangeValus.brightnessRange),
+	                noiseRange: new _range2.default(selector('#tie-noise-range'), _consts.defaultFilterRangeValus.noiseRange),
+	                pixelateRange: new _range2.default(selector('#tie-pixelate-range'), _consts.defaultFilterRangeValus.pixelateRange),
+	                colorfilterThresholeRange: new _range2.default(selector('#tie-colorfilter-threshole-range'), _consts.defaultFilterRangeValus.colorfilterThresholeRange),
+	                filterTintColor: new _colorpicker2.default(selector('#tie-filter-tint-color'), '#03bd9e', this.toggleDirection),
+	                filterMultiplyColor: new _colorpicker2.default(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection),
+	                filterBlendColor: new _colorpicker2.default(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection)
+	            };
+	            this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
+	            this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);
+	        }
+
+	        /**
+	         * Make submenu control for picker & range mixin
+	         * @param {HTMLElement} pickerControl - pickerControl dom element
+	         * @returns {Range}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pickerWithRange',
+	        value: function _pickerWithRange(pickerControl) {
+	            var rangeWrap = document.createElement('div');
+	            var rangelabel = document.createElement('label');
+	            var range = document.createElement('div');
+
+	            range.id = 'tie-filter-tint-opacity';
+	            rangelabel.innerHTML = 'Opacity';
+	            rangeWrap.appendChild(rangelabel);
+	            rangeWrap.appendChild(range);
+	            pickerControl.appendChild(rangeWrap);
+	            pickerControl.style.height = PICKER_CONTROL_HEIGHT;
+
+	            return new _range2.default(range, _consts.defaultFilterRangeValus.tintOpacityRange);
+	        }
+
+	        /**
+	         * Make submenu control for picker & selectbox
+	         * @param {HTMLElement} pickerControl - pickerControl dom element
+	         * @returns {HTMLElement}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pickerWithSelectbox',
+	        value: function _pickerWithSelectbox(pickerControl) {
+	            var selectlistWrap = document.createElement('div');
+	            var selectlist = document.createElement('select');
+
+	            selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
+	            selectlistWrap.appendChild(selectlist);
+
+	            this._makeSelectOptionList(selectlist);
+
+	            pickerControl.appendChild(selectlistWrap);
+	            pickerControl.style.height = PICKER_CONTROL_HEIGHT;
+
+	            return selectlist;
+	        }
+
+	        /**
+	         * Make blend select option
+	         * @param {HTMLElement} selectlist - blend option select list element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_makeSelectOptionList',
+	        value: function _makeSelectOptionList(selectlist) {
+	            _tuiCodeSnippet2.default.forEach(BLEND_OPTIONS, function (option) {
+	                var selectOption = document.createElement('option');
+	                selectOption.setAttribute('value', option);
+	                selectOption.innerHTML = option.replace(/^[a-z]/, function ($0) {
+	                    return $0.toUpperCase();
+	                });
+	                selectlist.appendChild(selectOption);
+	            });
+	        }
+	    }]);
+
+	    return Filter;
+	}(_submenuBase2.default);
+
+	exports.default = Filter;
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	exports.default = function () {
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-wrap fixed-width\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-grayscale\">\n                    <label for=\"tie-grayscale\">Grayscale</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-invert\">\n                    <label for=\"tie-invert\">Invert</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia\">\n                    <label for=\"tie-sepia\">Sepia</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia2\">\n                    <label for=\"tie-sepia2\">Sepia2</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blur\">\n                    <label for=\"tie-blur\">Blur</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sharpen\">\n                    <label for=\"tie-sharpen\">Sharpen</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-emboss\">\n                    <label for=\"tie-emboss\">Emboss</label>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div>\n                <div class=\"tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-remove-white\">\n                        <label for=\"tie-remove-white\">Remove White</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-removewhite-threshold-range\"></div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Distance</label>\n                    <div id=\"tie-removewhite-distance-range\"></div>\n                </div>\n            </div>\n            <div>\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-gradient-transparency\">\n                        <label for=\"tie-gradient-transparency\">Grayscale</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Value</label>\n                    <div id=\"tie-gradient-transparency-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-brightness\">\n                    <label for=\"tie-brightness\">Brightness</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-brightness-range\"></div>\n                </div>\n            </div>\n            <div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-noise\">\n                    <label for=\"tie-noise\">Noise</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-noise-range\"></div>\n                </div>\n            </div>\n\n            <div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-pixelate\">\n                    <label for=\"tie-pixelate\">Pixelate</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-pixelate-range\"></div>\n                </div>\n            </div>\n            <div>\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-color-filter\">\n                        <label for=\"tie-color-filter\">Color Filter</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-colorfilter-threshole-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-tint-color\" title=\"Tint\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-tint\">\n                    <label for=\"tie-tint\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-multiply-color\" title=\"Multiply\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-multiply\">\n                    <label for=\"tie-multiply\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-blend-color\" title=\"Blend\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blend\">\n                    <label for=\"tie-blend\"></label>\n                </div>\n            </div>\n        </li>\n    </ul>\n";
+	};
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _util = __webpack_require__(72);
+
+	var _util2 = _interopRequireDefault(_util);
+
+	var _imagetracer = __webpack_require__(103);
+
+	var _imagetracer2 = _interopRequireDefault(_imagetracer);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+
+	    /**
+	     * Get ui actions
+	     * @returns {Object} actions for ui
+	     * @private
+	     */
+	    getActions: function getActions() {
+	        return {
+	            main: this._mainAction(),
+	            shape: this._shapeAction(),
+	            crop: this._cropAction(),
+	            flip: this._flipAction(),
+	            rotate: this._rotateAction(),
+	            text: this._textAction(),
+	            mask: this._maskAction(),
+	            draw: this._drawAction(),
+	            icon: this._iconAction(),
+	            filter: this._filterAction()
+	        };
+	    },
+
+
+	    /**
+	     * Main Action
+	     * @returns {Object} actions for ui main
+	     * @private
+	     */
+	    _mainAction: function _mainAction() {
+	        var _this = this;
+
+	        var exitCropOnAction = function exitCropOnAction() {
+	            if (_this.ui.submenu === 'crop') {
+	                _this.stopDrawingMode();
+	                _this.ui.changeMenu('crop');
+	            }
+	        };
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            initLoadImage: function initLoadImage(imagePath, imageName) {
+	                return _this.loadImageFromURL(imagePath, imageName).then(function (sizeValue) {
+	                    exitCropOnAction();
+	                    _this.ui.initializeImgUrl = imagePath;
+	                    _this.ui.resizeEditor({ imageSize: sizeValue });
+	                    _this.clearUndoStack();
+	                });
+	            },
+	            undo: function undo() {
+	                if (!_this.isEmptyUndoStack()) {
+	                    exitCropOnAction();
+	                    _this.undo();
+	                }
+	            },
+	            redo: function redo() {
+	                if (!_this.isEmptyRedoStack()) {
+	                    exitCropOnAction();
+	                    _this.redo();
+	                }
+	            },
+	            reset: function reset() {
+	                exitCropOnAction();
+	                _this.loadImageFromURL(_this.ui.initializeImgUrl, 'resetImage').then(function (sizeValue) {
+	                    exitCropOnAction();
+	                    _this.ui.resizeEditor({ imageSize: sizeValue });
+	                    _this.clearUndoStack();
+	                });
+	            },
+	            delete: function _delete() {
+	                _this.ui.changeDeleteButtonEnabled(false);
+	                exitCropOnAction();
+	                _this.removeActiveObject();
+	                _this.activeObjectId = null;
+	            },
+	            deleteAll: function deleteAll() {
+	                exitCropOnAction();
+	                _this.clearObjects();
+	                _this.ui.changeDeleteButtonEnabled(false);
+	                _this.ui.changeDeleteAllButtonEnabled(false);
+	            },
+	            load: function load(file) {
+	                if (!_util2.default.isSupportFileApi()) {
+	                    alert('This browser does not support file-api');
+	                }
+
+	                _this.ui.initializeImgUrl = URL.createObjectURL(file);
+	                _this.loadImageFromFile(file).then(function () {
+	                    exitCropOnAction();
+	                    _this.clearUndoStack();
+	                    _this.ui.resizeEditor();
+	                })['catch'](function (message) {
+	                    return Promise.reject(message);
+	                });
+	            },
+	            download: function download() {
+	                var dataURL = _this.toDataURL();
+	                var imageName = _this.getImageName();
+	                var blob = void 0,
+	                    type = void 0,
+	                    w = void 0;
+
+	                if (_util2.default.isSupportFileApi() && window.saveAs) {
+	                    blob = _util2.default.base64ToBlob(dataURL);
+	                    type = blob.type.split('/')[1];
+	                    if (imageName.split('.').pop() !== type) {
+	                        imageName += '.' + type;
+	                    }
+	                    saveAs(blob, imageName); // eslint-disable-line
+	                } else {
+	                    w = window.open();
+	                    w.document.body.innerHTML = '<img src=\'' + dataURL + '\'>';
+	                }
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Icon Action
+	     * @returns {Object} actions for ui icon
+	     * @private
+	     */
+	    _iconAction: function _iconAction() {
+	        var _this2 = this;
+
+	        var cacheIconType = void 0;
+	        var cacheIconColor = void 0;
+	        var startX = void 0;
+	        var startY = void 0;
+	        var iconWidth = void 0;
+	        var iconHeight = void 0;
+	        var objId = void 0;
+
+	        this.on({
+	            'iconCreateResize': function iconCreateResize(_ref) {
+	                var moveOriginPointer = _ref.moveOriginPointer;
+
+	                var scaleX = (moveOriginPointer.x - startX) / iconWidth;
+	                var scaleY = (moveOriginPointer.y - startY) / iconHeight;
+
+	                _this2.setObjectPropertiesQuietly(objId, {
+	                    scaleX: Math.abs(scaleX * 2),
+	                    scaleY: Math.abs(scaleY * 2)
+	                });
+	            },
+	            'iconCreateEnd': function iconCreateEnd() {
+	                _this2.ui.icon.clearIconType();
+	                _this2.changeSelectableAll(true);
+	            }
+	        });
+
+	        var mouseDown = function mouseDown(e, originPointer) {
+	            startX = originPointer.x;
+	            startY = originPointer.y;
+
+	            _this2.addIcon(cacheIconType, {
+	                left: originPointer.x,
+	                top: originPointer.y,
+	                fill: cacheIconColor
+	            }).then(function (obj) {
+	                objId = obj.id;
+	                iconWidth = obj.width;
+	                iconHeight = obj.height;
+	            });
+	        };
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            changeColor: function changeColor(color) {
+	                if (_this2.activeObjectId) {
+	                    _this2.changeIconColor(_this2.activeObjectId, color);
+	                }
+	            },
+	            addIcon: function addIcon(iconType, iconColor) {
+	                cacheIconType = iconType;
+	                cacheIconColor = iconColor;
+	                // this.readyAddIcon();
+	                _this2.changeCursor('crosshair');
+	                _this2.off('mousedown');
+	                _this2.once('mousedown', mouseDown.bind(_this2));
+	            },
+	            cancelAddIcon: function cancelAddIcon() {
+	                _this2.off('mousedown');
+	                _this2.ui.icon.clearIconType();
+	                _this2.changeSelectableAll(true);
+	                _this2.changeCursor('default');
+	            },
+	            registDefalutIcons: function registDefalutIcons(type, path) {
+	                var iconObj = {};
+	                iconObj[type] = path;
+	                _this2.registerIcons(iconObj);
+	            },
+	            registCustomIcon: function registCustomIcon(imgUrl, file) {
+	                var imagetracer = new _imagetracer2.default();
+	                imagetracer.imageToSVG(imgUrl, function (svgstr) {
+	                    var _svgstr$match = svgstr.match(/path[^>]*d="([^"]*)"/),
+	                        svgPath = _svgstr$match[1];
+
+	                    var iconObj = {};
+	                    iconObj[file.name] = svgPath;
+	                    _this2.registerIcons(iconObj);
+	                    _this2.addIcon(file.name, {
+	                        left: 100,
+	                        top: 100
+	                    });
+	                }, _imagetracer2.default.tracerDefaultOption());
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Draw Action
+	     * @returns {Object} actions for ui draw
+	     * @private
+	     */
+	    _drawAction: function _drawAction() {
+	        var _this3 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            setDrawMode: function setDrawMode(type, settings) {
+	                _this3.stopDrawingMode();
+	                if (type === 'free') {
+	                    _this3.startDrawingMode('FREE_DRAWING', settings);
+	                } else {
+	                    _this3.startDrawingMode('LINE_DRAWING', settings);
+	                }
+	            },
+	            setColor: function setColor(color) {
+	                _this3.setBrush({
+	                    color: color
+	                });
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Mask Action
+	     * @returns {Object} actions for ui mask
+	     * @private
+	     */
+	    _maskAction: function _maskAction() {
+	        var _this4 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            loadImageFromURL: function loadImageFromURL(imgUrl, file) {
+	                return _this4.loadImageFromURL(_this4.toDataURL(), 'FilterImage').then(function () {
+	                    _this4.addImageObject(imgUrl).then(function () {
+	                        URL.revokeObjectURL(file);
+	                    });
+	                });
+	            },
+	            applyFilter: function applyFilter() {
+	                _this4.applyFilter('mask', {
+	                    maskObjId: _this4.activeObjectId
+	                });
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Text Action
+	     * @returns {Object} actions for ui text
+	     * @private
+	     */
+	    _textAction: function _textAction() {
+	        var _this5 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            changeTextStyle: function changeTextStyle(styleObj) {
+	                if (_this5.activeObjectId) {
+	                    _this5.changeTextStyle(_this5.activeObjectId, styleObj);
+	                }
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Rotate Action
+	     * @returns {Object} actions for ui rotate
+	     * @private
+	     */
+	    _rotateAction: function _rotateAction() {
+	        var _this6 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            rotate: function rotate(angle) {
+	                _this6.rotate(angle);
+	                _this6.ui.resizeEditor();
+	            },
+	            setAngle: function setAngle(angle) {
+	                _this6.setAngle(angle);
+	                _this6.ui.resizeEditor();
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Shape Action
+	     * @returns {Object} actions for ui shape
+	     * @private
+	     */
+	    _shapeAction: function _shapeAction() {
+	        var _this7 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            changeShape: function changeShape(changeShapeObject) {
+	                if (_this7.activeObjectId) {
+	                    _this7.changeShape(_this7.activeObjectId, changeShapeObject);
+	                }
+	            },
+	            setDrawingShape: function setDrawingShape(shapeType) {
+	                _this7.setDrawingShape(shapeType);
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Crop Action
+	     * @returns {Object} actions for ui crop
+	     * @private
+	     */
+	    _cropAction: function _cropAction() {
+	        var _this8 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            crop: function crop() {
+	                var cropRect = _this8.getCropzoneRect();
+	                if (cropRect) {
+	                    _this8.crop(cropRect).then(function () {
+	                        _this8.stopDrawingMode();
+	                        _this8.ui.resizeEditor();
+	                        _this8.ui.changeMenu('crop');
+	                    })['catch'](function (message) {
+	                        return Promise.reject(message);
+	                    });
+	                }
+	            },
+	            cancel: function cancel() {
+	                _this8.stopDrawingMode();
+	                _this8.ui.changeMenu('crop');
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Flip Action
+	     * @returns {Object} actions for ui flip
+	     * @private
+	     */
+	    _flipAction: function _flipAction() {
+	        var _this9 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            flip: function flip(flipType) {
+	                return _this9[flipType]();
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Filter Action
+	     * @returns {Object} actions for ui filter
+	     * @private
+	     */
+	    _filterAction: function _filterAction() {
+	        var _this10 = this;
+
+	        return (0, _tuiCodeSnippet.extend)({
+	            applyFilter: function applyFilter(applying, type, options) {
+	                if (applying) {
+	                    _this10.applyFilter(type, options);
+	                } else if (_this10.hasFilter(type)) {
+	                    _this10.removeFilter(type);
+	                }
+	            }
+	        }, this._commonAction());
+	    },
+
+
+	    /**
+	     * Image Editor Event Observer
+	     */
+	    setReAction: function setReAction() {
+	        var _this11 = this;
+
+	        this.on({
+	            undoStackChanged: function undoStackChanged(length) {
+	                if (length) {
+	                    _this11.ui.changeUndoButtonStatus(true);
+	                    _this11.ui.changeResetButtonStatus(true);
+	                } else {
+	                    _this11.ui.changeUndoButtonStatus(false);
+	                    _this11.ui.changeResetButtonStatus(false);
+	                }
+	                _this11.ui.resizeEditor();
+	            },
+	            redoStackChanged: function redoStackChanged(length) {
+	                if (length) {
+	                    _this11.ui.changeRedoButtonStatus(true);
+	                } else {
+	                    _this11.ui.changeRedoButtonStatus(false);
+	                }
+	                _this11.ui.resizeEditor();
+	            },
+	            /* eslint-disable complexity */
+	            objectActivated: function objectActivated(obj) {
+	                _this11.activeObjectId = obj.id;
+
+	                _this11.ui.changeDeleteButtonEnabled(true);
+	                _this11.ui.changeDeleteAllButtonEnabled(true);
+
+	                if (obj.type === 'cropzone') {
+	                    _this11.ui.crop.changeApplyButtonStatus(true);
+	                } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+	                    _this11.stopDrawingMode();
+	                    if (_this11.ui.submenu !== 'shape') {
+	                        _this11.ui.changeMenu('shape', false, false);
+	                    }
+	                    _this11.ui.shape.setShapeStatus({
+	                        strokeColor: obj.stroke,
+	                        strokeWidth: obj.strokeWidth,
+	                        fillColor: obj.fill
+	                    });
+
+	                    _this11.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+	                } else if (obj.type === 'path' || obj.type === 'line') {
+	                    if (_this11.ui.submenu !== 'draw') {
+	                        _this11.ui.changeMenu('draw', false, false);
+	                        _this11.ui.draw.changeStandbyMode();
+	                    }
+	                } else if (['i-text', 'text'].indexOf(obj.type) > -1) {
+	                    if (_this11.ui.submenu !== 'text') {
+	                        _this11.ui.changeMenu('text', false, false);
+	                    }
+	                } else if (obj.type === 'icon') {
+	                    _this11.stopDrawingMode();
+	                    if (_this11.ui.submenu !== 'icon') {
+	                        _this11.ui.changeMenu('icon', false, false);
+	                    }
+	                    _this11.ui.icon.setIconPickerColor(obj.fill);
+	                }
+	            },
+	            /* eslint-enable complexity */
+	            addText: function addText(pos) {
+	                _this11.addText('Double Click', {
+	                    position: pos.originPosition,
+	                    styles: {
+	                        fill: _this11.ui.text.textColor,
+	                        fontSize: _util2.default.toInteger(_this11.ui.text.fontSize)
+	                    }
+	                }).then(function () {
+	                    _this11.changeCursor('default');
+	                });
+	            },
+	            addObjectAfter: function addObjectAfter(obj) {
+	                if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+	                    _this11.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+	                    _this11.ui.shape.changeStandbyMode();
+	                }
+	            },
+	            objectScaled: function objectScaled(obj) {
+	                if (['i-text', 'text'].indexOf(obj.type) > -1) {
+	                    _this11.ui.text.fontSize = _util2.default.toInteger(obj.fontSize);
+	                } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
+	                    var width = obj.width,
+	                        height = obj.height;
+
+	                    var strokeValue = _this11.ui.shape.getStrokeValue();
+
+	                    if (width < strokeValue) {
+	                        _this11.ui.shape.setStrokeValue(width);
+	                    }
+	                    if (height < strokeValue) {
+	                        _this11.ui.shape.setStrokeValue(height);
+	                    }
+	                }
+	            },
+	            selectionCleared: function selectionCleared() {
+	                _this11.activeObjectId = null;
+	                if (_this11.ui.submenu === 'text') {
+	                    _this11.changeCursor('text');
+	                } else if (_this11.ui.submenu !== 'draw' && _this11.ui.submenu !== 'crop') {
+	                    _this11.stopDrawingMode();
+	                }
+	            }
+	        });
+	    },
+
+
+	    /**
+	     * Common Action
+	     * @returns {Object} common actions for ui
+	     * @private
+	     */
+	    _commonAction: function _commonAction() {
+	        var _this12 = this;
+
+	        return {
+	            modeChange: function modeChange(menu) {
+	                switch (menu) {
+	                    case 'text':
+	                        _this12._changeActivateMode('TEXT');
+	                        break;
+	                    case 'crop':
+	                        _this12.startDrawingMode('CROPPER');
+	                        break;
+	                    case 'shape':
+	                        _this12._changeActivateMode('SHAPE');
+	                        _this12.setDrawingShape(_this12.ui.shape.type, _this12.ui.shape.options);
+	                        break;
+	                    default:
+	                        break;
+	                }
+	            },
+	            deactivateAll: this.deactivateAll.bind(this),
+	            changeSelectableAll: this.changeSelectableAll.bind(this),
+	            discardSelection: this.discardSelection.bind(this),
+	            stopDrawingMode: this.stopDrawingMode.bind(this)
+	        };
+	    },
+
+
+	    /**
+	     * Mixin
+	     * @param {ImageEditor} ImageEditor instance
+	     */
+	    mixin: function mixin(ImageEditor) {
+	        (0, _tuiCodeSnippet.extend)(ImageEditor.prototype, this);
+	    }
+	};
+
+/***/ }),
+/* 103 */
+/***/ (function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/*
+	  imagetracer.js version 1.2.4
+	  Simple raster image tracer and vectorizer written in JavaScript.
+	  andras@jankovics.net
+	*/
+
+	/*
+	  The Unlicense / PUBLIC DOMAIN
+	  This is free and unencumbered software released into the public domain.
+	  Anyone is free to copy, modify, publish, use, compile, sell, or
+	  distribute this software, either in source code form or as a compiled
+	  binary, for any purpose, commercial or non-commercial, and by any
+	  means.
+	  In jurisdictions that recognize copyright laws, the author or authors
+	  of this software dedicate any and all copyright interest in the
+	  software to the public domain. We make this dedication for the benefit
+	  of the public at large and to the detriment of our heirs and
+	  successors. We intend this dedication to be an overt act of
+	  relinquishment in perpetuity of all present and future rights to this
+	  software under copyright law.
+	  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+	  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+	  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+	  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+	  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+	  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+	  OTHER DEALINGS IN THE SOFTWARE.
+	  For more information, please refer to http://unlicense.org/
+	*/
+	var ImageTracer = function () {
+	    _createClass(ImageTracer, null, [{
+	        key: 'tracerDefaultOption',
+	        value: function tracerDefaultOption() {
+	            return {
+	                pathomit: 100,
+	                ltres: 0.1,
+	                qtres: 1,
+
+	                scale: 1,
+	                strokewidth: 5,
+	                viewbox: false,
+	                linefilter: true,
+	                desc: false,
+	                rightangleenhance: false,
+	                pal: [{
+	                    r: 0,
+	                    g: 0,
+	                    b: 0,
+	                    a: 255
+	                }, {
+	                    r: 255,
+	                    g: 255,
+	                    b: 255,
+	                    a: 255
+	                }]
+	            };
+	        }
+	        /* eslint-disable */
+
+	    }]);
+
+	    function ImageTracer() {
+	        _classCallCheck(this, ImageTracer);
+
+	        this.versionnumber = '1.2.4';
+	        this.optionpresets = {
+	            default: {
+	                corsenabled: false,
+	                ltres: 1,
+	                qtres: 1,
+	                pathomit: 8,
+	                rightangleenhance: true,
+	                colorsampling: 2,
+	                numberofcolors: 16,
+	                mincolorratio: 0,
+	                colorquantcycles: 3,
+	                layering: 0,
+	                strokewidth: 1,
+	                linefilter: false,
+	                scale: 1,
+	                roundcoords: 1,
+	                viewbox: false,
+	                desc: false,
+	                lcpr: 0,
+	                qcpr: 0,
+	                blurradius: 0,
+	                blurdelta: 20
+	            },
+	            'posterized1': {
+	                colorsampling: 0,
+	                numberofcolors: 2
+	            },
+	            'posterized2': {
+	                numberofcolors: 4,
+	                blurradius: 5
+	            },
+	            'curvy': {
+	                ltres: 0.01,
+	                linefilter: true,
+	                rightangleenhance: false },
+	            'sharp': { qtres: 0.01,
+	                linefilter: false },
+	            'detailed': { pathomit: 0,
+	                roundcoords: 2,
+	                ltres: 0.5,
+	                qtres: 0.5,
+	                numberofcolors: 64 },
+	            'smoothed': { blurradius: 5,
+	                blurdelta: 64 },
+	            'grayscale': { colorsampling: 0,
+	                colorquantcycles: 1,
+	                numberofcolors: 7 },
+	            'fixedpalette': { colorsampling: 0,
+	                colorquantcycles: 1,
+	                numberofcolors: 27 },
+	            'randomsampling1': { colorsampling: 1,
+	                numberofcolors: 8 },
+	            'randomsampling2': { colorsampling: 1,
+	                numberofcolors: 64 },
+	            'artistic1': { colorsampling: 0,
+	                colorquantcycles: 1,
+	                pathomit: 0,
+	                blurradius: 5,
+	                blurdelta: 64,
+	                ltres: 0.01,
+	                linefilter: true,
+	                numberofcolors: 16,
+	                strokewidth: 2 },
+	            'artistic2': { qtres: 0.01,
+	                colorsampling: 0,
+	                colorquantcycles: 1,
+	                numberofcolors: 4,
+	                strokewidth: 0 },
+	            'artistic3': { qtres: 10,
+	                ltres: 10,
+	                numberofcolors: 8 },
+	            'artistic4': { qtres: 10,
+	                ltres: 10,
+	                numberofcolors: 64,
+	                blurradius: 5,
+	                blurdelta: 256,
+	                strokewidth: 2 },
+	            'posterized3': { ltres: 1,
+	                qtres: 1,
+	                pathomit: 20,
+	                rightangleenhance: true,
+	                colorsampling: 0,
+	                numberofcolors: 3,
+	                mincolorratio: 0,
+	                colorquantcycles: 3,
+	                blurradius: 3,
+	                blurdelta: 20,
+	                strokewidth: 0,
+	                linefilter: false,
+	                roundcoords: 1,
+	                pal: [{ r: 0,
+	                    g: 0,
+	                    b: 100,
+	                    a: 255 }, { r: 255,
+	                    g: 255,
+	                    b: 255,
+	                    a: 255 }] }
+	        };
+
+	        this.pathscan_combined_lookup = [[[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[0, 1, 0, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [0, 2, -1, 0]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [0, 1, 0, -1], [0, 0, 1, 0]], [[0, 0, 1, 0], [-1, -1, -1, -1], [0, 2, -1, 0], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [0, 0, 1, 0], [0, 3, 0, 1], [-1, -1, -1, -1]], [[13, 3, 0, 1], [13, 2, -1, 0], [7, 1, 0, -1], [7, 0, 1, 0]], [[-1, -1, -1, -1], [0, 1, 0, -1], [-1, -1, -1, -1], [0, 3, 0, 1]], [[0, 3, 0, 1], [0, 2, -1, 0], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[0, 3, 0, 1], [0, 2, -1, 0], [-1, -1, -1, -1], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [0, 1, 0, -1], [-1, -1, -1, -1], [0, 3, 0, 1]], [[11, 1, 0, -1], [14, 0, 1, 0], [14, 3, 0, 1], [11, 2, -1, 0]], [[-1, -1, -1, -1], [0, 0, 1, 0], [0, 3, 0, 1], [-1, -1, -1, -1]], [[0, 0, 1, 0], [-1, -1, -1, -1], [0, 2, -1, 0], [-1, -1, -1, -1]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [0, 1, 0, -1], [0, 0, 1, 0]], [[0, 1, 0, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [0, 2, -1, 0]], [[-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1], [-1, -1, -1, -1]]];
+
+	        this.gks = [[0.27901, 0.44198, 0.27901], [0.135336, 0.228569, 0.272192, 0.228569, 0.135336], [0.086776, 0.136394, 0.178908, 0.195843, 0.178908, 0.136394, 0.086776], [0.063327, 0.093095, 0.122589, 0.144599, 0.152781, 0.144599, 0.122589, 0.093095, 0.063327], [0.049692, 0.069304, 0.089767, 0.107988, 0.120651, 0.125194, 0.120651, 0.107988, 0.089767, 0.069304, 0.049692]];
+
+	        this.specpalette = [{ r: 0, g: 0, b: 0, a: 255 }, { r: 128, g: 128, b: 128, a: 255 }, { r: 0, g: 0, b: 128, a: 255 }, { r: 64, g: 64, b: 128, a: 255 }, { r: 192, g: 192, b: 192, a: 255 }, { r: 255, g: 255, b: 255, a: 255 }, { r: 128, g: 128, b: 192, a: 255 }, { r: 0, g: 0, b: 192, a: 255 }, { r: 128, g: 0, b: 0, a: 255 }, { r: 128, g: 64, b: 64, a: 255 }, { r: 128, g: 0, b: 128, a: 255 }, { r: 168, g: 168, b: 168, a: 255 }, { r: 192, g: 128, b: 128, a: 255 }, { r: 192, g: 0, b: 0, a: 255 }, { r: 255, g: 255, b: 255, a: 255 }, { r: 0, g: 128, b: 0, a: 255 }];
+	    }
+
+	    _createClass(ImageTracer, [{
+	        key: 'imageToSVG',
+	        value: function imageToSVG(url, callback, options) {
+	            var _this = this;
+
+	            options = this.checkoptions(options);
+	            this.loadImage(url, function (canvas) {
+	                callback(_this.imagedataToSVG(_this.getImgdata(canvas), options));
+	            }, options);
+	        }
+	    }, {
+	        key: 'imagedataToSVG',
+	        value: function imagedataToSVG(imgd, options) {
+	            options = this.checkoptions(options);
+	            var td = this.imagedataToTracedata(imgd, options);
+
+	            return this.getsvgstring(td, options);
+	        }
+	    }, {
+	        key: 'imageToTracedata',
+	        value: function imageToTracedata(url, callback, options) {
+	            var _this2 = this;
+
+	            options = this.checkoptions(options);
+	            this.loadImage(url, function (canvas) {
+	                callback(_this2.imagedataToTracedata(_this2.getImgdata(canvas), options));
+	            }, options);
+	        }
+	    }, {
+	        key: 'imagedataToTracedata',
+	        value: function imagedataToTracedata(imgd, options) {
+	            options = this.checkoptions(options);
+	            var ii = this.colorquantization(imgd, options);
+	            var tracedata = void 0;
+	            if (options.layering === 0) {
+	                tracedata = {
+	                    layers: [],
+	                    palette: ii.palette,
+	                    width: ii.array[0].length - 2,
+	                    height: ii.array.length - 2
+	                };
+
+	                for (var colornum = 0; colornum < ii.palette.length; colornum += 1) {
+	                    var tracedlayer = this.batchtracepaths(this.internodes(this.pathscan(this.layeringstep(ii, colornum), options.pathomit), options), options.ltres, options.qtres);
+	                    tracedata.layers.push(tracedlayer);
+	                }
+	            } else {
+	                var ls = this.layering(ii);
+	                if (options.layercontainerid) {
+	                    this.drawLayers(ls, this.specpalette, options.scale, options.layercontainerid);
+	                }
+	                var bps = this.batchpathscan(ls, options.pathomit);
+	                var bis = this.batchinternodes(bps, options);
+	                tracedata = {
+	                    layers: this.batchtracelayers(bis, options.ltres, options.qtres),
+	                    palette: ii.palette,
+	                    width: imgd.width,
+	                    height: imgd.height
+	                };
+	            }
+
+	            return tracedata;
+	        }
+	    }, {
+	        key: 'checkoptions',
+	        value: function checkoptions(options) {
+	            options = options || {};
+	            if (typeof options === 'string') {
+	                options = options.toLowerCase();
+	                if (this.optionpresets[options]) {
+	                    options = this.optionpresets[options];
+	                } else {
+	                    options = {};
+	                }
+	            }
+	            var ok = Object.keys(this.optionpresets['default']);
+	            for (var k = 0; k < ok.length; k += 1) {
+	                if (!options.hasOwnProperty(ok[k])) {
+	                    options[ok[k]] = this.optionpresets['default'][ok[k]];
+	                }
+	            }
+
+	            return options;
+	        }
+	    }, {
+	        key: 'colorquantization',
+	        value: function colorquantization(imgd, options) {
+	            var arr = [];
+	            var idx = 0;
+	            var cd = void 0;
+	            var cdl = void 0;
+	            var ci = void 0;
+	            var paletteacc = [];
+	            var pixelnum = imgd.width * imgd.height;
+	            var i = void 0;
+	            var j = void 0;
+	            var k = void 0;
+	            var cnt = void 0;
+	            var palette = void 0;
+
+	            for (j = 0; j < imgd.height + 2; j += 1) {
+	                arr[j] = [];
+	                for (i = 0; i < imgd.width + 2; i += 1) {
+	                    arr[j][i] = -1;
+	                }
+	            }
+	            if (options.pal) {
+	                palette = options.pal;
+	            } else if (options.colorsampling === 0) {
+	                palette = this.generatepalette(options.numberofcolors);
+	            } else if (options.colorsampling === 1) {
+	                palette = this.samplepalette(options.numberofcolors, imgd);
+	            } else {
+	                palette = this.samplepalette2(options.numberofcolors, imgd);
+	            }
+	            if (options.blurradius > 0) {
+	                imgd = this.blur(imgd, options.blurradius, options.blurdelta);
+	            }
+	            for (cnt = 0; cnt < options.colorquantcycles; cnt += 1) {
+	                if (cnt > 0) {
+	                    for (k = 0; k < palette.length; k += 1) {
+	                        if (paletteacc[k].n > 0) {
+	                            palette[k] = { r: Math.floor(paletteacc[k].r / paletteacc[k].n),
+	                                g: Math.floor(paletteacc[k].g / paletteacc[k].n),
+	                                b: Math.floor(paletteacc[k].b / paletteacc[k].n),
+	                                a: Math.floor(paletteacc[k].a / paletteacc[k].n) };
+	                        }
+
+	                        if (paletteacc[k].n / pixelnum < options.mincolorratio && cnt < options.colorquantcycles - 1) {
+	                            palette[k] = { r: Math.floor(Math.random() * 255),
+	                                g: Math.floor(Math.random() * 255),
+	                                b: Math.floor(Math.random() * 255),
+	                                a: Math.floor(Math.random() * 255) };
+	                        }
+	                    }
+	                }
+
+	                for (i = 0; i < palette.length; i += 1) {
+	                    paletteacc[i] = { r: 0,
+	                        g: 0,
+	                        b: 0,
+	                        a: 0,
+	                        n: 0 };
+	                }
+
+	                for (j = 0; j < imgd.height; j += 1) {
+	                    for (i = 0; i < imgd.width; i += 1) {
+	                        idx = (j * imgd.width + i) * 4;
+
+	                        ci = 0;
+	                        cdl = 1024;
+	                        for (k = 0; k < palette.length; k += 1) {
+	                            cd = Math.abs(palette[k].r - imgd.data[idx]) + Math.abs(palette[k].g - imgd.data[idx + 1]) + Math.abs(palette[k].b - imgd.data[idx + 2]) + Math.abs(palette[k].a - imgd.data[idx + 3]);
+
+	                            if (cd < cdl) {
+	                                cdl = cd;
+	                                ci = k;
+	                            }
+	                        }
+
+	                        paletteacc[ci].r += imgd.data[idx];
+	                        paletteacc[ci].g += imgd.data[idx + 1];
+	                        paletteacc[ci].b += imgd.data[idx + 2];
+	                        paletteacc[ci].a += imgd.data[idx + 3];
+	                        paletteacc[ci].n += 1;
+
+	                        arr[j + 1][i + 1] = ci;
+	                    }
+	                }
+	            }
+
+	            return { array: arr,
+	                palette: palette };
+	        }
+	    }, {
+	        key: 'samplepalette',
+	        value: function samplepalette(numberofcolors, imgd) {
+	            var idx = void 0;
+	            var palette = [];
+	            for (var i = 0; i < numberofcolors; i += 1) {
+	                idx = Math.floor(Math.random() * imgd.data.length / 4) * 4;
+	                palette.push({ r: imgd.data[idx],
+	                    g: imgd.data[idx + 1],
+	                    b: imgd.data[idx + 2],
+	                    a: imgd.data[idx + 3] });
+	            }
+
+	            return palette;
+	        }
+	    }, {
+	        key: 'samplepalette2',
+	        value: function samplepalette2(numberofcolors, imgd) {
+	            var idx = void 0;
+	            var palette = [];
+	            var ni = Math.ceil(Math.sqrt(numberofcolors));
+	            var nj = Math.ceil(numberofcolors / ni);
+	            var vx = imgd.width / (ni + 1);
+	            var vy = imgd.height / (nj + 1);
+	            for (var j = 0; j < nj; j += 1) {
+	                for (var i = 0; i < ni; i += 1) {
+	                    if (palette.length === numberofcolors) {
+	                        break;
+	                    } else {
+	                        idx = Math.floor((j + 1) * vy * imgd.width + (i + 1) * vx) * 4;
+	                        palette.push({ r: imgd.data[idx],
+	                            g: imgd.data[idx + 1],
+	                            b: imgd.data[idx + 2],
+	                            a: imgd.data[idx + 3] });
+	                    }
+	                }
+	            }
+
+	            return palette;
+	        }
+	    }, {
+	        key: 'generatepalette',
+	        value: function generatepalette(numberofcolors) {
+	            var palette = [];
+	            var rcnt = void 0;
+	            var gcnt = void 0;
+	            var bcnt = void 0;
+	            if (numberofcolors < 8) {
+	                var graystep = Math.floor(255 / (numberofcolors - 1));
+	                for (var i = 0; i < numberofcolors; i += 1) {
+	                    palette.push({ r: i * graystep,
+	                        g: i * graystep,
+	                        b: i * graystep,
+	                        a: 255 });
+	                }
+	            } else {
+	                var colorqnum = Math.floor(Math.pow(numberofcolors, 1 / 3));
+	                var colorstep = Math.floor(255 / (colorqnum - 1));
+	                var rndnum = numberofcolors - colorqnum * colorqnum * colorqnum;
+	                for (rcnt = 0; rcnt < colorqnum; rcnt += 1) {
+	                    for (gcnt = 0; gcnt < colorqnum; gcnt += 1) {
+	                        for (bcnt = 0; bcnt < colorqnum; bcnt += 1) {
+	                            palette.push({ r: rcnt * colorstep,
+	                                g: gcnt * colorstep,
+	                                b: bcnt * colorstep,
+	                                a: 255 });
+	                        }
+	                    }
+	                }
+	                for (rcnt = 0; rcnt < rndnum; rcnt += 1) {
+	                    palette.push({ r: Math.floor(Math.random() * 255),
+	                        g: Math.floor(Math.random() * 255),
+	                        b: Math.floor(Math.random() * 255),
+	                        a: Math.floor(Math.random() * 255) });
+	                }
+	            }
+
+	            return palette;
+	        }
+	    }, {
+	        key: 'layering',
+	        value: function layering(ii) {
+	            var layers = [];
+	            var val = 0;
+	            var ah = ii.array.length;
+	            var aw = ii.array[0].length;
+	            var n1 = void 0;
+	            var n2 = void 0;
+	            var n3 = void 0;
+	            var n4 = void 0;
+	            var n5 = void 0;
+	            var n6 = void 0;
+	            var n7 = void 0;
+	            var n8 = void 0;
+	            var i = void 0;
+	            var j = void 0;
+	            var k = void 0;
+	            for (k = 0; k < ii.palette.length; k += 1) {
+	                layers[k] = [];
+	                for (j = 0; j < ah; j += 1) {
+	                    layers[k][j] = [];
+	                    for (i = 0; i < aw; i += 1) {
+	                        layers[k][j][i] = 0;
+	                    }
+	                }
+	            }
+	            for (j = 1; j < ah - 1; j += 1) {
+	                for (i = 1; i < aw - 1; i += 1) {
+	                    val = ii.array[j][i];
+
+	                    n1 = ii.array[j - 1][i - 1] === val ? 1 : 0;
+	                    n2 = ii.array[j - 1][i] === val ? 1 : 0;
+	                    n3 = ii.array[j - 1][i + 1] === val ? 1 : 0;
+	                    n4 = ii.array[j][i - 1] === val ? 1 : 0;
+	                    n5 = ii.array[j][i + 1] === val ? 1 : 0;
+	                    n6 = ii.array[j + 1][i - 1] === val ? 1 : 0;
+	                    n7 = ii.array[j + 1][i] === val ? 1 : 0;
+	                    n8 = ii.array[j + 1][i + 1] === val ? 1 : 0;
+
+	                    layers[val][j + 1][i + 1] = 1 + n5 * 2 + n8 * 4 + n7 * 8;
+	                    if (!n4) {
+	                        layers[val][j + 1][i] = 0 + 2 + n7 * 4 + n6 * 8;
+	                    }
+	                    if (!n2) {
+	                        layers[val][j][i + 1] = 0 + n3 * 2 + n5 * 4 + 8;
+	                    }
+	                    if (!n1) {
+	                        layers[val][j][i] = 0 + n2 * 2 + 4 + n4 * 8;
+	                    }
+	                }
+	            }
+
+	            return layers;
+	        }
+	    }, {
+	        key: 'layeringstep',
+	        value: function layeringstep(ii, cnum) {
+	            var layer = [];
+	            var ah = ii.array.length;
+	            var aw = ii.array[0].length;
+	            var i = void 0;
+	            var j = void 0;
+	            for (j = 0; j < ah; j += 1) {
+	                layer[j] = [];
+	                for (i = 0; i < aw; i += 1) {
+	                    layer[j][i] = 0;
+	                }
+	            }
+	            for (j = 1; j < ah; j += 1) {
+	                for (i = 1; i < aw; i += 1) {
+	                    layer[j][i] = (ii.array[j - 1][i - 1] === cnum ? 1 : 0) + (ii.array[j - 1][i] === cnum ? 2 : 0) + (ii.array[j][i - 1] === cnum ? 8 : 0) + (ii.array[j][i] === cnum ? 4 : 0);
+	                }
+	            }
+
+	            return layer;
+	        }
+	    }, {
+	        key: 'pathscan',
+	        value: function pathscan(arr, pathomit) {
+	            var paths = [];
+	            var pacnt = 0;
+	            var pcnt = 0;
+	            var px = 0;
+	            var py = 0;
+	            var w = arr[0].length;
+	            var h = arr.length;
+	            var dir = 0;
+	            var pathfinished = true;
+	            var holepath = false;
+	            var lookuprow = void 0;
+	            for (var j = 0; j < h; j += 1) {
+	                for (var i = 0; i < w; i += 1) {
+	                    if (arr[j][i] === 4 || arr[j][i] === 11) {
+	                        px = i;
+	                        py = j;
+	                        paths[pacnt] = {};
+	                        paths[pacnt].points = [];
+	                        paths[pacnt].boundingbox = [px, py, px, py];
+	                        paths[pacnt].holechildren = [];
+	                        pathfinished = false;
+	                        pcnt = 0;
+	                        holepath = arr[j][i] === 11;
+	                        dir = 1;
+
+	                        while (!pathfinished) {
+	                            paths[pacnt].points[pcnt] = {};
+	                            paths[pacnt].points[pcnt].x = px - 1;
+	                            paths[pacnt].points[pcnt].y = py - 1;
+	                            paths[pacnt].points[pcnt].t = arr[py][px];
+
+	                            if (px - 1 < paths[pacnt].boundingbox[0]) {
+	                                paths[pacnt].boundingbox[0] = px - 1;
+	                            }
+	                            if (px - 1 > paths[pacnt].boundingbox[2]) {
+	                                paths[pacnt].boundingbox[2] = px - 1;
+	                            }
+	                            if (py - 1 < paths[pacnt].boundingbox[1]) {
+	                                paths[pacnt].boundingbox[1] = py - 1;
+	                            }
+	                            if (py - 1 > paths[pacnt].boundingbox[3]) {
+	                                paths[pacnt].boundingbox[3] = py - 1;
+	                            }
+
+	                            lookuprow = this.pathscan_combined_lookup[arr[py][px]][dir];
+	                            arr[py][px] = lookuprow[0];dir = lookuprow[1];px += lookuprow[2];py += lookuprow[3];
+
+	                            if (px - 1 === paths[pacnt].points[0].x && py - 1 === paths[pacnt].points[0].y) {
+	                                pathfinished = true;
+
+	                                if (paths[pacnt].points.length < pathomit) {
+	                                    paths.pop();
+	                                } else {
+	                                    paths[pacnt].isholepath = !!holepath;
+
+	                                    if (holepath) {
+	                                        var parentidx = 0,
+	                                            parentbbox = [-1, -1, w + 1, h + 1];
+	                                        for (var parentcnt = 0; parentcnt < pacnt; parentcnt++) {
+	                                            if (!paths[parentcnt].isholepath && this.boundingboxincludes(paths[parentcnt].boundingbox, paths[pacnt].boundingbox) && this.boundingboxincludes(parentbbox, paths[parentcnt].boundingbox)) {
+	                                                parentidx = parentcnt;
+	                                                parentbbox = paths[parentcnt].boundingbox;
+	                                            }
+	                                        }
+	                                        paths[parentidx].holechildren.push(pacnt);
+	                                    }
+	                                    pacnt += 1;
+	                                }
+	                            }
+	                            pcnt += 1;
+	                        }
+	                    }
+	                }
+	            }
+
+	            return paths;
+	        }
+	    }, {
+	        key: 'boundingboxincludes',
+	        value: function boundingboxincludes(parentbbox, childbbox) {
+	            return parentbbox[0] < childbbox[0] && parentbbox[1] < childbbox[1] && parentbbox[2] > childbbox[2] && parentbbox[3] > childbbox[3];
+	        }
+	    }, {
+	        key: 'batchpathscan',
+	        value: function batchpathscan(layers, pathomit) {
+	            var bpaths = [];
+	            for (var k in layers) {
+	                if (!layers.hasOwnProperty(k)) {
+	                    continue;
+	                }
+	                bpaths[k] = this.pathscan(layers[k], pathomit);
+	            }
+
+	            return bpaths;
+	        }
+	    }, {
+	        key: 'internodes',
+	        value: function internodes(paths, options) {
+	            var ins = [];
+	            var palen = 0;
+	            var nextidx = 0;
+	            var nextidx2 = 0;
+	            var previdx = 0;
+	            var previdx2 = 0;
+	            var pacnt = void 0;
+	            var pcnt = void 0;
+	            for (pacnt = 0; pacnt < paths.length; pacnt += 1) {
+	                ins[pacnt] = {};
+	                ins[pacnt].points = [];
+	                ins[pacnt].boundingbox = paths[pacnt].boundingbox;
+	                ins[pacnt].holechildren = paths[pacnt].holechildren;
+	                ins[pacnt].isholepath = paths[pacnt].isholepath;
+	                palen = paths[pacnt].points.length;
+
+	                for (pcnt = 0; pcnt < palen; pcnt += 1) {
+	                    nextidx = (pcnt + 1) % palen;nextidx2 = (pcnt + 2) % palen;previdx = (pcnt - 1 + palen) % palen;previdx2 = (pcnt - 2 + palen) % palen;
+
+	                    if (options.rightangleenhance && this.testrightangle(paths[pacnt], previdx2, previdx, pcnt, nextidx, nextidx2)) {
+	                        if (ins[pacnt].points.length > 0) {
+	                            ins[pacnt].points[ins[pacnt].points.length - 1].linesegment = this.getdirection(ins[pacnt].points[ins[pacnt].points.length - 1].x, ins[pacnt].points[ins[pacnt].points.length - 1].y, paths[pacnt].points[pcnt].x, paths[pacnt].points[pcnt].y);
+	                        }
+
+	                        ins[pacnt].points.push({
+	                            x: paths[pacnt].points[pcnt].x,
+	                            y: paths[pacnt].points[pcnt].y,
+	                            linesegment: this.getdirection(paths[pacnt].points[pcnt].x, paths[pacnt].points[pcnt].y, (paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2, (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2)
+	                        });
+	                    }
+
+	                    ins[pacnt].points.push({
+	                        x: (paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2,
+	                        y: (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2,
+	                        linesegment: this.getdirection((paths[pacnt].points[pcnt].x + paths[pacnt].points[nextidx].x) / 2, (paths[pacnt].points[pcnt].y + paths[pacnt].points[nextidx].y) / 2, (paths[pacnt].points[nextidx].x + paths[pacnt].points[nextidx2].x) / 2, (paths[pacnt].points[nextidx].y + paths[pacnt].points[nextidx2].y) / 2)
+	                    });
+	                }
+	            }
+
+	            return ins;
+	        }
+	    }, {
+	        key: 'testrightangle',
+	        value: function testrightangle(path, idx1, idx2, idx3, idx4, idx5) {
+	            return path.points[idx3].x === path.points[idx1].x && path.points[idx3].x === path.points[idx2].x && path.points[idx3].y === path.points[idx4].y && path.points[idx3].y === path.points[idx5].y || path.points[idx3].y === path.points[idx1].y && path.points[idx3].y === path.points[idx2].y && path.points[idx3].x === path.points[idx4].x && path.points[idx3].x === path.points[idx5].x;
+	        }
+	    }, {
+	        key: 'getdirection',
+	        value: function getdirection(x1, y1, x2, y2) {
+	            var val = 8;
+	            if (x1 < x2) {
+	                if (y1 < y2) {
+	                    val = 1;
+	                } else if (y1 > y2) {
+	                    val = 7;
+	                } else {
+	                    val = 0;
+	                }
+	            } else if (x1 > x2) {
+	                if (y1 < y2) {
+	                    val = 3;
+	                } else if (y1 > y2) {
+	                    val = 5;
+	                } else {
+	                    val = 4;
+	                }
+	            } else if (y1 < y2) {
+	                val = 2;
+	            } else if (y1 > y2) {
+	                val = 6;
+	            } else {
+	                val = 8;
+	            }
+
+	            return val;
+	        }
+	    }, {
+	        key: 'batchinternodes',
+	        value: function batchinternodes(bpaths, options) {
+	            var binternodes = [];
+	            for (var k in bpaths) {
+	                if (!bpaths.hasOwnProperty(k)) {
+	                    continue;
+	                }
+	                binternodes[k] = this.internodes(bpaths[k], options);
+	            }
+
+	            return binternodes;
+	        }
+	    }, {
+	        key: 'tracepath',
+	        value: function tracepath(path, ltres, qtres) {
+	            var pcnt = 0;
+	            var segtype1 = void 0;
+	            var segtype2 = void 0;
+	            var seqend = void 0;
+	            var smp = {};
+	            smp.segments = [];
+	            smp.boundingbox = path.boundingbox;
+	            smp.holechildren = path.holechildren;
+	            smp.isholepath = path.isholepath;
+
+	            while (pcnt < path.points.length) {
+	                segtype1 = path.points[pcnt].linesegment;
+	                segtype2 = -1;
+	                seqend = pcnt + 1;
+	                while ((path.points[seqend].linesegment === segtype1 || path.points[seqend].linesegment === segtype2 || segtype2 === -1) && seqend < path.points.length - 1) {
+	                    if (path.points[seqend].linesegment !== segtype1 && segtype2 === -1) {
+	                        segtype2 = path.points[seqend].linesegment;
+	                    }
+	                    seqend += 1;
+	                }
+	                if (seqend === path.points.length - 1) {
+	                    seqend = 0;
+	                }
+
+	                smp.segments = smp.segments.concat(this.fitseq(path, ltres, qtres, pcnt, seqend));
+
+	                if (seqend > 0) {
+	                    pcnt = seqend;
+	                } else {
+	                    pcnt = path.points.length;
+	                }
+	            }
+
+	            return smp;
+	        }
+	    }, {
+	        key: 'fitseq',
+	        value: function fitseq(path, ltres, qtres, seqstart, seqend) {
+	            if (seqend > path.points.length || seqend < 0) {
+	                return [];
+	            }
+	            var errorpoint = seqstart,
+	                errorval = 0,
+	                curvepass = true,
+	                px = void 0,
+	                py = void 0,
+	                dist2 = void 0;
+	            var tl = seqend - seqstart;if (tl < 0) {
+	                tl += path.points.length;
+	            }
+	            var vx = (path.points[seqend].x - path.points[seqstart].x) / tl,
+	                vy = (path.points[seqend].y - path.points[seqstart].y) / tl;
+	            var pcnt = (seqstart + 1) % path.points.length,
+	                pl = void 0;
+	            while (pcnt != seqend) {
+	                pl = pcnt - seqstart;if (pl < 0) {
+	                    pl += path.points.length;
+	                }
+	                px = path.points[seqstart].x + vx * pl;py = path.points[seqstart].y + vy * pl;
+	                dist2 = (path.points[pcnt].x - px) * (path.points[pcnt].x - px) + (path.points[pcnt].y - py) * (path.points[pcnt].y - py);
+	                if (dist2 > ltres) {
+	                    curvepass = false;
+	                }
+	                if (dist2 > errorval) {
+	                    errorpoint = pcnt;errorval = dist2;
+	                }
+	                pcnt = (pcnt + 1) % path.points.length;
+	            }
+	            if (curvepass) {
+	                return [{ type: 'L',
+	                    x1: path.points[seqstart].x,
+	                    y1: path.points[seqstart].y,
+	                    x2: path.points[seqend].x,
+	                    y2: path.points[seqend].y }];
+	            }
+	            var fitpoint = errorpoint;curvepass = true;errorval = 0;
+	            var t = (fitpoint - seqstart) / tl,
+	                t1 = (1 - t) * (1 - t),
+	                t2 = 2 * (1 - t) * t,
+	                t3 = t * t;
+	            var cpx = (t1 * path.points[seqstart].x + t3 * path.points[seqend].x - path.points[fitpoint].x) / -t2,
+	                cpy = (t1 * path.points[seqstart].y + t3 * path.points[seqend].y - path.points[fitpoint].y) / -t2;
+	            pcnt = seqstart + 1;
+	            while (pcnt != seqend) {
+	                t = (pcnt - seqstart) / tl;t1 = (1 - t) * (1 - t);t2 = 2 * (1 - t) * t;t3 = t * t;
+	                px = t1 * path.points[seqstart].x + t2 * cpx + t3 * path.points[seqend].x;
+	                py = t1 * path.points[seqstart].y + t2 * cpy + t3 * path.points[seqend].y;
+	                dist2 = (path.points[pcnt].x - px) * (path.points[pcnt].x - px) + (path.points[pcnt].y - py) * (path.points[pcnt].y - py);
+	                if (dist2 > qtres) {
+	                    curvepass = false;
+	                }
+	                if (dist2 > errorval) {
+	                    errorpoint = pcnt;errorval = dist2;
+	                }
+	                pcnt = (pcnt + 1) % path.points.length;
+	            }
+	            if (curvepass) {
+	                return [{ type: 'Q',
+	                    x1: path.points[seqstart].x,
+	                    y1: path.points[seqstart].y,
+	                    x2: cpx,
+	                    y2: cpy,
+	                    x3: path.points[seqend].x,
+	                    y3: path.points[seqend].y }];
+	            }
+	            var splitpoint = fitpoint;
+
+	            return this.fitseq(path, ltres, qtres, seqstart, splitpoint).concat(this.fitseq(path, ltres, qtres, splitpoint, seqend));
+	        }
+	    }, {
+	        key: 'batchtracepaths',
+	        value: function batchtracepaths(internodepaths, ltres, qtres) {
+	            var btracedpaths = [];
+	            for (var k in internodepaths) {
+	                if (!internodepaths.hasOwnProperty(k)) {
+	                    continue;
+	                }
+	                btracedpaths.push(this.tracepath(internodepaths[k], ltres, qtres));
+	            }
+
+	            return btracedpaths;
+	        }
+	    }, {
+	        key: 'batchtracelayers',
+	        value: function batchtracelayers(binternodes, ltres, qtres) {
+	            var btbis = [];
+	            for (var k in binternodes) {
+	                if (!binternodes.hasOwnProperty(k)) {
+	                    continue;
+	                }
+	                btbis[k] = this.batchtracepaths(binternodes[k], ltres, qtres);
+	            }
+
+	            return btbis;
+	        }
+	    }, {
+	        key: 'roundtodec',
+	        value: function roundtodec(val, places) {
+	            return Number(val.toFixed(places));
+	        }
+	    }, {
+	        key: 'svgpathstring',
+	        value: function svgpathstring(tracedata, lnum, pathnum, options) {
+	            var layer = tracedata.layers[lnum],
+	                smp = layer[pathnum],
+	                str = '',
+	                pcnt = void 0;
+	            if (options.linefilter && smp.segments.length < 3) {
+	                return str;
+	            }
+	            str = '<path ' + (options.desc ? 'desc="l ' + lnum + ' p ' + pathnum + '" ' : '') + this.tosvgcolorstr(tracedata.palette[lnum], options) + 'd="';
+	            if (options.roundcoords === -1) {
+	                str += 'M ' + smp.segments[0].x1 * options.scale + ' ' + smp.segments[0].y1 * options.scale + ' ';
+	                for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
+	                    str += smp.segments[pcnt].type + ' ' + smp.segments[pcnt].x2 * options.scale + ' ' + smp.segments[pcnt].y2 * options.scale + ' ';
+	                    if (smp.segments[pcnt].hasOwnProperty('x3')) {
+	                        str += smp.segments[pcnt].x3 * options.scale + ' ' + smp.segments[pcnt].y3 * options.scale + ' ';
+	                    }
+	                }
+	                str += 'Z ';
+	            } else {
+	                str += 'M ' + this.roundtodec(smp.segments[0].x1 * options.scale, options.roundcoords) + ' ' + this.roundtodec(smp.segments[0].y1 * options.scale, options.roundcoords) + ' ';
+	                for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
+	                    str += smp.segments[pcnt].type + ' ' + this.roundtodec(smp.segments[pcnt].x2 * options.scale, options.roundcoords) + ' ' + this.roundtodec(smp.segments[pcnt].y2 * options.scale, options.roundcoords) + ' ';
+	                    if (smp.segments[pcnt].hasOwnProperty('x3')) {
+	                        str += this.roundtodec(smp.segments[pcnt].x3 * options.scale, options.roundcoords) + ' ' + this.roundtodec(smp.segments[pcnt].y3 * options.scale, options.roundcoords) + ' ';
+	                    }
+	                }
+	                str += 'Z ';
+	            }
+	            for (var hcnt = 0; hcnt < smp.holechildren.length; hcnt++) {
+	                var hsmp = layer[smp.holechildren[hcnt]];
+
+	                if (options.roundcoords === -1) {
+	                    if (hsmp.segments[hsmp.segments.length - 1].hasOwnProperty('x3')) {
+	                        str += 'M ' + hsmp.segments[hsmp.segments.length - 1].x3 * options.scale + ' ' + hsmp.segments[hsmp.segments.length - 1].y3 * options.scale + ' ';
+	                    } else {
+	                        str += 'M ' + hsmp.segments[hsmp.segments.length - 1].x2 * options.scale + ' ' + hsmp.segments[hsmp.segments.length - 1].y2 * options.scale + ' ';
+	                    }
+	                    for (pcnt = hsmp.segments.length - 1; pcnt >= 0; pcnt--) {
+	                        str += hsmp.segments[pcnt].type + ' ';
+	                        if (hsmp.segments[pcnt].hasOwnProperty('x3')) {
+	                            str += hsmp.segments[pcnt].x2 * options.scale + ' ' + hsmp.segments[pcnt].y2 * options.scale + ' ';
+	                        }
+	                        str += hsmp.segments[pcnt].x1 * options.scale + ' ' + hsmp.segments[pcnt].y1 * options.scale + ' ';
+	                    }
+	                } else {
+	                    if (hsmp.segments[hsmp.segments.length - 1].hasOwnProperty('x3')) {
+	                        str += 'M ' + this.roundtodec(hsmp.segments[hsmp.segments.length - 1].x3 * options.scale) + ' ' + this.roundtodec(hsmp.segments[hsmp.segments.length - 1].y3 * options.scale) + ' ';
+	                    } else {
+	                        str += 'M ' + this.roundtodec(hsmp.segments[hsmp.segments.length - 1].x2 * options.scale) + ' ' + this.roundtodec(hsmp.segments[hsmp.segments.length - 1].y2 * options.scale) + ' ';
+	                    }
+	                    for (pcnt = hsmp.segments.length - 1; pcnt >= 0; pcnt--) {
+	                        str += hsmp.segments[pcnt].type + ' ';
+	                        if (hsmp.segments[pcnt].hasOwnProperty('x3')) {
+	                            str += this.roundtodec(hsmp.segments[pcnt].x2 * options.scale) + ' ' + this.roundtodec(hsmp.segments[pcnt].y2 * options.scale) + ' ';
+	                        }
+	                        str += this.roundtodec(hsmp.segments[pcnt].x1 * options.scale) + ' ' + this.roundtodec(hsmp.segments[pcnt].y1 * options.scale) + ' ';
+	                    }
+	                }
+	                str += 'Z ';
+	            }
+	            str += '" />';
+	            if (options.lcpr || options.qcpr) {
+	                for (pcnt = 0; pcnt < smp.segments.length; pcnt++) {
+	                    if (smp.segments[pcnt].hasOwnProperty('x3') && options.qcpr) {
+	                        str += '<circle cx="' + smp.segments[pcnt].x2 * options.scale + '" cy="' + smp.segments[pcnt].y2 * options.scale + '" r="' + options.qcpr + '" fill="cyan" stroke-width="' + options.qcpr * 0.2 + '" stroke="black" />';
+	                        str += '<circle cx="' + smp.segments[pcnt].x3 * options.scale + '" cy="' + smp.segments[pcnt].y3 * options.scale + '" r="' + options.qcpr + '" fill="white" stroke-width="' + options.qcpr * 0.2 + '" stroke="black" />';
+	                        str += '<line x1="' + smp.segments[pcnt].x1 * options.scale + '" y1="' + smp.segments[pcnt].y1 * options.scale + '" x2="' + smp.segments[pcnt].x2 * options.scale + '" y2="' + smp.segments[pcnt].y2 * options.scale + '" stroke-width="' + options.qcpr * 0.2 + '" stroke="cyan" />';
+	                        str += '<line x1="' + smp.segments[pcnt].x2 * options.scale + '" y1="' + smp.segments[pcnt].y2 * options.scale + '" x2="' + smp.segments[pcnt].x3 * options.scale + '" y2="' + smp.segments[pcnt].y3 * options.scale + '" stroke-width="' + options.qcpr * 0.2 + '" stroke="cyan" />';
+	                    }
+	                    if (!smp.segments[pcnt].hasOwnProperty('x3') && options.lcpr) {
+	                        str += '<circle cx="' + smp.segments[pcnt].x2 * options.scale + '" cy="' + smp.segments[pcnt].y2 * options.scale + '" r="' + options.lcpr + '" fill="white" stroke-width="' + options.lcpr * 0.2 + '" stroke="black" />';
+	                    }
+	                }
+
+	                for (var hcnt = 0; hcnt < smp.holechildren.length; hcnt++) {
+	                    var hsmp = layer[smp.holechildren[hcnt]];
+	                    for (pcnt = 0; pcnt < hsmp.segments.length; pcnt++) {
+	                        if (hsmp.segments[pcnt].hasOwnProperty('x3') && options.qcpr) {
+	                            str += '<circle cx="' + hsmp.segments[pcnt].x2 * options.scale + '" cy="' + hsmp.segments[pcnt].y2 * options.scale + '" r="' + options.qcpr + '" fill="cyan" stroke-width="' + options.qcpr * 0.2 + '" stroke="black" />';
+	                            str += '<circle cx="' + hsmp.segments[pcnt].x3 * options.scale + '" cy="' + hsmp.segments[pcnt].y3 * options.scale + '" r="' + options.qcpr + '" fill="white" stroke-width="' + options.qcpr * 0.2 + '" stroke="black" />';
+	                            str += '<line x1="' + hsmp.segments[pcnt].x1 * options.scale + '" y1="' + hsmp.segments[pcnt].y1 * options.scale + '" x2="' + hsmp.segments[pcnt].x2 * options.scale + '" y2="' + hsmp.segments[pcnt].y2 * options.scale + '" stroke-width="' + options.qcpr * 0.2 + '" stroke="cyan" />';
+	                            str += '<line x1="' + hsmp.segments[pcnt].x2 * options.scale + '" y1="' + hsmp.segments[pcnt].y2 * options.scale + '" x2="' + hsmp.segments[pcnt].x3 * options.scale + '" y2="' + hsmp.segments[pcnt].y3 * options.scale + '" stroke-width="' + options.qcpr * 0.2 + '" stroke="cyan" />';
+	                        }
+	                        if (!hsmp.segments[pcnt].hasOwnProperty('x3') && options.lcpr) {
+	                            str += '<circle cx="' + hsmp.segments[pcnt].x2 * options.scale + '" cy="' + hsmp.segments[pcnt].y2 * options.scale + '" r="' + options.lcpr + '" fill="white" stroke-width="' + options.lcpr * 0.2 + '" stroke="black" />';
+	                        }
+	                    }
+	                }
+	            }
+
+	            return str;
+	        }
+	    }, {
+	        key: 'getsvgstring',
+	        value: function getsvgstring(tracedata, options) {
+	            options = this.checkoptions(options);
+	            var w = tracedata.width * options.scale;
+	            var h = tracedata.height * options.scale;
+
+	            var svgstr = '<svg ' + (options.viewbox ? 'viewBox="0 0 ' + w + ' ' + h + '" ' : 'width="' + w + '" height="' + h + '" ') + 'version="1.1" xmlns="http://www.w3.org/2000/svg" desc="Created with imagetracer.js version ' + this.versionnumber + '" >';
+	            for (var lcnt = 0; lcnt < tracedata.layers.length; lcnt += 1) {
+	                for (var pcnt = 0; pcnt < tracedata.layers[lcnt].length; pcnt += 1) {
+	                    if (!tracedata.layers[lcnt][pcnt].isholepath) {
+	                        svgstr += this.svgpathstring(tracedata, lcnt, pcnt, options);
+	                    }
+	                }
+	            }
+	            svgstr += '</svg>';
+
+	            return svgstr;
+	        }
+	    }, {
+	        key: 'compareNumbers',
+	        value: function compareNumbers(a, b) {
+	            return a - b;
+	        }
+	    }, {
+	        key: 'torgbastr',
+	        value: function torgbastr(c) {
+	            return 'rgba(' + c.r + ',' + c.g + ',' + c.b + ',' + c.a + ')';
+	        }
+	    }, {
+	        key: 'tosvgcolorstr',
+	        value: function tosvgcolorstr(c, options) {
+	            return 'fill="rgb(' + c.r + ',' + c.g + ',' + c.b + ')" stroke="rgb(' + c.r + ',' + c.g + ',' + c.b + ')" stroke-width="' + options.strokewidth + '" opacity="' + c.a / 255.0 + '" ';
+	        }
+	    }, {
+	        key: 'appendSVGString',
+	        value: function appendSVGString(svgstr, parentid) {
+	            var div = void 0;
+	            if (parentid) {
+	                div = document.getElementById(parentid);
+	                if (!div) {
+	                    div = document.createElement('div');
+	                    div.id = parentid;
+	                    document.body.appendChild(div);
+	                }
+	            } else {
+	                div = document.createElement('div');
+	                document.body.appendChild(div);
+	            }
+	            div.innerHTML += svgstr;
+	        }
+	    }, {
+	        key: 'blur',
+	        value: function blur(imgd, radius, delta) {
+	            var i = void 0,
+	                j = void 0,
+	                k = void 0,
+	                d = void 0,
+	                idx = void 0,
+	                racc = void 0,
+	                gacc = void 0,
+	                bacc = void 0,
+	                aacc = void 0,
+	                wacc = void 0;
+	            var imgd2 = { width: imgd.width,
+	                height: imgd.height,
+	                data: [] };
+	            radius = Math.floor(radius);if (radius < 1) {
+	                return imgd;
+	            }if (radius > 5) {
+	                radius = 5;
+	            }delta = Math.abs(delta);if (delta > 1024) {
+	                delta = 1024;
+	            }
+	            var thisgk = this.gks[radius - 1];
+	            for (j = 0; j < imgd.height; j++) {
+	                for (i = 0; i < imgd.width; i++) {
+	                    racc = 0;gacc = 0;bacc = 0;aacc = 0;wacc = 0;
+
+	                    for (k = -radius; k < radius + 1; k++) {
+	                        if (i + k > 0 && i + k < imgd.width) {
+	                            idx = (j * imgd.width + i + k) * 4;
+	                            racc += imgd.data[idx] * thisgk[k + radius];
+	                            gacc += imgd.data[idx + 1] * thisgk[k + radius];
+	                            bacc += imgd.data[idx + 2] * thisgk[k + radius];
+	                            aacc += imgd.data[idx + 3] * thisgk[k + radius];
+	                            wacc += thisgk[k + radius];
+	                        }
+	                    }
+
+	                    idx = (j * imgd.width + i) * 4;
+	                    imgd2.data[idx] = Math.floor(racc / wacc);
+	                    imgd2.data[idx + 1] = Math.floor(gacc / wacc);
+	                    imgd2.data[idx + 2] = Math.floor(bacc / wacc);
+	                    imgd2.data[idx + 3] = Math.floor(aacc / wacc);
+	                }
+	            }
+	            var himgd = new Uint8ClampedArray(imgd2.data);
+	            for (j = 0; j < imgd.height; j++) {
+	                for (i = 0; i < imgd.width; i++) {
+	                    racc = 0;gacc = 0;bacc = 0;aacc = 0;wacc = 0;
+
+	                    for (k = -radius; k < radius + 1; k++) {
+	                        if (j + k > 0 && j + k < imgd.height) {
+	                            idx = ((j + k) * imgd.width + i) * 4;
+	                            racc += himgd[idx] * thisgk[k + radius];
+	                            gacc += himgd[idx + 1] * thisgk[k + radius];
+	                            bacc += himgd[idx + 2] * thisgk[k + radius];
+	                            aacc += himgd[idx + 3] * thisgk[k + radius];
+	                            wacc += thisgk[k + radius];
+	                        }
+	                    }
+
+	                    idx = (j * imgd.width + i) * 4;
+	                    imgd2.data[idx] = Math.floor(racc / wacc);
+	                    imgd2.data[idx + 1] = Math.floor(gacc / wacc);
+	                    imgd2.data[idx + 2] = Math.floor(bacc / wacc);
+	                    imgd2.data[idx + 3] = Math.floor(aacc / wacc);
+	                }
+	            }
+	            for (j = 0; j < imgd.height; j++) {
+	                for (i = 0; i < imgd.width; i++) {
+	                    idx = (j * imgd.width + i) * 4;
+
+	                    d = Math.abs(imgd2.data[idx] - imgd.data[idx]) + Math.abs(imgd2.data[idx + 1] - imgd.data[idx + 1]) + Math.abs(imgd2.data[idx + 2] - imgd.data[idx + 2]) + Math.abs(imgd2.data[idx + 3] - imgd.data[idx + 3]);
+
+	                    if (d > delta) {
+	                        imgd2.data[idx] = imgd.data[idx];
+	                        imgd2.data[idx + 1] = imgd.data[idx + 1];
+	                        imgd2.data[idx + 2] = imgd.data[idx + 2];
+	                        imgd2.data[idx + 3] = imgd.data[idx + 3];
+	                    }
+	                }
+	            }
+
+	            return imgd2;
+	        }
+	    }, {
+	        key: 'loadImage',
+	        value: function loadImage(url, callback, options) {
+	            var img = new Image();
+	            if (options && options.corsenabled) {
+	                img.crossOrigin = 'Anonymous';
+	            }
+	            img.src = url;
+	            img.onload = function () {
+	                var canvas = document.createElement('canvas');
+	                canvas.width = img.width;
+	                canvas.height = img.height;
+	                var context = canvas.getContext('2d');
+	                context.drawImage(img, 0, 0);
+	                callback(canvas);
+	            };
+	        }
+	    }, {
+	        key: 'getImgdata',
+	        value: function getImgdata(canvas) {
+	            var context = canvas.getContext('2d');
+
+	            return context.getImageData(0, 0, canvas.width, canvas.height);
+	        }
+	    }, {
+	        key: 'drawLayers',
+	        value: function drawLayers(layers, palette, scale, parentid) {
+	            scale = scale || 1;
+	            var w = void 0,
+	                h = void 0,
+	                i = void 0,
+	                j = void 0,
+	                k = void 0;
+	            var div = void 0;
+	            if (parentid) {
+	                div = document.getElementById(parentid);
+	                if (!div) {
+	                    div = document.createElement('div');
+	                    div.id = parentid;
+	                    document.body.appendChild(div);
+	                }
+	            } else {
+	                div = document.createElement('div');
+	                document.body.appendChild(div);
+	            }
+	            for (k in layers) {
+	                if (!layers.hasOwnProperty(k)) {
+	                    continue;
+	                }
+
+	                w = layers[k][0].length;
+	                h = layers[k].length;
+
+	                var canvas = document.createElement('canvas');
+	                canvas.width = w * scale;
+	                canvas.height = h * scale;
+	                var context = canvas.getContext('2d');
+
+	                for (j = 0; j < h; j += 1) {
+	                    for (i = 0; i < w; i += 1) {
+	                        context.fillStyle = this.torgbastr(palette[layers[k][j][i] % palette.length]);
+	                        context.fillRect(i * scale, j * scale, scale, scale);
+	                    }
+	                }
+
+	                div.appendChild(canvas);
+	            }
+	        }
+	    }]);
+
+	    return ImageTracer;
+	}();
+
+	exports.default = ImageTracer;
+
+/***/ }),
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -3908,7 +13397,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -3916,75 +13405,75 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _imageLoader = __webpack_require__(75);
+	var _imageLoader = __webpack_require__(106);
 
 	var _imageLoader2 = _interopRequireDefault(_imageLoader);
 
-	var _cropper = __webpack_require__(77);
+	var _cropper = __webpack_require__(108);
 
 	var _cropper2 = _interopRequireDefault(_cropper);
 
-	var _flip = __webpack_require__(79);
+	var _flip = __webpack_require__(110);
 
 	var _flip2 = _interopRequireDefault(_flip);
 
-	var _rotation = __webpack_require__(80);
+	var _rotation = __webpack_require__(111);
 
 	var _rotation2 = _interopRequireDefault(_rotation);
 
-	var _freeDrawing = __webpack_require__(81);
+	var _freeDrawing = __webpack_require__(112);
 
 	var _freeDrawing2 = _interopRequireDefault(_freeDrawing);
 
-	var _line = __webpack_require__(82);
+	var _line = __webpack_require__(113);
 
 	var _line2 = _interopRequireDefault(_line);
 
-	var _text = __webpack_require__(83);
+	var _text = __webpack_require__(114);
 
 	var _text2 = _interopRequireDefault(_text);
 
-	var _icon = __webpack_require__(84);
+	var _icon = __webpack_require__(115);
 
 	var _icon2 = _interopRequireDefault(_icon);
 
-	var _filter = __webpack_require__(85);
+	var _filter = __webpack_require__(116);
 
 	var _filter2 = _interopRequireDefault(_filter);
 
-	var _shape = __webpack_require__(91);
+	var _shape = __webpack_require__(122);
 
 	var _shape2 = _interopRequireDefault(_shape);
 
-	var _cropper3 = __webpack_require__(93);
+	var _cropper3 = __webpack_require__(124);
 
 	var _cropper4 = _interopRequireDefault(_cropper3);
 
-	var _freeDrawing3 = __webpack_require__(95);
+	var _freeDrawing3 = __webpack_require__(126);
 
 	var _freeDrawing4 = _interopRequireDefault(_freeDrawing3);
 
-	var _lineDrawing = __webpack_require__(96);
+	var _lineDrawing = __webpack_require__(127);
 
 	var _lineDrawing2 = _interopRequireDefault(_lineDrawing);
 
-	var _shape3 = __webpack_require__(97);
+	var _shape3 = __webpack_require__(128);
 
 	var _shape4 = _interopRequireDefault(_shape3);
 
-	var _text3 = __webpack_require__(98);
+	var _text3 = __webpack_require__(129);
 
 	var _text4 = _interopRequireDefault(_text3);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
-	var _util = __webpack_require__(71);
+	var _util = __webpack_require__(72);
 
 	var _util2 = _interopRequireDefault(_util);
 
@@ -3994,6 +13483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var components = _consts2.default.componentNames;
 	var events = _consts2.default.eventNames;
+
 	var drawingModes = _consts2.default.drawingModes,
 	    fObjectOptions = _consts2.default.fObjectOptions;
 	var extend = _tuiCodeSnippet2.default.extend,
@@ -4022,11 +13512,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @param {Object} [option] - Canvas max width & height of css
 	 *  @param {number} option.cssMaxWidth - Canvas css-max-width
 	 *  @param {number} option.cssMaxHeight - Canvas css-max-height
+	 *  @param {boolean} option.useItext - Use IText in text mode
+	 *  @param {boolean} option.useDragAddIcon - Use dragable add in icon mode
 	 * @ignore
 	 */
 
 	var Graphics = function () {
-	    function Graphics(element, cssMaxWidth, cssMaxHeight) {
+	    function Graphics(element) {
+	        var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+	            cssMaxWidth = _ref.cssMaxWidth,
+	            cssMaxHeight = _ref.cssMaxHeight,
+	            _ref$useItext = _ref.useItext,
+	            useItext = _ref$useItext === undefined ? false : _ref$useItext,
+	            _ref$useDragAddIcon = _ref.useDragAddIcon,
+	            useDragAddIcon = _ref$useDragAddIcon === undefined ? false : _ref$useDragAddIcon;
+
 	        _classCallCheck(this, Graphics);
 
 	        /**
@@ -4046,6 +13546,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {number}
 	         */
 	        this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
+
+	        /**
+	         * Use Itext mode for text component
+	         * @type {boolean}
+	         */
+	        this.useItext = useItext;
+
+	        /**
+	         * Use add drag icon mode for icon component
+	         * @type {boolean}
+	         */
+	        this.useDragAddIcon = useDragAddIcon;
+
+	        /**
+	         * cropper Selection Style
+	         * @type {Object}
+	         */
+	        this.cropSelectionStyle = {};
 
 	        /**
 	         * Image name
@@ -4100,7 +13618,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            onObjectMoved: this._onObjectMoved.bind(this),
 	            onObjectScaled: this._onObjectScaled.bind(this),
 	            onObjectSelected: this._onObjectSelected.bind(this),
-	            onPathCreated: this._onPathCreated.bind(this)
+	            onPathCreated: this._onPathCreated.bind(this),
+	            onSelectionCleared: this._onSelectionCleared.bind(this),
+	            onSelectionCreated: this._onSelectionCreated.bind(this)
 	        };
 
 	        this._setCanvasElement(element);
@@ -4170,6 +13690,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            (_canvas = this._canvas).add.apply(_canvas, theArgs);
 	        }
+
 	        /**
 	         * Removes the object or group
 	         * @param {Object} target - graphics object or group
@@ -4297,6 +13818,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * Gets an active group object
+	         * @returns {Object} active group object instance
+	         */
+
+	    }, {
+	        key: 'getActiveGroupObject',
+	        value: function getActiveGroupObject() {
+	            return this._canvas.getActiveGroup();
+	        }
+
+	        /**
 	         * Activates an object or group
 	         * @param {Object} target - target object or group
 	         */
@@ -4305,6 +13837,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'setActiveObject',
 	        value: function setActiveObject(target) {
 	            this._canvas.setActiveObject(target);
+	        }
+
+	        /**
+	         * Set Crop selection style
+	         * @param {Object} style - Selection styles
+	         */
+
+	    }, {
+	        key: 'setCropSelectionStyle',
+	        value: function setCropSelectionStyle(style) {
+	            this.cropSelectionStyle = style;
 	        }
 
 	        /**
@@ -4358,6 +13901,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            return !!drawingModeInstance;
 	        }
+
 	        /**
 	         * Stop the current drawing mode and back to the 'NORMAL' mode
 	         */
@@ -4649,6 +14193,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'registerPaths',
 	        value: function registerPaths(pathInfos) {
 	            this.getComponent(components.ICON).registerPaths(pathInfos);
+	        }
+
+	        /**
+	         * Change cursor style
+	         * @param {string} cursorType - cursor type
+	         */
+
+	    }, {
+	        key: 'changeCursor',
+	        value: function changeCursor(cursorType) {
+	            var canvas = this.getCanvas();
+	            canvas.defaultCursor = cursorType;
+	            canvas.renderAll();
 	        }
 
 	        /**
@@ -4978,7 +14535,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'object:moving': handler.onObjectMoved,
 	                'object:scaling': handler.onObjectScaled,
 	                'object:selected': handler.onObjectSelected,
-	                'path:created': handler.onPathCreated
+	                'path:created': handler.onPathCreated,
+	                'selection:cleared': handler.onSelectionCleared,
+	                'selection:created': handler.onSelectionCreated
 	            });
 	        }
 
@@ -5091,6 +14650,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * "selction:cleared" canvas event handler
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onSelectionCleared',
+	        value: function _onSelectionCleared() {
+	            this.fire(events.SELECTION_CLEARED);
+	        }
+
+	        /**
+	         * "selction:created" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onSelectionCreated',
+	        value: function _onSelectionCreated(fEvent) {
+	            this.fire(events.SELECTION_CREATED, fEvent.target);
+	        }
+
+	        /**
+	         * Canvas discard selection all
+	         */
+
+	    }, {
+	        key: 'discardSelection',
+	        value: function discardSelection() {
+	            this._canvas.discardActiveGroup();
+	            this._canvas.discardActiveObject();
+	            this._canvas.renderAll();
+	        }
+
+	        /**
+	         * Canvas Selectable status change
+	         * @param {boolean} selectable - expect status
+	         */
+
+	    }, {
+	        key: 'changeSelectableAll',
+	        value: function changeSelectableAll(selectable) {
+	            this._canvas.forEachObject(function (obj) {
+	                obj.selectable = selectable;
+	                obj.hoverCursor = selectable ? 'move' : 'crosshair';
+	            });
+	        }
+
+	        /**
 	         * Return object's properties
 	         * @param {fabric.Object} obj - fabric object
 	         * @returns {Object} properties object
@@ -5107,7 +14715,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            extend(props, _util2.default.getProperties(obj, predefinedKeys));
 
-	            if (obj.type === 'text') {
+	            if (['i-text', 'text'].indexOf(obj.type) > -1) {
 	                extend(props, this._createTextProperties(obj, props));
 	            }
 
@@ -5165,13 +14773,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Graphics;
 
 /***/ }),
-/* 74 */
+/* 105 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_74__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_105__;
 
 /***/ }),
-/* 75 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5182,11 +14790,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -5303,7 +14911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ImageLoader;
 
 /***/ }),
-/* 76 */
+/* 107 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -5489,28 +15097,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Component;
 
 /***/ }),
-/* 77 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _cropzone = __webpack_require__(78);
+	var _cropzone = __webpack_require__(109);
 
 	var _cropzone2 = _interopRequireDefault(_cropzone);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
-	var _util = __webpack_require__(71);
+	var _util = __webpack_require__(72);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5597,10 +15205,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	                return;
 	            }
 	            var canvas = this.getCanvas();
+
 	            canvas.forEachObject(function (obj) {
 	                // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
 	                obj.evented = false;
 	            });
+
 	            this._cropzone = new _cropzone2.default({
 	                left: -10,
 	                top: -10,
@@ -5614,7 +15224,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                hasBorders: false,
 	                lockScalingFlip: true,
 	                lockRotation: true
-	            });
+	            }, this.graphics.cropSelectionStyle);
+
 	            canvas.deactivateAll();
 	            canvas.add(this._cropzone);
 	            canvas.on('mouse:down', this._listeners.mousedown);
@@ -5860,20 +15471,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Cropper;
 
 /***/ }),
-/* 78 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _util = __webpack_require__(71);
+	var _util = __webpack_require__(72);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5904,9 +15515,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Object} options Options object
 	     * @override
 	     */
-	    initialize: function initialize(options) {
+	    initialize: function initialize(options, extendsOptions) {
+	        options = _tuiCodeSnippet2.default.extend(options, extendsOptions);
 	        options.type = 'cropzone';
+
 	        this.callSuper('initialize', options);
+
+	        this.options = options;
+
 	        this.on({
 	            'moving': this._onMoving,
 	            'scaling': this._onScaling
@@ -5937,11 +15553,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	        // Render outer rect
 	        this._fillOuterRect(ctx, 'rgba(0, 0, 0, 0.55)');
 
-	        // Black dash line
-	        this._strokeBorder(ctx, 'rgb(0, 0, 0)', cropzoneDashLineWidth);
+	        if (this.options.lineWidth) {
+	            this._fillInnerRect(ctx);
+	        } else {
+	            // Black dash line
+	            this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
+	                lineDashWidth: cropzoneDashLineWidth
+	            });
 
-	        // White dash line
-	        this._strokeBorder(ctx, 'rgb(255, 255, 255)', cropzoneDashLineWidth, cropzoneDashLineOffset);
+	            // White dash line
+	            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+	                lineDashWidth: cropzoneDashLineWidth,
+	                lineDashOffset: cropzoneDashLineOffset
+	            });
+	        }
 
 	        // Reset scale
 	        ctx.scale(1 / originalScaleX, 1 / originalScaleY);
@@ -5987,7 +15612,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ctx.moveTo(x[0] - 1, y[0] - 1);
 	        ctx.lineTo(x[3] + 1, y[0] - 1);
 	        ctx.lineTo(x[3] + 1, y[3] + 1);
-	        ctx.lineTo(x[0] - 1, y[3] - 1);
+	        ctx.lineTo(x[0] - 1, y[3] + 1);
 	        ctx.lineTo(x[0] - 1, y[0] - 1);
 	        ctx.closePath();
 
@@ -6001,6 +15626,60 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        ctx.fill();
 	        ctx.restore();
+	    },
+
+
+	    /**
+	     * Draw Inner grid line
+	     * @param {CanvasRenderingContext2D} ctx - Context
+	     * @private
+	     */
+	    _fillInnerRect: function _fillInnerRect(ctx) {
+	        var _getCoordinates2 = this._getCoordinates(ctx),
+	            outerX = _getCoordinates2.x,
+	            outerY = _getCoordinates2.y;
+
+	        var x = this._caculateInnerPosition(outerX, (outerX[2] - outerX[1]) / 3);
+	        var y = this._caculateInnerPosition(outerY, (outerY[2] - outerY[1]) / 3);
+
+	        ctx.save();
+	        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+	        ctx.lineWidth = this.options.lineWidth;
+	        ctx.beginPath();
+
+	        ctx.moveTo(x[0], y[1]);
+	        ctx.lineTo(x[3], y[1]);
+
+	        ctx.moveTo(x[0], y[2]);
+	        ctx.lineTo(x[3], y[2]);
+
+	        ctx.moveTo(x[1], y[0]);
+	        ctx.lineTo(x[1], y[3]);
+
+	        ctx.moveTo(x[2], y[0]);
+	        ctx.lineTo(x[2], y[3]);
+	        ctx.stroke();
+	        ctx.closePath();
+
+	        ctx.restore();
+	    },
+
+
+	    /**
+	     * Calculate Inner Position
+	     * @param {Array} outer - outer position
+	     * @param {number} size - interval for calcaulate
+	     * @returns {Array} - inner position
+	     * @private
+	     */
+	    _caculateInnerPosition: function _caculateInnerPosition(outer, size) {
+	        var position = [];
+	        position[0] = outer[1];
+	        position[1] = outer[1] + size;
+	        position[2] = outer[1] + size * 2;
+	        position[3] = outer[2];
+
+	        return position;
 	    },
 
 
@@ -6042,17 +15721,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {number} [lineDashOffset] - Dash offset
 	     * @private
 	     */
-	    _strokeBorder: function _strokeBorder(ctx, strokeStyle, lineDashWidth, lineDashOffset) {
+	    _strokeBorder: function _strokeBorder(ctx, strokeStyle, _ref) {
+	        var lineDashWidth = _ref.lineDashWidth,
+	            lineDashOffset = _ref.lineDashOffset,
+	            lineWidth = _ref.lineWidth;
+
 	        var halfWidth = this.getWidth() / 2,
 	            halfHeight = this.getHeight() / 2;
 
 	        ctx.save();
 	        ctx.strokeStyle = strokeStyle;
+
 	        if (ctx.setLineDash) {
 	            ctx.setLineDash([lineDashWidth, lineDashWidth]);
 	        }
 	        if (lineDashOffset) {
 	            ctx.lineDashOffset = lineDashOffset;
+	        }
+	        if (lineWidth) {
+	            ctx.lineWidth = lineWidth;
 	        }
 
 	        ctx.beginPath();
@@ -6246,14 +15933,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Cropzone;
 
 /***/ }),
-/* 79 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -6261,11 +15948,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -6455,14 +16142,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Flip;
 
 /***/ }),
-/* 80 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -6470,11 +16157,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -6602,22 +16289,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Rotation;
 
 /***/ }),
-/* 81 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -6715,22 +16402,22 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = FreeDrawing;
 
 /***/ }),
-/* 82 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -6939,18 +16626,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Line;
 
 /***/ }),
-/* 83 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -6958,15 +16645,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
-	var _util = __webpack_require__(71);
+	var _util = __webpack_require__(72);
 
 	var _util2 = _interopRequireDefault(_util);
 
@@ -7097,6 +16784,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {boolean}
 	         */
 	        _this.isPrevEditing = false;
+
+	        /**
+	         * use itext
+	         * @type {boolean}
+	         */
+	        _this.useItext = graphics.useItext;
 	        return _this;
 	    }
 
@@ -7116,10 +16809,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'mouse:down': this._listeners.mousedown,
 	                'object:selected': this._listeners.select,
 	                'before:selection:cleared': this._listeners.selectClear,
-	                'object:scaling': this._listeners.scaling
+	                'object:scaling': this._listeners.scaling,
+	                'text:editing': this._listeners.modify
 	            });
 
-	            this._createTextarea();
+	            if (this.useItext) {
+	                canvas.forEachObject(function (obj) {
+	                    if (obj.type === 'i-text') {
+	                        obj.set({
+	                            left: obj.left - obj.width / 2,
+	                            top: obj.top - obj.height / 2,
+	                            originX: 'left',
+	                            originY: 'top'
+	                        });
+	                    }
+	                });
+	            } else {
+	                this._createTextarea();
+	            }
 
 	            this.setCanvasRatio();
 	        }
@@ -7135,15 +16842,34 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            canvas.selection = true;
 	            canvas.defaultCursor = 'default';
-	            canvas.deactivateAllWithDispatch(); // action for undo stack
+
+	            if (this.useItext) {
+	                canvas.forEachObject(function (obj) {
+	                    if (obj.type === 'i-text') {
+	                        if (obj.text === '') {
+	                            obj.remove();
+	                        } else {
+	                            obj.set({
+	                                left: obj.left + obj.width / 2,
+	                                top: obj.top + obj.height / 2,
+	                                originX: 'center',
+	                                originY: 'center'
+	                            });
+	                        }
+	                    }
+	                });
+	            } else {
+	                canvas.deactivateAllWithDispatch();
+	                this._removeTextarea();
+	            }
+
 	            canvas.off({
 	                'mouse:down': this._listeners.mousedown,
 	                'object:selected': this._listeners.select,
 	                'before:selection:cleared': this._listeners.selectClear,
-	                'object:scaling': this._listeners.scaling
+	                'object:scaling': this._listeners.scaling,
+	                'text:editing': this._listeners.modify
 	            });
-
-	            this._removeTextarea();
 	        }
 
 	        /**
@@ -7169,16 +16895,27 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            return new _promise2.default(function (resolve) {
 	                var canvas = _this2.getCanvas();
+	                var newText = null;
+	                var selectionStyle = _consts2.default.fObjectOptions.SELECTION_STYLE;
 	                var styles = _this2._defaultStyles;
 
 	                _this2._setInitPos(options.position);
 
 	                if (options.styles) {
-	                    styles = _tuiCodeSnippet2.default.extend(options.styles, styles);
+	                    styles = _tuiCodeSnippet2.default.extend(styles, options.styles);
 	                }
 
-	                var newText = new _fabric2.default.Text(text, styles);
-	                newText.set(_consts2.default.fObjectOptions.SELECTION_STYLE);
+	                if (_this2.useItext) {
+	                    newText = new _fabric2.default.IText(text, styles);
+	                    selectionStyle = _tuiCodeSnippet2.default.extend({}, selectionStyle, {
+	                        originX: 'left',
+	                        originY: 'top'
+	                    });
+	                } else {
+	                    newText = new _fabric2.default.Text(text, styles);
+	                }
+
+	                newText.set(selectionStyle);
 	                newText.on({
 	                    mouseup: _this2._onFabricMouseUp.bind(_this2)
 	                });
@@ -7548,6 +17285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: '_onFabricMouseDown',
 	        value: function _onFabricMouseDown(fEvent) {
 	            var obj = fEvent.target;
+
 	            if (obj && !obj.isType('text')) {
 	                return;
 	            }
@@ -7600,7 +17338,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var newClickTime = new Date().getTime();
 
 	            if (this._isDoubleClick(newClickTime)) {
-	                this._changeToEditingMode(fEvent.target);
+	                if (!this.useItext) {
+	                    this._changeToEditingMode(fEvent.target);
+	                }
 	                this.fire(events.TEXT_EDITING); // fire editing text event
 	            }
 
@@ -7672,18 +17412,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Text;
 
 /***/ }),
-/* 84 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
@@ -7691,11 +17431,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -7711,6 +17451,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
 
+	var events = _consts2.default.eventNames;
 	var rejectMessages = _consts2.default.rejectMessages;
 
 
@@ -7746,6 +17487,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {Object}
 	         */
 	        _this._pathMap = pathMap;
+
+	        /**
+	         * Option to add icon to drag.
+	         * @type {boolean}
+	         */
+	        _this.useDragAddIcon = graphics.useDragAddIcon;
 	        return _this;
 	    }
 
@@ -7779,9 +17526,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	                icon.set(_tuiCodeSnippet2.default.extend({
 	                    type: 'icon',
 	                    fill: _this2._oColor
-	                }, selectionStyle, options));
+	                }, selectionStyle, options, _this2.graphics.controlStyle));
 
-	                canvas.add(icon).setActiveObject(icon);
+	                if (_this2.useDragAddIcon) {
+	                    canvas.add(icon).setActiveObject(icon);
+	                    canvas.on({
+	                        'mouse:move': function mouseMove(fEvent) {
+	                            canvas.selection = false;
+
+	                            _this2.fire(events.ICON_CREATE_RESIZE, {
+	                                moveOriginPointer: canvas.getPointer(fEvent.e)
+	                            });
+	                        },
+	                        'mouse:up': function mouseUp(fEvent) {
+	                            _this2.fire(events.ICON_CREATE_END, {
+	                                moveOriginPointer: canvas.getPointer(fEvent.e)
+	                            });
+
+	                            canvas.defaultCursor = 'default';
+	                            canvas.off('mouse:up');
+	                            canvas.off('mouse:move');
+	                            canvas.selection = true;
+	                        }
+	                    });
+	                } else {
+	                    canvas.add(icon).setActiveObject(icon);
+	                }
+
 	                resolve(_this2.graphics.createObjectProperties(icon));
 	            });
 	        }
@@ -7849,48 +17620,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Icon;
 
 /***/ }),
-/* 85 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _promise = __webpack_require__(4);
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _mask = __webpack_require__(86);
+	var _mask = __webpack_require__(117);
 
 	var _mask2 = _interopRequireDefault(_mask);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
-	var _blur = __webpack_require__(87);
+	var _blur = __webpack_require__(118);
 
 	var _blur2 = _interopRequireDefault(_blur);
 
-	var _sharpen = __webpack_require__(88);
+	var _sharpen = __webpack_require__(119);
 
 	var _sharpen2 = _interopRequireDefault(_sharpen);
 
-	var _emboss = __webpack_require__(89);
+	var _emboss = __webpack_require__(120);
 
 	var _emboss2 = _interopRequireDefault(_emboss);
 
-	var _colorFilter = __webpack_require__(90);
+	var _colorFilter = __webpack_require__(121);
 
 	var _colorFilter2 = _interopRequireDefault(_colorFilter);
 
@@ -8171,12 +17942,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Filter;
 
 /***/ }),
-/* 86 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -8282,12 +18053,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Mask;
 
 /***/ }),
-/* 87 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -8324,12 +18095,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Blur;
 
 /***/ }),
-/* 88 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -8366,12 +18137,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Sharpen;
 
 /***/ }),
-/* 89 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -8408,12 +18179,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Emboss;
 
 /***/ }),
-/* 90 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -8457,6 +18228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Object} canvasEl Canvas element to apply filter to
 	     */
 	    applyTo: function applyTo(canvasEl) {
+	        // eslint-disable-line
 	        var context = canvasEl.getContext('2d');
 	        var imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
 	        var data = imageData.data;
@@ -8525,14 +18297,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ColorFilter;
 
 /***/ }),
-/* 91 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(74);
+	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -8540,19 +18312,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(76);
+	var _component = __webpack_require__(107);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
-	var _shapeResizeHelper = __webpack_require__(92);
+	var _shapeResizeHelper = __webpack_require__(123);
 
 	var _shapeResizeHelper2 = _interopRequireDefault(_shapeResizeHelper);
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8570,6 +18342,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    eventNames = _consts2.default.eventNames;
 
 	var KEY_CODES = _consts2.default.keyCodes;
+
 	var DEFAULT_TYPE = 'rect';
 	var DEFAULT_OPTIONS = {
 	    strokeWidth: 1,
@@ -8698,6 +18471,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._isSelected = false;
 
 	            canvas.defaultCursor = 'default';
+
 	            canvas.selection = true;
 	            canvas.uniScaleTransform = false;
 	            canvas.off({
@@ -8905,6 +18679,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_onFabricMouseDown',
 	        value: function _onFabricMouseDown(fEvent) {
+	            if (!fEvent.target) {
+	                this._isSelected = false;
+	                this._shapeObj = false;
+	            }
+
 	            if (!this._isSelected && !this._shapeObj) {
 	                var canvas = this.getCanvas();
 	                this._startPoint = canvas.getPointer(fEvent.e);
@@ -8968,6 +18747,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _shapeResizeHelper2.default.adjustOriginToCenter(shape);
 	            }
 
+	            this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
+
 	            canvas.off({
 	                'mouse:move': this._handlers.mousemove,
 	                'mouse:up': this._handlers.mouseup
@@ -9017,7 +18798,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Shape;
 
 /***/ }),
-/* 92 */
+/* 123 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -9278,18 +19059,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 93 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(94);
+	var _drawingMode = __webpack_require__(125);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9358,7 +19139,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = CropperDrawingMode;
 
 /***/ }),
-/* 94 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -9369,7 +19150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
 
-	var _errorMessage = __webpack_require__(70);
+	var _errorMessage = __webpack_require__(71);
 
 	var _errorMessage2 = _interopRequireDefault(_errorMessage);
 
@@ -9440,18 +19221,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = DrawingMode;
 
 /***/ }),
-/* 95 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(94);
+	var _drawingMode = __webpack_require__(125);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9521,18 +19302,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = FreeDrawingMode;
 
 /***/ }),
-/* 96 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(94);
+	var _drawingMode = __webpack_require__(125);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9602,18 +19383,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LineDrawingMode;
 
 /***/ }),
-/* 97 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(94);
+	var _drawingMode = __webpack_require__(125);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9682,18 +19463,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ShapeDrawingMode;
 
 /***/ }),
-/* 98 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(94);
+	var _drawingMode = __webpack_require__(125);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9762,12 +19543,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = TextDrawingMode;
 
 /***/ }),
-/* 99 */
+/* 130 */
+/***/ (function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ }),
+/* 131 */,
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -9775,7 +19563,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9831,12 +19619,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 100 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -9844,7 +19632,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9890,12 +19678,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 101 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -9903,7 +19691,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -9957,12 +19745,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 102 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -9970,7 +19758,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10033,12 +19821,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 103 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10046,7 +19834,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10108,16 +19896,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 104 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10200,12 +19988,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 105 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10213,7 +20001,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10279,16 +20067,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 106 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10296,7 +20084,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10371,12 +20159,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 107 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10384,7 +20172,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10444,16 +20232,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 108 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10461,7 +20249,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10533,12 +20321,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 109 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10546,7 +20334,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10591,16 +20379,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 110 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10648,16 +20436,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 111 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10728,16 +20516,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 112 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10788,12 +20576,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 113 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10801,7 +20589,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10851,12 +20639,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 114 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10864,7 +20652,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10916,16 +20704,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 115 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -10976,16 +20764,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 116 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _tuiCodeSnippet = __webpack_require__(2);
+	var _tuiCodeSnippet = __webpack_require__(3);
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -10993,7 +20781,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
@@ -11063,12 +20851,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 117 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _command = __webpack_require__(68);
+	var _command = __webpack_require__(69);
 
 	var _command2 = _interopRequireDefault(_command);
 
@@ -11076,7 +20864,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _consts = __webpack_require__(72);
+	var _consts = __webpack_require__(73);
 
 	var _consts2 = _interopRequireDefault(_consts);
 
