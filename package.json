@@ -1,9 +1,12 @@
 {
   "name": "tui-image-editor",
   "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
-  "version": "3.1.0",
+  "version": "3.2.0",
   "license": "MIT",
-  "repository": "https://github.com/nhnent/tui.image-editor",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhnent/tui.image-editor.git"
+  },
   "main": "dist/tui-image-editor.js",
   "description": "TOAST UI Component: ImageEditor",
   "keywords": [
@@ -20,10 +23,12 @@
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.18.0",
+    "css-loader": "^0.28.11",
     "es5-shim": "^4.5.9",
     "eslint": "^4.5.0",
     "eslint-config-tui": "^1.0.1",
     "eslint-loader": "^1.6.1",
+    "extract-text-webpack-plugin": "^1.0.1",
     "file-saver": "^1.3.3",
     "istanbul-instrumenter-loader": "^1.0.0",
     "jasmine-core": "^2.4.1",
@@ -34,6 +39,7 @@
     "karma-chrome-launcher": "^2.0.0",
     "karma-coverage": "^1.1.1",
     "karma-es5-shim": "0.0.4",
+    "karma-firefox-launcher": "^1.1.0",
     "karma-jasmine": "^1.0.2",
     "karma-jquery": "^0.2.2",
     "karma-junit-reporter": "^1.2.0",
@@ -42,6 +48,9 @@
     "karma-webpack": "^1.8.0",
     "safe-umd-webpack-plugin": "0.0.2",
     "simulant": "^0.2.2",
+    "stylus": "^0.54.5",
+    "stylus-loader": "^3.0.2",
+    "svgstore": "^2.0.3",
     "tui-jsdoc-template": "^1.0.4",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.11.0"
@@ -49,7 +58,8 @@
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "KARMA_SERVER=ne karma start",
-    "bundle": "webpack && webpack -p",
+    "bundle": "webpack && webpack -p && npm run bundle:svg",
+    "bundle:svg": "mkdir -p dist/svg && node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
     "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
@@ -57,6 +67,7 @@
   },
   "dependencies": {
     "core-js": "2.4.1",
-    "tui-code-snippet": "^1.3.0"
+    "tui-code-snippet": "^1.3.0",
+    "tui-color-picker": "^2.2.0"
   }
 }

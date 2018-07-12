@@ -1,0 +1,24 @@
+/* ICON */
+.{prefix}-container
+    .svg_ic-menu
+        width: 24px;
+        height: 24px;
+    .svg_ic-submenu
+        width: 32px;
+        height: 32px;
+    .svg_img-bi
+        width: 257px;
+        height: 26px;
+
+    .{prefix}-controls
+        svg > use
+            display: none;
+        svg > use.normal
+            display: block;
+        .active svg > use.active
+            display: block;
+        .enabled svg > use.enabled
+            display: block;
+        .active svg > use.normal,
+        .enabled svg > use.normal
+            display: none;

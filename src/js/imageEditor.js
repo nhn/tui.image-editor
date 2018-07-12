@@ -3,7 +3,10 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js/library/es6/promise';
 import Invoker from './invoker';
+import UI from './ui';
+import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
@@ -18,16 +21,59 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  * Image editor
  * @class
  * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
- * @param {Object} [option] - Canvas max width & height of css
- *  @param {number} option.cssMaxWidth - Canvas css-max-width
- *  @param {number} option.cssMaxHeight - Canvas css-max-height
- *  @param {Boolean} [option.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+ * @param {Object} [options] - Canvas max width & height of css
+ *  @param {number} [options.includeUI] - Use the provided UI
+ *    @param {Object} [options.includeUI.loadImage] - Basic editing image
+ *      @param {string} options.includeUI.loadImage.path - image path
+ *      @param {string} options.includeUI.loadImage.name - image name
+ *    @param {Object} [options.includeUI.theme] - Theme object
+ *    @param {Array} [options.includeUI.menu] - It can be selected when only specific menu is used. [default all]
+ *    @param {string} [options.includeUI.initMenu] - The first menu to be selected and started.
+ *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
+ *  @param {number} options.cssMaxWidth - Canvas css-max-width
+ *  @param {number} options.cssMaxHeight - Canvas css-max-height
+ *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
+ * @example
+ * var ImageEditor = require('tui-image-editor');
+ * var blackTheme = require('./js/theme/black-theme.js');
+ * var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+ *   includeUI: {
+ *     loadImage: {
+ *       path: 'img/sampleImage.jpg',
+ *       name: 'SampleImage'
+ *     },
+ *     theme: blackTheme, // or whiteTheme
+ *     menu: ['shape', 'filter'],
+ *     initMenu: 'filter',
+ *     menuBarPosition: 'bottom'
+ *   },
+ *   cssMaxWidth: 700,
+ *   cssMaxHeight: 500,
+ *   selectionStyle: {
+ *     cornerSize: 20,
+ *     rotatingPointOffset: 70
+ *   }
+ * });
  */
 class ImageEditor {
-    constructor(wrapper, option) {
-        option = snippet.extend({
+    constructor(wrapper, options) {
+        options = snippet.extend({
+            includeUI: false,
             usageStatistics: true
-        }, option);
+        }, options);
+
+        this.mode = null;
+
+        this.activeObjectId = null;
+
+        /**
+         * UI instance
+         * @type {Ui}
+         */
+        if (options.includeUI) {
+            this.ui = new UI(wrapper, options.includeUI, this.getActions());
+            options = this.ui.setUiDefaultSelectionStyle(options);
+        }
 
         /**
          * Invoker
@@ -41,7 +87,14 @@ class ImageEditor {
          * @type {Graphics}
          * @private
          */
-        this._graphics = new Graphics(wrapper, option.cssMaxWidth, option.cssMaxHeight);
+        this._graphics = new Graphics(
+            this.ui ? this.ui.getEditorArea() : wrapper, {
+                cssMaxWidth: options.cssMaxWidth,
+                cssMaxHeight: options.cssMaxHeight,
+                useItext: !!this.ui,
+                useDragAddIcon: !!this.ui
+            }
+        );
 
         /**
          * Event handler list
@@ -57,20 +110,30 @@ class ImageEditor {
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
+            addObjectAfter: this._onAddObjectAfter.bind(this),
             textEditing: this._onTextEditing.bind(this),
-            textChanged: this._onTextChanged.bind(this)
+            textChanged: this._onTextChanged.bind(this),
+            iconCreateResize: this._onIconCreateResize.bind(this),
+            iconCreateEnd: this._onIconCreateEnd.bind(this),
+            selectionCleared: this._selectionCleared.bind(this),
+            selectionCreated: this._selectionCreated.bind(this)
         };
 
         this._attachInvokerEvents();
         this._attachGraphicsEvents();
         this._attachDomEvents();
+        this._setSelectionStyle(options.selectionStyle, {
+            applyCropSelectionStyle: options.applyCropSelectionStyle,
+            applyGroupSelectionStyle: options.applyGroupSelectionStyle
+        });
 
-        if (option.selectionStyle) {
-            this._setSelectionStyle(option.selectionStyle);
+        if (options.usageStatistics) {
+            sendHostName();
         }
 
-        if (option.usageStatistics) {
-            sendHostName();
+        if (this.ui) {
+            this.ui.initCanvas();
+            this.setReAction();
         }
     }
 
@@ -88,7 +151,6 @@ class ImageEditor {
      * @property {boolean} flipY - y axis
      * @property {Number} angle - angle
      */
-
     /**
      * Rotation status
      * @typedef {Number} RotateStatus
@@ -130,11 +192,28 @@ class ImageEditor {
 
     /**
      * Set selection style by init option
-     * @param {Object} styles - Selection styles
+     * @param {Object} selectionStyle - Selection styles
+     * @param {Object} applyTargets - Selection apply targets
+     *   @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
+     *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
      * @private
      */
-    _setSelectionStyle(styles) {
-        this._graphics.setSelectionStyle(styles);
+    _setSelectionStyle(selectionStyle, {applyCropSelectionStyle, applyGroupSelectionStyle}) {
+        if (selectionStyle) {
+            this._graphics.setSelectionStyle(selectionStyle);
+        }
+
+        if (applyCropSelectionStyle) {
+            this._graphics.setCropSelectionStyle(selectionStyle);
+        }
+
+        if (applyGroupSelectionStyle) {
+            this.on('selectionCreated', eventTarget => {
+                if (eventTarget.type === 'group') {
+                    eventTarget.set(selectionStyle);
+                }
+            });
+        }
     }
 
     /**
@@ -182,7 +261,12 @@ class ImageEditor {
             'addText': this._handlers.addText,
             'addObject': this._handlers.addObject,
             'textEditing': this._handlers.textEditing,
-            'textChanged': this._handlers.textChanged
+            'textChanged': this._handlers.textChanged,
+            'iconCreateResize': this._handlers.iconCreateResize,
+            'iconCreateEnd': this._handlers.iconCreateEnd,
+            'selectionCleared': this._handlers.selectionCleared,
+            'selectionCreated': this._handlers.selectionCreated,
+            'addObjectAfter': this._handlers.addObjectAfter
         });
     }
 
@@ -211,9 +295,6 @@ class ImageEditor {
      */
     /* eslint-disable complexity */
     _onKeyDown(e) {
-        const activeObject = this._graphics.getActiveObject();
-        const activeObjectId = this._graphics.getObjectId(activeObject);
-
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             // There is no error message on shortcut when it's empty
             this.undo()['catch'](() => {});
@@ -224,13 +305,47 @@ class ImageEditor {
             this.redo()['catch'](() => {});
         }
 
-        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) &&
-            activeObject) {
+        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL)) {
             e.preventDefault();
-            this.removeObject(activeObjectId);
+            this.removeActiveObject();
         }
     }
     /* eslint-enable complexity */
+
+    /**
+     * Remove Active Object
+     */
+    removeActiveObject() {
+        const activeObject = this._graphics.getActiveObject();
+        const activeObjectGroup = this._graphics.getActiveGroupObject();
+
+        if (activeObjectGroup) {
+            const objects = activeObjectGroup.getObjects();
+            this.discardSelection();
+            this._removeObjectStream(objects);
+        } else if (activeObject) {
+            const activeObjectId = this._graphics.getObjectId(activeObject);
+            this.removeObject(activeObjectId);
+        }
+    }
+
+    /**
+     * RemoveObject Sequential processing for prevent invoke lock
+     * @param {Array.<Object>} targetObjects - target Objects for remove
+     * @returns {object} targetObjects
+     * @private
+     */
+    _removeObjectStream(targetObjects) {
+        if (!targetObjects.length) {
+            return true;
+        }
+
+        const targetObject = targetObjects.pop();
+
+        return this.removeObject(this._graphics.getObjectId(targetObject)).then(() => (
+            this._removeObjectStream(targetObjects)
+        ));
+    }
 
     /**
      * mouse down event handler
@@ -369,6 +484,25 @@ class ImageEditor {
     deactivateAll() {
         this._graphics.deactivateAll();
         this._graphics.renderAll();
+    }
+
+    /**
+     * discard selction
+     * @example
+     * imageEditor.discardSelection();
+     */
+    discardSelection() {
+        this._graphics.discardSelection();
+    }
+
+    /**
+     * selectable status change
+     * @param {boolean} selectable - selctable status
+     * @example
+     * imageEditor.changeSelectableAll(false); // or true
+     */
+    changeSelectableAll(selectable) {
+        this._graphics.changeSelectableAll(selectable);
     }
 
     /**
@@ -849,12 +983,45 @@ class ImageEditor {
     }
 
     /**
+     * change text mode
+     * @param {string} type - change type
+     * @private
+     */
+    _changeActivateMode(type) {
+        if (type !== 'ICON' && this.getDrawingMode() !== type) {
+            this.startDrawingMode(type);
+        }
+    }
+
+    /**
      * 'textChanged' event handler
      * @param {Object} objectProps changed object properties
      * @private
      */
     _onTextChanged(objectProps) {
         this.changeText(objectProps.id, objectProps.text);
+    }
+
+    /**
+     * 'iconCreateResize' event handler
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
+     * @private
+     */
+    _onIconCreateResize(originPointer) {
+        this.fire(events.ICON_CREATE_RESIZE, originPointer);
+    }
+
+    /**
+     * 'iconCreateEnd' event handler
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
+     * @private
+     */
+    _onIconCreateEnd(originPointer) {
+        this.fire(events.ICON_CREATE_END, originPointer);
     }
 
     /**
@@ -915,6 +1082,32 @@ class ImageEditor {
     }
 
     /**
+     * 'addObjectAfter' event handler
+     * @param {Object} objectProps added object properties
+     * @private
+     */
+    _onAddObjectAfter(objectProps) {
+        this.fire(events.ADD_OBJECT_AFTER, objectProps);
+    }
+
+    /**
+     * 'selectionCleared' event handler
+     * @private
+     */
+    _selectionCleared() {
+        this.fire(events.SELECTION_CLEARED);
+    }
+
+    /**
+     * 'selectionCreated' event handler
+     * @param {Object} eventTarget - Fabric object
+     * @private
+     */
+    _selectionCreated(eventTarget) {
+        this.fire(events.SELECTION_CREATED, eventTarget);
+    }
+
+    /**
      * Register custom icons
      * @param {{iconType: string, pathValue: string}} infos - Infos to register icons
      * @example
@@ -925,6 +1118,16 @@ class ImageEditor {
      */
     registerIcons(infos) {
         this._graphics.registerPaths(infos);
+    }
+
+    /**
+     * Change canvas cursor type
+     * @param {string} cursorType - cursor type
+     * @example
+     * imageEditor.changeCursor('crosshair');
+     */
+    changeCursor(cursorType) {
+        this._graphics.changeCursor(cursorType);
     }
 
     /**
@@ -1145,6 +1348,23 @@ class ImageEditor {
     }
 
     /**
+     * Set properties of active object, Do not leave an invoke history.
+     * @param {number} id - object id
+     * @param {Object} keyValue - key & value
+     * @example
+     * imageEditor.setObjectPropertiesQuietly(id, {
+     *     left:100,
+     *     top:100,
+     *     width: 200,
+     *     height: 200,
+     *     opacity: 0.5
+     * });
+     */
+    setObjectPropertiesQuietly(id, keyValue) {
+        this._graphics.setObjectProperties(id, keyValue);
+    }
+
+    /**
      * Get properties of active object corresponding key
      * @param {number} id - object id
      * @param {Array<string>|ObjectProps|string} keys - property's key
@@ -1250,5 +1470,7 @@ class ImageEditor {
     }
 }
 
+action.mixin(ImageEditor);
 CustomEvents.mixin(ImageEditor);
+
 module.exports = ImageEditor;

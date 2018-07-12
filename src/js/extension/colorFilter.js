@@ -40,7 +40,7 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
      * Applies filter to canvas element
      * @param {Object} canvasEl Canvas element to apply filter to
      */
-    applyTo(canvasEl) {
+    applyTo(canvasEl) { // eslint-disable-line
         const context = canvasEl.getContext('2d');
         const imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
         const {data} = imageData;

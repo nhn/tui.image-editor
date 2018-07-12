@@ -671,7 +671,7 @@ function onClickIconSubMenu(event) {
             left: originPointer.x,
             top: originPointer.y
         }).then(objectProps => {
-            console.log(objectProps);
+            // console.log(objectProps);
         });
     });
 }
