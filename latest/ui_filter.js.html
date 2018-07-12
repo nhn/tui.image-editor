@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: ui/filter.js | ImageEditor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://user-images.githubusercontent.com/35218826/40895380-0b9f4cd6-67ea-11e8-982f-18121daa3a04.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">ImageEditor</a></h1>
+        
+            <span class="version">v3.2.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-includeUi.html">1. Include ui</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-includeUi_sub"></div></li><li><a href="tutorial-example02-useApiDirect.html">2. Use api direct (basic)</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-useApiDirect_sub"></div></li><li><a href="tutorial-example03-mobile.html">3. Mobile</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-mobile_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="ImageEditor.html">ImageEditor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ImageEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ImageEditor.html#addIcon">addIcon</a></li><li><a href="ImageEditor.html#addImageObject">addImageObject</a></li><li><a href="ImageEditor.html#addShape">addShape</a></li><li><a href="ImageEditor.html#addText">addText</a></li><li><a href="ImageEditor.html#applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#changeCursor">changeCursor</a></li><li><a href="ImageEditor.html#changeIconColor">changeIconColor</a></li><li><a href="ImageEditor.html#changeSelectableAll">changeSelectableAll</a></li><li><a href="ImageEditor.html#changeShape">changeShape</a></li><li><a href="ImageEditor.html#changeText">changeText</a></li><li><a href="ImageEditor.html#changeTextStyle">changeTextStyle</a></li><li><a href="ImageEditor.html#clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#clearRedoStack">clearRedoStack</a></li><li><a href="ImageEditor.html#clearUndoStack">clearUndoStack</a></li><li><a href="ImageEditor.html#crop">crop</a></li><li><a href="ImageEditor.html#deactivateAll">deactivateAll</a></li><li><a href="ImageEditor.html#destroy">destroy</a></li><li><a href="ImageEditor.html#discardSelection">discardSelection</a></li><li><a href="ImageEditor.html#flipX">flipX</a></li><li><a href="ImageEditor.html#flipY">flipY</a></li><li><a href="ImageEditor.html#getCanvasSize">getCanvasSize</a></li><li><a href="ImageEditor.html#getCropzoneRect">getCropzoneRect</a></li><li><a href="ImageEditor.html#getDrawingMode">getDrawingMode</a></li><li><a href="ImageEditor.html#getImageName">getImageName</a></li><li><a href="ImageEditor.html#getObjectPosition">getObjectPosition</a></li><li><a href="ImageEditor.html#getObjectProperties">getObjectProperties</a></li><li><a href="ImageEditor.html#hasFilter">hasFilter</a></li><li><a href="ImageEditor.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="ImageEditor.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="ImageEditor.html#loadImageFromFile">loadImageFromFile</a></li><li><a href="ImageEditor.html#loadImageFromURL">loadImageFromURL</a></li><li><a href="ImageEditor.html#redo">redo</a></li><li><a href="ImageEditor.html#registerIcons">registerIcons</a></li><li><a href="ImageEditor.html#removeActiveObject">removeActiveObject</a></li><li><a href="ImageEditor.html#removeFilter">removeFilter</a></li><li><a href="ImageEditor.html#removeObject">removeObject</a></li><li><a href="ImageEditor.html#resetFlip">resetFlip</a></li><li><a href="ImageEditor.html#resizeCanvasDimension">resizeCanvasDimension</a></li><li><a href="ImageEditor.html#rotate">rotate</a></li><li><a href="ImageEditor.html#setAngle">setAngle</a></li><li><a href="ImageEditor.html#setBrush">setBrush</a></li><li><a href="ImageEditor.html#setDrawingShape">setDrawingShape</a></li><li><a href="ImageEditor.html#setObjectPosition">setObjectPosition</a></li><li><a href="ImageEditor.html#setObjectProperties">setObjectProperties</a></li><li><a href="ImageEditor.html#setObjectPropertiesQuietly">setObjectPropertiesQuietly</a></li><li><a href="ImageEditor.html#startDrawingMode">startDrawingMode</a></li><li><a href="ImageEditor.html#stopDrawingMode">stopDrawingMode</a></li><li><a href="ImageEditor.html#toDataURL">toDataURL</a></li><li><a href="ImageEditor.html#undo">undo</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ImageEditor.html#event:addText">addText</a></li><li><a href="ImageEditor.html#event:mousedown">mousedown</a></li><li><a href="ImageEditor.html#event:objectActivated">objectActivated</a></li><li><a href="ImageEditor.html#event:objectMoved">objectMoved</a></li><li><a href="ImageEditor.html#event:objectScaled">objectScaled</a></li><li><a href="ImageEditor.html#event:redoStackChanged">redoStackChanged</a></li><li><a href="ImageEditor.html#event:textEditing">textEditing</a></li><li><a href="ImageEditor.html#event:undoStackChanged">undoStackChanged</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3><a href="global.html">Global</a></h3></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import snippet from 'tui-code-snippet';
+import Colorpicker from './tools/colorpicker';
+import Range from './tools/range';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/filter';
+import {toInteger, toCamelCase} from '../util';
+import {defaultFilterRangeValus as FILTER_RANGE} from '../consts';
+
+const PICKER_CONTROL_HEIGHT = '130px';
+const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
+const FILTER_OPTIONS = [
+    'grayscale',
+    'invert',
+    'sepia',
+    'sepia2',
+    'blur',
+    'sharpen',
+    'emboss',
+    'remove-white',
+    'gradient-transparency',
+    'brightness',
+    'noise',
+    'pixelate',
+    'color-filter',
+    'tint',
+    'multiply',
+    'blend'
+];
+
+/**
+ * Filter ui class
+ * @class
+ * @ignore
+ */
+class Filter extends Submenu {
+    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
+        super(subMenuElement, {
+            name: 'filter',
+            iconStyle,
+            menuBarPosition,
+            templateHtml
+        });
+
+        this.checkedMap = {};
+        this._makeControlElement();
+    }
+
+    /**
+     * Add event for filter
+     * @param {Object} actions - actions for crop
+     *   @param {Function} actions.applyFilter - apply filter option
+     */
+    addEvent({applyFilter}) {
+        const changeRangeValue = filterName => {
+            const apply = this.checkedMap[filterName].checked;
+            const type = filterName;
+
+            applyFilter(apply, type, this._getFilterOption(type));
+        };
+
+        snippet.forEach(FILTER_OPTIONS, filterName => {
+            const filterCheckElement = this.selector(`#tie-${filterName}`);
+            const filterNameCamelCase = toCamelCase(filterName);
+            this.checkedMap[filterNameCamelCase] = filterCheckElement;
+
+            filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
+        });
+
+        this._els.removewhiteThresholdRange.on('change', () => changeRangeValue('removeWhite'));
+        this._els.removewhiteDistanceRange.on('change', () => changeRangeValue('removeWhite'));
+        this._els.gradientTransparencyRange.on('change', () => changeRangeValue('gradientTransparency'));
+        this._els.colorfilterThresholeRange.on('change', () => changeRangeValue('colorFilter'));
+        this._els.pixelateRange.on('change', () => changeRangeValue('pixelate'));
+        this._els.noiseRange.on('change', () => changeRangeValue('noise'));
+        this._els.brightnessRange.on('change', () => changeRangeValue('brightness'));
+        this._els.blendType.addEventListener('change', () => changeRangeValue('blend'));
+        this._els.filterBlendColor.on('change', () => changeRangeValue('blend'));
+        this._els.filterMultiplyColor.on('change', () => changeRangeValue('multiply'));
+        this._els.tintOpacity.on('change', () => changeRangeValue('tint'));
+        this._els.filterTintColor.on('change', () => changeRangeValue('tint'));
+        this._els.blendType.addEventListener('click', event => event.stopPropagation());
+    }
+
+    /**
+     * Get filter option
+     * @param {String} type - filter type
+     * @returns {Object} filter option object
+     * @private
+     */
+    _getFilterOption(type) { // eslint-disable-line
+        const option = {};
+        switch (type) {
+            case 'removeWhite':
+                option.threshold = toInteger(this._els.removewhiteThresholdRange.value);
+                option.distance = toInteger(this._els.removewhiteDistanceRange.value);
+                break;
+            case 'gradientTransparency':
+                option.threshold = toInteger(this._els.gradientTransparencyRange.value);
+                break;
+            case 'colorFilter':
+                option.color = '#FFFFFF';
+                option.threshold = this._els.colorfilterThresholeRange.value;
+                break;
+            case 'pixelate':
+                option.blocksize = toInteger(this._els.pixelateRange.value);
+                break;
+            case 'noise':
+                option.noise = toInteger(this._els.noiseRange.value);
+                break;
+            case 'brightness':
+                option.brightness = toInteger(this._els.brightnessRange.value);
+                break;
+            case 'blend':
+                option.color = this._els.filterBlendColor.color;
+                option.mode = this._els.blendType.value;
+                break;
+            case 'multiply':
+                option.color = this._els.filterMultiplyColor.color;
+                break;
+            case 'tint':
+                option.color = this._els.filterTintColor.color;
+                option.opacity = this._els.tintOpacity.value;
+                break;
+            default:
+                break;
+        }
+
+        return option;
+    }
+
+    /**
+     * Make submenu range and colorpicker control
+     * @private
+     */
+    _makeControlElement() {
+        const {selector} = this;
+        this._els = {
+            removewhiteThresholdRange: new Range(
+                selector('#tie-removewhite-threshold-range'),
+                FILTER_RANGE.removewhiteThresholdRange
+            ),
+            removewhiteDistanceRange: new Range(
+                selector('#tie-removewhite-distance-range'),
+                FILTER_RANGE.removewhiteDistanceRange
+            ),
+            gradientTransparencyRange: new Range(
+                selector('#tie-gradient-transparency-range'),
+                FILTER_RANGE.gradientTransparencyRange
+            ),
+            brightnessRange: new Range(
+                selector('#tie-brightness-range'),
+                FILTER_RANGE.brightnessRange
+            ),
+            noiseRange: new Range(
+                selector('#tie-noise-range'),
+                FILTER_RANGE.noiseRange
+            ),
+            pixelateRange: new Range(
+                selector('#tie-pixelate-range'),
+                FILTER_RANGE.pixelateRange
+            ),
+            colorfilterThresholeRange: new Range(
+                selector('#tie-colorfilter-threshole-range'),
+                FILTER_RANGE.colorfilterThresholeRange
+            ),
+            filterTintColor: new Colorpicker(selector('#tie-filter-tint-color'), '#03bd9e', this.toggleDirection),
+            filterMultiplyColor: new Colorpicker(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection),
+            filterBlendColor: new Colorpicker(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection)
+        };
+        this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
+        this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);
+    }
+
+    /**
+     * Make submenu control for picker &amp; range mixin
+     * @param {HTMLElement} pickerControl - pickerControl dom element
+     * @returns {Range}
+     * @private
+     */
+    _pickerWithRange(pickerControl) {
+        const rangeWrap = document.createElement('div');
+        const rangelabel = document.createElement('label');
+        const range = document.createElement('div');
+
+        range.id = 'tie-filter-tint-opacity';
+        rangelabel.innerHTML = 'Opacity';
+        rangeWrap.appendChild(rangelabel);
+        rangeWrap.appendChild(range);
+        pickerControl.appendChild(rangeWrap);
+        pickerControl.style.height = PICKER_CONTROL_HEIGHT;
+
+        return new Range(range, FILTER_RANGE.tintOpacityRange);
+    }
+
+    /**
+     * Make submenu control for picker &amp; selectbox
+     * @param {HTMLElement} pickerControl - pickerControl dom element
+     * @returns {HTMLElement}
+     * @private
+     */
+    _pickerWithSelectbox(pickerControl) {
+        const selectlistWrap = document.createElement('div');
+        const selectlist = document.createElement('select');
+
+        selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
+        selectlistWrap.appendChild(selectlist);
+
+        this._makeSelectOptionList(selectlist);
+
+        pickerControl.appendChild(selectlistWrap);
+        pickerControl.style.height = PICKER_CONTROL_HEIGHT;
+
+        return selectlist;
+    }
+
+    /**
+     * Make blend select option
+     * @param {HTMLElement} selectlist - blend option select list element
+     * @private
+     */
+    _makeSelectOptionList(selectlist) {
+        snippet.forEach(BLEND_OPTIONS, option => {
+            const selectOption = document.createElement('option');
+            selectOption.setAttribute('value', option);
+            selectOption.innerHTML = option.replace(/^[a-z]/, $0 => $0.toUpperCase());
+            selectlist.appendChild(selectOption);
+        });
+    }
+}
+
+export default Filter;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://user-images.githubusercontent.com/35218826/40895380-0b9f4cd6-67ea-11e8-982f-18121daa3a04.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>

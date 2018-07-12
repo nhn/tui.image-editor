@@ -1,0 +1,226 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Source: ui/draw.js | ImageEditor</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-jsdoc.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/tui-doc.css">
+
+    
+</head>
+<body>
+<nav class="lnb" id="lnb">
+    <div class="logo" style="width: 150px; height: 13px">
+        
+            <a href="https://github.com/nhnent/tui.jsdoc-template" rel="noopener noreferrer" target="_blank">
+                <img src="https://user-images.githubusercontent.com/35218826/40895380-0b9f4cd6-67ea-11e8-982f-18121daa3a04.png" width="100%" height="100%">
+            </a>
+        
+    </div>
+    <div class="title">
+        <h1><a href="index.html" class="link">ImageEditor</a></h1>
+        
+            <span class="version">v3.2.0</span>
+        
+    </div>
+    <div class="search-container" id="search-container">
+        <input type="text" placeholder="Search">
+        <ul></ul>
+    </div>
+    
+        <ol class="lnb-tab">
+            <li id="api-tab">
+                <a href="#"><h4>API</h4></a>
+            </li>
+            <li id="examples-tab">
+                <a href="#"><h4>Examples</h4></a>
+            </li>
+        </ol>
+    
+    <div class="lnb-examples hidden"><h3>Examples</h3><ul><li><a href="tutorial-example01-includeUi.html">1. Include ui</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example01-includeUi_sub"></div></li><li><a href="tutorial-example02-useApiDirect.html">2. Use api direct (basic)</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example02-useApiDirect_sub"></div></li><li><a href="tutorial-example03-mobile.html">3. Mobile</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="example03-mobile_sub"></div></li></ul></div><div class="lnb-api hidden"><h3>Classes</h3><ul><li><a href="ImageEditor.html">ImageEditor</a><button type="button" class="hidden toggle-subnav btn btn-link">  <span class="glyphicon glyphicon-plus"></span></button><div class="hidden" id="ImageEditor_sub"><div class="member-type">Methods</div><ul class="inner"><li><a href="ImageEditor.html#addIcon">addIcon</a></li><li><a href="ImageEditor.html#addImageObject">addImageObject</a></li><li><a href="ImageEditor.html#addShape">addShape</a></li><li><a href="ImageEditor.html#addText">addText</a></li><li><a href="ImageEditor.html#applyFilter">applyFilter</a></li><li><a href="ImageEditor.html#changeCursor">changeCursor</a></li><li><a href="ImageEditor.html#changeIconColor">changeIconColor</a></li><li><a href="ImageEditor.html#changeSelectableAll">changeSelectableAll</a></li><li><a href="ImageEditor.html#changeShape">changeShape</a></li><li><a href="ImageEditor.html#changeText">changeText</a></li><li><a href="ImageEditor.html#changeTextStyle">changeTextStyle</a></li><li><a href="ImageEditor.html#clearObjects">clearObjects</a></li><li><a href="ImageEditor.html#clearRedoStack">clearRedoStack</a></li><li><a href="ImageEditor.html#clearUndoStack">clearUndoStack</a></li><li><a href="ImageEditor.html#crop">crop</a></li><li><a href="ImageEditor.html#deactivateAll">deactivateAll</a></li><li><a href="ImageEditor.html#destroy">destroy</a></li><li><a href="ImageEditor.html#discardSelection">discardSelection</a></li><li><a href="ImageEditor.html#flipX">flipX</a></li><li><a href="ImageEditor.html#flipY">flipY</a></li><li><a href="ImageEditor.html#getCanvasSize">getCanvasSize</a></li><li><a href="ImageEditor.html#getCropzoneRect">getCropzoneRect</a></li><li><a href="ImageEditor.html#getDrawingMode">getDrawingMode</a></li><li><a href="ImageEditor.html#getImageName">getImageName</a></li><li><a href="ImageEditor.html#getObjectPosition">getObjectPosition</a></li><li><a href="ImageEditor.html#getObjectProperties">getObjectProperties</a></li><li><a href="ImageEditor.html#hasFilter">hasFilter</a></li><li><a href="ImageEditor.html#isEmptyRedoStack">isEmptyRedoStack</a></li><li><a href="ImageEditor.html#isEmptyUndoStack">isEmptyUndoStack</a></li><li><a href="ImageEditor.html#loadImageFromFile">loadImageFromFile</a></li><li><a href="ImageEditor.html#loadImageFromURL">loadImageFromURL</a></li><li><a href="ImageEditor.html#redo">redo</a></li><li><a href="ImageEditor.html#registerIcons">registerIcons</a></li><li><a href="ImageEditor.html#removeActiveObject">removeActiveObject</a></li><li><a href="ImageEditor.html#removeFilter">removeFilter</a></li><li><a href="ImageEditor.html#removeObject">removeObject</a></li><li><a href="ImageEditor.html#resetFlip">resetFlip</a></li><li><a href="ImageEditor.html#resizeCanvasDimension">resizeCanvasDimension</a></li><li><a href="ImageEditor.html#rotate">rotate</a></li><li><a href="ImageEditor.html#setAngle">setAngle</a></li><li><a href="ImageEditor.html#setBrush">setBrush</a></li><li><a href="ImageEditor.html#setDrawingShape">setDrawingShape</a></li><li><a href="ImageEditor.html#setObjectPosition">setObjectPosition</a></li><li><a href="ImageEditor.html#setObjectProperties">setObjectProperties</a></li><li><a href="ImageEditor.html#setObjectPropertiesQuietly">setObjectPropertiesQuietly</a></li><li><a href="ImageEditor.html#startDrawingMode">startDrawingMode</a></li><li><a href="ImageEditor.html#stopDrawingMode">stopDrawingMode</a></li><li><a href="ImageEditor.html#toDataURL">toDataURL</a></li><li><a href="ImageEditor.html#undo">undo</a></li></ul><div class="member-type">Events</div><ul class="inner"><li><a href="ImageEditor.html#event:addText">addText</a></li><li><a href="ImageEditor.html#event:mousedown">mousedown</a></li><li><a href="ImageEditor.html#event:objectActivated">objectActivated</a></li><li><a href="ImageEditor.html#event:objectMoved">objectMoved</a></li><li><a href="ImageEditor.html#event:objectScaled">objectScaled</a></li><li><a href="ImageEditor.html#event:redoStackChanged">redoStackChanged</a></li><li><a href="ImageEditor.html#event:textEditing">textEditing</a></li><li><a href="ImageEditor.html#event:undoStackChanged">undoStackChanged</a></li></ul></div></li></ul></div><div class="lnb-api hidden"><h3><a href="global.html">Global</a></h3></div>
+</nav>
+<div id="resizer"></div>
+
+<div class="main" id="main">
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import util from '../util';
+import Colorpicker from './tools/colorpicker';
+import Range from './tools/range';
+import Submenu from './submenuBase';
+import templateHtml from './template/submenu/draw';
+import {defaultDrawRangeValus} from '../consts';
+const DRAW_OPACITY = 0.7;
+
+/**
+ * Draw ui class
+ * @class
+ * @ignore
+ */
+class Draw extends Submenu {
+    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
+        super(subMenuElement, {
+            name: 'draw',
+            iconStyle,
+            menuBarPosition,
+            templateHtml
+        });
+
+        this._els = {
+            lineSelectButton: this.selector('#tie-draw-line-select-button'),
+            drawColorpicker: new Colorpicker(this.selector('#tie-draw-color'), '#00a9ff', this.toggleDirection),
+            drawRange: new Range(this.selector('#tie-draw-range'), defaultDrawRangeValus),
+            drawRangeValue: this.selector('#tie-draw-range-value')
+        };
+
+        this.type = null;
+        this.color = this._els.drawColorpicker.color;
+        this.width = this._els.drawRange.value;
+    }
+
+    /**
+     * Add event for draw
+     * @param {Object} actions - actions for crop
+     *   @param {Function} actions.setDrawMode - set draw mode
+     */
+    addEvent(actions) {
+        this.actions = actions;
+
+        this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
+        this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
+        this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+        this._els.drawRangeValue.value = this._els.drawRange.value;
+        this._els.drawRangeValue.setAttribute('readonly', true);
+    }
+
+    /**
+     * set draw mode - action runner
+     */
+    setDrawMode() {
+        this.actions.setDrawMode(this.type, {
+            width: this.width,
+            color: util.getRgb(this.color, DRAW_OPACITY)
+        });
+    }
+
+    /**
+     * Returns the menu to its default state.
+     */
+    changeStandbyMode() {
+        this.type = null;
+        this.actions.stopDrawingMode();
+        this.actions.changeSelectableAll(true);
+        this._els.lineSelectButton.classList.remove('free');
+        this._els.lineSelectButton.classList.remove('line');
+    }
+
+    /**
+     * Executed when the menu starts.
+     */
+    changeStartMode() {
+        this.type = 'free';
+        this._els.lineSelectButton.classList.add('free');
+        this.setDrawMode();
+    }
+
+    /**
+     * Change draw type event
+     * @param {object} event - line select event
+     * @private
+     */
+    _changeDrawType(event) {
+        const button = event.target.closest('.tui-image-editor-button');
+        if (button) {
+            const lineType = this.getButtonType(button, ['free', 'line']);
+            this.actions.discardSelection();
+
+            if (this.type === lineType) {
+                this.changeStandbyMode();
+
+                return;
+            }
+
+            this.changeStandbyMode();
+            this.type = lineType;
+            this._els.lineSelectButton.classList.add(lineType);
+            this.setDrawMode();
+        }
+    }
+
+    /**
+     * Change drawing color
+     * @param {string} color - select drawing color
+     * @private
+     */
+    _changeDrawColor(color) {
+        this.color = color || 'transparent';
+        if (!this.type) {
+            this.changeStartMode();
+        } else {
+            this.setDrawMode();
+        }
+    }
+
+    /**
+     * Change drawing Range
+     * @param {number} value - select drawing range
+     * @private
+     */
+    _changeDrawRange(value) {
+        value = util.toInteger(value);
+        this._els.drawRangeValue.value = value;
+        this.width = value;
+        if (!this.type) {
+            this.changeStartMode();
+        } else {
+            this.setDrawMode();
+        }
+    }
+}
+
+export default Draw;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<footer>
+    <img class="logo" src="https://user-images.githubusercontent.com/35218826/40895380-0b9f4cd6-67ea-11e8-982f-18121daa3a04.png" style="width: 150px; height: 13px">
+    <div class="footer-text">NHN Entertainment. Frontend Development Lab</div>
+</footer>
+<script>prettyPrint();</script>
+<script src="scripts/jquery.min.js"></script>
+<script src="scripts/tui-doc.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+    <script>
+        var id = '_sub'.replace(/"/g, '_');
+        var selectedApi = document.getElementById(id); // do not use jquery selector
+        var $selectedApi = $(selectedApi);
+
+        $selectedApi.removeClass('hidden');
+        $selectedApi.parent().find('.glyphicon').removeClass('glyphicon-plus').addClass('glyphicon-minus');
+        showLnbApi();
+    </script>
+
+</body>
+</html>
