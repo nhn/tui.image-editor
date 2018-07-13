@@ -24,7 +24,7 @@
 * [Usage](#-usage)
   * [HTML](#html)
   * [JavaScript](#javascript)
-* [Development](#develop)
+* [Development](#-development)
   * [Setup](#setup)
   * [Run webpack-dev-server](#run-webpack-dev-server)
 * [Documents](#-documents)
