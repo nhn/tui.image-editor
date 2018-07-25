@@ -55,6 +55,14 @@ class Filter extends Submenu {
             const apply = this.checkedMap[filterName].checked;
             const type = filterName;
 
+            const checkboxGroup = this.checkedMap[filterName].closest('.tui-image-editor-checkbox-group');
+            if (checkboxGroup) {
+                if (apply) {
+                    checkboxGroup.classList.remove('tui-image-editor-disabled');
+                } else {
+                    checkboxGroup.classList.add('tui-image-editor-disabled');
+                }
+            }
             applyFilter(apply, type, this._getFilterOption(type));
         };
 

@@ -55,10 +55,15 @@ var blackTheme = {
     'checkbox.border': '0px',
     'checkbox.backgroundColor': '#fff',
 
-    // rango style
+    // range style
     'range.pointer.color': '#fff',
     'range.bar.color': '#666',
     'range.subbar.color': '#d1d1d1',
+
+    'range.disabledPointer.color': '#414141',
+    'range.disabledBar.color': '#282828',
+    'range.disabledSubbar.color': '#414141',
+
     'range.value.color': '#fff',
     'range.value.fontWeight': 'lighter',
     'range.value.fontSize': '11px',

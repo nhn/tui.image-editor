@@ -1,5 +1,12 @@
 /* VIRTUAL RANGE */
 .{prefix}-container
+
+    .{prefix}-virtual-range-bar
+    .{prefix}-virtual-range-subbar
+    .{prefix}-virtual-range-pointer
+        .{prefix}-disabled
+            backbround-color: red;
+
     .{prefix}-range
         position: relative;
         top: 5px;
@@ -65,7 +72,7 @@
         font-weight: lighter;
         vertical-align: baseline;
         font-family: 'Noto Sans', sans-serif;
-        padding-top: 2px;
+        padding-top: 0;
     .{prefix}-controls
         position: absolute;
         background-color: #151515;

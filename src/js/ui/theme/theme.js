@@ -47,6 +47,10 @@ class Theme {
                     horizontal: this._makeCssText(extend({}, option, {borderBottom: `1px solid ${option.color}`}))
                 };
                 break;
+
+            case 'range.disabledPointer':
+            case 'range.disabledBar':
+            case 'range.disabledSubbar':
             case 'range.pointer':
             case 'range.bar':
             case 'range.subbar':
@@ -80,6 +84,11 @@ class Theme {
             submenuRangePointer: this.getStyle('range.pointer'),
             submenuRangeBar: this.getStyle('range.bar'),
             submenuRangeSubbar: this.getStyle('range.subbar'),
+
+            submenuDisabledRangePointer: this.getStyle('range.disabledPointer'),
+            submenuDisabledRangeBar: this.getStyle('range.disabledBar'),
+            submenuDisabledRangeSubbar: this.getStyle('range.disabledSubbar'),
+
             submenuRangeValue: this.getStyle('range.value'),
             submenuColorpickerTitle: this.getStyle('colorpicker.title'),
             submenuColorpickerButton: this.getStyle('colorpicker.button'),

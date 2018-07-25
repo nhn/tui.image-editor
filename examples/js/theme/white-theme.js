@@ -59,6 +59,11 @@ var whiteTheme = {
     'range.pointer.color': '#333',
     'range.bar.color': '#ccc',
     'range.subbar.color': '#606060',
+
+    'range.disabledPointer.color': '#d3d3d3',
+    'range.disabledBar.color': 'rgba(85,85,85,0.06)',
+    'range.disabledSubbar.color': 'rgba(51,51,51,0.2)',
+
     'range.value.color': '#000',
     'range.value.fontWeight': 'normal',
     'range.value.fontSize': '11px',

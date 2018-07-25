@@ -36,7 +36,7 @@ export default () => (`
             <div></div>
         </li>
         <li class="tui-image-editor-submenu-align">
-            <div style="margin-bottom: 7px;">
+            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled" style="margin-bottom: 7px;">
                 <div class="tui-image-editor-checkbox-wrap">
                     <div class="tui-image-editor-checkbox">
                         <input type="checkbox" id="tie-remove-white">
@@ -52,7 +52,7 @@ export default () => (`
                     <div id="tie-removewhite-distance-range"></div>
                 </div>
             </div>
-            <div>
+            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
                 <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">
                     <div class="tui-image-editor-checkbox">
                         <input type="checkbox" id="tie-gradient-transparency">
@@ -69,7 +69,7 @@ export default () => (`
             <div></div>
         </li>
         <li class="tui-image-editor-submenu-align">
-            <div>
+            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
                 <div class="tui-image-editor-checkbox">
                     <input type="checkbox" id="tie-brightness">
                     <label for="tie-brightness">Brightness</label>
@@ -78,7 +78,7 @@ export default () => (`
                     <div id="tie-brightness-range"></div>
                 </div>
             </div>
-            <div>
+            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
                 <div class="tui-image-editor-checkbox">
                     <input type="checkbox" id="tie-noise">
                     <label for="tie-noise">Noise</label>
@@ -88,7 +88,7 @@ export default () => (`
                 </div>
             </div>
 
-            <div>
+            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
                 <div class="tui-image-editor-checkbox">
                     <input type="checkbox" id="tie-pixelate">
                     <label for="tie-pixelate">Pixelate</label>
@@ -97,7 +97,7 @@ export default () => (`
                     <div id="tie-pixelate-range"></div>
                 </div>
             </div>
-            <div>
+            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
                 <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">
                     <div class="tui-image-editor-checkbox">
                         <input type="checkbox" id="tie-color-filter">
