@@ -35,7 +35,7 @@ var blackTheme = {
 
     // submenu primary color
     'submenu.backgroundColor': '#1e1e1e',
-    'submenu.partition.color': '#858585',
+    'submenu.partition.color': '#3c3c3c',
 
     // submenu icons
     'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
