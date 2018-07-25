@@ -137,12 +137,17 @@ class Colorpicker {
         colorpickerElement.addEventListener('click', event => {
             this._show = !this._show;
             this.pickerControl.style.display = this._show ? 'block' : 'none';
+            this.fire('changeShow', this);
             event.stopPropagation();
         });
         document.body.addEventListener('click', () => {
-            this._show = false;
-            this.pickerControl.style.display = 'none';
+            this.hide();
         });
+    }
+
+    hide() {
+        this._show = false;
+        this.pickerControl.style.display = 'none';
     }
 
     /**

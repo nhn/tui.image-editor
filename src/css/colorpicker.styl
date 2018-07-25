@@ -14,6 +14,7 @@
         border: 0;
         font-size: 11px;
         margin-top: 2px;
+        font-family: 'Noto Sans', sans-serif;
 
     .tui-colorpicker-palette-preview
         border-radius: 100%;
@@ -34,8 +35,15 @@
         .tui-colorpicker-palette-toggle-slider
             display: none;
         .tui-colorpicker-palette-button
+            border: 0;
             border-radius: 100%;
             margin: 2px;
+            background-size: cover;
+            font-size: 1px;
+            &[title='#ffffff']
+              border: 1px solid #ccc;
+            &[title='']
+              border: 1px solid #ccc;
         .triangle
             width: 0;
             height: 0;
@@ -52,20 +60,25 @@
             height: auto;
 
 
-    .filter-color-item .color-picker-control label
-        font-color: #333;
-        font-weight: normal;
-        margin-right: 7pxleft
+    .filter-color-item
+        .color-picker-control label
+            font-color: #333;
+            font-weight: normal;
+            margin-right: 7pxleft
+        .tui-image-editor-checkbox
+            margin-top: 0;
+            input + label:before
+              left: -16px;
     .color-picker
         width: 100%;
         height: auto;
     .color-picker-value 
-        width: 30px;
-        height: 30px;
+        width: 32px;
+        height: 32px;
         border: 0px;
         border-radius: 100%;
         margin: auto;
-        margin-bottom: 4px;
+        margin-bottom: 1px;
         &.transparent
             border: 1px solid #cbcbcb;
             background-size: cover;

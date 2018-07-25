@@ -79,6 +79,9 @@ class Filter extends Submenu {
         this._els.tintOpacity.on('change', () => changeRangeValue('tint'));
         this._els.filterTintColor.on('change', () => changeRangeValue('tint'));
         this._els.blendType.addEventListener('click', event => event.stopPropagation());
+        this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+        this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+        this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
     }
 
     /**
@@ -167,8 +170,13 @@ class Filter extends Submenu {
             filterMultiplyColor: new Colorpicker(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection),
             filterBlendColor: new Colorpicker(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection)
         };
+
         this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
         this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);
+
+        this.colorPickerControls.push(this._els.filterTintColor);
+        this.colorPickerControls.push(this._els.filterMultiplyColor);
+        this.colorPickerControls.push(this._els.filterBlendColor);
     }
 
     /**

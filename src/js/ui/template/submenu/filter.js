@@ -36,7 +36,7 @@ export default () => (`
             <div></div>
         </li>
         <li class="tui-image-editor-submenu-align">
-            <div>
+            <div style="margin-bottom: 7px;">
                 <div class="tui-image-editor-checkbox-wrap">
                     <div class="tui-image-editor-checkbox">
                         <input type="checkbox" id="tie-remove-white">

@@ -8,10 +8,19 @@ class Submenu {
         this.selector = str => subMenuElement.querySelector(str);
         this.menuBarPosition = menuBarPosition;
         this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
+        this.colorPickerControls = [];
         this._makeSubMenuElement(subMenuElement, {
             name,
             iconStyle,
             templateHtml
+        });
+    }
+
+    colorPickerChangeShow(me) {
+        this.colorPickerControls.forEach(pickerControl => {
+            if (me !== pickerControl) {
+                pickerControl.hide();
+            }
         });
     }
 
