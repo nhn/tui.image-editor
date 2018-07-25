@@ -13,6 +13,11 @@
     .{prefix}-controls
         svg > use
             display: none;
+        .enabled svg:hover > use.hover
+        .normal svg:hover > use.hover
+            display: block;
+        .active svg:hover > use.hover
+            display: none;
         svg > use.normal
             display: block;
         .active svg > use.active

@@ -161,10 +161,14 @@ export default {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': 'icon-b.svg',
-    'menu.normalIcon.name': 'icon-b',
-    'menu.activeIcon.path': 'icon-a.svg',
-    'menu.activeIcon.name': 'icon-a',
+    'menu.normalIcon.path': 'icon-d.svg',
+    'menu.normalIcon.name': 'icon-d',
+    'menu.activeIcon.path': 'icon-b.svg',
+    'menu.activeIcon.name': 'icon-b',
+    'menu.disabledIcon.path': 'icon-a.svg',
+    'menu.disabledIcon.name': 'icon-a',
+    'menu.hoverIcon.path': 'icon-c.svg',
+    'menu.hoverIcon.name': 'icon-c',
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
 

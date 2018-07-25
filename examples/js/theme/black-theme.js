@@ -26,10 +26,14 @@ var blackTheme = {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': '../dist/svg/icon-b.svg',
-    'menu.normalIcon.name': 'icon-b',
-    'menu.activeIcon.path': '../dist/svg/icon-a.svg',
-    'menu.activeIcon.name': 'icon-a',
+    'menu.normalIcon.path': '../dist/svg/icon-d.svg',
+    'menu.normalIcon.name': 'icon-d',
+    'menu.activeIcon.path': '../dist/svg/icon-b.svg',
+    'menu.activeIcon.name': 'icon-b',
+    'menu.disabledIcon.path': '../dist/svg/icon-a.svg',
+    'menu.disabledIcon.name': 'icon-a',
+    'menu.hoverIcon.path': '../dist/svg/icon-c.svg',
+    'menu.hoverIcon.name': 'icon-c',
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
 
@@ -46,7 +50,7 @@ var blackTheme = {
     'submenu.iconSize.height': '32px',
 
     // submenu labels
-    'submenu.normalLabel.color': '#858585',
+    'submenu.normalLabel.color': '#434343',
     'submenu.normalLabel.fontWeight': 'lighter',
     'submenu.activeLabel.color': '#fff',
     'submenu.activeLabel.fontWeight': 'lighter',

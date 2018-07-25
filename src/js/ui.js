@@ -309,17 +309,18 @@ class Ui {
      */
     _makeMenuElement(menuName) {
         const btnElement = document.createElement('li');
-        const {normal, active} = this.theme.getStyle('menu.icon');
+        const {normal, active, hover} = this.theme.getStyle('menu.icon');
         const menuItemHtml = `
             <svg class="svg_ic-menu">
                 <use xlink:href="${normal.path}#${normal.name}-ic-${menuName}" class="normal"/>
                 <use xlink:href="${active.path}#${active.name}-ic-${menuName}" class="active"/>
+                <use xlink:href="${hover.path}#${hover.name}-ic-${menuName}" class="hover"/>
             </svg>
         `;
 
         btnElement.id = `tie-btn-${menuName}`;
-        btnElement.className = 'tui-image-editor-item';
-        btnElement.title = menuName;
+        btnElement.className = 'tui-image-editor-item normal';
+        btnElement.title = menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase());
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);

@@ -32,7 +32,9 @@ class Theme {
             case 'submenu.icon':
                 result = {
                     active: this.styles[`${firstProperty}.activeIcon`],
-                    normal: this.styles[`${firstProperty}.normalIcon`]
+                    normal: this.styles[`${firstProperty}.normalIcon`],
+                    hover: this.styles[`${firstProperty}.hoverIcon`],
+                    disabled: this.styles[`${firstProperty}.disabledIcon`]
                 };
                 break;
             case 'submenu.label':
