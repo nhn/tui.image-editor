@@ -15,7 +15,7 @@ var whiteTheme = {
     'loadButton.backgroundColor': '#fff',
     'loadButton.border': '1px solid #ddd',
     'loadButton.color': '#222',
-    'loadButton.fontFamily': 'Noto Sans, sans-serif',
+    'loadButton.fontFamily': '"Noto Sans", sans-serif',
     'loadButton.fontSize': '12px',
 
     // download button

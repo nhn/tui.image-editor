@@ -22,7 +22,7 @@ var blackTheme = {
     'downloadButton.backgroundColor': '#fdba3b',
     'downloadButton.border': '1px solid #fdba3b',
     'downloadButton.color': '#fff',
-    'downloadButton.fontFamily': 'Noto Sans, sans-serif',
+    'downloadButton.fontFamily': '"Noto Sans", sans-serif',
     'downloadButton.fontSize': '12px',
 
     // main icons
