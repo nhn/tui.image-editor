@@ -15,7 +15,7 @@ export default ({iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
-        <li id="tie-mask-apply" class="tui-image-editor-newline apply">
+        <li id="tie-mask-apply" class="tui-image-editor-newline apply" style="margin-top: 22px;margin-bottom: 5px">
             <div class="tui-image-editor-button apply">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${normal.path}#${normal.name}-ic-apply" class="normal"/>

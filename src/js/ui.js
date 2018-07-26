@@ -84,9 +84,9 @@ class Ui {
             applyGroupSelectionStyle: true,
             selectionStyle: {
                 cornerStyle: 'circle',
-                cornerSize: 20,
+                cornerSize: 16,
                 cornerColor: '#fff',
-                cornerStrokeColor: '#000',
+                cornerStrokeColor: '#fff',
                 transparentCorners: false,
                 lineWidth: 2,
                 borderColor: '#fff'

@@ -31,6 +31,7 @@ class Colorpicker {
 
         this._show = false;
 
+        this._colorpickerElement = colorpickerElement;
         this._toggleDirection = toggleDirection;
         this._makePickerButtonElement(colorpickerElement, defaultColor);
         this._makePickerLayerElement(colorpickerElement, title);
@@ -119,8 +120,6 @@ class Colorpicker {
         colorpickerElement.appendChild(this.pickerControl);
         colorpickerElement.appendChild(this.colorElement);
         colorpickerElement.appendChild(label);
-
-        this._setPickerControlPosition();
     }
 
     /**
@@ -137,6 +136,7 @@ class Colorpicker {
         colorpickerElement.addEventListener('click', event => {
             this._show = !this._show;
             this.pickerControl.style.display = this._show ? 'block' : 'none';
+            this._setPickerControlPosition();
             this.fire('changeShow', this);
             event.stopPropagation();
         });
@@ -156,8 +156,9 @@ class Colorpicker {
      */
     _setPickerControlPosition() {
         const controlStyle = this.pickerControl.style;
-        const left = (toInteger(window.getComputedStyle(this.pickerControl, null).width) / 2) - 20;
-        let top = (toInteger(window.getComputedStyle(this.pickerControl, null).height) + 12) * -1;
+        const halfPickerWidth = (this._colorpickerElement.clientWidth / 2) + 2;
+        const left = (toInteger(window.getComputedStyle(this.pickerControl, null).width) / 2) - halfPickerWidth;
+        let top = (toInteger(window.getComputedStyle(this.pickerControl, null).height) + 10) * -1;
 
         if (this._toggleDirection === 'down') {
             top = 30;

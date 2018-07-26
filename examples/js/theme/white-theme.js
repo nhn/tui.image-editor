@@ -39,7 +39,7 @@ var whiteTheme = {
 
     // submenu primary color
     'submenu.backgroundColor': 'transparent',
-    'submenu.partition.color': '#858585',
+    'submenu.partition.color': '#e5e5e5',
 
     // submenu icons
     'submenu.normalIcon.path': '../dist/svg/icon-d.svg',
@@ -77,6 +77,6 @@ var whiteTheme = {
     'range.title.fontWeight': 'lighter',
 
     // colorpicker style
-    'colorpicker.button.border': '1px solid #cbcbcb',
+    'colorpicker.button.border': '0px',
     'colorpicker.title.color': '#000'
 };

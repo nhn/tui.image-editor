@@ -62,6 +62,9 @@ export default ({
     .tui-image-editor-container .tui-image-editor-checkbox input + label:before {
         ${submenuCheckbox}
     }
+    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {
+        border: 0;
+    }
     .tui-image-editor-container .tui-image-editor-virtual-range-pointer {
         ${submenuRangePointer}
     }
