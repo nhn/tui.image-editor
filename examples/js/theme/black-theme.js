@@ -15,14 +15,14 @@ var blackTheme = {
     'loadButton.backgroundColor': '#fff',
     'loadButton.border': '1px solid #ddd',
     'loadButton.color': '#222',
-    'loadButton.fontFamily': '"Noto Sans", sans-serif',
+    'loadButton.fontFamily': '\'Noto Sans\', sans-serif',
     'loadButton.fontSize': '12px',
 
     // download button
     'downloadButton.backgroundColor': '#fdba3b',
     'downloadButton.border': '1px solid #fdba3b',
     'downloadButton.color': '#fff',
-    'downloadButton.fontFamily': '"Noto Sans", sans-serif',
+    'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
     'downloadButton.fontSize': '12px',
 
     // main icons
@@ -42,15 +42,15 @@ var blackTheme = {
     'submenu.partition.color': '#3c3c3c',
 
     // submenu icons
-    'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
-    'submenu.normalIcon.name': 'icon-a',
+    'submenu.normalIcon.path': '../dist/svg/icon-d.svg',
+    'submenu.normalIcon.name': 'icon-d',
     'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
     'submenu.activeIcon.name': 'icon-c',
     'submenu.iconSize.width': '32px',
     'submenu.iconSize.height': '32px',
 
     // submenu labels
-    'submenu.normalLabel.color': '#434343',
+    'submenu.normalLabel.color': '#8a8a8a',
     'submenu.normalLabel.fontWeight': 'lighter',
     'submenu.activeLabel.color': '#fff',
     'submenu.activeLabel.fontWeight': 'lighter',

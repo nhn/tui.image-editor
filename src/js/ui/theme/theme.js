@@ -134,6 +134,7 @@ class Theme {
             if (['backgroundImage'].indexOf(key) > -1 && value !== 'none') {
                 value = `url(${value})`;
             }
+
             converterStack.push(`${this._toUnderScore(key)}: ${value}`);
         });
 

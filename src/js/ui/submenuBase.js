@@ -16,9 +16,9 @@ class Submenu {
         });
     }
 
-    colorPickerChangeShow(me) {
+    colorPickerChangeShow(occurredControl) {
         this.colorPickerControls.forEach(pickerControl => {
-            if (me !== pickerControl) {
+            if (occurredControl !== pickerControl) {
                 pickerControl.hide();
             }
         });

@@ -27,7 +27,7 @@
           width: 14px;
           height: 14px;
           background-color: #fff;
-          top: 4px;
+          top: 6px;
           left: -19px;
           display: inline-block;
           margin: 0;
@@ -56,14 +56,28 @@
           -moz-appearance: none;
           appearance: none;
           padding: 0 7px 0 7px;
-  .{prefix}-selectlist-wrap:after
+      .{prefix}-selectlist
+          display: none;
+          position: relative;
+          top: -1px;
+          border: 1px solid #ccc;
+          background-color: #fff;
+          border-top: 0px;
+          li
+              display: block;
+              text-align: left;
+              padding: 7px;
+              font-family: 'Noto Sans', sans-serif;
+              &.{prefix}-active
+                  background-color: rgba(81, 92, 230, 0.05);
+  .{prefix}-selectlist-wrap:before
       content: '';
       position: absolute;
       display: inline-block;
       width: 14px;
       height: 14px;
       right: 5px;
-      bottom: 5px;
+      top: 16px;
       background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAHlJREFUKBVjYBgFOEOAEVkmPDxc89+/f6eAYjzI4kD2FyYmJrOVK1deh4kzwRggGiQBVJCELAZig8SQNYHEmEEEMrh69eo1HR0dfqCYJUickZGxf9WqVf3IakBsFBthklpaWmVA9mEQhrJhUoTp0NBQCRAmrHL4qgAAuu4cWZOZIGsAAAAASUVORK5CYII=');
       background-size: cover;
   .{prefix}-selectlist-wrap select::-ms-expand
