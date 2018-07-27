@@ -68,6 +68,9 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         if (this.options.lineWidth) {
             this._fillInnerRect(ctx);
+            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+                lineWidth: this.options.lineWidth
+            });
         } else {
             // Black dash line
             this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
