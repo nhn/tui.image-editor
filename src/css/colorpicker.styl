@@ -15,22 +15,26 @@
         font-size: 11px;
         margin-top: 2px;
         font-family: 'Noto Sans', sans-serif;
-
+    .tui-colorpicker-palette-hex[value='#ffffff'] + .tui-colorpicker-palette-preview,
+    .tui-colorpicker-palette-hex[value=''] + .tui-colorpicker-palette-preview
+            border: 1px solid #ccc;
+    .tui-colorpicker-palette-hex[value=''] + .tui-colorpicker-palette-preview
+            background-size: cover;
+            background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAdBJREFUWAnFl0FuwjAQRZ0ukiugHqFSOQNdseuKW3ALzkA4BateICvUGyCxrtRFd4WuunH/TzykaYJrnLEYaTJJsP2+x8GZZCbQrLU5mj7Bn+EP8HvnCObd+R7xBV5lWfaNON4AnsA38E94qLEt+0yiFaBzAV/Bv+Cxxr4co7hKCDpw1q9wLeNYYdlAwyn8TYt8Hme3+8D5ozcTaMCZ68PXa2tnM2sbEcOZAJhrrpl2DAcTOGNjZPSfCdzkw6JrfbiMv+osBe4y9WOedhm4jZfhbENWuxS44H9Wz/xw4WzqLOAqh1+zycgAwzEMzr5k5gaHOa9ULBwuuDkFlHI1Kl4PJ66kgIpnoywOTmRFAYcbwYk9UMApWkD8zAV5ihcwHk4Rx7gl0IFTQL0EFc+CTQ9OZHWH3YhlVJiVpTHbrTGLhTHLZVgff6s9lyBsI9KduSS83oj+34rTwJutmBmCnMsvozRwZqB5GTkBw6/jdPDu69iJ6BYk6eCcfbcgcQIK/MByaaiMqm8rHcjol2TnpWDhyAKSGdA3FrxtJUToX0ODqatetfGE+8tyEUOV8GY5dGRwLP/MBS4RHQr4bT7NRAQjlcOTfZxmv2G+c4hI8nn+Ax5PG/zhI393AAAAAElFTkSuQmCC');
     .tui-colorpicker-palette-preview
         border-radius: 100%;
         float: left;
-        width: 16px;
-        height: 16px;
-
+        width: 17px;
+        height: 17px;
+        border: 0;
     .color-picker-control
         position: absolute;
         display: none;
         z-index: 99;
-        width: 188px;
-        height: 112px;
+        width: 192px;
         background-color: #fff;
         box-shadow: 0 3px 22px 6px rgba(0, 0, 0, .15);
-        padding: 14px;
+        padding: 16px;
         border-radius: 2px;
         .tui-colorpicker-palette-toggle-slider
             display: none;

@@ -15,7 +15,8 @@ export default ({biImage, commonStyle, headerStyle, loadButtonStyle, downloadBut
             </div>
         </div>
         <div class="tui-image-editor-main">
-            <div class="tui-image-editor-submenu" style="${submenuStyle}">
+            <div class="tui-image-editor-submenu">
+                <div class="tui-image-editor-submenu-style" style="${submenuStyle}"></div>
             </div>
             <div class="tui-image-editor-wrap">
                 <div class="tui-image-editor-size-wrap">

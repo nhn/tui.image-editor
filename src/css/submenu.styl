@@ -7,6 +7,7 @@
         width:100%;
         height: 150px;
         white-space: nowrap;
+        z-index: 2;
         .{prefix}-button:hover svg > use.active
             display: block;
         .{prefix}-submenu-item
@@ -35,6 +36,15 @@
         > div
             display: none;
             vertical-align: bottom;
+        .{prefix}-submenu-style
+            opacity: 0.95;
+            z-index: -1;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: block;
 
     .{prefix}-partition > div
         width: 1px;

@@ -287,10 +287,6 @@ class Filter extends Submenu {
             optionlist.style.display = this.selectBoxShow ? 'block' : 'none';
             optionlist.setAttribute('data-selectitem', selectlist.value);
             optionlist.querySelector(`[data-item='${selectlist.value}']`).classList.add('active');
-            snippet.forEach(optionlist.querySelectorAll('[data-item]'), item => {
-                const itemValue = item.getAttribute('data-item');
-                item.className = (itemValue === selectlist.value) ? 'tui-image-editor-active' : '';
-            });
         });
     }
 

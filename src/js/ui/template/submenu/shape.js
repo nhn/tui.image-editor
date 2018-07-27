@@ -39,8 +39,8 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li id="tie-shape-color-button">
-            <div id="tie-color-fill" title="fill"></div>
-            <div id="tie-color-stroke" title="stroke"></div>
+            <div id="tie-color-fill" title="Fill"></div>
+            <div id="tie-color-stroke" title="Stroke"></div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
