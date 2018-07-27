@@ -1,5 +1,4 @@
 import snippet from 'tui-code-snippet';
-import {toInteger} from '../../util';
 import tuiColorPicker from 'tui-color-picker';
 const PICKER_COLOR = [
     '#000000',
@@ -157,8 +156,8 @@ class Colorpicker {
     _setPickerControlPosition() {
         const controlStyle = this.pickerControl.style;
         const halfPickerWidth = (this._colorpickerElement.clientWidth / 2) + 2;
-        const left = (toInteger(window.getComputedStyle(this.pickerControl, null).width) / 2) - halfPickerWidth;
-        let top = (toInteger(window.getComputedStyle(this.pickerControl, null).height) + 10) * -1;
+        const left = (this.pickerControl.offsetWidth / 2) - halfPickerWidth;
+        let top = (this.pickerControl.offsetHeight + 10) * -1;
 
         if (this._toggleDirection === 'down') {
             top = 30;
