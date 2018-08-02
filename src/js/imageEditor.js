@@ -10,12 +10,12 @@ import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
-import { sendHostName } from './util';
+import {sendHostName} from './util';
 
 const events = consts.eventNames;
 const commands = consts.commandNames;
-const { keyCodes, rejectMessages } = consts;
-const { isUndefined, forEach, CustomEvents } = snippet;
+const {keyCodes, rejectMessages} = consts;
+const {isUndefined, forEach, CustomEvents} = snippet;
 
 /**
  * Image editor
@@ -198,7 +198,7 @@ class ImageEditor {
      *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
      * @private
      */
-    _setSelectionStyle(selectionStyle, { applyCropSelectionStyle, applyGroupSelectionStyle }) {
+    _setSelectionStyle(selectionStyle, {applyCropSelectionStyle, applyGroupSelectionStyle}) {
         if (selectionStyle) {
             this._graphics.setSelectionStyle(selectionStyle);
         }
@@ -488,12 +488,14 @@ class ImageEditor {
 
     /**
     * set selection style properties
+    * @param {Object} styles - Object of styles
     * @example
     * imageEditor.setSelectionStyle({ cornerSize: 50 });
     */
     setSelectionStyle(styles) {
-        this._graphics.setSelectionStyle(styles)
+        this._graphics.setSelectionStyle(styles);
     }
+
     /**
      * discard selction
      * @example
