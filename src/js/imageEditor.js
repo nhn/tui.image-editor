@@ -10,12 +10,12 @@ import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import consts from './consts';
-import {sendHostName} from './util';
+import { sendHostName } from './util';
 
 const events = consts.eventNames;
 const commands = consts.commandNames;
-const {keyCodes, rejectMessages} = consts;
-const {isUndefined, forEach, CustomEvents} = snippet;
+const { keyCodes, rejectMessages } = consts;
+const { isUndefined, forEach, CustomEvents } = snippet;
 
 /**
  * Image editor
@@ -198,7 +198,7 @@ class ImageEditor {
      *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
      * @private
      */
-    _setSelectionStyle(selectionStyle, {applyCropSelectionStyle, applyGroupSelectionStyle}) {
+    _setSelectionStyle(selectionStyle, { applyCropSelectionStyle, applyGroupSelectionStyle }) {
         if (selectionStyle) {
             this._graphics.setSelectionStyle(selectionStyle);
         }
@@ -297,12 +297,12 @@ class ImageEditor {
     _onKeyDown(e) {
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             // There is no error message on shortcut when it's empty
-            this.undo()['catch'](() => {});
+            this.undo()['catch'](() => { });
         }
 
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
             // There is no error message on shortcut when it's empty
-            this.redo()['catch'](() => {});
+            this.redo()['catch'](() => { });
         }
 
         if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL)) {
@@ -486,6 +486,14 @@ class ImageEditor {
         this._graphics.renderAll();
     }
 
+    /**
+    * set selection style properties
+    * @example
+    * imageEditor.setSelectionStyle({ cornerSize: 50 });
+    */
+    setSelectionStyle(styles) {
+        this._graphics.setSelectionStyle(styles)
+    }
     /**
      * discard selction
      * @example
