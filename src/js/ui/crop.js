@@ -95,6 +95,7 @@ class Crop extends Submenu {
      */
     changeStandbyMode() {
         this.actions.stopDrawingMode();
+        this.setPresetButtonActive();
     }
 
     /**
@@ -120,7 +121,9 @@ class Crop extends Submenu {
                 this._els[key].classList.remove('active');
             }
         });
-        this._els[preset].classList.add('active');
+        if (preset) {
+            this._els[preset].classList.add('active');
+        }
     }
 }
 
