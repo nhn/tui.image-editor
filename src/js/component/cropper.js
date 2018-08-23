@@ -293,8 +293,8 @@ class Cropper extends Component {
         }
 
         const canvasImage = this.getCanvasImage();
-        const oWidth = canvasImage.getOriginalSize().width;
-        const oHeight = canvasImage.getOriginalSize().height;
+        const oWidth = canvasImage ? canvasImage.getOriginalSize().width : 800;
+        const oHeight = canvasImage ? canvasImage.getOriginalSize().height : 600;
 
         let width = (10000 * factor);
         let height = 10000;

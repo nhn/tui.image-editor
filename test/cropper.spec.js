@@ -240,6 +240,77 @@ describe('Cropper', () => {
         });
     });
 
+    describe('"presets - setCropzoneRect()"', () => {
+        it('should return cropzone rect as a square', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(1 / 1);
+            expect(cropper.getCropzoneRect()).toBeTruthy();
+            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height);
+            cropper.end();
+        });
+
+        it('should return cropzone rect as a 3:2 aspect box', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(3 / 2);
+            expect(cropper.getCropzoneRect()).toBeTruthy();
+            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (3 / 2));
+            cropper.end();
+        });
+
+        it('should return cropzone rect as a 4:3 aspect box', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(4 / 3);
+            expect(cropper.getCropzoneRect()).toBeTruthy();
+            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (4 / 3));
+            cropper.end();
+        });
+
+        it('should return cropzone rect as a 5:4 aspect box', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(5 / 4);
+            expect(cropper.getCropzoneRect()).toBeTruthy();
+            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (5 / 4));
+            cropper.end();
+        });
+
+        it('should return cropzone rect as a 7:5 aspect box', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(7 / 5);
+            expect(cropper.getCropzoneRect()).toBeTruthy();
+            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (7 / 5));
+            cropper.end();
+        });
+
+        it('should return cropzone rect as a 16:9 aspect box', () => {
+            cropper.start();
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(16 / 9);
+            expect(cropper.getCropzoneRect()).toBeTruthy();
+            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (16 / 9));
+            cropper.end();
+        });
+
+        it('should remove cropzone of cropper when falsy is passed', () => {
+            cropper.start();
+
+            cropper.setCropzoneRect();
+            expect(cropper.getCropzoneRect()).toBeFalsy();
+
+            cropper.setCropzoneRect(0);
+            expect(cropper.getCropzoneRect()).toBeFalsy();
+
+            cropper.setCropzoneRect(null);
+            expect(cropper.getCropzoneRect()).toBeFalsy();
+
+            cropper.end();
+        });
+    });
+
     describe('"end()"', () => {
         it('should set cropzone of cropper to null', () => {
             cropper.start();
