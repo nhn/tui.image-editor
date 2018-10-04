@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs>
-        <path id="a" d="M12 23C6.477 23 2 18.523 2 13a9.985 9.985 0 0 1 4.021-8.016"/>
-        <mask id="b" width="10" height="18.016" x="0" y="0" fill="#fff">
-            <use xlink:href="#a"/>
-        </mask>
-    </defs><symbol id="icon-b-ic-apply" viewBox="0 0 24 24">
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><defs/><symbol id="icon-b-ic-apply" viewBox="0 0 24 24">
     <g fill="none" fill-rule="evenodd">
         <path d="M0 0h24v24H0z"/>
         <path stroke="#555555" d="M4 12.011l5 5L20.011 6"/>
@@ -64,10 +59,10 @@
         <path d="M0 0v32h32V0z"/>
         <path fill="#555555" d="M0 16v1h32v-1zM11 27.167l3 .5v-1.03l-3-.546v1.076zm-3-.5v-1.122L5 25v-5H4v5.153a1 1 0 0 0 .836.986L8 26.667zm9 1.5l3 .5v-.94l-3-.545v.985zm6 1l3.836.639A1 1 0 0 0 28 28.82V26h-1v3l-4-.727v.894zM28 23v-3h-1v3h1zM4 13h1V7l22-4v10h1V3.18a1 1 0 0 0-1.164-.986l-22 3.667A1 1 0 0 0 4 6.847V13z"/>
     </g>
-</symbol><symbol id="icon-b-ic-flip" viewBox="0 0 32 32">
-    <g fill="none">
-        <path d="M32 32H0V0h32z"/>
-        <path fill="#555555" d="M17 32h-1V0h1zM27.167 11l.5 3h-1.03l-.546-3h1.076zm-.5-3h-1.122L25 5h-5V4h5.153a1 1 0 0 1 .986.836L26.667 8zm1.5 9l.5 3h-.94l-.545-3h.985zm1 6l.639 3.836A1 1 0 0 1 28.819 28H26v-1h3l-.726-4h.894zM23 28h-3v-1h3v1zM13 4v1H7L3 27h10v1H3.18a1 1 0 0 1-.986-1.164l3.666-22A1 1 0 0 1 6.847 4H13z"/>
+</symbol><symbol id="icon-b-ic-flip" viewBox="0 0 24 24">
+    <g fill="none" fill-rule="evenodd">
+        <path d="M0 0h24v24H0z"/>
+        <path fill="#555555" d="M11 0h1v24h-1zM19 21v-1h2v-2h1v2a1 1 0 0 1-1 1h-2zm-2 0h-3v-1h3v1zm5-5h-1v-3h1v3zm0-5h-1V8h1v3zm0-5h-1V4h-2V3h2a1 1 0 0 1 1 1v2zm-5-3v1h-3V3h3zM9 3v1H2v16h7v1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7z"/>
     </g>
 </symbol><symbol id="icon-b-ic-icon-arrow-2" viewBox="0 0 32 32">
     <g fill="none" fill-rule="evenodd">
@@ -145,20 +140,21 @@
     </g>
 </symbol><symbol id="icon-b-ic-rotate-clockwise" viewBox="0 0 32 32">
     <g fill="none" fill-rule="evenodd">
-        <path fill="#555555" d="M29 16h-.924c0 6.627-5.373 12-12 12-6.628 0-12-5.373-12-12s5.372-12 12-12c.337 0 .67.014 1 .041V4h3.933A12.96 12.96 0 0 0 16 3C8.82 3 3 8.82 3 16s5.82 13 13 13 13-5.82 13-13z"/>
-        <path stroke="#555555" stroke-linecap="square" d="M17 .5l4 3-4 3"/>
+        <path fill="#555555" d="M29 17h-.924c0 6.627-5.373 12-12 12-6.628 0-12-5.373-12-12C4.076 10.398 9.407 5.041 16 5V4C8.82 4 3 9.82 3 17s5.82 13 13 13 13-5.82 13-13z"/>
+        <path stroke="#555555" stroke-linecap="square" d="M16 1.5l4 3-4 3"/>
+        <path fill="#555555" fill-rule="nonzero" d="M16 4h4v1h-4z"/>
     </g>
 </symbol><symbol id="icon-b-ic-rotate-counterclockwise" viewBox="0 0 32 32">
     <g fill="none" fill-rule="evenodd">
-        <path fill="#555555" d="M3 16h.924c0 6.627 5.373 12 12 12 6.628 0 12-5.373 12-12s-5.372-12-12-12c-.337 0-.67.014-1 .041V4h-3.933A12.96 12.96 0 0 1 16 3c7.18 0 13 5.82 13 13s-5.82 13-13 13S3 23.18 3 16z"/>
-        <path stroke="#555555" stroke-linecap="square" d="M15 .5l-4 3 4 3"/>
+        <path fill="#555555" d="M3 17h.924c0 6.627 5.373 12 12 12 6.628 0 12-5.373 12-12 0-6.602-5.331-11.96-11.924-12V4c7.18 0 13 5.82 13 13s-5.82 13-13 13S3 24.18 3 17z"/>
+        <path fill="#555555" fill-rule="nonzero" d="M12 4h4v1h-4z"/>
+        <path stroke="#555555" stroke-linecap="square" d="M16 1.5l-4 3 4 3"/>
     </g>
 </symbol><symbol id="icon-b-ic-rotate" viewBox="0 0 24 24">
-    
     <g fill="none" fill-rule="evenodd">
-        <use stroke="#555555" stroke-dasharray="4,2.5" stroke-width="2" mask="url(#b)" xlink:href="#a"/>
-        <path fill="#555555" d="M11 22.95v-1.005a9 9 0 1 0 0-17.89V4H7.636c1.319-.64 2.8-1 4.364-1 5.523 0 10 4.477 10 10s-4.477 10-10 10c-.337 0-.671-.017-1-.05z"/>
-        <path stroke="#555555" stroke-linecap="square" d="M11 1L8.5 3.5 11 6"/>
+        <path d="M0 0h24v24H0z"/>
+        <path fill="#555555" d="M8.349 22.254a10.002 10.002 0 0 1-2.778-1.719l.65-.76a9.002 9.002 0 0 0 2.495 1.548l-.367.931zm2.873.704l.078-.997a9 9 0 1 0-.557-17.852l-.14-.99A10.076 10.076 0 0 1 12.145 3c5.523 0 10 4.477 10 10s-4.477 10-10 10c-.312 0-.62-.014-.924-.042zm-7.556-4.655a9.942 9.942 0 0 1-1.253-2.996l.973-.234a8.948 8.948 0 0 0 1.124 2.693l-.844.537zm-1.502-5.91A9.949 9.949 0 0 1 2.88 9.23l.925.382a8.954 8.954 0 0 0-.644 2.844l-.998-.062zm2.21-5.686c.687-.848 1.51-1.58 2.436-2.166l.523.852a9.048 9.048 0 0 0-2.188 1.95l-.771-.636z"/>
+        <path stroke="#555555" stroke-linecap="square" d="M13 1l-2.5 2.5L13 6"/>
     </g>
 </symbol><symbol id="icon-b-ic-shape-circle" viewBox="0 0 32 32">
     <g fill="none" fill-rule="evenodd">
