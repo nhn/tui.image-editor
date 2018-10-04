@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.2.0
+ * @version 3.2.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -16,6 +16,7 @@ body > textarea {
   position: relative;
   background-color: #282828;
   overflow: hidden;
+  letter-spacing: 0.3px;
 }
 .tui-image-editor-container div,
 .tui-image-editor-container ul,
@@ -61,14 +62,17 @@ body > textarea {
   position: relative;
   width: 120px;
   height: 40px;
+  padding: 0;
+  line-height: 40px;
   outline: none;
   border-radius: 20px;
   border: 1px solid #ddd;
-  padding-top: 5px;
-  font-family: NotoSans, sans-serif;
+  font-family: 'Noto Sans', sans-serif;
   font-size: 12px;
   font-weight: bold;
   cursor: pointer;
+  vertical-align: middle;
+  letter-spacing: 0.3px;
 }
 .tui-image-editor-container .tui-image-editor-download-btn {
   background-color: #fdba3b;
@@ -102,7 +106,7 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-wrap {
   position: absolute;
-  bottom: 150px;
+  bottom: 0;
   width: 100%;
   overflow: auto;
 }
@@ -116,7 +120,7 @@ body > textarea {
   vertical-align: middle;
 }
 .tui-image-editor-container .tui-image-editor {
-  position: static;
+  position: relative;
   display: inline-block;
 }
 .tui-image-editor-container .tui-image-editor-menu {
@@ -178,6 +182,7 @@ body > textarea {
   position: absolute;
   width: 100%;
   height: 100%;
+  border: 1px solid rgba(255,255,255,0.7);
 }
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-flip .tui-image-editor,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-rotate .tui-image-editor {
@@ -191,36 +196,36 @@ body > textarea {
   width: 100%;
   height: 100%;
   border-collapse: collapse;
-  box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
 }
 .tui-image-editor-container .tui-image-editor-grid-visual table td {
-  border: 1px solid #fff;
-  box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.3);
 }
 .tui-image-editor-container .tui-image-editor-grid-visual table td.dot:before {
   content: '';
   position: absolute;
-  width: 8px;
-  height: 8px;
-  border: 1px solid #cdcdcd;
+  box-sizing: border-box;
+  width: 10px;
+  height: 10px;
+  border: 0;
+  box-shadow: 0 0 1px 0 rgba(0,0,0,0.3);
   border-radius: 100%;
   background-color: #fff;
 }
 .tui-image-editor-container .tui-image-editor-grid-visual table td.dot.left-top:before {
-  top: -4px;
-  left: -4px;
+  top: -5px;
+  left: -5px;
 }
 .tui-image-editor-container .tui-image-editor-grid-visual table td.dot.right-top:before {
-  top: -4px;
-  right: -4px;
+  top: -5px;
+  right: -5px;
 }
 .tui-image-editor-container .tui-image-editor-grid-visual table td.dot.left-bottom:before {
-  bottom: -4px;
-  left: -4px;
+  bottom: -5px;
+  left: -5px;
 }
 .tui-image-editor-container .tui-image-editor-grid-visual table td.dot.right-bottom:before {
-  bottom: -4px;
-  right: -4px;
+  bottom: -5px;
+  right: -5px;
 }
 .tui-image-editor-container .tui-image-editor-submenu {
   display: none;
@@ -229,6 +234,7 @@ body > textarea {
   width: 100%;
   height: 150px;
   white-space: nowrap;
+  z-index: 2;
 }
 .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover svg > use.active {
   display: block;
@@ -239,7 +245,7 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item .tui-image-editor-newline {
   display: block;
-  margin-top: 14px;
+  margin-top: 0;
 }
 .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item .tui-image-editor-button {
   position: relative;
@@ -247,15 +253,14 @@ body > textarea {
   display: inline-block;
   font-weight: normal;
   font-size: 11px;
-  margin: 0 7px 0 7px;
+  margin: 0 9px 0 9px;
 }
 .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item label {
   display: inline-block;
   cursor: pointer;
   padding-top: 5px;
-  font-family: NotoSans, sans-serif;
+  font-family: "Noto Sans", sans-serif;
   font-size: 11px;
-  letter-spacing: 0.7px;
 }
 .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item .tui-image-editor-button.apply label,
 .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item .tui-image-editor-button.cancel label {
@@ -265,11 +270,21 @@ body > textarea {
   display: none;
   vertical-align: bottom;
 }
+.tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-style {
+  opacity: 0.95;
+  z-index: -1;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: block;
+}
 .tui-image-editor-container .tui-image-editor-partition > div {
   width: 1px;
   height: 52px;
   border-left: 1px solid #3c3c3c;
-  margin: 0 12px 0 14px;
+  margin: 0 8px 0 8px;
 }
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-filter .tui-image-editor-partition > div {
   height: 108px;
@@ -345,7 +360,7 @@ body > textarea {
   width: 14px;
   height: 14px;
   background-color: #fff;
-  top: 4px;
+  top: 6px;
   left: -19px;
   display: inline-block;
   margin: 0;
@@ -365,8 +380,8 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-selectlist-wrap select {
   width: 100%;
-  height: 25px;
-  margin-top: 9px;
+  height: 28px;
+  margin-top: 4px;
   border: 0;
   outline: 0;
   border-radius: 0;
@@ -375,25 +390,48 @@ body > textarea {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  padding: 0 7px 0 7px;
+  padding: 0 7px 0 10px;
 }
-.tui-image-editor-container .tui-image-editor-selectlist-wrap:after {
+.tui-image-editor-container .tui-image-editor-selectlist-wrap .tui-image-editor-selectlist {
+  display: none;
+  position: relative;
+  top: -1px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  border-top: 0px;
+  padding: 4px 0;
+}
+.tui-image-editor-container .tui-image-editor-selectlist-wrap .tui-image-editor-selectlist li {
+  display: block;
+  text-align: left;
+  padding: 7px 10px;
+  font-family: 'Noto Sans', sans-serif;
+}
+.tui-image-editor-container .tui-image-editor-selectlist-wrap .tui-image-editor-selectlist li:hover {
+  background-color: rgba(81,92,230,0.05);
+}
+.tui-image-editor-container .tui-image-editor-selectlist-wrap:before {
   content: '';
   position: absolute;
   display: inline-block;
   width: 14px;
   height: 14px;
   right: 5px;
-  bottom: 5px;
+  top: 10px;
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAHlJREFUKBVjYBgFOEOAEVkmPDxc89+/f6eAYjzI4kD2FyYmJrOVK1deh4kzwRggGiQBVJCELAZig8SQNYHEmEEEMrh69eo1HR0dfqCYJUickZGxf9WqVf3IakBsFBthklpaWmVA9mEQhrJhUoTp0NBQCRAmrHL4qgAAuu4cWZOZIGsAAAAASUVORK5CYII=");
   background-size: cover;
 }
 .tui-image-editor-container .tui-image-editor-selectlist-wrap select::-ms-expand {
   display: none;
 }
+.tui-image-editor-container .tui-image-editor-virtual-range-bar .tui-image-editor-disabled,
+.tui-image-editor-container .tui-image-editor-virtual-range-subbar .tui-image-editor-disabled,
+.tui-image-editor-container .tui-image-editor-virtual-range-pointer .tui-image-editor-disabled {
+  backbround-color: #f00;
+}
 .tui-image-editor-container .tui-image-editor-range {
   position: relative;
-  top: 7px;
+  top: 5px;
   width: 166px;
   height: 17px;
   display: inline-block;
@@ -424,12 +462,14 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-range-wrap {
   display: inline-block;
+  margin-left: 4px;
 }
 .tui-image-editor-container .tui-image-editor-range-wrap.short .tui-image-editor-range {
   width: 100px;
 }
 .tui-image-editor-container .color-picker-control .tui-image-editor-range {
   width: 108px;
+  margin-left: 10px;
 }
 .tui-image-editor-container .color-picker-control .tui-image-editor-virtual-range-pointer {
   background-color: #333;
@@ -441,8 +481,8 @@ body > textarea {
   background-color: #606060;
 }
 .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short {
-  margin-top: 0;
-  margin-left: 17px;
+  margin-top: -2px;
+  margin-left: 19px;
 }
 .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {
   color: #8e8e8e;
@@ -467,8 +507,9 @@ body > textarea {
   color: #fff;
   font-weight: lighter;
   vertical-align: baseline;
-  font-family: NotoSans, sans-serif;
-  padding-top: 2px;
+  font-family: 'Noto Sans', sans-serif;
+  margin-top: 21px;
+  margin-left: 4px;
 }
 .tui-image-editor-container .tui-image-editor-controls {
   position: absolute;
@@ -477,7 +518,7 @@ body > textarea {
   height: 64px;
   display: table;
   bottom: 0;
-  z-index: 1;
+  z-index: 2;
 }
 .tui-image-editor-container .tui-image-editor-icpartition {
   display: inline-block;
@@ -514,7 +555,7 @@ body > textarea {
 }
 .tui-image-editor-container.left .tui-image-editor-menu,
 .tui-image-editor-container.right .tui-image-editor-menu {
-  white-space: initial;
+  white-space: inherit;
 }
 .tui-image-editor-container.left .tui-image-editor-submenu,
 .tui-image-editor-container.right .tui-image-editor-submenu {
@@ -578,10 +619,6 @@ body > textarea {
 .tui-image-editor-container.right .tui-image-editor-range {
   width: 136px;
 }
-.tui-image-editor-container.left #tie-icon-add-button .tui-image-editor-button,
-.tui-image-editor-container.right #tie-icon-add-button .tui-image-editor-button {
-  width: 45px;
-}
 .tui-image-editor-container.right .tui-image-editor-menu > .tui-image-editor-item[title]:before {
   left: -3px;
   top: 11px;
@@ -618,14 +655,14 @@ body > textarea {
   padding-bottom: 24px;
 }
 .tui-image-editor-container.top .color-picker-control .triangle {
-  top: -11px;
-  border-right: 12px solid transparent;
+  top: -8px;
+  border-right: 7px solid transparent;
   border-top: 0px;
-  border-left: 12px solid transparent;
-  border-bottom: 12px solid #fff;
+  border-left: 7px solid transparent;
+  border-bottom: 8px solid #fff;
 }
 .tui-image-editor-container.top .tui-image-editor-size-wrap {
-  height: calc(100% - 64px);
+  height: 100%;
 }
 .tui-image-editor-container.top .tui-image-editor-main-container {
   bottom: 0;
@@ -655,11 +692,14 @@ body > textarea {
 }
 .tui-image-editor-container.top .tui-image-editor-main {
   top: 64px;
-  height: 100%;
+  height: calc(100% - 64px);
 }
 .tui-image-editor-container.top .tui-image-editor-controls {
   top: 0;
   bottom: inherit;
+}
+.tui-image-editor-container #tie-icon-add-button .tui-image-editor-button {
+  min-width: 42px;
 }
 .tui-image-editor-container .svg_ic-menu {
   width: 24px;
@@ -676,6 +716,13 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-controls svg > use {
   display: none;
 }
+.tui-image-editor-container .tui-image-editor-controls .enabled svg:hover > use.hover,
+.tui-image-editor-container .tui-image-editor-controls .normal svg:hover > use.hover {
+  display: block;
+}
+.tui-image-editor-container .tui-image-editor-controls .active svg:hover > use.hover {
+  display: none;
+}
 .tui-image-editor-container .tui-image-editor-controls svg > use.normal {
   display: block;
 }
@@ -688,6 +735,9 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-controls .active svg > use.normal,
 .tui-image-editor-container .tui-image-editor-controls .enabled svg > use.normal {
   display: none;
+}
+.tui-image-editor-container .tui-image-editor-controls:hover {
+  z-index: 3;
 }
 .tui-image-editor-container div.tui-colorpicker-clearfix {
   width: 159px;
@@ -704,40 +754,58 @@ body > textarea {
   border: 0;
   font-size: 11px;
   margin-top: 2px;
+  font-family: 'Noto Sans', sans-serif;
+}
+.tui-image-editor-container .tui-colorpicker-palette-hex[value='#ffffff'] + .tui-colorpicker-palette-preview,
+.tui-image-editor-container .tui-colorpicker-palette-hex[value=''] + .tui-colorpicker-palette-preview {
+  border: 1px solid #ccc;
+}
+.tui-image-editor-container .tui-colorpicker-palette-hex[value=''] + .tui-colorpicker-palette-preview {
+  background-size: cover;
+  background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAAdBJREFUWAnFl0FuwjAQRZ0ukiugHqFSOQNdseuKW3ALzkA4BateICvUGyCxrtRFd4WuunH/TzykaYJrnLEYaTJJsP2+x8GZZCbQrLU5mj7Bn+EP8HvnCObd+R7xBV5lWfaNON4AnsA38E94qLEt+0yiFaBzAV/Bv+Cxxr4co7hKCDpw1q9wLeNYYdlAwyn8TYt8Hme3+8D5ozcTaMCZ68PXa2tnM2sbEcOZAJhrrpl2DAcTOGNjZPSfCdzkw6JrfbiMv+osBe4y9WOedhm4jZfhbENWuxS44H9Wz/xw4WzqLOAqh1+zycgAwzEMzr5k5gaHOa9ULBwuuDkFlHI1Kl4PJ66kgIpnoywOTmRFAYcbwYk9UMApWkD8zAV5ihcwHk4Rx7gl0IFTQL0EFc+CTQ9OZHWH3YhlVJiVpTHbrTGLhTHLZVgff6s9lyBsI9KduSS83oj+34rTwJutmBmCnMsvozRwZqB5GTkBw6/jdPDu69iJ6BYk6eCcfbcgcQIK/MByaaiMqm8rHcjol2TnpWDhyAKSGdA3FrxtJUToX0ODqatetfGE+8tyEUOV8GY5dGRwLP/MBS4RHQr4bT7NRAQjlcOTfZxmv2G+c4hI8nn+Ax5PG/zhI393AAAAAElFTkSuQmCC");
 }
 .tui-image-editor-container .tui-colorpicker-palette-preview {
   border-radius: 100%;
   float: left;
-  width: 16px;
-  height: 16px;
+  width: 17px;
+  height: 17px;
+  border: 0;
 }
 .tui-image-editor-container .color-picker-control {
   position: absolute;
   display: none;
   z-index: 99;
-  width: 188px;
-  height: 112px;
+  width: 192px;
   background-color: #fff;
-  box-shadow: 0 3px 22px 0px #000;
-  padding: 14px;
+  box-shadow: 0 3px 22px 6px rgba(0,0,0,0.15);
+  padding: 16px;
   border-radius: 2px;
 }
 .tui-image-editor-container .color-picker-control .tui-colorpicker-palette-toggle-slider {
   display: none;
 }
 .tui-image-editor-container .color-picker-control .tui-colorpicker-palette-button {
+  border: 0;
   border-radius: 100%;
   margin: 2px;
+  background-size: cover;
+  font-size: 1px;
+}
+.tui-image-editor-container .color-picker-control .tui-colorpicker-palette-button[title='#ffffff'] {
+  border: 1px solid #ccc;
+}
+.tui-image-editor-container .color-picker-control .tui-colorpicker-palette-button[title=''] {
+  border: 1px solid #ccc;
 }
 .tui-image-editor-container .color-picker-control .triangle {
   width: 0;
   height: 0;
-  border-right: 12px solid transparent;
-  border-top: 12px solid #fff;
-  border-left: 12px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 8px solid #fff;
+  border-left: 7px solid transparent;
   position: absolute;
-  bottom: -11px;
-  left: 77px;
+  bottom: -8px;
+  left: 84px;
 }
 .tui-image-editor-container .color-picker-control .tui-colorpicker-container,
 .tui-image-editor-container .color-picker-control .tui-colorpicker-palette-container ul,
@@ -750,17 +818,23 @@ body > textarea {
   font-weight: normal;
   margin-right: 7pxleft;
 }
+.tui-image-editor-container .filter-color-item .tui-image-editor-checkbox {
+  margin-top: 0;
+}
+.tui-image-editor-container .filter-color-item .tui-image-editor-checkbox input + label:before {
+  left: -16px;
+}
 .tui-image-editor-container .color-picker {
   width: 100%;
   height: auto;
 }
 .tui-image-editor-container .color-picker-value {
-  width: 30px;
-  height: 30px;
+  width: 32px;
+  height: 32px;
   border: 0px;
   border-radius: 100%;
   margin: auto;
-  margin-bottom: 4px;
+  margin-bottom: 1px;
 }
 .tui-image-editor-container .color-picker-value.transparent {
   border: 1px solid #cbcbcb;
