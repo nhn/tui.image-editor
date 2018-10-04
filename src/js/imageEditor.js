@@ -295,6 +295,10 @@ class ImageEditor {
      */
     /* eslint-disable complexity */
     _onKeyDown(e) {
+        const activeObject = this._graphics.getActiveObject();
+        const activeObjectGroup = this._graphics.getActiveGroupObject();
+        const existRemoveObject = activeObject || activeObjectGroup;
+
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
             // There is no error message on shortcut when it's empty
             this.undo()['catch'](() => {});
@@ -305,7 +309,7 @@ class ImageEditor {
             this.redo()['catch'](() => {});
         }
 
-        if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL)) {
+        if (((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) && existRemoveObject)) {
             e.preventDefault();
             this.removeActiveObject();
         }
@@ -1226,7 +1230,14 @@ class ImageEditor {
 
     /**
      * Get data url
-     * @param {string} type - A DOMString indicating the image format. The default type is image/png.
+     * @param {Object} options - options for toDataURL
+     *   @param {String} [options.format=png] The format of the output image. Either "jpeg" or "png"
+     *   @param {Number} [options.quality=1] Quality level (0..1). Only used for jpeg.
+     *   @param {Number} [options.multiplier=1] Multiplier to scale by
+     *   @param {Number} [options.left] Cropping left offset. Introduced in fabric v1.2.14
+     *   @param {Number} [options.top] Cropping top offset. Introduced in fabric v1.2.14
+     *   @param {Number} [options.width] Cropping width. Introduced in fabric v1.2.14
+     *   @param {Number} [options.height] Cropping height. Introduced in fabric v1.2.14
      * @returns {string} A DOMString containing the requested data URI
      * @example
      * imgEl.src = imageEditor.toDataURL();
@@ -1235,8 +1246,8 @@ class ImageEditor {
      *      imageEditor.addImageObject(imgUrl);
      * });
      */
-    toDataURL(type) {
-        return this._graphics.toDataURL(type);
+    toDataURL(options) {
+        return this._graphics.toDataURL(options);
     }
 
     /**
