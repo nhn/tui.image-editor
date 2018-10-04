@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.2.0
+ * @version 3.2.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -939,6 +939,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_onKeyDown',
 	        value: function _onKeyDown(e) {
+	            var activeObject = this._graphics.getActiveObject();
+	            var activeObjectGroup = this._graphics.getActiveGroupObject();
+	            var existRemoveObject = activeObject || activeObjectGroup;
+
 	            if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
 	                // There is no error message on shortcut when it's empty
 	                this.undo()['catch'](function () {});
@@ -949,7 +953,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.redo()['catch'](function () {});
 	            }
 
-	            if (e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) {
+	            if ((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) && existRemoveObject) {
 	                e.preventDefault();
 	                this.removeActiveObject();
 	            }
@@ -2040,7 +2044,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Get data url
-	         * @param {string} type - A DOMString indicating the image format. The default type is image/png.
+	         * @param {Object} options - options for toDataURL
+	         *   @param {String} [options.format=png] The format of the output image. Either "jpeg" or "png"
+	         *   @param {Number} [options.quality=1] Quality level (0..1). Only used for jpeg.
+	         *   @param {Number} [options.multiplier=1] Multiplier to scale by
+	         *   @param {Number} [options.left] Cropping left offset. Introduced in fabric v1.2.14
+	         *   @param {Number} [options.top] Cropping top offset. Introduced in fabric v1.2.14
+	         *   @param {Number} [options.width] Cropping width. Introduced in fabric v1.2.14
+	         *   @param {Number} [options.height] Cropping height. Introduced in fabric v1.2.14
 	         * @returns {string} A DOMString containing the requested data URI
 	         * @example
 	         * imgEl.src = imageEditor.toDataURL();
@@ -2052,8 +2063,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    }, {
 	        key: 'toDataURL',
-	        value: function toDataURL(type) {
-	            return this._graphics.toDataURL(type);
+	        value: function toDataURL(options) {
+	            return this._graphics.toDataURL(options);
 	        }
 
 	        /**
@@ -4997,9 +5008,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                applyGroupSelectionStyle: true,
 	                selectionStyle: {
 	                    cornerStyle: 'circle',
-	                    cornerSize: 20,
+	                    cornerSize: 16,
 	                    cornerColor: '#fff',
-	                    cornerStrokeColor: '#000',
+	                    cornerStrokeColor: '#fff',
 	                    transparentCorners: false,
 	                    lineWidth: 2,
 	                    borderColor: '#fff'
@@ -5046,16 +5057,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            editorElementStyle.height = height + 'px';
 	            editorElementStyle.width = width + 'px';
 
-	            var _getEditorPosition2 = this._getEditorPosition(menuBarPosition),
-	                top = _getEditorPosition2.top,
-	                bottom = _getEditorPosition2.bottom,
-	                left = _getEditorPosition2.left,
-	                right = _getEditorPosition2.right;
+	            this._setEditorPosition(menuBarPosition);
 
-	            this._editorElementWrap.style.bottom = bottom + 'px';
-	            this._editorElementWrap.style.top = top + 'px';
-	            this._editorElementWrap.style.left = left + 'px';
-	            this._editorElementWrap.style.width = 'calc(100% - ' + right + 'px)';
+	            this._editorElementWrap.style.bottom = '0px';
+	            this._editorElementWrap.style.top = '0px';
+	            this._editorElementWrap.style.left = '0px';
+	            this._editorElementWrap.style.width = '100%';
+
 	            var selectElementClassList = this._selectedElement.classList;
 
 	            if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION) {
@@ -5277,13 +5285,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var _theme$getStyle = this.theme.getStyle('menu.icon'),
 	                normal = _theme$getStyle.normal,
-	                active = _theme$getStyle.active;
+	                active = _theme$getStyle.active,
+	                hover = _theme$getStyle.hover;
 
-	            var menuItemHtml = '\n            <svg class="svg_ic-menu">\n                <use xlink:href="' + normal.path + '#' + normal.name + '-ic-' + menuName + '" class="normal"/>\n                <use xlink:href="' + active.path + '#' + active.name + '-ic-' + menuName + '" class="active"/>\n            </svg>\n        ';
+	            var menuItemHtml = '\n            <svg class="svg_ic-menu">\n                <use xlink:href="' + normal.path + '#' + normal.name + '-ic-' + menuName + '" class="normal"/>\n                <use xlink:href="' + active.path + '#' + active.name + '-ic-' + menuName + '" class="active"/>\n                <use xlink:href="' + hover.path + '#' + hover.name + '-ic-' + menuName + '" class="hover"/>\n            </svg>\n        ';
 
 	            btnElement.id = 'tie-btn-' + menuName;
-	            btnElement.className = 'tui-image-editor-item';
-	            btnElement.title = menuName;
+	            btnElement.className = 'tui-image-editor-item normal';
+	            btnElement.title = menuName.replace(/^[a-z]/g, function ($0) {
+	                return $0.toUpperCase();
+	            });
 	            btnElement.innerHTML = menuItemHtml;
 
 	            this._menuElement.appendChild(btnElement);
@@ -5520,46 +5531,51 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
-	         * Get editor position
+	         * Set editor position
 	         * @param {string} menuBarPosition - top or right or bottom or left
-	         * @returns {Object} - positions (top, right, bottom, left)
 	         * @private
 	         */
 
 	    }, {
-	        key: '_getEditorPosition',
-	        value: function _getEditorPosition(menuBarPosition) {
-	            var bottom = 0;
+	        key: '_setEditorPosition',
+	        value: function _setEditorPosition(menuBarPosition) {
+	            var _getEditorDimension3 = this._getEditorDimension(),
+	                width = _getEditorDimension3.width,
+	                height = _getEditorDimension3.height;
+
+	            var editorElementStyle = this._editorElement.style;
 	            var top = 0;
 	            var left = 0;
-	            var right = 0;
 
 	            if (this.submenu) {
-	                switch (menuBarPosition) {
-	                    case 'bottom':
-	                        bottom += 150;
-	                        break;
-	                    case 'top':
-	                        top += 150;
-	                        break;
-	                    case 'left':
-	                        left += 248;
-	                        right += 248;
-	                        break;
-	                    case 'right':
-	                        right += 248;
-	                        break;
-	                    default:
-	                        break;
+	                if (menuBarPosition === 'bottom') {
+	                    if (height > this._editorElementWrap.scrollHeight - 150) {
+	                        top = (height - this._editorElementWrap.scrollHeight) / 2;
+	                    } else {
+	                        top = 150 / 2 * -1;
+	                    }
+	                } else if (menuBarPosition === 'top') {
+	                    if (height > this._editorElementWrap.offsetHeight - 150) {
+	                        top = 150 / 2 - (height - (this._editorElementWrap.offsetHeight - 150)) / 2;
+	                    } else {
+	                        top = 150 / 2;
+	                    }
+	                } else if (menuBarPosition === 'left') {
+	                    if (width > this._editorElementWrap.offsetWidth - 248) {
+	                        left = 248 / 2 - (width - (this._editorElementWrap.offsetWidth - 248)) / 2;
+	                    } else {
+	                        left = 248 / 2;
+	                    }
+	                } else if (menuBarPosition === 'right') {
+	                    if (width > this._editorElementWrap.scrollWidth - 248) {
+	                        left = (width - this._editorElementWrap.scrollWidth) / 2;
+	                    } else {
+	                        left = 248 / 2 * -1;
+	                    }
 	                }
 	            }
-
-	            return {
-	                top: top,
-	                bottom: bottom,
-	                left: left,
-	                right: right
-	            };
+	            editorElementStyle.top = top + 'px';
+	            editorElementStyle.left = left + 'px';
 	        }
 	    }]);
 
@@ -5585,7 +5601,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        loadButtonStyle = _ref.loadButtonStyle,
 	        downloadButtonStyle = _ref.downloadButtonStyle,
 	        submenuStyle = _ref.submenuStyle;
-	    return "\n    <div class=\"tui-image-editor-main-container\" style=\"" + commonStyle + "\">\n        <div class=\"tui-image-editor-header\" style=\"" + headerStyle + "\">\n            <div class=\"tui-image-editor-header-logo\">\n                <img src=\"" + biImage + "\" />\n            </div>\n            <div class=\"tui-image-editor-header-buttons\">\n                <button style=\"" + loadButtonStyle + "\">\n                    Load\n                    <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                </button>\n                <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                    Download\n                </button>\n            </div>\n        </div>\n        <div class=\"tui-image-editor-main\">\n            <div class=\"tui-image-editor-submenu\" style=\"" + submenuStyle + "\">\n            </div>\n            <div class=\"tui-image-editor-wrap\">\n                <div class=\"tui-image-editor-size-wrap\">\n                    <div class=\"tui-image-editor-align-wrap\">\n                        <div class=\"tui-image-editor\"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n";
+	    return "\n    <div class=\"tui-image-editor-main-container\" style=\"" + commonStyle + "\">\n        <div class=\"tui-image-editor-header\" style=\"" + headerStyle + "\">\n            <div class=\"tui-image-editor-header-logo\">\n                <img src=\"" + biImage + "\" />\n            </div>\n            <div class=\"tui-image-editor-header-buttons\">\n                <button style=\"" + loadButtonStyle + "\">\n                    Load\n                    <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                </button>\n                <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                    Download\n                </button>\n            </div>\n        </div>\n        <div class=\"tui-image-editor-main\">\n            <div class=\"tui-image-editor-submenu\">\n                <div class=\"tui-image-editor-submenu-style\" style=\"" + submenuStyle + "\"></div>\n            </div>\n            <div class=\"tui-image-editor-wrap\">\n                <div class=\"tui-image-editor-size-wrap\">\n                    <div class=\"tui-image-editor-align-wrap\">\n                        <div class=\"tui-image-editor\"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n";
 	};
 
 /***/ }),
@@ -5602,10 +5618,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var biImage = _ref.biImage,
 	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
-	        active = _ref$iconStyle.active,
+	        hover = _ref$iconStyle.hover,
+	        disabled = _ref$iconStyle.disabled,
 	        loadButtonStyle = _ref.loadButtonStyle,
 	        downloadButtonStyle = _ref.downloadButtonStyle;
-	    return "\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"" + biImage + "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\">\n            <li id=\"tie-btn-undo\" class=\"tui-image-editor-item\" title=\"undo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-undo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-undo\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-redo\" class=\"tui-image-editor-item\" title=\"redo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-redo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-redo\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-reset\" class=\"tui-image-editor-item\" title=\"reset\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-reset\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-reset\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n            <li id=\"tie-btn-delete\" class=\"tui-image-editor-item\" title=\"delete\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-delete\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-delete-all\" class=\"tui-image-editor-item\" title=\"delete-all\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-delete-all\" class=\"enabled\"/>\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete-all\" class=\"normal\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n        </ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <button style=\"" + loadButtonStyle + "\">\n                Load\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </button>\n            <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                Download\n            </button>\n        </div>\n    </div>\n";
+	    return "\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"" + biImage + "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\">\n            <li id=\"tie-btn-undo\" class=\"tui-image-editor-item\" title=\"Undo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-undo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-undo\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-undo\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-redo\" class=\"tui-image-editor-item\" title=\"Redo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-redo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-redo\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-redo\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-reset\" class=\"tui-image-editor-item\" title=\"Reset\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-reset\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-reset\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-reset\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n            <li id=\"tie-btn-delete\" class=\"tui-image-editor-item\" title=\"Delete\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-delete\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-delete\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-delete-all\" class=\"tui-image-editor-item\" title=\"Delete-all\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete-all\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-delete-all\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-delete-all\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n        </ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <button style=\"" + loadButtonStyle + "\">\n                Load\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </button>\n            <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                Download\n            </button>\n        </div>\n    </div>\n";
 	};
 
 /***/ }),
@@ -5672,7 +5689,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                case 'submenu.icon':
 	                    result = {
 	                        active: this.styles[firstProperty + '.activeIcon'],
-	                        normal: this.styles[firstProperty + '.normalIcon']
+	                        normal: this.styles[firstProperty + '.normalIcon'],
+	                        hover: this.styles[firstProperty + '.hoverIcon'],
+	                        disabled: this.styles[firstProperty + '.disabledIcon']
 	                    };
 	                    break;
 	                case 'submenu.label':
@@ -5687,6 +5706,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                        horizontal: this._makeCssText((0, _tuiCodeSnippet.extend)({}, option, { borderBottom: '1px solid ' + option.color }))
 	                    };
 	                    break;
+
+	                case 'range.disabledPointer':
+	                case 'range.disabledBar':
+	                case 'range.disabledSubbar':
 	                case 'range.pointer':
 	                case 'range.bar':
 	                case 'range.subbar':
@@ -5723,6 +5746,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                submenuRangePointer: this.getStyle('range.pointer'),
 	                submenuRangeBar: this.getStyle('range.bar'),
 	                submenuRangeSubbar: this.getStyle('range.subbar'),
+
+	                submenuDisabledRangePointer: this.getStyle('range.disabledPointer'),
+	                submenuDisabledRangeBar: this.getStyle('range.disabledBar'),
+	                submenuDisabledRangeSubbar: this.getStyle('range.disabledSubbar'),
+
 	                submenuRangeValue: this.getStyle('range.value'),
 	                submenuColorpickerTitle: this.getStyle('colorpicker.title'),
 	                submenuColorpickerButton: this.getStyle('colorpicker.button'),
@@ -5776,6 +5804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                if (['backgroundImage'].indexOf(key) > -1 && value !== 'none') {
 	                    value = 'url(' + value + ')';
 	                }
+
 	                converterStack.push(_this._toUnderScore(key) + ': ' + value);
 	            });
 
@@ -5826,10 +5855,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        submenuColorpickerButton = _ref.submenuColorpickerButton,
 	        submenuRangeBar = _ref.submenuRangeBar,
 	        submenuRangeSubbar = _ref.submenuRangeSubbar,
+	        submenuDisabledRangePointer = _ref.submenuDisabledRangePointer,
+	        submenuDisabledRangeBar = _ref.submenuDisabledRangeBar,
+	        submenuDisabledRangeSubbar = _ref.submenuDisabledRangeSubbar,
 	        submenuIconSize = _ref.submenuIconSize,
 	        menuIconSize = _ref.menuIconSize,
 	        biSize = _ref.biSize;
-	    return "\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    #tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    #tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    #tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    #tie-crop-button .tui-image-editor-button.apply.active label,\n    #tie-shape-button.rect .tui-image-editor-button.rect label,\n    #tie-shape-button.circle .tui-image-editor-button.circle label,\n    #tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    #tie-text-effect-button .tui-image-editor-button.active label,\n    #tie-text-align-button.left .tui-image-editor-button.left label,\n    #tie-text-align-button.center .tui-image-editor-button.center label,\n    #tie-text-align-button.right .tui-image-editor-button.right label,\n    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox input + label {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n\n";
+	    return "\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    #tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    #tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    #tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    #tie-crop-button .tui-image-editor-button.apply.active label,\n    #tie-shape-button.rect .tui-image-editor-button.rect label,\n    #tie-shape-button.circle .tui-image-editor-button.circle label,\n    #tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    #tie-text-effect-button .tui-image-editor-button.active label,\n    #tie-text-align-button.left .tui-image-editor-button.left label,\n    #tie-text-align-button.center .tui-image-editor-button.center label,\n    #tie-text-align-button.right .tui-image-editor-button.right label,\n    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox input + label {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n\n";
 	};
 
 /***/ }),
@@ -5993,21 +6025,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'loadButton.backgroundColor': '#fff',
 	  'loadButton.border': '1px solid #ddd',
 	  'loadButton.color': '#222',
-	  'loadButton.fontFamily': 'NotoSans, sans-serif',
+	  'loadButton.fontFamily': '"Noto Sans", sans-serif',
 	  'loadButton.fontSize': '12px',
 
 	  // download button
 	  'downloadButton.backgroundColor': '#fdba3b',
 	  'downloadButton.border': '1px solid #fdba3b',
 	  'downloadButton.color': '#fff',
-	  'downloadButton.fontFamily': 'NotoSans, sans-serif',
+	  'downloadButton.fontFamily': '"Noto Sans", sans-serif',
 	  'downloadButton.fontSize': '12px',
 
 	  // main icons
-	  'menu.normalIcon.path': 'icon-b.svg',
-	  'menu.normalIcon.name': 'icon-b',
-	  'menu.activeIcon.path': 'icon-a.svg',
-	  'menu.activeIcon.name': 'icon-a',
+	  'menu.normalIcon.path': 'icon-d.svg',
+	  'menu.normalIcon.name': 'icon-d',
+	  'menu.activeIcon.path': 'icon-b.svg',
+	  'menu.activeIcon.name': 'icon-b',
+	  'menu.disabledIcon.path': 'icon-a.svg',
+	  'menu.disabledIcon.name': 'icon-a',
+	  'menu.hoverIcon.path': 'icon-c.svg',
+	  'menu.hoverIcon.name': 'icon-c',
 	  'menu.iconSize.width': '24px',
 	  'menu.iconSize.height': '24px',
 
@@ -6037,6 +6073,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'range.pointer.color': '#fff',
 	  'range.bar.color': '#666',
 	  'range.subbar.color': '#d1d1d1',
+	  'range.disabledPointer.color': 'red',
+	  'range.disabledBar.color': 'blue',
+	  'range.disabledSubbar.color': 'red',
 	  'range.value.color': '#fff',
 	  'range.value.fontWeight': 'lighter',
 	  'range.value.fontSize': '11px',
@@ -6129,6 +6168,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            fillColorpicker: new _colorpicker2.default(_this.selector('#tie-color-fill'), '', _this.toggleDirection),
 	            strokeColorpicker: new _colorpicker2.default(_this.selector('#tie-color-stroke'), '#ffbb3b', _this.toggleDirection)
 	        };
+
+	        _this.colorPickerControls.push(_this._els.fillColorpicker);
+	        _this.colorPickerControls.push(_this._els.strokeColorpicker);
 	        return _this;
 	    }
 
@@ -6149,6 +6191,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
 	            this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
 	            this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
+	            this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
+	            this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
 	            this._els.strokeRangeValue.value = this._els.strokeRange.value;
 	            this._els.strokeRangeValue.setAttribute('readonly', true);
 	        }
@@ -6341,8 +6385,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _util = __webpack_require__(72);
-
 	var _tuiColorPicker = __webpack_require__(82);
 
 	var _tuiColorPicker2 = _interopRequireDefault(_tuiColorPicker);
@@ -6370,6 +6412,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        this._show = false;
 
+	        this._colorpickerElement = colorpickerElement;
 	        this._toggleDirection = toggleDirection;
 	        this._makePickerButtonElement(colorpickerElement, defaultColor);
 	        this._makePickerLayerElement(colorpickerElement, title);
@@ -6457,8 +6500,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	            colorpickerElement.appendChild(this.pickerControl);
 	            colorpickerElement.appendChild(this.colorElement);
 	            colorpickerElement.appendChild(label);
-
-	            this._setPickerControlPosition();
 	        }
 
 	        /**
@@ -6480,12 +6521,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	            colorpickerElement.addEventListener('click', function (event) {
 	                _this._show = !_this._show;
 	                _this.pickerControl.style.display = _this._show ? 'block' : 'none';
+	                _this._setPickerControlPosition();
+	                _this.fire('changeShow', _this);
 	                event.stopPropagation();
 	            });
 	            document.body.addEventListener('click', function () {
-	                _this._show = false;
-	                _this.pickerControl.style.display = 'none';
+	                _this.hide();
 	            });
+	        }
+	    }, {
+	        key: 'hide',
+	        value: function hide() {
+	            this._show = false;
+	            this.pickerControl.style.display = 'none';
 	        }
 
 	        /**
@@ -6497,8 +6545,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: '_setPickerControlPosition',
 	        value: function _setPickerControlPosition() {
 	            var controlStyle = this.pickerControl.style;
-	            var left = (0, _util.toInteger)(window.getComputedStyle(this.pickerControl, null).width) / 2 - 20;
-	            var top = ((0, _util.toInteger)(window.getComputedStyle(this.pickerControl, null).height) + 12) * -1;
+	            var halfPickerWidth = this._colorpickerElement.clientWidth / 2 + 2;
+	            var left = this.pickerControl.offsetWidth / 2 - halfPickerWidth;
+	            var top = (this.pickerControl.offsetHeight + 10) * -1;
 
 	            if (this._toggleDirection === 'down') {
 	                top = 30;
@@ -9982,7 +10031,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -9995,95 +10044,105 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 */
 	var Submenu = function () {
-	  function Submenu(subMenuElement, _ref) {
-	    var name = _ref.name,
-	        iconStyle = _ref.iconStyle,
-	        menuBarPosition = _ref.menuBarPosition,
-	        templateHtml = _ref.templateHtml;
+	    function Submenu(subMenuElement, _ref) {
+	        var name = _ref.name,
+	            iconStyle = _ref.iconStyle,
+	            menuBarPosition = _ref.menuBarPosition,
+	            templateHtml = _ref.templateHtml;
 
-	    _classCallCheck(this, Submenu);
+	        _classCallCheck(this, Submenu);
 
-	    this.selector = function (str) {
-	      return subMenuElement.querySelector(str);
-	    };
-	    this.menuBarPosition = menuBarPosition;
-	    this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
-	    this._makeSubMenuElement(subMenuElement, {
-	      name: name,
-	      iconStyle: iconStyle,
-	      templateHtml: templateHtml
-	    });
-	  }
-
-	  /**
-	   * Get butten type
-	   * @param {HTMLElement} button - event target element
-	   * @param {array} buttonNames - Array of button names
-	   * @returns {string} - button type
-	   */
-
-
-	  _createClass(Submenu, [{
-	    key: 'getButtonType',
-	    value: function getButtonType(button, buttonNames) {
-	      return button.className.match(RegExp('(' + buttonNames.join('|') + ')'))[0];
+	        this.selector = function (str) {
+	            return subMenuElement.querySelector(str);
+	        };
+	        this.menuBarPosition = menuBarPosition;
+	        this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
+	        this.colorPickerControls = [];
+	        this._makeSubMenuElement(subMenuElement, {
+	            name: name,
+	            iconStyle: iconStyle,
+	            templateHtml: templateHtml
+	        });
 	    }
 
-	    /**
-	     * Get butten type
-	     * @param {HTMLElement} target - event target element
-	     * @param {string} removeClass - remove class name
-	     * @param {string} addClass - add class name
-	     */
+	    _createClass(Submenu, [{
+	        key: 'colorPickerChangeShow',
+	        value: function colorPickerChangeShow(occurredControl) {
+	            this.colorPickerControls.forEach(function (pickerControl) {
+	                if (occurredControl !== pickerControl) {
+	                    pickerControl.hide();
+	                }
+	            });
+	        }
 
-	  }, {
-	    key: 'changeClass',
-	    value: function changeClass(target, removeClass, addClass) {
-	      target.classList.remove(removeClass);
-	      target.classList.add(addClass);
-	    }
+	        /**
+	         * Get butten type
+	         * @param {HTMLElement} button - event target element
+	         * @param {array} buttonNames - Array of button names
+	         * @returns {string} - button type
+	         */
 
-	    /**
-	     * Interface method whose implementation is optional.
-	     * Returns the menu to its default state.
-	     */
+	    }, {
+	        key: 'getButtonType',
+	        value: function getButtonType(button, buttonNames) {
+	            return button.className.match(RegExp('(' + buttonNames.join('|') + ')'))[0];
+	        }
 
-	  }, {
-	    key: 'changeStandbyMode',
-	    value: function changeStandbyMode() {}
+	        /**
+	         * Get butten type
+	         * @param {HTMLElement} target - event target element
+	         * @param {string} removeClass - remove class name
+	         * @param {string} addClass - add class name
+	         */
 
-	    /**
-	     * Interface method whose implementation is optional.
-	     * Executed when the menu starts.
-	     */
+	    }, {
+	        key: 'changeClass',
+	        value: function changeClass(target, removeClass, addClass) {
+	            target.classList.remove(removeClass);
+	            target.classList.add(addClass);
+	        }
 
-	  }, {
-	    key: 'changeStartMode',
-	    value: function changeStartMode() {}
+	        /**
+	         * Interface method whose implementation is optional.
+	         * Returns the menu to its default state.
+	         */
 
-	    /**
-	     * Make submenu dom element
-	     * @param {HTMLElement} subMenuElement - subment dom element
-	     * @param {Object} iconStyle -  icon style
-	     * @private
-	     */
+	    }, {
+	        key: 'changeStandbyMode',
+	        value: function changeStandbyMode() {}
 
-	  }, {
-	    key: '_makeSubMenuElement',
-	    value: function _makeSubMenuElement(subMenuElement, _ref2) {
-	      var name = _ref2.name,
-	          iconStyle = _ref2.iconStyle,
-	          templateHtml = _ref2.templateHtml;
+	        /**
+	         * Interface method whose implementation is optional.
+	         * Executed when the menu starts.
+	         */
 
-	      var iconSubMenu = document.createElement('div');
-	      iconSubMenu.className = 'tui-image-editor-menu-' + name;
-	      iconSubMenu.innerHTML = templateHtml({ iconStyle: iconStyle });
+	    }, {
+	        key: 'changeStartMode',
+	        value: function changeStartMode() {}
 
-	      subMenuElement.appendChild(iconSubMenu);
-	    }
-	  }]);
+	        /**
+	         * Make submenu dom element
+	         * @param {HTMLElement} subMenuElement - subment dom element
+	         * @param {Object} iconStyle -  icon style
+	         * @private
+	         */
 
-	  return Submenu;
+	    }, {
+	        key: '_makeSubMenuElement',
+	        value: function _makeSubMenuElement(subMenuElement, _ref2) {
+	            var name = _ref2.name,
+	                iconStyle = _ref2.iconStyle,
+	                templateHtml = _ref2.templateHtml;
+
+	            var iconSubMenu = document.createElement('div');
+	            iconSubMenu.className = 'tui-image-editor-menu-' + name;
+	            iconSubMenu.innerHTML = templateHtml({ iconStyle: iconStyle });
+
+	            subMenuElement.appendChild(iconSubMenu);
+	        }
+	    }]);
+
+	    return Submenu;
 	}();
 
 	exports.default = Submenu;
@@ -10102,7 +10161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-rectangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-rectangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Rectangle </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-circle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-circle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Circle </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-triangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-triangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Triangle </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-shape-color-button\">\n            <div id=\"tie-color-fill\" title=\"fill\"></div>\n            <div id=\"tie-color-stroke\" title=\"stroke\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Stroke</label>\n            <div id=\"tie-stroke-range\"></div>\n            <input id=\"tie-stroke-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-rectangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-rectangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Rectangle </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-circle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-circle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Circle </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-triangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-triangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Triangle </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-shape-color-button\">\n            <div id=\"tie-color-fill\" title=\"Fill\"></div>\n            <div id=\"tie-color-stroke\" title=\"Stroke\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Stroke</label>\n            <div id=\"tie-stroke-range\"></div>\n            <input id=\"tie-stroke-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
 	};
 
 /***/ }),
@@ -10771,7 +10830,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-bold\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-bold\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Bold </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-italic\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-italic\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Italic </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-underline\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-underline\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Underline </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-left\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-left\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> left </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-center\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-center\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> center </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-right\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-right\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> right </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-text-color\" title=\"Color\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Text size</label>\n            <div id=\"tie-text-range\"></div>\n            <input id=\"tie-text-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-bold\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-bold\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Bold </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-italic\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-italic\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Italic </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-underline\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-underline\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Underline </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-left\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-left\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Left </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-center\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-center\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Center </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-right\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-right\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Right </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-text-color\" title=\"Color\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Text size</label>\n            <div id=\"tie-text-range\"></div>\n            <input id=\"tie-text-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
 	};
 
 /***/ }),
@@ -10908,7 +10967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li>\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-mask-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-mask-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-mask-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Load Mask Image </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li id=\"tie-mask-apply\" class=\"tui-image-editor-newline apply\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li>\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-mask-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-mask-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-mask-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Load Mask Image </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li id=\"tie-mask-apply\" class=\"tui-image-editor-newline apply\" style=\"margin-top: 22px;margin-bottom: 5px\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n        </li>\n    </ul>\n";
 	};
 
 /***/ }),
@@ -11135,7 +11194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-2\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-3\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-3\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-3\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-3\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-1\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-2\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-polygon\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Polygon\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-location\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-location\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-location\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Location\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-heart\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-heart\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-heart\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Heart\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-bubble\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-bubble\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-bubble\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Bubble\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-icon-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Custom icon\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-icon-color\" title=\"Color\"></div>\n        </li>\n    </ul>\n";
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-2\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-3\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-3\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-3\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-3\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-1\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-2\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-polygon\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Polygon\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-location\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-location\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-location\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Location\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-heart\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-heart\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-heart\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Heart\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-bubble\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-bubble\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-bubble\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Bubble\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" style=\"margin:0\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-icon-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Custom icon\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-icon-color\" title=\"Color\"></div>\n        </li>\n    </ul>\n";
 	};
 
 /***/ }),
@@ -11431,6 +11490,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            templateHtml: _filter2.default
 	        }));
 
+	        _this.selectBoxShow = false;
+
 	        _this.checkedMap = {};
 	        _this._makeControlElement();
 	        return _this;
@@ -11450,12 +11511,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            var applyFilter = _ref2.applyFilter;
 
-	            var changeRangeValue = function changeRangeValue(filterName) {
-	                var apply = _this2.checkedMap[filterName].checked;
-	                var type = filterName;
-
-	                applyFilter(apply, type, _this2._getFilterOption(type));
-	            };
+	            var changeRangeValue = this._changeRangeValue.bind(this, applyFilter);
 
 	            _tuiCodeSnippet2.default.forEach(FILTER_OPTIONS, function (filterName) {
 	                var filterCheckElement = _this2.selector('#tie-' + filterName);
@@ -11506,6 +11562,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._els.blendType.addEventListener('click', function (event) {
 	                return event.stopPropagation();
 	            });
+	            this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+	            this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+	            this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+	        }
+
+	        /**
+	         * Add event for filter
+	         * @param {Function} applyFilter - actions for firter
+	         * @param {string} filterName - filter name
+	         */
+
+	    }, {
+	        key: '_changeRangeValue',
+	        value: function _changeRangeValue(applyFilter, filterName) {
+	            var apply = this.checkedMap[filterName].checked;
+	            var type = filterName;
+
+	            var checkboxGroup = this.checkedMap[filterName].closest('.tui-image-editor-checkbox-group');
+	            if (checkboxGroup) {
+	                if (apply) {
+	                    checkboxGroup.classList.remove('tui-image-editor-disabled');
+	                } else {
+	                    checkboxGroup.classList.add('tui-image-editor-disabled');
+	                }
+	            }
+	            applyFilter(apply, type, this._getFilterOption(type));
 	        }
 
 	        /**
@@ -11581,8 +11663,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                filterMultiplyColor: new _colorpicker2.default(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection),
 	                filterBlendColor: new _colorpicker2.default(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection)
 	            };
+
 	            this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
 	            this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);
+
+	            this.colorPickerControls.push(this._els.filterTintColor);
+	            this.colorPickerControls.push(this._els.filterMultiplyColor);
+	            this.colorPickerControls.push(this._els.filterBlendColor);
 	        }
 
 	        /**
@@ -11621,20 +11708,80 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function _pickerWithSelectbox(pickerControl) {
 	            var selectlistWrap = document.createElement('div');
 	            var selectlist = document.createElement('select');
+	            var optionlist = document.createElement('ul');
 
 	            selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
+	            optionlist.className = 'tui-image-editor-selectlist';
+
 	            selectlistWrap.appendChild(selectlist);
+	            selectlistWrap.appendChild(optionlist);
 
 	            this._makeSelectOptionList(selectlist);
 
 	            pickerControl.appendChild(selectlistWrap);
 	            pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
+	            this._drawSelectOptionList(selectlist, optionlist);
+	            this._pickerWithSelectboxForAddEvent(selectlist, optionlist);
+
 	            return selectlist;
 	        }
 
 	        /**
-	         * Make blend select option
+	         * Make selectbox option list custom style
+	         * @param {HTMLElement} selectlist - selectbox element
+	         * @param {HTMLElement} optionlist - custom option list item element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_drawSelectOptionList',
+	        value: function _drawSelectOptionList(selectlist, optionlist) {
+	            var options = selectlist.querySelectorAll('option');
+	            _tuiCodeSnippet2.default.forEach(options, function (option) {
+	                var optionElement = document.createElement('li');
+	                optionElement.innerHTML = option.innerHTML;
+	                optionElement.setAttribute('data-item', option.value);
+	                optionlist.appendChild(optionElement);
+	            });
+	        }
+
+	        /**
+	         * custome selectbox custom event
+	         * @param {HTMLElement} selectlist - selectbox element
+	         * @param {HTMLElement} optionlist - custom option list item element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_pickerWithSelectboxForAddEvent',
+	        value: function _pickerWithSelectboxForAddEvent(selectlist, optionlist) {
+	            var _this3 = this;
+
+	            optionlist.addEventListener('click', function (event) {
+	                var optionValue = event.target.getAttribute('data-item');
+	                var fireEvent = document.createEvent('HTMLEvents');
+
+	                selectlist.querySelector('[value="' + optionValue + '"]').selected = true;
+	                fireEvent.initEvent('change', true, true);
+
+	                selectlist.dispatchEvent(fireEvent);
+
+	                _this3.selectBoxShow = false;
+	                optionlist.style.display = 'none';
+	            });
+
+	            selectlist.addEventListener('mousedown', function (event) {
+	                event.preventDefault();
+	                _this3.selectBoxShow = !_this3.selectBoxShow;
+	                optionlist.style.display = _this3.selectBoxShow ? 'block' : 'none';
+	                optionlist.setAttribute('data-selectitem', selectlist.value);
+	                optionlist.querySelector('[data-item=\'' + selectlist.value + '\']').classList.add('active');
+	            });
+	        }
+
+	        /**
+	         * Make option list for select control
 	         * @param {HTMLElement} selectlist - blend option select list element
 	         * @private
 	         */
@@ -11669,7 +11816,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 	exports.default = function () {
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-wrap fixed-width\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-grayscale\">\n                    <label for=\"tie-grayscale\">Grayscale</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-invert\">\n                    <label for=\"tie-invert\">Invert</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia\">\n                    <label for=\"tie-sepia\">Sepia</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia2\">\n                    <label for=\"tie-sepia2\">Sepia2</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blur\">\n                    <label for=\"tie-blur\">Blur</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sharpen\">\n                    <label for=\"tie-sharpen\">Sharpen</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-emboss\">\n                    <label for=\"tie-emboss\">Emboss</label>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div>\n                <div class=\"tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-remove-white\">\n                        <label for=\"tie-remove-white\">Remove White</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-removewhite-threshold-range\"></div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Distance</label>\n                    <div id=\"tie-removewhite-distance-range\"></div>\n                </div>\n            </div>\n            <div>\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-gradient-transparency\">\n                        <label for=\"tie-gradient-transparency\">Grayscale</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Value</label>\n                    <div id=\"tie-gradient-transparency-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-brightness\">\n                    <label for=\"tie-brightness\">Brightness</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-brightness-range\"></div>\n                </div>\n            </div>\n            <div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-noise\">\n                    <label for=\"tie-noise\">Noise</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-noise-range\"></div>\n                </div>\n            </div>\n\n            <div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-pixelate\">\n                    <label for=\"tie-pixelate\">Pixelate</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-pixelate-range\"></div>\n                </div>\n            </div>\n            <div>\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-color-filter\">\n                        <label for=\"tie-color-filter\">Color Filter</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-colorfilter-threshole-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-tint-color\" title=\"Tint\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-tint\">\n                    <label for=\"tie-tint\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-multiply-color\" title=\"Multiply\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-multiply\">\n                    <label for=\"tie-multiply\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-blend-color\" title=\"Blend\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blend\">\n                    <label for=\"tie-blend\"></label>\n                </div>\n            </div>\n        </li>\n    </ul>\n";
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-wrap fixed-width\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-grayscale\">\n                    <label for=\"tie-grayscale\">Grayscale</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-invert\">\n                    <label for=\"tie-invert\">Invert</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia\">\n                    <label for=\"tie-sepia\">Sepia</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia2\">\n                    <label for=\"tie-sepia2\">Sepia2</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blur\">\n                    <label for=\"tie-blur\">Blur</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sharpen\">\n                    <label for=\"tie-sharpen\">Sharpen</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-emboss\">\n                    <label for=\"tie-emboss\">Emboss</label>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\" style=\"margin-bottom: 7px;\">\n                <div class=\"tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-remove-white\">\n                        <label for=\"tie-remove-white\">Remove White</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-removewhite-threshold-range\"></div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Distance</label>\n                    <div id=\"tie-removewhite-distance-range\"></div>\n                </div>\n            </div>\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-gradient-transparency\">\n                        <label for=\"tie-gradient-transparency\">Grayscale</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Value</label>\n                    <div id=\"tie-gradient-transparency-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-brightness\">\n                    <label for=\"tie-brightness\">Brightness</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-brightness-range\"></div>\n                </div>\n            </div>\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-noise\">\n                    <label for=\"tie-noise\">Noise</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-noise-range\"></div>\n                </div>\n            </div>\n\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-pixelate\">\n                    <label for=\"tie-pixelate\">Pixelate</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-pixelate-range\"></div>\n                </div>\n            </div>\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-color-filter\">\n                        <label for=\"tie-color-filter\">Color Filter</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-colorfilter-threshole-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-tint-color\" title=\"Tint\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-tint\">\n                    <label for=\"tie-tint\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-multiply-color\" title=\"Multiply\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-multiply\">\n                    <label for=\"tie-multiply\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-blend-color\" title=\"Blend\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blend\">\n                    <label for=\"tie-blend\"></label>\n                </div>\n            </div>\n        </li>\n    </ul>\n";
 	};
 
 /***/ }),
@@ -12148,7 +12295,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    position: pos.originPosition,
 	                    styles: {
 	                        fill: _this11.ui.text.textColor,
-	                        fontSize: _util2.default.toInteger(_this11.ui.text.fontSize)
+	                        fontSize: _util2.default.toInteger(_this11.ui.text.fontSize),
+	                        fontFamily: 'Noto Sans'
 	                    }
 	                }).then(function () {
 	                    _this11.changeCursor('default');
@@ -13922,14 +14070,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * To data url from canvas
-	         * @param {string} type - A DOMString indicating the image format. The default type is image/png.
+	         * @param {Object} options - options for toDataURL
+	         *   @param {String} [options.format=png] The format of the output image. Either "jpeg" or "png"
+	         *   @param {Number} [options.quality=1] Quality level (0..1). Only used for jpeg.
+	         *   @param {Number} [options.multiplier=1] Multiplier to scale by
+	         *   @param {Number} [options.left] Cropping left offset. Introduced in fabric v1.2.14
+	         *   @param {Number} [options.top] Cropping top offset. Introduced in fabric v1.2.14
+	         *   @param {Number} [options.width] Cropping width. Introduced in fabric v1.2.14
+	         *   @param {Number} [options.height] Cropping height. Introduced in fabric v1.2.14
 	         * @returns {string} A DOMString containing the requested data URI.
 	         */
 
 	    }, {
 	        key: 'toDataURL',
-	        value: function toDataURL(type) {
-	            return this._canvas && this._canvas.toDataURL(type);
+	        value: function toDataURL(options) {
+	            return this._canvas && this._canvas.toDataURL(options);
 	        }
 
 	        /**
@@ -15555,6 +15710,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        if (this.options.lineWidth) {
 	            this._fillInnerRect(ctx);
+	            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+	                lineWidth: this.options.lineWidth
+	            });
 	        } else {
 	            // Black dash line
 	            this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
@@ -17516,44 +17674,58 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var canvas = _this2.getCanvas();
 	                var path = _this2._pathMap[type];
 	                var selectionStyle = _consts2.default.fObjectOptions.SELECTION_STYLE;
+	                var registerdIcon = Object.keys(_consts2.default.defaultIconPath).indexOf(type) >= 0;
+	                var useDragAddIcon = _this2.useDragAddIcon && registerdIcon;
+	                var icon = path ? _this2._createIcon(path) : null;
 
-	                if (!path) {
+	                if (!icon) {
 	                    reject(rejectMessages.invalidParameters);
 	                }
-
-	                var icon = _this2._createIcon(path);
 
 	                icon.set(_tuiCodeSnippet2.default.extend({
 	                    type: 'icon',
 	                    fill: _this2._oColor
 	                }, selectionStyle, options, _this2.graphics.controlStyle));
 
-	                if (_this2.useDragAddIcon) {
-	                    canvas.add(icon).setActiveObject(icon);
-	                    canvas.on({
-	                        'mouse:move': function mouseMove(fEvent) {
-	                            canvas.selection = false;
+	                canvas.add(icon).setActiveObject(icon);
 
-	                            _this2.fire(events.ICON_CREATE_RESIZE, {
-	                                moveOriginPointer: canvas.getPointer(fEvent.e)
-	                            });
-	                        },
-	                        'mouse:up': function mouseUp(fEvent) {
-	                            _this2.fire(events.ICON_CREATE_END, {
-	                                moveOriginPointer: canvas.getPointer(fEvent.e)
-	                            });
-
-	                            canvas.defaultCursor = 'default';
-	                            canvas.off('mouse:up');
-	                            canvas.off('mouse:move');
-	                            canvas.selection = true;
-	                        }
-	                    });
-	                } else {
-	                    canvas.add(icon).setActiveObject(icon);
+	                if (useDragAddIcon) {
+	                    _this2._addWithDragEvent(canvas);
 	                }
 
 	                resolve(_this2.graphics.createObjectProperties(icon));
+	            });
+	        }
+
+	        /**
+	         * Added icon drag event
+	         * @param {fabric.Canvas} canvas - Canvas instance
+	         * @private
+	         */
+
+	    }, {
+	        key: '_addWithDragEvent',
+	        value: function _addWithDragEvent(canvas) {
+	            var _this3 = this;
+
+	            canvas.on({
+	                'mouse:move': function mouseMove(fEvent) {
+	                    canvas.selection = false;
+
+	                    _this3.fire(events.ICON_CREATE_RESIZE, {
+	                        moveOriginPointer: canvas.getPointer(fEvent.e)
+	                    });
+	                },
+	                'mouse:up': function mouseUp(fEvent) {
+	                    _this3.fire(events.ICON_CREATE_END, {
+	                        moveOriginPointer: canvas.getPointer(fEvent.e)
+	                    });
+
+	                    canvas.defaultCursor = 'default';
+	                    canvas.off('mouse:up');
+	                    canvas.off('mouse:move');
+	                    canvas.selection = true;
+	                }
 	            });
 	        }
 
@@ -17565,10 +17737,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: 'registerPaths',
 	        value: function registerPaths(pathInfos) {
-	            var _this3 = this;
+	            var _this4 = this;
 
 	            _tuiCodeSnippet2.default.forEach(pathInfos, function (path, type) {
-	                _this3._pathMap[type] = path;
+	                _this4._pathMap[type] = path;
 	            }, this);
 	        }
 
