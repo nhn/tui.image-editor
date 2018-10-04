@@ -6,6 +6,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
+import consts from '../src/js/consts';
 
 describe('ImageEditor', () => {
     // hostnameSent module scope variable can not be reset.
@@ -56,6 +57,20 @@ describe('ImageEditor', () => {
                 expect(imageEditor._removeObjectStream.calls.count()).toBe(expected);
                 done();
             });
+        });
+
+        it('`preventDefault` of BACKSPACE key events should not be executed when object is selected state.', () => {
+            const spyCallback = jasmine.createSpy();
+
+            spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(null);
+            spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue(null);
+
+            imageEditor._onKeyDown({
+                keyCode: consts.keyCodes.BACKSPACE,
+                preventDefault: spyCallback
+            });
+
+            expect(spyCallback).not.toHaveBeenCalled();
         });
 
         describe('removeActiveObject()', () => {
