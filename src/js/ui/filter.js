@@ -41,6 +41,8 @@ class Filter extends Submenu {
             templateHtml
         });
 
+        this.selectBoxShow = false;
+
         this.checkedMap = {};
         this._makeControlElement();
     }
@@ -51,12 +53,7 @@ class Filter extends Submenu {
      *   @param {Function} actions.applyFilter - apply filter option
      */
     addEvent({applyFilter}) {
-        const changeRangeValue = filterName => {
-            const apply = this.checkedMap[filterName].checked;
-            const type = filterName;
-
-            applyFilter(apply, type, this._getFilterOption(type));
-        };
+        const changeRangeValue = this._changeRangeValue.bind(this, applyFilter);
 
         snippet.forEach(FILTER_OPTIONS, filterName => {
             const filterCheckElement = this.selector(`#tie-${filterName}`);
@@ -79,6 +76,29 @@ class Filter extends Submenu {
         this._els.tintOpacity.on('change', () => changeRangeValue('tint'));
         this._els.filterTintColor.on('change', () => changeRangeValue('tint'));
         this._els.blendType.addEventListener('click', event => event.stopPropagation());
+        this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+        this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+        this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+    }
+
+    /**
+     * Add event for filter
+     * @param {Function} applyFilter - actions for firter
+     * @param {string} filterName - filter name
+     */
+    _changeRangeValue(applyFilter, filterName) {
+        const apply = this.checkedMap[filterName].checked;
+        const type = filterName;
+
+        const checkboxGroup = this.checkedMap[filterName].closest('.tui-image-editor-checkbox-group');
+        if (checkboxGroup) {
+            if (apply) {
+                checkboxGroup.classList.remove('tui-image-editor-disabled');
+            } else {
+                checkboxGroup.classList.add('tui-image-editor-disabled');
+            }
+        }
+        applyFilter(apply, type, this._getFilterOption(type));
     }
 
     /**
@@ -167,8 +187,13 @@ class Filter extends Submenu {
             filterMultiplyColor: new Colorpicker(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection),
             filterBlendColor: new Colorpicker(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection)
         };
+
         this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
         this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);
+
+        this.colorPickerControls.push(this._els.filterTintColor);
+        this.colorPickerControls.push(this._els.filterMultiplyColor);
+        this.colorPickerControls.push(this._els.filterBlendColor);
     }
 
     /**
@@ -201,20 +226,72 @@ class Filter extends Submenu {
     _pickerWithSelectbox(pickerControl) {
         const selectlistWrap = document.createElement('div');
         const selectlist = document.createElement('select');
+        const optionlist = document.createElement('ul');
 
         selectlistWrap.className = 'tui-image-editor-selectlist-wrap';
+        optionlist.className = 'tui-image-editor-selectlist';
+
         selectlistWrap.appendChild(selectlist);
+        selectlistWrap.appendChild(optionlist);
 
         this._makeSelectOptionList(selectlist);
 
         pickerControl.appendChild(selectlistWrap);
         pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
+        this._drawSelectOptionList(selectlist, optionlist);
+        this._pickerWithSelectboxForAddEvent(selectlist, optionlist);
+
         return selectlist;
     }
 
     /**
-     * Make blend select option
+     * Make selectbox option list custom style
+     * @param {HTMLElement} selectlist - selectbox element
+     * @param {HTMLElement} optionlist - custom option list item element
+     * @private
+     */
+    _drawSelectOptionList(selectlist, optionlist) {
+        const options = selectlist.querySelectorAll('option');
+        snippet.forEach(options, option => {
+            const optionElement = document.createElement('li');
+            optionElement.innerHTML = option.innerHTML;
+            optionElement.setAttribute('data-item', option.value);
+            optionlist.appendChild(optionElement);
+        });
+    }
+
+    /**
+     * custome selectbox custom event
+     * @param {HTMLElement} selectlist - selectbox element
+     * @param {HTMLElement} optionlist - custom option list item element
+     * @private
+     */
+    _pickerWithSelectboxForAddEvent(selectlist, optionlist) {
+        optionlist.addEventListener('click', event => {
+            const optionValue = event.target.getAttribute('data-item');
+            const fireEvent = document.createEvent('HTMLEvents');
+
+            selectlist.querySelector(`[value="${optionValue}"]`).selected = true;
+            fireEvent.initEvent('change', true, true);
+
+            selectlist.dispatchEvent(fireEvent);
+
+            this.selectBoxShow = false;
+            optionlist.style.display = 'none';
+        });
+
+        selectlist.addEventListener('mousedown', event => {
+            event.preventDefault();
+            this.selectBoxShow = !this.selectBoxShow;
+            optionlist.style.display = this.selectBoxShow ? 'block' : 'none';
+            optionlist.setAttribute('data-selectitem', selectlist.value);
+            optionlist.querySelector(`[data-item='${selectlist.value}']`).classList.add('active');
+        });
+    }
+
+    /**
+     * Make option list for select control
      * @param {HTMLElement} selectlist - blend option select list element
      * @private
      */

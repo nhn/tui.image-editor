@@ -125,7 +125,7 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li id="tie-icon-add-button">
-            <div class="tui-image-editor-button">
+            <div class="tui-image-editor-button" style="margin:0">
                 <div>
                     <input type="file" accept="image/*" id="tie-icon-image-file">
                     <svg class="svg_ic-submenu">

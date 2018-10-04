@@ -61,44 +61,53 @@ class Icon extends Component {
             const canvas = this.getCanvas();
             const path = this._pathMap[type];
             const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
+            const registerdIcon = Object.keys(consts.defaultIconPath).indexOf(type) >= 0;
+            const useDragAddIcon = this.useDragAddIcon && registerdIcon;
+            const icon = path ? this._createIcon(path) : null;
 
-            if (!path) {
+            if (!icon) {
                 reject(rejectMessages.invalidParameters);
             }
-
-            const icon = this._createIcon(path);
 
             icon.set(snippet.extend({
                 type: 'icon',
                 fill: this._oColor
             }, selectionStyle, options, this.graphics.controlStyle));
 
-            if (this.useDragAddIcon) {
-                canvas.add(icon).setActiveObject(icon);
-                canvas.on({
-                    'mouse:move': fEvent => {
-                        canvas.selection = false;
+            canvas.add(icon).setActiveObject(icon);
 
-                        this.fire(events.ICON_CREATE_RESIZE, {
-                            moveOriginPointer: canvas.getPointer(fEvent.e)
-                        });
-                    },
-                    'mouse:up': fEvent => {
-                        this.fire(events.ICON_CREATE_END, {
-                            moveOriginPointer: canvas.getPointer(fEvent.e)
-                        });
-
-                        canvas.defaultCursor = 'default';
-                        canvas.off('mouse:up');
-                        canvas.off('mouse:move');
-                        canvas.selection = true;
-                    }
-                });
-            } else {
-                canvas.add(icon).setActiveObject(icon);
+            if (useDragAddIcon) {
+                this._addWithDragEvent(canvas);
             }
 
             resolve(this.graphics.createObjectProperties(icon));
+        });
+    }
+
+    /**
+     * Added icon drag event
+     * @param {fabric.Canvas} canvas - Canvas instance
+     * @private
+     */
+    _addWithDragEvent(canvas) {
+        canvas.on({
+            'mouse:move': fEvent => {
+                canvas.selection = false;
+
+                this.fire(events.ICON_CREATE_RESIZE, {
+                    moveOriginPointer: canvas.getPointer(fEvent.e)
+                });
+            },
+            'mouse:up': fEvent => {
+                this.fire(events.ICON_CREATE_END, {
+                    moveOriginPointer: canvas.getPointer(fEvent.e)
+                });
+
+                canvas.defaultCursor = 'default';
+                canvas.off('mouse:up');
+                canvas.off('mouse:move');
+                canvas.selection = true;
+            }
         });
     }
 

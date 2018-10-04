@@ -35,6 +35,9 @@ class Shape extends Submenu {
             fillColorpicker: new Colorpicker(this.selector('#tie-color-fill'), '', this.toggleDirection),
             strokeColorpicker: new Colorpicker(this.selector('#tie-color-stroke'), '#ffbb3b', this.toggleDirection)
         };
+
+        this.colorPickerControls.push(this._els.fillColorpicker);
+        this.colorPickerControls.push(this._els.strokeColorpicker);
     }
 
     /**
@@ -50,6 +53,8 @@ class Shape extends Submenu {
         this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
         this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
         this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
+        this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
+        this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.strokeRangeValue.value = this._els.strokeRange.value;
         this._els.strokeRangeValue.setAttribute('readonly', true);
     }

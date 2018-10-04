@@ -66,6 +66,31 @@ describe('Icon', () => {
         expect(icon._createIcon).toHaveBeenCalledWith(path);
     });
 
+    it('`_addWithDragEvent()` should be executed when `useDragAddIcon` is true.', () => {
+        const defaultIconKey = 'icon-arrow';
+        icon._pathMap[defaultIconKey] = true;
+
+        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
+        spyOn(icon, '_addWithDragEvent');
+        spyOn(icon, 'useDragAddIcon').and.returnValue(true);
+
+        icon.add(defaultIconKey);
+
+        expect(icon._addWithDragEvent).toHaveBeenCalled();
+    });
+
+    it('`_addWithDragEvent()` should be not executed when target icon is not default icon.', () => {
+        const nonDefaultIconKey = 'non-default-icon';
+
+        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
+        spyOn(icon, '_addWithDragEvent');
+        spyOn(icon, 'useDragAddIcon').and.returnValue(true);
+
+        icon.add(nonDefaultIconKey);
+
+        expect(icon._addWithDragEvent).not.toHaveBeenCalled();
+    });
+
     it('setColor() should change color of next inserted icon.', () => {
         let activeObj;
         const color = '#ffffff';

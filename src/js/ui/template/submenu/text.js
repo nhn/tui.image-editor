@@ -44,7 +44,7 @@ export default ({iconStyle: {normal, active}}) => (`
                         class="active"/>
                     </svg>
                 </div>
-                <label> left </label>
+                <label> Left </label>
             </div>
             <div class="tui-image-editor-button center">
                 <div>
@@ -55,7 +55,7 @@ export default ({iconStyle: {normal, active}}) => (`
                         class="active"/>
                     </svg>
                 </div>
-                <label> center </label>
+                <label> Center </label>
             </div>
             <div class="tui-image-editor-button right">
                 <div>
@@ -66,7 +66,7 @@ export default ({iconStyle: {normal, active}}) => (`
                         class="active"/>
                     </svg>
                 </div>
-                <label> right </label>
+                <label> Right </label>
             </div>
         </li>
         <li class="tui-image-editor-partition">

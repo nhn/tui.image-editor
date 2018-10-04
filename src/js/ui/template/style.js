@@ -11,6 +11,9 @@ export default ({
     submenuColorpickerButton,
     submenuRangeBar,
     submenuRangeSubbar,
+    submenuDisabledRangePointer,
+    submenuDisabledRangeBar,
+    submenuDisabledRangeSubbar,
     submenuIconSize,
     menuIconSize,
     biSize
@@ -59,6 +62,9 @@ export default ({
     .tui-image-editor-container .tui-image-editor-checkbox input + label:before {
         ${submenuCheckbox}
     }
+    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {
+        border: 0;
+    }
     .tui-image-editor-container .tui-image-editor-virtual-range-pointer {
         ${submenuRangePointer}
     }
@@ -67,6 +73,15 @@ export default ({
     }
     .tui-image-editor-container .tui-image-editor-virtual-range-subbar {
         ${submenuRangeSubbar}
+    }
+    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {
+        ${submenuDisabledRangePointer}
+    }
+    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {
+        ${submenuDisabledRangeSubbar}
+    }
+    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {
+        ${submenuDisabledRangeBar}
     }
     .tui-image-editor-container .tui-image-editor-range-value {
         ${submenuRangeValue}

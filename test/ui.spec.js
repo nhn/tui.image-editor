@@ -95,43 +95,43 @@ describe('UI', () => {
         });
     });
 
-    describe('_getEditorPosition()', () => {
+    describe('_setEditorPosition()', () => {
+        beforeEach(() => {
+            ui._editorElement = document.createElement('div');
+            spyOn(ui, '_getEditorDimension').and.returnValue({
+                width: 300,
+                height: 300
+            });
+        });
+
         it('Position is bottom, it should be reflected in the bottom of the editor position.', () => {
             ui.submenu = true;
-            expect(ui._getEditorPosition('bottom')).toEqual({
-                top: 0,
-                bottom: 150,
-                left: 0,
-                right: 0
-            });
+            ui._setEditorPosition('bottom');
+
+            expect(ui._editorElement.style.top).toBe('150px');
+            expect(ui._editorElement.style.left).toBe('0px');
         });
 
         it('Position is top, it should be reflected in the top of the editor position.', () => {
             ui.submenu = true;
-            expect(ui._getEditorPosition('top')).toEqual({
-                top: 150,
-                bottom: 0,
-                left: 0,
-                right: 0
-            });
+            ui._setEditorPosition('top');
+
+            expect(ui._editorElement.style.top).toBe('-150px');
+            expect(ui._editorElement.style.left).toBe('0px');
         });
         it('Position is left, it should be reflected in the left, right of the editor position.', () => {
             ui.submenu = true;
-            expect(ui._getEditorPosition('left')).toEqual({
-                top: 0,
-                bottom: 0,
-                left: 248,
-                right: 248
-            });
+            ui._setEditorPosition('left');
+
+            expect(ui._editorElement.style.top).toBe('0px');
+            expect(ui._editorElement.style.left).toBe('-150px');
         });
         it('Position is right, it should be reflected in the right of the editor position.', () => {
             ui.submenu = true;
-            expect(ui._getEditorPosition('right')).toEqual({
-                top: 0,
-                bottom: 0,
-                left: 0,
-                right: 248
-            });
+            ui._setEditorPosition('right');
+
+            expect(ui._editorElement.style.top).toBe('0px');
+            expect(ui._editorElement.style.left).toBe('150px');
         });
     });
 });

@@ -30,7 +30,7 @@
 .{prefix}-container
   &.left, &.right
     .{prefix}-menu
-        white-space: initial;
+        white-space: inherit;
     .{prefix}-submenu
         white-space: normal;
         > div
@@ -72,8 +72,6 @@
         margin: auto;
     .{prefix}-range
         width: 136px;
-    #tie-icon-add-button .{prefix}-button
-        width: 45px;
 
 
 /* POSITION RIGIHT */
@@ -123,13 +121,13 @@
 .{prefix}-container
   &.top
     .color-picker-control .triangle
-        top: -11px;
-        border-right: 12px solid transparent;
+        top: -8px;
+        border-right: 7px solid transparent;
         border-top: 0px;
-        border-left: 12px solid transparent;
-        border-bottom: 12px solid #fff;
+        border-left: 7px solid transparent;
+        border-bottom: 8px solid #fff;
     .{prefix}-size-wrap
-        height: calc(100% - 64px);
+        height: 100%;
     .{prefix}-main-container
         bottom: 0;
     .{prefix}-menu
@@ -153,7 +151,7 @@
         display: table-cell;
     .{prefix}-main
         top: 64px;
-        height: 100%;
+        height: calc(100% - 64px);
     .{prefix}-controls
         top: 0;
         bottom: inherit;

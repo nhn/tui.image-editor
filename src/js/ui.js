@@ -84,9 +84,9 @@ class Ui {
             applyGroupSelectionStyle: true,
             selectionStyle: {
                 cornerStyle: 'circle',
-                cornerSize: 20,
+                cornerSize: 16,
                 cornerColor: '#fff',
-                cornerStrokeColor: '#000',
+                cornerStrokeColor: '#fff',
                 transparentCorners: false,
                 lineWidth: 2,
                 borderColor: '#fff'
@@ -120,12 +120,13 @@ class Ui {
         editorElementStyle.height = `${height}px`;
         editorElementStyle.width = `${width}px`;
 
-        const {top, bottom, left, right} = this._getEditorPosition(menuBarPosition);
+        this._setEditorPosition(menuBarPosition);
 
-        this._editorElementWrap.style.bottom = `${bottom}px`;
-        this._editorElementWrap.style.top = `${top}px`;
-        this._editorElementWrap.style.left = `${left}px`;
-        this._editorElementWrap.style.width = `calc(100% - ${right}px)`;
+        this._editorElementWrap.style.bottom = `0px`;
+        this._editorElementWrap.style.top = `0px`;
+        this._editorElementWrap.style.left = `0px`;
+        this._editorElementWrap.style.width = `100%`;
+
         const selectElementClassList = this._selectedElement.classList;
 
         if (menuBarPosition === 'top' && this._selectedElement.offsetWidth < BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION) {
@@ -309,17 +310,18 @@ class Ui {
      */
     _makeMenuElement(menuName) {
         const btnElement = document.createElement('li');
-        const {normal, active} = this.theme.getStyle('menu.icon');
+        const {normal, active, hover} = this.theme.getStyle('menu.icon');
         const menuItemHtml = `
             <svg class="svg_ic-menu">
                 <use xlink:href="${normal.path}#${normal.name}-ic-${menuName}" class="normal"/>
                 <use xlink:href="${active.path}#${active.name}-ic-${menuName}" class="active"/>
+                <use xlink:href="${hover.path}#${hover.name}-ic-${menuName}" class="hover"/>
             </svg>
         `;
 
         btnElement.id = `tie-btn-${menuName}`;
-        btnElement.className = 'tui-image-editor-item';
-        btnElement.title = menuName;
+        btnElement.className = 'tui-image-editor-item normal';
+        btnElement.title = menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase());
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -511,43 +513,45 @@ class Ui {
     }
 
     /**
-     * Get editor position
+     * Set editor position
      * @param {string} menuBarPosition - top or right or bottom or left
-     * @returns {Object} - positions (top, right, bottom, left)
      * @private
      */
-    _getEditorPosition(menuBarPosition) {
-        let bottom = 0;
+    _setEditorPosition(menuBarPosition) {
+        const {width, height} = this._getEditorDimension();
+        const editorElementStyle = this._editorElement.style;
         let top = 0;
         let left = 0;
-        let right = 0;
 
         if (this.submenu) {
-            switch (menuBarPosition) {
-                case 'bottom':
-                    bottom += 150;
-                    break;
-                case 'top':
-                    top += 150;
-                    break;
-                case 'left':
-                    left += 248;
-                    right += 248;
-                    break;
-                case 'right':
-                    right += 248;
-                    break;
-                default:
-                    break;
+            if (menuBarPosition === 'bottom') {
+                if (height > this._editorElementWrap.scrollHeight - 150) {
+                    top = (height - this._editorElementWrap.scrollHeight) / 2;
+                } else {
+                    top = (150 / 2) * -1;
+                }
+            } else if (menuBarPosition === 'top') {
+                if (height > this._editorElementWrap.offsetHeight - 150) {
+                    top = (150 / 2) - ((height - (this._editorElementWrap.offsetHeight - 150)) / 2);
+                } else {
+                    top = 150 / 2;
+                }
+            } else if (menuBarPosition === 'left') {
+                if (width > this._editorElementWrap.offsetWidth - 248) {
+                    left = (248 / 2) - ((width - (this._editorElementWrap.offsetWidth - 248)) / 2);
+                } else {
+                    left = 248 / 2;
+                }
+            } else if (menuBarPosition === 'right') {
+                if (width > this._editorElementWrap.scrollWidth - 248) {
+                    left = (width - this._editorElementWrap.scrollWidth) / 2;
+                } else {
+                    left = (248 / 2) * -1;
+                }
             }
         }
-
-        return {
-            top,
-            bottom,
-            left,
-            right
-        };
+        editorElementStyle.top = `${top}px`;
+        editorElementStyle.left = `${left}px`;
     }
 }
 

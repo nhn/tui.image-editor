@@ -1,5 +1,7 @@
 /* ICON */
 .{prefix}-container
+    #tie-icon-add-button .{prefix}-button
+        min-width: 42px;
     .svg_ic-menu
         width: 24px;
         height: 24px;
@@ -13,6 +15,11 @@
     .{prefix}-controls
         svg > use
             display: none;
+        .enabled svg:hover > use.hover
+        .normal svg:hover > use.hover
+            display: block;
+        .active svg:hover > use.hover
+            display: none;
         svg > use.normal
             display: block;
         .active svg > use.active
@@ -22,3 +29,5 @@
         .active svg > use.normal,
         .enabled svg > use.normal
             display: none;
+    .{prefix}-controls:hover
+        z-index: 3;

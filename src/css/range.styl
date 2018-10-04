@@ -1,8 +1,15 @@
 /* VIRTUAL RANGE */
 .{prefix}-container
+
+    .{prefix}-virtual-range-bar
+    .{prefix}-virtual-range-subbar
+    .{prefix}-virtual-range-pointer
+        .{prefix}-disabled
+            backbround-color: red;
+
     .{prefix}-range
         position: relative;
-        top: 7px;
+        top: 5px;
         width: 166px;
         height: 17px;
         display: inline-block;
@@ -29,11 +36,13 @@
         border-radius: 100%;
     .{prefix}-range-wrap
         display: inline-block;
+        margin-left: 4px;
         &.short .tui-image-editor-range
             width: 100px;
     .color-picker-control
         .{prefix}-range
             width: 108px;
+            margin-left: 10px;
         .{prefix}-virtual-range-pointer
             background-color: #333;
         .{prefix}-virtual-range-bar
@@ -41,8 +50,8 @@
         .{prefix}-virtual-range-subbar
             background-color: #606060;
     .{prefix}-range-wrap.{prefix}-newline.short
-        margin-top: 0;
-        margin-left: 17px;
+        margin-top: -2px;
+        margin-left: 19px;
         label
             color: #8e8e8e;
             font-weight: normal;
@@ -64,8 +73,9 @@
         color: #fff;
         font-weight: lighter;
         vertical-align: baseline;
-        font-family: NotoSans, sans-serif;
-        padding-top: 2px;
+        font-family: 'Noto Sans', sans-serif;
+        margin-top: 21px;
+        margin-left: 4px;
     .{prefix}-controls
         position: absolute;
         background-color: #151515;
@@ -73,7 +83,7 @@
         height: 64px;
         display: table;
         bottom: 0;
-        z-index: 1;
+        z-index: 2;
     .{prefix}-icpartition
         display: inline-block;
         background-color: #282828;
