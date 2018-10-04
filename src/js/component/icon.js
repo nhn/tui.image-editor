@@ -61,8 +61,8 @@ class Icon extends Component {
             const canvas = this.getCanvas();
             const path = this._pathMap[type];
             const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
-            const isDefaultIconPath = Object.keys(consts.defaultIconPath).indexOf(type) >= 0;
-            const useDragAddIcon = this.useDragAddIcon && isDefaultIconPath;
+            const registerdIcon = Object.keys(consts.defaultIconPath).indexOf(type) >= 0;
+            const useDragAddIcon = this.useDragAddIcon && registerdIcon;
             const icon = path ? this._createIcon(path) : null;
 
             if (!icon) {
@@ -77,7 +77,7 @@ class Icon extends Component {
             canvas.add(icon).setActiveObject(icon);
 
             if (useDragAddIcon) {
-                this._addWithDrag(canvas);
+                this._addWithDragEvent(canvas);
             }
 
             resolve(this.graphics.createObjectProperties(icon));
@@ -85,10 +85,11 @@ class Icon extends Component {
     }
 
     /**
-     * Added icon drag
+     * Added icon drag event
      * @param {fabric.Canvas} canvas - Canvas instance
+     * @private
      */
-    _addWithDrag(canvas) {
+    _addWithDragEvent(canvas) {
         canvas.on({
             'mouse:move': fEvent => {
                 canvas.selection = false;
