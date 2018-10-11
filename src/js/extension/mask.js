@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Mask extending fabric.Image.filters.Mask
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 
 /**
  * Mask object

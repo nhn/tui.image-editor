@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image crop module (start cropping, end cropping)
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
 import {keyCodes, componentNames} from '../consts';
