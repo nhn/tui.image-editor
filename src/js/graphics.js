@@ -4,7 +4,7 @@
  */
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
 import Flip from './component/flip';
