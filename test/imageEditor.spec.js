@@ -6,6 +6,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
+import util from '../src/js/util';
 import consts from '../src/js/consts';
 
 describe('ImageEditor', () => {
@@ -16,7 +17,7 @@ describe('ImageEditor', () => {
 
         beforeEach(() => {
             el = document.createElement('div');
-            spyOn(snippet, 'imagePing');
+            spyOn(snippet, 'sendHostname');
 
             imageEditor = new ImageEditor(el, {
                 usageStatistics: false
@@ -27,18 +28,20 @@ describe('ImageEditor', () => {
             imageEditor.destroy();
         });
 
-        xit('should send hostname by default', () => {
+        it('should send hostname by default', () => {
+            util._setHostNameSend(false);
             imageEditor = new ImageEditor(el);
 
-            expect(snippet.imagePing).toHaveBeenCalled();
+            expect(snippet.sendHostname).toHaveBeenCalled();
         });
 
-        xit('should not send hostname on usageStatistics option false', () => {
+        it('should not send hostname on usageStatistics option false', () => {
+            util._setHostNameSend(false);
             imageEditor = new ImageEditor(el, {
                 usageStatistics: false
             });
 
-            expect(snippet.imagePing).not.toHaveBeenCalled();
+            expect(snippet.sendHostname).not.toHaveBeenCalled();
         });
 
         it('removeObjectStream () must be executed as many times as the length of the Object array.', done => {
