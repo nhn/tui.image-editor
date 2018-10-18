@@ -12,7 +12,7 @@ describe('UI', () => {
     beforeEach(() => {
         uiOptions = {
             loadImage: {
-                path: '',
+                path: 'mockImagePath',
                 name: ''
             },
             menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
@@ -21,6 +21,7 @@ describe('UI', () => {
         };
         ui = new UI(document.createElement('div'), uiOptions, {});
     });
+
     describe('_changeMenu()', () => {
         beforeEach(() => {
             ui.submenu = 'shape';
@@ -65,8 +66,10 @@ describe('UI', () => {
     });
 
     describe('initCanvas()', () => {
-        it('When initCanvas is executed, some internal methods must be run as required.', done => {
-            const promise = new Promise(resolve => {
+        let promise;
+
+        beforeEach(() => {
+            promise = new Promise(resolve => {
                 resolve();
             });
             ui._editorElement = {
@@ -75,23 +78,35 @@ describe('UI', () => {
             ui._actions.main = {
                 initLoadImage: jasmine.createSpy('initLoadImage').and.returnValue(promise)
             };
+        });
 
-            spyOn(ui, '_addDownloadEvent');
+        it('When initCanvas is executed, some internal methods must be run as required.', done => {
+            spyOn(ui, 'activeMenuEvent');
             spyOn(ui, '_addLoadEvent');
-            spyOn(ui, '_addMenuEvent');
-            spyOn(ui, '_addSubMenuEvent');
-            spyOn(ui, '_addHelpActionEvent');
-            spyOn(ui, '_initMenu');
 
             ui.initCanvas();
             promise.then(() => {
-                expect(ui._addDownloadEvent).toHaveBeenCalled();
+                expect(ui.activeMenuEvent).toHaveBeenCalled();
                 expect(ui._addLoadEvent).toHaveBeenCalled();
-                expect(ui._addMenuEvent).toHaveBeenCalled();
-                expect(ui._addSubMenuEvent).toHaveBeenCalled();
-                expect(ui._addHelpActionEvent).toHaveBeenCalled();
                 done();
             });
+        });
+
+        it('`initLoadImage()` should not be run when has not image path.', () => {
+            spyOn(ui, '_getLoadImage').and.returnValue({path: ''});
+
+            ui.initCanvas();
+
+            expect(ui._actions.main.initLoadImage).not.toHaveBeenCalled();
+        });
+
+        it('`_AddLoadEvent()` should be executed even if there is no image path.', () => {
+            spyOn(ui, '_getLoadImage').and.returnValue({path: ''});
+            spyOn(ui, '_addLoadEvent');
+
+            ui.initCanvas();
+
+            expect(ui._addLoadEvent).toHaveBeenCalled();
         });
     });
 
