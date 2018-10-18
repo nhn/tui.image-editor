@@ -132,6 +132,11 @@ module.exports = {
         sendHostname('image-editor');
     },
 
+    /**
+     * Set hostnameSent
+     * @param {boolean} setState - change state
+     * @private
+     */
     _setHostNameSend(setState) {
         hostnameSent = setState;
     },
