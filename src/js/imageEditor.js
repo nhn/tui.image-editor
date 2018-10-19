@@ -29,6 +29,9 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  *    @param {Object} [options.includeUI.theme] - Theme object
  *    @param {Array} [options.includeUI.menu] - It can be selected when only specific menu is used. [default all]
  *    @param {string} [options.includeUI.initMenu] - The first menu to be selected and started.
+ *    @param {Object} [options.includeUI.uiSize] - ui size of editor
+ *      @param {string} options.includeUI.uiSize.width - width of ui
+ *      @param {string} options.includeUI.uiSize.height - height of ui
  *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
  *  @param {number} options.cssMaxWidth - Canvas css-max-width
  *  @param {number} options.cssMaxHeight - Canvas css-max-height
@@ -45,6 +48,10 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  *     theme: blackTheme, // or whiteTheme
  *     menu: ['shape', 'filter'],
  *     initMenu: 'filter',
+ *     uiSize: {
+ *         width: '1000px',
+ *         height: '700px'
+ *     },
  *     menuBarPosition: 'bottom'
  *   },
  *   cssMaxWidth: 700,
