@@ -133,15 +133,6 @@ module.exports = {
     },
 
     /**
-     * Set hostnameSent
-     * @param {boolean} setState - change state
-     * @private
-     */
-    _setHostNameSend(setState) {
-        hostnameSent = setState;
-    },
-
-    /**
      * Apply css resource
      * @param {string} styleBuffer - serialized css text
      * @param {string} tagId - style tag id

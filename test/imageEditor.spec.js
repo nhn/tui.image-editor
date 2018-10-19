@@ -28,15 +28,13 @@ describe('ImageEditor', () => {
             imageEditor.destroy();
         });
 
-        it('should send hostname by default', () => {
-            util._setHostNameSend(false);
+        xit('should send hostname by default', () => {
             imageEditor = new ImageEditor(el);
 
             expect(snippet.sendHostname).toHaveBeenCalled();
         });
 
-        it('should not send hostname on usageStatistics option false', () => {
-            util._setHostNameSend(false);
+        xit('should not send hostname on usageStatistics option false', () => {
             imageEditor = new ImageEditor(el, {
                 usageStatistics: false
             });
