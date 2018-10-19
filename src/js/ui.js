@@ -41,7 +41,6 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
  *     @param {string} options.uiSize.width - width of ui
  *     @param {string} options.uiSize.height - height of ui
  * @param {Objecdt} actions - ui action instance
- * @ignore
  */
 class Ui {
     constructor(element, options, actions) {
@@ -62,6 +61,7 @@ class Ui {
         this._subMenuElement = null;
         this._makeUiElement(element);
         this._setUiSize();
+        this._initMenuEvent = false;
 
         this._els = {
             'undo': this._menuElement.querySelector('#tie-btn-undo'),
@@ -80,6 +80,7 @@ class Ui {
      * Set Default Selection for includeUI
      * @param {Object} option - imageEditor options
      * @returns {Object} - extends selectionStyle option
+     * @ignore
      */
     setUiDefaultSelectionStyle(option) {
         return snippet.extend({
@@ -116,6 +117,7 @@ class Ui {
         if (uiSize) {
             this._setUiSize(uiSize);
         }
+
         const {width, height} = this._getEditorDimension();
         const editorElementStyle = this._editorElement.style;
         const {menuBarPosition} = this.options;
@@ -142,6 +144,7 @@ class Ui {
     /**
      * Change undo button status
      * @param {Boolean} enableStatus - enabled status
+     * @ignore
      */
     changeUndoButtonStatus(enableStatus) {
         if (enableStatus) {
@@ -154,6 +157,7 @@ class Ui {
     /**
      * Change redo button status
      * @param {Boolean} enableStatus - enabled status
+     * @ignore
      */
     changeRedoButtonStatus(enableStatus) {
         if (enableStatus) {
@@ -166,6 +170,7 @@ class Ui {
     /**
      * Change reset button status
      * @param {Boolean} enableStatus - enabled status
+     * @ignore
      */
     changeResetButtonStatus(enableStatus) {
         if (enableStatus) {
@@ -178,6 +183,7 @@ class Ui {
     /**
      * Change delete-all button status
      * @param {Boolean} enableStatus - enabled status
+     * @ignore
      */
     changeDeleteAllButtonEnabled(enableStatus) {
         if (enableStatus) {
@@ -190,6 +196,7 @@ class Ui {
     /**
      * Change delete button status
      * @param {Boolean} enableStatus - enabled status
+     * @ignore
      */
     changeDeleteButtonEnabled(enableStatus) {
         if (enableStatus) {
@@ -388,34 +395,50 @@ class Ui {
     /**
      * get editor area element
      * @returns {HTMLElement} editor area html element
+     * @ignore
      */
     getEditorArea() {
         return this._editorElement;
     }
 
     /**
+     * Add event for menu items
+     * @ignore
+     */
+    activeMenuEvent() {
+        if (this._initMenuEvent) {
+            return;
+        }
+
+        this._addHelpActionEvent('undo');
+        this._addHelpActionEvent('redo');
+        this._addHelpActionEvent('reset');
+        this._addHelpActionEvent('delete');
+        this._addHelpActionEvent('deleteAll');
+
+        this._addDownloadEvent();
+
+        snippet.forEach(this.options.menu, menuName => {
+            this._addMenuEvent(menuName);
+            this._addSubMenuEvent(menuName);
+        });
+        this._initMenu();
+        this._initMenuEvent = true;
+    }
+
+    /**
      * Init canvas
+     * @ignore
      */
     initCanvas() {
         const loadImageInfo = this._getLoadImage();
-        if (loadImageInfo) {
+        if (loadImageInfo.path) {
             this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(() => {
-                this._addHelpActionEvent('undo');
-                this._addHelpActionEvent('redo');
-                this._addHelpActionEvent('reset');
-                this._addHelpActionEvent('delete');
-                this._addHelpActionEvent('deleteAll');
-
-                this._addDownloadEvent();
-                this._addLoadEvent();
-
-                snippet.forEach(this.options.menu, menuName => {
-                    this._addMenuEvent(menuName);
-                    this._addSubMenuEvent(menuName);
-                });
-                this._initMenu();
+                this.activeMenuEvent();
             });
         }
+
+        this._addLoadEvent();
 
         const gridVisual = document.createElement('div');
         gridVisual.className = 'tui-image-editor-grid-visual';
@@ -431,7 +454,7 @@ class Ui {
 
     /**
      * get editor area element
-     * @returns {Object} loadimage optionk
+     * @returns {Object} load image option
      * @private
      */
     _getLoadImage() {
@@ -443,6 +466,7 @@ class Ui {
      * @param {string} menuName - menu name
      * @param {boolean} toggle - whether toogle or not
      * @param {boolean} discardSelection - discard selection
+     * @ignore
      */
     changeMenu(menuName, toggle = true, discardSelection = true) {
         if (!this._submenuChangeTransection) {
