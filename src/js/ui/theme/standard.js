@@ -150,14 +150,14 @@ export default {
     'loadButton.backgroundColor': '#fff',
     'loadButton.border': '1px solid #ddd',
     'loadButton.color': '#222',
-    'loadButton.fontFamily': '"Noto Sans", sans-serif',
+    'loadButton.fontFamily': '\'Noto Sans\', sans-serif',
     'loadButton.fontSize': '12px',
 
     // download button
     'downloadButton.backgroundColor': '#fdba3b',
     'downloadButton.border': '1px solid #fdba3b',
     'downloadButton.color': '#fff',
-    'downloadButton.fontFamily': '"Noto Sans", sans-serif',
+    'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
     'downloadButton.fontSize': '12px',
 
     // main icons
@@ -173,34 +173,36 @@ export default {
     'menu.iconSize.height': '24px',
 
     // submenu primary color
-    'submenu.backgroundColor': 'transparent',
-    'submenu.partition.color': '#858585',
+    'submenu.backgroundColor': '#1e1e1e',
+    'submenu.partition.color': '#3c3c3c',
 
     // submenu icons
-    'submenu.normalIcon.path': 'icon-a.svg',
-    'submenu.normalIcon.name': 'icon-a',
+    'submenu.normalIcon.path': 'icon-d.svg',
+    'submenu.normalIcon.name': 'icon-d',
     'submenu.activeIcon.path': 'icon-c.svg',
     'submenu.activeIcon.name': 'icon-c',
     'submenu.iconSize.width': '32px',
     'submenu.iconSize.height': '32px',
 
     // submenu labels
-    'submenu.normalLabel.color': '#858585',
+    'submenu.normalLabel.color': '#8a8a8a',
     'submenu.normalLabel.fontWeight': 'lighter',
     'submenu.activeLabel.color': '#fff',
     'submenu.activeLabel.fontWeight': 'lighter',
 
     // checkbox style
-    'checkbox.border': '1px solid #ccc',
+    'checkbox.border': '0px',
     'checkbox.backgroundColor': '#fff',
 
-    // rango style
+    // range style
     'range.pointer.color': '#fff',
     'range.bar.color': '#666',
     'range.subbar.color': '#d1d1d1',
-    'range.disabledPointer.color': 'red',
-    'range.disabledBar.color': 'blue',
-    'range.disabledSubbar.color': 'red',
+
+    'range.disabledPointer.color': '#414141',
+    'range.disabledBar.color': '#282828',
+    'range.disabledSubbar.color': '#414141',
+
     'range.value.color': '#fff',
     'range.value.fontWeight': 'lighter',
     'range.value.fontSize': '11px',
