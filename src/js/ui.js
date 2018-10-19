@@ -106,7 +106,6 @@ class Ui {
      *     @param {Number} resizeInfo.imageSize.oldHeight - old height
      *     @param {Number} resizeInfo.imageSize.newWidth - new width
      *     @param {Number} resizeInfo.imageSize.newHeight - new height
-     * @api
      */
     resizeEditor({uiSize, imageSize = this.imageSize} = {}) {
         if (imageSize !== this.imageSize) {
