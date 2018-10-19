@@ -7,6 +7,7 @@
 ![6 -20-2018 17-45-54](https://user-images.githubusercontent.com/35218826/41647896-7b218ae0-74b2-11e8-90db-d7805cc23e8c.gif)
 
 ## 🚩 Table of Contents
+* [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
 * [Browser Support](#-browser-support)
 * [Has full features that stick to the basic.](#-has-full-features-that-stick-to-the-basic)
     * [Photo manipulation](#photo-manipulation)
@@ -33,6 +34,25 @@
 * [TOAST UI Family](#-toast-ui-family)
 * [License](#-license)
 
+
+## Collect statistics on the use of open source
+
+TOAST UI ImageEditor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI ImageEditor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` option when creating the instance.
+
+```js
+var options = {
+    ...
+    usageStatistics: false
+}
+
+var imageEditor = new tui.ImageEditor('#tui-image-editor-container', options);
+```
+
+Or, include [`tui-code-snippet`](https://github.com/nhnent/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
+
+```js
+tui.usageStatistics = false;
+```
 
 
 ## 🌏 Browser Support

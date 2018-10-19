@@ -37,6 +37,9 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
  *   @param {number} option.initMenu - Init start menu
  *   @param {Boolean} [option.menuBarPosition=bottom] - Let
  *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+ *   @param {Object} [options.uiSize] - ui size of editor
+ *     @param {string} options.uiSize.width - width of ui
+ *     @param {string} options.uiSize.height - height of ui
  * @param {Objecdt} actions - ui action instance
  * @ignore
  */
