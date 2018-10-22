@@ -84,10 +84,11 @@ export default {
                 }
 
                 this.ui.initializeImgUrl = URL.createObjectURL(file);
-                this.loadImageFromFile(file).then(() => {
+                this.loadImageFromFile(file).then(sizeValue => {
                     exitCropOnAction();
                     this.clearUndoStack();
-                    this.ui.resizeEditor();
+                    this.ui.activeMenuEvent();
+                    this.ui.resizeEditor({imageSize: sizeValue});
                 })['catch'](message => (
                     Promise.reject(message)
                 ));
