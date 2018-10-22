@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.2.1
+ * @version 3.2.2
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -651,6 +651,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *    @param {Object} [options.includeUI.theme] - Theme object
 	 *    @param {Array} [options.includeUI.menu] - It can be selected when only specific menu is used. [default all]
 	 *    @param {string} [options.includeUI.initMenu] - The first menu to be selected and started.
+	 *    @param {Object} [options.includeUI.uiSize] - ui size of editor
+	 *      @param {string} options.includeUI.uiSize.width - width of ui
+	 *      @param {string} options.includeUI.uiSize.height - height of ui
 	 *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
 	 *  @param {number} options.cssMaxWidth - Canvas css-max-width
 	 *  @param {number} options.cssMaxHeight - Canvas css-max-height
@@ -667,6 +670,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *     theme: blackTheme, // or whiteTheme
 	 *     menu: ['shape', 'filter'],
 	 *     initMenu: 'filter',
+	 *     uiSize: {
+	 *         width: '1000px',
+	 *         height: '700px'
+	 *     },
 	 *     menuBarPosition: 'bottom'
 	 *   },
 	 *   cssMaxWidth: 700,
@@ -4563,22 +4570,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * send hostname
 	     */
 	    sendHostName: function sendHostName() {
-	        var _location = location,
-	            hostname = _location.hostname;
-
 	        if (hostnameSent) {
 	            return;
 	        }
 	        hostnameSent = true;
 
-	        (0, _tuiCodeSnippet.imagePing)('https://www.google-analytics.com/collect', {
-	            v: 1,
-	            t: 'event',
-	            tid: 'UA-115377265-9',
-	            cid: hostname,
-	            dp: hostname,
-	            dh: 'image-editor'
-	        });
+	        (0, _tuiCodeSnippet.sendHostname)('image-editor');
 	    },
 
 
@@ -4954,8 +4951,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *   @param {number} option.initMenu - Init start menu
 	 *   @param {Boolean} [option.menuBarPosition=bottom] - Let
 	 *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+	 *   @param {Object} [options.uiSize] - ui size of editor
+	 *     @param {string} options.uiSize.width - width of ui
+	 *     @param {string} options.uiSize.height - height of ui
 	 * @param {Objecdt} actions - ui action instance
-	 * @ignore
 	 */
 
 	var Ui = function () {
@@ -4979,6 +4978,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._subMenuElement = null;
 	        this._makeUiElement(element);
 	        this._setUiSize();
+	        this._initMenuEvent = false;
 
 	        this._els = {
 	            'undo': this._menuElement.querySelector('#tie-btn-undo'),
@@ -4997,6 +4997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Set Default Selection for includeUI
 	     * @param {Object} option - imageEditor options
 	     * @returns {Object} - extends selectionStyle option
+	     * @ignore
 	     */
 
 
@@ -5029,6 +5030,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *     @param {Number} resizeInfo.imageSize.oldHeight - old height
 	         *     @param {Number} resizeInfo.imageSize.newWidth - new width
 	         *     @param {Number} resizeInfo.imageSize.newHeight - new height
+	         * @example
+	         * // Change the image size and ui size, and change the affected ui state together.
+	         * imageEditor.ui.resizeEditor({
+	         *     imageSize: {oldWidth: 100, oldHeight: 100, newWidth: 700, newHeight: 700},
+	         *     uiSize: {width: 1000, height: 1000}
+	         * });
+	         * @example
+	         * // Apply the ui state while preserving the previous attribute (for example, if responsive Ui)
+	         * imageEditor.ui.resizeEditor();
 	         */
 
 	    }, {
@@ -5076,6 +5086,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Change undo button status
 	         * @param {Boolean} enableStatus - enabled status
+	         * @ignore
 	         */
 
 	    }, {
@@ -5091,6 +5102,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Change redo button status
 	         * @param {Boolean} enableStatus - enabled status
+	         * @ignore
 	         */
 
 	    }, {
@@ -5106,6 +5118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Change reset button status
 	         * @param {Boolean} enableStatus - enabled status
+	         * @ignore
 	         */
 
 	    }, {
@@ -5121,6 +5134,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Change delete-all button status
 	         * @param {Boolean} enableStatus - enabled status
+	         * @ignore
 	         */
 
 	    }, {
@@ -5136,6 +5150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Change delete button status
 	         * @param {Boolean} enableStatus - enabled status
+	         * @ignore
 	         */
 
 	    }, {
@@ -5381,6 +5396,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * get editor area element
 	         * @returns {HTMLElement} editor area html element
+	         * @ignore
 	         */
 
 	    }, {
@@ -5390,33 +5406,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * Add event for menu items
+	         * @ignore
+	         */
+
+	    }, {
+	        key: 'activeMenuEvent',
+	        value: function activeMenuEvent() {
+	            var _this6 = this;
+
+	            if (this._initMenuEvent) {
+	                return;
+	            }
+
+	            this._addHelpActionEvent('undo');
+	            this._addHelpActionEvent('redo');
+	            this._addHelpActionEvent('reset');
+	            this._addHelpActionEvent('delete');
+	            this._addHelpActionEvent('deleteAll');
+
+	            this._addDownloadEvent();
+
+	            _tuiCodeSnippet2.default.forEach(this.options.menu, function (menuName) {
+	                _this6._addMenuEvent(menuName);
+	                _this6._addSubMenuEvent(menuName);
+	            });
+	            this._initMenu();
+	            this._initMenuEvent = true;
+	        }
+
+	        /**
 	         * Init canvas
+	         * @ignore
 	         */
 
 	    }, {
 	        key: 'initCanvas',
 	        value: function initCanvas() {
-	            var _this6 = this;
+	            var _this7 = this;
 
 	            var loadImageInfo = this._getLoadImage();
-	            if (loadImageInfo) {
+	            if (loadImageInfo.path) {
 	                this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(function () {
-	                    _this6._addHelpActionEvent('undo');
-	                    _this6._addHelpActionEvent('redo');
-	                    _this6._addHelpActionEvent('reset');
-	                    _this6._addHelpActionEvent('delete');
-	                    _this6._addHelpActionEvent('deleteAll');
-
-	                    _this6._addDownloadEvent();
-	                    _this6._addLoadEvent();
-
-	                    _tuiCodeSnippet2.default.forEach(_this6.options.menu, function (menuName) {
-	                        _this6._addMenuEvent(menuName);
-	                        _this6._addSubMenuEvent(menuName);
-	                    });
-	                    _this6._initMenu();
+	                    _this7.activeMenuEvent();
 	                });
 	            }
+
+	            this._addLoadEvent();
 
 	            var gridVisual = document.createElement('div');
 	            gridVisual.className = 'tui-image-editor-grid-visual';
@@ -5428,7 +5464,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * get editor area element
-	         * @returns {Object} loadimage optionk
+	         * @returns {Object} load image option
 	         * @private
 	         */
 
@@ -5443,6 +5479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {string} menuName - menu name
 	         * @param {boolean} toggle - whether toogle or not
 	         * @param {boolean} discardSelection - discard selection
+	         * @ignore
 	         */
 
 	    }, {
@@ -6025,14 +6062,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'loadButton.backgroundColor': '#fff',
 	  'loadButton.border': '1px solid #ddd',
 	  'loadButton.color': '#222',
-	  'loadButton.fontFamily': '"Noto Sans", sans-serif',
+	  'loadButton.fontFamily': '\'Noto Sans\', sans-serif',
 	  'loadButton.fontSize': '12px',
 
 	  // download button
 	  'downloadButton.backgroundColor': '#fdba3b',
 	  'downloadButton.border': '1px solid #fdba3b',
 	  'downloadButton.color': '#fff',
-	  'downloadButton.fontFamily': '"Noto Sans", sans-serif',
+	  'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
 	  'downloadButton.fontSize': '12px',
 
 	  // main icons
@@ -6048,34 +6085,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	  'menu.iconSize.height': '24px',
 
 	  // submenu primary color
-	  'submenu.backgroundColor': 'transparent',
-	  'submenu.partition.color': '#858585',
+	  'submenu.backgroundColor': '#1e1e1e',
+	  'submenu.partition.color': '#3c3c3c',
 
 	  // submenu icons
-	  'submenu.normalIcon.path': 'icon-a.svg',
-	  'submenu.normalIcon.name': 'icon-a',
+	  'submenu.normalIcon.path': 'icon-d.svg',
+	  'submenu.normalIcon.name': 'icon-d',
 	  'submenu.activeIcon.path': 'icon-c.svg',
 	  'submenu.activeIcon.name': 'icon-c',
 	  'submenu.iconSize.width': '32px',
 	  'submenu.iconSize.height': '32px',
 
 	  // submenu labels
-	  'submenu.normalLabel.color': '#858585',
+	  'submenu.normalLabel.color': '#8a8a8a',
 	  'submenu.normalLabel.fontWeight': 'lighter',
 	  'submenu.activeLabel.color': '#fff',
 	  'submenu.activeLabel.fontWeight': 'lighter',
 
 	  // checkbox style
-	  'checkbox.border': '1px solid #ccc',
+	  'checkbox.border': '0px',
 	  'checkbox.backgroundColor': '#fff',
 
-	  // rango style
+	  // range style
 	  'range.pointer.color': '#fff',
 	  'range.bar.color': '#666',
 	  'range.subbar.color': '#d1d1d1',
-	  'range.disabledPointer.color': 'red',
-	  'range.disabledBar.color': 'blue',
-	  'range.disabledSubbar.color': 'red',
+
+	  'range.disabledPointer.color': '#414141',
+	  'range.disabledBar.color': '#282828',
+	  'range.disabledSubbar.color': '#414141',
+
 	  'range.value.color': '#fff',
 	  'range.value.fontWeight': 'lighter',
 	  'range.value.fontSize': '11px',
@@ -11926,10 +11965,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 
 	                _this.ui.initializeImgUrl = URL.createObjectURL(file);
-	                _this.loadImageFromFile(file).then(function () {
+	                _this.loadImageFromFile(file).then(function (sizeValue) {
 	                    exitCropOnAction();
 	                    _this.clearUndoStack();
-	                    _this.ui.resizeEditor();
+	                    _this.ui.activeMenuEvent();
+	                    _this.ui.resizeEditor({ imageSize: sizeValue });
 	                })['catch'](function (message) {
 	                    return Promise.reject(message);
 	                });
