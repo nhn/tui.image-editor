@@ -109,6 +109,15 @@ class Ui {
      *     @param {Number} resizeInfo.imageSize.oldHeight - old height
      *     @param {Number} resizeInfo.imageSize.newWidth - new width
      *     @param {Number} resizeInfo.imageSize.newHeight - new height
+     * @example
+     * // Change the image size and ui size, and change the affected ui state together.
+     * imageEditor.ui.resizeEditor({
+     *     imageSize: {oldWidth: 100, oldHeight: 100, newWidth: 700, newHeight: 700},
+     *     uiSize: {width: 1000, height: 1000}
+     * });
+     * @example
+     * // Apply the ui state while preserving the previous attribute (for example, if responsive Ui)
+     * imageEditor.ui.resizeEditor();
      */
     resizeEditor({uiSize, imageSize = this.imageSize} = {}) {
         if (imageSize !== this.imageSize) {
