@@ -44,9 +44,10 @@ const command = {
     undo(graphics) {
         const loader = graphics.getComponent(IMAGE_LOADER);
         const {objects, name, image} = this.undoData;
+        const filteredObject = objects.filter(objectItem => objectItem.type !== 'cropzone');
 
         graphics.removeAll(true);
-        graphics.add(objects);
+        graphics.add(filteredObject);
 
         return loader.load(name, image);
     }
