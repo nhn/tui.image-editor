@@ -1,0 +1,47 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+# Compiled files for DEV
+dist
+
+# Dependency directory
+node_modules
+
+# Bower Components
+/lib
+
+#JSDOC
+doc
+
+# IDEA
+.idea
+*.iml
+
+# Window
+Thumbs.db
+Desktop.ini
+
+# MACgi
+.DS_Store
+
+# eclipse
+.project
+.metadata
+
+#report / screenshots
+report
+screenshots
+
+# Atom
+tags
+.ctags
+.tern-project
+
+# etc
+.agignore

@@ -1,0 +1,35 @@
+{
+  "name": "@toast-ui/vue-image-editor",
+  "version": "1.0.0",
+  "description": "Vue wrapper component for tui.imageEditor",
+  "main": "dist/toastui-vue-image-editor.js",
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build:dev": "webpack --mode development",
+    "build": "webpack --mode production"
+  },
+  "author": "NHN Ent. FE Development Lab <dl_javascript@nhnent.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@babel/core": "^7.1.2",
+    "@babel/preset-env": "^7.1.0",
+    "babel-loader": "^8.0.4",
+    "clean-webpack-plugin": "^0.1.19",
+    "eslint": "^5.7.0",
+    "eslint-config-tui": "^2.0.0",
+    "eslint-loader": "^2.1.1",
+    "eslint-plugin-vue": "^4.7.1",
+    "safe-umd-webpack-plugin": "^4.0.0",
+    "vue": "^2.5.17",
+    "vue-loader": "^15.4.2",
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.22.0",
+    "webpack-cli": "^3.1.2"
+  },
+  "dependencies": {
+    "tui-image-editor": "^3.2.2"
+  }
+}
