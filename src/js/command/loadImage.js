@@ -23,11 +23,16 @@ const command = {
         const prevImage = loader.getCanvasImage();
         const prevImageWidth = prevImage ? prevImage.width : 0;
         const prevImageHeight = prevImage ? prevImage.height : 0;
+        const objects = graphics.removeAll(true).filter(objectItem => objectItem.type !== 'cropzone');
+
+        objects.forEach(objectItem => {
+            objectItem.evented = true;
+        });
 
         this.undoData = {
             name: loader.getImageName(),
             image: prevImage,
-            objects: graphics.removeAll(true)
+            objects
         };
 
         return loader.load(imageName, imgUrl).then(newImage => ({
@@ -37,6 +42,7 @@ const command = {
             newHeight: newImage.height
         }));
     },
+
     /**
      * @param {Graphics} graphics - Graphics instance
      * @returns {Promise}
@@ -44,10 +50,9 @@ const command = {
     undo(graphics) {
         const loader = graphics.getComponent(IMAGE_LOADER);
         const {objects, name, image} = this.undoData;
-        const filteredObject = objects.filter(objectItem => objectItem.type !== 'cropzone');
 
         graphics.removeAll(true);
-        graphics.add(filteredObject);
+        graphics.add(objects);
 
         return loader.load(name, image);
     }
