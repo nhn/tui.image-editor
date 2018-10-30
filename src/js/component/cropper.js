@@ -67,6 +67,7 @@ class Cropper extends Component {
      * Start cropping
      */
     start() {
+        console.log('START - CROPPER');
         if (this._cropzone) {
             return;
         }
@@ -281,6 +282,9 @@ class Cropper extends Component {
      * Set a cropzone square
      */
     setCropzoneRect(factor) {
+
+        console.log('FACTOR - ', factor);
+
         const canvas = this.getCanvas();
         canvas.deactivateAll();
         canvas.selection = false;
@@ -292,32 +296,29 @@ class Cropper extends Component {
             return;
         }
 
-        const canvasImage = this.getCanvasImage();
-        const oWidth = canvasImage ? canvasImage.getOriginalSize().width : 800;
-        const oHeight = canvasImage ? canvasImage.getOriginalSize().height : 600;
+        const originalWidth = canvas.getWidth();
+        const originalHeight = canvas.getHeight();
+        const standardSize = (originalWidth >= originalHeight) ? originalWidth : originalHeight;
 
-        let width = (10000 * factor);
-        let height = 10000;
+        let width = (standardSize * factor);
+        let height = standardSize;
         let scale = 1;
 
-        if (width > oWidth) {
-            scale = (oWidth / width);
+        if (width > originalWidth) {
+            scale = (originalWidth / width);
             width = (width * scale);
             height = (height * scale);
         }
 
-        if (height > oHeight) {
-            scale = (oHeight / height);
+        if (height > originalHeight) {
+            scale = (originalHeight / height);
             width = (width * scale);
             height = (height * scale);
         }
-
-        const top = 0;
-        const left = 0;
 
         cropzone.set({
-            top,
-            left,
+            top: 0,
+            left: 0,
             height,
             width
         });
