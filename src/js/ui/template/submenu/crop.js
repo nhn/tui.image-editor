@@ -1,6 +1,6 @@
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-crop-button">
+        <li id="tie-crop-preset-button">
             <div class="tui-image-editor-button preset preset-none active">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -80,6 +80,9 @@ export default ({iconStyle: {normal, active}}) => (`
             </div>
         </li>
         <li class="tui-image-editor-partition tui-image-editor-newline">
+        </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
         </li>
         <li id="tie-crop-button" class="action">
             <div class="tui-image-editor-button apply">

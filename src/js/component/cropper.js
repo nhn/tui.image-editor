@@ -67,7 +67,6 @@ class Cropper extends Component {
      * Start cropping
      */
     start() {
-        console.log('START - CROPPER');
         if (this._cropzone) {
             return;
         }
@@ -278,55 +277,61 @@ class Cropper extends Component {
         };
     }
 
-    /*
+    /**
      * Set a cropzone square
+     * @param {number} factor - preset ratio
+     * @returns {{left: number, top: number, width: number, height: number}}
      */
-    setCropzoneRect(factor) {
-
-        console.log('FACTOR - ', factor);
-
+    _getPresetCropSizePosition(factor) {
         const canvas = this.getCanvas();
-        canvas.deactivateAll();
-        canvas.selection = false;
-
-        const cropzone = this._cropzone;
-        cropzone.remove();
-
-        if (!factor) {
-            return;
-        }
-
         const originalWidth = canvas.getWidth();
         const originalHeight = canvas.getHeight();
+
         const standardSize = (originalWidth >= originalHeight) ? originalWidth : originalHeight;
+        const getScale = (value, orignalValue) => (value > orignalValue) ? orignalValue / value : 1;
 
         let width = (standardSize * factor);
         let height = standardSize;
-        let scale = 1;
 
-        if (width > originalWidth) {
-            scale = (originalWidth / width);
-            width = (width * scale);
-            height = (height * scale);
-        }
+        const scaleWidth = getScale(width, originalWidth);
+        [width, height] = [width, height].map(sizeValue => (sizeValue * scaleWidth));
 
-        if (height > originalHeight) {
-            scale = (originalHeight / height);
-            width = (width * scale);
-            height = (height * scale);
-        }
+        const scaleHeight = getScale(height, originalHeight);
+        [width, height] = [width, height].map(sizeValue => (sizeValue * scaleHeight));
 
-        cropzone.set({
-            top: 0,
-            left: 0,
-            height,
-            width
+        return {
+            top: (originalHeight - height) / 2,
+            left: (originalWidth - width) / 2,
+            width,
+            height
+        };
+    }
+
+    /**
+     * Set a cropzone square
+     * @param {number} factor - preset ratio
+     */
+    setCropzoneRect(factor) {
+        const canvas = this.getCanvas();
+        const cropzone = this._cropzone;
+
+        canvas.deactivateAll();
+        canvas.selection = false;
+        cropzone.remove();
+
+        cropzone.set(factor ? this._getPresetCropSizePosition(factor) : {
+            top: -10,
+            left: -10,
+            height: 1,
+            width: 1
         });
 
         canvas.add(cropzone);
-        canvas.centerObject(cropzone);
-        canvas.setActiveObject(cropzone);
         canvas.selection = true;
+
+        if (factor) {
+            canvas.setActiveObject(cropzone);
+        }
     }
 
     /**

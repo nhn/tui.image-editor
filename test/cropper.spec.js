@@ -246,7 +246,7 @@ describe('Cropper', () => {
             spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
             cropper.setCropzoneRect(1 / 1);
             expect(cropper.getCropzoneRect()).toBeTruthy();
-            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height);
+            expect(cropper.getCropzoneRect().width).toBe(cropper.getCropzoneRect().height);
             cropper.end();
         });
 
@@ -255,7 +255,8 @@ describe('Cropper', () => {
             spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
             cropper.setCropzoneRect(3 / 2);
             expect(cropper.getCropzoneRect()).toBeTruthy();
-            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (3 / 2));
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((3 / 2).toFixed(1));
             cropper.end();
         });
 
@@ -264,7 +265,8 @@ describe('Cropper', () => {
             spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
             cropper.setCropzoneRect(4 / 3);
             expect(cropper.getCropzoneRect()).toBeTruthy();
-            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (4 / 3));
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((4 / 3).toFixed(1));
             cropper.end();
         });
 
@@ -273,7 +275,8 @@ describe('Cropper', () => {
             spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
             cropper.setCropzoneRect(5 / 4);
             expect(cropper.getCropzoneRect()).toBeTruthy();
-            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (5 / 4));
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((5 / 4).toFixed(1));
             cropper.end();
         });
 
@@ -282,7 +285,8 @@ describe('Cropper', () => {
             spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
             cropper.setCropzoneRect(7 / 5);
             expect(cropper.getCropzoneRect()).toBeTruthy();
-            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (7 / 5));
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((7 / 5).toFixed(1));
             cropper.end();
         });
 
@@ -291,7 +295,8 @@ describe('Cropper', () => {
             spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
             cropper.setCropzoneRect(16 / 9);
             expect(cropper.getCropzoneRect()).toBeTruthy();
-            expect(cropper.getCropzoneRect().width).toEqual(cropper.getCropzoneRect().height * (16 / 9));
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((16 / 9).toFixed(1));
             cropper.end();
         });
 
