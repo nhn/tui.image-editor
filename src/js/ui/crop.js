@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/crop';
 
@@ -16,17 +17,14 @@ class Crop extends Submenu {
         });
 
         this.status = 'active';
+
         this._els = {
             apply: this.selector('#tie-crop-button .apply'),
             cancel: this.selector('#tie-crop-button .cancel'),
-            'preset-none': this.selector('#tie-crop-button .preset-none'),
-            'preset-square': this.selector('#tie-crop-button .preset-square'),
-            'preset-3-2': this.selector('#tie-crop-button .preset-3-2'),
-            'preset-4-3': this.selector('#tie-crop-button .preset-4-3'),
-            'preset-5-4': this.selector('#tie-crop-button .preset-5-4'),
-            'preset-7-5': this.selector('#tie-crop-button .preset-7-5'),
-            'preset-16-9': this.selector('#tie-crop-button .preset-16-9')
+            preset: this.selector('#tie-crop-preset-button')
         };
+
+        this.defaultPresetButton = this._els.preset.querySelector('.preset-none');
     }
 
     /**
@@ -34,6 +32,7 @@ class Crop extends Submenu {
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.crop - crop action
      *   @param {Function} actions.cancel - cancel action
+     *   @param {Function} actions.preset - draw rectzone at a predefined ratio
      */
     addEvent(actions) {
         this.actions = actions;
@@ -47,39 +46,14 @@ class Crop extends Submenu {
             this._els.apply.classList.remove('active');
         });
 
-        this._els['preset-none'].addEventListener('click', () => {
-            this.setPresetButtonActive('preset-none');
-            this.actions['preset-none']();
-        });
+        this._els.preset.addEventListener('click', event => {
+            const button = event.target.closest('.tui-image-editor-button.preset');
+            if (button) {
+                const [presetType] = button.className.match(/preset-[^\s]+/);
 
-        this._els['preset-square'].addEventListener('click', () => {
-            this.setPresetButtonActive('preset-square');
-            this.actions['preset-square']();
-        });
-
-        this._els['preset-3-2'].addEventListener('click', () => {
-            this.setPresetButtonActive('preset-3-2');
-            this.actions['preset-3-2']();
-        });
-
-        this._els['preset-4-3'].addEventListener('click', () => {
-            this.setPresetButtonActive('preset-4-3');
-            this.actions['preset-4-3']();
-        });
-
-        this._els['preset-5-4'].addEventListener('click', () => {
-            this.setPresetButtonActive('preset-5-4');
-            this.actions['preset-5-4']();
-        });
-
-        this._els['preset-7-5'].addEventListener('click', () => {
-            this.setPresetButtonActive('preset-7-5');
-            this.actions['preset-7-5']();
-        });
-
-        this._els['preset-16-9'].addEventListener('click', () => {
-            this.setPresetButtonActive('preset-16-9');
-            this.actions['preset-16-9']();
+                this._setPresetButtonActive(button);
+                this.actions.preset(presetType);
+            }
         });
     }
 
@@ -95,7 +69,7 @@ class Crop extends Submenu {
      */
     changeStandbyMode() {
         this.actions.stopDrawingMode();
-        this.setPresetButtonActive();
+        this._setPresetButtonActive();
     }
 
     /**
@@ -112,17 +86,16 @@ class Crop extends Submenu {
 
     /**
      * Set preset button to active status
-     * @param {String} preset - preset name
+     * @param {HTMLElement} button - event target element
+     * @private
      */
-    setPresetButtonActive(preset) {
-        const excludeList = [preset, 'apply', 'cancel'];
-        Object.keys(this._els).forEach(key => {
-            if (!excludeList.includes(key)) {
-                this._els[key].classList.remove('active');
-            }
+    _setPresetButtonActive(button = this.defaultPresetButton) {
+        snippet.forEach([].slice.call(this._els.preset.querySelectorAll('.preset')), presetButton => {
+            presetButton.classList.remove('active');
         });
-        if (preset) {
-            this._els[preset].classList.add('active');
+
+        if (button) {
+            button.classList.add('active');
         }
     }
 }
