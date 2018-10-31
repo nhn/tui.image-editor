@@ -10,6 +10,12 @@ import {keyCodes, componentNames} from '../consts';
 import {clamp} from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
+const DEFAULT_OPTION = {
+    top: -10,
+    left: -10,
+    height: 1,
+    width: 1
+};
 
 /**
  * Cropper components
@@ -280,9 +286,9 @@ class Cropper extends Component {
 
     /**
      * Set a cropzone square
-     * @param {number} factor - preset ratio
+     * @param {number} [scale] - preset ratio
      */
-    setCropzoneRect(factor) {
+    setCropzoneRect(scale) {
         const canvas = this.getCanvas();
         const cropzone = this._cropzone;
 
@@ -290,28 +296,23 @@ class Cropper extends Component {
         canvas.selection = false;
         cropzone.remove();
 
-        cropzone.set(factor ? this._getPresetCropSizePosition(factor) : {
-            top: -10,
-            left: -10,
-            height: 1,
-            width: 1
-        });
+        cropzone.set(scale ? this._getPresetCropSizePosition(scale) : DEFAULT_OPTION);
 
         canvas.add(cropzone);
         canvas.selection = true;
 
-        if (factor) {
+        if (scale) {
             canvas.setActiveObject(cropzone);
         }
     }
 
     /**
      * Set a cropzone square
-     * @param {number} factor - preset ratio
+     * @param {number} scale - preset ratio
      * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
-    _getPresetCropSizePosition(factor) {
+    _getPresetCropSizePosition(scale) {
         const canvas = this.getCanvas();
         const originalWidth = canvas.getWidth();
         const originalHeight = canvas.getHeight();
@@ -319,7 +320,7 @@ class Cropper extends Component {
         const standardSize = (originalWidth >= originalHeight) ? originalWidth : originalHeight;
         const getScale = (value, orignalValue) => (value > orignalValue) ? orignalValue / value : 1;
 
-        let width = (standardSize * factor);
+        let width = standardSize * scale;
         let height = standardSize;
 
         const scaleWidth = getScale(width, originalWidth);

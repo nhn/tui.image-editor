@@ -32,7 +32,7 @@ class Crop extends Submenu {
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.crop - crop action
      *   @param {Function} actions.cancel - cancel action
-     *   @param {Function} actions.preset - cancel action
+     *   @param {Function} actions.preset - draw rectzone at a predefined ratio
      */
     addEvent(actions) {
         this.actions = actions;
@@ -87,6 +87,7 @@ class Crop extends Submenu {
     /**
      * Set preset button to active status
      * @param {HTMLElement} button - event target element
+     * @private
      */
     _setPresetButtonActive(button = this.defaultPresetButton) {
         snippet.forEach([].slice.call(this._els.preset.querySelectorAll('.preset')), presetButton => {
