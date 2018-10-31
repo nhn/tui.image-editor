@@ -277,6 +277,57 @@ class Cropper extends Component {
         };
     }
 
+    /*
+     * Set a cropzone square
+     */
+    setCropzoneRect(factor) {
+        const canvas = this.getCanvas();
+        canvas.deactivateAll();
+        canvas.selection = false;
+
+        const cropzone = this._cropzone;
+        cropzone.remove();
+
+        if (!factor) {
+            return;
+        }
+
+        const canvasImage = this.getCanvasImage();
+        const oWidth = canvasImage ? canvasImage.getOriginalSize().width : 800;
+        const oHeight = canvasImage ? canvasImage.getOriginalSize().height : 600;
+
+        let width = (10000 * factor);
+        let height = 10000;
+        let scale = 1;
+
+        if (width > oWidth) {
+            scale = (oWidth / width);
+            width = (width * scale);
+            height = (height * scale);
+        }
+
+        if (height > oHeight) {
+            scale = (oHeight / height);
+            width = (width * scale);
+            height = (height * scale);
+        }
+
+        const top = 0;
+        const left = 0;
+
+        cropzone.set({
+            top,
+            left,
+            height,
+            width
+        });
+
+        canvas.add(cropzone);
+        canvas.centerObject(cropzone);
+        canvas.setActiveObject(cropzone);
+        canvas.selection = true;
+    }
+
     /**
      * Keydown event handler
      * @param {KeyboardEvent} e - Event object

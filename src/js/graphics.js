@@ -553,6 +553,15 @@ class Graphics {
     }
 
     /**
+     * Get cropped rect
+     * @param {Object} mode cropzone rect mode
+     * @returns {Object} rect
+     */
+    setCropzoneRect(mode) {
+        return this.getComponent(components.CROPPER).setCropzoneRect(mode);
+    }
+
+    /**
      * Get cropped image data
      * @param {Object} cropRect cropzone rect
      *  @param {Number} cropRect.left left position
