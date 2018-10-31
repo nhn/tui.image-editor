@@ -1,3 +1,4 @@
+
 export default ({iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li id="tie-crop-preset-button">
