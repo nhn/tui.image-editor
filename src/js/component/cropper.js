@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image crop module (start cropping, end cropping)
  */
+import snippet from 'tui-code-snippet';
 import fabric from 'fabric/dist/fabric.require';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
@@ -294,10 +295,10 @@ class Cropper extends Component {
         let height = standardSize;
 
         const scaleWidth = getScale(width, originalWidth);
-        [width, height] = [width, height].map(sizeValue => (sizeValue * scaleWidth));
+        [width, height] = snippet.map([width, height], sizeValue => (sizeValue * scaleWidth));
 
         const scaleHeight = getScale(height, originalHeight);
-        [width, height] = [width, height].map(sizeValue => (sizeValue * scaleHeight));
+        [width, height] = snippet.map([width, height], sizeValue => (sizeValue * scaleHeight));
 
         return {
             top: (originalHeight - height) / 2,

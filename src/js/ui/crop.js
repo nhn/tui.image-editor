@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/crop';
 
@@ -88,9 +89,7 @@ class Crop extends Submenu {
      * @param {HTMLElement} button - event target element
      */
     _setPresetButtonActive(button = this.defaultPresetButton) {
-        const presetButtons = Array.from(this._els.preset.querySelectorAll('.preset'));
-
-        presetButtons.forEach(presetButton => {
+        snippet.forEach([].slice.call(this._els.preset.querySelectorAll('.preset')), presetButton => {
             presetButton.classList.remove('active');
         });
 
