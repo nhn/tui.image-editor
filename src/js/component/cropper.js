@@ -281,7 +281,35 @@ class Cropper extends Component {
     /**
      * Set a cropzone square
      * @param {number} factor - preset ratio
+     */
+    setCropzoneRect(factor) {
+        const canvas = this.getCanvas();
+        const cropzone = this._cropzone;
+
+        canvas.deactivateAll();
+        canvas.selection = false;
+        cropzone.remove();
+
+        cropzone.set(factor ? this._getPresetCropSizePosition(factor) : {
+            top: -10,
+            left: -10,
+            height: 1,
+            width: 1
+        });
+
+        canvas.add(cropzone);
+        canvas.selection = true;
+
+        if (factor) {
+            canvas.setActiveObject(cropzone);
+        }
+    }
+
+    /**
+     * Set a cropzone square
+     * @param {number} factor - preset ratio
      * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
      */
     _getPresetCropSizePosition(factor) {
         const canvas = this.getCanvas();
@@ -306,33 +334,6 @@ class Cropper extends Component {
             width,
             height
         };
-    }
-
-    /**
-     * Set a cropzone square
-     * @param {number} factor - preset ratio
-     */
-    setCropzoneRect(factor) {
-        const canvas = this.getCanvas();
-        const cropzone = this._cropzone;
-
-        canvas.deactivateAll();
-        canvas.selection = false;
-        cropzone.remove();
-
-        cropzone.set(factor ? this._getPresetCropSizePosition(factor) : {
-            top: -10,
-            left: -10,
-            height: 1,
-            width: 1
-        });
-
-        canvas.add(cropzone);
-        canvas.selection = true;
-
-        if (factor) {
-            canvas.setActiveObject(cropzone);
-        }
     }
 
     /**
