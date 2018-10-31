@@ -286,9 +286,9 @@ class Cropper extends Component {
 
     /**
      * Set a cropzone square
-     * @param {number} [scale] - preset ratio
+     * @param {number} [presetRatio] - preset ratio
      */
-    setCropzoneRect(scale) {
+    setCropzoneRect(presetRatio) {
         const canvas = this.getCanvas();
         const cropzone = this._cropzone;
 
@@ -296,23 +296,23 @@ class Cropper extends Component {
         canvas.selection = false;
         cropzone.remove();
 
-        cropzone.set(scale ? this._getPresetCropSizePosition(scale) : DEFAULT_OPTION);
+        cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
 
         canvas.add(cropzone);
         canvas.selection = true;
 
-        if (scale) {
+        if (presetRatio) {
             canvas.setActiveObject(cropzone);
         }
     }
 
     /**
      * Set a cropzone square
-     * @param {number} scale - preset ratio
+     * @param {number} presetRatio - preset ratio
      * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
-    _getPresetCropSizePosition(scale) {
+    _getPresetCropSizePosition(presetRatio) {
         const canvas = this.getCanvas();
         const originalWidth = canvas.getWidth();
         const originalHeight = canvas.getHeight();
@@ -320,14 +320,14 @@ class Cropper extends Component {
         const standardSize = (originalWidth >= originalHeight) ? originalWidth : originalHeight;
         const getScale = (value, orignalValue) => (value > orignalValue) ? orignalValue / value : 1;
 
-        let width = standardSize * scale;
+        let width = standardSize * presetRatio;
         let height = standardSize;
 
         const scaleWidth = getScale(width, originalWidth);
-        [width, height] = snippet.map([width, height], sizeValue => (sizeValue * scaleWidth));
+        [width, height] = snippet.map([width, height], sizeValue => sizeValue * scaleWidth);
 
         const scaleHeight = getScale(height, originalHeight);
-        [width, height] = snippet.map([width, height], sizeValue => (sizeValue * scaleHeight));
+        [width, height] = snippet.map([width, height], sizeValue => sizeValue * scaleHeight);
 
         return {
             top: (originalHeight - height) / 2,
