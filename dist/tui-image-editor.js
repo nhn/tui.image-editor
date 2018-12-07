@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.2.2
+ * @version 3.3.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -1382,6 +1382,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'getCropzoneRect',
 	        value: function getCropzoneRect() {
 	            return this._graphics.getCropzoneRect();
+	        }
+
+	        /**
+	         * Set the cropping rect
+	         * @param {Object} mode crop rect mode [1, 1.5, 1.3333333333333333, 1.25, 1.7777777777777777]
+	         * @returns {Object}  {{left: number, top: number, width: number, height: number}} rect
+	         */
+
+	    }, {
+	        key: 'setCropzoneRect',
+	        value: function setCropzoneRect(mode) {
+	            return this._graphics.setCropzoneRect(mode);
 	        }
 
 	        /**
@@ -4575,7 +4587,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        hostnameSent = true;
 
-	        (0, _tuiCodeSnippet.sendHostname)('image-editor');
+	        (0, _tuiCodeSnippet.sendHostname)('image-editor', 'UA-129999381-1');
 	    },
 
 
@@ -5898,7 +5910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        submenuIconSize = _ref.submenuIconSize,
 	        menuIconSize = _ref.menuIconSize,
 	        biSize = _ref.biSize;
-	    return "\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    #tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    #tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    #tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    #tie-crop-button .tui-image-editor-button.apply.active label,\n    #tie-shape-button.rect .tui-image-editor-button.rect label,\n    #tie-shape-button.circle .tui-image-editor-button.circle label,\n    #tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    #tie-text-effect-button .tui-image-editor-button.active label,\n    #tie-text-align-button.left .tui-image-editor-button.left label,\n    #tie-text-align-button.center .tui-image-editor-button.center label,\n    #tie-text-align-button.right .tui-image-editor-button.right label,\n    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox input + label {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n\n";
+	    return "\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    #tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    #tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    #tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    #tie-crop-button .tui-image-editor-button.apply.active label,\n    #tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    #tie-shape-button.rect .tui-image-editor-button.rect label,\n    #tie-shape-button.circle .tui-image-editor-button.circle label,\n    #tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    #tie-text-effect-button .tui-image-editor-button.active label,\n    #tie-text-align-button.left .tui-image-editor-button.left label,\n    #tie-text-align-button.center .tui-image-editor-button.center label,\n    #tie-text-align-button.right .tui-image-editor-button.right label,\n    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox input + label {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n\n";
 	};
 
 /***/ }),
@@ -10215,6 +10227,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
 	var _submenuBase = __webpack_require__(84);
 
 	var _submenuBase2 = _interopRequireDefault(_submenuBase);
@@ -10253,10 +10269,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }));
 
 	        _this.status = 'active';
+
 	        _this._els = {
 	            apply: _this.selector('#tie-crop-button .apply'),
-	            cancel: _this.selector('#tie-crop-button .cancel')
+	            cancel: _this.selector('#tie-crop-button .cancel'),
+	            preset: _this.selector('#tie-crop-preset-button')
 	        };
+
+	        _this.defaultPresetButton = _this._els.preset.querySelector('.preset-none');
 	        return _this;
 	    }
 
@@ -10265,6 +10285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Object} actions - actions for crop
 	     *   @param {Function} actions.crop - crop action
 	     *   @param {Function} actions.cancel - cancel action
+	     *   @param {Function} actions.preset - draw rectzone at a predefined ratio
 	     */
 
 
@@ -10282,6 +10303,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this._els.cancel.addEventListener('click', function () {
 	                _this2.actions.cancel();
 	                _this2._els.apply.classList.remove('active');
+	            });
+
+	            this._els.preset.addEventListener('click', function (event) {
+	                var button = event.target.closest('.tui-image-editor-button.preset');
+	                if (button) {
+	                    var _button$className$mat = button.className.match(/preset-[^\s]+/),
+	                        presetType = _button$className$mat[0];
+
+	                    _this2._setPresetButtonActive(button);
+	                    _this2.actions.preset(presetType);
+	                }
 	            });
 	        }
 
@@ -10303,6 +10335,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: 'changeStandbyMode',
 	        value: function changeStandbyMode() {
 	            this.actions.stopDrawingMode();
+	            this._setPresetButtonActive();
 	        }
 
 	        /**
@@ -10317,6 +10350,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this._els.apply.classList.add('active');
 	            } else {
 	                this._els.apply.classList.remove('active');
+	            }
+	        }
+
+	        /**
+	         * Set preset button to active status
+	         * @param {HTMLElement} button - event target element
+	         * @private
+	         */
+
+	    }, {
+	        key: '_setPresetButtonActive',
+	        value: function _setPresetButtonActive() {
+	            var button = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.defaultPresetButton;
+
+	            _tuiCodeSnippet2.default.forEach([].slice.call(this._els.preset.querySelectorAll('.preset')), function (presetButton) {
+	                presetButton.classList.remove('active');
+	            });
+
+	            if (button) {
+	                button.classList.add('active');
 	            }
 	        }
 	    }]);
@@ -10340,7 +10393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-crop-button\" class=\"apply\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button cancel\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-cancel\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-cancel\" class=\"active\"/>\n                </svg>\n                <label>\n                    Cancel\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-crop-preset-button\">\n            <div class=\"tui-image-editor-button preset preset-none active\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-rectangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-rectangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Custom </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-square\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Square </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-3-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 3:2 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-4-3\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 4:3 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-5-4\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 5:4 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-7-5\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 7:5 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-16-9\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 16:9 </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition tui-image-editor-newline\">\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li id=\"tie-crop-button\" class=\"action\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button cancel\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-cancel\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-cancel\" class=\"active\"/>\n                </svg>\n                <label>\n                    Cancel\n                </label>\n            </div>\n        </li>\n    </ul>\n";
 	};
 
 /***/ }),
@@ -12225,6 +12278,32 @@ return /******/ (function(modules) { // webpackBootstrap
 	            cancel: function cancel() {
 	                _this8.stopDrawingMode();
 	                _this8.ui.changeMenu('crop');
+	            },
+	            preset: function preset(presetType) {
+	                switch (presetType) {
+	                    case 'preset-square':
+	                        _this8.setCropzoneRect(1 / 1);
+	                        break;
+	                    case 'preset-3-2':
+	                        _this8.setCropzoneRect(3 / 2);
+	                        break;
+	                    case 'preset-4-3':
+	                        _this8.setCropzoneRect(4 / 3);
+	                        break;
+	                    case 'preset-5-4':
+	                        _this8.setCropzoneRect(5 / 4);
+	                        break;
+	                    case 'preset-7-5':
+	                        _this8.setCropzoneRect(7 / 5);
+	                        break;
+	                    case 'preset-16-9':
+	                        _this8.setCropzoneRect(16 / 9);
+	                        break;
+	                    default:
+	                        _this8.setCropzoneRect();
+	                        _this8.ui.crop.changeApplyButtonStatus(false);
+	                        break;
+	                }
 	            }
 	        }, this._commonAction());
 	    },
@@ -14322,6 +14401,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 
 	        /**
+	         * Get cropped rect
+	         * @param {Object} mode cropzone rect mode
+	         * @returns {Object} rect
+	         */
+
+	    }, {
+	        key: 'setCropzoneRect',
+	        value: function setCropzoneRect(mode) {
+	            return this.getComponent(components.CROPPER).setCropzoneRect(mode);
+	        }
+
+	        /**
 	         * Get cropped image data
 	         * @param {Object} cropRect cropzone rect
 	         *  @param {Number} cropRect.left left position
@@ -15299,6 +15390,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _tuiCodeSnippet = __webpack_require__(3);
+
+	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
 	var _fabric = __webpack_require__(105);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
@@ -15328,6 +15423,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	var MOUSE_MOVE_THRESHOLD = 10;
+	var DEFAULT_OPTION = {
+	    top: -10,
+	    left: -10,
+	    height: 1,
+	    width: 1
+	};
 
 	/**
 	 * Cropper components
@@ -15628,6 +15729,81 @@ return /******/ (function(modules) { // webpackBootstrap
 	                top: cropzone.getTop(),
 	                width: cropzone.getWidth(),
 	                height: cropzone.getHeight()
+	            };
+	        }
+
+	        /**
+	         * Set a cropzone square
+	         * @param {number} [presetRatio] - preset ratio
+	         */
+
+	    }, {
+	        key: 'setCropzoneRect',
+	        value: function setCropzoneRect(presetRatio) {
+	            var canvas = this.getCanvas();
+	            var cropzone = this._cropzone;
+
+	            canvas.deactivateAll();
+	            canvas.selection = false;
+	            cropzone.remove();
+
+	            cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
+
+	            canvas.add(cropzone);
+	            canvas.selection = true;
+
+	            if (presetRatio) {
+	                canvas.setActiveObject(cropzone);
+	            }
+	        }
+
+	        /**
+	         * Set a cropzone square
+	         * @param {number} presetRatio - preset ratio
+	         * @returns {{left: number, top: number, width: number, height: number}}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_getPresetCropSizePosition',
+	        value: function _getPresetCropSizePosition(presetRatio) {
+	            var canvas = this.getCanvas();
+	            var originalWidth = canvas.getWidth();
+	            var originalHeight = canvas.getHeight();
+
+	            var standardSize = originalWidth >= originalHeight ? originalWidth : originalHeight;
+	            var getScale = function getScale(value, orignalValue) {
+	                return value > orignalValue ? orignalValue / value : 1;
+	            };
+
+	            var width = standardSize * presetRatio;
+	            var height = standardSize;
+
+	            var scaleWidth = getScale(width, originalWidth);
+
+	            var _snippet$map = _tuiCodeSnippet2.default.map([width, height], function (sizeValue) {
+	                return sizeValue * scaleWidth;
+	            });
+
+	            width = _snippet$map[0];
+	            height = _snippet$map[1];
+
+
+	            var scaleHeight = getScale(height, originalHeight);
+
+	            var _snippet$map2 = _tuiCodeSnippet2.default.map([width, height], function (sizeValue) {
+	                return sizeValue * scaleHeight;
+	            });
+
+	            width = _snippet$map2[0];
+	            height = _snippet$map2[1];
+
+
+	            return {
+	                top: (originalHeight - height) / 2,
+	                left: (originalWidth - width) / 2,
+	                width: width,
+	                height: height
 	            };
 	        }
 
@@ -20687,11 +20863,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var prevImage = loader.getCanvasImage();
 	        var prevImageWidth = prevImage ? prevImage.width : 0;
 	        var prevImageHeight = prevImage ? prevImage.height : 0;
+	        var objects = graphics.removeAll(true).filter(function (objectItem) {
+	            return objectItem.type !== 'cropzone';
+	        });
+
+	        objects.forEach(function (objectItem) {
+	            objectItem.evented = true;
+	        });
 
 	        this.undoData = {
 	            name: loader.getImageName(),
 	            image: prevImage,
-	            objects: graphics.removeAll(true)
+	            objects: objects
 	        };
 
 	        return loader.load(imageName, imgUrl).then(function (newImage) {
@@ -20703,6 +20886,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            };
 	        });
 	    },
+
 
 	    /**
 	     * @param {Graphics} graphics - Graphics instance
