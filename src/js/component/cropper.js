@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Image crop module (start cropping, end cropping)
  */
+import snippet from 'tui-code-snippet';
 import fabric from 'fabric/dist/fabric.require';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
@@ -9,6 +10,12 @@ import {keyCodes, componentNames} from '../consts';
 import {clamp} from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
+const DEFAULT_OPTION = {
+    top: -10,
+    left: -10,
+    height: 1,
+    width: 1
+};
 
 /**
  * Cropper components
@@ -274,6 +281,59 @@ class Cropper extends Component {
             top: cropzone.getTop(),
             width: cropzone.getWidth(),
             height: cropzone.getHeight()
+        };
+    }
+
+    /**
+     * Set a cropzone square
+     * @param {number} [presetRatio] - preset ratio
+     */
+    setCropzoneRect(presetRatio) {
+        const canvas = this.getCanvas();
+        const cropzone = this._cropzone;
+
+        canvas.deactivateAll();
+        canvas.selection = false;
+        cropzone.remove();
+
+        cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
+
+        canvas.add(cropzone);
+        canvas.selection = true;
+
+        if (presetRatio) {
+            canvas.setActiveObject(cropzone);
+        }
+    }
+
+    /**
+     * Set a cropzone square
+     * @param {number} presetRatio - preset ratio
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _getPresetCropSizePosition(presetRatio) {
+        const canvas = this.getCanvas();
+        const originalWidth = canvas.getWidth();
+        const originalHeight = canvas.getHeight();
+
+        const standardSize = (originalWidth >= originalHeight) ? originalWidth : originalHeight;
+        const getScale = (value, orignalValue) => (value > orignalValue) ? orignalValue / value : 1;
+
+        let width = standardSize * presetRatio;
+        let height = standardSize;
+
+        const scaleWidth = getScale(width, originalWidth);
+        [width, height] = snippet.map([width, height], sizeValue => sizeValue * scaleWidth);
+
+        const scaleHeight = getScale(height, originalHeight);
+        [width, height] = snippet.map([width, height], sizeValue => sizeValue * scaleHeight);
+
+        return {
+            top: (originalHeight - height) / 2,
+            left: (originalWidth - width) / 2,
+            width,
+            height
         };
     }
 

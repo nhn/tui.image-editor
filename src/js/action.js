@@ -320,6 +320,32 @@ export default {
             cancel: () => {
                 this.stopDrawingMode();
                 this.ui.changeMenu('crop');
+            },
+            preset: presetType => {
+                switch (presetType) {
+                    case 'preset-square':
+                        this.setCropzoneRect(1 / 1);
+                        break;
+                    case 'preset-3-2':
+                        this.setCropzoneRect(3 / 2);
+                        break;
+                    case 'preset-4-3':
+                        this.setCropzoneRect(4 / 3);
+                        break;
+                    case 'preset-5-4':
+                        this.setCropzoneRect(5 / 4);
+                        break;
+                    case 'preset-7-5':
+                        this.setCropzoneRect(7 / 5);
+                        break;
+                    case 'preset-16-9':
+                        this.setCropzoneRect(16 / 9);
+                        break;
+                    default:
+                        this.setCropzoneRect();
+                        this.ui.crop.changeApplyButtonStatus(false);
+                        break;
+                }
             }
         }, this._commonAction());
     },

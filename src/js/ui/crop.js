@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/crop';
 
@@ -16,10 +17,14 @@ class Crop extends Submenu {
         });
 
         this.status = 'active';
+
         this._els = {
             apply: this.selector('#tie-crop-button .apply'),
-            cancel: this.selector('#tie-crop-button .cancel')
+            cancel: this.selector('#tie-crop-button .cancel'),
+            preset: this.selector('#tie-crop-preset-button')
         };
+
+        this.defaultPresetButton = this._els.preset.querySelector('.preset-none');
     }
 
     /**
@@ -27,6 +32,7 @@ class Crop extends Submenu {
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.crop - crop action
      *   @param {Function} actions.cancel - cancel action
+     *   @param {Function} actions.preset - draw rectzone at a predefined ratio
      */
     addEvent(actions) {
         this.actions = actions;
@@ -38,6 +44,16 @@ class Crop extends Submenu {
         this._els.cancel.addEventListener('click', () => {
             this.actions.cancel();
             this._els.apply.classList.remove('active');
+        });
+
+        this._els.preset.addEventListener('click', event => {
+            const button = event.target.closest('.tui-image-editor-button.preset');
+            if (button) {
+                const [presetType] = button.className.match(/preset-[^\s]+/);
+
+                this._setPresetButtonActive(button);
+                this.actions.preset(presetType);
+            }
         });
     }
 
@@ -53,6 +69,7 @@ class Crop extends Submenu {
      */
     changeStandbyMode() {
         this.actions.stopDrawingMode();
+        this._setPresetButtonActive();
     }
 
     /**
@@ -64,6 +81,21 @@ class Crop extends Submenu {
             this._els.apply.classList.add('active');
         } else {
             this._els.apply.classList.remove('active');
+        }
+    }
+
+    /**
+     * Set preset button to active status
+     * @param {HTMLElement} button - event target element
+     * @private
+     */
+    _setPresetButtonActive(button = this.defaultPresetButton) {
+        snippet.forEach([].slice.call(this._els.preset.querySelectorAll('.preset')), presetButton => {
+            presetButton.classList.remove('active');
+        });
+
+        if (button) {
+            button.classList.add('active');
         }
     }
 }

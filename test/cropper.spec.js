@@ -240,6 +240,74 @@ describe('Cropper', () => {
         });
     });
 
+    describe('"presets - setCropzoneRect()"', () => {
+        beforeEach(() => {
+            cropper.start();
+        });
+
+        afterEach(() => {
+            cropper.end();
+        });
+
+        it('should return cropzone rect as a square', () => {
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(1 / 1);
+
+            expect(cropper.getCropzoneRect().width).toBe(cropper.getCropzoneRect().height);
+        });
+
+        it('should return cropzone rect as a 3:2 aspect box', () => {
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(3 / 2);
+
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((3 / 2).toFixed(1));
+        });
+
+        it('should return cropzone rect as a 4:3 aspect box', () => {
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(4 / 3);
+
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((4 / 3).toFixed(1));
+        });
+
+        it('should return cropzone rect as a 5:4 aspect box', () => {
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(5 / 4);
+
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((5 / 4).toFixed(1));
+        });
+
+        it('should return cropzone rect as a 7:5 aspect box', () => {
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(7 / 5);
+
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((7 / 5).toFixed(1));
+        });
+
+        it('should return cropzone rect as a 16:9 aspect box', () => {
+            spyOn(cropper._cropzone, 'isValid').and.returnValue(true);
+            cropper.setCropzoneRect(16 / 9);
+
+            expect((cropper.getCropzoneRect().width / cropper.getCropzoneRect().height).toFixed(1))
+                .toBe((16 / 9).toFixed(1));
+        });
+
+        it('should remove cropzone of cropper when falsy is passed', () => {
+            cropper.setCropzoneRect();
+            expect(cropper.getCropzoneRect()).toBeFalsy();
+
+            cropper.setCropzoneRect(0);
+            expect(cropper.getCropzoneRect()).toBeFalsy();
+
+            cropper.setCropzoneRect(null);
+            expect(cropper.getCropzoneRect()).toBeFalsy();
+        });
+    });
+
     describe('"end()"', () => {
         it('should set cropzone of cropper to null', () => {
             cropper.start();

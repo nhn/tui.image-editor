@@ -667,6 +667,15 @@ class ImageEditor {
     }
 
     /**
+     * Set the cropping rect
+     * @param {Object} mode crop rect mode [1, 1.5, 1.3333333333333333, 1.25, 1.7777777777777777]
+     * @returns {Object}  {{left: number, top: number, width: number, height: number}} rect
+     */
+    setCropzoneRect(mode) {
+        return this._graphics.setCropzoneRect(mode);
+    }
+
+    /**
      * Flip
      * @returns {Promise}
      * @param {string} type - 'flipX' or 'flipY' or 'reset'

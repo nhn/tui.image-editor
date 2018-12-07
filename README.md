@@ -4,6 +4,9 @@
 
 [![github version](https://img.shields.io/github/release/nhnent/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/releases/latest) [![npm version](https://img.shields.io/npm/v/tui-image-editor.svg)](https://www.npmjs.com/package/tui-image-editor) [![bower version](https://img.shields.io/bower/v/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/releases/latest) [![license](https://img.shields.io/github/license/nhnent/tui.image-editor.svg)](https://github.com/nhnent/tui.image-editor/blob/master/LICENSE) [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/tui.image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
 
+## Wrappers
+- [toast-ui.vue-image-editor](https://github.com/nhnent/toast-ui.vue-image-editor): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+
 ![6 -20-2018 17-45-54](https://user-images.githubusercontent.com/35218826/41647896-7b218ae0-74b2-11e8-90db-d7805cc23e8c.gif)
 
 ## 🚩 Table of Contents
@@ -32,6 +35,7 @@
 * [Contributing](#-contributing)
 * [Dependency](#-dependency)
 * [TOAST UI Family](#-toast-ui-family)
+* [Used By](#-used-by)
 * [License](#-license)
 
 
@@ -327,6 +331,9 @@ $ npm run serve
 * [TOAST UI Chart](https://github.com/nhnent/tui.chart)
 * [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
 * [TOAST UI Components](https://github.com/nhnent)
+
+## 🚀 Used By
+* [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com/home/)
 
 ## 📜 License
 [MIT LICENSE](https://github.com/nhnent/tui.image-editor/blob/master/LICENSE)

@@ -129,7 +129,7 @@ module.exports = {
         }
         hostnameSent = true;
 
-        sendHostname('image-editor');
+        sendHostname('image-editor', 'UA-129999381-1');
     },
 
     /**

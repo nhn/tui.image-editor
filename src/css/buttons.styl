@@ -30,18 +30,21 @@
         display: none;
     svg > use.active
         display: block;
-        
+
 /*  MASK BUTTON */
 #tie-mask-apply.apply.active .{prefix}-button.apply
     label
         color: #fff;
     svg > use.active
         display: block;
-  
+
 /* CROP BUTTON */
-#tie-crop-button
+#tie-crop-button,
+#tie-crop-preset-button
     .{prefix}-button.apply
         margin-right: 24px;
+    .{prefix}-button.preset.active svg > use.active
+        display: block;
     .{prefix}-button.apply.active svg > use.active
         display: block;
 
@@ -50,7 +53,7 @@
 #tie-shape-button
   &.rect .{prefix}-button.rect,
   &.circle .{prefix}-button.circle,
-  &.triangle .{prefix}-button.triangle 
+  &.triangle .{prefix}-button.triangle
     svg > use.normal
         display: none;
     svg > use.active
