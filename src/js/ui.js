@@ -13,6 +13,7 @@ import Mask from './ui/mask';
 import Icon from './ui/icon';
 import Draw from './ui/draw';
 import Filter from './ui/filter';
+import Locale from './ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
     Shape,
@@ -45,11 +46,11 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 class Ui {
     constructor(element, options, actions) {
         this.options = this._initializeOption(options);
-
         this._actions = actions;
         this.submenu = false;
         this.imageSize = {};
         this.uiSize = {};
+        this._locale = new Locale(this.options.locale);
         this.theme = new Theme(this.options.theme);
 
         this._submenuChangeTransection = false;
@@ -231,6 +232,7 @@ class Ui {
                 path: '',
                 name: ''
             },
+            locale: {},
             menuIconPath: '',
             menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
             initMenu: false,
@@ -271,6 +273,7 @@ class Ui {
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
+                locale: this._locale,
                 iconStyle: this.theme.getStyle('submenu.icon'),
                 menuBarPosition: this.options.menuBarPosition
             });
@@ -298,12 +301,14 @@ class Ui {
 
         selectedElement.classList.add('tui-image-editor-container');
         selectedElement.innerHTML = controls({
+            locale: this._locale,
             biImage: this.theme.getStyle('common.bi'),
             iconStyle: this.theme.getStyle('menu.icon'),
             loadButtonStyle: this.theme.getStyle('loadButton'),
             downloadButtonStyle: this.theme.getStyle('downloadButton')
         }) +
         mainContainer({
+            locale: this._locale,
             biImage: this.theme.getStyle('common.bi'),
             commonStyle: this.theme.getStyle('common'),
             headerStyle: this.theme.getStyle('header'),
@@ -340,7 +345,7 @@ class Ui {
 
         btnElement.id = `tie-btn-${menuName}`;
         btnElement.className = 'tui-image-editor-item normal';
-        btnElement.title = menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase());
+        btnElement.title = this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase()));
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);

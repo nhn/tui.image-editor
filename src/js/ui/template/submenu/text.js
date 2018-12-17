@@ -1,4 +1,10 @@
-export default ({iconStyle: {normal, active}}) => (`
+/**
+ * @param {Locale} locale - Translate text
+ * @param {Object} normal - iconStyle
+ * @param {Object} active - iconStyle
+ * @returns {string}
+ */
+export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li id="tie-text-effect-button">
             <div class="tui-image-editor-button bold">
@@ -8,7 +14,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     <use xlink:href="${active.path}#${active.name}-ic-text-bold" class="active"/>
                     </svg>
                 </div>
-                <label> Bold </label>
+                <label> ${locale.localize('Bold')} </label>
             </div>
             <div class="tui-image-editor-button italic">
                 <div>
@@ -17,7 +23,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     <use xlink:href="${active.path}#${active.name}-ic-text-italic" class="active"/>
                     </svg>
                 </div>
-                <label> Italic </label>
+                <label> ${locale.localize('Italic')} </label>
             </div>
             <div class="tui-image-editor-button underline">
                 <div>
@@ -28,7 +34,7 @@ export default ({iconStyle: {normal, active}}) => (`
                             class="active"/>
                     </svg>
                 </div>
-                <label> Underline </label>
+                <label> ${locale.localize('Underline')} </label>
             </div>
         </li>
         <li class="tui-image-editor-partition">
@@ -44,7 +50,7 @@ export default ({iconStyle: {normal, active}}) => (`
                         class="active"/>
                     </svg>
                 </div>
-                <label> Left </label>
+                <label> ${locale.localize('Left')} </label>
             </div>
             <div class="tui-image-editor-button center">
                 <div>
@@ -55,7 +61,7 @@ export default ({iconStyle: {normal, active}}) => (`
                         class="active"/>
                     </svg>
                 </div>
-                <label> Center </label>
+                <label> ${locale.localize('Center')} </label>
             </div>
             <div class="tui-image-editor-button right">
                 <div>
@@ -66,20 +72,20 @@ export default ({iconStyle: {normal, active}}) => (`
                         class="active"/>
                     </svg>
                 </div>
-                <label> Right </label>
+                <label> ${locale.localize('Right')} </label>
             </div>
         </li>
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
         <li>
-            <div id="tie-text-color" title="Color"></div>
+            <div id="tie-text-color" title="${locale.localize('Color')}"></div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
-            <label class="range">Text size</label>
+            <label class="range">${locale.localize('Text size')}</label>
             <div id="tie-text-range"></div>
             <input id="tie-text-range-value" class="tui-image-editor-range-value" value="0" />
         </li>

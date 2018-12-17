@@ -1,4 +1,10 @@
-export default ({iconStyle: {normal, active}}) => (`
+/**
+ * @param {Locale} locale - Translate text
+ * @param {Object} normal - iconStyle
+ * @param {Object} active - iconStyle
+ * @returns {string}
+ */
+export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li id="tie-draw-line-select-button">
             <div class="tui-image-editor-button free">
@@ -9,7 +15,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Free
+                    ${locale.localize('Free')}
                 </label>
             </div>
             <div class="tui-image-editor-button line">
@@ -20,7 +26,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Straight
+                    ${locale.localize('Straight')}
                 </label>
             </div>
         </li>
@@ -28,13 +34,13 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="tie-draw-color" title="Color"></div>
+            <div id="tie-draw-color" title="${locale.localize('Color')}"></div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
-            <label class="range">Range</label>
+            <label class="range">${locale.localize('Range')}</label>
             <div id="tie-draw-range"></div>
             <input id="tie-draw-range-value" class="tui-image-editor-range-value" value="0" />
         </li>

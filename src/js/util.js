@@ -7,6 +7,7 @@ const {min, max} = Math;
 let hostnameSent = false;
 
 module.exports = {
+
     /**
      * Clamp value
      * @param {number} value - Value

@@ -4,12 +4,21 @@
  * @ignore
  */
 class Submenu {
-    constructor(subMenuElement, {name, iconStyle, menuBarPosition, templateHtml}) {
+    /**
+     * @param {HTMLElement} subMenuElement - submenu dom element
+     * @param {Locale} locale - translate text
+     * @param {string} name - name of sub menu
+     * @param {Object} iconStyle - style of icon
+     * @param {string} menuBarPosition - position of menu
+     * @param {*} templateHtml - template for SubMenuElement
+     */
+    constructor(subMenuElement, {locale, name, iconStyle, menuBarPosition, templateHtml}) {
         this.selector = str => subMenuElement.querySelector(str);
         this.menuBarPosition = menuBarPosition;
         this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
         this.colorPickerControls = [];
         this._makeSubMenuElement(subMenuElement, {
+            locale,
             name,
             iconStyle,
             templateHtml
@@ -59,14 +68,20 @@ class Submenu {
 
     /**
      * Make submenu dom element
-     * @param {HTMLElement} subMenuElement - subment dom element
+     * @param {HTMLElement} subMenuElement - submenu dom element
+     * @param {Locale} locale - translate text
+     * @param {string} name - submenu name
      * @param {Object} iconStyle -  icon style
+     * @param {*} templateHtml - template for SubMenuElement
      * @private
      */
-    _makeSubMenuElement(subMenuElement, {name, iconStyle, templateHtml}) {
+    _makeSubMenuElement(subMenuElement, {locale, name, iconStyle, templateHtml}) {
         const iconSubMenu = document.createElement('div');
         iconSubMenu.className = `tui-image-editor-menu-${name}`;
-        iconSubMenu.innerHTML = templateHtml({iconStyle});
+        iconSubMenu.innerHTML = templateHtml({
+            locale,
+            iconStyle
+        });
 
         subMenuElement.appendChild(iconSubMenu);
     }
