@@ -22,7 +22,7 @@ mkdirp('./dist/svg', (mkdirpErr) => {
     if (mkdirpErr) {
         console.error(mkdirpErr);
     } else {
-        fs.readdir('./src/svg', (err, dirs) => {
+        fs.readdir(svgDir, (err, dirs) => {
             dirs.forEach(dir => {
                 getFileList(dir);
             });
