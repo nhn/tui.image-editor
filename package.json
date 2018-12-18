@@ -52,12 +52,14 @@
     "stylus-loader": "^3.0.2",
     "svgstore": "^2.0.3",
     "tui-jsdoc-template": "^1.0.4",
+    "typescript": "^3.2.2",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.11.0"
   },
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "KARMA_SERVER=ne karma start",
+    "test:types": "tsc --project test/types",
     "bundle": "webpack && webpack -p && npm run bundle:svg",
     "bundle:svg": "mkdir -p dist/svg && node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
