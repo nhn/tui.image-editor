@@ -1,4 +1,10 @@
-export default ({iconStyle: {normal, active}}) => (`
+/**
+ * @param {Locale} locale - Translate text
+ * @param {Object} normal - iconStyle
+ * @param {Object} active - iconStyle
+ * @returns {string}
+ */
+export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li id="tie-icon-add-button">
             <div class="tui-image-editor-button" data-icontype="icon-arrow">
@@ -11,7 +17,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Arrow
+                    ${locale.localize('Arrow')}
                 </label>
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-arrow-2">
@@ -24,7 +30,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Arrow-2
+                    ${locale.localize('Arrow-2')}
                 </label>
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-arrow-3">
@@ -37,7 +43,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Arrow-3
+                    ${locale.localize('Arrow-3')}
                 </label>
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-star">
@@ -48,7 +54,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Star-1
+                    ${locale.localize('Star-1')}
                 </label>
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-star-2">
@@ -61,7 +67,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Star-2
+                    ${locale.localize('Star-2')}
                 </label>
             </div>
 
@@ -75,7 +81,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Polygon
+                    ${locale.localize('Polygon')}
                 </label>
             </div>
 
@@ -89,7 +95,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Location
+                    ${locale.localize('Location')}
                 </label>
             </div>
 
@@ -103,7 +109,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Heart
+                    ${locale.localize('Heart')}
                 </label>
             </div>
 
@@ -117,7 +123,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Bubble
+                    ${locale.localize('Bubble')}
                 </label>
             </div>
         </li>
@@ -134,7 +140,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Custom icon
+                    ${locale.localize('Custom icon')}
                 </label>
             </div>
         </li>
@@ -142,7 +148,7 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="tie-icon-color" title="Color"></div>
+            <div id="tie-icon-color" title="${locale.localize('Color')}"></div>
         </li>
     </ul>
 `);

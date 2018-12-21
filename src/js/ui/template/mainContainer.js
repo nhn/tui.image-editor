@@ -1,4 +1,4 @@
-export default ({biImage, commonStyle, headerStyle, loadButtonStyle, downloadButtonStyle, submenuStyle}) => (`
+export default ({locale, biImage, commonStyle, headerStyle, loadButtonStyle, downloadButtonStyle, submenuStyle}) => (`
     <div class="tui-image-editor-main-container" style="${commonStyle}">
         <div class="tui-image-editor-header" style="${headerStyle}">
             <div class="tui-image-editor-header-logo">
@@ -6,11 +6,11 @@ export default ({biImage, commonStyle, headerStyle, loadButtonStyle, downloadBut
             </div>
             <div class="tui-image-editor-header-buttons">
                 <button style="${loadButtonStyle}">
-                    Load
+                    ${locale.localize('Load')}
                     <input type="file" class="tui-image-editor-load-btn" />
                 </button>
                 <button class="tui-image-editor-download-btn" style="${downloadButtonStyle}">
-                    Download
+                    ${locale.localize('Download')}
                 </button>
             </div>
         </div>
