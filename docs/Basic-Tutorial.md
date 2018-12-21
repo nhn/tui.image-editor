@@ -43,7 +43,7 @@ imageEditor.loadImageFromURL('img/sampleImage.jpg', 'My sample image')
 ImageEditor provide feature to customize all of inscriptions. Look at example.
 
 ```js
-var locale_ru = { // override default English locale to your custom
+var locale_ru_RU = { // override default English locale to your custom
     'Crop': 'Обзрезать', // as result default English inscription will be translated into Russian
     'Delete-all': 'Удалить всё'
     // etc...
@@ -55,7 +55,7 @@ var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
              path: 'img/sampleImage.jpg',
              name: 'SampleImage'
          },
-         locale: locale_ru, // key-value object with localization
+         locale: locale_ru_RU, // key-value object with localization
          theme: blackTheme, // or whiteTheme
          initMenu: 'filter',
          menuBarPosition: 'bottom'
