@@ -12,7 +12,7 @@ class Locale {
      * @returns {string}
      */
     localize(message) {
-        return (this._locale[message]) ? this._locale[message] : message;
+        return this._locale[message] || message;
     }
 }
 
