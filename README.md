@@ -247,7 +247,7 @@ Add dependencies & initialize ImageEditor class with given element to make an im
 ```javascript
 var ImageEditor = require('tui-image-editor');
 var blackTheme = require('./js/theme/black-theme.js');
-var locale_ru = { // override default English locale to your custom
+var locale_ru_RU = { // override default English locale to your custom
     'Crop': 'Обзрезать',
     'Delete-all': 'Удалить всё'
     // etc...
@@ -258,7 +258,7 @@ var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
              path: 'img/sampleImage.jpg',
              name: 'SampleImage'
          },
-         locale: locale_ru,
+         locale: locale_ru_RU,
          theme: blackTheme, // or whiteTheme
          initMenu: 'filter',
          menuBarPosition: 'bottom'
