@@ -1,4 +1,10 @@
-export default ({iconStyle: {normal, active}}) => (`
+/**
+ * @param {Locale} locale - Translate text
+ * @param {Object} normal - iconStyle
+ * @param {Object} active - iconStyle
+ * @returns {string}
+ */
+export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li>
             <div class="tui-image-editor-button">
@@ -9,7 +15,7 @@ export default ({iconStyle: {normal, active}}) => (`
                         <use xlink:href="${active.path}#${active.name}-ic-mask-load" class="active"/>
                     </svg>
                 </div>
-                <label> Load Mask Image </label>
+                <label> ${locale.localize('Load Mask Image')} </label>
             </div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
@@ -22,7 +28,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     <use xlink:href="${active.path}#${active.name}-ic-apply" class="active"/>
                 </svg>
                 <label>
-                    Apply
+                    ${locale.localize('Apply')}
                 </label>
             </div>
         </li>

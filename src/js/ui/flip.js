@@ -8,8 +8,9 @@ import templateHtml from './template/submenu/flip';
  * @ignore
  */
 class Flip extends Submenu {
-    constructor(subMenuElement, {iconStyle, menuBarPosition}) {
+    constructor(subMenuElement, {locale, iconStyle, menuBarPosition}) {
         super(subMenuElement, {
+            locale,
             name: 'flip',
             iconStyle,
             menuBarPosition,
