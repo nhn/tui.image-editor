@@ -191,13 +191,13 @@ class ImageEditor {
      * @property {number} id - object id
      * @property {string} type - object type
      * @property {string} text - text content
-     * @property {string} left - Left
-     * @property {string} top - Top
-     * @property {string} width - Width
-     * @property {string} height - Height
+     * @property {(string | number)} left - Left
+     * @property {(string | number)} top - Top
+     * @property {(string | number)} width - Width
+     * @property {(string | number)} height - Height
      * @property {string} fill - Color
      * @property {string} stroke - Stroke
-     * @property {string} strokeWidth - StrokeWidth
+     * @property {(string | number)} strokeWidth - StrokeWidth
      * @property {string} fontFamily - Font type for text
      * @property {number} fontSize - Font Size
      * @property {string} fontStyle - Type of inclination (normal / italic)

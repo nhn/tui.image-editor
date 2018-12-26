@@ -109,7 +109,7 @@ imageEditor.addImageObject('path/fileName.jpg').then(objectProps => {
     console.log(objectProps);
 });
 
-imageEditor.addShpae('rect', {
+imageEditor.addShape('rect', {
     fill: 'red',
     stroke: 'blue',
     strokeWidth: 3,
@@ -120,7 +120,7 @@ imageEditor.addShpae('rect', {
     isRegular: true
 });
 
-imageEditor.addShpae('circle', {
+imageEditor.addShape('circle', {
     fill: 'red',
     stroke: 'blue',
     strokeWidth: 3,
@@ -245,7 +245,7 @@ imageEditor.setBrush({
     width: 20,
     color: 'FFFFFF' // #(샵) 안붙여도될까요?
 });
-imageEditor.setCropzoneRect([1, 1.5, 1.3333333333333333, 1.25, 1.7777777777777777]);
+imageEditor.setCropzoneRect(1/1);
 imageEditor.setDrawingShape('rect', {
     fill: 'red',
     width: 100,

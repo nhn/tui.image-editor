@@ -1,10 +1,8 @@
-/**
- * Type definitions for tui.image-editor v3.3.0
- * TypeScript Version: 3.2
- */
+// Type definitions for TOAST UI Image Editor v3.3.0
+// TypeScript Version: 3.2.2
 
 type jQueryObj = any;
-type PromiseObj = any;
+type PromiseObj = Promise<any>;
 type FileObj = any;
 
 interface ThemeConfig {
@@ -63,8 +61,8 @@ interface ThemeConfig {
 
 interface IconOptions {
     fill?: string;
-    left?: number; // string으로 되있던데...
-    top?: number; // string으로 되있던데...
+    left?: number;
+    top?: number;
 }
 
 interface ShapeOptions {
@@ -77,18 +75,10 @@ interface ShapeOptions {
     ry?: number;
     left?: number;
     top?: number;
-    isRegular?: boolean; // number라고...
+    isRegular?: boolean;
 }
 
 interface GenerateTextOptions {
-    fill?: string; // 예제에는 styles.fill, fontSize, fontWeight
-    fontFamily?: string;
-    fontSize?: number; // ?string?
-    fontStyle?: string;
-    fontWeight?: string;
-    textAlign?: string;
-    textDecoration?: string;
-    // 예제에는 position.x, position.y
     styles?: TextStyleConfig;
     position?: {
         x: number;
@@ -97,7 +87,7 @@ interface GenerateTextOptions {
 }
 
 interface TextStyleConfig {
-    fill?: string; // 예제에는 stles.fill, fontSize, fontWeight
+    fill?: string;
     fontFamily?: string;
     fontSize?: number;
     fontStyle?: string;
@@ -107,10 +97,10 @@ interface TextStyleConfig {
 }
 
 interface RectConfig {
-    left?: number;
-    top?: number;
-    width?: number;
-    height?: number;
+    left: number;
+    top: number;
+    width: number;
+    height: number;
 }
 
 interface CanvasSize {
@@ -144,13 +134,13 @@ interface GraphicObjectProps {
     id?: number;
     type?: string;
     text?: string;
-    left?: string | number; // doc에는 string
-    top?: string | number; // doc에는 string
-    width?: string | number; // doc에는 string
-    height?: string | number; // doc에는 string
+    left?: string | number;
+    top?: string | number;
+    width?: string | number;
+    height?: string | number;
     fill?: string;
     stroke?: string;
-    strokeWidth?: string | number; // doc에는 string
+    strokeWidth?: string | number;
     fontFamily?: string;
     fontSize?: number;
     fontStyle?: string;
@@ -175,16 +165,23 @@ interface IncludeUIOptions {
     menuBarPosition?: string;
 }
 
+interface SelectionStyleConfig {
+    cornerStyle?: string;
+    cornerSize?: number;
+    cornerColor?: string;
+    cornerStrokeColor?: string;
+    transparentCorners?: boolean;
+    lineWidth?: number;
+    borderColor?: string;
+    rotatingPointOffset?: number;
+}
+
 interface Options {
     includeUI?: IncludeUIOptions;
     cssMaxWidth?: number;
     cssMaxHeight?: number;
     usageStatistics?: boolean;
-    selectionStyle?: {
-        cornerSize?: number,
-        rotatingPointOffset?: 70
-
-    };
+    selectionStyle?: SelectionStyleConfig;
 }
 
 declare class ImageEditor {
@@ -192,16 +189,16 @@ declare class ImageEditor {
 
     addIcon(type: string, options?: IconOptions): PromiseObj;
     addImageObject(imgUrl: string): PromiseObj;
-    addShpae(type: string, options?: ShapeOptions): PromiseObj;
+    addShape(type: string, options?: ShapeOptions): PromiseObj;
     addText(text: string, options?: GenerateTextOptions): PromiseObj;
     applyFilter(type: string, options?: {
         maskObjId: number
     }): PromiseObj;
-    changeCursor(cursorType: string);
+    changeCursor(cursorType: string): void;
     changeIconColor(id: number, color: string): PromiseObj;
     changeSelectableAll(selectable: boolean): void;
     changeShape(id: number, options?: ShapeOptions): PromiseObj;
-    changeText(id?: number, text?: string): PromiseObj;
+    changeText(id: number, text?: string): PromiseObj;
     changeTextStyle(id: number, styleObj: TextStyleConfig): PromiseObj;
     clearObjects(): PromiseObj;
     clearRedoStack(): void;
@@ -233,7 +230,7 @@ declare class ImageEditor {
     rotate(angle: number): PromiseObj;
     setAngle(angle: number): PromiseObj;
     setBrush(option: BrushOptions): void;
-    setCropzoneRect(mode: any): RectConfig; // mode의 타입 object라고 되어있는 number[]는?
+    setCropzoneRect(mode?: number): void;
     setDrawingShape(type: string, options?: ShapeOptions): void;
     setObjectPosition(id: number, posInfo?: PositionConfig): PromiseObj;
     setObjectProperties(id: number, keyValue?: GraphicObjectProps): PromiseObj;
@@ -242,7 +239,7 @@ declare class ImageEditor {
     stopDrawingMode(): void;
     toDataURL(options?: ToDataURLOptions): string;
     undo(): PromiseObj;
-    on(eventName: string, handler: (...args: any[]) => any): any; // 이것말고 이벤트관련 사용 가능한 api 또 있을까요?
+    on(eventName: string, handler: (...args: any[]) => any): any;
 }
 
 declare module 'tui-image-editor' {
