@@ -554,11 +554,10 @@ class Graphics {
 
     /**
      * Get cropped rect
-     * @param {Object} mode cropzone rect mode
-     * @returns {Object} rect
+     * @param {number} [mode] cropzone rect mode
      */
     setCropzoneRect(mode) {
-        return this.getComponent(components.CROPPER).setCropzoneRect(mode);
+        this.getComponent(components.CROPPER).setCropzoneRect(mode);
     }
 
     /**
