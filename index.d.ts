@@ -1,11 +1,11 @@
 // Type definitions for TOAST UI Image Editor v3.3.0
 // TypeScript Version: 3.2.2
 
-type jQueryObj = any;
-type PromiseObj = Promise<any>;
-type FileObj = any;
+/// <reference types="jquery" />
 
-interface ThemeConfig {
+type AngleType = number;
+
+interface IThemeConfig {
     'common.bi.image'?: string;
     'common.bisize.width'?: string;
     'common.bisize.height'?: string;
@@ -59,13 +59,17 @@ interface ThemeConfig {
     'colorpicker.title.color'?: string;
 }
 
-interface IconOptions {
+interface IIconInfo {
+    [propName: string]: string;
+}
+
+interface IIconOptions {
     fill?: string;
     left?: number;
     top?: number;
 }
 
-interface ShapeOptions {
+interface IShapeOptions {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
@@ -78,15 +82,15 @@ interface ShapeOptions {
     isRegular?: boolean;
 }
 
-interface GenerateTextOptions {
-    styles?: TextStyleConfig;
+interface IGenerateTextOptions {
+    styles?: ITextStyleConfig;
     position?: {
         x: number;
         y: number;
     };
 }
 
-interface TextStyleConfig {
+interface ITextStyleConfig {
     fill?: string;
     fontFamily?: string;
     fontSize?: number;
@@ -96,31 +100,31 @@ interface TextStyleConfig {
     textDecoration?: string;
 }
 
-interface RectConfig {
+interface IRectConfig {
     left: number;
     top: number;
     width: number;
     height: number;
 }
 
-interface CanvasSize {
+interface ICanvasSize {
     width: number;
     height: number;
 }
 
-interface BrushOptions {
+interface IBrushOptions {
     width: number;
     color: string;
 }
 
-interface PositionConfig {
+interface IPositionConfig {
     x: number;
     y: number;
     originX: string;
     originY: string;
 }
 
-interface ToDataURLOptions {
+interface IToDataURLOptions {
     format?: string;
     quality?: number;
     multiplier?: number;
@@ -130,7 +134,7 @@ interface ToDataURLOptions {
     height?: number;
 }
 
-interface GraphicObjectProps {
+interface IGraphicObjectProps {
     id?: number;
     type?: string;
     text?: string;
@@ -148,14 +152,15 @@ interface GraphicObjectProps {
     textAlign?: string;
     textDecoration?: string;
     opacity?: number;
+    [propName: string]: number | string | boolean;
 }
 
-interface IncludeUIOptions {
+interface IIncludeUIOptions {
     loadImage?: {
         path: string;
         name: string;
     };
-    theme?: ThemeConfig;
+    theme?: IThemeConfig;
     menu?: string[];
     initMenu?: string;
     uiSize?: {
@@ -165,7 +170,7 @@ interface IncludeUIOptions {
     menuBarPosition?: string;
 }
 
-interface SelectionStyleConfig {
+interface ISelectionStyleConfig {
     cornerStyle?: string;
     cornerSize?: number;
     cornerColor?: string;
@@ -176,70 +181,110 @@ interface SelectionStyleConfig {
     rotatingPointOffset?: number;
 }
 
-interface Options {
-    includeUI?: IncludeUIOptions;
+interface IObjectProps { // icon, shape
+    fill: string;
+    height: number;
+    id: number;
+    left: number;
+    opacity: number;
+    stroke: string | null;
+    strokeWidth: number | null;
+    top: number;
+    type: string;
+    width: number;
+}
+
+interface ITextObjectProps extends IObjectProps {
+    fontFamily: string;
+    fontSize: string;
+    fontStyle: string;
+    text: string;
+    textAlign: string;
+    textDecoration: string;
+}
+
+interface IFilterResolveObject {
+    type: string;
+    action: string;
+}
+
+interface ICropResolveObject {
+    oldWidth: number;
+    oldHeight: number;
+    newWidth: number;
+    newHeight: number;
+}
+
+interface IFlipXYResolveObject {
+    flipX: boolean;
+    flipY: boolean;
+    angle: AngleType;
+}
+
+interface IOptions {
+    includeUI?: IIncludeUIOptions;
     cssMaxWidth?: number;
     cssMaxHeight?: number;
     usageStatistics?: boolean;
-    selectionStyle?: SelectionStyleConfig;
+    selectionStyle?: ISelectionStyleConfig;
 }
 
 declare class ImageEditor {
-    constructor(wrapper: string | jQueryObj | Element, options: Options);
+    constructor(wrapper: string | JQuery | Element, options: IOptions);
 
-    addIcon(type: string, options?: IconOptions): PromiseObj;
-    addImageObject(imgUrl: string): PromiseObj;
-    addShape(type: string, options?: ShapeOptions): PromiseObj;
-    addText(text: string, options?: GenerateTextOptions): PromiseObj;
-    applyFilter(type: string, options?: {
+    public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
+    public addImageObject(imgUrl: string): Promise<void>;
+    public addShape(type: string, options?: IShapeOptions): Promise<IObjectProps>;
+    public addText(text: string, options?: IGenerateTextOptions): Promise<ITextObjectProps>;
+    public applyFilter(type: string, options?: {
         maskObjId: number
-    }): PromiseObj;
-    changeCursor(cursorType: string): void;
-    changeIconColor(id: number, color: string): PromiseObj;
-    changeSelectableAll(selectable: boolean): void;
-    changeShape(id: number, options?: ShapeOptions): PromiseObj;
-    changeText(id: number, text?: string): PromiseObj;
-    changeTextStyle(id: number, styleObj: TextStyleConfig): PromiseObj;
-    clearObjects(): PromiseObj;
-    clearRedoStack(): void;
-    clearUndoStack(): void;
-    crop(rect: RectConfig): PromiseObj;
-    deactivateAll(): void;
-    destroy(): void;
-    discardSelection(): void;
-    flipX(): PromiseObj;
-    flipY(): PromiseObj;
-    getCanvasSize(): CanvasSize;
-    getCropzoneRect(): RectConfig;
-    getDrawingMode(): string;
-    getImageName(): string;
-    getObjectPosition(id: number, originX: string, originY: string): CanvasSize;
-    getObjectProperties(id: number, keys: string[] | string | any): any;
-    hasFilter(type: string): boolean;
-    isEmptyRedoStack(): boolean;
-    isEmptyUndoStack(): boolean;
-    loadImageFromFile(imgFile: FileObj, imageName?: string): PromiseObj;
-    loadImageFromURL(url: string, imageName?: string): PromiseObj;
-    redo(): PromiseObj;
-    registerIcons(infos: any): void;
-    removeActiveObject(): void;
-    removeFilter(type?: string): PromiseObj;
-    removeObject(id: number): PromiseObj;
-    resetFlip(): PromiseObj;
-    resizeCanvasDemension(dimension: CanvasSize): PromiseObj; // 파라미터 확인 필요
-    rotate(angle: number): PromiseObj;
-    setAngle(angle: number): PromiseObj;
-    setBrush(option: BrushOptions): void;
-    setCropzoneRect(mode?: number): void;
-    setDrawingShape(type: string, options?: ShapeOptions): void;
-    setObjectPosition(id: number, posInfo?: PositionConfig): PromiseObj;
-    setObjectProperties(id: number, keyValue?: GraphicObjectProps): PromiseObj;
-    setObjectPropertiesQuietly(id: number, keyValue?: GraphicObjectProps): PromiseObj;
-    startDrawingMode(mode: string, option?: {width?: number, color?: string}): boolean;
-    stopDrawingMode(): void;
-    toDataURL(options?: ToDataURLOptions): string;
-    undo(): PromiseObj;
-    on(eventName: string, handler: (...args: any[]) => any): any;
+    }): Promise<IFilterResolveObject>;
+    public changeCursor(cursorType: string): void;
+    public changeIconColor(id: number, color: string): Promise<void>;
+    public changeSelectableAll(selectable: boolean): void;
+    public changeShape(id: number, options?: IShapeOptions): Promise<void>;
+    public changeText(id: number, text?: string): Promise<void>;
+    public changeTextStyle(id: number, styleObj: ITextStyleConfig): Promise<void>;
+    public clearObjects(): Promise<void>;
+    public clearRedoStack(): void;
+    public clearUndoStack(): void;
+    public crop(rect: IRectConfig): Promise<ICropResolveObject>;
+    public deactivateAll(): void;
+    public destroy(): void;
+    public discardSelection(): void;
+    public flipX(): Promise<IFlipXYResolveObject>;
+    public flipY(): Promise<IFlipXYResolveObject>;
+    public getCanvasSize(): ICanvasSize;
+    public getCropzoneRect(): IRectConfig;
+    public getDrawingMode(): string;
+    public getImageName(): string;
+    public getObjectPosition(id: number, originX: string, originY: string): ICanvasSize;
+    public getObjectProperties(id: number, keys: string | string[] | IGraphicObjectProps): IGraphicObjectProps;
+    public hasFilter(type: string): boolean;
+    public isEmptyRedoStack(): boolean;
+    public isEmptyUndoStack(): boolean;
+    public loadImageFromFile(imgFile: File, imageName?: string): Promise<ICropResolveObject>;
+    public loadImageFromURL(url: string, imageName?: string): Promise<ICropResolveObject>;
+    public redo(): Promise<any>;
+    public registerIcons(infos: IIconInfo): void;
+    public removeActiveObject(): void;
+    public removeFilter(type?: string): Promise<IFilterResolveObject>;
+    public removeObject(id: number): Promise<void>;
+    public resetFlip(): Promise<IFlipXYResolveObject>;
+    public resizeCanvasDemension(dimension: ICanvasSize): Promise<void>;
+    public rotate(angle: AngleType): Promise<AngleType>;
+    public setAngle(angle: AngleType): Promise<AngleType>;
+    public setBrush(option: IBrushOptions): void;
+    public setCropzoneRect(mode?: number): void;
+    public setDrawingShape(type: string, options?: IShapeOptions): void;
+    public setObjectPosition(id: number, posInfo?: IPositionConfig): Promise<void>;
+    public setObjectProperties(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
+    public setObjectPropertiesQuietly(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
+    public startDrawingMode(mode: string, option?: {width?: number, color?: string}): boolean;
+    public stopDrawingMode(): void;
+    public toDataURL(options?: IToDataURLOptions): string;
+    public undo(): Promise<any>;
+    public on(eventName: string, handler: (...args: any[]) => void): void;
 }
 
 declare module 'tui-image-editor' {
