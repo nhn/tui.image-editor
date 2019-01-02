@@ -131,7 +131,6 @@ imageEditor.addShape('circle', {
     console.log(objectProps.id);
 });
 
-// doc에 정의된 옵션과 예제에서 사용방식이 틀림
 imageEditor.addText('initText', {
     styles: {
         fill: '#000',
@@ -243,7 +242,7 @@ imageEditor.setBrush({
 });
 imageEditor.setBrush({
     width: 20,
-    color: 'FFFFFF' // #(샵) 안붙여도될까요?
+    color: '#FFFFFF'
 });
 imageEditor.setCropzoneRect(1/1);
 imageEditor.setDrawingShape('rect', {
