@@ -69,6 +69,7 @@
     "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
     "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
+    "tslint": "tslint index.d.ts",
     "postinstall": "npm install --no-save --no-optional fabric@~1.6.7"
   },
   "dependencies": {
