@@ -19,11 +19,13 @@
     "fabric"
   ],
   "devDependencies": {
+    "@types/jquery": "^3.3.29",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
     "babel-preset-es2015": "^6.18.0",
     "css-loader": "^0.28.11",
+    "dtslint": "^0.4.2",
     "es5-shim": "^4.5.9",
     "eslint": "^4.5.0",
     "eslint-config-tui": "^1.0.1",
@@ -52,18 +54,22 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "svgstore": "^2.0.3",
+    "tslint": "^5.12.0",
     "tui-jsdoc-template": "^1.0.4",
+    "typescript": "^3.2.2",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.11.0"
   },
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "KARMA_SERVER=ne karma start",
-    "bundle": "webpack && webpack -p && npm run bundle:svg",
+    "test:types": "tsc --project test/types",
+    "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
     "bundle:svg": "node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
     "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
+    "tslint": "tslint index.d.ts",
     "postinstall": "npm install --no-save --no-optional fabric@~1.6.7"
   },
   "dependencies": {
