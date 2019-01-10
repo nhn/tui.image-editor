@@ -72,7 +72,7 @@ class ImageLoader extends Component {
             canvas.setBackgroundImage(img, () => {
                 const oImage = canvas.backgroundImage;
 
-                if (oImage.getElement()) {
+                if (oImage && oImage.getElement()) {
                     resolve(oImage);
                 } else {
                     reject(rejectMessages.loadingImageFailed);
