@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.3.0
+ * @version 3.3.1
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -13,7 +13,7 @@
 		exports["ImageEditor"] = factory(require("tui-code-snippet"), require("fabric/dist/fabric.require"));
 	else
 		root["tui"] = root["tui"] || {}, root["tui"]["ImageEditor"] = factory((root["tui"] && root["tui"]["util"]), root["fabric"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_105__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_106__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -68,9 +68,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _imageEditor2 = _interopRequireDefault(_imageEditor);
 
-	__webpack_require__(130);
-
-	__webpack_require__(132);
+	__webpack_require__(131);
 
 	__webpack_require__(133);
 
@@ -107,6 +105,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	__webpack_require__(149);
 
 	__webpack_require__(150);
+
+	__webpack_require__(151);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -609,7 +609,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _ui2 = _interopRequireDefault(_ui);
 
-	var _action = __webpack_require__(102);
+	var _action = __webpack_require__(103);
 
 	var _action2 = _interopRequireDefault(_action);
 
@@ -617,7 +617,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _command2 = _interopRequireDefault(_command);
 
-	var _graphics = __webpack_require__(104);
+	var _graphics = __webpack_require__(105);
 
 	var _graphics2 = _interopRequireDefault(_graphics);
 
@@ -657,6 +657,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
 	 *  @param {number} options.cssMaxWidth - Canvas css-max-width
 	 *  @param {number} options.cssMaxHeight - Canvas css-max-height
+	 *  @param {Object} [options.selectionStyle] - selection style
+	 *  @param {string} [options.selectionStyle.cornerStyle] - selection corner style
+	 *  @param {number} [options.selectionStyle.cornerSize] - selection corner size
+	 *  @param {string} [options.selectionStyle.cornerColor] - selection corner color
+	 *  @param {string} [options.selectionStyle.cornerStrokeColor] = selection corner stroke color
+	 *  @param {boolean} [options.selectionStyle.transparentCorners] - selection corner transparent
+	 *  @param {number} [options.selectionStyle.lineWidth] - selection line width
+	 *  @param {string} [options.selectionStyle.borderColor] - selection border color
+	 *  @param {number} [options.selectionStyle.rotatingPointOffset] - selection rotating point length
 	 *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
 	 * @example
 	 * var ImageEditor = require('tui-image-editor');
@@ -805,13 +814,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @property {number} id - object id
 	     * @property {string} type - object type
 	     * @property {string} text - text content
-	     * @property {string} left - Left
-	     * @property {string} top - Top
-	     * @property {string} width - Width
-	     * @property {string} height - Height
+	     * @property {(string | number)} left - Left
+	     * @property {(string | number)} top - Top
+	     * @property {(string | number)} width - Width
+	     * @property {(string | number)} height - Height
 	     * @property {string} fill - Color
 	     * @property {string} stroke - Stroke
-	     * @property {string} strokeWidth - StrokeWidth
+	     * @property {(string | number)} strokeWidth - StrokeWidth
 	     * @property {string} fontFamily - Font type for text
 	     * @property {number} fontSize - Font Size
 	     * @property {string} fontStyle - Type of inclination (normal / italic)
@@ -1386,14 +1395,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Set the cropping rect
-	         * @param {Object} mode crop rect mode [1, 1.5, 1.3333333333333333, 1.25, 1.7777777777777777]
-	         * @returns {Object}  {{left: number, top: number, width: number, height: number}} rect
+	         * @param {number} [mode] crop rect mode [1, 1.5, 1.3333333333333333, 1.25, 1.7777777777777777]
 	         */
 
 	    }, {
 	        key: 'setCropzoneRect',
 	        value: function setCropzoneRect(mode) {
-	            return this._graphics.setCropzoneRect(mode);
+	            this._graphics.setCropzoneRect(mode);
 	        }
 
 	        /**
@@ -1608,7 +1616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
 	         *      @param {number} [options.left] - Shape x position
 	         *      @param {number} [options.top] - Shape y position
-	         *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+	         *      @param {boolean} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
 	         * @returns {Promise<ObjectProps, ErrorMsg>}
 	         * @example
 	         * imageEditor.addShape('rect', {
@@ -1655,7 +1663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
 	         *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
 	         *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-	         *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+	         *      @param {boolean} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
 	         * @returns {Promise}
 	         * @example
 	         * // call after selecting shape object on canvas
@@ -1703,7 +1711,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * imageEditor.addText('init text', {
 	         *     styles: {
 	         *         fill: '#000',
-	         *         fontSize: '20',
+	         *         fontSize: 20,
 	         *         fontWeight: 'bold'
 	         *     },
 	         *     position: {
@@ -1954,8 +1962,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
 	         * @param {Object} options - Icon options
 	         *      @param {string} [options.fill] - Icon foreground color
-	         *      @param {string} [options.left] - Icon x position
-	         *      @param {string} [options.top] - Icon y position
+	         *      @param {number} [options.left] - Icon x position
+	         *      @param {number} [options.top] - Icon y position
 	         * @returns {Promise<ObjectProps, ErrorMsg>}
 	         * @example
 	         * imageEditor.addIcon('arrow'); // The position is center on canvas
@@ -4450,6 +4458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var hostnameSent = false;
 
 	module.exports = {
+
 	    /**
 	     * Clamp value
 	     * @param {number} value - Value
@@ -4936,6 +4945,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _filter2 = _interopRequireDefault(_filter);
 
+	var _locale = __webpack_require__(102);
+
+	var _locale2 = _interopRequireDefault(_locale);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -4974,11 +4987,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Ui);
 
 	        this.options = this._initializeOption(options);
-
 	        this._actions = actions;
 	        this.submenu = false;
 	        this.imageSize = {};
 	        this.uiSize = {};
+	        this._locale = new _locale2.default(this.options.locale);
 	        this.theme = new _theme2.default(this.options.theme);
 
 	        this._submenuChangeTransection = false;
@@ -5194,6 +5207,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    path: '',
 	                    name: ''
 	                },
+	                locale: {},
 	                menuIconPath: '',
 	                menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
 	                initMenu: false,
@@ -5246,6 +5260,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	                // submenu ui instance
 	                _this[menuName] = new SubComponentClass(_this._subMenuElement, {
+	                    locale: _this._locale,
 	                    iconStyle: _this.theme.getStyle('submenu.icon'),
 	                    menuBarPosition: _this.options.menuBarPosition
 	                });
@@ -5276,11 +5291,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            selectedElement.classList.add('tui-image-editor-container');
 	            selectedElement.innerHTML = (0, _controls2.default)({
+	                locale: this._locale,
 	                biImage: this.theme.getStyle('common.bi'),
 	                iconStyle: this.theme.getStyle('menu.icon'),
 	                loadButtonStyle: this.theme.getStyle('loadButton'),
 	                downloadButtonStyle: this.theme.getStyle('downloadButton')
 	            }) + (0, _mainContainer2.default)({
+	                locale: this._locale,
 	                biImage: this.theme.getStyle('common.bi'),
 	                commonStyle: this.theme.getStyle('common'),
 	                headerStyle: this.theme.getStyle('header'),
@@ -5319,9 +5336,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            btnElement.id = 'tie-btn-' + menuName;
 	            btnElement.className = 'tui-image-editor-item normal';
-	            btnElement.title = menuName.replace(/^[a-z]/g, function ($0) {
+	            btnElement.title = this._locale.localize(menuName.replace(/^[a-z]/g, function ($0) {
 	                return $0.toUpperCase();
-	            });
+	            }));
 	            btnElement.innerHTML = menuItemHtml;
 
 	            this._menuElement.appendChild(btnElement);
@@ -5637,41 +5654,43 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 75 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
 	exports.default = function (_ref) {
-	    var biImage = _ref.biImage,
+	    var locale = _ref.locale,
+	        biImage = _ref.biImage,
 	        commonStyle = _ref.commonStyle,
 	        headerStyle = _ref.headerStyle,
 	        loadButtonStyle = _ref.loadButtonStyle,
 	        downloadButtonStyle = _ref.downloadButtonStyle,
 	        submenuStyle = _ref.submenuStyle;
-	    return "\n    <div class=\"tui-image-editor-main-container\" style=\"" + commonStyle + "\">\n        <div class=\"tui-image-editor-header\" style=\"" + headerStyle + "\">\n            <div class=\"tui-image-editor-header-logo\">\n                <img src=\"" + biImage + "\" />\n            </div>\n            <div class=\"tui-image-editor-header-buttons\">\n                <button style=\"" + loadButtonStyle + "\">\n                    Load\n                    <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n                </button>\n                <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                    Download\n                </button>\n            </div>\n        </div>\n        <div class=\"tui-image-editor-main\">\n            <div class=\"tui-image-editor-submenu\">\n                <div class=\"tui-image-editor-submenu-style\" style=\"" + submenuStyle + "\"></div>\n            </div>\n            <div class=\"tui-image-editor-wrap\">\n                <div class=\"tui-image-editor-size-wrap\">\n                    <div class=\"tui-image-editor-align-wrap\">\n                        <div class=\"tui-image-editor\"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n";
+	    return '\n    <div class="tui-image-editor-main-container" style="' + commonStyle + '">\n        <div class="tui-image-editor-header" style="' + headerStyle + '">\n            <div class="tui-image-editor-header-logo">\n                <img src="' + biImage + '" />\n            </div>\n            <div class="tui-image-editor-header-buttons">\n                <button style="' + loadButtonStyle + '">\n                    ' + locale.localize('Load') + '\n                    <input type="file" class="tui-image-editor-load-btn" />\n                </button>\n                <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                    ' + locale.localize('Download') + '\n                </button>\n            </div>\n        </div>\n        <div class="tui-image-editor-main">\n            <div class="tui-image-editor-submenu">\n                <div class="tui-image-editor-submenu-style" style="' + submenuStyle + '"></div>\n            </div>\n            <div class="tui-image-editor-wrap">\n                <div class="tui-image-editor-size-wrap">\n                    <div class="tui-image-editor-align-wrap">\n                        <div class="tui-image-editor"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n';
 	};
 
 /***/ }),
 /* 76 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
 	exports.default = function (_ref) {
-	    var biImage = _ref.biImage,
+	    var locale = _ref.locale,
+	        biImage = _ref.biImage,
 	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        hover = _ref$iconStyle.hover,
 	        disabled = _ref$iconStyle.disabled,
 	        loadButtonStyle = _ref.loadButtonStyle,
 	        downloadButtonStyle = _ref.downloadButtonStyle;
-	    return "\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"" + biImage + "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\">\n            <li id=\"tie-btn-undo\" class=\"tui-image-editor-item\" title=\"Undo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-undo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-undo\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-undo\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-redo\" class=\"tui-image-editor-item\" title=\"Redo\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-redo\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-redo\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-redo\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-reset\" class=\"tui-image-editor-item\" title=\"Reset\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-reset\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-reset\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-reset\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n            <li id=\"tie-btn-delete\" class=\"tui-image-editor-item\" title=\"Delete\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-delete\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-delete\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li id=\"tie-btn-delete-all\" class=\"tui-image-editor-item\" title=\"Delete-all\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-delete-all\" class=\"enabled\"/>\n                    <use xlink:href=\"" + disabled.path + "#" + disabled.name + "-ic-delete-all\" class=\"normal\"/>\n                    <use xlink:href=\"" + hover.path + "#" + hover.name + "-ic-delete-all\" class=\"hover\"/>\n                </svg>\n            </li>\n            <li class=\"tui-image-editor-item\">\n                <div class=\"tui-image-editor-icpartition\"></div>\n            </li>\n        </ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <button style=\"" + loadButtonStyle + "\">\n                Load\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </button>\n            <button class=\"tui-image-editor-download-btn\" style=\"" + downloadButtonStyle + "\">\n                Download\n            </button>\n        </div>\n    </div>\n";
+	    return '\n    <div class="tui-image-editor-controls">\n        <div class="tui-image-editor-controls-logo">\n            <img src="' + biImage + '" />\n        </div>\n        <ul class="tui-image-editor-menu">\n            <li id="tie-btn-undo" class="tui-image-editor-item" title="' + locale.localize('Undo') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-undo" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-undo" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-undo" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-redo" class="tui-image-editor-item" title="' + locale.localize('Redo') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-redo" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-redo" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-redo" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-reset" class="tui-image-editor-item" title="' + locale.localize('Reset') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-reset" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-reset" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-reset" class="hover"/>\n                </svg>\n            </li>\n            <li class="tui-image-editor-item">\n                <div class="tui-image-editor-icpartition"></div>\n            </li>\n            <li id="tie-btn-delete" class="tui-image-editor-item" title="' + locale.localize('Delete') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-delete" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-delete" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-delete" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-delete-all" class="tui-image-editor-item" title="' + locale.localize('Delete-all') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-delete-all" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-delete-all" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-delete-all" class="hover"/>\n                </svg>\n            </li>\n            <li class="tui-image-editor-item">\n                <div class="tui-image-editor-icpartition"></div>\n            </li>\n        </ul>\n\n        <div class="tui-image-editor-controls-buttons">\n            <button style="' + loadButtonStyle + '">\n                ' + locale.localize('Load') + '\n                <input type="file" class="tui-image-editor-load-btn" />\n            </button>\n            <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                ' + locale.localize('Download') + '\n            </button>\n        </div>\n    </div>\n';
 	};
 
 /***/ }),
@@ -6196,12 +6215,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Shape, _Submenu);
 
 	    function Shape(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Shape);
 
 	        var _this = _possibleConstructorReturn(this, (Shape.__proto__ || Object.getPrototypeOf(Shape)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'shape',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -10095,8 +10116,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 */
 	var Submenu = function () {
+	    /**
+	     * @param {HTMLElement} subMenuElement - submenu dom element
+	     * @param {Locale} locale - translate text
+	     * @param {string} name - name of sub menu
+	     * @param {Object} iconStyle - style of icon
+	     * @param {string} menuBarPosition - position of menu
+	     * @param {*} templateHtml - template for SubMenuElement
+	     */
 	    function Submenu(subMenuElement, _ref) {
-	        var name = _ref.name,
+	        var locale = _ref.locale,
+	            name = _ref.name,
 	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition,
 	            templateHtml = _ref.templateHtml;
@@ -10110,6 +10140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
 	        this.colorPickerControls = [];
 	        this._makeSubMenuElement(subMenuElement, {
+	            locale: locale,
 	            name: name,
 	            iconStyle: iconStyle,
 	            templateHtml: templateHtml
@@ -10173,21 +10204,28 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Make submenu dom element
-	         * @param {HTMLElement} subMenuElement - subment dom element
+	         * @param {HTMLElement} subMenuElement - submenu dom element
+	         * @param {Locale} locale - translate text
+	         * @param {string} name - submenu name
 	         * @param {Object} iconStyle -  icon style
+	         * @param {*} templateHtml - template for SubMenuElement
 	         * @private
 	         */
 
 	    }, {
 	        key: '_makeSubMenuElement',
 	        value: function _makeSubMenuElement(subMenuElement, _ref2) {
-	            var name = _ref2.name,
+	            var locale = _ref2.locale,
+	                name = _ref2.name,
 	                iconStyle = _ref2.iconStyle,
 	                templateHtml = _ref2.templateHtml;
 
 	            var iconSubMenu = document.createElement('div');
 	            iconSubMenu.className = 'tui-image-editor-menu-' + name;
-	            iconSubMenu.innerHTML = templateHtml({ iconStyle: iconStyle });
+	            iconSubMenu.innerHTML = templateHtml({
+	                locale: locale,
+	                iconStyle: iconStyle
+	            });
 
 	            subMenuElement.appendChild(iconSubMenu);
 	        }
@@ -10202,17 +10240,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 85 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-shape-button\">\n            <div class=\"tui-image-editor-button rect\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-rectangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-rectangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Rectangle </label>\n            </div>\n            <div class=\"tui-image-editor-button circle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-circle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-circle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Circle </label>\n            </div>\n            <div class=\"tui-image-editor-button triangle\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-triangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-triangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Triangle </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-shape-color-button\">\n            <div id=\"tie-color-fill\" title=\"Fill\"></div>\n            <div id=\"tie-color-stroke\" title=\"Stroke\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Stroke</label>\n            <div id=\"tie-stroke-range\"></div>\n            <input id=\"tie-stroke-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li id="tie-shape-button">\n            <div class="tui-image-editor-button rect">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-shape-rectangle"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-shape-rectangle"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Rectangle') + ' </label>\n            </div>\n            <div class="tui-image-editor-button circle">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-shape-circle"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-shape-circle"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Circle') + ' </label>\n            </div>\n            <div class="tui-image-editor-button triangle">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-shape-triangle"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-shape-triangle"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Triangle') + ' </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li id="tie-shape-color-button">\n            <div id="tie-color-fill" title="' + locale.localize('Fill') + '"></div>\n            <div id="tie-color-stroke" title="' + locale.localize('Stroke') + '"></div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-newline tui-image-editor-range-wrap">\n            <label class="range">' + locale.localize('Stroke') + '</label>\n            <div id="tie-stroke-range"></div>\n            <input id="tie-stroke-range-value" class="tui-image-editor-range-value" value="0" />\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -10256,12 +10301,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Crop, _Submenu);
 
 	    function Crop(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Crop);
 
 	        var _this = _possibleConstructorReturn(this, (Crop.__proto__ || Object.getPrototypeOf(Crop)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'crop',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -10383,17 +10430,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 87 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-crop-preset-button\">\n            <div class=\"tui-image-editor-button preset preset-none active\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-shape-rectangle\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-shape-rectangle\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Custom </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-square\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Square </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-3-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 3:2 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-4-3\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 4:3 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-5-4\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 5:4 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-7-5\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 7:5 </label>\n            </div>\n            <div class=\"tui-image-editor-button preset preset-16-9\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-crop\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-crop\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 16:9 </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition tui-image-editor-newline\">\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li id=\"tie-crop-button\" class=\"action\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button cancel\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-cancel\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-cancel\" class=\"active\"/>\n                </svg>\n                <label>\n                    Cancel\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li id="tie-crop-preset-button">\n            <div class="tui-image-editor-button preset preset-none active">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-shape-rectangle"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-shape-rectangle"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Custom') + ' </label>\n            </div>\n            <div class="tui-image-editor-button preset preset-square">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-crop"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-crop"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Square') + ' </label>\n            </div>\n            <div class="tui-image-editor-button preset preset-3-2">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-crop"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-crop"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('3:2') + ' </label>\n            </div>\n            <div class="tui-image-editor-button preset preset-4-3">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-crop"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-crop"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('4:3') + ' </label>\n            </div>\n            <div class="tui-image-editor-button preset preset-5-4">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-crop"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-crop"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('5:4') + ' </label>\n            </div>\n            <div class="tui-image-editor-button preset preset-7-5">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-crop"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-crop"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('7:5') + ' </label>\n            </div>\n            <div class="tui-image-editor-button preset preset-16-9">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-crop"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-crop"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('16:9') + ' </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition tui-image-editor-newline">\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li id="tie-crop-button" class="action">\n            <div class="tui-image-editor-button apply">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-apply" class="normal"/>\n                    <use xlink:href="' + active.path + '#' + active.name + '-ic-apply" class="active"/>\n                </svg>\n                <label>\n                    ' + locale.localize('Apply') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button cancel">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-cancel" class="normal"/>\n                    <use xlink:href="' + active.path + '#' + active.name + '-ic-cancel" class="active"/>\n                </svg>\n                <label>\n                    ' + locale.localize('Cancel') + '\n                </label>\n            </div>\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -10437,12 +10491,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Flip, _Submenu);
 
 	    function Flip(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Flip);
 
 	        var _this = _possibleConstructorReturn(this, (Flip.__proto__ || Object.getPrototypeOf(Flip)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'flip',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -10516,17 +10572,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 89 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul id=\"tie-flip-button\" class=\"tui-image-editor-submenu-item\">\n        <li>\n            <div class=\"tui-image-editor-button flipX\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-flip-x\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-flip-x\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Flip X\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button flipY\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-flip-y\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-flip-y\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Flip Y\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"tui-image-editor-button resetFlip\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-flip-reset\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-flip-reset\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Reset\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	    return '\n    <ul id="tie-flip-button" class="tui-image-editor-submenu-item">\n        <li>\n            <div class="tui-image-editor-button flipX">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-flip-x" class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-flip-x" class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Flip X') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button flipY">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-flip-y" class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-flip-y" class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Flip Y') + '\n                </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div class="tui-image-editor-button resetFlip">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-flip-reset"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-flip-reset"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Reset') + '\n                </label>\n            </div>\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -10578,12 +10641,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Rotate, _Submenu);
 
 	    function Rotate(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Rotate);
 
 	        var _this = _possibleConstructorReturn(this, (Rotate.__proto__ || Object.getPrototypeOf(Rotate)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'rotate',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -10660,17 +10725,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 91 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-retate-button\">\n            <div class=\"tui-image-editor-button clockwise\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-rotate-clockwise\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-rotate-clockwise\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> 30 </label>\n            </div>\n            <div class=\"tui-image-editor-button counterclockwise\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-rotate-counterclockwise\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-rotate-counterclockwise\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> -30 </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Range</label>\n            <div id=\"tie-rotate-range\"></div>\n            <input id=\"tie-ratate-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li id="tie-retate-button">\n            <div class="tui-image-editor-button clockwise">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-rotate-clockwise"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-rotate-clockwise"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> 30 </label>\n            </div>\n            <div class="tui-image-editor-button counterclockwise">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-rotate-counterclockwise"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-rotate-counterclockwise"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> -30 </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-newline tui-image-editor-range-wrap">\n            <label class="range">' + locale.localize('Range') + '</label>\n            <div id="tie-rotate-range"></div>\n            <input id="tie-ratate-range-value" class="tui-image-editor-range-value" value="0" />\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -10722,12 +10794,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Text, _Submenu);
 
 	    function Text(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Text);
 
 	        var _this = _possibleConstructorReturn(this, (Text.__proto__ || Object.getPrototypeOf(Text)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'text',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -10912,17 +10986,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 93 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-text-effect-button\">\n            <div class=\"tui-image-editor-button bold\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-bold\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-bold\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Bold </label>\n            </div>\n            <div class=\"tui-image-editor-button italic\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-italic\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-italic\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Italic </label>\n            </div>\n            <div class=\"tui-image-editor-button underline\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-underline\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-underline\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Underline </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-text-align-button\">\n            <div class=\"tui-image-editor-button left\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-left\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-left\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Left </label>\n            </div>\n            <div class=\"tui-image-editor-button center\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-center\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-center\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Center </label>\n            </div>\n            <div class=\"tui-image-editor-button right\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                     <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-text-align-right\"\n                        class=\"normal\"/>\n                     <use xlink:href=\"" + active.path + "#" + active.name + "-ic-text-align-right\"\n                        class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Right </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-text-color\" title=\"Color\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Text size</label>\n            <div id=\"tie-text-range\"></div>\n            <input id=\"tie-text-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li id="tie-text-effect-button">\n            <div class="tui-image-editor-button bold">\n                <div>\n                    <svg class="svg_ic-submenu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-text-bold" class="normal"/>\n                    <use xlink:href="' + active.path + '#' + active.name + '-ic-text-bold" class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Bold') + ' </label>\n            </div>\n            <div class="tui-image-editor-button italic">\n                <div>\n                    <svg class="svg_ic-submenu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-text-italic" class="normal"/>\n                    <use xlink:href="' + active.path + '#' + active.name + '-ic-text-italic" class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Italic') + ' </label>\n            </div>\n            <div class="tui-image-editor-button underline">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-text-underline"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-text-underline"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Underline') + ' </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li id="tie-text-align-button">\n            <div class="tui-image-editor-button left">\n                <div>\n                    <svg class="svg_ic-submenu">\n                     <use xlink:href="' + normal.path + '#' + normal.name + '-ic-text-align-left"\n                        class="normal"/>\n                     <use xlink:href="' + active.path + '#' + active.name + '-ic-text-align-left"\n                        class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Left') + ' </label>\n            </div>\n            <div class="tui-image-editor-button center">\n                <div>\n                    <svg class="svg_ic-submenu">\n                     <use xlink:href="' + normal.path + '#' + normal.name + '-ic-text-align-center"\n                        class="normal"/>\n                     <use xlink:href="' + active.path + '#' + active.name + '-ic-text-align-center"\n                        class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Center') + ' </label>\n            </div>\n            <div class="tui-image-editor-button right">\n                <div>\n                    <svg class="svg_ic-submenu">\n                     <use xlink:href="' + normal.path + '#' + normal.name + '-ic-text-align-right"\n                        class="normal"/>\n                     <use xlink:href="' + active.path + '#' + active.name + '-ic-text-align-right"\n                        class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Right') + ' </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div id="tie-text-color" title="' + locale.localize('Color') + '"></div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-newline tui-image-editor-range-wrap">\n            <label class="range">' + locale.localize('Text size') + '</label>\n            <div id="tie-text-range"></div>\n            <input id="tie-text-range-value" class="tui-image-editor-range-value" value="0" />\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -10966,12 +11047,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Mask, _Submenu);
 
 	    function Mask(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Mask);
 
 	        var _this = _possibleConstructorReturn(this, (Mask.__proto__ || Object.getPrototypeOf(Mask)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'mask',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -11049,17 +11132,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 95 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li>\n            <div class=\"tui-image-editor-button\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-mask-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-mask-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-mask-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label> Load Mask Image </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li id=\"tie-mask-apply\" class=\"tui-image-editor-newline apply\" style=\"margin-top: 22px;margin-bottom: 5px\">\n            <div class=\"tui-image-editor-button apply\">\n                <svg class=\"svg_ic-menu\">\n                    <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-apply\" class=\"normal\"/>\n                    <use xlink:href=\"" + active.path + "#" + active.name + "-ic-apply\" class=\"active\"/>\n                </svg>\n                <label>\n                    Apply\n                </label>\n            </div>\n        </li>\n    </ul>\n";
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li>\n            <div class="tui-image-editor-button">\n                <div>\n                    <input type="file" accept="image/*" id="tie-mask-image-file">\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-mask-load" class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-mask-load" class="active"/>\n                    </svg>\n                </div>\n                <label> ' + locale.localize('Load Mask Image') + ' </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li id="tie-mask-apply" class="tui-image-editor-newline apply" style="margin-top: 22px;margin-bottom: 5px">\n            <div class="tui-image-editor-button apply">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-apply" class="normal"/>\n                    <use xlink:href="' + active.path + '#' + active.name + '-ic-apply" class="active"/>\n                </svg>\n                <label>\n                    ' + locale.localize('Apply') + '\n                </label>\n            </div>\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -11111,12 +11201,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Icon, _Submenu);
 
 	    function Icon(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Icon);
 
 	        var _this = _possibleConstructorReturn(this, (Icon.__proto__ || Object.getPrototypeOf(Icon)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'icon',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -11276,17 +11368,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 97 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-2\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-arrow-3\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-arrow-3\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-arrow-3\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Arrow-3\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-1\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-star-2\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-star-2\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-star-2\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Star-2\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-polygon\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-polygon\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Polygon\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-location\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-location\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-location\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Location\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-heart\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-heart\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-heart\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Heart\n                </label>\n            </div>\n\n            <div class=\"tui-image-editor-button\" data-icontype=\"icon-bubble\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-bubble\"\n                            class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-bubble\"\n                            class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Bubble\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li id=\"tie-icon-add-button\">\n            <div class=\"tui-image-editor-button\" style=\"margin:0\">\n                <div>\n                    <input type=\"file\" accept=\"image/*\" id=\"tie-icon-image-file\">\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-icon-load\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-icon-load\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Custom icon\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-icon-color\" title=\"Color\"></div>\n        </li>\n    </ul>\n";
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li id="tie-icon-add-button">\n            <div class="tui-image-editor-button" data-icontype="icon-arrow">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-arrow"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-arrow"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Arrow') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button" data-icontype="icon-arrow-2">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-arrow-2"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-arrow-2"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Arrow-2') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button" data-icontype="icon-arrow-3">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-arrow-3"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-arrow-3"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Arrow-3') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button" data-icontype="icon-star">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-star" class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-star" class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Star-1') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button" data-icontype="icon-star-2">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-star-2"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-star-2"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Star-2') + '\n                </label>\n            </div>\n\n            <div class="tui-image-editor-button" data-icontype="icon-polygon">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-polygon"\n                            class="normal"/>\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-polygon"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Polygon') + '\n                </label>\n            </div>\n\n            <div class="tui-image-editor-button" data-icontype="icon-location">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-location"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-location"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Location') + '\n                </label>\n            </div>\n\n            <div class="tui-image-editor-button" data-icontype="icon-heart">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-heart"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-heart"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Heart') + '\n                </label>\n            </div>\n\n            <div class="tui-image-editor-button" data-icontype="icon-bubble">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-bubble"\n                            class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-bubble"\n                            class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Bubble') + '\n                </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li id="tie-icon-add-button">\n            <div class="tui-image-editor-button" style="margin:0">\n                <div>\n                    <input type="file" accept="image/*" id="tie-icon-image-file">\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-icon-load" class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-icon-load" class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Custom icon') + '\n                </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div id="tie-icon-color" title="' + locale.localize('Color') + '"></div>\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -11343,12 +11442,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Draw, _Submenu);
 
 	    function Draw(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Draw);
 
 	        var _this = _possibleConstructorReturn(this, (Draw.__proto__ || Object.getPrototypeOf(Draw)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'draw',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -11499,17 +11600,24 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 99 */
 /***/ (function(module, exports) {
 
-	"use strict";
+	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @param {Object} normal - iconStyle
+	 * @param {Object} active - iconStyle
+	 * @returns {string}
+	 */
 	exports.default = function (_ref) {
-	    var _ref$iconStyle = _ref.iconStyle,
+	    var locale = _ref.locale,
+	        _ref$iconStyle = _ref.iconStyle,
 	        normal = _ref$iconStyle.normal,
 	        active = _ref$iconStyle.active;
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li id=\"tie-draw-line-select-button\">\n            <div class=\"tui-image-editor-button free\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-draw-free\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-draw-free\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Free\n                </label>\n            </div>\n            <div class=\"tui-image-editor-button line\">\n                <div>\n                    <svg class=\"svg_ic-submenu\">\n                        <use xlink:href=\"" + normal.path + "#" + normal.name + "-ic-draw-line\" class=\"normal\"/>\n                        <use xlink:href=\"" + active.path + "#" + active.name + "-ic-draw-line\" class=\"active\"/>\n                    </svg>\n                </div>\n                <label>\n                    Straight\n                </label>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div id=\"tie-draw-color\" title=\"Color\"></div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-newline tui-image-editor-range-wrap\">\n            <label class=\"range\">Range</label>\n            <div id=\"tie-draw-range\"></div>\n            <input id=\"tie-draw-range-value\" class=\"tui-image-editor-range-value\" value=\"0\" />\n        </li>\n    </ul>\n";
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li id="tie-draw-line-select-button">\n            <div class="tui-image-editor-button free">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-draw-free" class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-draw-free" class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Free') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button line">\n                <div>\n                    <svg class="svg_ic-submenu">\n                        <use xlink:href="' + normal.path + '#' + normal.name + '-ic-draw-line" class="normal"/>\n                        <use xlink:href="' + active.path + '#' + active.name + '-ic-draw-line" class="active"/>\n                    </svg>\n                </div>\n                <label>\n                    ' + locale.localize('Straight') + '\n                </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div id="tie-draw-color" title="' + locale.localize('Color') + '"></div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-newline tui-image-editor-range-wrap">\n            <label class="range">' + locale.localize('Range') + '</label>\n            <div id="tie-draw-range"></div>\n            <input id="tie-draw-range-value" class="tui-image-editor-range-value" value="0" />\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -11570,12 +11678,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _inherits(Filter, _Submenu);
 
 	    function Filter(subMenuElement, _ref) {
-	        var iconStyle = _ref.iconStyle,
+	        var locale = _ref.locale,
+	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition;
 
 	        _classCallCheck(this, Filter);
 
 	        var _this = _possibleConstructorReturn(this, (Filter.__proto__ || Object.getPrototypeOf(Filter)).call(this, subMenuElement, {
+	            locale: locale,
 	            name: 'filter',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
@@ -11901,18 +12011,66 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 101 */
 /***/ (function(module, exports) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+
+	/**
+	 * @param {Locale} locale - Translate text
+	 * @returns {string}
+	 */
+	exports.default = function (_ref) {
+	    var locale = _ref.locale;
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-wrap fixed-width">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-grayscale">\n                    <label for="tie-grayscale">' + locale.localize('Grayscale') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-invert">\n                    <label for="tie-invert">' + locale.localize('Invert') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sepia">\n                    <label for="tie-sepia">' + locale.localize('Sepia') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sepia2">\n                    <label for="tie-sepia2">' + locale.localize('Sepia2') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-blur">\n                    <label for="tie-blur">' + locale.localize('Blur') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sharpen">\n                    <label for="tie-sharpen">' + locale.localize('Sharpen') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-emboss">\n                    <label for="tie-emboss">' + locale.localize('Emboss') + '</label>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled" style="margin-bottom: 7px;">\n                <div class="tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-remove-white">\n                        <label for="tie-remove-white">' + locale.localize('Remove White') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Threshold') + '</label>\n                    <div id="tie-removewhite-threshold-range"></div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Distance') + '</label>\n                    <div id="tie-removewhite-distance-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-gradient-transparency">\n                        <label for="tie-gradient-transparency">' + locale.localize('Grayscale') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Value') + '</label>\n                    <div id="tie-gradient-transparency-range"></div>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-brightness">\n                    <label for="tie-brightness">' + locale.localize('Brightness') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-brightness-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-noise">\n                    <label for="tie-noise">' + locale.localize('Noise') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-noise-range"></div>\n                </div>\n            </div>\n\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-pixelate">\n                    <label for="tie-pixelate">' + locale.localize('Pixelate') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-pixelate-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-color-filter">\n                        <label for="tie-color-filter">' + locale.localize('Color Filter') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Threshold') + '</label>\n                    <div id="tie-colorfilter-threshole-range"></div>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div class="filter-color-item">\n                <div id="tie-filter-tint-color" title="' + locale.localize('Tint') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-tint">\n                    <label for="tie-tint"></label>\n                </div>\n            </div>\n            <div class="filter-color-item">\n                <div id="tie-filter-multiply-color" title="' + locale.localize('Multiply') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-multiply">\n                    <label for="tie-multiply"></label>\n                </div>\n            </div>\n            <div class="filter-color-item">\n                <div id="tie-filter-blend-color" title="' + locale.localize('Blend') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-blend">\n                    <label for="tie-blend"></label>\n                </div>\n            </div>\n        </li>\n    </ul>\n';
+	};
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports) {
+
 	"use strict";
 
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
 	});
 
-	exports.default = function () {
-	    return "\n    <ul class=\"tui-image-editor-submenu-item\">\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-wrap fixed-width\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-grayscale\">\n                    <label for=\"tie-grayscale\">Grayscale</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-invert\">\n                    <label for=\"tie-invert\">Invert</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia\">\n                    <label for=\"tie-sepia\">Sepia</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sepia2\">\n                    <label for=\"tie-sepia2\">Sepia2</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blur\">\n                    <label for=\"tie-blur\">Blur</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-sharpen\">\n                    <label for=\"tie-sharpen\">Sharpen</label>\n                </div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-emboss\">\n                    <label for=\"tie-emboss\">Emboss</label>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\" style=\"margin-bottom: 7px;\">\n                <div class=\"tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-remove-white\">\n                        <label for=\"tie-remove-white\">Remove White</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-removewhite-threshold-range\"></div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Distance</label>\n                    <div id=\"tie-removewhite-distance-range\"></div>\n                </div>\n            </div>\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-gradient-transparency\">\n                        <label for=\"tie-gradient-transparency\">Grayscale</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Value</label>\n                    <div id=\"tie-gradient-transparency-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition only-left-right\">\n            <div></div>\n        </li>\n        <li class=\"tui-image-editor-submenu-align\">\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-brightness\">\n                    <label for=\"tie-brightness\">Brightness</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-brightness-range\"></div>\n                </div>\n            </div>\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-noise\">\n                    <label for=\"tie-noise\">Noise</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-noise-range\"></div>\n                </div>\n            </div>\n\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-pixelate\">\n                    <label for=\"tie-pixelate\">Pixelate</label>\n                </div>\n                <div class=\"tui-image-editor-range-wrap short\">\n                    <div id=\"tie-pixelate-range\"></div>\n                </div>\n            </div>\n            <div class=\"tui-image-editor-checkbox-group tui-image-editor-disabled\">\n                <div class=\"tui-image-editor-newline tui-image-editor-checkbox-wrap\">\n                    <div class=\"tui-image-editor-checkbox\">\n                        <input type=\"checkbox\" id=\"tie-color-filter\">\n                        <label for=\"tie-color-filter\">Color Filter</label>\n                    </div>\n                </div>\n                <div class=\"tui-image-editor-newline tui-image-editor-range-wrap short\">\n                    <label>Threshold</label>\n                    <div id=\"tie-colorfilter-threshole-range\"></div>\n                </div>\n            </div>\n        </li>\n        <li class=\"tui-image-editor-partition\">\n            <div></div>\n        </li>\n        <li>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-tint-color\" title=\"Tint\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-tint\">\n                    <label for=\"tie-tint\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-multiply-color\" title=\"Multiply\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-multiply\">\n                    <label for=\"tie-multiply\"></label>\n                </div>\n            </div>\n            <div class=\"filter-color-item\">\n                <div id=\"tie-filter-blend-color\" title=\"Blend\"></div>\n                <div class=\"tui-image-editor-checkbox\">\n                    <input type=\"checkbox\" id=\"tie-blend\">\n                    <label for=\"tie-blend\"></label>\n                </div>\n            </div>\n        </li>\n    </ul>\n";
-	};
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	/**
+	 * Translate messages
+	 */
+	var Locale = function () {
+	    function Locale(locale) {
+	        _classCallCheck(this, Locale);
+
+	        this._locale = locale;
+	    }
+
+	    /**
+	     * localize message
+	     * @param {string} message - message who will be localized
+	     * @returns {string}
+	     */
+
+
+	    _createClass(Locale, [{
+	        key: "localize",
+	        value: function localize(message) {
+	            return this._locale[message] || message;
+	        }
+	    }]);
+
+	    return Locale;
+	}();
+
+	exports.default = Locale;
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11927,7 +12085,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _util2 = _interopRequireDefault(_util);
 
-	var _imagetracer = __webpack_require__(103);
+	var _imagetracer = __webpack_require__(104);
 
 	var _imagetracer2 = _interopRequireDefault(_imagetracer);
 
@@ -12499,7 +12657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -13653,7 +13811,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.default = ImageTracer;
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13672,67 +13830,67 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _imageLoader = __webpack_require__(106);
+	var _imageLoader = __webpack_require__(107);
 
 	var _imageLoader2 = _interopRequireDefault(_imageLoader);
 
-	var _cropper = __webpack_require__(108);
+	var _cropper = __webpack_require__(109);
 
 	var _cropper2 = _interopRequireDefault(_cropper);
 
-	var _flip = __webpack_require__(110);
+	var _flip = __webpack_require__(111);
 
 	var _flip2 = _interopRequireDefault(_flip);
 
-	var _rotation = __webpack_require__(111);
+	var _rotation = __webpack_require__(112);
 
 	var _rotation2 = _interopRequireDefault(_rotation);
 
-	var _freeDrawing = __webpack_require__(112);
+	var _freeDrawing = __webpack_require__(113);
 
 	var _freeDrawing2 = _interopRequireDefault(_freeDrawing);
 
-	var _line = __webpack_require__(113);
+	var _line = __webpack_require__(114);
 
 	var _line2 = _interopRequireDefault(_line);
 
-	var _text = __webpack_require__(114);
+	var _text = __webpack_require__(115);
 
 	var _text2 = _interopRequireDefault(_text);
 
-	var _icon = __webpack_require__(115);
+	var _icon = __webpack_require__(116);
 
 	var _icon2 = _interopRequireDefault(_icon);
 
-	var _filter = __webpack_require__(116);
+	var _filter = __webpack_require__(117);
 
 	var _filter2 = _interopRequireDefault(_filter);
 
-	var _shape = __webpack_require__(122);
+	var _shape = __webpack_require__(123);
 
 	var _shape2 = _interopRequireDefault(_shape);
 
-	var _cropper3 = __webpack_require__(124);
+	var _cropper3 = __webpack_require__(125);
 
 	var _cropper4 = _interopRequireDefault(_cropper3);
 
-	var _freeDrawing3 = __webpack_require__(126);
+	var _freeDrawing3 = __webpack_require__(127);
 
 	var _freeDrawing4 = _interopRequireDefault(_freeDrawing3);
 
-	var _lineDrawing = __webpack_require__(127);
+	var _lineDrawing = __webpack_require__(128);
 
 	var _lineDrawing2 = _interopRequireDefault(_lineDrawing);
 
-	var _shape3 = __webpack_require__(128);
+	var _shape3 = __webpack_require__(129);
 
 	var _shape4 = _interopRequireDefault(_shape3);
 
-	var _text3 = __webpack_require__(129);
+	var _text3 = __webpack_require__(130);
 
 	var _text4 = _interopRequireDefault(_text3);
 
@@ -14402,14 +14560,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Get cropped rect
-	         * @param {Object} mode cropzone rect mode
-	         * @returns {Object} rect
+	         * @param {number} [mode] cropzone rect mode
 	         */
 
 	    }, {
 	        key: 'setCropzoneRect',
 	        value: function setCropzoneRect(mode) {
-	            return this.getComponent(components.CROPPER).setCropzoneRect(mode);
+	            this.getComponent(components.CROPPER).setCropzoneRect(mode);
 	        }
 
 	        /**
@@ -15059,13 +15216,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Graphics;
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports) {
 
-	module.exports = __WEBPACK_EXTERNAL_MODULE_105__;
+	module.exports = __WEBPACK_EXTERNAL_MODULE_106__;
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15076,7 +15233,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -15197,7 +15354,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ImageLoader;
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports) {
 
 	"use strict";
@@ -15383,7 +15540,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Component;
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15394,15 +15551,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _cropzone = __webpack_require__(109);
+	var _cropzone = __webpack_require__(110);
 
 	var _cropzone2 = _interopRequireDefault(_cropzone);
 
@@ -15842,7 +15999,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Cropper;
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -15851,7 +16008,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -16307,7 +16464,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Cropzone;
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16322,7 +16479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -16516,14 +16673,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Flip;
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -16531,7 +16688,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -16663,18 +16820,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Rotation;
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -16776,18 +16933,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = FreeDrawing;
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -17000,14 +17157,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Line;
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -17019,7 +17176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -17786,14 +17943,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Text;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -17805,7 +17962,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -18008,7 +18165,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Icon;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -18021,15 +18178,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _mask = __webpack_require__(117);
+	var _mask = __webpack_require__(118);
 
 	var _mask2 = _interopRequireDefault(_mask);
 
@@ -18037,19 +18194,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _consts2 = _interopRequireDefault(_consts);
 
-	var _blur = __webpack_require__(118);
+	var _blur = __webpack_require__(119);
 
 	var _blur2 = _interopRequireDefault(_blur);
 
-	var _sharpen = __webpack_require__(119);
+	var _sharpen = __webpack_require__(120);
 
 	var _sharpen2 = _interopRequireDefault(_sharpen);
 
-	var _emboss = __webpack_require__(120);
+	var _emboss = __webpack_require__(121);
 
 	var _emboss2 = _interopRequireDefault(_emboss);
 
-	var _colorFilter = __webpack_require__(121);
+	var _colorFilter = __webpack_require__(122);
 
 	var _colorFilter2 = _interopRequireDefault(_colorFilter);
 
@@ -18330,12 +18487,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Filter;
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -18441,12 +18598,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Mask;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -18483,12 +18640,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Blur;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -18525,12 +18682,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Sharpen;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -18567,12 +18724,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Emboss;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -18685,14 +18842,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ColorFilter;
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _fabric = __webpack_require__(105);
+	var _fabric = __webpack_require__(106);
 
 	var _fabric2 = _interopRequireDefault(_fabric);
 
@@ -18700,7 +18857,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _promise2 = _interopRequireDefault(_promise);
 
-	var _component = __webpack_require__(107);
+	var _component = __webpack_require__(108);
 
 	var _component2 = _interopRequireDefault(_component);
 
@@ -18708,7 +18865,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var _consts2 = _interopRequireDefault(_consts);
 
-	var _shapeResizeHelper = __webpack_require__(123);
+	var _shapeResizeHelper = __webpack_require__(124);
 
 	var _shapeResizeHelper2 = _interopRequireDefault(_shapeResizeHelper);
 
@@ -19186,7 +19343,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = Shape;
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -19447,14 +19604,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(125);
+	var _drawingMode = __webpack_require__(126);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
@@ -19527,7 +19684,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = CropperDrawingMode;
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19609,14 +19766,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = DrawingMode;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(125);
+	var _drawingMode = __webpack_require__(126);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
@@ -19690,14 +19847,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = FreeDrawingMode;
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(125);
+	var _drawingMode = __webpack_require__(126);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
@@ -19771,14 +19928,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LineDrawingMode;
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(125);
+	var _drawingMode = __webpack_require__(126);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
@@ -19851,14 +20008,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = ShapeDrawingMode;
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-	var _drawingMode = __webpack_require__(125);
+	var _drawingMode = __webpack_require__(126);
 
 	var _drawingMode2 = _interopRequireDefault(_drawingMode);
 
@@ -19931,14 +20088,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = TextDrawingMode;
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports) {
 
 	// removed by extract-text-webpack-plugin
 
 /***/ }),
-/* 131 */,
-/* 132 */
+/* 132 */,
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20007,7 +20164,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20066,7 +20223,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20133,7 +20290,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20209,7 +20366,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20284,7 +20441,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20376,7 +20533,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20455,7 +20612,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20547,7 +20704,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20620,7 +20777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20709,7 +20866,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20767,7 +20924,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20824,7 +20981,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20912,7 +21069,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20972,7 +21129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21035,7 +21192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21100,7 +21257,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21160,7 +21317,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -21247,7 +21404,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = command;
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
