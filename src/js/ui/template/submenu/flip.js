@@ -1,4 +1,10 @@
-export default ({iconStyle: {normal, active}}) => (`
+/**
+ * @param {Locale} locale - Translate text
+ * @param {Object} normal - iconStyle
+ * @param {Object} active - iconStyle
+ * @returns {string}
+ */
+export default ({locale, iconStyle: {normal, active}}) => (`
     <ul id="tie-flip-button" class="tui-image-editor-submenu-item">
         <li>
             <div class="tui-image-editor-button flipX">
@@ -9,7 +15,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Flip X
+                    ${locale.localize('Flip X')}
                 </label>
             </div>
             <div class="tui-image-editor-button flipY">
@@ -20,7 +26,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Flip Y
+                    ${locale.localize('Flip Y')}
                 </label>
             </div>
         </li>
@@ -38,7 +44,7 @@ export default ({iconStyle: {normal, active}}) => (`
                     </svg>
                 </div>
                 <label>
-                    Reset
+                    ${locale.localize('Reset')}
                 </label>
             </div>
         </li>

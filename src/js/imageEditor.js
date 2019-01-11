@@ -35,6 +35,15 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
  *  @param {number} options.cssMaxWidth - Canvas css-max-width
  *  @param {number} options.cssMaxHeight - Canvas css-max-height
+ *  @param {Object} [options.selectionStyle] - selection style
+ *  @param {string} [options.selectionStyle.cornerStyle] - selection corner style
+ *  @param {number} [options.selectionStyle.cornerSize] - selection corner size
+ *  @param {string} [options.selectionStyle.cornerColor] - selection corner color
+ *  @param {string} [options.selectionStyle.cornerStrokeColor] = selection corner stroke color
+ *  @param {boolean} [options.selectionStyle.transparentCorners] - selection corner transparent
+ *  @param {number} [options.selectionStyle.lineWidth] - selection line width
+ *  @param {string} [options.selectionStyle.borderColor] - selection border color
+ *  @param {number} [options.selectionStyle.rotatingPointOffset] - selection rotating point length
  *  @param {Boolean} [options.usageStatistics=true] - Let us know the hostname. If you don't want to send the hostname, please set to false.
  * @example
  * var ImageEditor = require('tui-image-editor');
@@ -182,13 +191,13 @@ class ImageEditor {
      * @property {number} id - object id
      * @property {string} type - object type
      * @property {string} text - text content
-     * @property {string} left - Left
-     * @property {string} top - Top
-     * @property {string} width - Width
-     * @property {string} height - Height
+     * @property {(string | number)} left - Left
+     * @property {(string | number)} top - Top
+     * @property {(string | number)} width - Width
+     * @property {(string | number)} height - Height
      * @property {string} fill - Color
      * @property {string} stroke - Stroke
-     * @property {string} strokeWidth - StrokeWidth
+     * @property {(string | number)} strokeWidth - StrokeWidth
      * @property {string} fontFamily - Font type for text
      * @property {number} fontSize - Font Size
      * @property {string} fontStyle - Type of inclination (normal / italic)
@@ -668,11 +677,10 @@ class ImageEditor {
 
     /**
      * Set the cropping rect
-     * @param {Object} mode crop rect mode [1, 1.5, 1.3333333333333333, 1.25, 1.7777777777777777]
-     * @returns {Object}  {{left: number, top: number, width: number, height: number}} rect
+     * @param {number} [mode] crop rect mode [1, 1.5, 1.3333333333333333, 1.25, 1.7777777777777777]
      */
     setCropzoneRect(mode) {
-        return this._graphics.setCropzoneRect(mode);
+        this._graphics.setCropzoneRect(mode);
     }
 
     /**
@@ -860,7 +868,7 @@ class ImageEditor {
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
-     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     *      @param {boolean} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
      * @returns {Promise<ObjectProps, ErrorMsg>}
      * @example
      * imageEditor.addShape('rect', {
@@ -904,7 +912,7 @@ class ImageEditor {
      *      @param {number} [options.height] - Height value (When type option is 'rect', this options can use)
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
-     *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     *      @param {boolean} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
      * @returns {Promise}
      * @example
      * // call after selecting shape object on canvas
@@ -949,7 +957,7 @@ class ImageEditor {
      * imageEditor.addText('init text', {
      *     styles: {
      *         fill: '#000',
-     *         fontSize: '20',
+     *         fontSize: 20,
      *         fontWeight: 'bold'
      *     },
      *     position: {
@@ -1155,8 +1163,8 @@ class ImageEditor {
      * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
      * @param {Object} options - Icon options
      *      @param {string} [options.fill] - Icon foreground color
-     *      @param {string} [options.left] - Icon x position
-     *      @param {string} [options.top] - Icon y position
+     *      @param {number} [options.left] - Icon x position
+     *      @param {number} [options.top] - Icon y position
      * @returns {Promise<ObjectProps, ErrorMsg>}
      * @example
      * imageEditor.addIcon('arrow'); // The position is center on canvas

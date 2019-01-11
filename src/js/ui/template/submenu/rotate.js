@@ -1,4 +1,10 @@
-export default ({iconStyle: {normal, active}}) => (`
+/**
+ * @param {Locale} locale - Translate text
+ * @param {Object} normal - iconStyle
+ * @param {Object} active - iconStyle
+ * @returns {string}
+ */
+export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li id="tie-retate-button">
             <div class="tui-image-editor-button clockwise">
@@ -28,7 +34,7 @@ export default ({iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
-            <label class="range">Range</label>
+            <label class="range">${locale.localize('Range')}</label>
             <div id="tie-rotate-range"></div>
             <input id="tie-ratate-range-value" class="tui-image-editor-range-value" value="0" />
         </li>
