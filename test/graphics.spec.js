@@ -17,7 +17,7 @@ describe('Graphics', () => {
     let graphics, canvas;
 
     beforeEach(() => {
-        graphics = new Graphics($('<canvas>'), {
+        graphics = new Graphics($('<canvas>')[0], {
             cssMaxWidth,
             cssMaxHeight
         });

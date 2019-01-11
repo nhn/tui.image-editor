@@ -10,7 +10,7 @@ describe('Filter', () => {
     const imageURL = 'base/test/fixtures/sampleImage.jpg';
 
     beforeAll(done => {
-        imageEditor = new ImageEditor($('<div></div>'), {
+        imageEditor = new ImageEditor(document.createElement('div'), {
             cssMaxWidth: 700,
             cssMaxHeight: 500
         });

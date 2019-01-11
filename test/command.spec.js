@@ -17,7 +17,7 @@ describe('commandFactory', () => {
     let invoker, mockImage, canvas, graphics;
 
     beforeEach(() => {
-        graphics = new Graphics($('<canvas>'));
+        graphics = new Graphics($('<canvas>')[0]);
         invoker = new Invoker();
         mockImage = new fabric.Image();
 
