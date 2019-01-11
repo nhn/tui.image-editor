@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.min.js
- * @version 3.3.1
+ * @version 3.4.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
