@@ -23,6 +23,7 @@ export default ({
     #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype="icon-location"] label,
     #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype="icon-polygon"] label,
     #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype="icon-star"] label,
+    #tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype="icon-star-2"] label,
     #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype="icon-arrow-3"] label,
     #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype="icon-arrow-2"] label,
     #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype="icon-arrow"] label,

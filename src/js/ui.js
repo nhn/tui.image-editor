@@ -219,10 +219,10 @@ class Ui {
     /**
      * Change delete button status
      * @param {Object} [options] - Ui setting options
-     *   @param {number} option.loadImage - Init default load image
-     *   @param {number} option.initMenu - Init start menu
-     *   @param {Boolean} [option.menuBarPosition=bottom] - Let
-     *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+     *   @param {object} [option.loadImage] - Init default load image
+     *   @param {string} [option.initMenu] - Init start menu
+     *   @param {string} [option.menuBarPosition=bottom] - Let
+     *   @param {boolean} [option.applyCropSelectionStyle=false] - Let
      * @returns {Object} initialize option
      * @private
      */
@@ -235,7 +235,7 @@ class Ui {
             locale: {},
             menuIconPath: '',
             menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
-            initMenu: false,
+            initMenu: '',
             uiSize: {
                 width: '100%',
                 height: '100%'
@@ -529,9 +529,10 @@ class Ui {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
             this._els[this.options.initMenu].dispatchEvent(evt);
-            if (this.icon) {
-                this.icon.registDefaultIcon();
-            }
+        }
+
+        if (this.icon) {
+            this.icon.registDefaultIcon();
         }
     }
 
