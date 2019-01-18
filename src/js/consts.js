@@ -122,6 +122,7 @@ module.exports = {
         flip: 'The flipX and flipY setting values are not changed.',
         rotation: 'The current angle is same the old angle.',
         loadImage: 'The background image is empty.',
+        loadingImageFailed: 'Invalid image loaded.',
         isLock: 'The executing command state is locked.',
         undo: 'The promise of undo command is reject.',
         redo: 'The promise of redo command is reject.',
