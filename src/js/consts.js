@@ -119,19 +119,20 @@ module.exports = {
      * @type {Object.<string, string>}
      */
     rejectMessages: {
+        addedObject: 'The object is already added.',
         flip: 'The flipX and flipY setting values are not changed.',
-        rotation: 'The current angle is same the old angle.',
+        invalidDrawingMode: 'This operation is not supported in the drawing mode.',
+        invalidParameters: 'Invalid parameters.',
+        isLock: 'The executing command state is locked.',
         loadImage: 'The background image is empty.',
         loadingImageFailed: 'Invalid image loaded.',
-        isLock: 'The executing command state is locked.',
-        undo: 'The promise of undo command is reject.',
-        redo: 'The promise of redo command is reject.',
-        invalidDrawingMode: 'This operation is not supported in the drawing mode',
-        invalidParameters: 'Invalid parameters',
         noActiveObject: 'There is no active object.',
-        unsupportedType: 'Unsupported object type',
         noObject: 'The object is not in canvas.',
-        addedObject: 'The object is already added.'
+        redo: 'The promise of redo command is reject.',
+        rotation: 'The current angle is same the old angle.',
+        undo: 'The promise of undo command is reject.',
+        unsupportedOperation: 'Unsupported operation.',
+        unsupportedType: 'Unsupported object type.'
     },
 
     /**
