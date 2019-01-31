@@ -5,7 +5,6 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import fabric from 'fabric/dist/fabric.require';
-import $ from 'jquery';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import Graphics from '../src/js/graphics';
@@ -17,7 +16,7 @@ describe('commandFactory', () => {
     let invoker, mockImage, canvas, graphics;
 
     beforeEach(() => {
-        graphics = new Graphics($('<canvas>')[0]);
+        graphics = new Graphics(document.createElement('canvas'));
         invoker = new Invoker();
         mockImage = new fabric.Image();
 

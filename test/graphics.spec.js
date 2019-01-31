@@ -4,7 +4,6 @@
  */
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric/dist/fabric.require';
-import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import consts from '../src/js/consts';
 
@@ -17,7 +16,7 @@ describe('Graphics', () => {
     let graphics, canvas;
 
     beforeEach(() => {
-        graphics = new Graphics($('<canvas>')[0], {
+        graphics = new Graphics(document.createElement('canvas'), {
             cssMaxWidth,
             cssMaxHeight
         });
