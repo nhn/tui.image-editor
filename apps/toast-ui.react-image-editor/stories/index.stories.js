@@ -8,24 +8,23 @@ import ImageEditor from '../src/index';
 
 const stories = storiesOf('Toast UI ImageEditor', module);
 
-const commonContainerStyle = {height: '700px', width: '900px'};
 const props = {
   includeUI: {
     loadImage: {
       path: 'img/sampleImage2.png',
       name: 'sampleImage2'
     },
-    initMenu: 'shape'
+    initMenu: 'shape',
+    uiSize: {
+      height: '700px',
+      width: '1000px'
+    }
   },
   cssMaxWidth: 700,
   cssMaxHeight: 500
 };
 
-stories.add('Include default UI', () => (
-  <div style={commonContainerStyle}>
-    <ImageEditor {...props} />
-  </div>
-));
+stories.add('Include default UI', () => <ImageEditor {...props} />);
 
 stories.add('Using Method', () => {
   class Story extends React.Component {
@@ -51,7 +50,7 @@ stories.add('Using Method', () => {
 
     render() {
       return (
-        <div style={commonContainerStyle}>
+        <>
           <ImageEditor ref={this.ref} {...props} />
           <button
             onClick={() => {
@@ -67,7 +66,7 @@ stories.add('Using Method', () => {
           >
             Flip-Y!
           </button>
-        </div>
+        </>
       );
     }
   }
@@ -87,22 +86,20 @@ stories.add('Events', () => {
 
     render() {
       return (
-        <div style={commonContainerStyle}>
-          <ImageEditor
-            ref={this.ref}
-            {...props}
-            onMousedown={(event, originPointer) => {
-              console.log(event);
-              console.log(originPointer);
-            }}
-            onAddText={(pos) => {
-              const {x: ox, y: oy} = pos.originPosition;
-              const {x: cx, y: cy} = pos.clientPosition;
-              console.log(`text position on canvas(x, y): ${ox}px, ${oy}px`);
-              console.log(`text position on brwoser(x, y): ${cx}px, ${cy}px`);
-            }}
-          />
-        </div>
+        <ImageEditor
+          ref={this.ref}
+          {...props}
+          onMousedown={(event, originPointer) => {
+            console.log(event);
+            console.log(originPointer);
+          }}
+          onAddText={(pos) => {
+            const {x: ox, y: oy} = pos.originPosition;
+            const {x: cx, y: cy} = pos.clientPosition;
+            console.log(`text position on canvas(x, y): ${ox}px, ${oy}px`);
+            console.log(`text position on brwoser(x, y): ${cx}px, ${cy}px`);
+          }}
+        />
       );
     }
   }
