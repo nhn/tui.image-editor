@@ -10,7 +10,9 @@
   "scripts": {
     "build:dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "serve": "webpack-dev-server"
+    "serve": "webpack-dev-server",
+    "storybook": "start-storybook -s ./node_modules/tui-image-editor/dist/svg,.storybook -p 6006",
+    "build-storybook": "build-storybook"
   },
   "homepage": "https://github.com/nhnent/toast-ui.react-image-editor",
   "bugs": "https://github.com/nhnent/toast-ui.react-image-editor/issues",
@@ -51,6 +53,6 @@
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
-    "tui-image-editor": "~3.4.0"
+    "tui-image-editor": "^3.4.0"
   }
 }
