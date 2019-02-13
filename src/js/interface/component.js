@@ -27,7 +27,6 @@ class Component {
 
     /**
      * Fire Graphics event
-     * @param {Array} args - arguments
      * @returns {Object} return value
      */
     fire(...args) {
