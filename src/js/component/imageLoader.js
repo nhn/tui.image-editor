@@ -28,7 +28,7 @@ class ImageLoader extends Component {
      * Load image from url
      * @param {?string} imageName - File name
      * @param {?(fabric.Image|string)} img - fabric.Image instance or URL of an image
-     * @returns {jQuery.Deferred} deferred
+     * @returns {Promise}
      */
     load(imageName, img) {
         let promise;
@@ -58,7 +58,7 @@ class ImageLoader extends Component {
     /**
      * Set background image
      * @param {?(fabric.Image|String)} img fabric.Image instance or URL of an image to set background to
-     * @returns {$.Deferred} deferred
+     * @returns {Promise}
      * @private
      */
     _setBackgroundImage(img) {

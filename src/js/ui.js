@@ -32,7 +32,7 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 /**
  * Ui class
  * @class
- * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+ * @param {string|HTMLElement} element - Wrapper's element or selector
  * @param {Object} [options] - Ui setting options
  *   @param {number} option.loadImage - Init default load image
  *   @param {number} option.initMenu - Init start menu
@@ -282,7 +282,7 @@ class Ui {
 
     /**
      * Make primary ui dom element
-     * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+     * @param {string|HTMLElement} element - Wrapper's element or selector
      * @private
      */
     _makeUiElement(element) {
@@ -290,9 +290,7 @@ class Ui {
 
         window.snippet = snippet;
 
-        if (element.jquery) {
-            [selectedElement] = element;
-        } else if (element.nodeType) {
+        if (element.nodeType) {
             selectedElement = element;
         } else {
             selectedElement = document.querySelector(element);
