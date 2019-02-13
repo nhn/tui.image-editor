@@ -1,6 +1,6 @@
-# TOAST UI Image-Editor for React
+# TOAST UI Image Editor for React
 
-> This is a React component wrapping [TOAST UI Image-Editor](https://github.com/nhnent/tui.image-editor).
+> This is a React component wrapping [TOAST UI Image Editor](https://github.com/nhnent/tui.image-editor).
  [![github version](https://img.shields.io/github/release/nhnent/toast-ui.react-image-editor.svg)](https://github.com/nhnent/toast-ui.react-image-editor/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-image-editor.svg)](https://www.npmjs.com/package/@toast-ui/react-image-editor)
 [![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-image-editor.svg)](https://github.com/nhnent/toast-ui.react-image-editor/blob/master/LICENSE)
@@ -24,7 +24,7 @@
 
 ## Collect statistics on the use of open source
 
-React Wrapper of TOAST UI Image-Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Image-Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the `usageStatistics` props like the example below.
+React Wrapper of TOAST UI Image Editor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI Image Editor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the `usageStatistics` props like the example below.
 
 ```js
 <ImageEditor
@@ -50,7 +50,7 @@ npm install --save @toast-ui/react-image-editor
 
 ### Import
 
-You can use Toast UI Image-Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-image-editor.css` from `tui-image-editor/dist` manually.
+You can use Toast UI Image Editor for React as a ECMAScript module or a CommonJS module. As this module does not contain CSS files, you should import `tui-image-editor.css` from `tui-image-editor/dist` manually.
 
 * Using ECMAScript module
 
@@ -68,7 +68,7 @@ var ImageEditor = require('@toast-ui/react-image-editor');
 
 ### Props
 
-[All the options of the TOAST UI Image-Editor](http://nhnent.github.io/tui.image-editor/latest/ImageEditor.html) are supported in the form of props.
+[All the options of the TOAST UI Image Editor](http://nhnent.github.io/tui.image-editor/latest/ImageEditor.html) are supported in the form of props.
 
 ```js
 const myTheme = {
@@ -107,7 +107,7 @@ Importing `black/white-theme.js` file is not working directly import yet. You wa
 
 ### Instance Methods
 
-For using [instance methods of TOAST UI Image-Editor](https://nhnent.github.io/tui.date-picker/latest/DatePicker.html#.createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Image-Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
+For using [instance methods of TOAST UI Image Editor](https://nhnent.github.io/tui.date-picker/latest/DatePicker.html#.createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Image Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
 const imageEditorOptions = {
@@ -126,7 +126,7 @@ class MyComponent extends React.Component {
   render() {
     return (
       <>
-        <Image-Editor 
+        <ImageEditor 
           ref={this.editorRef}
           {...imageEditorOptions}
         />
@@ -152,7 +152,7 @@ class MyComponent extends React.Component {
   render() {
     return (
       <>
-        <Image-Editor 
+        <ImageEditor 
           ref={this.editorRef}
           {...imageEditorOptions} 
         />
@@ -165,7 +165,7 @@ class MyComponent extends React.Component {
 
 ### Event
 
-[All the events of TOAST UI Image-Editor](https://nhnent.github.io/tui.image-editor/latest/ImageEditor.html#event:addText) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `mousedown` event you can use `onMousedown` prop like the example below.
+[All the events of TOAST UI Image Editor](https://nhnent.github.io/tui.image-editor/latest/ImageEditor.html#event:addText) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `mousedown` event you can use `onMousedown` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
@@ -175,7 +175,7 @@ class MyComponent extends React.Component {
 
   render() {
     return (
-      <Image-Editor 
+      <ImageEditor 
         onMousedown={this.handleMousedown}
       />
     );
