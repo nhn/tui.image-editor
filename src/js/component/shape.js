@@ -13,8 +13,8 @@ const {rejectMessages, eventNames} = consts;
 const KEY_CODES = consts.keyCodes;
 
 const DEFAULT_TYPE = 'rect';
-const defaultWidth = 20;
-const defaultHeight = 20;
+const DEFAULT_WIDTH = 20;
+const DEFAULT_HEIGHT = 20;
 
 const DEFAULT_OPTIONS = {
     strokeWidth: 1,
@@ -380,8 +380,8 @@ class Shape extends Component {
             this.add(this._type, {
                 left: startPointX,
                 top: startPointY,
-                width: defaultWidth,
-                height: defaultHeight
+                width: DEFAULT_WIDTH,
+                height: DEFAULT_HEIGHT
             }).then(objectProps => {
                 this.fire(eventNames.ADD_OBJECT, objectProps);
             });
