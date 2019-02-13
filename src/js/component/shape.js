@@ -190,8 +190,6 @@ class Shape extends Component {
             const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
             resolve(objectProperties);
-
-            this.fire(eventNames.ADD_OBJECT_AFTER, objectProperties);
         });
     }
 
@@ -387,6 +385,7 @@ class Shape extends Component {
             });
         } else if (shape) {
             resizeHelper.adjustOriginToCenter(shape);
+            this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
         }
 
         canvas.off({
