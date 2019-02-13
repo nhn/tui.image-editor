@@ -19,7 +19,6 @@
     "fabric"
   ],
   "devDependencies": {
-    "@types/jquery": "^3.3.29",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
