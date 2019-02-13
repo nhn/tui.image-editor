@@ -103,7 +103,7 @@ const MyComponent = () => (
 ```
 
 #### Theme
-The black and white theme file in 
+Importing `black/white-theme.js` file is not working directly import yet. You want to use white theme, please write own theme object by copy and paste.
 
 ### Instance Methods
 
@@ -152,7 +152,7 @@ class MyComponent extends React.Component {
   render() {
     return (
       <>
-        <BarImage-Editor 
+        <Image-Editor 
           ref={this.editorRef}
           {...imageEditorOptions} 
         />
