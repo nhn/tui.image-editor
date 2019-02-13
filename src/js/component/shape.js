@@ -372,9 +372,20 @@ class Shape extends Component {
      */
     _onFabricMouseUp() {
         const canvas = this.getCanvas();
+        const startPointX = this._startPoint.x;
+        const startPointY = this._startPoint.y;
         const shape = this._shapeObj;
 
-        if (shape) {
+        if (!shape) {
+            this.add(this._type, {
+                left: startPointX,
+                top: startPointY,
+                width: defaultWidth,
+                height: defaultHeight
+            }).then(objectProps => {
+                this.fire(eventNames.ADD_OBJECT, objectProps);
+            });
+        } else if (shape) {
             resizeHelper.adjustOriginToCenter(shape);
         }
 
