@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Text module
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
@@ -173,7 +173,7 @@ class Text extends Component {
             canvas.forEachObject(obj => {
                 if (obj.type === 'i-text') {
                     if (obj.text === '') {
-                        obj.remove();
+                        canvas.remove(obj);
                     } else {
                         obj.set({
                             left: obj.left + (obj.width / 2),
@@ -520,7 +520,7 @@ class Text extends Component {
         if (obj) {
             // obj is empty object at initial time, will be set fabric object
             if (obj.text === '') {
-                obj.remove();
+                this.getCanvas().remove(obj);
             }
         }
     }
@@ -589,7 +589,7 @@ class Text extends Component {
     _onFabricMouseUp(fEvent) {
         const newClickTime = (new Date()).getTime();
 
-        if (this._isDoubleClick(newClickTime)) {
+        if (fEvent.isEditing) {
             if (!this.useItext) {
                 this._changeToEditingMode(fEvent.target);
             }
@@ -620,7 +620,7 @@ class Text extends Component {
 
         this.isPrevEditing = true;
 
-        obj.remove();
+        this.getCanvas().remove(obj);
 
         this._editingObj = obj;
         this._textarea.value = obj.getText();
