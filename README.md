@@ -33,7 +33,7 @@
   * [Run webpack-dev-server](#run-webpack-dev-server)
 * [Documents](#-documents)
 * [Contributing](#-contributing)
-* [Dependency](#-dependency)
+* [Required package](#-required-package)
 * [TOAST UI Family](#-toast-ui-family)
 * [Used By](#-used-by)
 * [License](#-license)
@@ -45,7 +45,7 @@ TOAST UI ImageEditor applies Google Analytics (GA) to collect statistics on the 
 
 ```js
 var options = {
-    ...
+    //...
     usageStatistics: false
 }
 
@@ -228,41 +228,85 @@ tui-image-editor/
 
 ## 🔨 Usage
 
-### HTML
+### Load dependencies & TOAST UI ImageEditor
+
+Load dependencies in order to load TOAST UI ImageEditor.
+
+``` html
+<!DOCTYPE html>
+<html>
+    <head>
+        ...
+        <!-- Dependencies [css] -->
+        <link rel="stylesheet" href="lib/tui-color-picker/dist/tui-color-picker.css"/>
+        <link rel="stylesheet" href="lib/tui-image-editor/dist/tui-image-editor.css"/>
+        <!-- Dependencies [css] -->
+        ...
+    </head>
+    <body>
+        ...
+        <!-- Dependencies [js] -->
+        <script type="text/javascript" src="lib/fabric/fabric.js"/>
+        <script type="text/javascript" src="lib/tui-code-snippet/dist/tui-code-snipet.js"/>
+        <script type="text/javascript" src="lib/tui-color-picker/dist/tui-color-picker.js"/>
+        <!-- Dependencies [js] -->
+        ...
+        <script type="text/javascript" src="lib/tui-image-editor/dist/tui-image-editor.js"/>
+    </body>
+</html>
+```
+
+### Create and add container element
 
 Add the container element where TOAST UI ImageEditor will be created.
 
 ``` html
+<!DOCTYPE html>
+<html>
+...
 <body>
-...
-<div id="tui-image-editor"></div>
-...
+    <div id="tui-image-editor"></div>
+    ...
+    <!-- Dependencies [js] -->
+    <script type="text/javascript" src="lib/fabric/fabric.js"/>
+    <script type="text/javascript" src="lib/tui-code-snippet/dist/tui-code-snipet.js"/>
+    <script type="text/javascript" src="lib/tui-color-picker/dist/tui-color-picker.js"/>
+    <!-- Dependencies [js] -->
+    ...
+    <script type="text/javascript" src="lib/tui-image-editor/dist/tui-image-editor.js"/>
 </body>
+</html>
 ```
 
-### javascript
+### For use `includeUI` option set `true`.
 
-Add dependencies & initialize ImageEditor class with given element to make an image editor.
+Create ImageEditor instance with container element and options.
+`includeUI.theme` gets [themeObject](https://github.com/nhnent/tui.image-editor/tree/master/examples/js/theme) form object to extends default theme properties.
 
 ```javascript
-var ImageEditor = require('tui-image-editor');
-var blackTheme = require('./js/theme/black-theme.js');
+var whiteTheme = {
+    // Your own white theme object.
+};
+var blueTheme = {
+    // Your own blue theme object.
+};
+
 var locale_ru_RU = { // override default English locale to your custom
     'Crop': 'Обзрезать',
     'Delete-all': 'Удалить всё'
     // etc...
 };
 var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
-     includeUI: {
-         loadImage: {
-             path: 'img/sampleImage.jpg',
-             name: 'SampleImage'
-         },
-         locale: locale_ru_RU,
-         theme: blackTheme, // or whiteTheme
-         initMenu: 'filter',
-         menuBarPosition: 'bottom'
-     },
+    includeUI: {
+        loadImage: {
+            path: 'img/sampleImage.jpg',
+            name: 'SampleImage'
+        },
+        locale: locale_ru_RU,
+        theme: blueTheme, // or whiteTheme
+        initMenu: 'filter',
+        menuBarPosition: 'bottom'
+    },
     cssMaxWidth: 700,
     cssMaxHeight: 500,
     selectionStyle: {
@@ -272,21 +316,9 @@ var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
 });
 ```
 
-Or ~ UI
+### Want to implement your own UI with TOAST UI ImageEditor?
 
-```javascript
-var ImageEditor = require('tui-image-editor');
-var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
-    cssMaxWidth: 700,
-    cssMaxHeight: 500,
-    selectionStyle: {
-        cornerSize: 20,
-        rotatingPointOffset: 70
-    }
-});
-```
-
-See [details](https://nhnent.github.io/tui.image-editor/latest) for additional informations.
+Please checkout [service-basic.js](https://github.com/nhnent/tui.image-editor/blob/master/examples/js/service-basic.js) and [example: 02.Use API Direct](http://nhnent.github.io/tui.image-editor/latest/tutorial-example02-useApiDirect.html) to make your own UI.
 
 ## 🔧 Development
 
@@ -325,11 +357,8 @@ $ npm run serve
 * [Issue guideline](ISSUE_TEMPLATE.md)
 * [Commit convention](https://github.com/nhnent/tui.image-editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
-## 🔩 Dependency
-* [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7
-* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
-* [tui.color-picker](https://github.com/nhnent/tui.color-picker/releases/tag/v2.2.0) >=2.2.0
-
+## 🔩 Required package
+Install [fabric.js >=1.6.7 && <2.0.0](https://github.com/fabric/fabric.js).
 
 ## 🍞 TOAST UI Family
 * [TOAST UI Editor](https://github.com/nhnent/tui.editor)
