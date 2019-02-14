@@ -312,7 +312,7 @@ class ImageEditor {
     /* eslint-disable complexity */
     _onKeyDown(e) {
         const activeObject = this._graphics.getActiveObject();
-        const activeObjectGroup = this._graphics.getActiveGroupObject();
+        const activeObjectGroup = this._graphics.getActiveObjects();
         const existRemoveObject = activeObject || activeObjectGroup;
 
         if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
@@ -337,12 +337,11 @@ class ImageEditor {
      */
     removeActiveObject() {
         const activeObject = this._graphics.getActiveObject();
-        const activeObjectGroup = this._graphics.getActiveGroupObject();
+        const activeObjectGroup = this._graphics.getActiveObjects();
 
-        if (activeObjectGroup) {
-            const objects = activeObjectGroup.getObjects();
+        if (activeObjectGroup.length) {
             this.discardSelection();
-            this._removeObjectStream(objects);
+            this._removeObjectStream(activeObjectGroup);
         } else if (activeObject) {
             const activeObjectId = this._graphics.getObjectId(activeObject);
             this.removeObject(activeObjectId);

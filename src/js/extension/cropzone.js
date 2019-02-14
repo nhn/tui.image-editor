@@ -3,7 +3,7 @@
  * @fileoverview Cropzone extending fabric.Rect
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import {clamp} from '../util';
 
 const CORNER_TYPE_TOP_LEFT = 'tl';

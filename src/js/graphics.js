@@ -4,7 +4,7 @@
  */
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
 import Flip from './component/flip';
@@ -266,14 +266,14 @@ class Graphics {
         const isValidGroup = target && target.isType('group') && !target.isEmpty();
 
         if (isValidGroup) {
-            canvas.discardActiveGroup(); // restore states for each objects
+            canvas.discardActiveObject(); // restore states for each objects
             target.forEachObject(obj => {
                 objects.push(obj);
-                obj.remove();
+                canvas.remove(obj);
             });
         } else if (canvas.contains(target)) {
             objects.push(target);
-            target.remove();
+            canvas.remove(target);
         }
 
         return objects;
@@ -309,8 +309,8 @@ class Graphics {
      * Gets an active group object
      * @returns {Object} active group object instance
      */
-    getActiveGroupObject() {
-        return this._canvas.getActiveGroup();
+    getActiveObjects() {
+        return this._canvas.getActiveObjects();
     }
 
     /**
@@ -1011,7 +1011,7 @@ class Graphics {
      * Canvas discard selection all
      */
     discardSelection() {
-        this._canvas.discardActiveGroup();
+        this._canvas.discardActiveObject();
         this._canvas.discardActiveObject();
         this._canvas.renderAll();
     }
