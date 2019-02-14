@@ -1,16 +1,15 @@
 {
   "name": "tui-image-editor",
-  "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
-  "version": "3.5.3",
+  "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
+  "version": "3.5.1",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/nhn/tui.image-editor.git"
+    "url": "https://github.com/nhnent/tui.image-editor.git"
   },
   "main": "dist/tui-image-editor.js",
   "description": "TOAST UI Component: ImageEditor",
   "keywords": [
-    "nhn",
     "nhnent",
     "tui",
     "component",
@@ -20,7 +19,6 @@
     "fabric"
   ],
   "devDependencies": {
-    "acorn": "^6.0.0",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
@@ -47,9 +45,8 @@
     "karma-jquery": "^0.2.2",
     "karma-junit-reporter": "^1.2.0",
     "karma-sourcemap-loader": "^0.3.7",
-    "karma-webdriver-launcher": "git+https://github.com/nhn/karma-webdriver-launcher.git#v1.1.0",
+    "karma-webdriver-launcher": "git+https://github.com/nhnent/karma-webdriver-launcher.git#v1.1.0",
     "karma-webpack": "^1.8.0",
-    "mini-css-extract-plugin": "^0.5.0",
     "mkdirp": "^0.5.1",
     "safe-umd-webpack-plugin": "0.0.2",
     "simulant": "^0.2.2",
@@ -69,13 +66,13 @@
     "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
     "bundle:svg": "node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
-    "doc:dev": "tuidoc --dev",
-    "doc": "tuidoc",
-    "tslint": "tslint index.d.ts",
-    "postinstall": "npm install --no-save --no-optional fabric@^1.6.7"
+    "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
+    "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
+    "tslint": "tslint index.d.ts"
   },
   "dependencies": {
     "core-js": "2.4.1",
+    "fabric": "^2.6.0",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.0"
   }
