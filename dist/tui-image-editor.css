@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.4.0
+ * @version 3.5.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -58,7 +58,9 @@ body > textarea {
   display: none;
 }
 .tui-image-editor-container .tui-image-editor-header-buttons button,
+.tui-image-editor-container .tui-image-editor-header-buttons div,
 .tui-image-editor-container .tui-image-editor-controls-buttons button {
+  display: inline-block;
   position: relative;
   width: 120px;
   height: 40px;
@@ -73,6 +75,7 @@ body > textarea {
   cursor: pointer;
   vertical-align: middle;
   letter-spacing: 0.3px;
+  text-align: center;
 }
 .tui-image-editor-container .tui-image-editor-download-btn {
   background-color: #fdba3b;
@@ -858,6 +861,7 @@ body > textarea {
 #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype="icon-location"] svg > use.active,
 #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype="icon-polygon"] svg > use.active,
 #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype="icon-star"] svg > use.active,
+#tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype="icon-star-2"] svg > use.active,
 #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype="icon-arrow-3"] svg > use.active,
 #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype="icon-arrow-2"] svg > use.active,
 #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype="icon-arrow"] svg > use.active {

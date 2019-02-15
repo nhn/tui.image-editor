@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.4.0
+ * @version 3.5.0
  * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
  * @license MIT
  */
@@ -642,7 +642,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Image editor
 	 * @class
-	 * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
+	 * @param {string|HTMLElement} wrapper - Wrapper's element or selector
 	 * @param {Object} [options] - Canvas max width & height of css
 	 *  @param {number} [options.includeUI] - Use the provided UI
 	 *    @param {Object} [options.includeUI.loadImage] - Basic editing image
@@ -4773,18 +4773,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @type {Object.<string, string>}
 	     */
 	    rejectMessages: {
+	        addedObject: 'The object is already added.',
 	        flip: 'The flipX and flipY setting values are not changed.',
-	        rotation: 'The current angle is same the old angle.',
-	        loadImage: 'The background image is empty.',
+	        invalidDrawingMode: 'This operation is not supported in the drawing mode.',
+	        invalidParameters: 'Invalid parameters.',
 	        isLock: 'The executing command state is locked.',
-	        undo: 'The promise of undo command is reject.',
-	        redo: 'The promise of redo command is reject.',
-	        invalidDrawingMode: 'This operation is not supported in the drawing mode',
-	        invalidParameters: 'Invalid parameters',
+	        loadImage: 'The background image is empty.',
+	        loadingImageFailed: 'Invalid image loaded.',
 	        noActiveObject: 'There is no active object.',
-	        unsupportedType: 'Unsupported object type',
 	        noObject: 'The object is not in canvas.',
-	        addedObject: 'The object is already added.'
+	        redo: 'The promise of redo command is reject.',
+	        rotation: 'The current angle is same the old angle.',
+	        undo: 'The promise of undo command is reject.',
+	        unsupportedOperation: 'Unsupported operation.',
+	        unsupportedType: 'Unsupported object type.'
 	    },
 
 	    /**
@@ -4970,7 +4972,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Ui class
 	 * @class
-	 * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+	 * @param {string|HTMLElement} element - Wrapper's element or selector
 	 * @param {Object} [options] - Ui setting options
 	 *   @param {number} option.loadImage - Init default load image
 	 *   @param {number} option.initMenu - Init start menu
@@ -5191,10 +5193,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Change delete button status
 	         * @param {Object} [options] - Ui setting options
-	         *   @param {number} option.loadImage - Init default load image
-	         *   @param {number} option.initMenu - Init start menu
-	         *   @param {Boolean} [option.menuBarPosition=bottom] - Let
-	         *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+	         *   @param {object} [option.loadImage] - Init default load image
+	         *   @param {string} [option.initMenu] - Init start menu
+	         *   @param {string} [option.menuBarPosition=bottom] - Let
+	         *   @param {boolean} [option.applyCropSelectionStyle=false] - Let
 	         * @returns {Object} initialize option
 	         * @private
 	         */
@@ -5210,7 +5212,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                locale: {},
 	                menuIconPath: '',
 	                menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
-	                initMenu: false,
+	                initMenu: '',
 	                uiSize: {
 	                    width: '100%',
 	                    height: '100%'
@@ -5269,7 +5271,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Make primary ui dom element
-	         * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+	         * @param {string|HTMLElement} element - Wrapper's element or selector
 	         * @private
 	         */
 
@@ -5280,9 +5282,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            window.snippet = _tuiCodeSnippet2.default;
 
-	            if (element.jquery) {
-	                selectedElement = element[0];
-	            } else if (element.nodeType) {
+	            if (element.nodeType) {
 	                selectedElement = element;
 	            } else {
 	                selectedElement = document.querySelector(element);
@@ -5569,9 +5569,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                var evt = document.createEvent('MouseEvents');
 	                evt.initEvent('click', true, false);
 	                this._els[this.options.initMenu].dispatchEvent(evt);
-	                if (this.icon) {
-	                    this.icon.registDefaultIcon();
-	                }
+	            }
+
+	            if (this.icon) {
+	                this.icon.registDefaultIcon();
 	            }
 	        }
 
@@ -5668,7 +5669,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        loadButtonStyle = _ref.loadButtonStyle,
 	        downloadButtonStyle = _ref.downloadButtonStyle,
 	        submenuStyle = _ref.submenuStyle;
-	    return '\n    <div class="tui-image-editor-main-container" style="' + commonStyle + '">\n        <div class="tui-image-editor-header" style="' + headerStyle + '">\n            <div class="tui-image-editor-header-logo">\n                <img src="' + biImage + '" />\n            </div>\n            <div class="tui-image-editor-header-buttons">\n                <button style="' + loadButtonStyle + '">\n                    ' + locale.localize('Load') + '\n                    <input type="file" class="tui-image-editor-load-btn" />\n                </button>\n                <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                    ' + locale.localize('Download') + '\n                </button>\n            </div>\n        </div>\n        <div class="tui-image-editor-main">\n            <div class="tui-image-editor-submenu">\n                <div class="tui-image-editor-submenu-style" style="' + submenuStyle + '"></div>\n            </div>\n            <div class="tui-image-editor-wrap">\n                <div class="tui-image-editor-size-wrap">\n                    <div class="tui-image-editor-align-wrap">\n                        <div class="tui-image-editor"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n';
+	    return '\n    <div class="tui-image-editor-main-container" style="' + commonStyle + '">\n        <div class="tui-image-editor-header" style="' + headerStyle + '">\n            <div class="tui-image-editor-header-logo">\n                <img src="' + biImage + '" />\n            </div>\n            <div class="tui-image-editor-header-buttons">\n                <div style="' + loadButtonStyle + '">\n                    ' + locale.localize('Load') + '\n                    <input type="file" class="tui-image-editor-load-btn" />\n                </div>\n                <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                    ' + locale.localize('Download') + '\n                </button>\n            </div>\n        </div>\n        <div class="tui-image-editor-main">\n            <div class="tui-image-editor-submenu">\n                <div class="tui-image-editor-submenu-style" style="' + submenuStyle + '"></div>\n            </div>\n            <div class="tui-image-editor-wrap">\n                <div class="tui-image-editor-size-wrap">\n                    <div class="tui-image-editor-align-wrap">\n                        <div class="tui-image-editor"></div>\n                    </div>\n                </div>\n            </div>\n        </div>\n    </div>\n';
 	};
 
 /***/ }),
@@ -5690,7 +5691,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        disabled = _ref$iconStyle.disabled,
 	        loadButtonStyle = _ref.loadButtonStyle,
 	        downloadButtonStyle = _ref.downloadButtonStyle;
-	    return '\n    <div class="tui-image-editor-controls">\n        <div class="tui-image-editor-controls-logo">\n            <img src="' + biImage + '" />\n        </div>\n        <ul class="tui-image-editor-menu">\n            <li id="tie-btn-undo" class="tui-image-editor-item" title="' + locale.localize('Undo') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-undo" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-undo" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-undo" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-redo" class="tui-image-editor-item" title="' + locale.localize('Redo') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-redo" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-redo" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-redo" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-reset" class="tui-image-editor-item" title="' + locale.localize('Reset') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-reset" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-reset" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-reset" class="hover"/>\n                </svg>\n            </li>\n            <li class="tui-image-editor-item">\n                <div class="tui-image-editor-icpartition"></div>\n            </li>\n            <li id="tie-btn-delete" class="tui-image-editor-item" title="' + locale.localize('Delete') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-delete" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-delete" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-delete" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-delete-all" class="tui-image-editor-item" title="' + locale.localize('Delete-all') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-delete-all" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-delete-all" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-delete-all" class="hover"/>\n                </svg>\n            </li>\n            <li class="tui-image-editor-item">\n                <div class="tui-image-editor-icpartition"></div>\n            </li>\n        </ul>\n\n        <div class="tui-image-editor-controls-buttons">\n            <button style="' + loadButtonStyle + '">\n                ' + locale.localize('Load') + '\n                <input type="file" class="tui-image-editor-load-btn" />\n            </button>\n            <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                ' + locale.localize('Download') + '\n            </button>\n        </div>\n    </div>\n';
+	    return '\n    <div class="tui-image-editor-controls">\n        <div class="tui-image-editor-controls-logo">\n            <img src="' + biImage + '" />\n        </div>\n        <ul class="tui-image-editor-menu">\n            <li id="tie-btn-undo" class="tui-image-editor-item" title="' + locale.localize('Undo') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-undo" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-undo" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-undo" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-redo" class="tui-image-editor-item" title="' + locale.localize('Redo') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-redo" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-redo" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-redo" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-reset" class="tui-image-editor-item" title="' + locale.localize('Reset') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-reset" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-reset" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-reset" class="hover"/>\n                </svg>\n            </li>\n            <li class="tui-image-editor-item">\n                <div class="tui-image-editor-icpartition"></div>\n            </li>\n            <li id="tie-btn-delete" class="tui-image-editor-item" title="' + locale.localize('Delete') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-delete" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-delete" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-delete" class="hover"/>\n                </svg>\n            </li>\n            <li id="tie-btn-delete-all" class="tui-image-editor-item" title="' + locale.localize('Delete-all') + '">\n                <svg class="svg_ic-menu">\n                    <use xlink:href="' + normal.path + '#' + normal.name + '-ic-delete-all" class="enabled"/>\n                    <use xlink:href="' + disabled.path + '#' + disabled.name + '-ic-delete-all" class="normal"/>\n                    <use xlink:href="' + hover.path + '#' + hover.name + '-ic-delete-all" class="hover"/>\n                </svg>\n            </li>\n            <li class="tui-image-editor-item">\n                <div class="tui-image-editor-icpartition"></div>\n            </li>\n        </ul>\n\n        <div class="tui-image-editor-controls-buttons">\n            <div style="' + loadButtonStyle + '">\n                ' + locale.localize('Load') + '\n                <input type="file" class="tui-image-editor-load-btn" />\n            </div>\n            <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                ' + locale.localize('Download') + '\n            </button>\n        </div>\n    </div>\n';
 	};
 
 /***/ }),
@@ -5929,7 +5930,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        submenuIconSize = _ref.submenuIconSize,
 	        menuIconSize = _ref.menuIconSize,
 	        biSize = _ref.biSize;
-	    return "\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    #tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    #tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    #tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    #tie-crop-button .tui-image-editor-button.apply.active label,\n    #tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    #tie-shape-button.rect .tui-image-editor-button.rect label,\n    #tie-shape-button.circle .tui-image-editor-button.circle label,\n    #tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    #tie-text-effect-button .tui-image-editor-button.active label,\n    #tie-text-align-button.left .tui-image-editor-button.left label,\n    #tie-text-align-button.center .tui-image-editor-button.center label,\n    #tie-text-align-button.right .tui-image-editor-button.right label,\n    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox input + label {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n\n";
+	    return "\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    #tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    #tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    #tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    #tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype=\"icon-star-2\"] label,\n    #tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    #tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    #tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    #tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    #tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    #tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    #tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    #tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    #tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    #tie-crop-button .tui-image-editor-button.apply.active label,\n    #tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    #tie-shape-button.rect .tui-image-editor-button.rect label,\n    #tie-shape-button.circle .tui-image-editor-button.circle label,\n    #tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    #tie-text-effect-button .tui-image-editor-button.active label,\n    #tie-text-align-button.left .tui-image-editor-button.left label,\n    #tie-text-align-button.center .tui-image-editor-button.center label,\n    #tie-text-align-button.right .tui-image-editor-button.right label,\n    #tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox input + label {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n\n";
 	};
 
 /***/ }),
@@ -6591,15 +6592,61 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _this.fire('change', value.color);
 	            });
 	            colorpickerElement.addEventListener('click', function (event) {
-	                _this._show = !_this._show;
-	                _this.pickerControl.style.display = _this._show ? 'block' : 'none';
-	                _this._setPickerControlPosition();
-	                _this.fire('changeShow', _this);
+	                var target = event.target;
+
+	                var isInPickerControl = target && _this._isElementInColorPickerControl(target);
+
+	                if (!isInPickerControl || isInPickerControl && _this._isPaletteButton(target)) {
+	                    _this._show = !_this._show;
+	                    _this.pickerControl.style.display = _this._show ? 'block' : 'none';
+	                    _this._setPickerControlPosition();
+	                    _this.fire('changeShow', _this);
+	                }
 	                event.stopPropagation();
 	            });
 	            document.body.addEventListener('click', function () {
 	                _this.hide();
 	            });
+	        }
+
+	        /**
+	         * Check hex input or not
+	         * @param {Element} target - Event target element
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isPaletteButton',
+	        value: function _isPaletteButton(target) {
+	            return target.className === 'tui-colorpicker-palette-button';
+	        }
+
+	        /**
+	         * Check given element is in pickerControl element
+	         * @param {Element} element - element to check
+	         * @returns {boolean}
+	         * @private
+	         */
+
+	    }, {
+	        key: '_isElementInColorPickerControl',
+	        value: function _isElementInColorPickerControl(element) {
+	            var parentNode = element;
+
+	            while (parentNode !== document.body) {
+	                if (!parentNode) {
+	                    break;
+	                }
+
+	                if (parentNode === this.pickerControl) {
+	                    return true;
+	                }
+
+	                parentNode = parentNode.parentNode;
+	            }
+
+	            return false;
 	        }
 	    }, {
 	        key: 'hide',
@@ -12023,7 +12070,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	exports.default = function (_ref) {
 	    var locale = _ref.locale;
-	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-wrap fixed-width">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-grayscale">\n                    <label for="tie-grayscale">' + locale.localize('Grayscale') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-invert">\n                    <label for="tie-invert">' + locale.localize('Invert') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sepia">\n                    <label for="tie-sepia">' + locale.localize('Sepia') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sepia2">\n                    <label for="tie-sepia2">' + locale.localize('Sepia2') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-blur">\n                    <label for="tie-blur">' + locale.localize('Blur') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sharpen">\n                    <label for="tie-sharpen">' + locale.localize('Sharpen') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-emboss">\n                    <label for="tie-emboss">' + locale.localize('Emboss') + '</label>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled" style="margin-bottom: 7px;">\n                <div class="tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-remove-white">\n                        <label for="tie-remove-white">' + locale.localize('Remove White') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Threshold') + '</label>\n                    <div id="tie-removewhite-threshold-range"></div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Distance') + '</label>\n                    <div id="tie-removewhite-distance-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-gradient-transparency">\n                        <label for="tie-gradient-transparency">' + locale.localize('Grayscale') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Value') + '</label>\n                    <div id="tie-gradient-transparency-range"></div>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-brightness">\n                    <label for="tie-brightness">' + locale.localize('Brightness') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-brightness-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-noise">\n                    <label for="tie-noise">' + locale.localize('Noise') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-noise-range"></div>\n                </div>\n            </div>\n\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-pixelate">\n                    <label for="tie-pixelate">' + locale.localize('Pixelate') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-pixelate-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-color-filter">\n                        <label for="tie-color-filter">' + locale.localize('Color Filter') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Threshold') + '</label>\n                    <div id="tie-colorfilter-threshole-range"></div>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div class="filter-color-item">\n                <div id="tie-filter-tint-color" title="' + locale.localize('Tint') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-tint">\n                    <label for="tie-tint"></label>\n                </div>\n            </div>\n            <div class="filter-color-item">\n                <div id="tie-filter-multiply-color" title="' + locale.localize('Multiply') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-multiply">\n                    <label for="tie-multiply"></label>\n                </div>\n            </div>\n            <div class="filter-color-item">\n                <div id="tie-filter-blend-color" title="' + locale.localize('Blend') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-blend">\n                    <label for="tie-blend"></label>\n                </div>\n            </div>\n        </li>\n    </ul>\n';
+	    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-wrap fixed-width">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-grayscale">\n                    <label for="tie-grayscale">' + locale.localize('Grayscale') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-invert">\n                    <label for="tie-invert">' + locale.localize('Invert') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sepia">\n                    <label for="tie-sepia">' + locale.localize('Sepia') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sepia2">\n                    <label for="tie-sepia2">' + locale.localize('Sepia2') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-blur">\n                    <label for="tie-blur">' + locale.localize('Blur') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-sharpen">\n                    <label for="tie-sharpen">' + locale.localize('Sharpen') + '</label>\n                </div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-emboss">\n                    <label for="tie-emboss">' + locale.localize('Emboss') + '</label>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled" style="margin-bottom: 7px;">\n                <div class="tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-remove-white">\n                        <label for="tie-remove-white">' + locale.localize('Remove White') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Threshold') + '</label>\n                    <div id="tie-removewhite-threshold-range"></div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Distance') + '</label>\n                    <div id="tie-removewhite-distance-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-gradient-transparency">\n                        <label for="tie-gradient-transparency">' + locale.localize('Gradient transparency') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Value') + '</label>\n                    <div id="tie-gradient-transparency-range"></div>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-brightness">\n                    <label for="tie-brightness">' + locale.localize('Brightness') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-brightness-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-noise">\n                    <label for="tie-noise">' + locale.localize('Noise') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-noise-range"></div>\n                </div>\n            </div>\n\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-pixelate">\n                    <label for="tie-pixelate">' + locale.localize('Pixelate') + '</label>\n                </div>\n                <div class="tui-image-editor-range-wrap short">\n                    <div id="tie-pixelate-range"></div>\n                </div>\n            </div>\n            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">\n                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">\n                    <div class="tui-image-editor-checkbox">\n                        <input type="checkbox" id="tie-color-filter">\n                        <label for="tie-color-filter">' + locale.localize('Color Filter') + '</label>\n                    </div>\n                </div>\n                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">\n                    <label>' + locale.localize('Threshold') + '</label>\n                    <div id="tie-colorfilter-threshole-range"></div>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div class="filter-color-item">\n                <div id="tie-filter-tint-color" title="' + locale.localize('Tint') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-tint">\n                    <label for="tie-tint"></label>\n                </div>\n            </div>\n            <div class="filter-color-item">\n                <div id="tie-filter-multiply-color" title="' + locale.localize('Multiply') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-multiply">\n                    <label for="tie-multiply"></label>\n                </div>\n            </div>\n            <div class="filter-color-item">\n                <div id="tie-filter-blend-color" title="' + locale.localize('Blend') + '"></div>\n                <div class="tui-image-editor-checkbox">\n                    <input type="checkbox" id="tie-blend">\n                    <label for="tie-blend"></label>\n                </div>\n            </div>\n        </li>\n    </ul>\n';
 	};
 
 /***/ }),
@@ -13933,7 +13980,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	/**
 	 * Graphics class
 	 * @class
-	 * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
+	 * @param {string|HTMLElement} wrapper - Wrapper's element or selector
 	 * @param {Object} [option] - Canvas max width & height of css
 	 *  @param {number} option.cssMaxWidth - Canvas css-max-width
 	 *  @param {number} option.cssMaxHeight - Canvas css-max-height
@@ -14820,7 +14867,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Set canvas element to fabric.Canvas
-	         * @param {jQuery|Element|string} element - Wrapper or canvas element or selector
+	         * @param {Element|string} element - Wrapper or canvas element or selector
 	         * @private
 	         */
 
@@ -14830,9 +14877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var selectedElement = void 0;
 	            var canvasElement = void 0;
 
-	            if (element.jquery) {
-	                selectedElement = element[0];
-	            } else if (element.nodeType) {
+	            if (element.nodeType) {
 	                selectedElement = element;
 	            } else {
 	                selectedElement = document.querySelector(element);
@@ -15282,7 +15327,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * Load image from url
 	     * @param {?string} imageName - File name
 	     * @param {?(fabric.Image|string)} img - fabric.Image instance or URL of an image
-	     * @returns {jQuery.Deferred} deferred
+	     * @returns {Promise}
 	     */
 
 
@@ -15319,7 +15364,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Set background image
 	         * @param {?(fabric.Image|String)} img fabric.Image instance or URL of an image to set background to
-	         * @returns {$.Deferred} deferred
+	         * @returns {Promise}
 	         * @private
 	         */
 
@@ -15338,7 +15383,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                canvas.setBackgroundImage(img, function () {
 	                    var oImage = canvas.backgroundImage;
 
-	                    if (oImage.getElement()) {
+	                    if (oImage && oImage.getElement()) {
 	                        resolve(oImage);
 	                    } else {
 	                        reject(rejectMessages.loadingImageFailed);
@@ -15394,7 +15439,6 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	  /**
 	   * Fire Graphics event
-	   * @param {Array} args - arguments
 	   * @returns {Object} return value
 	   */
 
@@ -16539,7 +16583,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Set flipX, flipY
 	         * @param {{flipX: Boolean, flipY: Boolean}} newSetting - Flip setting
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         */
 
 	    }, {
@@ -16622,7 +16666,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Reset flip settings
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         */
 
 	    }, {
@@ -16636,7 +16680,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Flip x
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         */
 
 	    }, {
@@ -16652,7 +16696,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Flip y
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         */
 
 	    }, {
@@ -16747,7 +16791,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *      See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
 	         *
 	         * @param {number} angle - Angle value
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         */
 
 	    }, {
@@ -16802,7 +16846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        /**
 	         * Rotate the image
 	         * @param {number} additionalAngle - Additional angle
-	         * @returns {jQuery.Deferred}
+	         * @returns {Promise}
 	         */
 
 	    }, {
@@ -18889,6 +18933,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	var KEY_CODES = _consts2.default.keyCodes;
 
 	var DEFAULT_TYPE = 'rect';
+	var DEFAULT_WIDTH = 20;
+	var DEFAULT_HEIGHT = 20;
+
 	var DEFAULT_OPTIONS = {
 	    strokeWidth: 1,
 	    stroke: '#000000',
@@ -19074,13 +19121,16 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            return new _promise2.default(function (resolve) {
 	                var canvas = _this2.getCanvas();
-	                options = _this2._createOptions(options);
+	                options = _this2._extendOptions(options);
 	                var shapeObj = _this2._createInstance(type, options);
 
 	                _this2._bindEventOnShape(shapeObj);
 
 	                canvas.add(shapeObj).setActiveObject(shapeObj);
-	                resolve(_this2.graphics.createObjectProperties(shapeObj));
+
+	                var objectProperties = _this2.graphics.createObjectProperties(shapeObj);
+
+	                resolve(objectProperties);
 	            });
 	        }
 
@@ -19156,8 +19206,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 
 	    }, {
-	        key: '_createOptions',
-	        value: function _createOptions(options) {
+	        key: '_extendOptions',
+	        value: function _extendOptions(options) {
 	            var selectionStyles = _consts2.default.fObjectOptions.SELECTION_STYLE;
 
 	            options = (0, _tuiCodeSnippet.extend)({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
@@ -19285,14 +19335,26 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }, {
 	        key: '_onFabricMouseUp',
 	        value: function _onFabricMouseUp() {
+	            var _this5 = this;
+
 	            var canvas = this.getCanvas();
+	            var startPointX = this._startPoint.x;
+	            var startPointY = this._startPoint.y;
 	            var shape = this._shapeObj;
 
-	            if (shape) {
+	            if (!shape) {
+	                this.add(this._type, {
+	                    left: startPointX,
+	                    top: startPointY,
+	                    width: DEFAULT_WIDTH,
+	                    height: DEFAULT_HEIGHT
+	                }).then(function (objectProps) {
+	                    _this5.fire(eventNames.ADD_OBJECT, objectProps);
+	                });
+	            } else if (shape) {
 	                _shapeResizeHelper2.default.adjustOriginToCenter(shape);
+	                this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
 	            }
-
-	            this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
 
 	            canvas.off({
 	                'mouse:move': this._handlers.mousemove,
