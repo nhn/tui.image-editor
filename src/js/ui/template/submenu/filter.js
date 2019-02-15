@@ -60,7 +60,7 @@ export default ({locale}) => (`
                 <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">
                     <div class="tui-image-editor-checkbox">
                         <input type="checkbox" id="tie-gradient-transparency">
-                        <label for="tie-gradient-transparency">${locale.localize('Grayscale')}</label>
+                        <label for="tie-gradient-transparency">${locale.localize('Gradient transparency')}</label>
                     </div>
                 </div>
                 <div class="tui-image-editor-newline tui-image-editor-range-wrap short">

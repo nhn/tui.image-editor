@@ -37,7 +37,7 @@ class Flip extends Component {
     /**
      * Set flipX, flipY
      * @param {{flipX: Boolean, flipY: Boolean}} newSetting - Flip setting
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     set(newSetting) {
         const setting = this.getCurrentSetting();
@@ -110,7 +110,7 @@ class Flip extends Component {
 
     /**
      * Reset flip settings
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     reset() {
         return this.set({
@@ -121,7 +121,7 @@ class Flip extends Component {
 
     /**
      * Flip x
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     flipX() {
         const current = this.getCurrentSetting();
@@ -134,7 +134,7 @@ class Flip extends Component {
 
     /**
      * Flip y
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     flipY() {
         const current = this.getCurrentSetting();

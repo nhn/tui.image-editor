@@ -13,6 +13,9 @@ const {rejectMessages, eventNames} = consts;
 const KEY_CODES = consts.keyCodes;
 
 const DEFAULT_TYPE = 'rect';
+const DEFAULT_WIDTH = 20;
+const DEFAULT_HEIGHT = 20;
+
 const DEFAULT_OPTIONS = {
     strokeWidth: 1,
     stroke: '#000000',
@@ -177,13 +180,16 @@ class Shape extends Component {
     add(type, options) {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
-            options = this._createOptions(options);
+            options = this._extendOptions(options);
             const shapeObj = this._createInstance(type, options);
 
             this._bindEventOnShape(shapeObj);
 
             canvas.add(shapeObj).setActiveObject(shapeObj);
-            resolve(this.graphics.createObjectProperties(shapeObj));
+
+            const objectProperties = this.graphics.createObjectProperties(shapeObj);
+
+            resolve(objectProperties);
         });
     }
 
@@ -249,7 +255,7 @@ class Shape extends Component {
      * @returns {Object} Shape options
      * @private
      */
-    _createOptions(options) {
+    _extendOptions(options) {
         const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
 
         options = extend({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
@@ -364,13 +370,23 @@ class Shape extends Component {
      */
     _onFabricMouseUp() {
         const canvas = this.getCanvas();
+        const startPointX = this._startPoint.x;
+        const startPointY = this._startPoint.y;
         const shape = this._shapeObj;
 
-        if (shape) {
+        if (!shape) {
+            this.add(this._type, {
+                left: startPointX,
+                top: startPointY,
+                width: DEFAULT_WIDTH,
+                height: DEFAULT_HEIGHT
+            }).then(objectProps => {
+                this.fire(eventNames.ADD_OBJECT, objectProps);
+            });
+        } else if (shape) {
             resizeHelper.adjustOriginToCenter(shape);
+            this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
         }
-
-        this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
 
         canvas.off({
             'mouse:move': this._handlers.mousemove,

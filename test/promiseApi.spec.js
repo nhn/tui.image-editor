@@ -2,7 +2,6 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Test cases of "src/js/component/filter.js"
  */
-import $ from 'jquery';
 import ImageEditor from '../src/js/imageEditor';
 
 describe('Promise API', () => {
@@ -10,7 +9,7 @@ describe('Promise API', () => {
     const imageURL = 'base/test/fixtures/sampleImage.jpg';
 
     beforeAll(() => {
-        imageEditor = new ImageEditor($('<div></div>'), {
+        imageEditor = new ImageEditor(document.createElement('div'), {
             cssMaxWidth: 700,
             cssMaxHeight: 500
         });

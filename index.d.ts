@@ -1,8 +1,6 @@
 // Type definitions for TOAST UI Image Editor v3.4.0
 // TypeScript Version: 3.2.2
 
-/// <reference types="jquery" />
-
 declare namespace tuiImageEditor {
     type AngleType = number;
 
@@ -231,7 +229,7 @@ declare namespace tuiImageEditor {
     }
 
     class ImageEditor {
-        constructor(wrapper: string | JQuery | Element, options: IOptions);
+        constructor(wrapper: string | Element, options: IOptions);
 
         public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
         public addImageObject(imgUrl: string): Promise<void>;
@@ -290,5 +288,5 @@ declare namespace tuiImageEditor {
 }
 
 declare module 'tui-image-editor' {
-    export = tuiImageEditor.ImageEditor;
+    export default tuiImageEditor.ImageEditor;
 }

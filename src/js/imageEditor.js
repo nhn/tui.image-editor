@@ -20,7 +20,7 @@ const {isUndefined, forEach, CustomEvents} = snippet;
 /**
  * Image editor
  * @class
- * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
+ * @param {string|HTMLElement} wrapper - Wrapper's element or selector
  * @param {Object} [options] - Canvas max width & height of css
  *  @param {number} [options.includeUI] - Use the provided UI
  *    @param {Object} [options.includeUI.loadImage] - Basic editing image

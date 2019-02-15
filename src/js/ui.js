@@ -32,7 +32,7 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 /**
  * Ui class
  * @class
- * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+ * @param {string|HTMLElement} element - Wrapper's element or selector
  * @param {Object} [options] - Ui setting options
  *   @param {number} option.loadImage - Init default load image
  *   @param {number} option.initMenu - Init start menu
@@ -219,10 +219,10 @@ class Ui {
     /**
      * Change delete button status
      * @param {Object} [options] - Ui setting options
-     *   @param {number} option.loadImage - Init default load image
-     *   @param {number} option.initMenu - Init start menu
-     *   @param {Boolean} [option.menuBarPosition=bottom] - Let
-     *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+     *   @param {object} [option.loadImage] - Init default load image
+     *   @param {string} [option.initMenu] - Init start menu
+     *   @param {string} [option.menuBarPosition=bottom] - Let
+     *   @param {boolean} [option.applyCropSelectionStyle=false] - Let
      * @returns {Object} initialize option
      * @private
      */
@@ -235,7 +235,7 @@ class Ui {
             locale: {},
             menuIconPath: '',
             menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
-            initMenu: false,
+            initMenu: '',
             uiSize: {
                 width: '100%',
                 height: '100%'
@@ -282,7 +282,7 @@ class Ui {
 
     /**
      * Make primary ui dom element
-     * @param {string|jQuery|HTMLElement} element - Wrapper's element or selector
+     * @param {string|HTMLElement} element - Wrapper's element or selector
      * @private
      */
     _makeUiElement(element) {
@@ -290,9 +290,7 @@ class Ui {
 
         window.snippet = snippet;
 
-        if (element.jquery) {
-            [selectedElement] = element;
-        } else if (element.nodeType) {
+        if (element.nodeType) {
             selectedElement = element;
         } else {
             selectedElement = document.querySelector(element);
@@ -529,9 +527,10 @@ class Ui {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
             this._els[this.options.initMenu].dispatchEvent(evt);
-            if (this.icon) {
-                this.icon.registDefaultIcon();
-            }
+        }
+
+        if (this.icon) {
+            this.icon.registDefaultIcon();
         }
     }
 

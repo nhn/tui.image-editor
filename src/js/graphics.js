@@ -42,7 +42,7 @@ const backstoreOnly = {
 /**
  * Graphics class
  * @class
- * @param {string|jQuery|HTMLElement} wrapper - Wrapper's element or selector
+ * @param {string|HTMLElement} wrapper - Wrapper's element or selector
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
@@ -768,16 +768,14 @@ class Graphics {
 
     /**
      * Set canvas element to fabric.Canvas
-     * @param {jQuery|Element|string} element - Wrapper or canvas element or selector
+     * @param {Element|string} element - Wrapper or canvas element or selector
      * @private
      */
     _setCanvasElement(element) {
         let selectedElement;
         let canvasElement;
 
-        if (element.jquery) {
-            [selectedElement] = element;
-        } else if (element.nodeType) {
+        if (element.nodeType) {
             selectedElement = element;
         } else {
             selectedElement = document.querySelector(element);

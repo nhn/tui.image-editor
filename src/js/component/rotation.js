@@ -37,7 +37,7 @@ class Rotation extends Component {
      *      See "http://fabricjs.com/docs/fabric.Object.html#setAngle"
      *
      * @param {number} angle - Angle value
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     setAngle(angle) {
         const oldAngle = this.getCurrentAngle() % 360; // The angle is lower than 2*PI(===360 degrees)
@@ -86,7 +86,7 @@ class Rotation extends Component {
     /**
      * Rotate the image
      * @param {number} additionalAngle - Additional angle
-     * @returns {jQuery.Deferred}
+     * @returns {Promise}
      */
     rotate(additionalAngle) {
         const current = this.getCurrentAngle();

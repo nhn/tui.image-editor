@@ -133,15 +133,54 @@ class Colorpicker {
             this.fire('change', value.color);
         });
         colorpickerElement.addEventListener('click', event => {
-            this._show = !this._show;
-            this.pickerControl.style.display = this._show ? 'block' : 'none';
-            this._setPickerControlPosition();
-            this.fire('changeShow', this);
+            const {target} = event;
+            const isInPickerControl = target && this._isElementInColorPickerControl(target);
+
+            if (!isInPickerControl || (isInPickerControl && this._isPaletteButton(target))) {
+                this._show = !this._show;
+                this.pickerControl.style.display = this._show ? 'block' : 'none';
+                this._setPickerControlPosition();
+                this.fire('changeShow', this);
+            }
             event.stopPropagation();
         });
         document.body.addEventListener('click', () => {
             this.hide();
         });
+    }
+
+    /**
+     * Check hex input or not
+     * @param {Element} target - Event target element
+     * @returns {boolean}
+     * @private
+     */
+    _isPaletteButton(target) {
+        return target.className === 'tui-colorpicker-palette-button';
+    }
+
+    /**
+     * Check given element is in pickerControl element
+     * @param {Element} element - element to check
+     * @returns {boolean}
+     * @private
+     */
+    _isElementInColorPickerControl(element) {
+        let parentNode = element;
+
+        while (parentNode !== document.body) {
+            if (!parentNode) {
+                break;
+            }
+
+            if (parentNode === this.pickerControl) {
+                return true;
+            }
+
+            parentNode = parentNode.parentNode;
+        }
+
+        return false;
     }
 
     hide() {
