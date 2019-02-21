@@ -37,6 +37,12 @@ module.exports = {
             'amd': 'tui-code-snippet',
             'root': ['tui', 'util']
         },
+        'tui-color-picker': {
+            'commonjs': 'tui-color-picker',
+            'commonjs2': 'tui-color-picker',
+            'amd': 'tui-color-picker',
+            'root': ['tui', 'colorPicker']
+        },
         'fabric/dist/fabric.require': {
             'commonjs': 'fabric/dist/fabric.require',
             'commonjs2': 'fabric/dist/fabric.require',
