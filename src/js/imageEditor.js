@@ -1086,9 +1086,6 @@ class ImageEditor {
          *      @param {Number} pos.clientPosition.y - y
          * @example
          * imageEditor.on('addText', function(pos) {
-         *     imageEditor.addText('Double Click', {
-         *         position: pos.originPosition
-         *     });
          *     console.log('text position on canvas: ' + pos.originPosition);
          *     console.log('text position on brwoser: ' + pos.clientPosition);
          * });

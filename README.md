@@ -6,6 +6,7 @@
 
 ## Wrappers
 - [toast-ui.vue-image-editor](https://github.com/nhnent/toast-ui.vue-image-editor): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+- [toast-ui.react-image-editor](https://github.com/nhnent/toast-ui.react-image-editor): React wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
 
 ![6 -20-2018 17-45-54](https://user-images.githubusercontent.com/35218826/41647896-7b218ae0-74b2-11e8-90db-d7805cc23e8c.gif)
 
@@ -45,7 +46,7 @@ TOAST UI ImageEditor applies Google Analytics (GA) to collect statistics on the 
 
 ```js
 var options = {
-    ...
+    //...
     usageStatistics: false
 }
 
