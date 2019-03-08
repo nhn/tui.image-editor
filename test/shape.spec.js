@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/line.js"
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Shape from '../src/js/component/shape';
@@ -215,8 +215,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('left');
-            expect(shapeObj.getOriginY()).toBe('top');
+            expect(shapeObj.originX).toBe('left');
+            expect(shapeObj.originY).toBe('top');
         });
 
         it('When the mouse direction is in 2th quadrant,' +
@@ -228,8 +228,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('right');
-            expect(shapeObj.getOriginY()).toBe('top');
+            expect(shapeObj.originX).toBe('right');
+            expect(shapeObj.originY).toBe('top');
         });
 
         it('When the mouse direction is in 3th quadrant,' +
@@ -241,8 +241,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('right');
-            expect(shapeObj.getOriginY()).toBe('bottom');
+            expect(shapeObj.originX).toBe('right');
+            expect(shapeObj.originY).toBe('bottom');
         });
 
         it('When the mouse direction is in 4th quadrant,' +
@@ -254,8 +254,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('left');
-            expect(shapeObj.getOriginY()).toBe('bottom');
+            expect(shapeObj.originX).toBe('left');
+            expect(shapeObj.originY).toBe('bottom');
         });
     });
 

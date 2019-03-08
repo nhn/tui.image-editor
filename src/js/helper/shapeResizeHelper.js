@@ -28,8 +28,7 @@ const DIMENSION_KEYS = {
  * @ignore
  */
 function setStartPoint(shape) {
-    const originX = shape.getOriginX();
-    const originY = shape.getOriginY();
+    const {originX, originY} = shape;
     const originKey = originX.substring(0, 1) + originY.substring(0, 1);
 
     shape.startPoint = shape.origins[originKey];
@@ -65,8 +64,8 @@ function getPositionsOfRotatedOrigin(origin, pointer, angle) {
  * @ignore
  */
 function hasCenterOrigin(shape) {
-    return (shape.getOriginX() === 'center' &&
-            shape.getOriginY() === 'center');
+    return (shape.originX === 'center' &&
+            shape.originY === 'center');
 }
 
 /**
@@ -77,12 +76,12 @@ function hasCenterOrigin(shape) {
  */
 function adjustOriginByStartPoint(pointer, shape) {
     const centerPoint = shape.getPointByOrigin('center', 'center');
-    const angle = -shape.getAngle();
+    const angle = -shape.angle;
     const originPositions = getPositionsOfRotatedOrigin(centerPoint, pointer, angle);
     const {originX, originY} = originPositions;
     const origin = shape.getPointByOrigin(originX, originY);
-    const left = shape.getLeft() - (centerPoint.x - origin.x);
-    const top = shape.getTop() - (centerPoint.x - origin.y);
+    const left = shape.left - (centerPoint.x - origin.x);
+    const top = shape.top - (centerPoint.x - origin.y);
 
     shape.set({
         originX,
@@ -102,7 +101,7 @@ function adjustOriginByStartPoint(pointer, shape) {
  */
 function adjustOriginByMovingPointer(pointer, shape) {
     const origin = shape.startPoint;
-    const angle = -shape.getAngle();
+    const angle = -shape.angle;
     const originPositions = getPositionsOfRotatedOrigin(origin, pointer, angle);
     const {originX, originY} = originPositions;
 
@@ -223,11 +222,10 @@ module.exports = {
      */
     adjustOriginToCenter(shape) {
         const centerPoint = shape.getPointByOrigin('center', 'center');
-        const originX = shape.getOriginX();
-        const originY = shape.getOriginY();
+        const {originX, originY} = shape;
         const origin = shape.getPointByOrigin(originX, originY);
-        const left = shape.getLeft() + (centerPoint.x - origin.x);
-        const top = shape.getTop() + (centerPoint.y - origin.y);
+        const left = shape.left + (centerPoint.x - origin.x);
+        const top = shape.top + (centerPoint.y - origin.y);
 
         shape.set({
             hasControls: true,

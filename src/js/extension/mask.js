@@ -2,15 +2,15 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Mask extending fabric.Image.filters.Mask
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 
 /**
  * Mask object
  * @class Mask
- * @extends {fabric.Image.filters.Mask}
+ * @extends {fabric.Image.filters.BlendImage}
  * @ignore
  */
-const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.prototype */{
+const Mask = fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends Mask.prototype */{
     /**
      * Apply filter to canvas element
      * @param {Object} canvasEl - Canvas element to apply filter
@@ -21,13 +21,14 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
             return;
         }
 
-        const {width, height} = canvasEl;
+        const canvas = canvasEl.targetCanvas;
+        const {width, height} = canvas;
         const maskCanvasEl = this._createCanvasOfMask(width, height);
-        const ctx = canvasEl.getContext('2d');
+        const ctx = canvas.getContext('2d');
         const maskCtx = maskCanvasEl.getContext('2d');
         const imageData = ctx.getImageData(0, 0, width, height);
 
-        this._drawMask(maskCtx, canvasEl, ctx);
+        this._drawMask(maskCtx, canvas, ctx);
         this._mapData(maskCtx, imageData, width, height);
 
         ctx.putImageData(imageData, 0, 0);
@@ -57,15 +58,12 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
     _drawMask(maskCtx) {
         const {mask} = this;
         const maskImg = mask.getElement();
-
-        const left = mask.getLeft();
-        const top = mask.getTop();
-        const angle = mask.getAngle();
+        const {angle, left, scaleX, scaleY, top} = mask;
 
         maskCtx.save();
         maskCtx.translate(left, top);
         maskCtx.rotate(angle * Math.PI / 180);
-        maskCtx.scale(mask.scaleX, mask.scaleY);
+        maskCtx.scale(scaleX, scaleY);
         maskCtx.drawImage(maskImg, -maskImg.width / 2, -maskImg.height / 2);
         maskCtx.restore();
     },
@@ -79,10 +77,11 @@ const Mask = fabric.util.createClass(fabric.Image.filters.Mask, /** @lends Mask.
      * @private
      */
     _mapData(maskCtx, imageData, width, height) {
-        const sourceData = imageData.data;
-        const maskData = maskCtx.getImageData(0, 0, width, height).data;
         const {channel} = this;
-        const len = imageData.width * imageData.height * 4;
+        const {data, height: imgHeight, width: imgWidth} = imageData;
+        const sourceData = data;
+        const len = imgWidth * imgHeight * 4;
+        const maskData = maskCtx.getImageData(0, 0, width, height).data;
 
         for (let i = 0; i < len; i += 4) {
             sourceData[i + 3] = maskData[i + channel]; // adjust value of alpha data

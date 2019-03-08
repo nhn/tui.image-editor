@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview ColorFilter extending fabric.Image.filters.BaseFilter
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 
 /**
  * ColorFilter object
