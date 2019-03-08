@@ -185,10 +185,28 @@ When using npm, be sure [Node.js](https://nodejs.org) is installed in the enviro
 
 #### npm
 
+#### 1. ImageEditor installation
 ```sh
 $ npm install --save tui-image-editor # Latest version
 $ npm install --save tui-image-editor@<version> # Specific version
 ```
+
+##### 2. `fabric.js` installation
+And you should add **postInstall** script to your `package.json`. 
+_This process will be removed when `fabric.js` updated to v2.7.0 and bundled with TOAST UI ImageEditor together._
+
+```js
+{
+    // ...
+    "scripts": {
+        // ...
+        "postInstall": "npm install --no-save --no-optional fabric@^1.6.7"
+    }
+    // ...
+}
+```
+
+Or you can add `fabric` as dependency. **But** there is [some steps](https://github.com/fabricjs/fabric.js#install-with-npm) to be installed well.
 
 #### bower
 
@@ -327,7 +345,7 @@ $ npm run serve
 * [Commit convention](https://github.com/nhnent/tui.image-editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🔩 Dependency
-* [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7
+* [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7 && < 2.0.0
 * [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
 * [tui.color-picker](https://github.com/nhnent/tui.color-picker/releases/tag/v2.2.0) >=2.2.0
 
