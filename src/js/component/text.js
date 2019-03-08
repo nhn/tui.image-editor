@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
  * @fileoverview Text module
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
@@ -626,8 +626,8 @@ class Text extends Component {
         this._textarea.value = obj.getText();
 
         this._editingObjInfos = {
-            left: this._editingObj.getLeft(),
-            top: this._editingObj.getTop(),
+            left: this._editingObj.left,
+            top: this._editingObj.top,
             width: this._editingObj.getWidth(),
             height: this._editingObj.getHeight()
         };
@@ -637,7 +637,7 @@ class Text extends Component {
         textareaStyle.top = `${obj.oCoords.tl.y / ratio}px`;
         textareaStyle.width = `${Math.ceil(obj.getWidth() / ratio)}px`;
         textareaStyle.height = `${Math.ceil(obj.getHeight() / ratio)}px`;
-        textareaStyle.transform = `rotate(${obj.getAngle()}deg)`;
+        textareaStyle.transform = `rotate(${obj.angle}deg)`;
         textareaStyle.color = obj.getFill();
 
         textareaStyle['font-size'] = `${obj.getFontSize() / ratio}px`;

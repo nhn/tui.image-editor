@@ -3,7 +3,7 @@
  * @fileoverview Image crop module (start cropping, end cropping)
  */
 import snippet from 'tui-code-snippet';
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
 import {keyCodes, componentNames} from '../consts';
@@ -277,8 +277,8 @@ class Cropper extends Component {
         }
 
         return {
-            left: cropzone.getLeft(),
-            top: cropzone.getTop(),
+            left: cropzone.left,
+            top: cropzone.top,
             width: cropzone.getWidth(),
             height: cropzone.getHeight()
         };

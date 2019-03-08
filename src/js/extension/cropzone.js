@@ -3,7 +3,7 @@
  * @fileoverview Cropzone extending fabric.Rect
  */
 import snippet from 'tui-code-snippet';
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import {clamp} from '../util';
 
 const CORNER_TYPE_TOP_LEFT = 'tl';
@@ -27,6 +27,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     /**
      * Constructor
      * @param {Object} options Options object
+     * @param {Object} extendsOptions object for extends "options" 
      * @override
      */
     initialize(options, extendsOptions) {
@@ -176,7 +177,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     /**
      * Calculate Inner Position
      * @param {Array} outer - outer position
-     * @param {number} size - interval for calcaulate
+     * @param {number} size - interval for calculate
      * @returns {Array} - inner position
      * @private
      */
@@ -197,13 +198,12 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _getCoordinates(ctx) {
-        const width = this.getWidth(),
-            height = this.getHeight(),
-            halfWidth = width / 2,
-            halfHeight = height / 2,
-            left = this.getLeft(),
-            top = this.getTop(),
-            canvasEl = ctx.canvas; // canvas element, not fabric object
+        const width = this.getWidth();
+        const height = this.getHeight();
+        const halfWidth = width / 2;
+        const halfHeight = height / 2;
+        const {left, top} = this;
+        const canvasEl = ctx.canvas; // canvas element, not fabric object
 
         return {
             x: snippet.map([
@@ -227,11 +227,12 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @param {string|CanvasGradient|CanvasPattern} strokeStyle - Stroke-style
      * @param {number} lineDashWidth - Dash width
      * @param {number} [lineDashOffset] - Dash offset
+     * @param {number} [lineWidth] - line width
      * @private
      */
     _strokeBorder(ctx, strokeStyle, {lineDashWidth, lineDashOffset, lineWidth}) {
-        const halfWidth = this.getWidth() / 2,
-            halfHeight = this.getHeight() / 2;
+        const halfWidth = this.getWidth() / 2;
+        const halfHeight = this.getHeight() / 2;
 
         ctx.save();
         ctx.strokeStyle = strokeStyle;
@@ -262,12 +263,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _onMoving() {
-        const left = this.getLeft(),
-            top = this.getTop(),
-            width = this.getWidth(),
-            height = this.getHeight(),
-            maxLeft = this.canvas.getWidth() - width,
-            maxTop = this.canvas.getHeight() - height;
+        const {left, top} = this;
+        const width = this.getWidth();
+        const height = this.getHeight();
+        const maxLeft = this.canvas.getWidth() - width;
+        const maxTop = this.canvas.getHeight() - height;
 
         this.setLeft(clamp(left, 0, maxLeft));
         this.setTop(clamp(top, 0, maxTop));
@@ -279,8 +279,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _onScaling(fEvent) {
-        const pointer = this.canvas.getPointer(fEvent.e),
-            settings = this._calcScalingSizeFromPointer(pointer);
+        const pointer = this.canvas.getPointer(fEvent.e);
+        const settings = this._calcScalingSizeFromPointer(pointer);
 
         // On scaling cropzone,
         // change real width and height and fix scaleFactor to 1
@@ -314,10 +314,10 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _calcTopLeftScalingSizeFromPointer(x, y) {
-        const bottom = this.getHeight() + this.top,
-            right = this.getWidth() + this.left,
-            top = clamp(y, 0, bottom - 1), // 0 <= top <= (bottom - 1)
-            left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
+        const bottom = this.getHeight() + this.top;
+        const right = this.getWidth() + this.left;
+        const top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
+        const left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
 
         // When scaling "Top-Left corner": It fixes right and bottom coordinates
         return {
