@@ -103,8 +103,8 @@ class Ui {
      * Change editor size
      * @param {Object} resizeInfo - ui & image size info
      *   @param {Object} resizeInfo.uiSize - image size dimension
-     *     @param {Number} resizeInfo.uiSize.width - ui width
-     *     @param {Number} resizeInfo.uiSize.height - ui height
+     *     @param {string} resizeInfo.uiSize.width - ui width
+     *     @param {string} resizeInfo.uiSize.height - ui height
      *   @param {Object} resizeInfo.imageSize - image size dimension
      *     @param {Number} resizeInfo.imageSize.oldWidth - old width
      *     @param {Number} resizeInfo.imageSize.oldHeight - old height
@@ -247,8 +247,8 @@ class Ui {
     /**
      * Set ui container size
      * @param {Object} uiSize - ui dimension
-     *   @param {number} width - width
-     *   @param {number} height - height
+     *   @param {string} uiSize.width - css width property
+     *   @param {string} uiSize.height - css height property 
      * @private
      */
     _setUiSize(uiSize = this.options.uiSize) {
