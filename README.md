@@ -305,6 +305,23 @@ var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
 });
 ```
 
+### TypeScript
+If you using TypeScript, You must `import module = require('module')` on importing.
+[`export =` and `import = require()`](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require)
+
+```typescript
+import ImageEditor = require('tui-image-editor');
+
+const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+    cssMaxWidth: 700,
+    cssMaxHeight: 500,
+    selectionStyle: {
+        cornerSize: 20,
+        rotatingPointOffset: 70
+    }
+});
+```
+
 See [details](https://nhnent.github.io/tui.image-editor/latest) for additional informations.
 
 ## 🔧 Development
