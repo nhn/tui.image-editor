@@ -42,12 +42,6 @@ module.exports = {
             'commonjs2': 'tui-color-picker',
             'amd': 'tui-color-picker',
             'root': ['tui', 'colorPicker']
-        },
-        'fabric': {
-            'commonjs': 'fabric',
-            'commonjs2': 'fabric',
-            'amd': 'fabric',
-            'root': ['fabric']
         }
     },
     module: {
