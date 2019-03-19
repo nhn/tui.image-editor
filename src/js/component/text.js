@@ -587,11 +587,12 @@ class Text extends Component {
      * @private
      */
     _onFabricMouseUp(fEvent) {
+        const {target} = fEvent;
         const newClickTime = (new Date()).getTime();
 
-        if (fEvent.isEditing) {
+        if (target.isEditing) {
             if (!this.useItext) {
-                this._changeToEditingMode(fEvent.target);
+                this._changeToEditingMode(target);
             }
             this.fire(events.TEXT_EDITING); // fire editing text event
         }
@@ -617,19 +618,21 @@ class Text extends Component {
     _changeToEditingMode(obj) {
         const ratio = this.getCanvasRatio();
         const textareaStyle = this._textarea.style;
+        const canvas = this.getCanvas();
 
         this.isPrevEditing = true;
 
-        this.getCanvas().remove(obj);
+        canvas.remove(obj);
+        canvas.discardSelection();
 
         this._editingObj = obj;
         this._textarea.value = obj.getText();
 
         this._editingObjInfos = {
-            left: this._editingObj.left,
-            top: this._editingObj.top,
-            width: this._editingObj.getWidth(),
-            height: this._editingObj.getHeight()
+            left: obj.left,
+            top: obj.top,
+            width: obj.getWidth(),
+            height: obj.getHeight()
         };
 
         textareaStyle.display = 'block';
