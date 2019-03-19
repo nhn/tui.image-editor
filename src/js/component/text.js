@@ -185,7 +185,7 @@ class Text extends Component {
                 }
             });
         } else {
-            canvas.deactivateAllWithDispatch();
+            canvas.discardActiveObject();
             this._removeTextarea();
         }
 

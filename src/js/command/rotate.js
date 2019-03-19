@@ -33,7 +33,7 @@ const command = {
         const rotationComp = graphics.getComponent(ROTATION);
         const {angle} = this.undoData;
 
-        return rotationComp.setAngle(angle);
+        return rotationComp.rotate(angle);
     }
 };
 
