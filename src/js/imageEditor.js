@@ -311,21 +311,21 @@ class ImageEditor {
      */
     /* eslint-disable complexity */
     _onKeyDown(e) {
+        const {ctrlKey, keyCode, metaKey} = e;
         const activeObject = this._graphics.getActiveObject();
         const activeObjectGroup = this._graphics.getActiveObjects();
-        const existRemoveObject = activeObject || activeObjectGroup;
+        const existRemoveObject = activeObject || activeObjectGroup.length;
+        const isModifierKey = (ctrlKey || metaKey);
 
-        if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Z) {
-            // There is no error message on shortcut when it's empty
-            this.undo()['catch'](() => {});
-        }
-
-        if ((e.ctrlKey || e.metaKey) && e.keyCode === keyCodes.Y) {
+        if (isModifierKey && (keyCode === keyCodes.Z || keyCode === keyCodes.Y)) {
             // There is no error message on shortcut when it's empty
             this.redo()['catch'](() => {});
         }
 
-        if (((e.keyCode === keyCodes.BACKSPACE || e.keyCode === keyCodes.DEL) && existRemoveObject)) {
+        const isDeleteKey = keyCode === keyCodes.BACKSPACE || keyCode === keyCodes.DEL;
+        const isEditing = activeObject && activeObject.isEditing;
+
+        if (!isEditing && isDeleteKey && existRemoveObject) {
             e.preventDefault();
             this.removeActiveObject();
         }
