@@ -757,9 +757,9 @@ class ImageEditor {
      * @param {number} angle - Additional angle to rotate image
      * @returns {Promise<RotateStatus, ErrorMsg>}
      * @example
-     * imageEditor.setAngle(10); // angle = 10
+     * imageEditor.rotate(10); // angle = 10
      * imageEditor.rotate(10); // angle = 20
-     * imageEidtor.setAngle(5); // angle = 5
+     * imageEidtor.rotate(5); // angle = 5
      * imageEidtor.rotate(-95); // angle = -90
      * imageEditor.rotate(10).then(status => {
      *     console.log('angle: ', status.angle);

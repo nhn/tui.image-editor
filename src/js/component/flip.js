@@ -75,7 +75,7 @@ class Flip extends Component {
         if (isChangingFlipY) {
             angle *= -1;
         }
-        canvasImage.setAngle(parseFloat(angle)).setCoords();// parseFloat for -0 to 0
+        canvasImage.rotate(parseFloat(angle)).setCoords();// parseFloat for -0 to 0
     }
 
     /**
