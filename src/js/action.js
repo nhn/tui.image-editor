@@ -274,7 +274,7 @@ export default {
                 this.ui.resizeEditor();
             },
             setAngle: angle => {
-                this.setAngle(angle);
+                this.rotate(angle);
                 this.ui.resizeEditor();
             }
         }, this._commonAction());
