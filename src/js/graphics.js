@@ -1012,7 +1012,6 @@ class Graphics {
      */
     discardSelection() {
         this._canvas.discardActiveObject();
-        this._canvas.discardActiveObject();
         this._canvas.renderAll();
     }
 
