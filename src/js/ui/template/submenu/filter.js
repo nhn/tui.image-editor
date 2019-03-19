@@ -48,10 +48,6 @@ export default ({locale}) => (`
                     </div>
                 </div>
                 <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
-                    <label>${locale.localize('Threshold')}</label>
-                    <div id="tie-removewhite-threshold-range"></div>
-                </div>
-                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
                     <label>${locale.localize('Distance')}</label>
                     <div id="tie-removewhite-distance-range"></div>
                 </div>
