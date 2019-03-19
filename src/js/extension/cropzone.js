@@ -65,7 +65,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         ctx.scale(originalScaleX, originalScaleY);
 
         // Render outer rect
-        this._fillOuterRect(ctx, 'rgba(0, 0, 0, 0.55)');
+        this._fillOuterRect(ctx, 'rgba(0, 0, 0, 0.5)');
 
         if (this.options.lineWidth) {
             this._fillInnerRect(ctx);
@@ -198,11 +198,9 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _getCoordinates(ctx) {
-        const width = this.getWidth();
-        const height = this.getHeight();
+        const {width, height, left, top} = this;
         const halfWidth = width / 2;
         const halfHeight = height / 2;
-        const {left, top} = this;
         const canvasEl = ctx.canvas; // canvas element, not fabric object
 
         return {
@@ -231,8 +229,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _strokeBorder(ctx, strokeStyle, {lineDashWidth, lineDashOffset, lineWidth}) {
-        const halfWidth = this.getWidth() / 2;
-        const halfHeight = this.getHeight() / 2;
+        const halfWidth = this.width / 2;
+        const halfHeight = this.height / 2;
 
         ctx.save();
         ctx.strokeStyle = strokeStyle;
@@ -263,14 +261,12 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _onMoving() {
-        const {left, top} = this;
-        const width = this.getWidth();
-        const height = this.getHeight();
+        const {height, width, left, top} = this;
         const maxLeft = this.canvas.getWidth() - width;
         const maxTop = this.canvas.getHeight() - height;
 
-        this.setLeft(clamp(left, 0, maxLeft));
-        this.setTop(clamp(top, 0, maxTop));
+        this.left = clamp(left, 0, maxLeft);
+        this.top = clamp(top, 0, maxTop);
     },
 
     /**
@@ -314,8 +310,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _calcTopLeftScalingSizeFromPointer(x, y) {
-        const bottom = this.getHeight() + this.top;
-        const right = this.getWidth() + this.left;
+        const bottom = this.height + this.top;
+        const right = this.width + this.left;
         const top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
         const left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
 

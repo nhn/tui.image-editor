@@ -97,8 +97,9 @@ class Cropper extends Component {
             lockScalingFlip: true,
             lockRotation: true
         }, this.graphics.cropSelectionStyle);
+        this._cropzone._render(canvas.getContext('2d'));
 
-        canvas.deactivateAll();
+        canvas.discardActiveObject();
         canvas.add(this._cropzone);
         canvas.on('mouse:down', this._listeners.mousedown);
         canvas.selection = false;
@@ -108,7 +109,7 @@ class Cropper extends Component {
         fabric.util.addListener(document, 'keyup', this._listeners.keyup);
     }
 
-    /**
+    /** 
      * End cropping
      */
     end() {
@@ -118,7 +119,7 @@ class Cropper extends Component {
         if (!cropzone) {
             return;
         }
-        cropzone.remove();
+        canvas.remove(cropzone);
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.off('mouse:down', this._listeners.mousedown);
@@ -168,7 +169,7 @@ class Cropper extends Component {
         const cropzone = this._cropzone;
 
         if (Math.abs(x - this._startX) + Math.abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
-            cropzone.remove();
+            canvas.remove(cropzone);
             cropzone.set(this._calcRectDimensionFromPoint(x, y));
 
             canvas.add(cropzone);
@@ -250,7 +251,7 @@ class Cropper extends Component {
         }
 
         if (containsCropzone) {
-            this._cropzone.remove();
+            canvas.remove(this._cropzone);
         }
 
         const imageData = {
@@ -292,9 +293,9 @@ class Cropper extends Component {
         const canvas = this.getCanvas();
         const cropzone = this._cropzone;
 
-        canvas.deactivateAll();
+        canvas.discardActiveObject();
         canvas.selection = false;
-        cropzone.remove();
+        canvas.remove(cropzone);
 
         cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
 
