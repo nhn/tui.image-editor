@@ -6,6 +6,7 @@
 
 ## Wrappers
 - [toast-ui.vue-image-editor](https://github.com/nhnent/toast-ui.vue-image-editor): Vue wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
+- [toast-ui.react-image-editor](https://github.com/nhnent/toast-ui.react-image-editor): React wrapper component is powered by [NHN Entertainment](https://github.com/nhnent).
 
 ![6 -20-2018 17-45-54](https://user-images.githubusercontent.com/35218826/41647896-7b218ae0-74b2-11e8-90db-d7805cc23e8c.gif)
 
@@ -45,7 +46,7 @@ TOAST UI ImageEditor applies Google Analytics (GA) to collect statistics on the 
 
 ```js
 var options = {
-    ...
+    //...
     usageStatistics: false
 }
 
@@ -184,10 +185,28 @@ When using npm, be sure [Node.js](https://nodejs.org) is installed in the enviro
 
 #### npm
 
+#### 1. ImageEditor installation
 ```sh
 $ npm install --save tui-image-editor # Latest version
 $ npm install --save tui-image-editor@<version> # Specific version
 ```
+
+##### 2. `fabric.js` installation
+And you should add **postInstall** script to your `package.json`. 
+_This process will be removed when `fabric.js` updated to v2.7.0 and bundled with TOAST UI ImageEditor together._
+
+```js
+{
+    // ...
+    "scripts": {
+        // ...
+        "postInstall": "npm install --no-save --no-optional fabric@^1.6.7"
+    }
+    // ...
+}
+```
+
+Or you can add `fabric` as dependency. **But** there is [some steps](https://github.com/fabricjs/fabric.js#install-with-npm) to be installed well.
 
 #### bower
 
@@ -286,6 +305,23 @@ var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
 });
 ```
 
+### TypeScript
+If you using TypeScript, You must `import module = require('module')` on importing.
+[`export =` and `import = require()`](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require)
+
+```typescript
+import ImageEditor = require('tui-image-editor');
+
+const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+    cssMaxWidth: 700,
+    cssMaxHeight: 500,
+    selectionStyle: {
+        cornerSize: 20,
+        rotatingPointOffset: 70
+    }
+});
+```
+
 See [details](https://nhnent.github.io/tui.image-editor/latest) for additional informations.
 
 ## 🔧 Development
@@ -326,7 +362,7 @@ $ npm run serve
 * [Commit convention](https://github.com/nhnent/tui.image-editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🔩 Dependency
-* [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7
+* [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7 && < 2.0.0
 * [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
 * [tui.color-picker](https://github.com/nhnent/tui.color-picker/releases/tag/v2.2.0) >=2.2.0
 

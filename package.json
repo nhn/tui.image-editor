@@ -1,7 +1,7 @@
 {
   "name": "tui-image-editor",
   "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
-  "version": "3.5.0",
+  "version": "3.5.2",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -69,7 +69,7 @@
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
     "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
     "tslint": "tslint index.d.ts",
-    "postinstall": "npm install --no-save --no-optional fabric@~1.6.7"
+    "postinstall": "npm install --no-save --no-optional fabric@^1.6.7"
   },
   "dependencies": {
     "core-js": "2.4.1",

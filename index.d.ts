@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.5.0
+// Type definitions for TOAST UI Image Editor v3.5.2
 // TypeScript Version: 3.2.2
 
 declare namespace tuiImageEditor {
@@ -270,7 +270,7 @@ declare namespace tuiImageEditor {
         public removeFilter(type?: string): Promise<IFilterResolveObject>;
         public removeObject(id: number): Promise<void>;
         public resetFlip(): Promise<IFlipXYResolveObject>;
-        public resizeCanvasDemension(dimension: ICanvasSize): Promise<void>;
+        public resizeCanvasDimension(dimension: ICanvasSize): Promise<void>;
         public rotate(angle: AngleType): Promise<AngleType>;
         public setAngle(angle: AngleType): Promise<AngleType>;
         public setBrush(option: IBrushOptions): void;
@@ -288,5 +288,5 @@ declare namespace tuiImageEditor {
 }
 
 declare module 'tui-image-editor' {
-    export default tuiImageEditor.ImageEditor;
+    export = tuiImageEditor.ImageEditor;
 }

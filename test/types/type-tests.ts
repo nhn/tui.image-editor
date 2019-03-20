@@ -1,4 +1,4 @@
-import ImageEditor from 'tui-image-editor';
+import ImageEditor = require('tui-image-editor');
 
 const blackTheme = {
     'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
@@ -230,7 +230,7 @@ imageEditor.resetFlip().then(status => {
     console.log(`angle : ${status.angle}`);
 });
 
-imageEditor.resizeCanvasDemension({
+imageEditor.resizeCanvasDimension({
     width: 300,
     height: 300
 });
