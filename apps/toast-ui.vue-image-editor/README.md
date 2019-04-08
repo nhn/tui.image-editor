@@ -7,7 +7,7 @@
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-image-editor.svg)](https://www.npmjs.com/package/@toast-ui/vue-image-editor)
 [![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-image-editor.svg)](https://github.com/nhnent/toast-ui.vue-image-editor/blob/master/LICENSE)
 [![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN Entertainment](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN%20Entertainment-ff1414.svg)](https://github.com/nhnent)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 * [Install](#-install)
@@ -245,4 +245,4 @@ For more information on PR's step, please see links of Contributing section.
 * [Commit convention](./docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN Ent.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhnent)
