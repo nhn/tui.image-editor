@@ -1,6 +1,6 @@
 /**
  * @fileoverview Test env
- * @author NHN Ent. FE Development Lab <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
  */
 
 import snippet from 'tui-code-snippet';

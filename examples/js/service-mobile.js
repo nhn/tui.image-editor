@@ -1,6 +1,6 @@
 /**
  * mobile.js
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview
  */
 /* eslint-disable vars-on-top */
