@@ -53,7 +53,7 @@ var options = {
 var imageEditor = new tui.ImageEditor('#tui-image-editor-container', options);
 ```
 
-Or, include [`tui-code-snippet`](https://github.com/nhnent/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
+Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
@@ -322,7 +322,7 @@ const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
 });
 ```
 
-See [details](https://nhnent.github.io/tui.image-editor/latest) for additional informations.
+See [details](https://nhn.github.io/tui.image-editor/latest) for additional informations.
 
 ## 🔧 Development
 
@@ -351,31 +351,31 @@ $ npm run serve
 ```
 
 ## 📙 Documents
-* **Tutorial** : [https://github.com/nhnent/tui.image-editor/tree/master/docs](https://github.com/nhnent/tui.image-editor/tree/master/docs)
-* **Example** : [http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html)
-* **API** : [http://nhnent.github.io/tui.image-editor/latest/](http://nhnent.github.io/tui.image-editor/latest/)
+* **Tutorial** : [https://github.com/nhn/tui.image-editor/tree/master/docs](https://github.com/nhnent/tui.image-editor/tree/master/docs)
+* **Example** : [http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html](http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html)
+* **API** : [http://nhn.github.io/tui.image-editor/latest/](http://nhn.github.io/tui.image-editor/latest/)
 
 ## 💬 Contributing
 * [Code of Conduct](CODE_OF_CONDUCT.md)
 * [Contributing guideline](CONTRIBUTING.md)
 * [Issue guideline](ISSUE_TEMPLATE.md)
-* [Commit convention](https://github.com/nhnent/tui.image-editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Commit convention](https://github.com/nhn/tui.image-editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🔩 Dependency
 * [fabric.js](https://github.com/kangax/fabric.js/releases/tag/v1.6.7) >=1.6.7 && < 2.0.0
-* [tui.code-snippet](https://github.com/nhnent/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
-* [tui.color-picker](https://github.com/nhnent/tui.color-picker/releases/tag/v2.2.0) >=2.2.0
+* [tui.code-snippet](https://github.com/nhn/tui.code-snippet/releases/tag/v1.2.5) >=1.3.0
+* [tui.color-picker](https://github.com/nhn/tui.color-picker/releases/tag/v2.2.0) >=2.2.0
 
 
 ## 🍞 TOAST UI Family
-* [TOAST UI Editor](https://github.com/nhnent/tui.editor)
-* [TOAST UI Grid](https://github.com/nhnent/tui.grid)
-* [TOAST UI Chart](https://github.com/nhnent/tui.chart)
-* [TOAST UI Calendar](https://github.com/nhnent/tui.calendar)
-* [TOAST UI Components](https://github.com/nhnent)
+* [TOAST UI Editor](https://github.com/nhn/tui.editor)
+* [TOAST UI Grid](https://github.com/nhn/tui.grid)
+* [TOAST UI Chart](https://github.com/nhn/tui.chart)
+* [TOAST UI Calendar](https://github.com/nhn/tui.calendar)
+* [TOAST UI Components](https://github.com/nhn)
 
 ## 🚀 Used By
 * [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com/home/)
 
 ## 📜 License
-[MIT LICENSE](https://github.com/nhnent/tui.image-editor/blob/master/LICENSE)
+[MIT LICENSE](https://github.com/nhn/tui.image-editor/blob/master/LICENSE)
