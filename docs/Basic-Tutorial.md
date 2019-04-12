@@ -147,5 +147,5 @@ Full inscriptions list who can be replaced to custom ones:
 ## More..
 
 See the API page and the sample page
-* API: http://nhnent.github.io/tui.image-editor/latest/
-* Sample: http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html
+* API: http://nhn.github.io/tui.image-editor/latest/
+* Sample: http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html
