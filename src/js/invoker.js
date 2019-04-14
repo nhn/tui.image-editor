@@ -1,5 +1,5 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Invoker - invoke commands
  */
 import snippet from 'tui-code-snippet';

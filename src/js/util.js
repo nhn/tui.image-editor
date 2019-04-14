@@ -1,5 +1,5 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+ * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Util
  */
 import {forEach, sendHostname} from 'tui-code-snippet';
