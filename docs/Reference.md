@@ -64,7 +64,7 @@ imageEditor.on('adjustObject', function(obj) {
 
 
 ## More
-- Get started (Tutorial) : [https://github.com/nhnent/tui.component.image-editor/wiki/Tutorial](https://github.com/nhnent/tui.component.image-editor/wiki/Tutorial)
-- API : [http://nhnent.github.io/tui.image-editor/latest/](http://nhnent.github.io/tui.image-editor/latest/)
-- Sample : [http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-basic.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-basic.html)
+- Get started (Tutorial) : [https://github.com/nhn/tui.component.image-editor/wiki/Tutorial](https://github.com/nhn/tui.component.image-editor/wiki/Tutorial)
+- API : [http://nhn.github.io/tui.image-editor/latest/](http://nhn.github.io/tui.image-editor/latest/)
+- Sample : [http://nhn.github.io/tui.image-editor/latest/tutorial-example01-basic.html](http://nhn.github.io/tui.image-editor/latest/tutorial-example01-basic.html)
 

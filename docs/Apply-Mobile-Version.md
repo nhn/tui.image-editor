@@ -3,7 +3,7 @@
 ## Image editor How to apply a mobile device
 
 - Some settings are required to use Image Editor components on mobile devices.
-- Please refer to the [sample page](http://nhnent.github.io/tui.image-editor/latest/tutorial-example03-mobile.html) first to check the UI configuration and operation.
+- Please refer to the [sample page](http://nhn.github.io/tui.image-editor/latest/tutorial-example03-mobile.html) first to check the UI configuration and operation.
  
 #### Step 1. Include the dependency file on the page. (PC version same)
 
@@ -50,15 +50,18 @@ var imageEditor = new tui.component.ImageEditor('.tui-image-editor canvas', {
   * If the corner size is small, it is difficult to resize and rotate, so set the selection style.
   * The selection style options are the same as those provided by `fabric.js` and can be set with the following option values: ([Reference](http://fabricjs.com/customization))
   
-  ```js
-  {
-      borderColor: 'red', // Selection line color
-      cornerColor: 'green', // Selection corner color
-      cornerSize: 6, // Selection corner size
-      rotatingPointOffset: 100 // Distance from selection area to rotation corner
-      transparentCorners: false, // Selection corner Transparency
-  }
-  ```
+```js
+var options = {
+    //...
+    selectionStyle: {
+        borderColor: 'red', // Selection line color
+        cornerColor: 'green', // Selection corner color
+        cornerSize: 6, // Selection corner size
+        rotatingPointOffset: 100, // Distance from selection area to rotation corner
+        transparentCorners: false // Selection corner Transparency
+    }
+};
+```
 ![2016-08-18 4 52 29](https://cloud.githubusercontent.com/assets/18183560/17766120/86f7c3fc-6564-11e6-86d7-554e8e946843.png)
 
 
@@ -74,8 +77,8 @@ It is recommended to customize image, CSS, and markup files when applying the se
 
 #### Step 6. Apply the image editor API to the UI
 
-- API : [http://nhnent.github.io/tui.image-editor/latest/](http://nhnent.github.io/tui.image-editor/latest/)
-- Sample Page : [http://nhnent.github.io/tui.image-editor/latest/tutorial-example03-mobile.html](http://nhnent.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html)
+- API : [http://nhn.github.io/tui.image-editor/latest/](http://nhn.github.io/tui.image-editor/latest/)
+- Sample Page : [http://nhn.github.io/tui.image-editor/latest/tutorial-example03-mobile.html](http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi.html)
 
 ![all_feature_small](https://cloud.githubusercontent.com/assets/18183560/17803706/034ea17c-6633-11e6-914d-6602d12888f9.gif)
 ![text_feature_small](https://cloud.githubusercontent.com/assets/18183560/17803707/03530636-6633-11e6-8c03-cd5523716b9b.gif)
