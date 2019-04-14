@@ -66,8 +66,8 @@
     "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
     "bundle:svg": "node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
-    "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
-    "doc": "jsdoc -c jsdoc.conf.json && npm run cpy-dist2doc",
+    "doc:dev": "tuidoc --dev",
+    "doc": "tuidoc",
     "tslint": "tslint index.d.ts",
     "postinstall": "npm install --no-save --no-optional fabric@^1.6.7"
   },
