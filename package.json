@@ -20,6 +20,7 @@
     "fabric"
   ],
   "devDependencies": {
+    "acorn": "^6.0.0",
     "babel-core": "^6.18.2",
     "babel-eslint": "^7.1.0",
     "babel-loader": "^6.2.7",
@@ -48,6 +49,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-webdriver-launcher": "git+https://github.com/nhn/karma-webdriver-launcher.git#v1.1.0",
     "karma-webpack": "^1.8.0",
+    "mini-css-extract-plugin": "^0.5.0",
     "mkdirp": "^0.5.1",
     "safe-umd-webpack-plugin": "0.0.2",
     "simulant": "^0.2.2",
