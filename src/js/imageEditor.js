@@ -156,38 +156,40 @@ class ImageEditor {
     /**
      * Image filter result
      * @typedef {Object} FilterResult
-     * @property {string} type - filter type like 'mask', 'Grayscale' and so on
-     * @property {string} action - action type like 'add', 'remove'
+     * @property {string} type - Filter type like 'mask', 'Grayscale' and so on
+     * @property {string} action - Action type like 'add', 'remove'
      */
 
     /**
      * Flip status
      * @typedef {Object} FlipStatus
-     * @property {boolean} flipX - x axis
-     * @property {boolean} flipY - y axis
-     * @property {Number} angle - angle
+     * @property {boolean} flipX - X axis
+     * @property {boolean} flipY - Y axis
+     * @property {Number} angle - Angle
      */
     /**
      * Rotation status
      * @typedef {Number} RotateStatus
-     * @property {Number} angle - angle
+     * @property {Number} angle - Angle
      */
 
     /**
      * Old and new Size
      * @typedef {Object} SizeChange
-     * @property {Number} oldWidth - old width
-     * @property {Number} oldHeight - old height
-     * @property {Number} newWidth - new width
-     * @property {Number} newHeight - new height
+     * @property {Number} oldWidth - Old width
+     * @property {Number} oldHeight - Old height
+     * @property {Number} newWidth - New width
+     * @property {Number} newHeight - New height
      */
 
     /**
-     * @typedef {string} ErrorMsg - {string} error message
+     * Error message is {String} type
+     * @typedef {String} ErrorMsg
      */
 
     /**
-     * @typedef {Object} ObjectProps - graphics object properties
+     * Graphics object properties
+     * @typedef {Object} ObjectProps
      * @property {number} id - object id
      * @property {string} type - object type
      * @property {string} text - text content

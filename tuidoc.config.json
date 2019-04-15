@@ -27,8 +27,8 @@
     "examples": {
         "filePath": "examples",
         "titles": {
-            "example01-includeUi": "1. Include ui",
-            "example02-useApiDirect": "2. Use api direct (basic)",
+            "example01-includeUi": "1. Include UI",
+            "example02-useApiDirect": "2. Use API direct (basic)",
             "example03-mobile": "3. Mobile"
         }
     },

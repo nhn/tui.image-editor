@@ -30,18 +30,20 @@ const SUB_UI_COMPONENT = {
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 
 /**
- * Ui class
+ * Default UI Class
  * @class
- * @param {string|HTMLElement} element - Wrapper's element or selector
- * @param {Object} [options] - Ui setting options
- *   @param {number} option.loadImage - Init default load image
- *   @param {number} option.initMenu - Init start menu
- *   @param {Boolean} [option.menuBarPosition=bottom] - Let
- *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
- *   @param {Object} [options.uiSize] - ui size of editor
- *     @param {string} options.uiSize.width - width of ui
- *     @param {string} options.uiSize.height - height of ui
- * @param {Objecdt} actions - ui action instance
+ * @param {String|HTMLElement} element - Wrapper's element or selector
+ * @param {Object} [options] - UI setting options
+ *   @param {Boolean} [options.applyCropSelectionStyle=false] - Whether apply crop selection style or not
+ *   @param {String} options.initMenu - Menu name for initial selection
+ *   @param {String} [options.menuBarPosition="bottom"] - Menu bar's position ['bottom', 'top', 'left', 'right']
+ *   @param {Object} options.loadImage - Initial default load image
+ *     @param {String} options.loadImage.path - Image's URL path
+ *     @param {String} options.loadImage.name - Image name
+ *   @param {Object} options.uiSize - UI dimension of editor
+ *     @param {String} options.uiSize.width - Width
+ *     @param {String} options.uiSize.height - Height
+ * @param {Object} actions - UI action instance
  */
 class Ui {
     constructor(element, options, actions) {
@@ -117,7 +119,7 @@ class Ui {
      *     uiSize: {width: 1000, height: 1000}
      * });
      * @example
-     * // Apply the ui state while preserving the previous attribute (for example, if responsive Ui)
+     * // Apply the ui state while preserving the previous attribute (for example, if responsive UI)
      * imageEditor.ui.resizeEditor();
      */
     resizeEditor({uiSize, imageSize = this.imageSize} = {}) {
@@ -219,10 +221,10 @@ class Ui {
     /**
      * Change delete button status
      * @param {Object} [options] - Ui setting options
-     *   @param {object} [option.loadImage] - Init default load image
-     *   @param {string} [option.initMenu] - Init start menu
-     *   @param {string} [option.menuBarPosition=bottom] - Let
-     *   @param {boolean} [option.applyCropSelectionStyle=false] - Let
+     *   @param {object} [options.loadImage] - Init default load image
+     *   @param {string} [options.initMenu] - Init start menu
+     *   @param {string} [options.menuBarPosition=bottom] - Let
+     *   @param {boolean} [options.applyCropSelectionStyle=false] - Let
      * @returns {Object} initialize option
      * @private
      */
@@ -247,8 +249,8 @@ class Ui {
     /**
      * Set ui container size
      * @param {Object} uiSize - ui dimension
-     *   @param {number} width - width
-     *   @param {number} height - height
+     *   @param {number} uiSize.width - width
+     *   @param {number} uiSize.height - height
      * @private
      */
     _setUiSize(uiSize = this.options.uiSize) {
