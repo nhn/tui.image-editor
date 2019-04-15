@@ -353,7 +353,7 @@ $ npm run serve
 ## 📙 Documents
 * **Tutorial** : [https://github.com/nhn/tui.image-editor/tree/master/docs](https://github.com/nhn/tui.image-editor/tree/master/docs)
 * **Example** : [http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi](http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi)
-* **API** : [http://nhn.github.io/tui.image-editor/latest/](http://nhn.github.io/tui.image-editor/latest/)
+* **API** : [http://nhn.github.io/tui.image-editor/latest](http://nhn.github.io/tui.image-editor/latest/index)
 
 ## 💬 Contributing
 * [Code of Conduct](CODE_OF_CONDUCT.md)
