@@ -149,8 +149,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _fillInnerRect(ctx) {
         const {x: outerX, y: outerY} = this._getCoordinates(ctx);
-        const x = this._caculateInnerPosition(outerX, (outerX[2] - outerX[1]) / 3);
-        const y = this._caculateInnerPosition(outerY, (outerY[2] - outerY[1]) / 3);
+        const x = this._calculateInnerPosition(outerX, (outerX[2] - outerX[1]) / 3);
+        const y = this._calculateInnerPosition(outerY, (outerY[2] - outerY[1]) / 3);
 
         ctx.save();
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
@@ -181,7 +181,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @returns {Array} - inner position
      * @private
      */
-    _caculateInnerPosition(outer, size) {
+    _calculateInnerPosition(outer, size) {
         const position = [];
         position[0] = outer[1];
         position[1] = outer[1] + size;

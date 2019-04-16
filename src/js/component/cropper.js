@@ -185,8 +185,8 @@ class Cropper extends Component {
      */
     _calcRectDimensionFromPoint(x, y) {
         const canvas = this.getCanvas();
-        const canvasWidth = canvas.getWidth();
-        const canvasHeight = canvas.getHeight();
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
         const startX = this._startX;
         const startY = this._startY;
         let left = clamp(x, 0, startX);
@@ -280,8 +280,8 @@ class Cropper extends Component {
         return {
             left: cropzone.left,
             top: cropzone.top,
-            width: cropzone.getWidth(),
-            height: cropzone.getHeight()
+            width: cropzone.width,
+            height: cropzone.height
         };
     }
 
@@ -315,8 +315,8 @@ class Cropper extends Component {
      */
     _getPresetCropSizePosition(presetRatio) {
         const canvas = this.getCanvas();
-        const originalWidth = canvas.getWidth();
-        const originalHeight = canvas.getHeight();
+        const originalWidth = canvas.width;
+        const originalHeight = canvas.height;
 
         const standardSize = (originalWidth >= originalHeight) ? originalWidth : originalHeight;
         const getScale = (value, orignalValue) => (value > orignalValue) ? orignalValue / value : 1;
