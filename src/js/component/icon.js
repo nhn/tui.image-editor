@@ -130,7 +130,7 @@ class Icon extends Component {
         this._oColor = color;
 
         if (obj && obj.get('type') === 'icon') {
-            obj.setFill(this._oColor);
+            obj.set({fill: this._oColor});
             this.getCanvas().renderAll();
         }
     }
