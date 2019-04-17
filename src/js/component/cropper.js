@@ -83,9 +83,9 @@ class Cropper extends Component {
             obj.evented = false;
         });
 
-        this._cropzone = new Cropzone({
-            left: -10,
-            top: -10,
+        this._cropzone = new Cropzone(canvas, {
+            left: 0,
+            top: 0,
             width: 1,
             height: 1,
             strokeWidth: 0, // {@link https://github.com/kangax/fabric.js/issues/2860}
@@ -97,7 +97,6 @@ class Cropper extends Component {
             lockScalingFlip: true,
             lockRotation: true
         }, this.graphics.cropSelectionStyle);
-        this._cropzone._render(canvas.getContext('2d'));
 
         canvas.discardActiveObject();
         canvas.add(this._cropzone);
@@ -119,7 +118,7 @@ class Cropper extends Component {
         if (!cropzone) {
             return;
         }
-        canvas.remove(cropzone);
+        cropzone.remove();
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.off('mouse:down', this._listeners.mousedown);
@@ -141,7 +140,7 @@ class Cropper extends Component {
     _onFabricMouseDown(fEvent) {
         const canvas = this.getCanvas();
 
-        if (fEvent.target) {
+        if (!fEvent.target || fEvent.target.isCropzoneInner) {
             return;
         }
 
@@ -169,7 +168,7 @@ class Cropper extends Component {
         const cropzone = this._cropzone;
 
         if (Math.abs(x - this._startX) + Math.abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
-            canvas.remove(cropzone);
+            cropzone.remove();
             cropzone.set(this._calcRectDimensionFromPoint(x, y));
 
             canvas.add(cropzone);
@@ -295,7 +294,7 @@ class Cropper extends Component {
 
         canvas.discardActiveObject();
         canvas.selection = false;
-        canvas.remove(cropzone);
+        cropzone.remove();
 
         cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
 

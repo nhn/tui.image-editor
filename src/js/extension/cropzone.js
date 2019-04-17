@@ -26,17 +26,21 @@ const CORNER_TYPE_BOTTOM_RIGHT = 'br';
 const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
     /**
      * Constructor
+     * @param {Object} canvas Options object
      * @param {Object} options Options object
      * @param {Object} extendsOptions object for extends "options" 
      * @override
      */
-    initialize(options, extendsOptions) {
+    initialize(canvas, options, extendsOptions) {
         options = snippet.extend(options, extendsOptions);
         options.type = 'cropzone';
 
         this.callSuper('initialize', options);
-
+        this.canvas = canvas;
         this.options = options;
+        this.outerRectPath = null;
+        this.innerRectPath = null;
+        this.borderPaths = [];
 
         this.on({
             'moving': this._onMoving,
@@ -47,13 +51,19 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     /**
      * Render Crop-zone
      * @param {CanvasRenderingContext2D} ctx - Context
+     * @param {boolean} isFirstRender - is first render
      * @private
      * @override
      */
-    _render(ctx) {
+    _render(ctx, isFirstRender) {
         const cropzoneDashLineWidth = 7;
         const cropzoneDashLineOffset = 7;
-        this.callSuper('_render', ctx);
+
+        if (!isFirstRender) {
+            this.callSuper('_render', ctx);
+        }
+
+        this.isCropzoneInner = true;
 
         // Calc original scale
         const originalFlipX = this.flipX ? -1 : 1;
@@ -65,21 +75,21 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         ctx.scale(originalScaleX, originalScaleY);
 
         // Render outer rect
-        this._fillOuterRect(ctx, 'rgba(0, 0, 0, 0.5)');
+        this._fillOuterRect('rgba(0, 0, 0, 0.5)');
 
         if (this.options.lineWidth) {
-            this._fillInnerRect(ctx);
-            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+            this._fillInnerRect();
+            this._strokeBorder('rgb(255, 255, 255)', {
                 lineWidth: this.options.lineWidth
             });
         } else {
             // Black dash line
-            this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
+            this._strokeBorder('rgb(0, 0, 0)', {
                 lineDashWidth: cropzoneDashLineWidth
             });
 
             // White dash line
-            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+            this._strokeBorder('rgb(255, 255, 255)', {
                 lineDashWidth: cropzoneDashLineWidth,
                 lineDashOffset: cropzoneDashLineOffset
             });
@@ -110,68 +120,74 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
     /**
      * Fill outer rectangle
-     * @param {CanvasRenderingContext2D} ctx - Context
      * @param {string|CanvasGradient|CanvasPattern} fillStyle - Fill-style
      * @private
      */
-    _fillOuterRect(ctx, fillStyle) {
-        const {x, y} = this._getCoordinates(ctx);
+    _fillOuterRect(fillStyle) {
+        const {x, y} = this._getCoordinates();
 
-        ctx.save();
-        ctx.fillStyle = fillStyle;
-        ctx.beginPath();
+        const pathStr = [
+            // Outer rect
+            `M${x[0] - 1},${y[0] - 1}`,
+            `L${x[3] + 1},${y[0] - 1}`,
+            `L${x[3] + 1},${y[3] + 1}`,
+            `L${x[0] - 1},${y[3] + 1}`,
+            `L${x[0] - 1},${y[0] - 1}`,
+            'Z',
 
-        // Outer rectangle
-        // Numbers are +/-1 so that overlay edges don't get blurry.
-        ctx.moveTo(x[0] - 1, y[0] - 1);
-        ctx.lineTo(x[3] + 1, y[0] - 1);
-        ctx.lineTo(x[3] + 1, y[3] + 1);
-        ctx.lineTo(x[0] - 1, y[3] + 1);
-        ctx.lineTo(x[0] - 1, y[0] - 1);
-        ctx.closePath();
+            // Inner rect
+            `M${x[1]},${y[1]}`,
+            `L${x[1]},${y[2]}`,
+            `L${x[2]},${y[2]}`,
+            `L${x[2]},${y[1]}`,
+            `L${x[1]},${y[1]}`,
+            'Z'
+        ].join('');
 
-        // Inner rectangle
-        ctx.moveTo(x[1], y[1]);
-        ctx.lineTo(x[1], y[2]);
-        ctx.lineTo(x[2], y[2]);
-        ctx.lineTo(x[2], y[1]);
-        ctx.lineTo(x[1], y[1]);
-        ctx.closePath();
+        const outerRectPath = new fabric.Path(pathStr);
 
-        ctx.fill();
-        ctx.restore();
+        console.log('------------');
+        console.log(x[0], y[0]);
+        console.log(x[1], y[1]);
+        console.log(x[2], y[2]);
+        console.log(x[3], y[3]);
+        console.log('============');
+        console.log(this.width, this.height);
+
+        outerRectPath.fill = fillStyle;
+        outerRectPath.selectable = false;
+
+        this.canvas.add(outerRectPath);
+        this.outerRectPath = outerRectPath;
     },
 
     /**
      * Draw Inner grid line
-     * @param {CanvasRenderingContext2D} ctx - Context
      * @private
      */
-    _fillInnerRect(ctx) {
-        const {x: outerX, y: outerY} = this._getCoordinates(ctx);
+    _fillInnerRect() {
+        const {x: outerX, y: outerY} = this._getCoordinates();
         const x = this._calculateInnerPosition(outerX, (outerX[2] - outerX[1]) / 3);
         const y = this._calculateInnerPosition(outerY, (outerY[2] - outerY[1]) / 3);
 
-        ctx.save();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
-        ctx.lineWidth = this.options.lineWidth;
-        ctx.beginPath();
+        const innerRectPath = new fabric.Path([
+            `M${x[0]},${y[1]}`,
+            `L${x[3]},${y[1]}`,
+            `M${x[0]},${y[2]}`,
+            `L${x[3]},${y[2]}`,
+            `M${x[1]},${y[0]}`,
+            `L${x[1]},${y[3]}`,
+            `M${x[2]},${y[0]}`,
+            `L${x[2]},${y[3]}`
+        ].join(''));
+        innerRectPath.stroke = 'rgba(255, 255, 255, 0.7)';
+        innerRectPath.strokeWidth = this.options.lineWidth;
+        innerRectPath.fill = 'rgba(0,0,0,0)';
+        innerRectPath.selectable = false;
 
-        ctx.moveTo(x[0], y[1]);
-        ctx.lineTo(x[3], y[1]);
+        this.innerRectPath = innerRectPath;
 
-        ctx.moveTo(x[0], y[2]);
-        ctx.lineTo(x[3], y[2]);
-
-        ctx.moveTo(x[1], y[0]);
-        ctx.lineTo(x[1], y[3]);
-
-        ctx.moveTo(x[2], y[0]);
-        ctx.lineTo(x[2], y[3]);
-        ctx.stroke();
-        ctx.closePath();
-
-        ctx.restore();
+        this.canvas.add(innerRectPath);
     },
 
     /**
@@ -193,67 +209,68 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
     /**
      * Get coordinates
-     * @param {CanvasRenderingContext2D} ctx - Context
      * @returns {cropzoneCoordinates} - {@link cropzoneCoordinates}
      * @private
      */
-    _getCoordinates(ctx) {
+    _getCoordinates() {
         const {width, height, left, top} = this;
-        const halfWidth = width / 2;
-        const halfHeight = height / 2;
-        const canvasEl = ctx.canvas; // canvas element, not fabric object
+        const canvasEl = this.canvas; // canvas element, not fabric object
+
+        const x = snippet.map([
+            0, // x0
+            left, // x1
+            left + width, // x2
+            canvasEl.width// x3
+        ], Math.ceil);
+        const y = snippet.map([
+            0, // y0
+            top, // y1
+            top + height, // y2
+            canvasEl.height// y3
+        ], Math.ceil);
 
         return {
-            x: snippet.map([
-                -(halfWidth + left), // x0
-                -(halfWidth), // x1
-                halfWidth, // x2
-                halfWidth + (canvasEl.width - left - width) // x3
-            ], Math.ceil),
-            y: snippet.map([
-                -(halfHeight + top), // y0
-                -(halfHeight), // y1
-                halfHeight, // y2
-                halfHeight + (canvasEl.height - top - height) // y3
-            ], Math.ceil)
+            x,
+            y
         };
     },
 
     /**
      * Stroke border
-     * @param {CanvasRenderingContext2D} ctx - Context
      * @param {string|CanvasGradient|CanvasPattern} strokeStyle - Stroke-style
      * @param {number} lineDashWidth - Dash width
      * @param {number} [lineDashOffset] - Dash offset
      * @param {number} [lineWidth] - line width
      * @private
      */
-    _strokeBorder(ctx, strokeStyle, {lineDashWidth, lineDashOffset, lineWidth}) {
-        const halfWidth = this.width / 2;
-        const halfHeight = this.height / 2;
+    _strokeBorder(strokeStyle, {lineDashWidth, lineDashOffset, lineWidth}) {
+        const {x, y} = this._getCoordinates();
 
-        ctx.save();
-        ctx.strokeStyle = strokeStyle;
+        const borderPath = new fabric.Path([
+            `M${x[1]},${y[1]}`,
+            `L${x[2]},${y[1]}`,
+            `L${x[2]},${y[2]}`,
+            `L${x[1]},${y[2]}`,
+            `L${x[1]},${y[1]}`,
+            'Z'
+        ].join(''));
 
-        if (ctx.setLineDash) {
-            ctx.setLineDash([lineDashWidth, lineDashWidth]);
-        }
+        borderPath.stroke = strokeStyle;
+
         if (lineDashOffset) {
-            ctx.lineDashOffset = lineDashOffset;
+            borderPath.strokeDashOffset = lineDashOffset;
         }
         if (lineWidth) {
-            ctx.lineWidth = lineWidth;
+            borderPath.strokeWidth = lineWidth;
         }
 
-        ctx.beginPath();
-        ctx.moveTo(-halfWidth, -halfHeight);
-        ctx.lineTo(halfWidth, -halfHeight);
-        ctx.lineTo(halfWidth, halfHeight);
-        ctx.lineTo(-halfWidth, halfHeight);
-        ctx.lineTo(-halfWidth, -halfHeight);
-        ctx.stroke();
+        borderPath.borderDashArray = [lineDashWidth, lineDashWidth];
+        borderPath.selectable = false;
+        borderPath.fill = 'rgba(0,0,0,0)';
 
-        ctx.restore();
+        this.borderPaths.push(borderPath);
+
+        this.canvas.add(borderPath);
     },
 
     /**
@@ -420,6 +437,12 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             this.width > 0 &&
             this.height > 0
         );
+    },
+
+    remove() {
+        this.canvas.remove(this.outerRectPath);
+        this.canvas.remove(this.innerRectPath);
+        this.borderPaths.forEach(path => this.canvas.remove(path));
     }
 });
 
