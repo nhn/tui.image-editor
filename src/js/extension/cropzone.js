@@ -146,14 +146,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         const outerRectPath = new fabric.Path(pathStr);
 
-        console.log('------------');
-        console.log(x[0], y[0]);
-        console.log(x[1], y[1]);
-        console.log(x[2], y[2]);
-        console.log(x[3], y[3]);
-        console.log('============');
-        console.log(this.width, this.height);
-
         outerRectPath.fill = fillStyle;
         outerRectPath.selectable = false;
 
