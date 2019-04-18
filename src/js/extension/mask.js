@@ -13,15 +13,15 @@ import {fabric} from 'fabric';
 const Mask = fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends Mask.prototype */{
     /**
      * Apply filter to canvas element
-     * @param {Object} canvasEl - Canvas element to apply filter
+     * @param {Object} pipelineState - Canvas element to apply filter
      * @override
      */
-    applyTo(canvasEl) {
+    applyTo(pipelineState) {
         if (!this.mask) {
             return;
         }
 
-        const canvas = canvasEl.targetCanvas;
+        const canvas = pipelineState.canvasEl;
         const {width, height} = canvas;
         const maskCanvasEl = this._createCanvasOfMask(width, height);
         const ctx = canvas.getContext('2d');
@@ -31,7 +31,7 @@ const Mask = fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends
         this._drawMask(maskCtx, canvas, ctx);
         this._mapData(maskCtx, imageData, width, height);
 
-        ctx.putImageData(imageData, 0, 0);
+        pipelineState.imageData = imageData;
     },
 
     /**
@@ -77,14 +77,13 @@ const Mask = fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends
      * @private
      */
     _mapData(maskCtx, imageData, width, height) {
-        const {channel} = this;
         const {data, height: imgHeight, width: imgWidth} = imageData;
         const sourceData = data;
         const len = imgWidth * imgHeight * 4;
         const maskData = maskCtx.getImageData(0, 0, width, height).data;
 
         for (let i = 0; i < len; i += 4) {
-            sourceData[i + 3] = maskData[i + channel]; // adjust value of alpha data
+            sourceData[i + 3] = maskData[i]; // adjust value of alpha data
         }
     }
 });
