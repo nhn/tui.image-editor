@@ -151,6 +151,7 @@ class ImageEditor {
             this.ui.initCanvas();
             this.setReAction();
         }
+        fabric.enableGLFiltering = false;
     }
 
     /**
