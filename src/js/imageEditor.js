@@ -226,7 +226,7 @@ class ImageEditor {
 
         if (applyGroupSelectionStyle) {
             this.on('selectionCreated', eventTarget => {
-                if (eventTarget.type === 'group') {
+                if (eventTarget.type === 'activeSelection') {
                     eventTarget.set(selectionStyle);
                 }
             });
