@@ -1,7 +1,7 @@
 /*!
  * tui-image-editor.js
- * @version 3.5.2
- * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
+ * @version 3.5.3
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
@@ -588,7 +588,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Image-editor application class
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
@@ -3838,7 +3838,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Invoker - invoke commands
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
@@ -4220,7 +4220,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 */
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Command factory
 	 */
 	function create(name) {
@@ -4260,7 +4260,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Command interface
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
@@ -4406,7 +4406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Error-message factory
 	 */
 	var types = (0, _util.keyMirror)('UN_IMPLEMENTATION', 'NO_COMPONENT_NAME');
@@ -4448,7 +4448,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var min = Math.min,
 	    max = Math.max; /**
-	                     * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                     * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                     * @fileoverview Util
 	                     */
 
@@ -4872,7 +4872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	}; /**
-	    * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	    * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	    * @fileoverview Constants
 	    */
 
@@ -5941,7 +5941,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	/**
 	 * @fileoverview The standard theme
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 */
 
 	/**
@@ -10649,7 +10649,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview Graphics module
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
@@ -12078,7 +12078,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image loader
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -12194,7 +12194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Component interface
 	 */
 
@@ -12403,7 +12403,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image crop module (start cropping, end cropping)
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -12846,7 +12846,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var CORNER_TYPE_TOP_LEFT = 'tl'; /**
-	                                  * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                  * @fileoverview Cropzone extending fabric.Rect
 	                                  */
 
@@ -13323,7 +13323,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image flip module
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -13532,7 +13532,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Image rotation module
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -13675,7 +13675,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Free drawing module, Set brush
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -13788,7 +13788,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Free drawing module, Set brush
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -14024,7 +14024,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Text module
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -14806,7 +14806,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Add icon module
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -15046,7 +15046,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Add filter module
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -15419,7 +15419,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	}); /**
-	     * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	     * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	     * @fileoverview Mask extending fabric.Image.filters.Mask
 	     */
 
@@ -15461,7 +15461,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.matrix = matrix;
 	  }
 	}); /**
-	     * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	     * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	     * @fileoverview Blur extending fabric.Image.filters.Convolute
 	     */
 
@@ -15503,7 +15503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.matrix = matrix;
 	  }
 	}); /**
-	     * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	     * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	     * @fileoverview Sharpen extending fabric.Image.filters.Convolute
 	     */
 
@@ -15545,7 +15545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this.matrix = matrix;
 	  }
 	}); /**
-	     * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	     * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	     * @fileoverview Emboss extending fabric.Image.filters.Convolute
 	     */
 
@@ -15663,7 +15663,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return color;
 	    }
 	}); /**
-	     * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	     * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	     * @fileoverview ColorFilter extending fabric.Image.filters.BaseFilter
 	     */
 
@@ -15707,7 +15707,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview Shape component
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -16196,7 +16196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Shape resize helper
 	 */
 	var DIVISOR = {
@@ -16473,7 +16473,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview CropperDrawingMode class
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -16537,7 +16537,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * @fileoverview DrawingMode interface
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
 
@@ -16635,7 +16635,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview FreeDrawingMode class
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -16716,7 +16716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview LineDrawingMode class
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -16797,7 +16797,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview ShapeDrawingMode class
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -16877,7 +16877,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * @fileoverview TextDrawingMode class
 	                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
 
@@ -16963,7 +16963,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var componentNames = _consts2.default.componentNames,
 	    commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Add an icon
 	                                                   */
 
@@ -17031,7 +17031,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Add an image object
 	                                                   */
 
@@ -17091,7 +17091,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var commandNames = _consts2.default.commandNames,
 	    rejectMessages = _consts2.default.rejectMessages; /**
-	                                                       * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                       * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                       * @fileoverview Add an object
 	                                                       */
 
@@ -17158,7 +17158,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var componentNames = _consts2.default.componentNames,
 	    commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Add a shape
 	                                                   */
 
@@ -17234,7 +17234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var componentNames = _consts2.default.componentNames,
 	    commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Add a text object
 	                                                   */
 
@@ -17304,7 +17304,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Apply a filter into an image
 	 */
 	var componentNames = _consts2.default.componentNames,
@@ -17402,7 +17402,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var componentNames = _consts2.default.componentNames,
 	    rejectMessages = _consts2.default.rejectMessages,
 	    commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Change icon color
 	                                                   */
 
@@ -17483,7 +17483,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview change a shape
 	 */
 	var componentNames = _consts2.default.componentNames,
@@ -17573,7 +17573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	var componentNames = _consts2.default.componentNames,
 	    rejectMessages = _consts2.default.rejectMessages,
 	    commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Change a text
 	                                                   */
 
@@ -17648,7 +17648,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Change text styles
 	 */
 	var componentNames = _consts2.default.componentNames,
@@ -17733,7 +17733,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Clear all objects
 	                                                   */
 
@@ -17787,7 +17787,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Flip an image
 	 */
 	var componentNames = _consts2.default.componentNames,
@@ -17844,7 +17844,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Load a background (main) image
 	 */
 	var componentNames = _consts2.default.componentNames,
@@ -17932,7 +17932,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Remove a filter from an image
 	 */
 	var componentNames = _consts2.default.componentNames,
@@ -17997,7 +17997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var commandNames = _consts2.default.commandNames,
 	    rejectMessages = _consts2.default.rejectMessages; /**
-	                                                       * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                       * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                       * @fileoverview Remove an object
 	                                                       */
 
@@ -18059,7 +18059,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var commandNames = _consts2.default.commandNames; /**
-	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                   * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                   * @fileoverview Resize a canvas
 	                                                   */
 
@@ -18120,7 +18120,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Rotate an image
 	 */
 	var componentNames = _consts2.default.componentNames,
@@ -18188,7 +18188,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	/**
-	 * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	 * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	 * @fileoverview Set object properties
 	 */
 	var commandNames = _consts2.default.commandNames,
@@ -18272,7 +18272,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var commandNames = _consts2.default.commandNames,
 	    rejectMessages = _consts2.default.rejectMessages; /**
-	                                                       * @author NHN Ent. FE Development Team <dl_javascript@nhnent.com>
+	                                                       * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
 	                                                       * @fileoverview Set object properties
 	                                                       */
 

@@ -66,22 +66,22 @@ var $inputStrokeWidthRange = $('#input-stroke-range');
 var $inputCheckTransparent = $('#input-check-transparent');
 
 // Colorpicker
-var iconColorpicker = tui.component.colorpicker.create({
+var iconColorpicker = tui.colorPicker.create({
     container: $('#tui-icon-color-picker')[0],
     color: '#000000'
 });
 
-var textColorpicker = tui.component.colorpicker.create({
+var textColorpicker = tui.colorPicker.create({
     container: $('#tui-text-color-picker')[0],
     color: '#000000'
 });
 
-var brushColorpicker = tui.component.colorpicker.create({
+var brushColorpicker = tui.colorPicker.create({
     container: $('#tui-brush-color-picker')[0],
     color: '#000000'
 });
 
-var shapeColorpicker = tui.component.colorpicker.create({
+var shapeColorpicker = tui.colorPicker.create({
     container: $('#tui-shape-color-picker')[0],
     color: '#000000'
 });
