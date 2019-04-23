@@ -302,7 +302,7 @@ class Graphics {
      * @returns {Object} active object or group instance
      */
     getActiveObject() {
-        return this._canvas.getActiveObject();
+        return this._canvas._activeObject;
     }
 
     /**
@@ -310,7 +310,9 @@ class Graphics {
      * @returns {Object} active group object instance
      */
     getActiveObjects() {
-        return this._canvas.getActiveObjects();
+        const activeObject = this._canvas._activeObject;
+
+        return activeObject && activeObject.type === 'activeSelection' ? activeObject : null;
     }
 
     /**
