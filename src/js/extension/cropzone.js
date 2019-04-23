@@ -26,34 +26,29 @@ const CORNER_TYPE_BOTTOM_RIGHT = 'br';
 const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
     /**
      * Constructor
+     * @param {Object} canvas canvas
      * @param {Object} options Options object
      * @param {Object} extendsOptions object for extends "options" 
      * @override
      */
-    initialize(options, extendsOptions) {
+    initialize(canvas, options, extendsOptions) {
         options = snippet.extend(options, extendsOptions);
         options.type = 'cropzone';
 
         this.callSuper('initialize', options);
 
+        this.canvas = canvas;
         this.options = options;
 
         this.on({
-            'moving': this._onMoving,
-            'scaling': this._onScaling
+            'moving': this._onMoving.bind(this),
+            'scaling': this._onScaling.bind(this)
         });
     },
 
-    /**
-     * Render Crop-zone
-     * @param {CanvasRenderingContext2D} ctx - Context
-     * @private
-     * @override
-     */
-    _render(ctx) {
+    _renderCropzone() {
         const cropzoneDashLineWidth = 7;
         const cropzoneDashLineOffset = 7;
-        this.callSuper('_render', ctx);
 
         // Calc original scale
         const originalFlipX = this.flipX ? -1 : 1;
@@ -62,6 +57,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const originalScaleY = originalFlipY / this.scaleY;
 
         // Set original scale
+        const ctx = this.canvas.getContext();
         ctx.scale(originalScaleX, originalScaleY);
 
         // Render outer rect
@@ -90,6 +86,19 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     },
 
     /**
+     * Render Crop-zone
+     * @private
+     * @override
+     */
+    _render() {
+        const ctx = this.canvas.getContext();
+
+        this.callSuper('_render', ctx);
+
+        this._renderCropzone();
+    },
+
+    /**
      * Cropzone-coordinates with outer rectangle
      *
      *     x0     x1         x2      x3
@@ -115,7 +124,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _fillOuterRect(ctx, fillStyle) {
-        const {x, y} = this._getCoordinates(ctx);
+        const {x, y} = this._getCoordinates();
 
         ctx.save();
         ctx.fillStyle = fillStyle;
@@ -148,7 +157,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _fillInnerRect(ctx) {
-        const {x: outerX, y: outerY} = this._getCoordinates(ctx);
+        const {x: outerX, y: outerY} = this._getCoordinates();
         const x = this._caculateInnerPosition(outerX, (outerX[2] - outerX[1]) / 3);
         const y = this._caculateInnerPosition(outerY, (outerY[2] - outerY[1]) / 3);
 
@@ -193,28 +202,28 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
     /**
      * Get coordinates
-     * @param {CanvasRenderingContext2D} ctx - Context
      * @returns {cropzoneCoordinates} - {@link cropzoneCoordinates}
      * @private
      */
-    _getCoordinates(ctx) {
+    _getCoordinates() {
         const {width, height, left, top} = this;
         const halfWidth = width / 2;
         const halfHeight = height / 2;
-        const canvasEl = ctx.canvas; // canvas element, not fabric object
+        const canvasHeight = this.canvas.getHeight(); // canvas element, not fabric object
+        const canvasWidth = this.canvas.getWidth(); // canvas element, not fabric object
 
         return {
             x: snippet.map([
                 -(halfWidth + left), // x0
                 -(halfWidth), // x1
                 halfWidth, // x2
-                halfWidth + (canvasEl.width - left - width) // x3
+                halfWidth + (canvasWidth - left - width) // x3
             ], Math.ceil),
             y: snippet.map([
                 -(halfHeight + top), // y0
                 -(halfHeight), // y1
                 halfHeight, // y2
-                halfHeight + (canvasEl.height - top - height) // y3
+                halfHeight + (canvasHeight - top - height) // y3
             ], Math.ceil)
         };
     },

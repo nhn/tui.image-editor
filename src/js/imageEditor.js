@@ -315,12 +315,19 @@ class ImageEditor {
         const {ctrlKey, keyCode, metaKey} = e;
         const activeObject = this._graphics.getActiveObject();
         const activeObjectGroup = this._graphics.getActiveObjects();
-        const existRemoveObject = activeObject || activeObjectGroup.length;
+        const existRemoveObject = activeObject || (activeObjectGroup && activeObjectGroup.size());
         const isModifierKey = (ctrlKey || metaKey);
 
-        if (isModifierKey && (keyCode === keyCodes.Z || keyCode === keyCodes.Y)) {
-            // There is no error message on shortcut when it's empty
-            this.redo()['catch'](() => {});
+        if (isModifierKey) {
+            if (keyCode === keyCodes.Z) {
+                // There is no error message on shortcut when it's empty
+                this.undo()['catch'](() => {
+                });
+            } else if (keyCode === keyCodes.Y) {
+                // There is no error message on shortcut when it's empty
+                this.redo()['catch'](() => {
+                });
+            }
         }
 
         const isDeleteKey = keyCode === keyCodes.BACKSPACE || keyCode === keyCodes.DEL;
@@ -340,9 +347,9 @@ class ImageEditor {
         const activeObject = this._graphics.getActiveObject();
         const activeObjectGroup = this._graphics.getActiveObjects();
 
-        if (activeObjectGroup.length) {
+        if (activeObjectGroup && activeObjectGroup.size()) {
             this.discardSelection();
-            this._removeObjectStream(activeObjectGroup);
+            this._removeObjectStream(activeObjectGroup.getObjects());
         } else if (activeObject) {
             const activeObjectId = this._graphics.getObjectId(activeObject);
             this.removeObject(activeObjectId);
