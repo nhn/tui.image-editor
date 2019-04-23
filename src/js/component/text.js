@@ -282,14 +282,23 @@ class Text extends Component {
      */
     setStyle(activeObj, styleObj) {
         return new Promise(resolve => {
-            snippet.forEach(styleObj, (val, key) => {
-                if (activeObj[key] === val) {
-                    styleObj[key] = resetStyles[key] || '';
-                }
-            }, this);
-
-            activeObj.set(styleObj);
-
+            const activeObject = this.getCanvas().getActiveObject();
+            if (styleObj.textAlign || activeObject.selectionEnd === activeObject.selectionStart) {
+                snippet.forEach(styleObj, (val, key) => {
+                    if (activeObj[key] === val) {
+                        styleObj[key] = resetStyles[key] || '';
+                    }
+                }, this);
+                activeObj.set(styleObj);
+            } else {
+                snippet.forEach(styleObj, (val, key) => {
+                    const selectedPart = activeObj.getSelectionStyles();
+                    if (selectedPart[key] === val) {
+                        styleObj[key] = resetStyles[key] || '';
+                    }
+                }, this);
+                activeObject.setSelectionStyles(styleObj);
+            }
             this.getCanvas().renderAll();
             resolve();
         });
