@@ -151,6 +151,7 @@ class Graphics {
             onSelectionCreated: this._onSelectionCreated.bind(this)
         };
 
+        this._setObejctCachingToFalse();
         this._setCanvasElement(element);
         this._createDrawingModeInstances();
         this._createComponents();
@@ -766,6 +767,10 @@ class Graphics {
      */
     _getDrawingModeInstance(modeName) {
         return this._drawingModeMap[modeName];
+    }
+
+    _setObejctCachingToFalse() {
+        fabric.Object.prototype.objectCaching = false;
     }
 
     /**
