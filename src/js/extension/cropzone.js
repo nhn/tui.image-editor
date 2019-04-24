@@ -319,8 +319,9 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _calcTopLeftScalingSizeFromPointer(x, y) {
-        const bottom = this.height + this.top;
-        const right = this.width + this.left;
+        const rect = this.getBoundingRect(false, true);
+        const bottom = rect.height + this.top;
+        const right = rect.width + this.left;
         const top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
         const left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
 
