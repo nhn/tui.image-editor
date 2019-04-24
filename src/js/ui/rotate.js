@@ -51,7 +51,7 @@ class Rotate extends Submenu {
     _changeRotateForRange(value) {
         const angle = toInteger(value);
         this._els.rotateRangeValue.value = angle;
-        this.actions.rotate(angle);
+        this.actions.setAngle(angle);
     }
 
     /**
