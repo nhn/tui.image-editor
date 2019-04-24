@@ -172,6 +172,7 @@ class Cropper extends Component {
             cropzone.set(this._calcRectDimensionFromPoint(x, y));
 
             canvas.add(cropzone);
+            canvas.setActiveObject(cropzone);
         }
     }
 
