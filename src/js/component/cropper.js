@@ -280,8 +280,8 @@ class Cropper extends Component {
         return {
             left: cropzone.left,
             top: cropzone.top,
-            width: cropzone.getWidth(),
-            height: cropzone.getHeight()
+            width: cropzone.width,
+            height: cropzone.height
         };
     }
 
