@@ -151,7 +151,7 @@ declare namespace tuiImageEditor {
         textAlign?: string;
         textDecoration?: string;
         opacity?: number;
-        [propName: string]: number | string | boolean;
+        [propName: string]: number | string | boolean | undefined;
     }
 
     interface IIncludeUIOptions {
