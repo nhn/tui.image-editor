@@ -2,7 +2,6 @@
  * webpack.config.js created on 2016. 12. 01.
  * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
  */
-
 const pkg = require('./package.json');
 const webpack = require('webpack');
 const SafeUmdPlugin = require('safe-umd-webpack-plugin');

@@ -95,7 +95,7 @@ describe('Flip', () => {
 
     describe('Promise is returned with settings and angle,', () => {
         beforeEach(() => {
-            mockImage.setAngle(10);
+            mockImage.angle = 10;
         });
 
         it('flipX() is called.', done => {

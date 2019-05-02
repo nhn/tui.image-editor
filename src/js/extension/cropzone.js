@@ -206,11 +206,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _getCoordinates() {
-        const {width, height, left, top} = this;
+        const {canvas, width, height, left, top} = this;
         const halfWidth = width / 2;
         const halfHeight = height / 2;
-        const canvasHeight = this.canvas.getHeight(); // canvas element, not fabric object
-        const canvasWidth = this.canvas.getWidth(); // canvas element, not fabric object
+        const canvasHeight = canvas.getHeight(); // fabric object
+        const canvasWidth = canvas.getWidth(); // fabric object
 
         return {
             x: snippet.map([

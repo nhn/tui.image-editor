@@ -301,7 +301,7 @@ class Text extends Component {
      * @returns {String} text
      */
     getText(activeObj) {
-        return activeObj.getText();
+        return activeObj.text;
     }
 
     /**
@@ -424,8 +424,8 @@ class Text extends Component {
         const obj = this._editingObj;
         const textareaStyle = this._textarea.style;
 
-        textareaStyle.width = `${Math.ceil(obj.getWidth() / ratio)}px`;
-        textareaStyle.height = `${Math.ceil(obj.getHeight() / ratio)}px`;
+        textareaStyle.width = `${Math.ceil(obj.width / ratio)}px`;
+        textareaStyle.height = `${Math.ceil(obj.height / ratio)}px`;
     }
 
     /**
@@ -438,10 +438,10 @@ class Text extends Component {
         const textareaStyle = this._textarea.style;
 
         setTimeout(() => {
-            obj.setText(this._textarea.value);
+            obj.text(this._textarea.value);
 
-            textareaStyle.width = `${Math.ceil(obj.getWidth() / ratio)}px`;
-            textareaStyle.height = `${Math.ceil(obj.getHeight() / ratio)}px`;
+            textareaStyle.width = `${Math.ceil(obj.width / ratio)}px`;
+            textareaStyle.height = `${Math.ceil(obj.height / ratio)}px`;
         }, 0);
     }
 
@@ -454,8 +454,8 @@ class Text extends Component {
         const editingObj = this._editingObj;
         const editingObjInfos = this._editingObjInfos;
         const textContent = this._textarea.value;
-        let transWidth = (editingObj.getWidth() / ratio) - (editingObjInfos.width / ratio);
-        let transHeight = (editingObj.getHeight() / ratio) - (editingObjInfos.height / ratio);
+        let transWidth = (editingObj.width / ratio) - (editingObjInfos.width / ratio);
+        let transHeight = (editingObj.height / ratio) - (editingObjInfos.height / ratio);
 
         if (ratio === 1) {
             transWidth /= 2;
@@ -498,11 +498,11 @@ class Text extends Component {
      */
     _onFabricScaling(fEvent) {
         const obj = fEvent.target;
-        const scalingSize = obj.getFontSize() * obj.getScaleY();
+        const scalingSize = obj.fontSize * obj.scaleY;
 
-        obj.setFontSize(scalingSize);
-        obj.setScaleX(1);
-        obj.setScaleY(1);
+        obj.fontSize = scalingSize;
+        obj.scaleX = 1;
+        obj.scaleY = 1;
     }
 
     /**
@@ -623,32 +623,32 @@ class Text extends Component {
         this.isPrevEditing = true;
 
         canvas.remove(obj);
-        canvas.discardSelection();
+        canvas.discardActiveObject();
 
         this._editingObj = obj;
-        this._textarea.value = obj.getText();
+        this._textarea.value = obj.text;
 
         this._editingObjInfos = {
             left: obj.left,
             top: obj.top,
-            width: obj.getWidth(),
-            height: obj.getHeight()
+            width: obj.width,
+            height: obj.height
         };
 
         textareaStyle.display = 'block';
         textareaStyle.left = `${obj.oCoords.tl.x / ratio}px`;
         textareaStyle.top = `${obj.oCoords.tl.y / ratio}px`;
-        textareaStyle.width = `${Math.ceil(obj.getWidth() / ratio)}px`;
-        textareaStyle.height = `${Math.ceil(obj.getHeight() / ratio)}px`;
+        textareaStyle.width = `${Math.ceil(obj.width / ratio)}px`;
+        textareaStyle.height = `${Math.ceil(obj.height / ratio)}px`;
         textareaStyle.transform = `rotate(${obj.angle}deg)`;
-        textareaStyle.color = obj.getFill();
+        textareaStyle.color = obj.fill;
 
-        textareaStyle['font-size'] = `${obj.getFontSize() / ratio}px`;
-        textareaStyle['font-family'] = obj.getFontFamily();
-        textareaStyle['font-style'] = obj.getFontStyle();
-        textareaStyle['font-weight'] = obj.getFontWeight();
-        textareaStyle['text-align'] = obj.getTextAlign();
-        textareaStyle['line-height'] = obj.getLineHeight() + EXTRA_PIXEL_LINEHEIGHT;
+        textareaStyle['font-size'] = `${obj.fontSize / ratio}px`;
+        textareaStyle['font-family'] = obj.fontFamily;
+        textareaStyle['font-style'] = obj.fontStyle;
+        textareaStyle['font-weight'] = obj.fontWeight;
+        textareaStyle['text-align'] = obj.textAlign;
+        textareaStyle['line-height'] = obj.lineHeight + EXTRA_PIXEL_LINEHEIGHT;
         textareaStyle['transform-origin'] = 'left top';
 
         this._textarea.focus();
