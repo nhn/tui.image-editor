@@ -30,6 +30,21 @@ class Rotate extends Submenu {
         };
     }
 
+    setRangeBarAngle(type, angle) {
+        let resultAngle = angle;
+
+        if (type === 'rotate') {
+            resultAngle = parseInt(this._els.rotateRangeValue.value, 10) + angle;
+        }
+
+        this._els.rotateRangeValue.value = resultAngle;
+        this._setRangeBarRatio(resultAngle);
+    }
+
+    _setRangeBarRatio(angle) {
+        this._els.rotateRange.value = angle;
+    }
+
     /**
      * Add event for rotate
      * @param {Object} actions - actions for crop
@@ -53,7 +68,7 @@ class Rotate extends Submenu {
     _changeRotateForRange(value, isLast) {
         const angle = toInteger(value);
         this._els.rotateRangeValue.value = angle;
-        this.actions.rotate(angle - this._value, !isLast);
+        this.actions.setAngle(angle, !isLast);
         this._value = angle;
     }
 
