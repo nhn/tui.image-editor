@@ -2,7 +2,7 @@
 .{prefix}-container
   &.left
     .{prefix}-menu
-        > .{prefix}-item[title]
+        > .{prefix}-item[tooltip-content]
             &:before
                 left: 28px;
                 top: 11px;
@@ -11,7 +11,7 @@
                 border-bottom: 7px solid transparent;
             &:after
                 top: 7px;
-                left: 39px;
+                left: 42px;
                 white-space: nowrap;
     .{prefix}-submenu
         left: 0;
@@ -78,7 +78,7 @@
 .{prefix}-container
   &.right
     .{prefix}-menu
-        > .{prefix}-item[title]
+        > .{prefix}-item[tooltip-content]
             &:before
                 left: -3px;
                 top: 11px;
@@ -87,7 +87,8 @@
                 border-bottom: 7px solid transparent;
             &:after
                 top: 7px;
-                left: -44px;
+                left: unset;
+                right: 43px;
                 white-space: nowrap;
     .{prefix}-submenu
         right: 0;
@@ -131,7 +132,7 @@
     .{prefix}-main-container
         bottom: 0;
     .{prefix}-menu
-        > .{prefix}-item[title]
+        > .{prefix}-item[tooltip-content]
             &:before
                 left: 13px;
                 border-top: 0;
