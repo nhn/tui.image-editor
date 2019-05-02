@@ -3,103 +3,103 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview
  */
-
-const supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
-const rImageType = /data:(image\/.+);base64,/;
-const shapeOptions = {};
+/* eslint-disable vars-on-top,no-var,strict,prefer-template,prefer-arrow-callback,prefer-destructuring,object-shorthand,require-jsdoc,complexity,prefer-const,no-unused-vars */
+var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
+var rImageType = /data:(image\/.+);base64,/;
+var shapeOptions = {};
 let shapeType;
 let activeObjectId;
 
 // Buttons
-const $btns = $('.menu-item');
-const $btnsActivatable = $btns.filter('.activatable');
-const $inputImage = $('#input-image-file');
-const $btnDownload = $('#btn-download');
+var $btns = $('.menu-item');
+var $btnsActivatable = $btns.filter('.activatable');
+var $inputImage = $('#input-image-file');
+var $btnDownload = $('#btn-download');
 
-const $btnUndo = $('#btn-undo');
-const $btnRedo = $('#btn-redo');
-const $btnClearObjects = $('#btn-clear-objects');
-const $btnRemoveActiveObject = $('#btn-remove-active-object');
-const $btnCrop = $('#btn-crop');
-const $btnFlip = $('#btn-flip');
-const $btnRotation = $('#btn-rotation');
-const $btnDrawLine = $('#btn-draw-line');
-const $btnDrawShape = $('#btn-draw-shape');
-const $btnApplyCrop = $('#btn-apply-crop');
-const $btnCancelCrop = $('#btn-cancel-crop');
-const $btnFlipX = $('#btn-flip-x');
-const $btnFlipY = $('#btn-flip-y');
-const $btnResetFlip = $('#btn-reset-flip');
-const $btnRotateClockwise = $('#btn-rotate-clockwise');
-const $btnRotateCounterClockWise = $('#btn-rotate-counter-clockwise');
-const $btnText = $('#btn-text');
-const $btnTextStyle = $('.btn-text-style');
-const $btnAddIcon = $('#btn-add-icon');
-const $btnRegisterIcon = $('#btn-register-icon');
-const $btnMaskFilter = $('#btn-mask-filter');
-const $btnImageFilter = $('#btn-image-filter');
-const $btnLoadMaskImage = $('#input-mask-image-file');
-const $btnApplyMask = $('#btn-apply-mask');
-const $btnClose = $('.close');
+var $btnUndo = $('#btn-undo');
+var $btnRedo = $('#btn-redo');
+var $btnClearObjects = $('#btn-clear-objects');
+var $btnRemoveActiveObject = $('#btn-remove-active-object');
+var $btnCrop = $('#btn-crop');
+var $btnFlip = $('#btn-flip');
+var $btnRotation = $('#btn-rotation');
+var $btnDrawLine = $('#btn-draw-line');
+var $btnDrawShape = $('#btn-draw-shape');
+var $btnApplyCrop = $('#btn-apply-crop');
+var $btnCancelCrop = $('#btn-cancel-crop');
+var $btnFlipX = $('#btn-flip-x');
+var $btnFlipY = $('#btn-flip-y');
+var $btnResetFlip = $('#btn-reset-flip');
+var $btnRotateClockwise = $('#btn-rotate-clockwise');
+var $btnRotateCounterClockWise = $('#btn-rotate-counter-clockwise');
+var $btnText = $('#btn-text');
+var $btnTextStyle = $('.btn-text-style');
+var $btnAddIcon = $('#btn-add-icon');
+var $btnRegisterIcon = $('#btn-register-icon');
+var $btnMaskFilter = $('#btn-mask-filter');
+var $btnImageFilter = $('#btn-image-filter');
+var $btnLoadMaskImage = $('#input-mask-image-file');
+var $btnApplyMask = $('#btn-apply-mask');
+var $btnClose = $('.close');
 
 // Input etc.
-const $inputRotationRange = $('#input-rotation-range');
-const $inputBrushWidthRange = $('#input-brush-width-range');
-const $inputFontSizeRange = $('#input-font-size-range');
-const $inputStrokeWidthRange = $('#input-stroke-width-range');
-const $inputCheckTransparent = $('#input-check-transparent');
-const $inputCheckGrayscale = $('#input-check-grayscale');
-const $inputCheckInvert = $('#input-check-invert');
-const $inputCheckSepia = $('#input-check-sepia');
-const $inputCheckSepia2 = $('#input-check-sepia2');
-const $inputCheckBlur = $('#input-check-blur');
-const $inputCheckSharpen = $('#input-check-sharpen');
-const $inputCheckEmboss = $('#input-check-emboss');
-const $inputCheckRemoveWhite = $('#input-check-remove-white');
-const $inputRangeRemoveWhiteThreshold = $('#input-range-remove-white-threshold');
-const $inputRangeRemoveWhiteDistance = $('#input-range-remove-white-distance');
-const $inputCheckBrightness = $('#input-check-brightness');
-const $inputRangeBrightnessValue = $('#input-range-brightness-value');
-const $inputCheckNoise = $('#input-check-noise');
-const $inputRangeNoiseValue = $('#input-range-noise-value');
-const $inputCheckGradientTransparency = $('#input-check-gradient-transparancy');
-const $inputRangeGradientTransparencyValue = $('#input-range-gradient-transparency-value');
-const $inputCheckPixelate = $('#input-check-pixelate');
-const $inputRangePixelateValue = $('#input-range-pixelate-value');
-const $inputCheckTint = $('#input-check-tint');
-const $inputRangeTintOpacityValue = $('#input-range-tint-opacity-value');
-const $inputCheckMultiply = $('#input-check-multiply');
-const $inputCheckBlend = $('#input-check-blend');
-const $inputCheckColorFilter = $('#input-check-color-filter');
-const $inputRangeColorFilterValue = $('#input-range-color-filter-value');
+var $inputRotationRange = $('#input-rotation-range');
+var $inputBrushWidthRange = $('#input-brush-width-range');
+var $inputFontSizeRange = $('#input-font-size-range');
+var $inputStrokeWidthRange = $('#input-stroke-width-range');
+var $inputCheckTransparent = $('#input-check-transparent');
+var $inputCheckGrayscale = $('#input-check-grayscale');
+var $inputCheckInvert = $('#input-check-invert');
+var $inputCheckSepia = $('#input-check-sepia');
+var $inputCheckSepia2 = $('#input-check-sepia2');
+var $inputCheckBlur = $('#input-check-blur');
+var $inputCheckSharpen = $('#input-check-sharpen');
+var $inputCheckEmboss = $('#input-check-emboss');
+var $inputCheckRemoveWhite = $('#input-check-remove-white');
+var $inputRangeRemoveWhiteThreshold = $('#input-range-remove-white-threshold');
+var $inputRangeRemoveWhiteDistance = $('#input-range-remove-white-distance');
+var $inputCheckBrightness = $('#input-check-brightness');
+var $inputRangeBrightnessValue = $('#input-range-brightness-value');
+var $inputCheckNoise = $('#input-check-noise');
+var $inputRangeNoiseValue = $('#input-range-noise-value');
+var $inputCheckGradientTransparency = $('#input-check-gradient-transparancy');
+var $inputRangeGradientTransparencyValue = $('#input-range-gradient-transparency-value');
+var $inputCheckPixelate = $('#input-check-pixelate');
+var $inputRangePixelateValue = $('#input-range-pixelate-value');
+var $inputCheckTint = $('#input-check-tint');
+var $inputRangeTintOpacityValue = $('#input-range-tint-opacity-value');
+var $inputCheckMultiply = $('#input-check-multiply');
+var $inputCheckBlend = $('#input-check-blend');
+var $inputCheckColorFilter = $('#input-check-color-filter');
+var $inputRangeColorFilterValue = $('#input-range-color-filter-value');
 
 // Sub menus
 let $displayingSubMenu = $();
-const $cropSubMenu = $('#crop-sub-menu');
-const $flipSubMenu = $('#flip-sub-menu');
-const $rotationSubMenu = $('#rotation-sub-menu');
-const $freeDrawingSubMenu = $('#free-drawing-sub-menu');
-const $drawLineSubMenu = $('#draw-line-sub-menu');
-const $drawShapeSubMenu = $('#draw-shape-sub-menu');
-const $textSubMenu = $('#text-sub-menu');
-const $iconSubMenu = $('#icon-sub-menu');
-const $filterSubMenu = $('#filter-sub-menu');
-const $imageFilterSubMenu = $('#image-filter-sub-menu');
+var $cropSubMenu = $('#crop-sub-menu');
+var $flipSubMenu = $('#flip-sub-menu');
+var $rotationSubMenu = $('#rotation-sub-menu');
+var $freeDrawingSubMenu = $('#free-drawing-sub-menu');
+var $drawLineSubMenu = $('#draw-line-sub-menu');
+var $drawShapeSubMenu = $('#draw-shape-sub-menu');
+var $textSubMenu = $('#text-sub-menu');
+var $iconSubMenu = $('#icon-sub-menu');
+var $filterSubMenu = $('#filter-sub-menu');
+var $imageFilterSubMenu = $('#image-filter-sub-menu');
 
 // Select line type
-const $selectLine = $('[name="select-line-type"]');
+var $selectLine = $('[name="select-line-type"]');
 
 // Select shape type
-const $selectShapeType = $('[name="select-shape-type"]');
+var $selectShapeType = $('[name="select-shape-type"]');
 
 // Select color of shape type
-const $selectColorType = $('[name="select-color-type"]');
+var $selectColorType = $('[name="select-color-type"]');
 
 // Select blend type
-const $selectBlendType = $('[name="select-blend-type"]');
+var $selectBlendType = $('[name="select-blend-type"]');
 
 // Image editor
-const imageEditor = new tui.ImageEditor('.tui-image-editor', {
+var imageEditor = new tui.ImageEditor('.tui-image-editor', {
     cssMaxWidth: 700,
     cssMaxHeight: 500,
     selectionStyle: {
@@ -109,40 +109,40 @@ const imageEditor = new tui.ImageEditor('.tui-image-editor', {
 });
 
 // Color picker for free drawing
-const brushColorpicker = tui.colorPicker.create({
+var brushColorpicker = tui.colorPicker.create({
     container: $('#tui-brush-color-picker')[0],
     color: '#000000'
 });
 
 // Color picker for text palette
-const textColorpicker = tui.colorPicker.create({
+var textColorpicker = tui.colorPicker.create({
     container: $('#tui-text-color-picker')[0],
     color: '#000000'
 });
 
 // Color picker for shape
-const shapeColorpicker = tui.colorPicker.create({
+var shapeColorpicker = tui.colorPicker.create({
     container: $('#tui-shape-color-picker')[0],
     color: '#000000'
 });
 
 // Color picker for icon
-const iconColorpicker = tui.colorPicker.create({
+var iconColorpicker = tui.colorPicker.create({
     container: $('#tui-icon-color-picker')[0],
     color: '#000000'
 });
 
-const tintColorpicker = tui.colorPicker.create({
+var tintColorpicker = tui.colorPicker.create({
     container: $('#tui-tint-color-picker')[0],
     color: '#000000'
 });
 
-const multiplyColorpicker = tui.colorPicker.create({
+var multiplyColorpicker = tui.colorPicker.create({
     container: $('#tui-multiply-color-picker')[0],
     color: '#000000'
 });
 
-const blendColorpicker = tui.colorPicker.create({
+var blendColorpicker = tui.colorPicker.create({
     container: $('#tui-blend-color-picker')[0],
     color: '#00FF00'
 });
@@ -150,10 +150,10 @@ const blendColorpicker = tui.colorPicker.create({
 // Common global functions
 // HEX to RGBA
 function hexToRGBa(hex, alpha) {
-    const r = parseInt(hex.slice(1, 3), 16);
-    const g = parseInt(hex.slice(3, 5), 16);
-    const b = parseInt(hex.slice(5, 7), 16);
-    const a = alpha || 1;
+    var r = parseInt(hex.slice(1, 3), 16);
+    var g = parseInt(hex.slice(3, 5), 16);
+    var b = parseInt(hex.slice(5, 7), 16);
+    var a = alpha || 1;
 
     return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
@@ -180,16 +180,16 @@ function base64ToBlob(data) {
 }
 
 function resizeEditor() {
-    const $editor = $('.tui-image-editor');
-    const $container = $('.tui-image-editor-canvas-container');
-    const height = parseFloat($container.css('max-height'));
+    var $editor = $('.tui-image-editor');
+    var $container = $('.tui-image-editor-canvas-container');
+    var height = parseFloat($container.css('max-height'));
 
     $editor.height(height);
 }
 
 function getBrushSettings() {
-    const brushWidth = $inputBrushWidthRange.val();
-    const brushColor = brushColorpicker.getColor();
+    var brushWidth = $inputBrushWidthRange.val();
+    var brushColor = brushColorpicker.getColor();
 
     return {
         width: brushWidth,
@@ -216,22 +216,22 @@ function activateTextMode() {
 }
 
 function setTextToolbar(obj) {
-    const fontSize = obj.fontSize;
-    const fontColor = obj.fill;
+    var fontSize = obj.fontSize;
+    var fontColor = obj.fill;
 
     $inputFontSizeRange.val(fontSize);
     textColorpicker.setColor(fontColor);
 }
 
 function setIconToolbar(obj) {
-    const iconColor = obj.fill;
+    var iconColor = obj.fill;
 
     iconColorpicker.setColor(iconColor);
 }
 
 function setShapeToolbar(obj) {
     let strokeColor, fillColor, isTransparent;
-    const colorType = $selectColorType.val();
+    var colorType = $selectColorType.val();
 
     if (colorType === 'stroke') {
         strokeColor = obj.stroke;
@@ -445,7 +445,7 @@ $btnRotateCounterClockWise.on('click', () => {
 });
 
 $inputRotationRange.on('mousedown', () => {
-    const changeAngle = function() {
+    var changeAngle = function() {
         imageEditor.setAngle(parseInt($inputRotationRange.val(), 10))['catch'](() => {});
     };
     $(document).on('mousemove', changeAngle);
@@ -479,7 +479,7 @@ $inputImage.on('change', event => {
 
 $btnDownload.on('click', () => {
     let imageName = imageEditor.getImageName();
-    const dataURL = imageEditor.toDataURL();
+    var dataURL = imageEditor.toDataURL();
     let blob, type, w;
 
     if (supportingFileAPI) {
@@ -507,8 +507,8 @@ $btnDrawLine.on('click', () => {
 });
 
 $selectLine.on('change', function() {
-    const mode = $(this).val();
-    const settings = getBrushSettings();
+    var mode = $(this).val();
+    var settings = getBrushSettings();
 
     imageEditor.stopDrawingMode();
     if (mode === 'freeDrawing') {
@@ -550,8 +550,8 @@ $selectShapeType.on('change', function() {
 });
 
 $inputCheckTransparent.on('change', function() {
-    const colorType = $selectColorType.val();
-    const isTransparent = $(this).prop('checked');
+    var colorType = $selectColorType.val();
+    var isTransparent = $(this).prop('checked');
     let color;
 
     if (!isTransparent) {
@@ -574,9 +574,9 @@ $inputCheckTransparent.on('change', function() {
 });
 
 shapeColorpicker.on('selectColor', event => {
-    const colorType = $selectColorType.val();
-    const isTransparent = $inputCheckTransparent.prop('checked');
-    const color = event.color;
+    var colorType = $selectColorType.val();
+    var isTransparent = $inputCheckTransparent.prop('checked');
+    var color = event.color;
 
     if (isTransparent) {
         return;
@@ -596,7 +596,7 @@ shapeColorpicker.on('selectColor', event => {
 });
 
 $inputStrokeWidthRange.on('change', function() {
-    const strokeWidth = Number($(this).val());
+    var strokeWidth = Number($(this).val());
 
     imageEditor.changeShape(activeObjectId, {
         strokeWidth
@@ -618,7 +618,7 @@ $inputFontSizeRange.on('change', function() {
 });
 
 $btnTextStyle.on('click', function(e) { // eslint-disable-line
-    const styleType = $(this).attr('data-style-type');
+    var styleType = $(this).attr('data-style-type');
     let styleObj;
 
     e.stopPropagation();
@@ -662,8 +662,8 @@ $btnAddIcon.on('click', () => {
 });
 
 function onClickIconSubMenu(event) {
-    const element = event.target || event.srcElement;
-    const iconType = $(element).attr('data-icon-type');
+    var element = event.target || event.srcElement;
+    var iconType = $(element).attr('data-icon-type');
 
     imageEditor.once('mousedown', (e, originPointer) => {
         imageEditor.addIcon(iconType, {
@@ -704,7 +704,7 @@ $btnMaskFilter.on('click', () => {
 });
 
 $btnImageFilter.on('click', () => {
-    const filters = {
+    var filters = {
         'grayscale': $inputCheckGrayscale,
         'invert': $inputCheckInvert,
         'sepia': $inputCheckSepia,

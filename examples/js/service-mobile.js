@@ -3,7 +3,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview
  */
-/* eslint-disable vars-on-top */
+/* eslint-disable vars-on-top,no-var,strict,prefer-template,prefer-arrow-callback,prefer-destructuring,object-shorthand,require-jsdoc,complexity */
 'use strict';
 
 var MAX_RESOLUTION = 3264 * 2448; // 8MP (Mega Pixel)
@@ -272,7 +272,7 @@ $btnShowMenu.on('click', function() {
     imageEditor.stopDrawingMode();
 });
 
-//Image load action
+// Image load action
 $inputImage.on('change', function(event) {
     var file;
     var img;

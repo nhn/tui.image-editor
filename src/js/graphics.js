@@ -909,7 +909,8 @@ class Graphics {
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
             'selection:cleared': handler.onSelectionCleared,
-            'selection:created': handler.onSelectionCreated
+            'selection:created': handler.onSelectionCreated,
+            'selection:updated': handler.onObjectSelected
         });
     }
 
