@@ -590,7 +590,7 @@ class Text extends Component {
         const {target} = fEvent;
         const newClickTime = (new Date()).getTime();
 
-        if (target.isEditing) {
+        if (target.isEditing || this._isDoubleClick(newClickTime)) {
             if (!this.useItext) {
                 this._changeToEditingMode(target);
             }
