@@ -54,7 +54,9 @@ describe('Ui', () => {
 
         it('Undo() API should be executed When the undo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyUndoStack').and.returnValue(false);
-            spyOn(imageEditorMock, 'undo');
+            spyOn(imageEditorMock, 'undo').and.returnValue(new Promise(resolve => {
+                resolve();
+            }));
 
             mainAction.undo();
 
@@ -63,7 +65,9 @@ describe('Ui', () => {
 
         it('Redo() API should be executed When the redo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyRedoStack').and.returnValue(false);
-            spyOn(imageEditorMock, 'redo');
+            spyOn(imageEditorMock, 'redo').and.returnValue(new Promise(resolve => {
+                resolve();
+            }));
 
             mainAction.redo();
 
