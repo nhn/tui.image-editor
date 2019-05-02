@@ -771,11 +771,11 @@ class ImageEditor {
      * @private
      */
     _rotate(type, angle, isSilent) {
-        const result = null;
+        let result = null;
         if (isSilent) {
-            this.executeSilent(commands.ROTATE_IMAGE, type, angle);
+            result = this.executeSilent(commands.ROTATE_IMAGE, type, angle);
         } else {
-            this.execute(commands.ROTATE_IMAGE, type, angle);
+            result = this.execute(commands.ROTATE_IMAGE, type, angle);
         }
 
         return result;
