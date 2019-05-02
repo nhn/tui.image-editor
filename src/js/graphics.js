@@ -151,7 +151,7 @@ class Graphics {
             onSelectionCreated: this._onSelectionCreated.bind(this)
         };
 
-        this._setObejctCachingToFalse();
+        this._setObjectCachingToFalse();
         this._setCanvasElement(element);
         this._createDrawingModeInstances();
         this._createComponents();
@@ -769,7 +769,12 @@ class Graphics {
         return this._drawingModeMap[modeName];
     }
 
-    _setObejctCachingToFalse() {
+    /**
+     * Set object caching to false. This brought many bugs when draw Shape & cropzone
+     * @see http://fabricjs.com/fabric-object-caching
+     * @private
+     */
+    _setObjectCachingToFalse() {
         fabric.Object.prototype.objectCaching = false;
     }
 
