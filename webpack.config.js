@@ -30,6 +30,7 @@ module.exports = {
         filename: `${FILENAME}.js`
     },
     externals: {
+        'fabric': 'fabric',
         'tui-code-snippet': {
             'commonjs': 'tui-code-snippet',
             'commonjs2': 'tui-code-snippet',

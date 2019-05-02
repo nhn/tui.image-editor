@@ -3,7 +3,7 @@
  * @fileoverview Image crop module (start cropping, end cropping)
  */
 import snippet from 'tui-code-snippet';
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
 import {keyCodes, componentNames} from '../consts';
