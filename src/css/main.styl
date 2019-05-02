@@ -129,7 +129,7 @@ body > textarea
             padding: 7px 8px 3px 8px;
             cursor: pointer;
             margin: 0 4px;
-        > .{prefix}-item[title]:hover
+        > .{prefix}-item[tooltip-content]:hover
             &:before
                 content: '';
                 position: absolute;
@@ -140,11 +140,10 @@ body > textarea
                 border-right: 7px solid transparent;
                 border-top: 7px solid #2f2f2f;
                 border-left: 7px solid transparent;
-                position: absolute;
                 left: 13px;
                 top: -2px;
             &:after
-                content: attr(title);
+                content: attr(tooltip-content);
                 position: absolute;
                 display: inline-block;
                 background-color: #2f2f2f;
@@ -154,7 +153,7 @@ body > textarea
                 font-weight: lighter;
                 border-radius: 3px;
                 max-height: 23px;
-                top: -22px;
+                top: -25px;
                 left: 0;
                 min-width: 24px;
         > .{prefix}-item.active

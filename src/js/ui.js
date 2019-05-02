@@ -343,7 +343,7 @@ class Ui {
 
         btnElement.id = `tie-btn-${menuName}`;
         btnElement.className = 'tui-image-editor-item normal';
-        btnElement.title = this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase()));
+        btnElement.setAttribute('tooltip-content', this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase())));
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
