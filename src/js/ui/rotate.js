@@ -21,6 +21,7 @@ class Rotate extends Submenu {
             menuBarPosition,
             templateHtml
         });
+        this._value = 0;
 
         this._els = {
             rotateButton: this.selector('#tie-retate-button'),
@@ -46,12 +47,14 @@ class Rotate extends Submenu {
     /**
      * Change rotate for range
      * @param {number} value - angle value
+     * @param {boolean} isLast - Is last change
      * @private
      */
-    _changeRotateForRange(value) {
+    _changeRotateForRange(value, isLast) {
         const angle = toInteger(value);
         this._els.rotateRangeValue.value = angle;
-        this.actions.setAngle(angle);
+        this.actions.rotate(angle - this._value, !isLast);
+        this._value = angle;
     }
 
     /**

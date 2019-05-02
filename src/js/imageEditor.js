@@ -547,6 +547,20 @@ class ImageEditor {
     }
 
     /**
+     * Invoke command
+     * @param {String} commandName - Command name
+     * @param {...*} args - Arguments for creating command
+     * @returns {Promise}
+     * @private
+     */
+    executeSilent(commandName, ...args) {
+        // Inject an Graphics instance as first parameter
+        const theArgs = [this._graphics].concat(args);
+
+        return this._invoker.executeSilent(commandName, ...theArgs);
+    }
+
+    /**
      * Undo
      * @returns {Promise}
      * @example
@@ -752,17 +766,26 @@ class ImageEditor {
     /**
      * @param {string} type - 'rotate' or 'setAngle'
      * @param {number} angle - angle value (degree)
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise<RotateStatus, ErrorMsg>}
      * @private
      */
-    _rotate(type, angle) {
-        return this.execute(commands.ROTATE_IMAGE, type, angle);
+    _rotate(type, angle, isSilent) {
+        const result = null;
+        if (isSilent) {
+            this.executeSilent(commands.ROTATE_IMAGE, type, angle);
+        } else {
+            this.execute(commands.ROTATE_IMAGE, type, angle);
+        }
+
+        return result;
     }
 
     /**
      * Rotate image
      * @returns {Promise}
      * @param {number} angle - Additional angle to rotate image
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise<RotateStatus, ErrorMsg>}
      * @example
      * imageEditor.rotate(10); // angle = 10
@@ -775,13 +798,14 @@ class ImageEditor {
      *     console.log('error: ', message);
      * });
      */
-    rotate(angle) {
-        return this._rotate('rotate', angle);
+    rotate(angle, isSilent) {
+        return this._rotate('rotate', angle, isSilent);
     }
 
     /**
      * Set angle
      * @param {number} angle - Angle of image
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise<RotateStatus, ErrorMsg>}
      * @example
      * imageEditor.setAngle(10); // angle = 10
@@ -795,8 +819,8 @@ class ImageEditor {
      *     console.log('error: ', message);
      * });
      */
-    setAngle(angle) {
-        return this._rotate('setAngle', angle);
+    setAngle(angle, isSilent) {
+        return this._rotate('setAngle', angle, isSilent);
     }
 
     /**

@@ -269,12 +269,12 @@ export default {
      */
     _rotateAction() {
         return extend({
-            rotate: angle => {
-                this.rotate(angle);
+            rotate: (angle, isSilent) => {
+                this.rotate(angle, isSilent);
                 this.ui.resizeEditor();
             },
-            setAngle: angle => {
-                this.setAngle(angle);
+            setAngle: (angle, isSilent) => {
+                this.setAngle(angle, isSilent);
                 this.ui.resizeEditor();
             }
         }, this._commonAction());
