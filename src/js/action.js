@@ -43,6 +43,8 @@ export default {
         };
         const onEndUndoRedo = result => {
             setAngleRangeBarOnAction(result);
+
+            return result;
         };
 
         return extend({
