@@ -3,7 +3,7 @@
  * @fileoverview Image crop module (start cropping, end cropping)
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
 import {keyCodes, componentNames} from '../consts';
@@ -83,11 +83,11 @@ class Cropper extends Component {
             obj.evented = false;
         });
 
-        this._cropzone = new Cropzone({
-            left: -10,
-            top: -10,
-            width: 1,
-            height: 1,
+        this._cropzone = new Cropzone(canvas, {
+            left: 0,
+            top: 0,
+            width: 0.5,
+            height: 0.5,
             strokeWidth: 0, // {@link https://github.com/kangax/fabric.js/issues/2860}
             cornerSize: 10,
             cornerColor: 'black',
@@ -98,7 +98,7 @@ class Cropper extends Component {
             lockRotation: true
         }, this.graphics.cropSelectionStyle);
 
-        canvas.deactivateAll();
+        canvas.discardActiveObject();
         canvas.add(this._cropzone);
         canvas.on('mouse:down', this._listeners.mousedown);
         canvas.selection = false;
@@ -118,7 +118,7 @@ class Cropper extends Component {
         if (!cropzone) {
             return;
         }
-        cropzone.remove();
+        canvas.remove(cropzone);
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.off('mouse:down', this._listeners.mousedown);
@@ -168,10 +168,11 @@ class Cropper extends Component {
         const cropzone = this._cropzone;
 
         if (Math.abs(x - this._startX) + Math.abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
-            cropzone.remove();
+            canvas.remove(cropzone);
             cropzone.set(this._calcRectDimensionFromPoint(x, y));
 
             canvas.add(cropzone);
+            canvas.setActiveObject(cropzone);
         }
     }
 
@@ -250,7 +251,7 @@ class Cropper extends Component {
         }
 
         if (containsCropzone) {
-            this._cropzone.remove();
+            canvas.remove(this._cropzone);
         }
 
         const imageData = {
@@ -277,10 +278,10 @@ class Cropper extends Component {
         }
 
         return {
-            left: cropzone.getLeft(),
-            top: cropzone.getTop(),
-            width: cropzone.getWidth(),
-            height: cropzone.getHeight()
+            left: cropzone.left,
+            top: cropzone.top,
+            width: cropzone.width,
+            height: cropzone.height
         };
     }
 
@@ -292,9 +293,9 @@ class Cropper extends Component {
         const canvas = this.getCanvas();
         const cropzone = this._cropzone;
 
-        canvas.deactivateAll();
+        canvas.discardActiveObject();
         canvas.selection = false;
-        cropzone.remove();
+        canvas.remove(cropzone);
 
         cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
 

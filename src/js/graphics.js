@@ -4,7 +4,7 @@
  */
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
 import Flip from './component/flip';
@@ -151,6 +151,7 @@ class Graphics {
             onSelectionCreated: this._onSelectionCreated.bind(this)
         };
 
+        this._setObjectCachingToFalse();
         this._setCanvasElement(element);
         this._createDrawingModeInstances();
         this._createComponents();
@@ -173,7 +174,7 @@ class Graphics {
      * @returns {Graphics} this
      */
     deactivateAll() {
-        this._canvas.deactivateAll();
+        this._canvas.discardActiveObject();
 
         return this;
     }
@@ -266,14 +267,14 @@ class Graphics {
         const isValidGroup = target && target.isType('group') && !target.isEmpty();
 
         if (isValidGroup) {
-            canvas.discardActiveGroup(); // restore states for each objects
+            canvas.discardActiveObject(); // restore states for each objects
             target.forEachObject(obj => {
                 objects.push(obj);
-                obj.remove();
+                canvas.remove(obj);
             });
         } else if (canvas.contains(target)) {
             objects.push(target);
-            target.remove();
+            canvas.remove(target);
         }
 
         return objects;
@@ -302,15 +303,17 @@ class Graphics {
      * @returns {Object} active object or group instance
      */
     getActiveObject() {
-        return this._canvas.getActiveObject();
+        return this._canvas._activeObject;
     }
 
     /**
      * Gets an active group object
      * @returns {Object} active group object instance
      */
-    getActiveGroupObject() {
-        return this._canvas.getActiveGroup();
+    getActiveObjects() {
+        const activeObject = this._canvas._activeObject;
+
+        return activeObject && activeObject.type === 'activeSelection' ? activeObject : null;
     }
 
     /**
@@ -767,6 +770,15 @@ class Graphics {
     }
 
     /**
+     * Set object caching to false. This brought many bugs when draw Shape & cropzone
+     * @see http://fabricjs.com/fabric-object-caching
+     * @private
+     */
+    _setObjectCachingToFalse() {
+        fabric.Object.prototype.objectCaching = false;
+    }
+
+    /**
      * Set canvas element to fabric.Canvas
      * @param {Element|string} element - Wrapper or canvas element or selector
      * @private
@@ -902,7 +914,8 @@ class Graphics {
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
             'selection:cleared': handler.onSelectionCleared,
-            'selection:created': handler.onSelectionCreated
+            'selection:created': handler.onSelectionCreated,
+            'selection:updated': handler.onObjectSelected
         });
     }
 
@@ -1011,7 +1024,6 @@ class Graphics {
      * Canvas discard selection all
      */
     discardSelection() {
-        this._canvas.discardActiveGroup();
         this._canvas.discardActiveObject();
         this._canvas.renderAll();
     }

@@ -21,12 +21,28 @@ class Rotate extends Submenu {
             menuBarPosition,
             templateHtml
         });
+        this._value = 0;
 
         this._els = {
             rotateButton: this.selector('#tie-retate-button'),
             rotateRange: new Range(this.selector('#tie-rotate-range'), defaultRotateRangeValus),
             rotateRangeValue: this.selector('#tie-ratate-range-value')
         };
+    }
+
+    setRangeBarAngle(type, angle) {
+        let resultAngle = angle;
+
+        if (type === 'rotate') {
+            resultAngle = parseInt(this._els.rotateRangeValue.value, 10) + angle;
+        }
+
+        this._els.rotateRangeValue.value = resultAngle;
+        this._setRangeBarRatio(resultAngle);
+    }
+
+    _setRangeBarRatio(angle) {
+        this._els.rotateRange.value = angle;
     }
 
     /**
@@ -46,12 +62,14 @@ class Rotate extends Submenu {
     /**
      * Change rotate for range
      * @param {number} value - angle value
+     * @param {boolean} isLast - Is last change
      * @private
      */
-    _changeRotateForRange(value) {
+    _changeRotateForRange(value, isLast) {
         const angle = toInteger(value);
         this._els.rotateRangeValue.value = angle;
-        this.actions.setAngle(angle);
+        this.actions.setAngle(angle, !isLast);
+        this._value = angle;
     }
 
     /**
@@ -61,13 +79,19 @@ class Rotate extends Submenu {
      */
     _changeRotateForButton(event) {
         const button = event.target.closest('.tui-image-editor-button');
+        const angle = this._els.rotateRangeValue.value;
+
         if (button) {
             const rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);
             const rotateAngle = {
                 clockwise: CLOCKWISE,
                 counterclockwise: COUNTERCLOCKWISE
             }[rotateType];
-            this.actions.rotate(rotateAngle);
+            const newAngle = parseInt(angle, 10) + rotateAngle;
+            const isRotatable = newAngle >= -360 && newAngle <= 360;
+            if (isRotatable) {
+                this.actions.rotate(rotateAngle);
+            }
         }
     }
 }

@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/line.js"
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Shape from '../src/js/component/shape';
@@ -61,8 +61,8 @@ describe('Shape', () => {
 
         [shapeObj] = canvas.getObjects();
 
-        expect(shapeObj.getWidth()).toBe(2); // strokeWidth: 1, width: 1
-        expect(shapeObj.getHeight()).toBe(2); // strokeWidth: 1, height: 1
+        expect(shapeObj.width).toBe(1); // strokeWidth: 1, width: 1
+        expect(shapeObj.height).toBe(1); // strokeWidth: 1, height: 1
     });
 
     it('When add() is called with no options, the default options set the circle object.', () => {
@@ -70,8 +70,8 @@ describe('Shape', () => {
 
         [shapeObj] = canvas.getObjects();
 
-        expect(shapeObj.getWidth()).toBe(1);
-        expect(shapeObj.getHeight()).toBe(1);
+        expect(shapeObj.width).toBe(0);
+        expect(shapeObj.height).toBe(0);
     });
 
     it('When add() is called with no options, the default options set the triangle object.', () => {
@@ -79,8 +79,8 @@ describe('Shape', () => {
 
         [shapeObj] = canvas.getObjects();
 
-        expect(shapeObj.getWidth()).toBe(2); // strokeWidth: 1, width: 1
-        expect(shapeObj.getHeight()).toBe(2); // strokeWidth: 1, height: 1
+        expect(shapeObj.width).toBe(1); // strokeWidth: 1, width: 1
+        expect(shapeObj.height).toBe(1); // strokeWidth: 1, height: 1
     });
 
     it('When add() is called with the options, this options set the rectagle object.', () => {
@@ -96,11 +96,11 @@ describe('Shape', () => {
         shape.add('rect', settings);
         [shapeObj] = canvas.getObjects();
 
-        expect(shapeObj.getFill()).toBe('blue');
-        expect(shapeObj.getStroke()).toBe('red');
-        expect(shapeObj.getStrokeWidth()).toBe(10);
-        expect(shapeObj.getWidth()).toBe(110); // width + storkeWidth
-        expect(shapeObj.getHeight()).toBe(110); // height + storkeWidth
+        expect(shapeObj.fill).toBe('blue');
+        expect(shapeObj.stroke).toBe('red');
+        expect(shapeObj.strokeWidth).toBe(10);
+        expect(shapeObj.width).toBe(100); // width + storkeWidth
+        expect(shapeObj.height).toBe(100); // height + storkeWidth
     });
 
     it('When add() is called with the options, this options set the circle object.', () => {
@@ -116,11 +116,11 @@ describe('Shape', () => {
         shape.add('circle', settings);
         [shapeObj] = canvas.getObjects();
 
-        expect(shapeObj.getFill()).toBe('blue');
-        expect(shapeObj.getStroke()).toBe('red');
-        expect(shapeObj.getStrokeWidth()).toBe(3);
-        expect(shapeObj.getWidth()).toBe(203); // rx * 2 + stokeWidth
-        expect(shapeObj.getHeight()).toBe(103); // ry * 2 + stokeWidth
+        expect(shapeObj.fill).toBe('blue');
+        expect(shapeObj.stroke).toBe('red');
+        expect(shapeObj.strokeWidth).toBe(3);
+        expect(shapeObj.width).toBe(200); // rx * 2 + stokeWidth
+        expect(shapeObj.height).toBe(100); // ry * 2 + stokeWidth
     });
 
     it('When add() is called with the options, this options set the triangle object.', () => {
@@ -136,11 +136,11 @@ describe('Shape', () => {
         shape.add('triangle', settings);
         [shapeObj] = canvas.getObjects();
 
-        expect(shapeObj.getFill()).toBe('blue');
-        expect(shapeObj.getStroke()).toBe('red');
-        expect(shapeObj.getStrokeWidth()).toBe(0);
-        expect(shapeObj.getWidth()).toBe(100);
-        expect(shapeObj.getHeight()).toBe(100);
+        expect(shapeObj.fill).toBe('blue');
+        expect(shapeObj.stroke).toBe('red');
+        expect(shapeObj.strokeWidth).toBe(0);
+        expect(shapeObj.width).toBe(100);
+        expect(shapeObj.height).toBe(100);
     });
 
     it('When change() is called, the style of the rectagle object is changed.', () => {
@@ -155,10 +155,10 @@ describe('Shape', () => {
             height: 20
         });
 
-        expect(shapeObj.getFill()).toBe('blue');
-        expect(shapeObj.getStroke()).toBe('red');
-        expect(shapeObj.getWidth()).toBe(11);
-        expect(shapeObj.getHeight()).toBe(21);
+        expect(shapeObj.fill).toBe('blue');
+        expect(shapeObj.stroke).toBe('red');
+        expect(shapeObj.width).toBe(10);
+        expect(shapeObj.height).toBe(20);
     });
 
     it('When change() is called, the style of the circle object is changed.', () => {
@@ -173,10 +173,10 @@ describe('Shape', () => {
             ry: 20
         });
 
-        expect(shapeObj.getFill()).toBe('blue');
-        expect(shapeObj.getStroke()).toBe('red');
-        expect(shapeObj.getWidth()).toBe(21);
-        expect(shapeObj.getHeight()).toBe(41);
+        expect(shapeObj.fill).toBe('blue');
+        expect(shapeObj.stroke).toBe('red');
+        expect(shapeObj.width).toBe(20);
+        expect(shapeObj.height).toBe(40);
     });
 
     it('When change() is called, the style of the triangle object is changed.', () => {
@@ -189,10 +189,10 @@ describe('Shape', () => {
             height: 20
         });
 
-        expect(shapeObj.getFill()).toBe('#ffffff');
-        expect(shapeObj.getStroke()).toBe('#000000');
-        expect(shapeObj.getWidth()).toBe(11);
-        expect(shapeObj.getHeight()).toBe(21);
+        expect(shapeObj.fill).toBe('#ffffff');
+        expect(shapeObj.stroke).toBe('#000000');
+        expect(shapeObj.width).toBe(10);
+        expect(shapeObj.height).toBe(20);
     });
 
     describe('_onFabricMouseMove()', () => {
@@ -215,8 +215,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('left');
-            expect(shapeObj.getOriginY()).toBe('top');
+            expect(shapeObj.originX).toBe('left');
+            expect(shapeObj.originY).toBe('top');
         });
 
         it('When the mouse direction is in 2th quadrant,' +
@@ -228,8 +228,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('right');
-            expect(shapeObj.getOriginY()).toBe('top');
+            expect(shapeObj.originX).toBe('right');
+            expect(shapeObj.originY).toBe('top');
         });
 
         it('When the mouse direction is in 3th quadrant,' +
@@ -241,8 +241,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('right');
-            expect(shapeObj.getOriginY()).toBe('bottom');
+            expect(shapeObj.originX).toBe('right');
+            expect(shapeObj.originY).toBe('bottom');
         });
 
         it('When the mouse direction is in 4th quadrant,' +
@@ -254,8 +254,8 @@ describe('Shape', () => {
 
             shape._onFabricMouseMove(fEvent);
 
-            expect(shapeObj.getOriginX()).toBe('left');
-            expect(shapeObj.getOriginY()).toBe('bottom');
+            expect(shapeObj.originX).toBe('left');
+            expect(shapeObj.originY).toBe('bottom');
         });
     });
 
@@ -360,8 +360,8 @@ describe('Shape', () => {
         shape._onFabricMouseMove(fEvent);
         shape._onFabricMouseUp();
 
-        expect(shapeObj.getWidth()).toBe(201); // has 1 storkeWidth
-        expect(shapeObj.getHeight()).toBe(201); // has 1 storkeWidth
+        expect(shapeObj.width).toBe(200); // has 1 storkeWidth
+        expect(shapeObj.height).toBe(200); // has 1 storkeWidth
     });
 
     it('When drawing the shape with mouse and the "isRegular" option set to true, ' +
@@ -383,7 +383,7 @@ describe('Shape', () => {
         shape._onFabricMouseMove(fEvent);
         shape._onFabricMouseUp();
 
-        expect(shapeObj.getWidth()).toBe(201); // has 1 storkeWidth
-        expect(shapeObj.getHeight()).toBe(201); // has 1 storkeWidth
+        expect(shapeObj.width).toBe(200); // has 1 storkeWidth
+        expect(shapeObj.height).toBe(200); // has 1 storkeWidth
     });
 });

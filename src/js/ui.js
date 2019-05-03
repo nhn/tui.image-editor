@@ -34,14 +34,14 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
  * @class
  * @param {string|HTMLElement} element - Wrapper's element or selector
  * @param {Object} [options] - Ui setting options
- *   @param {number} option.loadImage - Init default load image
- *   @param {number} option.initMenu - Init start menu
- *   @param {Boolean} [option.menuBarPosition=bottom] - Let
- *   @param {Boolean} [option.applyCropSelectionStyle=false] - Let
+ *   @param {number} options.loadImage - Init default load image
+ *   @param {number} options.initMenu - Init start menu
+ *   @param {Boolean} [options.menuBarPosition=bottom] - Let
+ *   @param {Boolean} [options.applyCropSelectionStyle=false] - Let
  *   @param {Object} [options.uiSize] - ui size of editor
  *     @param {string} options.uiSize.width - width of ui
  *     @param {string} options.uiSize.height - height of ui
- * @param {Objecdt} actions - ui action instance
+ * @param {Object} actions - ui action instance
  */
 class Ui {
     constructor(element, options, actions) {
@@ -102,10 +102,10 @@ class Ui {
     /**
      * Change editor size
      * @param {Object} resizeInfo - ui & image size info
-     *   @param {Object} resizeInfo.uiSize - image size dimension
-     *     @param {Number} resizeInfo.uiSize.width - ui width
-     *     @param {Number} resizeInfo.uiSize.height - ui height
-     *   @param {Object} resizeInfo.imageSize - image size dimension
+     *   @param {Object} [resizeInfo.uiSize] - image size dimension
+     *     @param {string} resizeInfo.uiSize.width - ui width
+     *     @param {string} resizeInfo.uiSize.height - ui height
+     *   @param {Object} [resizeInfo.imageSize] - image size dimension
      *     @param {Number} resizeInfo.imageSize.oldWidth - old width
      *     @param {Number} resizeInfo.imageSize.oldHeight - old height
      *     @param {Number} resizeInfo.imageSize.newWidth - new width
@@ -219,10 +219,10 @@ class Ui {
     /**
      * Change delete button status
      * @param {Object} [options] - Ui setting options
-     *   @param {object} [option.loadImage] - Init default load image
-     *   @param {string} [option.initMenu] - Init start menu
-     *   @param {string} [option.menuBarPosition=bottom] - Let
-     *   @param {boolean} [option.applyCropSelectionStyle=false] - Let
+     *   @param {object} [options.loadImage] - Init default load image
+     *   @param {string} [options.initMenu] - Init start menu
+     *   @param {string} [options.menuBarPosition=bottom] - Let
+     *   @param {boolean} [options.applyCropSelectionStyle=false] - Let
      * @returns {Object} initialize option
      * @private
      */
@@ -247,8 +247,8 @@ class Ui {
     /**
      * Set ui container size
      * @param {Object} uiSize - ui dimension
-     *   @param {number} width - width
-     *   @param {number} height - height
+     *   @param {string} uiSize.width - css width property
+     *   @param {string} uiSize.height - css height property 
      * @private
      */
     _setUiSize(uiSize = this.options.uiSize) {
@@ -557,7 +557,7 @@ class Ui {
      * @param {string} menuBarPosition - top or right or bottom or left
      * @private
      */
-    _setEditorPosition(menuBarPosition) {
+    _setEditorPosition(menuBarPosition) { // eslint-disable-line complexity
         const {width, height} = this._getEditorDimension();
         const editorElementStyle = this._editorElement.style;
         let top = 0;

@@ -48,31 +48,10 @@ export default ({locale}) => (`
                     </div>
                 </div>
                 <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
-                    <label>${locale.localize('Threshold')}</label>
-                    <div id="tie-removewhite-threshold-range"></div>
-                </div>
-                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
                     <label>${locale.localize('Distance')}</label>
                     <div id="tie-removewhite-distance-range"></div>
                 </div>
             </div>
-            <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
-                <div class="tui-image-editor-newline tui-image-editor-checkbox-wrap">
-                    <div class="tui-image-editor-checkbox">
-                        <input type="checkbox" id="tie-gradient-transparency">
-                        <label for="tie-gradient-transparency">${locale.localize('Gradient transparency')}</label>
-                    </div>
-                </div>
-                <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
-                    <label>${locale.localize('Value')}</label>
-                    <div id="tie-gradient-transparency-range"></div>
-                </div>
-            </div>
-        </li>
-        <li class="tui-image-editor-partition only-left-right">
-            <div></div>
-        </li>
-        <li class="tui-image-editor-submenu-align">
             <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
                 <div class="tui-image-editor-checkbox">
                     <input type="checkbox" id="tie-brightness">
@@ -91,7 +70,11 @@ export default ({locale}) => (`
                     <div id="tie-noise-range"></div>
                 </div>
             </div>
-
+        </li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
+        <li class="tui-image-editor-submenu-align">
             <div class="tui-image-editor-checkbox-group tui-image-editor-disabled">
                 <div class="tui-image-editor-checkbox">
                     <input type="checkbox" id="tie-pixelate">

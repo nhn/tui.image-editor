@@ -17,7 +17,6 @@ const FILTER_OPTIONS = [
     'sharpen',
     'emboss',
     'remove-white',
-    'gradient-transparency',
     'brightness',
     'noise',
     'pixelate',
@@ -26,6 +25,29 @@ const FILTER_OPTIONS = [
     'multiply',
     'blend'
 ];
+const filterNameMap = {
+    grayscale: 'grayscale',
+    invert: 'invert',
+    sepia: 'sepia',
+    sepia2: 'vintage',
+    blur: 'blur',
+    sharpen: 'sharpen',
+    emboss: 'emboss',
+    removeWhite: 'removeColor',
+    brightness: 'brightness',
+    contrast: 'contrast',
+    saturation: 'saturation',
+    vintage: 'vintage',
+    polaroid: 'polaroid',
+    noise: 'noise',
+    pixelate: 'pixelate',
+    colorFilter: 'removeColor',
+    tint: 'blendColor',
+    multiply: 'blendColor',
+    blend: 'blendColor',
+    hue: 'hue',
+    gamma: 'gamma'
+};
 
 /**
  * Filter ui class
@@ -56,17 +78,15 @@ class Filter extends Submenu {
     addEvent({applyFilter}) {
         const changeRangeValue = this._changeRangeValue.bind(this, applyFilter);
 
-        snippet.forEach(FILTER_OPTIONS, filterName => {
-            const filterCheckElement = this.selector(`#tie-${filterName}`);
-            const filterNameCamelCase = toCamelCase(filterName);
+        snippet.forEach(FILTER_OPTIONS, filter => {
+            const filterCheckElement = this.selector(`#tie-${filter}`);
+            const filterNameCamelCase = toCamelCase(filter);
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
 
             filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
         });
 
-        this._els.removewhiteThresholdRange.on('change', () => changeRangeValue('removeWhite'));
         this._els.removewhiteDistanceRange.on('change', () => changeRangeValue('removeWhite'));
-        this._els.gradientTransparencyRange.on('change', () => changeRangeValue('gradientTransparency'));
         this._els.colorfilterThresholeRange.on('change', () => changeRangeValue('colorFilter'));
         this._els.pixelateRange.on('change', () => changeRangeValue('pixelate'));
         this._els.noiseRange.on('change', () => changeRangeValue('noise'));
@@ -85,13 +105,13 @@ class Filter extends Submenu {
     /**
      * Add event for filter
      * @param {Function} applyFilter - actions for firter
-     * @param {string} filterName - filter name
+     * @param {string} filter - filter name
      */
-    _changeRangeValue(applyFilter, filterName) {
-        const apply = this.checkedMap[filterName].checked;
-        const type = filterName;
+    _changeRangeValue(applyFilter, filter) {
+        const apply = this.checkedMap[filter].checked;
+        const type = filterNameMap[filter];
 
-        const checkboxGroup = this.checkedMap[filterName].closest('.tui-image-editor-checkbox-group');
+        const checkboxGroup = this.checkedMap[filter].closest('.tui-image-editor-checkbox-group');
         if (checkboxGroup) {
             if (apply) {
                 checkboxGroup.classList.remove('tui-image-editor-disabled');
@@ -99,7 +119,7 @@ class Filter extends Submenu {
                 checkboxGroup.classList.add('tui-image-editor-disabled');
             }
         }
-        applyFilter(apply, type, this._getFilterOption(type));
+        applyFilter(apply, type, this._getFilterOption(filter));
     }
 
     /**
@@ -112,15 +132,13 @@ class Filter extends Submenu {
         const option = {};
         switch (type) {
             case 'removeWhite':
-                option.threshold = toInteger(this._els.removewhiteThresholdRange.value);
-                option.distance = toInteger(this._els.removewhiteDistanceRange.value);
-                break;
-            case 'gradientTransparency':
-                option.threshold = toInteger(this._els.gradientTransparencyRange.value);
+                option.color = '#FFFFFF';
+                option.useAlpha = false;
+                option.distance = parseFloat(this._els.removewhiteDistanceRange.value);
                 break;
             case 'colorFilter':
                 option.color = '#FFFFFF';
-                option.threshold = this._els.colorfilterThresholeRange.value;
+                option.distance = parseFloat(this._els.colorfilterThresholeRange.value);
                 break;
             case 'pixelate':
                 option.blocksize = toInteger(this._els.pixelateRange.value);
@@ -129,18 +147,21 @@ class Filter extends Submenu {
                 option.noise = toInteger(this._els.noiseRange.value);
                 break;
             case 'brightness':
-                option.brightness = toInteger(this._els.brightnessRange.value);
+                option.brightness = parseFloat(this._els.brightnessRange.value);
                 break;
             case 'blend':
+                option.mode = 'add';
                 option.color = this._els.filterBlendColor.color;
                 option.mode = this._els.blendType.value;
                 break;
             case 'multiply':
+                option.mode = 'multiply';
                 option.color = this._els.filterMultiplyColor.color;
                 break;
             case 'tint':
+                option.mode = 'tint';
                 option.color = this._els.filterTintColor.color;
-                option.opacity = this._els.tintOpacity.value;
+                option.alpha = this._els.tintOpacity.value;
                 break;
             default:
                 break;
@@ -156,17 +177,9 @@ class Filter extends Submenu {
     _makeControlElement() {
         const {selector} = this;
         this._els = {
-            removewhiteThresholdRange: new Range(
-                selector('#tie-removewhite-threshold-range'),
-                FILTER_RANGE.removewhiteThresholdRange
-            ),
             removewhiteDistanceRange: new Range(
                 selector('#tie-removewhite-distance-range'),
                 FILTER_RANGE.removewhiteDistanceRange
-            ),
-            gradientTransparencyRange: new Range(
-                selector('#tie-gradient-transparency-range'),
-                FILTER_RANGE.gradientTransparencyRange
             ),
             brightnessRange: new Range(
                 selector('#tie-brightness-range'),

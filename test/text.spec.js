@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/text.js"
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Text from '../src/js/component/text';
@@ -37,7 +37,7 @@ describe('Text', () => {
         });
 
         it('should make the blank text object when text parameter is empty string.', () => {
-            const newText = activeObj.getText();
+            const newText = activeObj.text;
 
             expect(newText).toEqual('');
         });
@@ -63,11 +63,11 @@ describe('Text', () => {
 
         text.change(activeObj, 'abc');
 
-        expect(activeObj.getText()).toEqual('abc');
+        expect(activeObj.text).toEqual('abc');
 
         text.change(activeObj, 'def');
 
-        expect(activeObj.getText()).toEqual('def');
+        expect(activeObj.text).toEqual('def');
     });
 
     describe('setStyle()', () => {
@@ -159,16 +159,16 @@ describe('Text', () => {
             target: obj
         };
         const scale = 10;
-        const originSize = obj.getFontSize();
+        const originSize = obj.fontSize;
 
         text.start({});
 
         canvas.add(obj);
-        obj.setScaleY(scale);
+        obj.scaleY = scale;
 
         canvas.fire('object:scaling', mock);
 
-        expect(obj.getFontSize()).toEqual(originSize * scale);
+        expect(obj.fontSize).toEqual(originSize * scale);
     });
 
     describe('_changeToEditingMode()', () => {
@@ -211,7 +211,7 @@ describe('Text', () => {
             expect(textareaStyles['font-family'].replace(/'|"|\\/g, '')).toEqual(expected.fontFamily);
             expect(textareaStyles['font-weight']).toEqual(expected.fontWeight);
             expect(textareaStyles['font-align']).toEqual(expected.fontAlign);
-            expect(textareaStyles['line-height']).toEqual(obj.getLineHeight() + 0.1);
+            expect(textareaStyles['line-height']).toEqual(obj.lineHeight + 0.1);
         });
     });
 });

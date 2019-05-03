@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add icon module
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
@@ -130,7 +130,7 @@ class Icon extends Component {
         this._oColor = color;
 
         if (obj && obj.get('type') === 'icon') {
-            obj.setFill(this._oColor);
+            obj.set({fill: this._oColor});
             this.getCanvas().renderAll();
         }
     }
