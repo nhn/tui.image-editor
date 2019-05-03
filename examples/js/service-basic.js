@@ -62,8 +62,6 @@ var $inputCheckBrightness = $('#input-check-brightness');
 var $inputRangeBrightnessValue = $('#input-range-brightness-value');
 var $inputCheckNoise = $('#input-check-noise');
 var $inputRangeNoiseValue = $('#input-range-noise-value');
-var $inputCheckGradientTransparency = $('#input-check-gradient-transparancy');
-var $inputRangeGradientTransparencyValue = $('#input-range-gradient-transparency-value');
 var $inputCheckPixelate = $('#input-check-pixelate');
 var $inputRangePixelateValue = $('#input-range-pixelate-value');
 var $inputCheckTint = $('#input-check-tint');
@@ -715,7 +713,6 @@ $btnImageFilter.on('click', () => {
         'removeWhite': $inputCheckRemoveWhite,
         'brightness': $inputCheckBrightness,
         'noise': $inputCheckNoise,
-        'gradientTransparency': $inputCheckGradientTransparency,
         'pixelate': $inputCheckPixelate,
         'tint': $inputCheckTint,
         'multiply': $inputCheckMultiply,
@@ -829,18 +826,6 @@ $inputCheckNoise.on('change', function() {
 $inputRangeNoiseValue.on('change', function() {
     applyOrRemoveFilter($inputCheckNoise.is(':checked'), 'noise', {
         noise: parseInt(this.value, 10)
-    });
-});
-
-$inputCheckGradientTransparency.on('change', function() {
-    applyOrRemoveFilter(this.checked, 'gradientTransparency', {
-        threshold: parseInt($inputRangeGradientTransparencyValue.val(), 10)
-    });
-});
-
-$inputRangeGradientTransparencyValue.on('change', function() {
-    applyOrRemoveFilter($inputCheckGradientTransparency.is(':checked'), 'gradientTransparency', {
-        threshold: parseInt(this.value, 10)
     });
 });
 

@@ -189,11 +189,6 @@ module.exports = {
             max: 1,
             value: 0.2
         },
-        gradientTransparencyRange: {
-            min: 0,
-            max: 255,
-            value: 100
-        },
         brightnessRange: {
             min: -1,
             max: 1,
