@@ -108,7 +108,7 @@ class Cropper extends Component {
         fabric.util.addListener(document, 'keyup', this._listeners.keyup);
     }
 
-    /** 
+    /**
      * End cropping
      */
     end() {
