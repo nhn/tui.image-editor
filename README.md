@@ -106,11 +106,11 @@ tui.usageStatistics = false;
 </table>
 
 ### Powerful filter function
-- Grayscale, Invert, Sepia, Blur Sharpen, Emboss, RemoveWhite, GradientTransparency, Brightness, Noise, Pixelate, ColorFilter, Tint, Multiply, Blend
+- Grayscale, Invert, Sepia, Blur Sharpen, Emboss, RemoveWhite, Brightness, Noise, Pixelate, ColorFilter, Tint, Multiply, Blend
 
-| Grayscale | Noise | Gradient | Emboss | Pixelate | 
-| --- | --- | --- | --- | --- | 
-| ![grayscale](https://user-images.githubusercontent.com/35218826/41753470-930fb7b0-7608-11e8-9966-1c890e73d131.png) | ![noise](https://user-images.githubusercontent.com/35218826/41753458-9013bc82-7608-11e8-91d9-74dcc3ffce31.png) | ![gradient-transparency](https://user-images.githubusercontent.com/35218826/41753459-903fe640-7608-11e8-87f4-cc0bff43b4ee.png) | ![emboss](https://user-images.githubusercontent.com/35218826/41753460-906c018a-7608-11e8-8861-c135c0117cea.png) | ![pixelate](https://user-images.githubusercontent.com/35218826/41753461-90a614a6-7608-11e8-97a7-0d3b7bb4aec4.png) |
+| Grayscale | Noise | Emboss | Pixelate | 
+| --- | --- | --- | --- | 
+| ![grayscale](https://user-images.githubusercontent.com/35218826/41753470-930fb7b0-7608-11e8-9966-1c890e73d131.png) | ![noise](https://user-images.githubusercontent.com/35218826/41753458-9013bc82-7608-11e8-91d9-74dcc3ffce31.png) | ![emboss](https://user-images.githubusercontent.com/35218826/41753460-906c018a-7608-11e8-8861-c135c0117cea.png) | ![pixelate](https://user-images.githubusercontent.com/35218826/41753461-90a614a6-7608-11e8-97a7-0d3b7bb4aec4.png) |
 
 
 | Sepia | Sepia2 | Blend-righten | Blend-diff | Invert | 
@@ -353,7 +353,7 @@ $ npm run serve
 ## 📙 Documents
 * **Tutorial** : [https://github.com/nhn/tui.image-editor/tree/master/docs](https://github.com/nhn/tui.image-editor/tree/master/docs)
 * **Example** : [http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi](http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi)
-* **API** : [http://nhn.github.io/tui.image-editor/latest/](http://nhn.github.io/tui.image-editor/latest/)
+* **API** : [http://nhn.github.io/tui.image-editor/latest](http://nhn.github.io/tui.image-editor/latest/index)
 
 ## 💬 Contributing
 * [Code of Conduct](CODE_OF_CONDUCT.md)

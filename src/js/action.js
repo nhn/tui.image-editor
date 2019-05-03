@@ -36,6 +36,16 @@ export default {
                 this.ui.changeMenu('crop');
             }
         };
+        const setAngleRangeBarOnAction = angle => {
+            if (this.ui.submenu === 'rotate') {
+                this.ui.rotate.setRangeBarAngle('setAngle', angle);
+            }
+        };
+        const onEndUndoRedo = result => {
+            setAngleRangeBarOnAction(result);
+
+            return result;
+        };
 
         return extend({
             initLoadImage: (imagePath, imageName) => (
@@ -49,13 +59,13 @@ export default {
             undo: () => {
                 if (!this.isEmptyUndoStack()) {
                     exitCropOnAction();
-                    this.undo();
+                    this.undo().then(onEndUndoRedo);
                 }
             },
             redo: () => {
                 if (!this.isEmptyRedoStack()) {
                     exitCropOnAction();
-                    this.redo();
+                    this.redo().then(onEndUndoRedo);
                 }
             },
             reset: () => {
@@ -269,13 +279,15 @@ export default {
      */
     _rotateAction() {
         return extend({
-            rotate: angle => {
-                this.rotate(angle);
+            rotate: (angle, isSilent) => {
+                this.rotate(angle, isSilent);
                 this.ui.resizeEditor();
+                this.ui.rotate.setRangeBarAngle('rotate', angle);
             },
-            setAngle: angle => {
-                this.setAngle(angle);
+            setAngle: (angle, isSilent) => {
+                this.setAngle(angle, isSilent);
                 this.ui.resizeEditor();
+                this.ui.rotate.setRangeBarAngle('setAngle', angle);
             }
         }, this._commonAction());
     },

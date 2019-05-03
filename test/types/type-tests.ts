@@ -295,3 +295,5 @@ imageEditor.on('addText', pos => {
     console.log(`text position on canvas : ${pos.originPosition}`);
     console.log(`text position on browser : ${pos.clientPosition}`);
 });
+imageEditor.ui.resizeEditor({uiSize: {width: '600px', height: '1200px'}});
+imageEditor.ui.resizeEditor({imageSize: {newWidth: 300, newHeight: 140}});

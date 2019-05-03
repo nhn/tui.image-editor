@@ -32,18 +32,16 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 /**
  * Default UI Class
  * @class
- * @param {String|HTMLElement} element - Wrapper's element or selector
- * @param {Object} [options] - UI setting options
- *   @param {Boolean} [options.applyCropSelectionStyle=false] - Whether apply crop selection style or not
- *   @param {String} options.initMenu - Menu name for initial selection
- *   @param {String} [options.menuBarPosition="bottom"] - Menu bar's position ['bottom', 'top', 'left', 'right']
- *   @param {Object} options.loadImage - Initial default load image
- *     @param {String} options.loadImage.path - Image's URL path
- *     @param {String} options.loadImage.name - Image name
- *   @param {Object} options.uiSize - UI dimension of editor
- *     @param {String} options.uiSize.width - Width
- *     @param {String} options.uiSize.height - Height
- * @param {Object} actions - UI action instance
+ * @param {string|HTMLElement} element - Wrapper's element or selector
+ * @param {Object} [options] - Ui setting options
+ *   @param {number} options.loadImage - Init default load image
+ *   @param {number} options.initMenu - Init start menu
+ *   @param {Boolean} [options.menuBarPosition=bottom] - Let
+ *   @param {Boolean} [options.applyCropSelectionStyle=false] - Let
+ *   @param {Object} [options.uiSize] - ui size of editor
+ *     @param {string} options.uiSize.width - width of ui
+ *     @param {string} options.uiSize.height - height of ui
+ * @param {Object} actions - ui action instance
  */
 class Ui {
     constructor(element, options, actions) {
@@ -104,10 +102,10 @@ class Ui {
     /**
      * Change editor size
      * @param {Object} resizeInfo - ui & image size info
-     *   @param {Object} resizeInfo.uiSize - image size dimension
-     *     @param {Number} resizeInfo.uiSize.width - ui width
-     *     @param {Number} resizeInfo.uiSize.height - ui height
-     *   @param {Object} resizeInfo.imageSize - image size dimension
+     *   @param {Object} [resizeInfo.uiSize] - image size dimension
+     *     @param {string} resizeInfo.uiSize.width - ui width
+     *     @param {string} resizeInfo.uiSize.height - ui height
+     *   @param {Object} [resizeInfo.imageSize] - image size dimension
      *     @param {Number} resizeInfo.imageSize.oldWidth - old width
      *     @param {Number} resizeInfo.imageSize.oldHeight - old height
      *     @param {Number} resizeInfo.imageSize.newWidth - new width
@@ -249,8 +247,8 @@ class Ui {
     /**
      * Set ui container size
      * @param {Object} uiSize - ui dimension
-     *   @param {number} uiSize.width - width
-     *   @param {number} uiSize.height - height
+     *   @param {string} uiSize.width - css width property
+     *   @param {string} uiSize.height - css height property 
      * @private
      */
     _setUiSize(uiSize = this.options.uiSize) {
@@ -345,7 +343,7 @@ class Ui {
 
         btnElement.id = `tie-btn-${menuName}`;
         btnElement.className = 'tui-image-editor-item normal';
-        btnElement.title = this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase()));
+        btnElement.setAttribute('tooltip-content', this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase())));
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -559,7 +557,7 @@ class Ui {
      * @param {string} menuBarPosition - top or right or bottom or left
      * @private
      */
-    _setEditorPosition(menuBarPosition) {
+    _setEditorPosition(menuBarPosition) { // eslint-disable-line complexity
         const {width, height} = this._getEditorDimension();
         const editorElementStyle = this._editorElement.style;
         let top = 0;

@@ -2,7 +2,6 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/filter.js"
  */
-import $ from 'jquery';
 import ImageEditor from '../src/js/imageEditor';
 
 describe('Filter', () => {
@@ -39,8 +38,7 @@ describe('Filter', () => {
     });
 
     it('removeFilter() can remove added filter', done => {
-        imageEditor.applyFilter('colorFilter').then(() =>
-            imageEditor.removeFilter('colorFilter')
+        imageEditor.applyFilter('colorFilter').then(() => imageEditor.removeFilter('colorFilter')
         ).then(() => {
             expect(imageEditor.hasFilter('colorFilter')).toBe(false);
             expect(imageEditor.isEmptyUndoStack()).toBe(false);

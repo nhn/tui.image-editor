@@ -2,36 +2,31 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/extension/cropzone.js"
  */
+import {fabric} from 'fabric';
 import Cropzone from '../src/js/extension/cropzone';
 
 describe('Cropzone', () => {
-    let cropzone;
-
-    beforeEach(() => {
-        cropzone = new Cropzone({
-            left: 10,
-            top: 10,
-            width: 100,
-            height: 100,
-            cornerSize: 10,
-            strokeWidth: 0,
-            cornerColor: 'black',
-            fill: 'transparent',
-            hasRotatingPoint: false,
-            hasBorders: false,
-            lockScalingFlip: true,
-            lockRotation: true
-        });
-    });
+    const options = {
+        left: 10,
+        top: 10,
+        width: 100,
+        height: 100,
+        cornerSize: 10,
+        strokeWidth: 0,
+        cornerColor: 'black',
+        fill: 'transparent',
+        hasRotatingPoint: false,
+        hasBorders: false,
+        lockScalingFlip: true,
+        lockRotation: true
+    };
+    const canvas = new fabric.Canvas();
+    canvas.height = 400;
+    canvas.width = 300;
 
     it('"_getCoordinates()" should return outer&inner rect coordinates(array)', () => {
-        const mockCtx = {
-                canvas: {
-                    width: 300,
-                    height: 400
-                }
-            },
-            coords = cropzone._getCoordinates(mockCtx);
+        const cropzone = new Cropzone(canvas, options, {});
+        const coords = cropzone._getCoordinates();
 
         expect(coords).toEqual({
             x: [-60, -50, 50, 240],
@@ -40,6 +35,7 @@ describe('Cropzone', () => {
     });
 
     it('"_onMoving()" should set left and top between 0 and canvas size', () => {
+        const cropzone = new Cropzone(canvas, options, {});
         const mockFabricCanvas = {
             getWidth() {
                 return 300;
@@ -50,15 +46,15 @@ describe('Cropzone', () => {
         };
 
         cropzone.canvas = mockFabricCanvas;
-        cropzone.setLeft(-1);
-        cropzone.setTop(-1);
+        cropzone.left = -1;
+        cropzone.top = -1;
         cropzone._onMoving();
 
         expect(cropzone.top).toEqual(0);
         expect(cropzone.left).toEqual(0);
 
-        cropzone.setLeft(1000);
-        cropzone.setTop(1000);
+        cropzone.left = 1000;
+        cropzone.top = 1000;
         cropzone._onMoving();
 
         expect(cropzone.left).toEqual(200);
@@ -66,21 +62,23 @@ describe('Cropzone', () => {
     });
 
     it('"isValid()" should return whether the cropzone has real area or not', () => {
-        cropzone.setLeft(-1);
+        const cropzone = new Cropzone(canvas, options, {});
+        cropzone.left = -1;
         expect(cropzone.isValid()).toBe(false);
 
-        cropzone.setLeft(1);
+        cropzone.left = 1;
         expect(cropzone.isValid()).toBe(true);
 
-        cropzone.setHeight(-1);
+        cropzone.height = -1;
         expect(cropzone.isValid()).toBe(false);
 
-        cropzone.setHeight(1);
+        cropzone.height = 1;
         expect(cropzone.isValid()).toBe(true);
     });
 
     it('"_calcTopLeftScalingSizeFromPointer()"' +
         ' should return scaling size(position + dimension)', () => {
+        const cropzone = new Cropzone(canvas, options, {});
         let mousePointerX, mousePointerY,
             expected, actual;
 
@@ -120,6 +118,7 @@ describe('Cropzone', () => {
 
     it('"_calcBottomRightScalingSizeFromPointer()"' +
         ' should return scaling size(dimension)', () => {
+        const cropzone = new Cropzone(canvas, options, {});
         let mousePointerX, mousePointerY,
             expected, actual;
 
@@ -158,11 +157,13 @@ describe('Cropzone', () => {
     });
 
     it('should be "cropzone" type', () => {
+        const cropzone = new Cropzone(canvas, options, {});
         expect(cropzone.isType('cropzone')).toBe(true);
     });
 
     it('"_makeScalingSettings()" ' +
         'should return suitable position&dimension values from corner', () => {
+        const cropzone = new Cropzone(canvas, options, {});
         const mockTL = {
                 width: 1,
                 height: 2,

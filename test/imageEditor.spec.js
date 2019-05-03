@@ -64,7 +64,7 @@ describe('ImageEditor', () => {
             const spyCallback = jasmine.createSpy();
 
             spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(null);
-            spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue(null);
+            spyOn(imageEditor._graphics, 'getActiveObjects').and.returnValue(null);
 
             imageEditor._onKeyDown({
                 keyCode: consts.keyCodes.BACKSPACE,
@@ -77,9 +77,16 @@ describe('ImageEditor', () => {
         describe('removeActiveObject()', () => {
             it('_removeObjectStream should be executed when group exists.', () => {
                 spyOn(imageEditor._graphics, 'getActiveObject');
-                spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue({
-                    getObjects: () => [1, 2, 3]
-                });
+                const activeSelection = {
+                    type: 'activeSelection',
+                    size() {
+                        return 3;
+                    },
+                    getObjects() {
+                        return [1, 2, 3];
+                    }
+                };
+                spyOn(imageEditor._graphics, 'getActiveObjects').and.returnValue(activeSelection);
                 spyOn(imageEditor, '_removeObjectStream');
                 spyOn(imageEditor, 'discardSelection');
 
@@ -90,7 +97,7 @@ describe('ImageEditor', () => {
             });
 
             it('removeObject must be executed when group does not exist.', () => {
-                spyOn(imageEditor._graphics, 'getActiveGroupObject').and.returnValue(null);
+                spyOn(imageEditor._graphics, 'getActiveObjects').and.returnValue(null);
                 spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(jasmine.any(Object));
                 spyOn(imageEditor._graphics, 'getObjectId');
                 spyOn(imageEditor, 'removeObject');

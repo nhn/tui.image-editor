@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview ColorFilter extending fabric.Image.filters.BaseFilter
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 
 /**
  * ColorFilter object
@@ -38,9 +38,10 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
 
     /**
      * Applies filter to canvas element
-     * @param {Object} canvasEl Canvas element to apply filter to
+     * @param {Object} canvas Canvas object passed by fabric
      */
-    applyTo(canvasEl) { // eslint-disable-line
+    applyTo(canvas) { // eslint-disable-line
+        const {canvasEl} = canvas;
         const context = canvasEl.getContext('2d');
         const imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
         const {data} = imageData;

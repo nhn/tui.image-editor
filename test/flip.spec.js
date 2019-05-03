@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/flip.js"
  */
-import fabric from 'fabric/dist/fabric.require';
+import {fabric} from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Flip from '../src/js/component/flip';
@@ -95,7 +95,7 @@ describe('Flip', () => {
 
     describe('Promise is returned with settings and angle,', () => {
         beforeEach(() => {
-            mockImage.setAngle(10);
+            mockImage.angle = 10;
         });
 
         it('flipX() is called.', done => {

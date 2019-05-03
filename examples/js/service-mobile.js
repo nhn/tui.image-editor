@@ -3,7 +3,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview
  */
-/* eslint-disable vars-on-top */
+/* eslint-disable vars-on-top,no-var,strict,prefer-template,prefer-arrow-callback,prefer-destructuring,object-shorthand,require-jsdoc,complexity */
 'use strict';
 
 var MAX_RESOLUTION = 3264 * 2448; // 8MP (Mega Pixel)
@@ -66,22 +66,22 @@ var $inputStrokeWidthRange = $('#input-stroke-range');
 var $inputCheckTransparent = $('#input-check-transparent');
 
 // Colorpicker
-var iconColorpicker = tui.component.colorpicker.create({
+var iconColorpicker = tui.colorPicker.create({
     container: $('#tui-icon-color-picker')[0],
     color: '#000000'
 });
 
-var textColorpicker = tui.component.colorpicker.create({
+var textColorpicker = tui.colorPicker.create({
     container: $('#tui-text-color-picker')[0],
     color: '#000000'
 });
 
-var brushColorpicker = tui.component.colorpicker.create({
+var brushColorpicker = tui.colorPicker.create({
     container: $('#tui-brush-color-picker')[0],
     color: '#000000'
 });
 
-var shapeColorpicker = tui.component.colorpicker.create({
+var shapeColorpicker = tui.colorPicker.create({
     container: $('#tui-shape-color-picker')[0],
     color: '#000000'
 });
@@ -272,7 +272,7 @@ $btnShowMenu.on('click', function() {
     imageEditor.stopDrawingMode();
 });
 
-//Image load action
+// Image load action
 $inputImage.on('change', function(event) {
     var file;
     var img;

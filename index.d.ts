@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.5.2
+// Type definitions for TOAST UI Image Editor v3.5.3
 // TypeScript Version: 3.2.2
 
 declare namespace tuiImageEditor {
@@ -151,7 +151,7 @@ declare namespace tuiImageEditor {
         textAlign?: string;
         textDecoration?: string;
         opacity?: number;
-        [propName: string]: number | string | boolean;
+        [propName: string]: number | string | boolean | undefined;
     }
 
     interface IIncludeUIOptions {
@@ -228,8 +228,30 @@ declare namespace tuiImageEditor {
         selectionStyle?: ISelectionStyleConfig;
     }
 
+    interface IUIDimension {
+        height?: string;
+        width?: string;
+    }
+    
+    interface IImageDimension {
+        oldHeight?: number;
+        oldWidth?: number;
+        newHeight?: number;
+        newWidth?: number;
+    }
+    
+    interface IEditorSize {
+        uiSize?: IUIDimension,
+        imageSize?: IImageDimension
+    }
+
+    interface UI {
+        resizeEditor(dimension: IEditorSize): Promise<void>;
+    }
+
     class ImageEditor {
         constructor(wrapper: string | Element, options: IOptions);
+        public ui: UI;
 
         public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
         public addImageObject(imgUrl: string): Promise<void>;

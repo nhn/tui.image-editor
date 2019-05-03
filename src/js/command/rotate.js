@@ -16,12 +16,15 @@ const command = {
      * @param {Graphics} graphics - Graphics instance
      * @param {string} type - 'rotate' or 'setAngle'
      * @param {number} angle - angle value (degree)
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      */
-    execute(graphics, type, angle) {
+    execute(graphics, type, angle, isSilent) {
         const rotationComp = graphics.getComponent(ROTATION);
 
-        this.undoData.angle = rotationComp.getCurrentAngle();
+        if (!isSilent) {
+            this.undoData.angle = rotationComp.getCurrentAngle();
+        }
 
         return rotationComp[type](angle);
     },
@@ -31,9 +34,13 @@ const command = {
      */
     undo(graphics) {
         const rotationComp = graphics.getComponent(ROTATION);
-        const {angle} = this.undoData;
+        const [, type, angle] = this.args;
 
-        return rotationComp.setAngle(angle);
+        if (type === 'setAngle') {
+            return rotationComp[type](this.undoData.angle);
+        }
+
+        return rotationComp.rotate(-angle);
     }
 };
 

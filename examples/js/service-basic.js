@@ -3,13 +3,12 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview
  */
-'use strict';
-
+/* eslint-disable vars-on-top,no-var,strict,prefer-template,prefer-arrow-callback,prefer-destructuring,object-shorthand,require-jsdoc,complexity,prefer-const,no-unused-vars */
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
 var shapeOptions = {};
-var shapeType;
-var activeObjectId;
+let shapeType;
+let activeObjectId;
 
 // Buttons
 var $btns = $('.menu-item');
@@ -63,8 +62,6 @@ var $inputCheckBrightness = $('#input-check-brightness');
 var $inputRangeBrightnessValue = $('#input-range-brightness-value');
 var $inputCheckNoise = $('#input-check-noise');
 var $inputRangeNoiseValue = $('#input-range-noise-value');
-var $inputCheckGradientTransparency = $('#input-check-gradient-transparancy');
-var $inputRangeGradientTransparencyValue = $('#input-range-gradient-transparency-value');
 var $inputCheckPixelate = $('#input-check-pixelate');
 var $inputRangePixelateValue = $('#input-range-pixelate-value');
 var $inputCheckTint = $('#input-check-tint');
@@ -75,7 +72,7 @@ var $inputCheckColorFilter = $('#input-check-color-filter');
 var $inputRangeColorFilterValue = $('#input-range-color-filter-value');
 
 // Sub menus
-var $displayingSubMenu = $();
+let $displayingSubMenu = $();
 var $cropSubMenu = $('#crop-sub-menu');
 var $flipSubMenu = $('#flip-sub-menu');
 var $rotationSubMenu = $('#rotation-sub-menu');
@@ -96,7 +93,7 @@ var $selectShapeType = $('[name="select-shape-type"]');
 // Select color of shape type
 var $selectColorType = $('[name="select-color-type"]');
 
-//Select blend type
+// Select blend type
 var $selectBlendType = $('[name="select-blend-type"]');
 
 // Image editor
@@ -110,40 +107,40 @@ var imageEditor = new tui.ImageEditor('.tui-image-editor', {
 });
 
 // Color picker for free drawing
-var brushColorpicker = tui.component.colorpicker.create({
+var brushColorpicker = tui.colorPicker.create({
     container: $('#tui-brush-color-picker')[0],
     color: '#000000'
 });
 
 // Color picker for text palette
-var textColorpicker = tui.component.colorpicker.create({
+var textColorpicker = tui.colorPicker.create({
     container: $('#tui-text-color-picker')[0],
     color: '#000000'
 });
 
 // Color picker for shape
-var shapeColorpicker = tui.component.colorpicker.create({
+var shapeColorpicker = tui.colorPicker.create({
     container: $('#tui-shape-color-picker')[0],
     color: '#000000'
 });
 
 // Color picker for icon
-var iconColorpicker = tui.component.colorpicker.create({
+var iconColorpicker = tui.colorPicker.create({
     container: $('#tui-icon-color-picker')[0],
     color: '#000000'
 });
 
-var tintColorpicker = tui.component.colorpicker.create({
+var tintColorpicker = tui.colorPicker.create({
     container: $('#tui-tint-color-picker')[0],
     color: '#000000'
 });
 
-var multiplyColorpicker = tui.component.colorpicker.create({
+var multiplyColorpicker = tui.colorPicker.create({
     container: $('#tui-multiply-color-picker')[0],
     color: '#000000'
 });
 
-var blendColorpicker = tui.component.colorpicker.create({
+var blendColorpicker = tui.colorPicker.create({
     container: $('#tui-blend-color-picker')[0],
     color: '#00FF00'
 });
@@ -156,14 +153,14 @@ function hexToRGBa(hex, alpha) {
     var b = parseInt(hex.slice(5, 7), 16);
     var a = alpha || 1;
 
-    return 'rgba(' + r + ', ' + g + ', ' + b + ', ' + a + ')';
+    return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
 
 function base64ToBlob(data) {
-    var mimeString = '';
-    var raw, uInt8Array, i, rawLength;
+    let mimeString = '';
+    let raw, uInt8Array, i, rawLength;
 
-    raw = data.replace(rImageType, function(header, imageType) {
+    raw = data.replace(rImageType, (header, imageType) => {
         mimeString = imageType;
 
         return '';
@@ -231,7 +228,7 @@ function setIconToolbar(obj) {
 }
 
 function setShapeToolbar(obj) {
-    var strokeColor, fillColor, isTransparent;
+    let strokeColor, fillColor, isTransparent;
     var colorType = $selectColorType.val();
 
     if (colorType === 'stroke') {
@@ -255,7 +252,7 @@ function setShapeToolbar(obj) {
 }
 
 function showSubMenu(type) {
-    var $submenu;
+    let $submenu;
 
     switch (type) {
         case 'shape':
@@ -287,10 +284,10 @@ function applyOrRemoveFilter(applying, type, options) {
 
 // Attach image editor custom events
 imageEditor.on({
-    objectAdded: function(objectProps) {
+    objectAdded(objectProps) {
         console.info(objectProps);
     },
-    undoStackChanged: function(length) {
+    undoStackChanged(length) {
         if (length) {
             $btnUndo.removeClass('disabled');
         } else {
@@ -298,7 +295,7 @@ imageEditor.on({
         }
         resizeEditor();
     },
-    redoStackChanged: function(length) {
+    redoStackChanged(length) {
         if (length) {
             $btnRedo.removeClass('disabled');
         } else {
@@ -306,19 +303,19 @@ imageEditor.on({
         }
         resizeEditor();
     },
-    objectScaled: function(obj) {
+    objectScaled(obj) {
         if (obj.type === 'text') {
             $inputFontSizeRange.val(obj.fontSize);
         }
     },
-    addText: function(pos) {
+    addText(pos) {
         imageEditor.addText('Double Click', {
             position: pos.originPosition
         }).then(objectProps => {
             console.log(objectProps);
         });
     },
-    objectActivated: function(obj) {
+    objectActivated(obj) {
         activeObjectId = obj.id;
         if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
             showSubMenu('shape');
@@ -334,7 +331,7 @@ imageEditor.on({
             activateTextMode();
         }
     },
-    mousedown: function(event, originPointer) {
+    mousedown(event, originPointer) {
         if ($imageFilterSubMenu.is(':visible') && imageEditor.hasFilter('colorFilter')) {
             imageEditor.applyFilter('colorFilter', {
                 x: parseInt(originPointer.x, 10),
@@ -345,7 +342,7 @@ imageEditor.on({
 });
 
 // Attach button click event listeners
-$btns.on('click', function() {
+$btns.on('click', () => {
     $btnsActivatable.removeClass('active');
 });
 
@@ -369,51 +366,51 @@ $btnRedo.on('click', function() {
     }
 });
 
-$btnClearObjects.on('click', function() {
+$btnClearObjects.on('click', () => {
     $displayingSubMenu.hide();
     imageEditor.clearObjects();
 });
 
-$btnRemoveActiveObject.on('click', function() {
+$btnRemoveActiveObject.on('click', () => {
     $displayingSubMenu.hide();
     imageEditor.removeObject(activeObjectId);
 });
 
-$btnCrop.on('click', function() {
+$btnCrop.on('click', () => {
     imageEditor.startDrawingMode('CROPPER');
     $displayingSubMenu.hide();
     $displayingSubMenu = $cropSubMenu.show();
 });
 
-$btnFlip.on('click', function() {
+$btnFlip.on('click', () => {
     imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
     $displayingSubMenu = $flipSubMenu.show();
 });
 
-$btnRotation.on('click', function() {
+$btnRotation.on('click', () => {
     imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
     $displayingSubMenu = $rotationSubMenu.show();
 });
 
-$btnClose.on('click', function() {
+$btnClose.on('click', () => {
     imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
 });
 
-$btnApplyCrop.on('click', function() {
+$btnApplyCrop.on('click', () => {
     imageEditor.crop(imageEditor.getCropzoneRect()).then(() => {
         imageEditor.stopDrawingMode();
         resizeEditor();
     });
 });
 
-$btnCancelCrop.on('click', function() {
+$btnCancelCrop.on('click', () => {
     imageEditor.stopDrawingMode();
 });
 
-$btnFlipX.on('click', function() {
+$btnFlipX.on('click', () => {
     imageEditor.flipX().then(status => {
         console.log('flipX: ', status.flipX);
         console.log('flipY: ', status.flipY);
@@ -421,7 +418,7 @@ $btnFlipX.on('click', function() {
     });
 });
 
-$btnFlipY.on('click', function() {
+$btnFlipY.on('click', () => {
     imageEditor.flipY().then(status => {
         console.log('flipX: ', status.flipX);
         console.log('flipY: ', status.flipY);
@@ -429,7 +426,7 @@ $btnFlipY.on('click', function() {
     });
 });
 
-$btnResetFlip.on('click', function() {
+$btnResetFlip.on('click', () => {
     imageEditor.resetFlip().then(status => {
         console.log('flipX: ', status.flipX);
         console.log('flipY: ', status.flipY);
@@ -437,17 +434,17 @@ $btnResetFlip.on('click', function() {
     });
 });
 
-$btnRotateClockwise.on('click', function() {
+$btnRotateClockwise.on('click', () => {
     imageEditor.rotate(30);
 });
 
-$btnRotateCounterClockWise.on('click', function() {
+$btnRotateCounterClockWise.on('click', () => {
     imageEditor.rotate(-30);
 });
 
-$inputRotationRange.on('mousedown', function() {
+$inputRotationRange.on('mousedown', () => {
     var changeAngle = function() {
-        imageEditor.setAngle(parseInt($inputRotationRange.val(), 10)).catch(() => {});
+        imageEditor.setAngle(parseInt($inputRotationRange.val(), 10))['catch'](() => {});
     };
     $(document).on('mousemove', changeAngle);
     $(document).on('mouseup', function stopChangingAngle() {
@@ -456,16 +453,16 @@ $inputRotationRange.on('mousedown', function() {
     });
 });
 
-$inputRotationRange.on('change', function() {
-    imageEditor.setAngle(parseInt($inputRotationRange.val(), 10)).catch(() => {});
+$inputRotationRange.on('change', () => {
+    imageEditor.setAngle(parseInt($inputRotationRange.val(), 10))['catch'](() => {});
 });
 
 $inputBrushWidthRange.on('change', function() {
     imageEditor.setBrush({width: parseInt(this.value, 10)});
 });
 
-$inputImage.on('change', function(event) {
-    var file;
+$inputImage.on('change', event => {
+    let file;
 
     if (!supportingFileAPI) {
         alert('This browser does not support file-api');
@@ -478,16 +475,16 @@ $inputImage.on('change', function(event) {
     });
 });
 
-$btnDownload.on('click', function() {
-    var imageName = imageEditor.getImageName();
+$btnDownload.on('click', () => {
+    let imageName = imageEditor.getImageName();
     var dataURL = imageEditor.toDataURL();
-    var blob, type, w;
+    let blob, type, w;
 
     if (supportingFileAPI) {
         blob = base64ToBlob(dataURL);
         type = blob.type.split('/')[1];
         if (imageName.split('.').pop() !== type) {
-            imageName += '.' + type;
+            imageName += `.${type}`;
         }
 
         // Library: FileSaver - saveAs
@@ -495,12 +492,12 @@ $btnDownload.on('click', function() {
     } else {
         alert('This browser needs a file-server');
         w = window.open();
-        w.document.body.innerHTML = '<img src=' + dataURL + '>';
+        w.document.body.innerHTML = `<img src=${dataURL}>`;
     }
 });
 
 // control draw line mode
-$btnDrawLine.on('click', function() {
+$btnDrawLine.on('click', () => {
     imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
     $displayingSubMenu = $drawLineSubMenu.show();
@@ -519,14 +516,14 @@ $selectLine.on('change', function() {
     }
 });
 
-brushColorpicker.on('selectColor', function(event) {
+brushColorpicker.on('selectColor', event => {
     imageEditor.setBrush({
         color: hexToRGBa(event.color, 0.5)
     });
 });
 
 // control draw shape mode
-$btnDrawShape.on('click', function() {
+$btnDrawShape.on('click', () => {
     showSubMenu('shape');
 
     // step 1. get options to draw shape from toolbar
@@ -553,7 +550,7 @@ $selectShapeType.on('change', function() {
 $inputCheckTransparent.on('change', function() {
     var colorType = $selectColorType.val();
     var isTransparent = $(this).prop('checked');
-    var color;
+    let color;
 
     if (!isTransparent) {
         color = shapeColorpicker.getColor();
@@ -574,7 +571,7 @@ $inputCheckTransparent.on('change', function() {
     imageEditor.setDrawingShape(shapeType, shapeOptions);
 });
 
-shapeColorpicker.on('selectColor', function(event) {
+shapeColorpicker.on('selectColor', event => {
     var colorType = $selectColorType.val();
     var isTransparent = $inputCheckTransparent.prop('checked');
     var color = event.color;
@@ -600,14 +597,14 @@ $inputStrokeWidthRange.on('change', function() {
     var strokeWidth = Number($(this).val());
 
     imageEditor.changeShape(activeObjectId, {
-        strokeWidth: strokeWidth
+        strokeWidth
     });
 
     imageEditor.setDrawingShape(shapeType, shapeOptions);
 });
 
 // control text mode
-$btnText.on('click', function() {
+$btnText.on('click', () => {
     showSubMenu('text');
     activateTextMode();
 });
@@ -620,7 +617,7 @@ $inputFontSizeRange.on('change', function() {
 
 $btnTextStyle.on('click', function(e) { // eslint-disable-line
     var styleType = $(this).attr('data-style-type');
-    var styleObj;
+    let styleObj;
 
     e.stopPropagation();
 
@@ -650,14 +647,14 @@ $btnTextStyle.on('click', function(e) { // eslint-disable-line
     imageEditor.changeTextStyle(activeObjectId, styleObj);
 });
 
-textColorpicker.on('selectColor', function(event) {
+textColorpicker.on('selectColor', event => {
     imageEditor.changeTextStyle(activeObjectId, {
         'fill': event.color
     });
 });
 
 // control icon
-$btnAddIcon.on('click', function() {
+$btnAddIcon.on('click', () => {
     showSubMenu('icon');
     activateIconMode();
 });
@@ -666,7 +663,7 @@ function onClickIconSubMenu(event) {
     var element = event.target || event.srcElement;
     var iconType = $(element).attr('data-icon-type');
 
-    imageEditor.once('mousedown', function(e, originPointer) {
+    imageEditor.once('mousedown', (e, originPointer) => {
         imageEditor.addIcon(iconType, {
             left: originPointer.x,
             top: originPointer.y
@@ -676,7 +673,7 @@ function onClickIconSubMenu(event) {
     });
 }
 
-$btnRegisterIcon.on('click', function() {
+$btnRegisterIcon.on('click', () => {
     $iconSubMenu.find('.menu-item').eq(3).after(
         '<li id="customArrow" class="menu-item icon-text" data-icon-type="customArrow">↑</li>'
     );
@@ -692,19 +689,19 @@ $btnRegisterIcon.on('click', function() {
 
 $iconSubMenu.on('click', '.icon-text', onClickIconSubMenu);
 
-iconColorpicker.on('selectColor', function(event) {
+iconColorpicker.on('selectColor', event => {
     imageEditor.changeIconColor(activeObjectId, event.color);
 });
 
 // control mask filter
-$btnMaskFilter.on('click', function() {
+$btnMaskFilter.on('click', () => {
     imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
 
     $displayingSubMenu = $filterSubMenu.show();
 });
 
-$btnImageFilter.on('click', function() {
+$btnImageFilter.on('click', () => {
     var filters = {
         'grayscale': $inputCheckGrayscale,
         'invert': $inputCheckInvert,
@@ -716,7 +713,6 @@ $btnImageFilter.on('click', function() {
         'removeWhite': $inputCheckRemoveWhite,
         'brightness': $inputCheckBrightness,
         'noise': $inputCheckNoise,
-        'gradientTransparency': $inputCheckGradientTransparency,
         'pixelate': $inputCheckPixelate,
         'tint': $inputCheckTint,
         'multiply': $inputCheckMultiply,
@@ -724,7 +720,7 @@ $btnImageFilter.on('click', function() {
         'colorFilter': $inputCheckColorFilter
     };
 
-    tui.util.forEach(filters, function($value, key) {
+    tui.util.forEach(filters, ($value, key) => {
         $value.prop('checked', imageEditor.hasFilter(key));
     });
     $displayingSubMenu.hide();
@@ -732,9 +728,9 @@ $btnImageFilter.on('click', function() {
     $displayingSubMenu = $imageFilterSubMenu.show();
 });
 
-$btnLoadMaskImage.on('change', function() {
-    var file;
-    var imgUrl;
+$btnLoadMaskImage.on('change', () => {
+    let file;
+    let imgUrl;
 
     if (!supportingFileAPI) {
         alert('This browser does not support file-api');
@@ -754,7 +750,7 @@ $btnLoadMaskImage.on('change', function() {
     }
 });
 
-$btnApplyMask.on('click', function() {
+$btnApplyMask.on('click', () => {
     imageEditor.applyFilter('mask', {
         maskObjId: activeObjectId
     }).then(result => {
@@ -833,18 +829,6 @@ $inputRangeNoiseValue.on('change', function() {
     });
 });
 
-$inputCheckGradientTransparency.on('change', function() {
-    applyOrRemoveFilter(this.checked, 'gradientTransparency', {
-        threshold: parseInt($inputRangeGradientTransparencyValue.val(), 10)
-    });
-});
-
-$inputRangeGradientTransparencyValue.on('change', function() {
-    applyOrRemoveFilter($inputCheckGradientTransparency.is(':checked'), 'gradientTransparency', {
-        threshold: parseInt(this.value, 10)
-    });
-});
-
 $inputCheckPixelate.on('change', function() {
     applyOrRemoveFilter(this.checked, 'pixelate', {
         blocksize: parseInt($inputRangePixelateValue.val(), 10)
@@ -864,13 +848,13 @@ $inputCheckTint.on('change', function() {
     });
 });
 
-tintColorpicker.on('selectColor', function(e) {
+tintColorpicker.on('selectColor', e => {
     applyOrRemoveFilter($inputCheckTint.is(':checked'), 'tint', {
         color: e.color
     });
 });
 
-$inputRangeTintOpacityValue.on('change', function() {
+$inputRangeTintOpacityValue.on('change', () => {
     applyOrRemoveFilter($inputCheckTint.is(':checked'), 'tint', {
         opacity: parseFloat($inputRangeTintOpacityValue.val())
     });
@@ -882,7 +866,7 @@ $inputCheckMultiply.on('change', function() {
     });
 });
 
-multiplyColorpicker.on('selectColor', function(e) {
+multiplyColorpicker.on('selectColor', e => {
     applyOrRemoveFilter($inputCheckMultiply.is(':checked'), 'multiply', {
         color: e.color
     });
@@ -895,7 +879,7 @@ $inputCheckBlend.on('change', function() {
     });
 });
 
-blendColorpicker.on('selectColor', function(e) {
+blendColorpicker.on('selectColor', e => {
     applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blend', {
         color: e.color
     });
@@ -929,6 +913,4 @@ imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(sizeValu
 });
 
 // IE9 Unselectable
-$('.menu').on('selectstart', function() {
-    return false;
-});
+$('.menu').on('selectstart', () => false);

@@ -37,6 +37,8 @@ class Invoker {
          * @private
          */
         this._isLocked = false;
+
+        this._isSilent = false;
     }
 
     /**
@@ -55,7 +57,9 @@ class Invoker {
 
         return command.execute(...args)
             .then(value => {
-                this.pushUndoStack(command);
+                if (!this._isSilent) {
+                    this.pushUndoStack(command);
+                }
                 this.unlock();
                 if (isFunction(command.executeCallback)) {
                     command.executeCallback(value);
@@ -127,6 +131,14 @@ class Invoker {
      */
     unlock() {
         this._isLocked = false;
+    }
+
+    executeSilent(...args) {
+        this._isSilent = true;
+
+        return this.execute(...args, this._isSilent).then(() => {
+            this._isSilent = false;
+        });
     }
 
     /**

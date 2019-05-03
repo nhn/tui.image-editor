@@ -184,25 +184,15 @@ module.exports = {
             max: 1,
             value: 0.7
         },
-        removewhiteThresholdRange: {
-            min: 0,
-            max: 255,
-            value: 60
-        },
         removewhiteDistanceRange: {
             min: 0,
-            max: 255,
-            value: 10
-        },
-        gradientTransparencyRange: {
-            min: 0,
-            max: 255,
-            value: 100
+            max: 1,
+            value: 0.2
         },
         brightnessRange: {
-            min: -255,
-            max: 255,
-            value: 100
+            min: -1,
+            max: 1,
+            value: 0
         },
         noiseRange: {
             min: 0,
@@ -216,8 +206,8 @@ module.exports = {
         },
         colorfilterThresholeRange: {
             min: 0,
-            max: 255,
-            value: 45
+            max: 1,
+            value: 0.2
         }
     }
 };

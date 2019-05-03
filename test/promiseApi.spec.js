@@ -65,7 +65,7 @@ describe('Promise API', () => {
             top: 10
         }).then(() => imageEditor.changeIconColor(activeObjectId, '#FFFF00')
         ).then(() => {
-            expect(canvas.getObjects()[0].getFill()).toBe('#FFFF00');
+            expect(canvas.getObjects()[0].fill).toBe('#FFFF00');
             done();
         })['catch'](message => {
             fail(message);
@@ -83,7 +83,7 @@ describe('Promise API', () => {
             expect(shape.type).toBe('rect');
             expect(shape.width).toBe(100);
             expect(shape.height).toBe(100);
-            expect(shape.getFill()).toBe('#FFFF00');
+            expect(shape.fill).toBe('#FFFF00');
             done();
         })['catch'](message => {
             fail(message);
@@ -104,7 +104,7 @@ describe('Promise API', () => {
             const [shape] = canvas.getObjects();
             expect(shape.type).toBe('triangle');
             expect(shape.width).toBe(200);
-            expect(shape.getFill()).toBe('#FF0000');
+            expect(shape.fill).toBe('#FF0000');
             done();
         })['catch'](message => {
             fail(message);
