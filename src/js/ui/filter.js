@@ -17,7 +17,6 @@ const FILTER_OPTIONS = [
     'sharpen',
     'emboss',
     'remove-white',
-    'gradient-transparency',
     'brightness',
     'noise',
     'pixelate',
@@ -35,7 +34,6 @@ const filterNameMap = {
     sharpen: 'sharpen',
     emboss: 'emboss',
     removeWhite: 'removeColor',
-    gradientTransparency: 'gradientTransparency',
     brightness: 'brightness',
     contrast: 'contrast',
     saturation: 'saturation',
@@ -89,7 +87,6 @@ class Filter extends Submenu {
         });
 
         this._els.removewhiteDistanceRange.on('change', () => changeRangeValue('removeWhite'));
-        this._els.gradientTransparencyRange.on('change', () => changeRangeValue('gradientTransparency'));
         this._els.colorfilterThresholeRange.on('change', () => changeRangeValue('colorFilter'));
         this._els.pixelateRange.on('change', () => changeRangeValue('pixelate'));
         this._els.noiseRange.on('change', () => changeRangeValue('noise'));
@@ -139,9 +136,6 @@ class Filter extends Submenu {
                 option.useAlpha = false;
                 option.distance = parseFloat(this._els.removewhiteDistanceRange.value);
                 break;
-            case 'gradientTransparency':
-                option.threshold = toInteger(this._els.gradientTransparencyRange.value);
-                break;
             case 'colorFilter':
                 option.color = '#FFFFFF';
                 option.distance = parseFloat(this._els.colorfilterThresholeRange.value);
@@ -186,10 +180,6 @@ class Filter extends Submenu {
             removewhiteDistanceRange: new Range(
                 selector('#tie-removewhite-distance-range'),
                 FILTER_RANGE.removewhiteDistanceRange
-            ),
-            gradientTransparencyRange: new Range(
-                selector('#tie-gradient-transparency-range'),
-                FILTER_RANGE.gradientTransparencyRange
             ),
             brightnessRange: new Range(
                 selector('#tie-brightness-range'),
