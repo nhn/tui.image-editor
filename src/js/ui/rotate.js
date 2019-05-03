@@ -79,13 +79,19 @@ class Rotate extends Submenu {
      */
     _changeRotateForButton(event) {
         const button = event.target.closest('.tui-image-editor-button');
+        const angle = this._els.rotateRangeValue.value;
+
         if (button) {
             const rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);
             const rotateAngle = {
                 clockwise: CLOCKWISE,
                 counterclockwise: COUNTERCLOCKWISE
             }[rotateType];
-            this.actions.rotate(rotateAngle);
+            const newAngle = parseInt(angle, 10) + rotateAngle;
+            const isRotatable = newAngle >= -360 && newAngle <= 360;
+            if (isRotatable) {
+                this.actions.rotate(rotateAngle);
+            }
         }
     }
 }
