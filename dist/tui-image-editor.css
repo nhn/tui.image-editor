@@ -1,14 +1,14 @@
 /*!
  * tui-image-editor.js
- * @version 3.5.2
- * @author NHNEnt FE Development Lab <dl_javascript@nhnent.com>
+ * @version 3.6.0
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
 body > textarea {
   position: fixed !important;
 }
 .tui-image-editor-container {
-  marign: 0;
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
   min-height: 300px;
@@ -59,7 +59,8 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-header-buttons button,
 .tui-image-editor-container .tui-image-editor-header-buttons div,
-.tui-image-editor-container .tui-image-editor-controls-buttons button {
+.tui-image-editor-container .tui-image-editor-controls-buttons button,
+.tui-image-editor-container .tui-image-editor-controls-buttons div {
   display: inline-block;
   position: relative;
   width: 120px;
@@ -144,7 +145,7 @@ body > textarea {
   cursor: pointer;
   margin: 0 4px;
 }
-.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[title]:hover:before {
+.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:hover:before {
   content: '';
   position: absolute;
   display: inline-block;
@@ -154,12 +155,11 @@ body > textarea {
   border-right: 7px solid transparent;
   border-top: 7px solid #2f2f2f;
   border-left: 7px solid transparent;
-  position: absolute;
   left: 13px;
   top: -2px;
 }
-.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[title]:hover:after {
-  content: attr(title);
+.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:hover:after {
+  content: attr(tooltip-content);
   position: absolute;
   display: inline-block;
   background-color: #2f2f2f;
@@ -169,7 +169,7 @@ body > textarea {
   font-weight: lighter;
   border-radius: 3px;
   max-height: 23px;
-  top: -22px;
+  top: -25px;
   left: 0;
   min-width: 24px;
 }
@@ -532,16 +532,16 @@ body > textarea {
   width: 1px;
   height: 24px;
 }
-.tui-image-editor-container.left .tui-image-editor-menu > .tui-image-editor-item[title]:before {
+.tui-image-editor-container.left .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:before {
   left: 28px;
   top: 11px;
   border-right: 7px solid #2f2f2f;
   border-top: 7px solid transparent;
   border-bottom: 7px solid transparent;
 }
-.tui-image-editor-container.left .tui-image-editor-menu > .tui-image-editor-item[title]:after {
+.tui-image-editor-container.left .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:after {
   top: 7px;
-  left: 39px;
+  left: 42px;
   white-space: nowrap;
 }
 .tui-image-editor-container.left .tui-image-editor-submenu {
@@ -625,16 +625,17 @@ body > textarea {
 .tui-image-editor-container.right .tui-image-editor-range {
   width: 136px;
 }
-.tui-image-editor-container.right .tui-image-editor-menu > .tui-image-editor-item[title]:before {
+.tui-image-editor-container.right .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:before {
   left: -3px;
   top: 11px;
   border-left: 7px solid #2f2f2f;
   border-top: 7px solid transparent;
   border-bottom: 7px solid transparent;
 }
-.tui-image-editor-container.right .tui-image-editor-menu > .tui-image-editor-item[title]:after {
+.tui-image-editor-container.right .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:after {
   top: 7px;
-  left: -44px;
+  left: unset;
+  right: 43px;
   white-space: nowrap;
 }
 .tui-image-editor-container.right .tui-image-editor-submenu {
@@ -673,13 +674,13 @@ body > textarea {
 .tui-image-editor-container.top .tui-image-editor-main-container {
   bottom: 0;
 }
-.tui-image-editor-container.top .tui-image-editor-menu > .tui-image-editor-item[title]:before {
+.tui-image-editor-container.top .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:before {
   left: 13px;
   border-top: 0;
   border-bottom: 7px solid #2f2f2f;
   top: 33px;
 }
-.tui-image-editor-container.top .tui-image-editor-menu > .tui-image-editor-item[title]:after {
+.tui-image-editor-container.top .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:after {
   top: 38px;
 }
 .tui-image-editor-container.top .tui-image-editor-submenu {
