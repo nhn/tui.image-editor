@@ -30,7 +30,12 @@ module.exports = {
         filename: `${FILENAME}.js`
     },
     externals: {
-        'fabric.fabric': 'fabric',
+        'fabric/dist/fabric': {
+            'commonjs': 'fabric/dist/fabric',
+            'commonjs2': 'fabric/dist/fabric',
+            'amd': 'fabric/dist/fabric',
+            'root': ['fabric']
+        },
         'tui-code-snippet': {
             'commonjs': 'tui-code-snippet',
             'commonjs2': 'tui-code-snippet',

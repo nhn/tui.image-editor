@@ -2,8 +2,8 @@
  * @fileoverview Test env
  * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
  */
+import fabric from 'fabric/dist/fabric';
 import '../src';
-import {fabric} from 'fabric';
 
 fabric.Object.prototype.objectCaching = false;
 

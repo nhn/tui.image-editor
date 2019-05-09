@@ -84,7 +84,7 @@ function setConfig(defaultConfig, server) {
         };
     } else {
         defaultConfig.browsers = [
-            'ChromeHeadless'
+            'Chrome'
         ];
     }
 }
@@ -120,7 +120,6 @@ module.exports = function(config) {
         },
         reporters: ['dots'],
         webpack: {
-            devtool: 'inline-source-map',
             module: {
                 preLoaders: [
                     {

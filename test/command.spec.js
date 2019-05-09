@@ -4,7 +4,7 @@
  */
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
-import {fabric} from 'fabric';
+import fabric from 'fabric/dist/fabric';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import Graphics from '../src/js/graphics';
