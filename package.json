@@ -1,7 +1,7 @@
 {
   "name": "tui-image-editor",
   "author": "NHNEnt FE Development Lab <dl_javascript@nhnent.com>",
-  "version": "3.5.2",
+  "version": "3.5.3",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -64,6 +64,7 @@
     "test:ne": "KARMA_SERVER=ne karma start",
     "test:types": "tsc --project test/types",
     "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
+    "product": "webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
     "bundle:svg": "node makesvg.js",
     "serve": "webpack-dev-server --inline --hot -d",
     "cpy-dist2doc": "mkdir -p doc/dist && cp -f -r dist doc",
