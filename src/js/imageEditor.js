@@ -120,6 +120,7 @@ class ImageEditor {
         this._handlers = {
             keydown: this._onKeyDown.bind(this),
             mousedown: this._onMouseDown.bind(this),
+            mouseup: this._onMouseUp.bind(this),
             objectActivated: this._onObjectActivated.bind(this),
             objectMoved: this._onObjectMoved.bind(this),
             objectScaled: this._onObjectScaled.bind(this),
@@ -271,6 +272,7 @@ class ImageEditor {
     _attachGraphicsEvents() {
         this._graphics.on({
             'mousedown': this._handlers.mousedown,
+            'mouseup': this._handlers.mouseup,
             'objectMoved': this._handlers.objectMoved,
             'objectScaled': this._handlers.objectScaled,
             'objectActivated': this._handlers.objectActivated,
@@ -396,6 +398,37 @@ class ImageEditor {
          * });
          */
         this.fire(events.MOUSE_DOWN, event, originPointer);
+    }
+
+    /**
+     * mouse up event handler
+     * @param {Event} event mouse down event
+     * @param {Object} originPointer origin pointer
+     *  @param {Number} originPointer.x x position
+     *  @param {Number} originPointer.y y position
+     * @private
+     */
+    _onMouseUp(event, originPointer) {
+        /**
+         * The mouse down event with position x, y on canvas
+         * @event ImageEditor#mouseup
+         * @param {Object} event - browser mouse event object
+         * @param {Object} originPointer origin pointer
+         *  @param {Number} originPointer.x x position
+         *  @param {Number} originPointer.y y position
+         * @example
+         * imageEditor.on('mouseup', function(event, originPointer) {
+         *     console.log(event);
+         *     console.log(originPointer);
+         *     if (imageEditor.hasFilter('colorFilter')) {
+         *         imageEditor.applyFilter('colorFilter', {
+         *             x: parseInt(originPointer.x, 10),
+         *             y: parseInt(originPointer.y, 10)
+         *         });
+         *     }
+         * });
+         */
+        this.fire(events.MOUSE_UP, event, originPointer);
     }
 
     /**
