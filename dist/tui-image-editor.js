@@ -125,13 +125,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	Element.prototype.matches = Element.prototype.msMatchesSelector || Element.prototype.webkitMatchesSelector;
 
 	if (!Element.prototype.closest) Element.prototype.closest = function (s) {
-	    var el = this;
-	    if (!document.documentElement.contains(el)) return null;
-	    do {
-	        if (el.matches(s)) return el;
-	        el = el.parentElement || el.parentNode;
-	    } while (el !== null && el.nodeType === 1);
-	    return null;
+	  var el = this;
+	  if (!document.documentElement.contains(el)) return null;
+	  do {
+	    if (el.matches(s)) return el;
+	    el = el.parentElement || el.parentNode;
+	  } while (el !== null && el.nodeType === 1);
+	  return null;
 	};
 
 	/*
@@ -149,205 +149,205 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	if ("document" in window.self) {
 
-	    // Full polyfill for browsers with no classList support
-	    // Including IE < Edge missing SVGElement.classList
-	    if (!("classList" in document.createElement("_")) || document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg", "g"))) {
+	  // Full polyfill for browsers with no classList support
+	  // Including IE < Edge missing SVGElement.classList
+	  if (!("classList" in document.createElement("_")) || document.createElementNS && !("classList" in document.createElementNS("http://www.w3.org/2000/svg", "g"))) {
 
-	        (function (view) {
+	    (function (view) {
 
-	            "use strict";
+	      "use strict";
 
-	            if (!('Element' in view)) return;
+	      if (!('Element' in view)) return;
 
-	            var classListProp = "classList",
-	                protoProp = "prototype",
-	                elemCtrProto = view.Element[protoProp],
-	                objCtr = Object,
-	                strTrim = String[protoProp].trim || function () {
-	                return this.replace(/^\s+|\s+$/g, "");
-	            },
-	                arrIndexOf = Array[protoProp].indexOf || function (item) {
-	                var i = 0,
-	                    len = this.length;
-	                for (; i < len; i++) {
-	                    if (i in this && this[i] === item) {
-	                        return i;
-	                    }
-	                }
-	                return -1;
-	            }
-	            // Vendors: please allow content code to instantiate DOMExceptions
-	            ,
-	                DOMEx = function DOMEx(type, message) {
-	                this.name = type;
-	                this.code = DOMException[type];
-	                this.message = message;
-	            },
-	                checkTokenAndGetIndex = function checkTokenAndGetIndex(classList, token) {
-	                if (token === "") {
-	                    throw new DOMEx("SYNTAX_ERR", "An invalid or illegal string was specified");
-	                }
-	                if (/\s/.test(token)) {
-	                    throw new DOMEx("INVALID_CHARACTER_ERR", "String contains an invalid character");
-	                }
-	                return arrIndexOf.call(classList, token);
-	            },
-	                ClassList = function ClassList(elem) {
-	                var trimmedClasses = strTrim.call(elem.getAttribute("class") || ""),
-	                    classes = trimmedClasses ? trimmedClasses.split(/\s+/) : [],
-	                    i = 0,
-	                    len = classes.length;
-	                for (; i < len; i++) {
-	                    this.push(classes[i]);
-	                }
-	                this._updateClassName = function () {
-	                    elem.setAttribute("class", this.toString());
-	                };
-	            },
-	                classListProto = ClassList[protoProp] = [],
-	                classListGetter = function classListGetter() {
-	                return new ClassList(this);
-	            };
-	            // Most DOMException implementations don't allow calling DOMException's toString()
-	            // on non-DOMExceptions. Error's toString() is sufficient here.
-	            DOMEx[protoProp] = Error[protoProp];
-	            classListProto.item = function (i) {
-	                return this[i] || null;
-	            };
-	            classListProto.contains = function (token) {
-	                token += "";
-	                return checkTokenAndGetIndex(this, token) !== -1;
-	            };
-	            classListProto.add = function () {
-	                var tokens = arguments,
-	                    i = 0,
-	                    l = tokens.length,
-	                    token,
-	                    updated = false;
-	                do {
-	                    token = tokens[i] + "";
-	                    if (checkTokenAndGetIndex(this, token) === -1) {
-	                        this.push(token);
-	                        updated = true;
-	                    }
-	                } while (++i < l);
+	      var classListProp = "classList",
+	          protoProp = "prototype",
+	          elemCtrProto = view.Element[protoProp],
+	          objCtr = Object,
+	          strTrim = String[protoProp].trim || function () {
+	        return this.replace(/^\s+|\s+$/g, "");
+	      },
+	          arrIndexOf = Array[protoProp].indexOf || function (item) {
+	        var i = 0,
+	            len = this.length;
+	        for (; i < len; i++) {
+	          if (i in this && this[i] === item) {
+	            return i;
+	          }
+	        }
+	        return -1;
+	      }
+	      // Vendors: please allow content code to instantiate DOMExceptions
+	      ,
+	          DOMEx = function DOMEx(type, message) {
+	        this.name = type;
+	        this.code = DOMException[type];
+	        this.message = message;
+	      },
+	          checkTokenAndGetIndex = function checkTokenAndGetIndex(classList, token) {
+	        if (token === "") {
+	          throw new DOMEx("SYNTAX_ERR", "An invalid or illegal string was specified");
+	        }
+	        if (/\s/.test(token)) {
+	          throw new DOMEx("INVALID_CHARACTER_ERR", "String contains an invalid character");
+	        }
+	        return arrIndexOf.call(classList, token);
+	      },
+	          ClassList = function ClassList(elem) {
+	        var trimmedClasses = strTrim.call(elem.getAttribute("class") || ""),
+	            classes = trimmedClasses ? trimmedClasses.split(/\s+/) : [],
+	            i = 0,
+	            len = classes.length;
+	        for (; i < len; i++) {
+	          this.push(classes[i]);
+	        }
+	        this._updateClassName = function () {
+	          elem.setAttribute("class", this.toString());
+	        };
+	      },
+	          classListProto = ClassList[protoProp] = [],
+	          classListGetter = function classListGetter() {
+	        return new ClassList(this);
+	      };
+	      // Most DOMException implementations don't allow calling DOMException's toString()
+	      // on non-DOMExceptions. Error's toString() is sufficient here.
+	      DOMEx[protoProp] = Error[protoProp];
+	      classListProto.item = function (i) {
+	        return this[i] || null;
+	      };
+	      classListProto.contains = function (token) {
+	        token += "";
+	        return checkTokenAndGetIndex(this, token) !== -1;
+	      };
+	      classListProto.add = function () {
+	        var tokens = arguments,
+	            i = 0,
+	            l = tokens.length,
+	            token,
+	            updated = false;
+	        do {
+	          token = tokens[i] + "";
+	          if (checkTokenAndGetIndex(this, token) === -1) {
+	            this.push(token);
+	            updated = true;
+	          }
+	        } while (++i < l);
 
-	                if (updated) {
-	                    this._updateClassName();
-	                }
-	            };
-	            classListProto.remove = function () {
-	                var tokens = arguments,
-	                    i = 0,
-	                    l = tokens.length,
-	                    token,
-	                    updated = false,
-	                    index;
-	                do {
-	                    token = tokens[i] + "";
-	                    index = checkTokenAndGetIndex(this, token);
-	                    while (index !== -1) {
-	                        this.splice(index, 1);
-	                        updated = true;
-	                        index = checkTokenAndGetIndex(this, token);
-	                    }
-	                } while (++i < l);
+	        if (updated) {
+	          this._updateClassName();
+	        }
+	      };
+	      classListProto.remove = function () {
+	        var tokens = arguments,
+	            i = 0,
+	            l = tokens.length,
+	            token,
+	            updated = false,
+	            index;
+	        do {
+	          token = tokens[i] + "";
+	          index = checkTokenAndGetIndex(this, token);
+	          while (index !== -1) {
+	            this.splice(index, 1);
+	            updated = true;
+	            index = checkTokenAndGetIndex(this, token);
+	          }
+	        } while (++i < l);
 
-	                if (updated) {
-	                    this._updateClassName();
-	                }
-	            };
-	            classListProto.toggle = function (token, force) {
-	                token += "";
+	        if (updated) {
+	          this._updateClassName();
+	        }
+	      };
+	      classListProto.toggle = function (token, force) {
+	        token += "";
 
-	                var result = this.contains(token),
-	                    method = result ? force !== true && "remove" : force !== false && "add";
+	        var result = this.contains(token),
+	            method = result ? force !== true && "remove" : force !== false && "add";
 
-	                if (method) {
-	                    this[method](token);
-	                }
+	        if (method) {
+	          this[method](token);
+	        }
 
-	                if (force === true || force === false) {
-	                    return force;
-	                } else {
-	                    return !result;
-	                }
-	            };
-	            classListProto.toString = function () {
-	                return this.join(" ");
-	            };
+	        if (force === true || force === false) {
+	          return force;
+	        } else {
+	          return !result;
+	        }
+	      };
+	      classListProto.toString = function () {
+	        return this.join(" ");
+	      };
 
-	            if (objCtr.defineProperty) {
-	                var classListPropDesc = {
-	                    get: classListGetter,
-	                    enumerable: true,
-	                    configurable: true
-	                };
-	                try {
-	                    objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-	                } catch (ex) {
-	                    // IE 8 doesn't support enumerable:true
-	                    // adding undefined to fight this issue https://github.com/eligrey/classList.js/issues/36
-	                    // modernie IE8-MSW7 machine has IE8 8.0.6001.18702 and is affected
-	                    if (ex.number === undefined || ex.number === -0x7FF5EC54) {
-	                        classListPropDesc.enumerable = false;
-	                        objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
-	                    }
-	                }
-	            } else if (objCtr[protoProp].__defineGetter__) {
-	                elemCtrProto.__defineGetter__(classListProp, classListGetter);
-	            }
-	        })(window.self);
+	      if (objCtr.defineProperty) {
+	        var classListPropDesc = {
+	          get: classListGetter,
+	          enumerable: true,
+	          configurable: true
+	        };
+	        try {
+	          objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+	        } catch (ex) {
+	          // IE 8 doesn't support enumerable:true
+	          // adding undefined to fight this issue https://github.com/eligrey/classList.js/issues/36
+	          // modernie IE8-MSW7 machine has IE8 8.0.6001.18702 and is affected
+	          if (ex.number === undefined || ex.number === -0x7FF5EC54) {
+	            classListPropDesc.enumerable = false;
+	            objCtr.defineProperty(elemCtrProto, classListProp, classListPropDesc);
+	          }
+	        }
+	      } else if (objCtr[protoProp].__defineGetter__) {
+	        elemCtrProto.__defineGetter__(classListProp, classListGetter);
+	      }
+	    })(window.self);
+	  }
+
+	  // There is full or partial native classList support, so just check if we need
+	  // to normalize the add/remove and toggle APIs.
+
+	  (function () {
+	    "use strict";
+
+	    var testElement = document.createElement("_");
+
+	    testElement.classList.add("c1", "c2");
+
+	    // Polyfill for IE 10/11 and Firefox <26, where classList.add and
+	    // classList.remove exist but support only one argument at a time.
+	    if (!testElement.classList.contains("c2")) {
+	      var createMethod = function createMethod(method) {
+	        var original = DOMTokenList.prototype[method];
+
+	        DOMTokenList.prototype[method] = function (token) {
+	          var i,
+	              len = arguments.length;
+
+	          for (i = 0; i < len; i++) {
+	            token = arguments[i];
+	            original.call(this, token);
+	          }
+	        };
+	      };
+	      createMethod('add');
+	      createMethod('remove');
 	    }
 
-	    // There is full or partial native classList support, so just check if we need
-	    // to normalize the add/remove and toggle APIs.
+	    testElement.classList.toggle("c3", false);
 
-	    (function () {
-	        "use strict";
+	    // Polyfill for IE 10 and Firefox <24, where classList.toggle does not
+	    // support the second argument.
+	    if (testElement.classList.contains("c3")) {
+	      var _toggle = DOMTokenList.prototype.toggle;
 
-	        var testElement = document.createElement("_");
-
-	        testElement.classList.add("c1", "c2");
-
-	        // Polyfill for IE 10/11 and Firefox <26, where classList.add and
-	        // classList.remove exist but support only one argument at a time.
-	        if (!testElement.classList.contains("c2")) {
-	            var createMethod = function createMethod(method) {
-	                var original = DOMTokenList.prototype[method];
-
-	                DOMTokenList.prototype[method] = function (token) {
-	                    var i,
-	                        len = arguments.length;
-
-	                    for (i = 0; i < len; i++) {
-	                        token = arguments[i];
-	                        original.call(this, token);
-	                    }
-	                };
-	            };
-	            createMethod('add');
-	            createMethod('remove');
+	      DOMTokenList.prototype.toggle = function (token, force) {
+	        if (1 in arguments && !this.contains(token) === !force) {
+	          return force;
+	        } else {
+	          return _toggle.call(this, token);
 	        }
+	      };
+	    }
 
-	        testElement.classList.toggle("c3", false);
-
-	        // Polyfill for IE 10 and Firefox <24, where classList.toggle does not
-	        // support the second argument.
-	        if (testElement.classList.contains("c3")) {
-	            var _toggle = DOMTokenList.prototype.toggle;
-
-	            DOMTokenList.prototype.toggle = function (token, force) {
-	                if (1 in arguments && !this.contains(token) === !force) {
-	                    return force;
-	                } else {
-	                    return _toggle.call(this, token);
-	                }
-	            };
-	        }
-
-	        testElement = null;
-	    })();
+	    testElement = null;
+	  })();
 	}
 
 	/*!
@@ -359,226 +359,226 @@ return /******/ (function(modules) { // webpackBootstrap
 	/*jslint browser: true */
 	/*global XDomainRequest, MutationObserver, window */
 	(function () {
-	    "use strict";
+	  "use strict";
 
-	    if (typeof window !== "undefined" && window.addEventListener) {
-	        var cache = Object.create(null); // holds xhr objects to prevent multiple requests
-	        var checkUseElems;
-	        var tid; // timeout id
-	        var debouncedCheck = function debouncedCheck() {
-	            clearTimeout(tid);
-	            tid = setTimeout(checkUseElems, 100);
+	  if (typeof window !== "undefined" && window.addEventListener) {
+	    var cache = Object.create(null); // holds xhr objects to prevent multiple requests
+	    var checkUseElems;
+	    var tid; // timeout id
+	    var debouncedCheck = function debouncedCheck() {
+	      clearTimeout(tid);
+	      tid = setTimeout(checkUseElems, 100);
+	    };
+	    var unobserveChanges = function unobserveChanges() {
+	      return;
+	    };
+	    var observeChanges = function observeChanges() {
+	      var observer;
+	      window.addEventListener("resize", debouncedCheck, false);
+	      window.addEventListener("orientationchange", debouncedCheck, false);
+	      if (window.MutationObserver) {
+	        observer = new MutationObserver(debouncedCheck);
+	        observer.observe(document.documentElement, {
+	          childList: true,
+	          subtree: true,
+	          attributes: true
+	        });
+	        unobserveChanges = function unobserveChanges() {
+	          try {
+	            observer.disconnect();
+	            window.removeEventListener("resize", debouncedCheck, false);
+	            window.removeEventListener("orientationchange", debouncedCheck, false);
+	          } catch (ignore) {}
 	        };
-	        var unobserveChanges = function unobserveChanges() {
-	            return;
+	      } else {
+	        document.documentElement.addEventListener("DOMSubtreeModified", debouncedCheck, false);
+	        unobserveChanges = function unobserveChanges() {
+	          document.documentElement.removeEventListener("DOMSubtreeModified", debouncedCheck, false);
+	          window.removeEventListener("resize", debouncedCheck, false);
+	          window.removeEventListener("orientationchange", debouncedCheck, false);
 	        };
-	        var observeChanges = function observeChanges() {
-	            var observer;
-	            window.addEventListener("resize", debouncedCheck, false);
-	            window.addEventListener("orientationchange", debouncedCheck, false);
-	            if (window.MutationObserver) {
-	                observer = new MutationObserver(debouncedCheck);
-	                observer.observe(document.documentElement, {
-	                    childList: true,
-	                    subtree: true,
-	                    attributes: true
-	                });
-	                unobserveChanges = function unobserveChanges() {
-	                    try {
-	                        observer.disconnect();
-	                        window.removeEventListener("resize", debouncedCheck, false);
-	                        window.removeEventListener("orientationchange", debouncedCheck, false);
-	                    } catch (ignore) {}
-	                };
-	            } else {
-	                document.documentElement.addEventListener("DOMSubtreeModified", debouncedCheck, false);
-	                unobserveChanges = function unobserveChanges() {
-	                    document.documentElement.removeEventListener("DOMSubtreeModified", debouncedCheck, false);
-	                    window.removeEventListener("resize", debouncedCheck, false);
-	                    window.removeEventListener("orientationchange", debouncedCheck, false);
-	                };
-	            }
-	        };
-	        var createRequest = function createRequest(url) {
-	            // In IE 9, cross origin requests can only be sent using XDomainRequest.
-	            // XDomainRequest would fail if CORS headers are not set.
-	            // Therefore, XDomainRequest should only be used with cross origin requests.
-	            function getOrigin(loc) {
-	                var a;
-	                if (loc.protocol !== undefined) {
-	                    a = loc;
-	                } else {
-	                    a = document.createElement("a");
-	                    a.href = loc;
-	                }
-	                return a.protocol.replace(/:/g, "") + a.host;
-	            }
-	            var Request;
-	            var origin;
-	            var origin2;
-	            if (window.XMLHttpRequest) {
-	                Request = new XMLHttpRequest();
-	                origin = getOrigin(location);
-	                origin2 = getOrigin(url);
-	                if (Request.withCredentials === undefined && origin2 !== "" && origin2 !== origin) {
-	                    Request = XDomainRequest || undefined;
-	                } else {
-	                    Request = XMLHttpRequest;
-	                }
-	            }
-	            return Request;
-	        };
-	        var xlinkNS = "http://www.w3.org/1999/xlink";
-	        checkUseElems = function checkUseElems() {
-	            var base;
-	            var bcr;
-	            var fallback = ""; // optional fallback URL in case no base path to SVG file was given and no symbol definition was found.
-	            var hash;
-	            var href;
-	            var i;
-	            var inProgressCount = 0;
-	            var isHidden;
-	            var Request;
-	            var url;
-	            var uses;
-	            var xhr;
-	            function observeIfDone() {
-	                // If done with making changes, start watching for chagnes in DOM again
-	                inProgressCount -= 1;
-	                if (inProgressCount === 0) {
-	                    // if all xhrs were resolved
-	                    unobserveChanges(); // make sure to remove old handlers
-	                    observeChanges(); // watch for changes to DOM
-	                }
-	            }
-	            function attrUpdateFunc(spec) {
-	                return function () {
-	                    if (cache[spec.base] !== true) {
-	                        spec.useEl.setAttributeNS(xlinkNS, "xlink:href", "#" + spec.hash);
-	                        if (spec.useEl.hasAttribute("href")) {
-	                            spec.useEl.setAttribute("href", "#" + spec.hash);
-	                        }
-	                    }
-	                };
-	            }
-	            function onloadFunc(xhr) {
-	                return function () {
-	                    var body = document.body;
-	                    var x = document.createElement("x");
-	                    var svg;
-	                    xhr.onload = null;
-	                    x.innerHTML = xhr.responseText;
-	                    svg = x.getElementsByTagName("svg")[0];
-	                    if (svg) {
-	                        svg.setAttribute("aria-hidden", "true");
-	                        svg.style.position = "absolute";
-	                        svg.style.width = 0;
-	                        svg.style.height = 0;
-	                        svg.style.overflow = "hidden";
-	                        body.insertBefore(svg, body.firstChild);
-	                    }
-	                    observeIfDone();
-	                };
-	            }
-	            function onErrorTimeout(xhr) {
-	                return function () {
-	                    xhr.onerror = null;
-	                    xhr.ontimeout = null;
-	                    observeIfDone();
-	                };
-	            }
-	            unobserveChanges(); // stop watching for changes to DOM
-	            // find all use elements
-	            uses = document.getElementsByTagName("use");
-	            for (i = 0; i < uses.length; i += 1) {
-	                try {
-	                    bcr = uses[i].getBoundingClientRect();
-	                } catch (ignore) {
-	                    // failed to get bounding rectangle of the use element
-	                    bcr = false;
-	                }
-	                href = uses[i].getAttribute("href") || uses[i].getAttributeNS(xlinkNS, "href") || uses[i].getAttribute("xlink:href");
-	                if (href && href.split) {
-	                    url = href.split("#");
-	                } else {
-	                    url = ["", ""];
-	                }
-	                base = url[0];
-	                hash = url[1];
-	                isHidden = bcr && bcr.left === 0 && bcr.right === 0 && bcr.top === 0 && bcr.bottom === 0;
-	                if (bcr && bcr.width === 0 && bcr.height === 0 && !isHidden) {
-	                    // the use element is empty
-	                    // if there is a reference to an external SVG, try to fetch it
-	                    // use the optional fallback URL if there is no reference to an external SVG
-	                    if (fallback && !base.length && hash && !document.getElementById(hash)) {
-	                        base = fallback;
-	                    }
-	                    if (uses[i].hasAttribute("href")) {
-	                        uses[i].setAttributeNS(xlinkNS, "xlink:href", href);
-	                    }
-	                    if (base.length) {
-	                        // schedule updating xlink:href
-	                        xhr = cache[base];
-	                        if (xhr !== true) {
-	                            // true signifies that prepending the SVG was not required
-	                            setTimeout(attrUpdateFunc({
-	                                useEl: uses[i],
-	                                base: base,
-	                                hash: hash
-	                            }), 0);
-	                        }
-	                        if (xhr === undefined) {
-	                            Request = createRequest(base);
-	                            if (Request !== undefined) {
-	                                xhr = new Request();
-	                                cache[base] = xhr;
-	                                xhr.onload = onloadFunc(xhr);
-	                                xhr.onerror = onErrorTimeout(xhr);
-	                                xhr.ontimeout = onErrorTimeout(xhr);
-	                                xhr.open("GET", base);
-	                                xhr.send();
-	                                inProgressCount += 1;
-	                            }
-	                        }
-	                    }
-	                } else {
-	                    if (!isHidden) {
-	                        if (cache[base] === undefined) {
-	                            // remember this URL if the use element was not empty and no request was sent
-	                            cache[base] = true;
-	                        } else if (cache[base].onload) {
-	                            // if it turns out that prepending the SVG is not necessary,
-	                            // abort the in-progress xhr.
-	                            cache[base].abort();
-	                            delete cache[base].onload;
-	                            cache[base] = true;
-	                        }
-	                    } else if (base.length && cache[base]) {
-	                        setTimeout(attrUpdateFunc({
-	                            useEl: uses[i],
-	                            base: base,
-	                            hash: hash
-	                        }), 0);
-	                    }
-	                }
-	            }
-	            uses = "";
-	            inProgressCount += 1;
-	            observeIfDone();
-	        };
-	        var _winLoad;
-	        _winLoad = function winLoad() {
-	            window.removeEventListener("load", _winLoad, false); // to prevent memory leaks
-	            tid = setTimeout(checkUseElems, 0);
-	        };
-	        if (document.readyState !== "complete") {
-	            // The load event fires when all resources have finished loading, which allows detecting whether SVG use elements are empty.
-	            window.addEventListener("load", _winLoad, false);
+	      }
+	    };
+	    var createRequest = function createRequest(url) {
+	      // In IE 9, cross origin requests can only be sent using XDomainRequest.
+	      // XDomainRequest would fail if CORS headers are not set.
+	      // Therefore, XDomainRequest should only be used with cross origin requests.
+	      function getOrigin(loc) {
+	        var a;
+	        if (loc.protocol !== undefined) {
+	          a = loc;
 	        } else {
-	            // No need to add a listener if the document is already loaded, initialize immediately.
-	            _winLoad();
+	          a = document.createElement("a");
+	          a.href = loc;
 	        }
+	        return a.protocol.replace(/:/g, "") + a.host;
+	      }
+	      var Request;
+	      var origin;
+	      var origin2;
+	      if (window.XMLHttpRequest) {
+	        Request = new XMLHttpRequest();
+	        origin = getOrigin(location);
+	        origin2 = getOrigin(url);
+	        if (Request.withCredentials === undefined && origin2 !== "" && origin2 !== origin) {
+	          Request = XDomainRequest || undefined;
+	        } else {
+	          Request = XMLHttpRequest;
+	        }
+	      }
+	      return Request;
+	    };
+	    var xlinkNS = "http://www.w3.org/1999/xlink";
+	    checkUseElems = function checkUseElems() {
+	      var base;
+	      var bcr;
+	      var fallback = ""; // optional fallback URL in case no base path to SVG file was given and no symbol definition was found.
+	      var hash;
+	      var href;
+	      var i;
+	      var inProgressCount = 0;
+	      var isHidden;
+	      var Request;
+	      var url;
+	      var uses;
+	      var xhr;
+	      function observeIfDone() {
+	        // If done with making changes, start watching for chagnes in DOM again
+	        inProgressCount -= 1;
+	        if (inProgressCount === 0) {
+	          // if all xhrs were resolved
+	          unobserveChanges(); // make sure to remove old handlers
+	          observeChanges(); // watch for changes to DOM
+	        }
+	      }
+	      function attrUpdateFunc(spec) {
+	        return function () {
+	          if (cache[spec.base] !== true) {
+	            spec.useEl.setAttributeNS(xlinkNS, "xlink:href", "#" + spec.hash);
+	            if (spec.useEl.hasAttribute("href")) {
+	              spec.useEl.setAttribute("href", "#" + spec.hash);
+	            }
+	          }
+	        };
+	      }
+	      function onloadFunc(xhr) {
+	        return function () {
+	          var body = document.body;
+	          var x = document.createElement("x");
+	          var svg;
+	          xhr.onload = null;
+	          x.innerHTML = xhr.responseText;
+	          svg = x.getElementsByTagName("svg")[0];
+	          if (svg) {
+	            svg.setAttribute("aria-hidden", "true");
+	            svg.style.position = "absolute";
+	            svg.style.width = 0;
+	            svg.style.height = 0;
+	            svg.style.overflow = "hidden";
+	            body.insertBefore(svg, body.firstChild);
+	          }
+	          observeIfDone();
+	        };
+	      }
+	      function onErrorTimeout(xhr) {
+	        return function () {
+	          xhr.onerror = null;
+	          xhr.ontimeout = null;
+	          observeIfDone();
+	        };
+	      }
+	      unobserveChanges(); // stop watching for changes to DOM
+	      // find all use elements
+	      uses = document.getElementsByTagName("use");
+	      for (i = 0; i < uses.length; i += 1) {
+	        try {
+	          bcr = uses[i].getBoundingClientRect();
+	        } catch (ignore) {
+	          // failed to get bounding rectangle of the use element
+	          bcr = false;
+	        }
+	        href = uses[i].getAttribute("href") || uses[i].getAttributeNS(xlinkNS, "href") || uses[i].getAttribute("xlink:href");
+	        if (href && href.split) {
+	          url = href.split("#");
+	        } else {
+	          url = ["", ""];
+	        }
+	        base = url[0];
+	        hash = url[1];
+	        isHidden = bcr && bcr.left === 0 && bcr.right === 0 && bcr.top === 0 && bcr.bottom === 0;
+	        if (bcr && bcr.width === 0 && bcr.height === 0 && !isHidden) {
+	          // the use element is empty
+	          // if there is a reference to an external SVG, try to fetch it
+	          // use the optional fallback URL if there is no reference to an external SVG
+	          if (fallback && !base.length && hash && !document.getElementById(hash)) {
+	            base = fallback;
+	          }
+	          if (uses[i].hasAttribute("href")) {
+	            uses[i].setAttributeNS(xlinkNS, "xlink:href", href);
+	          }
+	          if (base.length) {
+	            // schedule updating xlink:href
+	            xhr = cache[base];
+	            if (xhr !== true) {
+	              // true signifies that prepending the SVG was not required
+	              setTimeout(attrUpdateFunc({
+	                useEl: uses[i],
+	                base: base,
+	                hash: hash
+	              }), 0);
+	            }
+	            if (xhr === undefined) {
+	              Request = createRequest(base);
+	              if (Request !== undefined) {
+	                xhr = new Request();
+	                cache[base] = xhr;
+	                xhr.onload = onloadFunc(xhr);
+	                xhr.onerror = onErrorTimeout(xhr);
+	                xhr.ontimeout = onErrorTimeout(xhr);
+	                xhr.open("GET", base);
+	                xhr.send();
+	                inProgressCount += 1;
+	              }
+	            }
+	          }
+	        } else {
+	          if (!isHidden) {
+	            if (cache[base] === undefined) {
+	              // remember this URL if the use element was not empty and no request was sent
+	              cache[base] = true;
+	            } else if (cache[base].onload) {
+	              // if it turns out that prepending the SVG is not necessary,
+	              // abort the in-progress xhr.
+	              cache[base].abort();
+	              delete cache[base].onload;
+	              cache[base] = true;
+	            }
+	          } else if (base.length && cache[base]) {
+	            setTimeout(attrUpdateFunc({
+	              useEl: uses[i],
+	              base: base,
+	              hash: hash
+	            }), 0);
+	          }
+	        }
+	      }
+	      uses = "";
+	      inProgressCount += 1;
+	      observeIfDone();
+	    };
+	    var _winLoad;
+	    _winLoad = function winLoad() {
+	      window.removeEventListener("load", _winLoad, false); // to prevent memory leaks
+	      tid = setTimeout(checkUseElems, 0);
+	    };
+	    if (document.readyState !== "complete") {
+	      // The load event fires when all resources have finished loading, which allows detecting whether SVG use elements are empty.
+	      window.addEventListener("load", _winLoad, false);
+	    } else {
+	      // No need to add a listener if the document is already loaded, initialize immediately.
+	      _winLoad();
 	    }
+	  }
 	})();
 
 /***/ }),
@@ -743,6 +743,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this._handlers = {
 	            keydown: this._onKeyDown.bind(this),
 	            mousedown: this._onMouseDown.bind(this),
+	            mouseup: this._onMouseUp.bind(this),
 	            objectActivated: this._onObjectActivated.bind(this),
 	            objectMoved: this._onObjectMoved.bind(this),
 	            objectScaled: this._onObjectScaled.bind(this),
@@ -906,6 +907,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function _attachGraphicsEvents() {
 	            this._graphics.on({
 	                'mousedown': this._handlers.mousedown,
+	                'mouseup': this._handlers.mouseup,
 	                'objectMoved': this._handlers.objectMoved,
 	                'objectScaled': this._handlers.objectScaled,
 	                'objectActivated': this._handlers.objectActivated,
@@ -1051,6 +1053,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	             * });
 	             */
 	            this.fire(events.MOUSE_DOWN, event, originPointer);
+	        }
+
+	        /**
+	         * mouse up event handler
+	         * @param {Event} event mouse down event
+	         * @param {Object} originPointer origin pointer
+	         *  @param {Number} originPointer.x x position
+	         *  @param {Number} originPointer.y y position
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onMouseUp',
+	        value: function _onMouseUp(event, originPointer) {
+	            /**
+	             * The mouse down event with position x, y on canvas
+	             * @event ImageEditor#mouseup
+	             * @param {Object} event - browser mouse event object
+	             * @param {Object} originPointer origin pointer
+	             *  @param {Number} originPointer.x x position
+	             *  @param {Number} originPointer.y y position
+	             * @example
+	             * imageEditor.on('mouseup', function(event, originPointer) {
+	             *     console.log(event);
+	             *     console.log(originPointer);
+	             *     if (imageEditor.hasFilter('colorFilter')) {
+	             *         imageEditor.applyFilter('colorFilter', {
+	             *             x: parseInt(originPointer.x, 10),
+	             *             y: parseInt(originPointer.y, 10)
+	             *         });
+	             *     }
+	             * });
+	             */
+	            this.fire(events.MOUSE_UP, event, originPointer);
 	        }
 
 	        /**
@@ -5937,7 +5973,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	  value: true
+	    value: true
 	});
 	/**
 	 * @fileoverview The standard theme
@@ -6075,86 +6111,86 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	 */
 	exports.default = {
-	  'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
-	  'common.bisize.width': '251px',
-	  'common.bisize.height': '21px',
-	  'common.backgroundImage': 'none',
-	  'common.backgroundColor': '#1e1e1e',
-	  'common.border': '0px',
+	    'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
+	    'common.bisize.width': '251px',
+	    'common.bisize.height': '21px',
+	    'common.backgroundImage': 'none',
+	    'common.backgroundColor': '#1e1e1e',
+	    'common.border': '0px',
 
-	  // header
-	  'header.backgroundImage': 'none',
-	  'header.backgroundColor': 'transparent',
-	  'header.border': '0px',
+	    // header
+	    'header.backgroundImage': 'none',
+	    'header.backgroundColor': 'transparent',
+	    'header.border': '0px',
 
-	  // load button
-	  'loadButton.backgroundColor': '#fff',
-	  'loadButton.border': '1px solid #ddd',
-	  'loadButton.color': '#222',
-	  'loadButton.fontFamily': '\'Noto Sans\', sans-serif',
-	  'loadButton.fontSize': '12px',
+	    // load button
+	    'loadButton.backgroundColor': '#fff',
+	    'loadButton.border': '1px solid #ddd',
+	    'loadButton.color': '#222',
+	    'loadButton.fontFamily': '\'Noto Sans\', sans-serif',
+	    'loadButton.fontSize': '12px',
 
-	  // download button
-	  'downloadButton.backgroundColor': '#fdba3b',
-	  'downloadButton.border': '1px solid #fdba3b',
-	  'downloadButton.color': '#fff',
-	  'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
-	  'downloadButton.fontSize': '12px',
+	    // download button
+	    'downloadButton.backgroundColor': '#fdba3b',
+	    'downloadButton.border': '1px solid #fdba3b',
+	    'downloadButton.color': '#fff',
+	    'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
+	    'downloadButton.fontSize': '12px',
 
-	  // main icons
-	  'menu.normalIcon.path': 'icon-d.svg',
-	  'menu.normalIcon.name': 'icon-d',
-	  'menu.activeIcon.path': 'icon-b.svg',
-	  'menu.activeIcon.name': 'icon-b',
-	  'menu.disabledIcon.path': 'icon-a.svg',
-	  'menu.disabledIcon.name': 'icon-a',
-	  'menu.hoverIcon.path': 'icon-c.svg',
-	  'menu.hoverIcon.name': 'icon-c',
-	  'menu.iconSize.width': '24px',
-	  'menu.iconSize.height': '24px',
+	    // main icons
+	    'menu.normalIcon.path': 'icon-d.svg',
+	    'menu.normalIcon.name': 'icon-d',
+	    'menu.activeIcon.path': 'icon-b.svg',
+	    'menu.activeIcon.name': 'icon-b',
+	    'menu.disabledIcon.path': 'icon-a.svg',
+	    'menu.disabledIcon.name': 'icon-a',
+	    'menu.hoverIcon.path': 'icon-c.svg',
+	    'menu.hoverIcon.name': 'icon-c',
+	    'menu.iconSize.width': '24px',
+	    'menu.iconSize.height': '24px',
 
-	  // submenu primary color
-	  'submenu.backgroundColor': '#1e1e1e',
-	  'submenu.partition.color': '#3c3c3c',
+	    // submenu primary color
+	    'submenu.backgroundColor': '#1e1e1e',
+	    'submenu.partition.color': '#3c3c3c',
 
-	  // submenu icons
-	  'submenu.normalIcon.path': 'icon-d.svg',
-	  'submenu.normalIcon.name': 'icon-d',
-	  'submenu.activeIcon.path': 'icon-c.svg',
-	  'submenu.activeIcon.name': 'icon-c',
-	  'submenu.iconSize.width': '32px',
-	  'submenu.iconSize.height': '32px',
+	    // submenu icons
+	    'submenu.normalIcon.path': 'icon-d.svg',
+	    'submenu.normalIcon.name': 'icon-d',
+	    'submenu.activeIcon.path': 'icon-c.svg',
+	    'submenu.activeIcon.name': 'icon-c',
+	    'submenu.iconSize.width': '32px',
+	    'submenu.iconSize.height': '32px',
 
-	  // submenu labels
-	  'submenu.normalLabel.color': '#8a8a8a',
-	  'submenu.normalLabel.fontWeight': 'lighter',
-	  'submenu.activeLabel.color': '#fff',
-	  'submenu.activeLabel.fontWeight': 'lighter',
+	    // submenu labels
+	    'submenu.normalLabel.color': '#8a8a8a',
+	    'submenu.normalLabel.fontWeight': 'lighter',
+	    'submenu.activeLabel.color': '#fff',
+	    'submenu.activeLabel.fontWeight': 'lighter',
 
-	  // checkbox style
-	  'checkbox.border': '0px',
-	  'checkbox.backgroundColor': '#fff',
+	    // checkbox style
+	    'checkbox.border': '0px',
+	    'checkbox.backgroundColor': '#fff',
 
-	  // range style
-	  'range.pointer.color': '#fff',
-	  'range.bar.color': '#666',
-	  'range.subbar.color': '#d1d1d1',
+	    // range style
+	    'range.pointer.color': '#fff',
+	    'range.bar.color': '#666',
+	    'range.subbar.color': '#d1d1d1',
 
-	  'range.disabledPointer.color': '#414141',
-	  'range.disabledBar.color': '#282828',
-	  'range.disabledSubbar.color': '#414141',
+	    'range.disabledPointer.color': '#414141',
+	    'range.disabledBar.color': '#282828',
+	    'range.disabledSubbar.color': '#414141',
 
-	  'range.value.color': '#fff',
-	  'range.value.fontWeight': 'lighter',
-	  'range.value.fontSize': '11px',
-	  'range.value.border': '1px solid #353535',
-	  'range.value.backgroundColor': '#151515',
-	  'range.title.color': '#fff',
-	  'range.title.fontWeight': 'lighter',
+	    'range.value.color': '#fff',
+	    'range.value.fontWeight': 'lighter',
+	    'range.value.fontSize': '11px',
+	    'range.value.border': '1px solid #353535',
+	    'range.value.backgroundColor': '#151515',
+	    'range.title.color': '#fff',
+	    'range.title.fontWeight': 'lighter',
 
-	  // colorpicker style
-	  'colorpicker.button.border': '1px solid #1e1e1e',
-	  'colorpicker.title.color': '#fff'
+	    // colorpicker style
+	    'colorpicker.button.border': '1px solid #1e1e1e',
+	    'colorpicker.title.color': '#fff'
 	};
 
 /***/ }),
@@ -12206,164 +12242,164 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 */
 	var Component = function () {
-	  function Component(name, graphics) {
-	    _classCallCheck(this, Component);
+	    function Component(name, graphics) {
+	        _classCallCheck(this, Component);
 
-	    /**
-	     * Component name
-	     * @type {string}
-	     */
-	    this.name = name;
+	        /**
+	         * Component name
+	         * @type {string}
+	         */
+	        this.name = name;
 
-	    /**
-	     * Graphics instance
-	     * @type {Graphics}
-	     */
-	    this.graphics = graphics;
-	  }
-
-	  /**
-	   * Fire Graphics event
-	   * @returns {Object} return value
-	   */
-
-
-	  _createClass(Component, [{
-	    key: "fire",
-	    value: function fire() {
-	      var context = this.graphics;
-
-	      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-	        args[_key] = arguments[_key];
-	      }
-
-	      return this.graphics.fire.apply(context, args);
+	        /**
+	         * Graphics instance
+	         * @type {Graphics}
+	         */
+	        this.graphics = graphics;
 	    }
 
 	    /**
-	     * Save image(background) of canvas
-	     * @param {string} name - Name of image
-	     * @param {fabric.Image} oImage - Fabric image instance
+	     * Fire Graphics event
+	     * @returns {Object} return value
 	     */
 
-	  }, {
-	    key: "setCanvasImage",
-	    value: function setCanvasImage(name, oImage) {
-	      this.graphics.setCanvasImage(name, oImage);
-	    }
 
-	    /**
-	     * Returns canvas element of fabric.Canvas[[lower-canvas]]
-	     * @returns {HTMLCanvasElement}
-	     */
+	    _createClass(Component, [{
+	        key: "fire",
+	        value: function fire() {
+	            var context = this.graphics;
 
-	  }, {
-	    key: "getCanvasElement",
-	    value: function getCanvasElement() {
-	      return this.graphics.getCanvasElement();
-	    }
+	            for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	                args[_key] = arguments[_key];
+	            }
 
-	    /**
-	     * Get fabric.Canvas instance
-	     * @returns {fabric.Canvas}
-	     */
+	            return this.graphics.fire.apply(context, args);
+	        }
 
-	  }, {
-	    key: "getCanvas",
-	    value: function getCanvas() {
-	      return this.graphics.getCanvas();
-	    }
+	        /**
+	         * Save image(background) of canvas
+	         * @param {string} name - Name of image
+	         * @param {fabric.Image} oImage - Fabric image instance
+	         */
 
-	    /**
-	     * Get canvasImage (fabric.Image instance)
-	     * @returns {fabric.Image}
-	     */
+	    }, {
+	        key: "setCanvasImage",
+	        value: function setCanvasImage(name, oImage) {
+	            this.graphics.setCanvasImage(name, oImage);
+	        }
 
-	  }, {
-	    key: "getCanvasImage",
-	    value: function getCanvasImage() {
-	      return this.graphics.getCanvasImage();
-	    }
+	        /**
+	         * Returns canvas element of fabric.Canvas[[lower-canvas]]
+	         * @returns {HTMLCanvasElement}
+	         */
 
-	    /**
-	     * Get image name
-	     * @returns {string}
-	     */
+	    }, {
+	        key: "getCanvasElement",
+	        value: function getCanvasElement() {
+	            return this.graphics.getCanvasElement();
+	        }
 
-	  }, {
-	    key: "getImageName",
-	    value: function getImageName() {
-	      return this.graphics.getImageName();
-	    }
+	        /**
+	         * Get fabric.Canvas instance
+	         * @returns {fabric.Canvas}
+	         */
 
-	    /**
-	     * Get image editor
-	     * @returns {ImageEditor}
-	     */
+	    }, {
+	        key: "getCanvas",
+	        value: function getCanvas() {
+	            return this.graphics.getCanvas();
+	        }
 
-	  }, {
-	    key: "getEditor",
-	    value: function getEditor() {
-	      return this.graphics.getEditor();
-	    }
+	        /**
+	         * Get canvasImage (fabric.Image instance)
+	         * @returns {fabric.Image}
+	         */
 
-	    /**
-	     * Return component name
-	     * @returns {string}
-	     */
+	    }, {
+	        key: "getCanvasImage",
+	        value: function getCanvasImage() {
+	            return this.graphics.getCanvasImage();
+	        }
 
-	  }, {
-	    key: "getName",
-	    value: function getName() {
-	      return this.name;
-	    }
+	        /**
+	         * Get image name
+	         * @returns {string}
+	         */
 
-	    /**
-	     * Set image properties
-	     * @param {Object} setting - Image properties
-	     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
-	     */
+	    }, {
+	        key: "getImageName",
+	        value: function getImageName() {
+	            return this.graphics.getImageName();
+	        }
 
-	  }, {
-	    key: "setImageProperties",
-	    value: function setImageProperties(setting, withRendering) {
-	      this.graphics.setImageProperties(setting, withRendering);
-	    }
+	        /**
+	         * Get image editor
+	         * @returns {ImageEditor}
+	         */
 
-	    /**
-	     * Set canvas dimension - css only
-	     * @param {Object} dimension - Canvas css dimension
-	     */
+	    }, {
+	        key: "getEditor",
+	        value: function getEditor() {
+	            return this.graphics.getEditor();
+	        }
 
-	  }, {
-	    key: "setCanvasCssDimension",
-	    value: function setCanvasCssDimension(dimension) {
-	      this.graphics.setCanvasCssDimension(dimension);
-	    }
+	        /**
+	         * Return component name
+	         * @returns {string}
+	         */
 
-	    /**
-	     * Set canvas dimension - css only
-	     * @param {Object} dimension - Canvas backstore dimension
-	     */
+	    }, {
+	        key: "getName",
+	        value: function getName() {
+	            return this.name;
+	        }
 
-	  }, {
-	    key: "setCanvasBackstoreDimension",
-	    value: function setCanvasBackstoreDimension(dimension) {
-	      this.graphics.setCanvasBackstoreDimension(dimension);
-	    }
+	        /**
+	         * Set image properties
+	         * @param {Object} setting - Image properties
+	         * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
+	         */
 
-	    /**
-	     * Adjust canvas dimension with scaling image
-	     */
+	    }, {
+	        key: "setImageProperties",
+	        value: function setImageProperties(setting, withRendering) {
+	            this.graphics.setImageProperties(setting, withRendering);
+	        }
 
-	  }, {
-	    key: "adjustCanvasDimension",
-	    value: function adjustCanvasDimension() {
-	      this.graphics.adjustCanvasDimension();
-	    }
-	  }]);
+	        /**
+	         * Set canvas dimension - css only
+	         * @param {Object} dimension - Canvas css dimension
+	         */
 
-	  return Component;
+	    }, {
+	        key: "setCanvasCssDimension",
+	        value: function setCanvasCssDimension(dimension) {
+	            this.graphics.setCanvasCssDimension(dimension);
+	        }
+
+	        /**
+	         * Set canvas dimension - css only
+	         * @param {Object} dimension - Canvas backstore dimension
+	         */
+
+	    }, {
+	        key: "setCanvasBackstoreDimension",
+	        value: function setCanvasBackstoreDimension(dimension) {
+	            this.graphics.setCanvasBackstoreDimension(dimension);
+	        }
+
+	        /**
+	         * Adjust canvas dimension with scaling image
+	         */
+
+	    }, {
+	        key: "adjustCanvasDimension",
+	        value: function adjustCanvasDimension() {
+	            this.graphics.adjustCanvasDimension();
+	        }
+	    }]);
+
+	    return Component;
 	}();
 
 	module.exports = Component;
@@ -13688,75 +13724,75 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @ignore
 	 */
 	var FreeDrawing = function (_Component) {
-	  _inherits(FreeDrawing, _Component);
+	    _inherits(FreeDrawing, _Component);
 
-	  function FreeDrawing(graphics) {
-	    _classCallCheck(this, FreeDrawing);
+	    function FreeDrawing(graphics) {
+	        _classCallCheck(this, FreeDrawing);
 
-	    /**
-	     * Brush width
-	     * @type {number}
-	     */
-	    var _this = _possibleConstructorReturn(this, (FreeDrawing.__proto__ || Object.getPrototypeOf(FreeDrawing)).call(this, _consts2.default.componentNames.FREE_DRAWING, graphics));
+	        /**
+	         * Brush width
+	         * @type {number}
+	         */
+	        var _this = _possibleConstructorReturn(this, (FreeDrawing.__proto__ || Object.getPrototypeOf(FreeDrawing)).call(this, _consts2.default.componentNames.FREE_DRAWING, graphics));
 
-	    _this.width = 12;
+	        _this.width = 12;
 
-	    /**
-	     * fabric.Color instance for brush color
-	     * @type {fabric.Color}
-	     */
-	    _this.oColor = new _fabric2.default.Color('rgba(0, 0, 0, 0.5)');
-	    return _this;
-	  }
-
-	  /**
-	   * Start free drawing mode
-	   * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
-	   */
-
-
-	  _createClass(FreeDrawing, [{
-	    key: 'start',
-	    value: function start(setting) {
-	      var canvas = this.getCanvas();
-
-	      canvas.isDrawingMode = true;
-	      this.setBrush(setting);
+	        /**
+	         * fabric.Color instance for brush color
+	         * @type {fabric.Color}
+	         */
+	        _this.oColor = new _fabric2.default.Color('rgba(0, 0, 0, 0.5)');
+	        return _this;
 	    }
 
 	    /**
-	     * Set brush
+	     * Start free drawing mode
 	     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
 	     */
 
-	  }, {
-	    key: 'setBrush',
-	    value: function setBrush(setting) {
-	      var brush = this.getCanvas().freeDrawingBrush;
 
-	      setting = setting || {};
-	      this.width = setting.width || this.width;
-	      if (setting.color) {
-	        this.oColor = new _fabric2.default.Color(setting.color);
-	      }
-	      brush.width = this.width;
-	      brush.color = this.oColor.toRgba();
-	    }
+	    _createClass(FreeDrawing, [{
+	        key: 'start',
+	        value: function start(setting) {
+	            var canvas = this.getCanvas();
 
-	    /**
-	     * End free drawing mode
-	     */
+	            canvas.isDrawingMode = true;
+	            this.setBrush(setting);
+	        }
 
-	  }, {
-	    key: 'end',
-	    value: function end() {
-	      var canvas = this.getCanvas();
+	        /**
+	         * Set brush
+	         * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
+	         */
 
-	      canvas.isDrawingMode = false;
-	    }
-	  }]);
+	    }, {
+	        key: 'setBrush',
+	        value: function setBrush(setting) {
+	            var brush = this.getCanvas().freeDrawingBrush;
 
-	  return FreeDrawing;
+	            setting = setting || {};
+	            this.width = setting.width || this.width;
+	            if (setting.color) {
+	                this.oColor = new _fabric2.default.Color(setting.color);
+	            }
+	            brush.width = this.width;
+	            brush.color = this.oColor.toRgba();
+	        }
+
+	        /**
+	         * End free drawing mode
+	         */
+
+	    }, {
+	        key: 'end',
+	        value: function end() {
+	            var canvas = this.getCanvas();
+
+	            canvas.isDrawingMode = false;
+	        }
+	    }]);
+
+	    return FreeDrawing;
 	}(_component2.default);
 
 	module.exports = FreeDrawing;
@@ -16561,53 +16597,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 
 	var DrawingMode = function () {
-	  function DrawingMode(name) {
-	    _classCallCheck(this, DrawingMode);
+	    function DrawingMode(name) {
+	        _classCallCheck(this, DrawingMode);
 
-	    /**
-	     * the name of drawing mode
-	     * @type {string}
-	     */
-	    this.name = name;
-	  }
-
-	  /**
-	   * Get this drawing mode name;
-	   * @returns {string} drawing mode name
-	   */
-
-
-	  _createClass(DrawingMode, [{
-	    key: 'getName',
-	    value: function getName() {
-	      return this.name;
+	        /**
+	         * the name of drawing mode
+	         * @type {string}
+	         */
+	        this.name = name;
 	    }
 
 	    /**
-	    * start this drawing mode
-	    * @param {Object} options - drawing mode options
-	    * @abstract
-	    */
-
-	  }, {
-	    key: 'start',
-	    value: function start() {
-	      throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'start'));
-	    }
-
-	    /**
-	     * stop this drawing mode
-	     * @abstract
+	     * Get this drawing mode name;
+	     * @returns {string} drawing mode name
 	     */
 
-	  }, {
-	    key: 'stop',
-	    value: function stop() {
-	      throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'stop'));
-	    }
-	  }]);
 
-	  return DrawingMode;
+	    _createClass(DrawingMode, [{
+	        key: 'getName',
+	        value: function getName() {
+	            return this.name;
+	        }
+
+	        /**
+	        * start this drawing mode
+	        * @param {Object} options - drawing mode options
+	        * @abstract
+	        */
+
+	    }, {
+	        key: 'start',
+	        value: function start() {
+	            throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'start'));
+	        }
+
+	        /**
+	         * stop this drawing mode
+	         * @abstract
+	         */
+
+	    }, {
+	        key: 'stop',
+	        value: function stop() {
+	            throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'stop'));
+	        }
+	    }]);
+
+	    return DrawingMode;
 	}();
 
 	module.exports = DrawingMode;
@@ -17796,31 +17832,31 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	var command = {
-	  name: commandNames.FLIP_IMAGE,
+	    name: commandNames.FLIP_IMAGE,
 
-	  /**
-	   * flip an image
-	   * @param {Graphics} graphics - Graphics instance
-	   * @param {string} type - 'flipX' or 'flipY' or 'reset'
-	   * @returns {Promise}
-	   */
-	  execute: function execute(graphics, type) {
-	    var flipComp = graphics.getComponent(FLIP);
+	    /**
+	     * flip an image
+	     * @param {Graphics} graphics - Graphics instance
+	     * @param {string} type - 'flipX' or 'flipY' or 'reset'
+	     * @returns {Promise}
+	     */
+	    execute: function execute(graphics, type) {
+	        var flipComp = graphics.getComponent(FLIP);
 
-	    this.undoData.setting = flipComp.getCurrentSetting();
+	        this.undoData.setting = flipComp.getCurrentSetting();
 
-	    return flipComp[type]();
-	  },
+	        return flipComp[type]();
+	    },
 
-	  /**
-	   * @param {Graphics} graphics - Graphics instance
-	   * @returns {Promise}
-	   */
-	  undo: function undo(graphics) {
-	    var flipComp = graphics.getComponent(FLIP);
+	    /**
+	     * @param {Graphics} graphics - Graphics instance
+	     * @returns {Promise}
+	     */
+	    undo: function undo(graphics) {
+	        var flipComp = graphics.getComponent(FLIP);
 
-	    return flipComp.set(this.undoData.setting);
-	  }
+	        return flipComp.set(this.undoData.setting);
+	    }
 	};
 
 	_command2.default.register(command);
@@ -17941,34 +17977,34 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	var command = {
-	  name: commandNames.REMOVE_FILTER,
+	    name: commandNames.REMOVE_FILTER,
 
-	  /**
-	   * Remove a filter from an image
-	   * @param {Graphics} graphics - Graphics instance
-	   * @param {string} type - Filter type
-	   * @returns {Promise}
-	   */
-	  execute: function execute(graphics, type) {
-	    var filterComp = graphics.getComponent(FILTER);
+	    /**
+	     * Remove a filter from an image
+	     * @param {Graphics} graphics - Graphics instance
+	     * @param {string} type - Filter type
+	     * @returns {Promise}
+	     */
+	    execute: function execute(graphics, type) {
+	        var filterComp = graphics.getComponent(FILTER);
 
-	    this.undoData.options = filterComp.getOptions(type);
+	        this.undoData.options = filterComp.getOptions(type);
 
-	    return filterComp.remove(type);
-	  },
+	        return filterComp.remove(type);
+	    },
 
-	  /**
-	   * @param {Graphics} graphics - Graphics instance
-	   * @param {string} type - Filter type
-	   * @returns {Promise}
-	   */
-	  undo: function undo(graphics, type) {
-	    var filterComp = graphics.getComponent(FILTER);
-	    var options = this.undoData.options;
+	    /**
+	     * @param {Graphics} graphics - Graphics instance
+	     * @param {string} type - Filter type
+	     * @returns {Promise}
+	     */
+	    undo: function undo(graphics, type) {
+	        var filterComp = graphics.getComponent(FILTER);
+	        var options = this.undoData.options;
 
 
-	    return filterComp.add(type, options);
-	  }
+	        return filterComp.add(type, options);
+	    }
 	};
 
 	_command2.default.register(command);
@@ -18129,34 +18165,34 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 	var command = {
-	  name: commandNames.ROTATE_IMAGE,
+	    name: commandNames.ROTATE_IMAGE,
 
-	  /**
-	   * Rotate an image
-	   * @param {Graphics} graphics - Graphics instance
-	   * @param {string} type - 'rotate' or 'setAngle'
-	   * @param {number} angle - angle value (degree)
-	   * @returns {Promise}
-	   */
-	  execute: function execute(graphics, type, angle) {
-	    var rotationComp = graphics.getComponent(ROTATION);
+	    /**
+	     * Rotate an image
+	     * @param {Graphics} graphics - Graphics instance
+	     * @param {string} type - 'rotate' or 'setAngle'
+	     * @param {number} angle - angle value (degree)
+	     * @returns {Promise}
+	     */
+	    execute: function execute(graphics, type, angle) {
+	        var rotationComp = graphics.getComponent(ROTATION);
 
-	    this.undoData.angle = rotationComp.getCurrentAngle();
+	        this.undoData.angle = rotationComp.getCurrentAngle();
 
-	    return rotationComp[type](angle);
-	  },
+	        return rotationComp[type](angle);
+	    },
 
-	  /**
-	   * @param {Graphics} graphics - Graphics instance
-	   * @returns {Promise}
-	   */
-	  undo: function undo(graphics) {
-	    var rotationComp = graphics.getComponent(ROTATION);
-	    var angle = this.undoData.angle;
+	    /**
+	     * @param {Graphics} graphics - Graphics instance
+	     * @returns {Promise}
+	     */
+	    undo: function undo(graphics) {
+	        var rotationComp = graphics.getComponent(ROTATION);
+	        var angle = this.undoData.angle;
 
 
-	    return rotationComp.setAngle(angle);
-	  }
+	        return rotationComp.setAngle(angle);
+	    }
 	};
 
 	_command2.default.register(command);
@@ -18277,50 +18313,50 @@ return /******/ (function(modules) { // webpackBootstrap
 	                                                       */
 
 	var command = {
-	    name: commandNames.SET_OBJECT_POSITION,
+	        name: commandNames.SET_OBJECT_POSITION,
 
-	    /**
-	     * Set object properties
-	     * @param {Graphics} graphics - Graphics instance
-	     * @param {number} id - object id
-	     * @param {Object} posInfo - position object
-	     *  @param {number} posInfo.x - x position
-	     *  @param {number} posInfo.y - y position
-	     *  @param {string} posInfo.originX - can be 'left', 'center', 'right'
-	     *  @param {string} posInfo.originY - can be 'top', 'center', 'bottom'
-	     * @returns {Promise}
-	     */
-	    execute: function execute(graphics, id, posInfo) {
-	        var targetObj = graphics.getObject(id);
+	        /**
+	         * Set object properties
+	         * @param {Graphics} graphics - Graphics instance
+	         * @param {number} id - object id
+	         * @param {Object} posInfo - position object
+	         *  @param {number} posInfo.x - x position
+	         *  @param {number} posInfo.y - y position
+	         *  @param {string} posInfo.originX - can be 'left', 'center', 'right'
+	         *  @param {string} posInfo.originY - can be 'top', 'center', 'bottom'
+	         * @returns {Promise}
+	         */
+	        execute: function execute(graphics, id, posInfo) {
+	                var targetObj = graphics.getObject(id);
 
-	        if (!targetObj) {
-	            return _promise2.default.reject(rejectMessages.noObject);
+	                if (!targetObj) {
+	                        return _promise2.default.reject(rejectMessages.noObject);
+	                }
+
+	                this.undoData.objectId = id;
+	                this.undoData.props = graphics.getObjectProperties(id, ['left', 'top']);
+
+	                graphics.setObjectPosition(id, posInfo);
+	                graphics.renderAll();
+
+	                return _promise2.default.resolve();
+	        },
+
+	        /**
+	         * @param {Graphics} graphics - Graphics instance
+	         * @returns {Promise}
+	         */
+	        undo: function undo(graphics) {
+	                var _undoData = this.undoData,
+	                    objectId = _undoData.objectId,
+	                    props = _undoData.props;
+
+
+	                graphics.setObjectProperties(objectId, props);
+	                graphics.renderAll();
+
+	                return _promise2.default.resolve();
 	        }
-
-	        this.undoData.objectId = id;
-	        this.undoData.props = graphics.getObjectProperties(id, ['left', 'top']);
-
-	        graphics.setObjectPosition(id, posInfo);
-	        graphics.renderAll();
-
-	        return _promise2.default.resolve();
-	    },
-
-	    /**
-	     * @param {Graphics} graphics - Graphics instance
-	     * @returns {Promise}
-	     */
-	    undo: function undo(graphics) {
-	        var _undoData = this.undoData,
-	            objectId = _undoData.objectId,
-	            props = _undoData.props;
-
-
-	        graphics.setObjectProperties(objectId, props);
-	        graphics.renderAll();
-
-	        return _promise2.default.resolve();
-	    }
 	};
 
 	_command2.default.register(command);
