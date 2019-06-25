@@ -66,6 +66,10 @@ class Line extends Component {
         canvas.on({
             'mouse:down': this._listeners.mousedown
         });
+
+        canvas.on({
+            'mouse:up': this._listeners.mouseup
+        });
     }
 
     /**
@@ -101,6 +105,8 @@ class Line extends Component {
         });
 
         canvas.off('mouse:down', this._listeners.mousedown);
+
+        canvas.off('mouse:up', this._listeners.mouseup);
     }
 
     /**

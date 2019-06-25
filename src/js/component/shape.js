@@ -116,6 +116,10 @@ class Shape extends Component {
             'mouse:down': this._handlers.mousedown
         });
 
+        canvas.on({
+            'mouse:up': this._handlers.mouseup
+        });
+
         fabric.util.addListener(document, 'keydown', this._handlers.keydown);
         fabric.util.addListener(document, 'keyup', this._handlers.keyup);
     }
@@ -135,6 +139,10 @@ class Shape extends Component {
         canvas.uniScaleTransform = false;
         canvas.off({
             'mouse:down': this._handlers.mousedown
+        });
+
+        canvas.off({
+            'mouse:up': this._handlers.mouseup
         });
 
         fabric.util.removeListener(document, 'keydown', this._handlers.keydown);

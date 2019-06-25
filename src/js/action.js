@@ -158,6 +158,21 @@ export default {
             });
         };
 
+        const mouseUp = (e, originPointer) => {
+            startX = originPointer.x;
+            startY = originPointer.y;
+
+            this.addIcon(cacheIconType, {
+                left: originPointer.x,
+                top: originPointer.y,
+                fill: cacheIconColor
+            }).then(obj => {
+                objId = obj.id;
+                iconWidth = obj.width;
+                iconHeight = obj.height;
+            });
+        };
+
         return extend({
             changeColor: color => {
                 if (this.activeObjectId) {
@@ -171,9 +186,13 @@ export default {
                 this.changeCursor('crosshair');
                 this.off('mousedown');
                 this.once('mousedown', mouseDown.bind(this));
+
+                this.off('mouseup');
+                this.once('mouseup', mouseUp.bind(this));
             },
             cancelAddIcon: () => {
                 this.off('mousedown');
+                this.off('mouseup');
                 this.ui.icon.clearIconType();
                 this.changeSelectableAll(true);
                 this.changeCursor('default');

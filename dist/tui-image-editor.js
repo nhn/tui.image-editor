@@ -8848,6 +8848,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	                optionlist.setAttribute('data-selectitem', selectlist.value);
 	                optionlist.querySelector('[data-item=\'' + selectlist.value + '\']').classList.add('active');
 	            });
+
+	            selectlist.addEventListener('mouseup', function (event) {
+	                event.preventDefault();
+	                _this3.selectBoxShow = !_this3.selectBoxShow;
+	                optionlist.style.display = _this3.selectBoxShow ? 'block' : 'none';
+	                optionlist.setAttribute('data-selectitem', selectlist.value);
+	                optionlist.querySelector('[data-item=\'' + selectlist.value + '\']').classList.add('active');
+	            });
 	        }
 
 	        /**
@@ -9125,6 +9133,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 	        };
 
+	        var mouseUp = function mouseUp(e, originPointer) {
+	            startX = originPointer.x;
+	            startY = originPointer.y;
+
+	            _this2.addIcon(cacheIconType, {
+	                left: originPointer.x,
+	                top: originPointer.y,
+	                fill: cacheIconColor
+	            }).then(function (obj) {
+	                objId = obj.id;
+	                iconWidth = obj.width;
+	                iconHeight = obj.height;
+	            });
+	        };
+
 	        return (0, _tuiCodeSnippet.extend)({
 	            changeColor: function changeColor(color) {
 	                if (_this2.activeObjectId) {
@@ -9138,9 +9161,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _this2.changeCursor('crosshair');
 	                _this2.off('mousedown');
 	                _this2.once('mousedown', mouseDown.bind(_this2));
+
+	                _this2.off('mouseup');
+	                _this2.once('mouseup', mouseUp.bind(_this2));
 	            },
 	            cancelAddIcon: function cancelAddIcon() {
 	                _this2.off('mousedown');
+	                _this2.off('mouseup');
 	                _this2.ui.icon.clearIconType();
 	                _this2.changeSelectableAll(true);
 	                _this2.changeCursor('default');
@@ -10906,6 +10933,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        this._handler = {
 	            onMouseDown: this._onMouseDown.bind(this),
+	            onMouseUp: this._onMouseUp.bind(this),
 	            onObjectAdded: this._onObjectAdded.bind(this),
 	            onObjectRemoved: this._onObjectRemoved.bind(this),
 	            onObjectMoved: this._onObjectMoved.bind(this),
@@ -11839,6 +11867,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var handler = this._handler;
 	            canvas.on({
 	                'mouse:down': handler.onMouseDown,
+	                'mouse:up': handler._onMouseUp,
 	                'object:added': handler.onObjectAdded,
 	                'object:removed': handler.onObjectRemoved,
 	                'object:moving': handler.onObjectMoved,
@@ -11861,6 +11890,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value: function _onMouseDown(fEvent) {
 	            var originPointer = this._canvas.getPointer(fEvent.e);
 	            this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
+	        }
+
+	        /**
+	         * "mouse:down" canvas event handler
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onMouseUp',
+	        value: function _onMouseUp(fEvent) {
+	            var originPointer = this._canvas.getPointer(fEvent.e);
+	            this.fire(events.MOUSE_UP, fEvent.e, originPointer);
 	        }
 
 	        /**
@@ -12547,6 +12589,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvas.deactivateAll();
 	            canvas.add(this._cropzone);
 	            canvas.on('mouse:down', this._listeners.mousedown);
+
+	            canvas.on('mouse:up', this._listeners.mouseup);
+
 	            canvas.selection = false;
 	            canvas.defaultCursor = 'crosshair';
 
@@ -12571,6 +12616,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvas.selection = true;
 	            canvas.defaultCursor = 'default';
 	            canvas.off('mouse:down', this._listeners.mousedown);
+	            canvas.off('mouse:up', this._listeners.mouseup);
 	            canvas.forEachObject(function (obj) {
 	                obj.evented = true;
 	            });
@@ -13899,6 +13945,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvas.on({
 	                'mouse:down': this._listeners.mousedown
 	            });
+
+	            canvas.on({
+	                'mouse:up': this._listeners.mouseup
+	            });
 	        }
 
 	        /**
@@ -13940,6 +13990,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 
 	            canvas.off('mouse:down', this._listeners.mousedown);
+
+	            canvas.off('mouse:up', this._listeners.mouseup);
 	        }
 
 	        /**
@@ -14146,6 +14198,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         */
 	        _this._listeners = {
 	            mousedown: _this._onFabricMouseDown.bind(_this),
+	            mouseup: _this._onFabricMouseUp.bind(_this),
 	            select: _this._onFabricSelect.bind(_this),
 	            selectClear: _this._onFabricSelectClear.bind(_this),
 	            scaling: _this._onFabricScaling.bind(_this)
@@ -14203,6 +14256,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvas.defaultCursor = 'text';
 	            canvas.on({
 	                'mouse:down': this._listeners.mousedown,
+	                'mouse:up': this._listeners.mouseup,
 	                'object:selected': this._listeners.select,
 	                'before:selection:cleared': this._listeners.selectClear,
 	                'object:scaling': this._listeners.scaling,
@@ -14261,6 +14315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            canvas.off({
 	                'mouse:down': this._listeners.mousedown,
+	                'mouse:up': this._listeners.mouseup,
 	                'object:selected': this._listeners.select,
 	                'before:selection:cleared': this._listeners.selectClear,
 	                'object:scaling': this._listeners.scaling,
@@ -14724,7 +14779,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        /**
 	         * Fabric mouseup event handler
-	         * @param {fabric.Event} fEvent - Current mousedown event on selected object
+	         * @param {fabric.Event} fEvent - Current mouseup event on selected object
 	         * @private
 	         */
 
@@ -15867,6 +15922,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'mouse:down': this._handlers.mousedown
 	            });
 
+	            canvas.on({
+	                'mouse:up': this._handlers.mouseup
+	            });
+
 	            _fabric2.default.util.addListener(document, 'keydown', this._handlers.keydown);
 	            _fabric2.default.util.addListener(document, 'keyup', this._handlers.keyup);
 	        }
@@ -15889,6 +15948,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvas.uniScaleTransform = false;
 	            canvas.off({
 	                'mouse:down': this._handlers.mousedown
+	            });
+
+	            canvas.off({
+	                'mouse:up': this._handlers.mouseup
 	            });
 
 	            _fabric2.default.util.removeListener(document, 'keydown', this._handlers.keydown);

@@ -289,6 +289,14 @@ class Filter extends Submenu {
             optionlist.setAttribute('data-selectitem', selectlist.value);
             optionlist.querySelector(`[data-item='${selectlist.value}']`).classList.add('active');
         });
+
+        selectlist.addEventListener('mouseup', event => {
+            event.preventDefault();
+            this.selectBoxShow = !this.selectBoxShow;
+            optionlist.style.display = this.selectBoxShow ? 'block' : 'none';
+            optionlist.setAttribute('data-selectitem', selectlist.value);
+            optionlist.querySelector(`[data-item='${selectlist.value}']`).classList.add('active');
+        });
     }
 
     /**

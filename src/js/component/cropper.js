@@ -101,6 +101,9 @@ class Cropper extends Component {
         canvas.deactivateAll();
         canvas.add(this._cropzone);
         canvas.on('mouse:down', this._listeners.mousedown);
+
+        canvas.on('mouse:up', this._listeners.mouseup);
+
         canvas.selection = false;
         canvas.defaultCursor = 'crosshair';
 
@@ -122,6 +125,7 @@ class Cropper extends Component {
         canvas.selection = true;
         canvas.defaultCursor = 'default';
         canvas.off('mouse:down', this._listeners.mousedown);
+        canvas.off('mouse:up', this._listeners.mouseup);
         canvas.forEachObject(obj => {
             obj.evented = true;
         });

@@ -84,6 +84,7 @@ class Text extends Component {
          */
         this._listeners = {
             mousedown: this._onFabricMouseDown.bind(this),
+            mouseup: this._onFabricMouseUp.bind(this),
             select: this._onFabricSelect.bind(this),
             selectClear: this._onFabricSelectClear.bind(this),
             scaling: this._onFabricScaling.bind(this)
@@ -136,6 +137,7 @@ class Text extends Component {
         canvas.defaultCursor = 'text';
         canvas.on({
             'mouse:down': this._listeners.mousedown,
+            'mouse:up': this._listeners.mouseup,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
             'object:scaling': this._listeners.scaling,
@@ -191,6 +193,7 @@ class Text extends Component {
 
         canvas.off({
             'mouse:down': this._listeners.mousedown,
+            'mouse:up': this._listeners.mouseup,
             'object:selected': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
             'object:scaling': this._listeners.scaling,
@@ -583,7 +586,7 @@ class Text extends Component {
 
     /**
      * Fabric mouseup event handler
-     * @param {fabric.Event} fEvent - Current mousedown event on selected object
+     * @param {fabric.Event} fEvent - Current mouseup event on selected object
      * @private
      */
     _onFabricMouseUp(fEvent) {
