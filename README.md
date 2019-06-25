@@ -379,3 +379,26 @@ $ npm run serve
 
 ## 📜 License
 [MIT LICENSE](https://github.com/nhnent/tui.image-editor/blob/master/LICENSE)
+
+
+## 计算坐标
+
+circle  圆心
+
+x,y
+x=开始坐标X + 结束坐标X/2
+y=开始坐标Y + 结束坐标Y/2
+
+rect  (x,y)
+x=开始坐标X + 结束坐标X
+y=开始坐标Y + 结束坐标Y
+
+triangle
+
+
+
+A:  x=开始坐标X+结束坐标X-(开始坐标X/2)   y=开始坐标Y
+
+B:  x=开始坐标X   y=开始坐标Y+结束坐标Y
+
+C:  x=开始坐标X+结束坐标X   y=开始坐标Y+结束坐标Y

@@ -14055,7 +14055,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: '_onFabricMouseUp',
 	        value: function _onFabricMouseUp() {
 	            var canvas = this.getCanvas();
-	            if (this._line) {
+
+	            if (this._line !== null) {
 	                var params = this.graphics.createObjectProperties(this._line);
 
 	                this.fire(eventNames.ADD_OBJECT, params);

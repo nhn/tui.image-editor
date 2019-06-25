@@ -42,17 +42,16 @@
          });
 
          imageEditor.on('mousedown', function(event, originPointer) {
-             console.log('mousedown');
-             console.log(event);
-             console.log(originPointer);
+             console.log('mousedown'+event);
+             console.log("X:"+originPointer.x+" Y:"+originPointer.y);
 
          });
 
          imageEditor.on('mouseup', function(event, originPointer) {
-             console.log('mouseup');
-             console.log(event);
-             console.log(originPointer);
-
+             console.log('mouseup'+event.id);
+             let x = event.width
+             let y = event.height
+             console.log("x:"+x+"  y:"+y);
          });
 
          window.onresize = function() {
