@@ -161,9 +161,13 @@ class Line extends Component {
      */
     _onFabricMouseUp() {
         const canvas = this.getCanvas();
-        const params = this.graphics.createObjectProperties(this._line);
+        if (this._line) {
+            const params = this.graphics.createObjectProperties(this._line);
 
-        this.fire(eventNames.ADD_OBJECT, params);
+            this.fire(eventNames.ADD_OBJECT, params);
+
+            this.fire(eventNames.MOUSE_UP, params);
+        }
 
         this._line = null;
 

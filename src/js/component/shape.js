@@ -142,7 +142,7 @@ class Shape extends Component {
         });
 
         canvas.off({
-            'mouse:up': this._handlers.mouseup
+            'mouse:up': this._handlers.mousedown
         });
 
         fabric.util.removeListener(document, 'keydown', this._handlers.keydown);
@@ -395,6 +395,7 @@ class Shape extends Component {
             resizeHelper.adjustOriginToCenter(shape);
             this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
         }
+        this.fire(eventNames.MOUSE_UP, this.graphics.createObjectProperties(shape));
 
         canvas.off({
             'mouse:move': this._handlers.mousemove,

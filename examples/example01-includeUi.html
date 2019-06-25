@@ -33,12 +33,26 @@
                      path: 'img/sampleImage2.png',
                      name: 'SampleImage'
                  },
-                 theme: blackTheme, // or whiteTheme
+                 theme: whiteTheme, // or whiteTheme
                  initMenu: 'filter',
                  menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,
              cssMaxHeight: 500
+         });
+
+         imageEditor.on('mousedown', function(event, originPointer) {
+             console.log('mousedown');
+             console.log(event);
+             console.log(originPointer);
+
+         });
+
+         imageEditor.on('mouseup', function(event, originPointer) {
+             console.log('mouseup');
+             console.log(event);
+             console.log(originPointer);
+
          });
 
          window.onresize = function() {

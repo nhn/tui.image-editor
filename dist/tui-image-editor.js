@@ -14055,9 +14055,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        key: '_onFabricMouseUp',
 	        value: function _onFabricMouseUp() {
 	            var canvas = this.getCanvas();
-	            var params = this.graphics.createObjectProperties(this._line);
+	            if (this._line) {
+	                var params = this.graphics.createObjectProperties(this._line);
 
-	            this.fire(eventNames.ADD_OBJECT, params);
+	                this.fire(eventNames.ADD_OBJECT, params);
+
+	                this.fire(eventNames.MOUSE_UP, params);
+	            }
 
 	            this._line = null;
 
@@ -15951,7 +15955,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 
 	            canvas.off({
-	                'mouse:up': this._handlers.mouseup
+	                'mouse:up': this._handlers.mousedown
 	            });
 
 	            _fabric2.default.util.removeListener(document, 'keydown', this._handlers.keydown);
@@ -16239,6 +16243,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _shapeResizeHelper2.default.adjustOriginToCenter(shape);
 	                this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
 	            }
+	            this.fire(eventNames.MOUSE_UP, this.graphics.createObjectProperties(shape));
 
 	            canvas.off({
 	                'mouse:move': this._handlers.mousemove,
