@@ -4750,6 +4750,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        OBJECT_ACTIVATED: 'objectActivated',
 	        OBJECT_MOVED: 'objectMoved',
 	        OBJECT_SCALED: 'objectScaled',
+	        OBJECT_RESIZE_LINE: 'objectResizeline',
 	        OBJECT_CREATED: 'objectCreated',
 	        TEXT_EDITING: 'textEditing',
 	        TEXT_CHANGED: 'textChanged',
@@ -4761,6 +4762,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        MOUSE_DOWN: 'mousedown',
 	        MOUSE_UP: 'mouseup',
 	        MOUSE_MOVE: 'mousemove',
+	        RESIZE_LINE: 'resizeline',
 	        // UNDO/REDO Events
 	        REDO_STACK_CHANGED: 'redoStackChanged',
 	        UNDO_STACK_CHANGED: 'undoStackChanged',
@@ -5973,7 +5975,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-	    value: true
+	  value: true
 	});
 	/**
 	 * @fileoverview The standard theme
@@ -6111,86 +6113,86 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	 */
 	exports.default = {
-	    'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
-	    'common.bisize.width': '251px',
-	    'common.bisize.height': '21px',
-	    'common.backgroundImage': 'none',
-	    'common.backgroundColor': '#1e1e1e',
-	    'common.border': '0px',
+	  'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
+	  'common.bisize.width': '251px',
+	  'common.bisize.height': '21px',
+	  'common.backgroundImage': './img/bg.png',
+	  'common.backgroundColor': '#fff',
+	  'common.border': '1px solid #c1c1c1',
 
-	    // header
-	    'header.backgroundImage': 'none',
-	    'header.backgroundColor': 'transparent',
-	    'header.border': '0px',
+	  // header
+	  'header.backgroundImage': 'none',
+	  'header.backgroundColor': 'transparent',
+	  'header.border': '0px',
 
-	    // load button
-	    'loadButton.backgroundColor': '#fff',
-	    'loadButton.border': '1px solid #ddd',
-	    'loadButton.color': '#222',
-	    'loadButton.fontFamily': '\'Noto Sans\', sans-serif',
-	    'loadButton.fontSize': '12px',
+	  // load button
+	  'loadButton.backgroundColor': '#fff',
+	  'loadButton.border': '1px solid #ddd',
+	  'loadButton.color': '#222',
+	  'loadButton.fontFamily': '\'Noto Sans\', sans-serif',
+	  'loadButton.fontSize': '12px',
 
-	    // download button
-	    'downloadButton.backgroundColor': '#fdba3b',
-	    'downloadButton.border': '1px solid #fdba3b',
-	    'downloadButton.color': '#fff',
-	    'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
-	    'downloadButton.fontSize': '12px',
+	  // download button
+	  'downloadButton.backgroundColor': '#fdba3b',
+	  'downloadButton.border': '1px solid #fdba3b',
+	  'downloadButton.color': '#fff',
+	  'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
+	  'downloadButton.fontSize': '12px',
 
-	    // main icons
-	    'menu.normalIcon.path': 'icon-d.svg',
-	    'menu.normalIcon.name': 'icon-d',
-	    'menu.activeIcon.path': 'icon-b.svg',
-	    'menu.activeIcon.name': 'icon-b',
-	    'menu.disabledIcon.path': 'icon-a.svg',
-	    'menu.disabledIcon.name': 'icon-a',
-	    'menu.hoverIcon.path': 'icon-c.svg',
-	    'menu.hoverIcon.name': 'icon-c',
-	    'menu.iconSize.width': '24px',
-	    'menu.iconSize.height': '24px',
+	  // main icons
+	  'menu.normalIcon.path': '../dist/svg/icon-d.svg',
+	  'menu.normalIcon.name': 'icon-d',
+	  'menu.activeIcon.path': '../dist/svg/icon-b.svg',
+	  'menu.activeIcon.name': 'icon-b',
+	  'menu.disabledIcon.path': '../dist/svg/icon-a.svg',
+	  'menu.disabledIcon.name': 'icon-a',
+	  'menu.hoverIcon.path': '../dist/svg/icon-c.svg',
+	  'menu.hoverIcon.name': 'icon-c',
+	  'menu.iconSize.width': '24px',
+	  'menu.iconSize.height': '24px',
 
-	    // submenu primary color
-	    'submenu.backgroundColor': '#1e1e1e',
-	    'submenu.partition.color': '#3c3c3c',
+	  // submenu primary color
+	  'submenu.backgroundColor': 'transparent',
+	  'submenu.partition.color': '#e5e5e5',
 
-	    // submenu icons
-	    'submenu.normalIcon.path': 'icon-d.svg',
-	    'submenu.normalIcon.name': 'icon-d',
-	    'submenu.activeIcon.path': 'icon-c.svg',
-	    'submenu.activeIcon.name': 'icon-c',
-	    'submenu.iconSize.width': '32px',
-	    'submenu.iconSize.height': '32px',
+	  // submenu icons
+	  'submenu.normalIcon.path': '../dist/svg/icon-d.svg',
+	  'submenu.normalIcon.name': 'icon-d',
+	  'submenu.activeIcon.path': '../dist/svg/icon-b.svg',
+	  'submenu.activeIcon.name': 'icon-b',
+	  'submenu.iconSize.width': '32px',
+	  'submenu.iconSize.height': '32px',
 
-	    // submenu labels
-	    'submenu.normalLabel.color': '#8a8a8a',
-	    'submenu.normalLabel.fontWeight': 'lighter',
-	    'submenu.activeLabel.color': '#fff',
-	    'submenu.activeLabel.fontWeight': 'lighter',
+	  // submenu labels
+	  'submenu.normalLabel.color': '#858585',
+	  'submenu.normalLabel.fontWeight': 'normal',
+	  'submenu.activeLabel.color': '#000',
+	  'submenu.activeLabel.fontWeight': 'normal',
 
-	    // checkbox style
-	    'checkbox.border': '0px',
-	    'checkbox.backgroundColor': '#fff',
+	  // checkbox style
+	  'checkbox.border': '1px solid #ccc',
+	  'checkbox.backgroundColor': '#fff',
 
-	    // range style
-	    'range.pointer.color': '#fff',
-	    'range.bar.color': '#666',
-	    'range.subbar.color': '#d1d1d1',
+	  // rango style
+	  'range.pointer.color': '#333',
+	  'range.bar.color': '#ccc',
+	  'range.subbar.color': '#606060',
 
-	    'range.disabledPointer.color': '#414141',
-	    'range.disabledBar.color': '#282828',
-	    'range.disabledSubbar.color': '#414141',
+	  'range.disabledPointer.color': '#d3d3d3',
+	  'range.disabledBar.color': 'rgba(85,85,85,0.06)',
+	  'range.disabledSubbar.color': 'rgba(51,51,51,0.2)',
 
-	    'range.value.color': '#fff',
-	    'range.value.fontWeight': 'lighter',
-	    'range.value.fontSize': '11px',
-	    'range.value.border': '1px solid #353535',
-	    'range.value.backgroundColor': '#151515',
-	    'range.title.color': '#fff',
-	    'range.title.fontWeight': 'lighter',
+	  'range.value.color': '#000',
+	  'range.value.fontWeight': 'normal',
+	  'range.value.fontSize': '11px',
+	  'range.value.border': '0',
+	  'range.value.backgroundColor': '#f5f5f5',
+	  'range.title.color': '#000',
+	  'range.title.fontWeight': 'lighter',
 
-	    // colorpicker style
-	    'colorpicker.button.border': '1px solid #1e1e1e',
-	    'colorpicker.title.color': '#fff'
+	  // colorpicker style
+	  'colorpicker.button.border': '0px',
+	  'colorpicker.title.color': '#000'
 	};
 
 /***/ }),
@@ -11872,6 +11874,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                'object:removed': handler.onObjectRemoved,
 	                'object:moving': handler.onObjectMoved,
 	                'object:scaling': handler.onObjectScaled,
+	                'object:resizeline': handler._onObjectScaled,
 	                'object:selected': handler.onObjectSelected,
 	                'path:created': handler.onPathCreated,
 	                'selection:cleared': handler.onSelectionCleared,
@@ -11940,16 +11943,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * "object:moving" canvas event handler
 	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
 	         * @private
-	         */
+	         _onObjectMoved(fEvent) {
+	            const {target} = fEvent;
+	            const params = this.createObjectProperties(target);
+	             this.fire(events.OBJECT_MOVED, fEvent);
+	        }*/
 
 	    }, {
 	        key: '_onObjectMoved',
 	        value: function _onObjectMoved(fEvent) {
-	            var target = fEvent.target;
-
-	            var params = this.createObjectProperties(target);
-
-	            this.fire(events.OBJECT_MOVED, params);
+	            this.fire(events.OBJECT_MOVED, fEvent);
 	        }
 
 	        /**
@@ -11964,6 +11967,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var target = fEvent.target;
 
 	            var params = this.createObjectProperties(target);
+
+	            if (params.type === 'line') {
+	                this.fire(events.OBJECT_RESIZE_LINE, fEvent);
+	            }
 
 	            this.fire(events.OBJECT_SCALED, params);
 	        }
@@ -13892,12 +13899,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _classCallCheck(this, Line);
 
 	        /**
-	         * Brush width
-	         * @type {number}
+	         * Object of The drawing shape
+	         * @type {fabric.Object}
 	         * @private
 	         */
 	        var _this = _possibleConstructorReturn(this, (Line.__proto__ || Object.getPrototypeOf(Line)).call(this, _consts2.default.componentNames.LINE, graphics));
 
+	        _this._shapeObj = null;
+
+	        _this.lineMap = new Map();
+
+	        /**
+	         * Brush width
+	         * @type {number}
+	         * @private
+	         */
 	        _this._width = 12;
 
 	        /**
@@ -14017,10 +14033,36 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            canvas.add(this._line);
 
+	            this._bindEventOnShape(this._line);
+
 	            canvas.on({
 	                'mouse:move': this._listeners.mousemove,
 	                'mouse:up': this._listeners.mouseup
 	            });
+	        }
+
+	        /**
+	         * Mousedown event handler in fabric canvas
+	         * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_onFabricResizeLine',
+	        value: function _onFabricResizeLine(fEvent) {
+	            self._shapeObj = this;
+	            this._line = this.lineMap.get(self._shapeObj.graphics._canvas._activeObject.__fe_id);
+	            var canvas = this.getCanvas();
+	            var pointer = canvas.getPointer(fEvent.e);
+
+	            this._line.set({
+	                x2: pointer.x,
+	                y2: pointer.y
+	            });
+
+	            this._line.setCoords();
+
+	            canvas.renderAll();
 	        }
 
 	        /**
@@ -14062,6 +14104,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.fire(eventNames.ADD_OBJECT, params);
 
 	                this.fire(eventNames.MOUSE_UP, params);
+
+	                this.lineMap.set(params.id, this._line);
 	            }
 
 	            this._line = null;
@@ -14069,6 +14113,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	            canvas.off({
 	                'mouse:move': this._listeners.mousemove,
 	                'mouse:up': this._listeners.mouseup
+	            });
+	        }
+
+	        /**
+	         * Bind fabric events on the creating shape object
+	         * @param {fabric.Object} shapeObj - Shape object
+	         * @private
+	         */
+
+	    }, {
+	        key: '_bindEventOnShape',
+	        value: function _bindEventOnShape(shapeObj) {
+	            var self = this;
+
+	            shapeObj.on({
+	                scaling: function scaling(fEvent) {
+	                    self._onFabricResizeLine(fEvent);
+	                }
 	            });
 	        }
 	    }]);
@@ -15956,7 +16018,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            });
 
 	            canvas.off({
-	                'mouse:up': this._handlers.mousedown
+	                'mouse:down': this._handlers.mousedown
 	            });
 
 	            _fabric2.default.util.removeListener(document, 'keydown', this._handlers.keydown);

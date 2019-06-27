@@ -15,6 +15,8 @@
     </head>
     <body>
 
+    <button onclick="test()"></button>
+
         <div id="tui-image-editor-container"></div>
 
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.6.7/fabric.js"></script>
@@ -22,8 +24,6 @@
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
         <script type="text/javascript" src="https://uicdn.toast.com/tui-color-picker/v2.2.0/tui-color-picker.js"></script>
         <script type="text/javascript" src="../dist/tui-image-editor.js"></script>
-        <script type="text/javascript" src="./js/theme/white-theme.js"></script>
-        <script type="text/javascript" src="./js/theme/black-theme.js"></script>
         <script>
 
          // Image editor
@@ -33,7 +33,6 @@
                      path: 'img/sampleImage2.png',
                      name: 'SampleImage'
                  },
-                 theme: whiteTheme, // or whiteTheme
                  initMenu: 'filter',
                  menuBarPosition: 'bottom'
              },
@@ -44,14 +43,38 @@
          imageEditor.on('mousedown', function(event, originPointer) {
              console.log('mousedown'+event);
              console.log("X:"+originPointer.x+" Y:"+originPointer.y);
-
          });
 
          imageEditor.on('mouseup', function(event, originPointer) {
-             console.log('mouseup'+event.id);
-             let x = event.width
-             let y = event.height
-             console.log("x:"+x+"  y:"+y);
+             console.log('mouseup：：：：：：'+event.id);
+             //let x = event.width
+            // let y = event.height
+            // console.log("x:"+x+"  y:"+y);
+             //debugger
+         });
+
+         imageEditor.on('objectScaled', function(props) {
+             console.log(props);
+             //console.log(props.type);
+             // console.log("objectScaled::::id:::"+props.id)
+         });
+
+         let _fEvent = null
+
+         imageEditor.on('objectMoved', function(fEvent) {
+             // if(this._fEvent == null){
+             //     imageEditor.fire('objectMoved', fEvent);
+             //     this._fEvent = fEvent
+             //     debugger
+             // }
+             // debugger
+             this._fEvent = fEvent
+             // console.log("move::::id:::"+this._fEvent.id)
+             // if(fEvent.e.movementX == -1 && fEvent.e.movementY == -1){
+             //     console.log(this._fEvent)
+             // }
+             //console.log(this._fEvent)
+
          });
 
          window.onresize = function() {

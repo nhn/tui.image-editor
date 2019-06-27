@@ -20,6 +20,15 @@ class Line extends Component {
         super(consts.componentNames.LINE, graphics);
 
         /**
+         * Object of The drawing shape
+         * @type {fabric.Object}
+         * @private
+         */
+        this._shapeObj = null;
+
+        this.lineMap = new Map();
+
+        /**
          * Brush width
          * @type {number}
          * @private
@@ -129,10 +138,33 @@ class Line extends Component {
 
         canvas.add(this._line);
 
+        this._bindEventOnShape(this._line);
+
         canvas.on({
             'mouse:move': this._listeners.mousemove,
             'mouse:up': this._listeners.mouseup
         });
+    }
+
+    /**
+     * Mousedown event handler in fabric canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+     * @private
+     */
+    _onFabricResizeLine(fEvent) {
+        self._shapeObj = this;
+        this._line = this.lineMap.get(self._shapeObj.graphics._canvas._activeObject.__fe_id);
+        const canvas = this.getCanvas();
+        const pointer = canvas.getPointer(fEvent.e);
+
+        this._line.set({
+            x2: pointer.x,
+            y2: pointer.y
+        });
+
+        this._line.setCoords();
+
+        canvas.renderAll();
     }
 
     /**
@@ -168,6 +200,8 @@ class Line extends Component {
             this.fire(eventNames.ADD_OBJECT, params);
 
             this.fire(eventNames.MOUSE_UP, params);
+
+            this.lineMap.set(params.id, this._line);
         }
 
         this._line = null;
@@ -175,6 +209,21 @@ class Line extends Component {
         canvas.off({
             'mouse:move': this._listeners.mousemove,
             'mouse:up': this._listeners.mouseup
+        });
+    }
+
+    /**
+     * Bind fabric events on the creating shape object
+     * @param {fabric.Object} shapeObj - Shape object
+     * @private
+     */
+    _bindEventOnShape(shapeObj) {
+        const self = this;
+
+        shapeObj.on({
+            scaling(fEvent) {
+                self._onFabricResizeLine(fEvent);
+            }
         });
     }
 }

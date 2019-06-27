@@ -901,6 +901,7 @@ class Graphics {
             'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
+            'object:resizeline': handler._onObjectScaled,
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
             'selection:cleared': handler.onSelectionCleared,
@@ -957,12 +958,15 @@ class Graphics {
      * "object:moving" canvas event handler
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      * @private
-     */
+
     _onObjectMoved(fEvent) {
         const {target} = fEvent;
         const params = this.createObjectProperties(target);
 
-        this.fire(events.OBJECT_MOVED, params);
+        this.fire(events.OBJECT_MOVED, fEvent);
+    }*/
+    _onObjectMoved(fEvent) {
+        this.fire(events.OBJECT_MOVED, fEvent);
     }
 
     /**
@@ -973,6 +977,10 @@ class Graphics {
     _onObjectScaled(fEvent) {
         const {target} = fEvent;
         const params = this.createObjectProperties(target);
+
+        if (params.type === 'line') {
+            this.fire(events.OBJECT_RESIZE_LINE, fEvent);
+        }
 
         this.fire(events.OBJECT_SCALED, params);
     }

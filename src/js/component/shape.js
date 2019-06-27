@@ -142,7 +142,7 @@ class Shape extends Component {
         });
 
         canvas.off({
-            'mouse:up': this._handlers.mousedown
+            'mouse:down': this._handlers.mousedown
         });
 
         fabric.util.removeListener(document, 'keydown', this._handlers.keydown);

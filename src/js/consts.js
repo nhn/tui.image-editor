@@ -56,6 +56,7 @@ module.exports = {
         OBJECT_ACTIVATED: 'objectActivated',
         OBJECT_MOVED: 'objectMoved',
         OBJECT_SCALED: 'objectScaled',
+        OBJECT_RESIZE_LINE: 'objectResizeline',
         OBJECT_CREATED: 'objectCreated',
         TEXT_EDITING: 'textEditing',
         TEXT_CHANGED: 'textChanged',
@@ -67,6 +68,7 @@ module.exports = {
         MOUSE_DOWN: 'mousedown',
         MOUSE_UP: 'mouseup',
         MOUSE_MOVE: 'mousemove',
+        RESIZE_LINE: 'resizeline',
         // UNDO/REDO Events
         REDO_STACK_CHANGED: 'redoStackChanged',
         UNDO_STACK_CHANGED: 'undoStackChanged',
