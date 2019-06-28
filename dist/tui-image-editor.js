@@ -6113,10 +6113,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	 */
 	exports.default = {
-	  'common.bi.image': 'https://uicdn.toast.com/toastui/img/tui-image-editor-bi.png',
+	  'common.bi.image': '',
 	  'common.bisize.width': '251px',
 	  'common.bisize.height': '21px',
-	  'common.backgroundImage': './img/bg.png',
+	  'common.backgroundImage': '../static/img/bg.png',
 	  'common.backgroundColor': '#fff',
 	  'common.border': '1px solid #c1c1c1',
 
