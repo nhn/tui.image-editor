@@ -87,9 +87,9 @@
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': '../dist/svg/icon-b.svg',
+    'menu.normalIcon.path': '../static/svg/icon-b.svg',
     'menu.normalIcon.name': 'icon-b',
-    'menu.activeIcon.path': '../dist/svg/icon-a.svg',
+    'menu.activeIcon.path': '../static/svg/icon-a.svg',
     'menu.activeIcon.name': 'icon-a',
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
@@ -99,9 +99,9 @@
     'submenu.partition.color': '#858585',
 
     // submenu icons
-    'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
+    'submenu.normalIcon.path': '../static/svg/icon-a.svg',
     'submenu.normalIcon.name': 'icon-a',
-    'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
+    'submenu.activeIcon.path': '../static/svg/icon-c.svg',
     'submenu.activeIcon.name': 'icon-c',
     'submenu.iconSize.width': '32px',
     'submenu.iconSize.height': '32px',
@@ -161,13 +161,13 @@ export default {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': '../dist/svg/icon-d.svg',
+    'menu.normalIcon.path': '../static/svg/icon-d.svg',
     'menu.normalIcon.name': 'icon-d',
-    'menu.activeIcon.path': '../dist/svg/icon-b.svg',
+    'menu.activeIcon.path': '../static/svg/icon-b.svg',
     'menu.activeIcon.name': 'icon-b',
-    'menu.disabledIcon.path': '../dist/svg/icon-a.svg',
+    'menu.disabledIcon.path': '../static/svg/icon-a.svg',
     'menu.disabledIcon.name': 'icon-a',
-    'menu.hoverIcon.path': '../dist/svg/icon-c.svg',
+    'menu.hoverIcon.path': '../static/svg/icon-c.svg',
     'menu.hoverIcon.name': 'icon-c',
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
@@ -177,9 +177,9 @@ export default {
     'submenu.partition.color': '#e5e5e5',
 
     // submenu icons
-    'submenu.normalIcon.path': '../dist/svg/icon-d.svg',
+    'submenu.normalIcon.path': '../static/svg/icon-d.svg',
     'submenu.normalIcon.name': 'icon-d',
-    'submenu.activeIcon.path': '../dist/svg/icon-b.svg',
+    'submenu.activeIcon.path': '../static/svg/icon-b.svg',
     'submenu.activeIcon.name': 'icon-b',
     'submenu.iconSize.width': '32px',
     'submenu.iconSize.height': '32px',
