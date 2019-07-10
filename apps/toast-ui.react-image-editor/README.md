@@ -1,12 +1,12 @@
 # TOAST UI Image Editor for React
 
-> This is a React component wrapping [TOAST UI Image Editor](https://github.com/nhnent/tui.image-editor).
+> This is a React component wrapping [TOAST UI Image Editor](https://github.com/nhn/tui.image-editor).
 
- [![github version](https://img.shields.io/github/release/nhnent/toast-ui.react-image-editor.svg)](https://github.com/nhnent/toast-ui.react-image-editor/releases/latest)
+ [![github version](https://img.shields.io/github/release/nhn/toast-ui.react-image-editor.svg)](https://github.com/nhn/toast-ui.react-image-editor/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/react-image-editor.svg)](https://www.npmjs.com/package/@toast-ui/react-image-editor)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-image-editor.svg)](https://github.com/nhnent/toast-ui.react-image-editor/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.react-image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.vue-image-editor.svg)](https://github.com/nhn/toast-ui.react-image-editor/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.react-image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
@@ -69,7 +69,7 @@ var ImageEditor = require('@toast-ui/react-image-editor');
 
 ### Props
 
-[All the options of the TOAST UI Image Editor](http://nhnent.github.io/tui.image-editor/latest/ImageEditor.html) are supported in the form of props.
+[All the options of the TOAST UI Image Editor](http://nhn.github.io/tui.image-editor/latest/ImageEditor.html) are supported in the form of props.
 
 ```js
 const myTheme = {
@@ -108,7 +108,7 @@ Importing `black/white-theme.js` file is not working directly import yet. You wa
 
 ### Instance Methods
 
-For using [instance methods of TOAST UI Image Editor](https://nhnent.github.io/tui.date-picker/latest/DatePicker.html#.createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Image Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
+For using [instance methods of TOAST UI Image Editor](https://nhn.github.io/tui.date-picker/latest/DatePicker.html#.createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Image Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
 const imageEditorOptions = {
@@ -166,7 +166,7 @@ class MyComponent extends React.Component {
 
 ### Event
 
-[All the events of TOAST UI Image Editor](https://nhnent.github.io/tui.image-editor/latest/ImageEditor.html#event:addText) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `mousedown` event you can use `onMousedown` prop like the example below.
+[All the events of TOAST UI Image Editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor.html#event:addText) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `mousedown` event you can use `onMousedown` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
@@ -213,12 +213,12 @@ If it has no error, commit and then push it!
 For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
-* [Getting Started](https://github.com/nhnent/toast-ui.react-image-editor/blob/master/docs/getting-started.md)
+* [Getting Started](https://github.com/nhn/toast-ui.react-image-editor/blob/master/docs/getting-started.md)
 
 ## 💬 Contributing
-* [Code of Conduct](https://github.com/nhnent/toast-ui.react-image-editor/blob/master/CODE_OF_CONDUCT.md)
-* [Contributing guideline](https://github.com/nhnent/toast-ui.react-image-editor/blob/master/CONTRIBUTING.md)
-* [Commit convention](https://github.com/nhnent/toast-ui.react-image-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
+* [Code of Conduct](https://github.com/nhn/toast-ui.react-image-editor/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/toast-ui.react-image-editor/blob/master/CONTRIBUTING.md)
+* [Commit convention](https://github.com/nhn/toast-ui.react-image-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)
