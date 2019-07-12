@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.6.0
+ * @version 3.6.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -712,7 +712,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	         * @type {Ui}
 	         */
 	        if (options.includeUI) {
-	            this.ui = new _ui2.default(wrapper, options.includeUI, this.getActions());
+	            var UIOption = options.includeUI;
+	            UIOption.usageStatistics = options.usageStatistics;
+
+	            this.ui = new _ui2.default(wrapper, UIOption, this.getActions());
 	            options = this.ui.setUiDefaultSelectionStyle(options);
 	        }
 
@@ -5027,6 +5030,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *   @param {number} options.initMenu - Init start menu
 	 *   @param {Boolean} [options.menuBarPosition=bottom] - Let
 	 *   @param {Boolean} [options.applyCropSelectionStyle=false] - Let
+	 *   @param {Boolean} [options.usageStatistics=false] - Use statistics or not
 	 *   @param {Object} [options.uiSize] - ui size of editor
 	 *     @param {string} options.uiSize.width - width of ui
 	 *     @param {string} options.uiSize.height - height of ui
@@ -5246,6 +5250,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	         *   @param {string} [options.initMenu] - Init start menu
 	         *   @param {string} [options.menuBarPosition=bottom] - Let
 	         *   @param {boolean} [options.applyCropSelectionStyle=false] - Let
+	         *   @param {boolean} [options.usageStatistics=false] - Send statistics ping or not
 	         * @returns {Object} initialize option
 	         * @private
 	         */
@@ -5313,7 +5318,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	                _this[menuName] = new SubComponentClass(_this._subMenuElement, {
 	                    locale: _this._locale,
 	                    iconStyle: _this.theme.getStyle('submenu.icon'),
-	                    menuBarPosition: _this.options.menuBarPosition
+	                    menuBarPosition: _this.options.menuBarPosition,
+	                    usageStatistics: _this.options.usageStatistics
 	                });
 	            });
 	        }
@@ -6268,7 +6274,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Shape(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Shape);
 
@@ -6277,7 +6284,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'shape',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _shape2.default
+	            templateHtml: _shape2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this.type = null;
@@ -6288,8 +6296,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            shapeColorButton: _this.selector('#tie-shape-color-button'),
 	            strokeRange: new _range2.default(_this.selector('#tie-stroke-range'), _consts.defaultShapeStrokeValus),
 	            strokeRangeValue: _this.selector('#tie-stroke-range-value'),
-	            fillColorpicker: new _colorpicker2.default(_this.selector('#tie-color-fill'), '', _this.toggleDirection),
-	            strokeColorpicker: new _colorpicker2.default(_this.selector('#tie-color-stroke'), '#ffbb3b', _this.toggleDirection)
+	            fillColorpicker: new _colorpicker2.default(_this.selector('#tie-color-fill'), '', _this.toggleDirection, _this.usageStatistics),
+	            strokeColorpicker: new _colorpicker2.default(_this.selector('#tie-color-stroke'), '#ffbb3b', _this.toggleDirection, _this.usageStatistics)
 	        };
 
 	        _this.colorPickerControls.push(_this._els.fillColorpicker);
@@ -6528,10 +6536,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Colorpicker(colorpickerElement) {
 	        var defaultColor = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '#7e7e7e';
 	        var toggleDirection = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 'up';
+	        var usageStatistics = arguments[3];
 
 	        _classCallCheck(this, Colorpicker);
 
 	        var title = colorpickerElement.getAttribute('title');
+	        this.usageStatistics = usageStatistics;
 
 	        this._show = false;
 
@@ -6543,7 +6553,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.picker = _tuiColorPicker2.default.create({
 	            container: this.pickerElement,
 	            preset: PICKER_COLOR,
-	            color: defaultColor
+	            color: defaultColor,
+	            usageStatistics: this.usageStatistics
 	        });
 
 	        this._addEvent(colorpickerElement);
@@ -7008,13 +7019,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param {Object} iconStyle - style of icon
 	     * @param {string} menuBarPosition - position of menu
 	     * @param {*} templateHtml - template for SubMenuElement
+	     * @param {boolean} [usageStatistics=false] - template for SubMenuElement
 	     */
 	    function Submenu(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            name = _ref.name,
 	            iconStyle = _ref.iconStyle,
 	            menuBarPosition = _ref.menuBarPosition,
-	            templateHtml = _ref.templateHtml;
+	            templateHtml = _ref.templateHtml,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Submenu);
 
@@ -7024,6 +7037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.menuBarPosition = menuBarPosition;
 	        this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
 	        this.colorPickerControls = [];
+	        this.usageStatistics = usageStatistics;
 	        this._makeSubMenuElement(subMenuElement, {
 	            locale: locale,
 	            name: name,
@@ -7188,7 +7202,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Crop(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Crop);
 
@@ -7197,7 +7212,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'crop',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _crop2.default
+	            templateHtml: _crop2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this.status = 'active';
@@ -7378,7 +7394,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Flip(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Flip);
 
@@ -7387,7 +7404,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'flip',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _flip2.default
+	            templateHtml: _flip2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this.flipStatus = false;
@@ -7528,7 +7546,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Rotate(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Rotate);
 
@@ -7537,7 +7556,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'rotate',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _rotate2.default
+	            templateHtml: _rotate2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this._value = 0;
@@ -7708,7 +7728,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Text(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Text);
 
@@ -7717,7 +7738,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'text',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _text2.default
+	            templateHtml: _text2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this.effect = {
@@ -7729,7 +7751,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this._els = {
 	            textEffectButton: _this.selector('#tie-text-effect-button'),
 	            textAlignButton: _this.selector('#tie-text-align-button'),
-	            textColorpicker: new _colorpicker2.default(_this.selector('#tie-text-color'), '#ffbb3b', _this.toggleDirection),
+	            textColorpicker: new _colorpicker2.default(_this.selector('#tie-text-color'), '#ffbb3b', _this.toggleDirection, _this.usageStatistics),
 	            textRange: new _range2.default(_this.selector('#tie-text-range'), _consts.defaultTextRangeValus),
 	            textRangeValue: _this.selector('#tie-text-range-value')
 	        };
@@ -7961,7 +7983,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Mask(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Mask);
 
@@ -7970,7 +7993,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'mask',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _mask2.default
+	            templateHtml: _mask2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this._els = {
@@ -8115,7 +8139,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Icon(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Icon);
 
@@ -8124,7 +8149,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'icon',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _icon2.default
+	            templateHtml: _icon2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this.iconType = null;
@@ -8133,7 +8159,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        _this._els = {
 	            registIconButton: _this.selector('#tie-icon-image-file'),
 	            addIconButton: _this.selector('#tie-icon-add-button'),
-	            iconColorpicker: new _colorpicker2.default(_this.selector('#tie-icon-color'), '#ffbb3b', _this.toggleDirection)
+	            iconColorpicker: new _colorpicker2.default(_this.selector('#tie-icon-color'), '#ffbb3b', _this.toggleDirection, _this.usageStatistics)
 	        };
 	        return _this;
 	    }
@@ -8356,7 +8382,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Draw(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Draw);
 
@@ -8365,12 +8392,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'draw',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _draw2.default
+	            templateHtml: _draw2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this._els = {
 	            lineSelectButton: _this.selector('#tie-draw-line-select-button'),
-	            drawColorpicker: new _colorpicker2.default(_this.selector('#tie-draw-color'), '#00a9ff', _this.toggleDirection),
+	            drawColorpicker: new _colorpicker2.default(_this.selector('#tie-draw-color'), '#00a9ff', _this.toggleDirection, _this.usageStatistics),
 	            drawRange: new _range2.default(_this.selector('#tie-draw-range'), _consts.defaultDrawRangeValus),
 	            drawRangeValue: _this.selector('#tie-draw-range-value')
 	        };
@@ -8615,7 +8643,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    function Filter(subMenuElement, _ref) {
 	        var locale = _ref.locale,
 	            iconStyle = _ref.iconStyle,
-	            menuBarPosition = _ref.menuBarPosition;
+	            menuBarPosition = _ref.menuBarPosition,
+	            usageStatistics = _ref.usageStatistics;
 
 	        _classCallCheck(this, Filter);
 
@@ -8624,7 +8653,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            name: 'filter',
 	            iconStyle: iconStyle,
 	            menuBarPosition: menuBarPosition,
-	            templateHtml: _filter2.default
+	            templateHtml: _filter2.default,
+	            usageStatistics: usageStatistics
 	        }));
 
 	        _this.selectBoxShow = false;
@@ -8789,9 +8819,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                noiseRange: new _range2.default(selector('#tie-noise-range'), _consts.defaultFilterRangeValus.noiseRange),
 	                pixelateRange: new _range2.default(selector('#tie-pixelate-range'), _consts.defaultFilterRangeValus.pixelateRange),
 	                colorfilterThresholeRange: new _range2.default(selector('#tie-colorfilter-threshole-range'), _consts.defaultFilterRangeValus.colorfilterThresholeRange),
-	                filterTintColor: new _colorpicker2.default(selector('#tie-filter-tint-color'), '#03bd9e', this.toggleDirection),
-	                filterMultiplyColor: new _colorpicker2.default(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection),
-	                filterBlendColor: new _colorpicker2.default(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection)
+	                filterTintColor: new _colorpicker2.default(selector('#tie-filter-tint-color'), '#03bd9e', this.toggleDirection, this.usageStatistics),
+	                filterMultiplyColor: new _colorpicker2.default(selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection, this.usageStatistics),
+	                filterBlendColor: new _colorpicker2.default(selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics)
 	            };
 
 	            this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
