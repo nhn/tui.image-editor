@@ -87,7 +87,10 @@ class ImageEditor {
          * @type {Ui}
          */
         if (options.includeUI) {
-            this.ui = new UI(wrapper, options.includeUI, this.getActions());
+            const UIOption = options.includeUI;
+            UIOption.usageStatistics = options.usageStatistics;
+
+            this.ui = new UI(wrapper, UIOption, this.getActions());
             options = this.ui.setUiDefaultSelectionStyle(options);
         }
 

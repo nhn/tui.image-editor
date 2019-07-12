@@ -7,8 +7,8 @@
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
 var shapeOptions = {};
-let shapeType;
-let activeObjectId;
+var shapeType;
+var activeObjectId;
 
 // Buttons
 var $btns = $('.menu-item');
@@ -72,7 +72,7 @@ var $inputCheckColorFilter = $('#input-check-color-filter');
 var $inputRangeColorFilterValue = $('#input-range-color-filter-value');
 
 // Sub menus
-let $displayingSubMenu = $();
+var $displayingSubMenu = $();
 var $cropSubMenu = $('#crop-sub-menu');
 var $flipSubMenu = $('#flip-sub-menu');
 var $rotationSubMenu = $('#rotation-sub-menu');
@@ -153,12 +153,12 @@ function hexToRGBa(hex, alpha) {
     var b = parseInt(hex.slice(5, 7), 16);
     var a = alpha || 1;
 
-    return `rgba(${r}, ${g}, ${b}, ${a})`;
+    return 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
 }
 
 function base64ToBlob(data) {
-    let mimeString = '';
-    let raw, uInt8Array, i, rawLength;
+    var mimeString = '';
+    var raw, uInt8Array, i, rawLength;
 
     raw = data.replace(rImageType, (header, imageType) => {
         mimeString = imageType;
@@ -228,7 +228,7 @@ function setIconToolbar(obj) {
 }
 
 function setShapeToolbar(obj) {
-    let strokeColor, fillColor, isTransparent;
+    var strokeColor, fillColor, isTransparent;
     var colorType = $selectColorType.val();
 
     if (colorType === 'stroke') {
@@ -252,7 +252,7 @@ function setShapeToolbar(obj) {
 }
 
 function showSubMenu(type) {
-    let $submenu;
+    var $submenu;
 
     switch (type) {
         case 'shape':
@@ -462,7 +462,7 @@ $inputBrushWidthRange.on('change', function() {
 });
 
 $inputImage.on('change', event => {
-    let file;
+    var file;
 
     if (!supportingFileAPI) {
         alert('This browser does not support file-api');
@@ -476,15 +476,15 @@ $inputImage.on('change', event => {
 });
 
 $btnDownload.on('click', () => {
-    let imageName = imageEditor.getImageName();
+    var imageName = imageEditor.getImageName();
     var dataURL = imageEditor.toDataURL();
-    let blob, type, w;
+    var blob, type, w;
 
     if (supportingFileAPI) {
         blob = base64ToBlob(dataURL);
         type = blob.type.split('/')[1];
         if (imageName.split('.').pop() !== type) {
-            imageName += `.${type}`;
+            imageName += '.' + type;
         }
 
         // Library: FileSaver - saveAs
@@ -492,7 +492,7 @@ $btnDownload.on('click', () => {
     } else {
         alert('This browser needs a file-server');
         w = window.open();
-        w.document.body.innerHTML = `<img src=${dataURL}>`;
+        w.document.body.innerHTML = '<img src="' + dataURL + '">';
     }
 });
 
@@ -550,7 +550,7 @@ $selectShapeType.on('change', function() {
 $inputCheckTransparent.on('change', function() {
     var colorType = $selectColorType.val();
     var isTransparent = $(this).prop('checked');
-    let color;
+    var color;
 
     if (!isTransparent) {
         color = shapeColorpicker.getColor();
@@ -617,7 +617,7 @@ $inputFontSizeRange.on('change', function() {
 
 $btnTextStyle.on('click', function(e) { // eslint-disable-line
     var styleType = $(this).attr('data-style-type');
-    let styleObj;
+    var styleObj;
 
     e.stopPropagation();
 
@@ -729,8 +729,8 @@ $btnImageFilter.on('click', () => {
 });
 
 $btnLoadMaskImage.on('change', () => {
-    let file;
-    let imgUrl;
+    var file;
+    var imgUrl;
 
     if (!supportingFileAPI) {
         alert('This browser does not support file-api');
