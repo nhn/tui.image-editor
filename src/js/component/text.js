@@ -21,7 +21,8 @@ const resetStyles = {
     fontStyle: 'normal',
     fontWeight: 'normal',
     textAlign: 'left',
-    textDecoraiton: ''
+    textDecoraiton: '',
+    underline: false
 };
 const {browser} = snippet;
 

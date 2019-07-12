@@ -629,7 +629,7 @@ $btnTextStyle.on('click', function(e) { // eslint-disable-line
             styleObj = {fontStyle: 'italic'};
             break;
         case 'u':
-            styleObj = {textDecoration: 'underline'};
+            styleObj = {underline: true};
             break;
         case 'l':
             styleObj = {textAlign: 'left'};

@@ -102,7 +102,10 @@ class Text extends Submenu {
         const styleObj = {
             'bold': {fontWeight: 'bold'},
             'italic': {fontStyle: 'italic'},
-            'underline': {underline: true}
+            'underline': {
+                underline: true,
+                textDecoraiton: 'underline'
+            }
         }[styleType];
 
         this.effect[styleType] = !this.effect[styleType];
