@@ -25,8 +25,9 @@ const PICKER_COLOR = [
  * @ignore
  */
 class Colorpicker {
-    constructor(colorpickerElement, defaultColor = '#7e7e7e', toggleDirection = 'up') {
+    constructor(colorpickerElement, defaultColor = '#7e7e7e', toggleDirection = 'up', usageStatistics) {
         const title = colorpickerElement.getAttribute('title');
+        this.usageStatistics = usageStatistics;
 
         this._show = false;
 
@@ -38,7 +39,8 @@ class Colorpicker {
         this.picker = tuiColorPicker.create({
             container: this.pickerElement,
             preset: PICKER_COLOR,
-            color: defaultColor
+            color: defaultColor,
+            usageStatistics: this.usageStatistics
         });
 
         this._addEvent(colorpickerElement);
