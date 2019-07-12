@@ -376,6 +376,7 @@ $ npm run serve
 
 ## 🚀 Used By
 * [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com/home/)
+* [Catalyst](https://catalystapp.co/)
 
 ## 📜 License
 [MIT LICENSE](https://github.com/nhn/tui.image-editor/blob/master/LICENSE)
