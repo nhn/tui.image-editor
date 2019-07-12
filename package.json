@@ -8,6 +8,11 @@
     "url": "https://github.com/nhn/tui.image-editor.git"
   },
   "main": "dist/tui-image-editor.js",
+  "files": [
+    "src",
+    "dist",
+    "index.d.ts"
+  ],
   "description": "TOAST UI Component: ImageEditor",
   "keywords": [
     "nhn",
