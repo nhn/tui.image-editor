@@ -38,6 +38,7 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
  *   @param {number} options.initMenu - Init start menu
  *   @param {Boolean} [options.menuBarPosition=bottom] - Let
  *   @param {Boolean} [options.applyCropSelectionStyle=false] - Let
+ *   @param {Boolean} [options.usageStatistics=false] - Use statistics or not
  *   @param {Object} [options.uiSize] - ui size of editor
  *     @param {string} options.uiSize.width - width of ui
  *     @param {string} options.uiSize.height - height of ui
@@ -223,6 +224,7 @@ class Ui {
      *   @param {string} [options.initMenu] - Init start menu
      *   @param {string} [options.menuBarPosition=bottom] - Let
      *   @param {boolean} [options.applyCropSelectionStyle=false] - Let
+     *   @param {boolean} [options.usageStatistics=false] - Send statistics ping or not
      * @returns {Object} initialize option
      * @private
      */
@@ -275,7 +277,8 @@ class Ui {
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
                 iconStyle: this.theme.getStyle('submenu.icon'),
-                menuBarPosition: this.options.menuBarPosition
+                menuBarPosition: this.options.menuBarPosition,
+                usageStatistics: this.options.usageStatistics
             });
         });
     }
