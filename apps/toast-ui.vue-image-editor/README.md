@@ -1,13 +1,13 @@
 # Vue wrapper for TOAST UI Image Editor
 
-> This is Vue component wrapping [TOAST UI Image Editor](https://github.com/nhnent/tui.image-editor).
+> This is Vue component wrapping [TOAST UI Image Editor](https://github.com/nhn/tui.image-editor).
 
 [![vue2](https://img.shields.io/badge/vue-2.x-brightgreen.svg)](https://vuejs.org/)
-[![github version](https://img.shields.io/github/release/nhnent/toast-ui.vue-image-editor.svg)](https://github.com/nhnent/toast-ui.vue-image-editor/releases/latest)
+[![github version](https://img.shields.io/github/release/nhn/toast-ui.vue-image-editor.svg)](https://github.com/nhn/toast-ui.vue-image-editor/releases/latest)
 [![npm version](https://img.shields.io/npm/v/@toast-ui/vue-image-editor.svg)](https://www.npmjs.com/package/@toast-ui/vue-image-editor)
-[![license](https://img.shields.io/github/license/nhnent/toast-ui.vue-image-editor.svg)](https://github.com/nhnent/toast-ui.vue-image-editor/blob/master/LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhnent/toast-ui.vue-image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhnent)
+[![license](https://img.shields.io/github/license/nhn/toast-ui.vue-image-editor.svg)](https://github.com/nhn/toast-ui.vue-image-editor/blob/master/LICENSE)
+[![PRs welcome](https://img.shields.io/badge/PRs-welcome-ff69b4.svg)](https://github.com/nhn/toast-ui.vue-image-editor/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+[![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 ## 🚩 Table of Contents
 * [Collect statistics on the use of open source](#collect-statistics-on-the-use-of-open-source)
 * [Install](#-install)
@@ -39,7 +39,7 @@ const options = {
 const imageEditor = new tui.ImageEditor('#tui-image-editor-container', options);
 ```
 
-Or, include [`tui-code-snippet`](https://github.com/nhnent/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
+Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
 
 ```js
 tui.usageStatistics = false;
@@ -141,7 +141,7 @@ You can use `includeUi` and `options` props. Example of each props is in the [Ge
     | --- | --- | --- |
     | Object | X | { cssMaxWidth: 700, cssMaxHeight: 500 } |
 
-    You can configurate your image editor using `options` prop. For more information which properties can be set in `options`, see [options of tui.image-editor](http://nhnent.github.io/tui.image-editor/latest/ImageEditor.html).
+    You can configurate your image editor using `options` prop. For more information which properties can be set in `options`, see [options of tui.image-editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor).
 
 ### Event
 
@@ -172,7 +172,7 @@ methods: {
 }
 ...
 ```
-For more information such as the parameters of each event, see [event of tui.image-editor](https://nhnent.github.io/tui.image-editor/latest/ImageEditor.html#event:addText).
+For more information such as the parameters of each event, see [event of tui.image-editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor#event-addText).
 
 ### Method
 
@@ -194,7 +194,7 @@ After then you can use methods through `this.$refs`. We provide `getRootElement`
 
 * `invoke`
 
-    If you want to more manipulate the Grid, you can use `invoke` method to call the method of tui.ImageEditor. First argument of `invoke` is name of the method and second argument is parameters of the method. To find out what kind of methods are available, see [method of tui.ImageEditor](http://nhnent.github.io/tui.grid/api/Grid.html).
+    If you want to more manipulate the ImageEditor, you can use `invoke` method to call the method of tui.ImageEditor. First argument of `invoke` is name of the method and second argument is parameters of the method. To find out what kind of methods are available, see [method of tui.ImageEditor](https://nhn.github.io/tui.image-editor/latest/ImageEditor).
 
     ```js
     const drawingMode = this.$refs.tuiImageEditor.invoke('getDrawingMode');
@@ -245,4 +245,4 @@ For more information on PR's step, please see links of Contributing section.
 * [Commit convention](./docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 📜 License
-This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhnent)
+This software is licensed under the [MIT](./LICENSE) © [NHN.](https://github.com/nhn)

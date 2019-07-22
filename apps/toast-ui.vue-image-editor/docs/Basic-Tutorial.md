@@ -175,4 +175,4 @@ import {ImageEditor} from '@toast-ui/vue-image-editor';
 ## More..
 
 See the API page
-* API: http://nhnent.github.io/tui.image-editor/latest/
+* API: http://nhn.github.io/tui.image-editor/latest/
