@@ -75,7 +75,7 @@
     "doc:dev": "tuidoc --dev",
     "doc": "tuidoc",
     "tslint": "tslint index.d.ts",
-    "postinstall": "npm install --no-save --no-optional fabric@^2.7.0"
+    "postinstall": "npm install --no-save --no-optional fabric@^3.3.2"
   },
   "dependencies": {
     "core-js": "2.4.1",

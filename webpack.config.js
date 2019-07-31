@@ -30,7 +30,6 @@ module.exports = {
         filename: `${FILENAME}.js`
     },
     externals: {
-        'fabric.fabric': 'fabric',
         'tui-code-snippet': {
             'commonjs': 'tui-code-snippet',
             'commonjs2': 'tui-code-snippet',
@@ -42,6 +41,12 @@ module.exports = {
             'commonjs2': 'tui-color-picker',
             'amd': 'tui-color-picker',
             'root': ['tui', 'colorPicker']
+        },
+        'fabric': {
+            'commonjs': ['fabric', 'fabric'],
+            'commonjs2': ['fabric', 'fabric'],
+            'amd': 'fabric',
+            'root': 'fabric'
         }
     },
     module: {
