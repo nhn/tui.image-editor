@@ -101,6 +101,7 @@ module.exports = function(config) {
             // reason for not using karma-jasmine-jquery framework is that including older jasmine-karma file
             // included jasmine-karma version is 2.0.5 and this version don't support ie8
             'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
+            'node_modules/fabric/dist/fabric.js',
             'test/index.js',
             {
                 pattern: 'test/fixtures/*.jpg',
@@ -121,6 +122,9 @@ module.exports = function(config) {
         reporters: ['dots'],
         webpack: {
             devtool: 'inline-source-map',
+            externals: {
+                fabric: 'fabric'
+            },
             module: {
                 preLoaders: [
                     {
