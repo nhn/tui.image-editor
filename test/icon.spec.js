@@ -41,9 +41,10 @@ describe('Icon', () => {
         icon.add('arrow');
 
         const activeObj = canvas.getActiveObject();
+        const halfStrokeWidth = activeObj.strokeWidth / 2;
 
-        expect(activeObj.left).toEqual(centerPos.x);
-        expect(activeObj.top).toEqual(centerPos.y);
+        expect(activeObj.left + halfStrokeWidth).toEqual(centerPos.x);
+        expect(activeObj.top + halfStrokeWidth).toEqual(centerPos.y);
     });
 
     it('add() should create the arrow icon when parameter value is "arrow".', () => {
