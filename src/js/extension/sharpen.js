@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Sharpen extending fabric.Image.filters.Convolute
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 
 /**
  * Sharpen object
