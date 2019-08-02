@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image rotation module
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';

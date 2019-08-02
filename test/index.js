@@ -3,7 +3,7 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
  */
 import '../src';
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 
 fabric.Object.prototype.objectCaching = false;
 

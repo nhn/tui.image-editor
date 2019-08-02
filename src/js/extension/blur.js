@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Blur extending fabric.Image.filters.Convolute
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 
 /**
  * Blur object
