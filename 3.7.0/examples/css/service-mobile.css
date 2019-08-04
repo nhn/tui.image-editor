@@ -1,0 +1,200 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+    background-color: #383838;
+    font-family: Sans-Serif;
+}
+ul, li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+input[type=button], button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: #fff;
+}
+input[type=file] {
+    position: absolute;
+    margin: 0;
+    padding: 0;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+    opacity: 0;
+    filter: alpha(opacity=0);
+}
+.header {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background-color: #fff;
+    text-align: center;
+    z-index: 9999;
+}
+.header .logo {
+    margin: 10px 5px;
+    width: 180px;
+    vertical-align: middle;
+}
+.header .name {
+    font-size: 16px;
+    font-weight: bold;
+}
+.header .menu {
+    padding: 10px;
+    background-color: #000;
+}
+.header .menu input {
+    opacity: 0;
+}
+.header .menu img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+.header .button {
+    position: relative;
+    display: inline-block;
+    margin: 0 5px;
+    padding: 0;
+    border-radius: 5px 5px;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    background-color: #fff;
+    vertical-align: middle;
+}
+.header .button.disabled img {
+    opacity: 0.5;
+}
+.tui-image-editor {
+    height: 100%;
+}
+.tui-image-editor-canvas-container {
+    margin: 0 auto;
+    top: 50%;
+    transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    -moz-transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    overflow: hidden;
+}
+.tui-image-editor-controls {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    background-color: #fff;
+}
+.tui-image-editor-controls .scrollable {
+    display: inline-block;
+    overflow-x: auto;
+    width: 100%;
+    height: 100%;
+    white-space: nowrap;
+    font-size:0;
+    background-color: #000;
+    vertical-align: middle;
+}
+.tui-image-editor-controls .no-scrollable {
+    overflow-x: hidden;
+}
+.tui-image-editor-controls .menu-item {
+    display: inline-block;
+    height: 80px;
+    border-right: 1px solid #383838;
+    background-color: #ddd;
+    vertical-align: middle;
+}
+.tui-image-editor-controls .menu-button {
+    width: 80px;
+    height: 80px;
+    border: none;
+    vertical-align: middle;
+    background-color: #000;
+    color: #fff;
+    font-size: 12px;
+    font-weight: bold;
+    outline: 0;
+}
+.tui-image-editor-controls .submenu-button {
+    width: 80px;
+    height: 80px;
+    border: none;
+    background-color: #ddd;
+    vertical-align: middle;
+}
+.tui-image-editor-controls .hiddenmenu-button {
+    margin: 0 10px;
+    padding: 5px;
+    border: none;
+    color: #fff;
+    background-color: rgba(255, 255, 255, 0);
+}
+.tui-image-editor-controls .submenu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    font-size: 0;
+}
+.tui-image-editor-controls .submenu.show {
+    display: block;
+}
+.tui-image-editor-controls .submenu .menu-item:last-child {
+    margin-right: 50px;
+}
+.tui-image-editor-controls .hiddenmenu {
+    position: absolute;
+    display: none;
+    padding: 40px;
+    width: 100%;
+    left: 0;
+    bottom: 80px;
+    background-color: rgba(0, 0, 0, 0.7);
+    text-align: center;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    z-index: 9999;
+}
+.tui-image-editor-controls .hiddenmenu.show {
+    display: block;
+}
+.tui-image-editor-controls .hiddenmenu .top {
+    font-size: 12px;
+    color: #fff;
+    margin-bottom: 20px;
+}
+.tui-image-editor-controls .btn-prev {
+    display: inline-block;
+    width: 30px;
+    height: 80px;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    vertical-align: middle;
+}
+.tui-image-editor-controls .tui-colorpicker-container {
+    display: inline-block;
+}
+.tui-image-editor-controls .msg {
+    position: absolute;
+    margin-left: 50%;
+    padding: 5px 10px;
+    left: -86px;
+    top: -50px;
+    border-radius: 5px 5px;
+    background-color: rgba(255, 255, 255, 0.5);
+    font-size: 12px;
+}
+.tui-image-editor-controls .msg.hide {
+    display: none;
+}
