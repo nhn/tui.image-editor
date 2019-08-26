@@ -114,11 +114,11 @@ export default {
     data() {
         return {
             useDefaultUI: true,
-            options: { // for options prop
+            options: { // for tui-image-editor component's "options" prop
                 cssMaxWidth: 700,
                 cssMaxHeight: 500
             }
-        }
+        };
     }
 }
 ```
