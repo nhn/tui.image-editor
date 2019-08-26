@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/react-image-editor",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "React wrapper component for tui.imageEditor",
   "main": "dist/toastui-react-image-editor.js",
   "files": [
@@ -12,7 +12,8 @@
     "build": "webpack --mode production",
     "serve": "webpack-dev-server",
     "storybook": "start-storybook -s ./node_modules/tui-image-editor/dist/svg,.storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "build-storybook": "build-storybook",
+    "postinstall": "npm install --no-save --no-optional fabric@^3.3.2"
   },
   "homepage": "https://github.com/nhn/toast-ui.react-image-editor",
   "bugs": "https://github.com/nhn/toast-ui.react-image-editor/issues",

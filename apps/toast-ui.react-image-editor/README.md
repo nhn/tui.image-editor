@@ -69,7 +69,7 @@ var ImageEditor = require('@toast-ui/react-image-editor');
 
 ### Props
 
-[All the options of the TOAST UI Image Editor](http://nhn.github.io/tui.image-editor/latest/ImageEditor.html) are supported in the form of props.
+[All the options of the TOAST UI Image Editor](http://nhn.github.io/tui.image-editor/latest/ImageEditor) are supported in the form of props.
 
 ```js
 const myTheme = {
@@ -108,7 +108,7 @@ Importing `black/white-theme.js` file is not working directly import yet. You wa
 
 ### Instance Methods
 
-For using [instance methods of TOAST UI Image Editor](https://nhn.github.io/tui.date-picker/latest/DatePicker.html#.createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom.html#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Image Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
+For using [instance methods of TOAST UI Image Editor](https://nhn.github.io/tui.date-picker/latest/DatePicker#createCalendar), first thing to do is creating Refs of wrapper component using [`createRef()`](https://reactjs.org/docs/refs-and-the-dom#creating-refs). But the wrapper component does not provide a way to call instance methods of TOAST UI Image Editor directly. Instead, you can call `getInstance()` method of the wrapper component to get the instance, and call the methods on it.
 
 ```js
 const imageEditorOptions = {
@@ -166,7 +166,7 @@ class MyComponent extends React.Component {
 
 ### Event
 
-[All the events of TOAST UI Image Editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor.html#event:addText) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `mousedown` event you can use `onMousedown` prop like the example below.
+[All the events of TOAST UI Image Editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor#event:addText) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `mousedown` event you can use `onMousedown` prop like the example below.
 
 ```js
 class MyComponent extends React.Component {
