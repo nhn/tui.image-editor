@@ -207,7 +207,7 @@ class ImageEditor {
      * @property {string} fontStyle - Type of inclination (normal / italic)
      * @property {string} fontWeight - Type of thicker or thinner looking (normal / bold)
      * @property {string} textAlign - Type of text align (left / center / right)
-     * @property {string} textDecoraiton - Type of line (underline / line-throgh / overline)
+     * @property {string} textDecoration - Type of line (underline / line-through / overline)
      */
 
     /**
@@ -982,7 +982,7 @@ class ImageEditor {
      *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
      *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
-     *         @param {string} [options.styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *         @param {string} [options.styles.textDecoration] Type of line (underline / line-through / overline)
      *     @param {{x: number, y: number}} [options.position] - Initial position
      * @returns {Promise}
      * @example
@@ -1033,7 +1033,7 @@ class ImageEditor {
      *     @param {string} [styleObj.fontStyle] Type of inclination (normal / italic)
      *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
-     *     @param {string} [styleObj.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *     @param {string} [styleObj.textDecoration] Type of line (underline / line-through / overline)
      * @returns {Promise}
      * @example
      * imageEditor.changeTextStyle(id, {

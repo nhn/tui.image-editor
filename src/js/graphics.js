@@ -657,7 +657,7 @@ class Graphics {
      *     @param {string} [props.fontStyle] Type of inclination (normal / italic)
      *     @param {string} [props.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [props.textAlign] Type of text align (left / center / right)
-     *     @param {string} [props.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *     @param {string} [props.textDecoration] Type of line (underline / line-through / overline)
      * @returns {Object} applied properties
      */
     setObjectProperties(id, props) {

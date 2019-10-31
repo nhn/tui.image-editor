@@ -24,7 +24,7 @@ const command = {
      *     @param {string} [styles.fontStyle] Type of inclination (normal / italic)
      *     @param {string} [styles.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styles.textAlign] Type of text align (left / center / right)
-     *     @param {string} [styles.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *     @param {string} [styles.textDecoration] Type of line (underline / line-through / overline)
      * @returns {Promise}
      */
     execute(graphics, id, styles) {
