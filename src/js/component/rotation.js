@@ -69,12 +69,7 @@ class Rotation extends Component {
         };
 
         canvas.forEachObject(obj => {
-            let objCenter = obj.getCenterPoint();
-            if (obj.type === 'path') {
-                // got the right positon 
-                objCenter = obj.getPointByOrigin('left', 'top');
-            }
-
+            const objCenter = obj.getCenterPoint();
             const radian = fabric.util.degreesToRadians(angleDiff);
             const newObjCenter = fabric.util.rotatePoint(objCenter, oldImageCenter, radian);
 
@@ -85,7 +80,7 @@ class Rotation extends Component {
             });
             obj.setCoords();
         });
-        // canvas.renderAll();
+        canvas.renderAll();
     }
 
     /**

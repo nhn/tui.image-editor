@@ -935,7 +935,6 @@ class Graphics {
      * @private
      */
     _onObjectAdded(fEvent) {
-        console.log('_ONOBJECTADDED - ');
         const obj = fEvent.target;
         if (obj.isType('cropzone')) {
             return;
@@ -997,10 +996,12 @@ class Graphics {
      * @private
      */
     _onPathCreated(obj) {
+        const objCenter = obj.path.getCenterPoint();
         obj.path.set(Object.assign({}, consts.fObjectOptions.SELECTION_STYLE, {
-            originX: 'left',
-            originY: 'top'
+            left: objCenter.x,
+            top: objCenter.y
         }));
+
         const params = this.createObjectProperties(obj.path);
 
         this.fire(events.ADD_OBJECT, params);
@@ -1062,7 +1063,6 @@ class Graphics {
             id: stamp(obj),
             type: obj.type
         };
-        console.log(obj);
 
         extend(props, util.getProperties(obj, predefinedKeys));
 

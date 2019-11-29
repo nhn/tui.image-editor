@@ -79,7 +79,6 @@ class Rotate extends Submenu {
      * @private
      */
     _changeRotateForButton(event) {
-        console.log('ROTATE - ', event);
         const button = event.target.closest('.tui-image-editor-button');
         const angle = this._els.rotateRangeValue.value;
 
