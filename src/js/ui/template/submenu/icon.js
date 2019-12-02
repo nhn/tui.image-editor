@@ -148,7 +148,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="tie-icon-color" title="${locale.localize('Color')}"></div>
+            <div class="tie-icon-color" title="${locale.localize('Color')}"></div>
         </li>
     </ul>
 `);
