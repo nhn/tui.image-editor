@@ -997,7 +997,7 @@ class Graphics {
      */
     _onPathCreated(obj) {
         const objCenter = obj.path.getCenterPoint();
-        obj.path.set(Object.assign({}, consts.fObjectOptions.SELECTION_STYLE, {
+        obj.path.set(extend({}, consts.fObjectOptions.SELECTION_STYLE, {
             left: objCenter.x,
             top: objCenter.y
         }));
