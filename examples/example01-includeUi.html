@@ -15,8 +15,7 @@
     </head>
     <body>
 
-        <div id="tui-image-editor-container" style="width: 500px; height: 300px"></div>
-        <div id="tui-image-editor-container2" style="width: 500px; height: 300px"></div>
+        <div id="tui-image-editor-container"></div>
         <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.3.2/fabric.js"></script>
         <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
         <script type="text/javascript" src="https://uicdn.toast.com/tui-color-picker/v2.2.3/tui-color-picker.js"></script>
@@ -25,7 +24,6 @@
         <script type="text/javascript" src="./js/theme/white-theme.js"></script>
         <script type="text/javascript" src="./js/theme/black-theme.js"></script>
         <script>
-
          // Image editor
          var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
              includeUI: {
@@ -35,31 +33,15 @@
                  },
                  theme: blackTheme, // or whiteTheme
                  initMenu: 'filter',
-                 menuBarPosition: 'bottom',
-                 uiSize: {
-                     width: '900px',
-                     height: '700px'
-                 }
+                 menuBarPosition: 'bottom'
              },
-             cssMaxWidth: 300,
-             cssMaxHeight: 200,
+             cssMaxWidth: 700,
+             cssMaxHeight: 500,
              usageStatistics: false
          });
-         var imageEditor2 = new tui.ImageEditor('#tui-image-editor-container2', {
-             includeUI: {
-                 loadImage: {
-                     path: 'img/sampleImage2.png',
-                     name: 'SampleImage'
-                 },
-                 theme: blackTheme, // or whiteTheme
-                 initMenu: 'filter',
-                 menuBarPosition: 'bottom',
-             },
-             cssMaxWidth: 300,
-             cssMaxHeight: 200,
-             usageStatistics: false
-         });
-
+         window.onresize = function() {
+             imageEditor.ui.resizeEditor();
+         }
         </script>
     </body>
 </html>
