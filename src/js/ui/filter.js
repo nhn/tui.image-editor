@@ -80,7 +80,7 @@ class Filter extends Submenu {
         const changeRangeValue = this._changeRangeValue.bind(this, applyFilter);
 
         snippet.forEach(FILTER_OPTIONS, filter => {
-            const filterCheckElement = this.selector(`#tie-${filter}`);
+            const filterCheckElement = this.selector(`.tie-${filter}`);
             const filterNameCamelCase = toCamelCase(filter);
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
 
@@ -179,33 +179,33 @@ class Filter extends Submenu {
         const {selector} = this;
         this._els = {
             removewhiteDistanceRange: new Range(
-                selector('#tie-removewhite-distance-range'),
+                selector('.tie-removewhite-distance-range'),
                 FILTER_RANGE.removewhiteDistanceRange
             ),
             brightnessRange: new Range(
-                selector('#tie-brightness-range'),
+                selector('.tie-brightness-range'),
                 FILTER_RANGE.brightnessRange
             ),
             noiseRange: new Range(
-                selector('#tie-noise-range'),
+                selector('.tie-noise-range'),
                 FILTER_RANGE.noiseRange
             ),
             pixelateRange: new Range(
-                selector('#tie-pixelate-range'),
+                selector('.tie-pixelate-range'),
                 FILTER_RANGE.pixelateRange
             ),
             colorfilterThresholeRange: new Range(
-                selector('#tie-colorfilter-threshole-range'),
+                selector('.tie-colorfilter-threshole-range'),
                 FILTER_RANGE.colorfilterThresholeRange
             ),
             filterTintColor: new Colorpicker(
-                selector('#tie-filter-tint-color'), '#03bd9e', this.toggleDirection, this.usageStatistics
+                selector('.tie-filter-tint-color'), '#03bd9e', this.toggleDirection, this.usageStatistics
             ),
             filterMultiplyColor: new Colorpicker(
-                selector('#tie-filter-multiply-color'), '#515ce6', this.toggleDirection, this.usageStatistics
+                selector('.tie-filter-multiply-color'), '#515ce6', this.toggleDirection, this.usageStatistics
             ),
             filterBlendColor: new Colorpicker(
-                selector('#tie-filter-blend-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                selector('.tie-filter-blend-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             )
         };
 

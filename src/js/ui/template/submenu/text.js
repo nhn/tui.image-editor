@@ -6,7 +6,7 @@
  */
 export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-text-effect-button">
+        <li class="tie-text-effect-button">
             <div class="tui-image-editor-button bold">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -40,7 +40,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
-        <li id="tie-text-align-button">
+        <li class="tie-text-align-button">
             <div class="tui-image-editor-button left">
                 <div>
                     <svg class="svg_ic-submenu">

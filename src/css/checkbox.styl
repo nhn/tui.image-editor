@@ -17,11 +17,12 @@
           width: 14px;
           height: 14px;
           opacity: 0;
-      input + label
+      > label > span
           color: #fff;
           height: 14px;
           position: relative;
-      input + label:before
+      input + label:before,
+      > label > span:before
           content: '';
           position: absolute;
           width: 14px;
@@ -37,7 +38,7 @@
           border-radius: 2px;
           padding-top: 1px;
           box-sizing: border-box;
-      input[type='checkbox']:checked + label:before
+      input[type='checkbox']:checked + span:before
           background-size: cover;
           background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAMBJREFUKBWVkjEOwjAMRe2WgZW7IIHEDdhghhuwcQ42rlJugAQS54Cxa5cq1QM5TUpByZfS2j9+dlJVt/tX5ZxbS4ZU9VLkQvSHKTIGRaVJYFmKrBbTCJxE2UgCdDzMZDkHrOV6b95V0US6UmgKodujEZbJg0B0ZgEModO5lrY1TMQf1TpyJGBEjD+E2NPN7ukIUDiF/BfEXgRiGEw8NgkffYGYwCi808fpn/6OvfUfsDr/Vc1IfRf8sKnFVqeiVQfDu0tf/nWH9gAAAABJRU5ErkJggg==');
 

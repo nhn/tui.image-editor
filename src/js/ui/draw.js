@@ -23,7 +23,7 @@ class Draw extends Submenu {
         });
 
         this._els = {
-            lineSelectButton: this.selector('#tie-draw-line-select-button'),
+            lineSelectButton: this.selector('.tie-draw-line-select-button'),
             drawColorpicker: new Colorpicker(
                 this.selector('#tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics
             ),

@@ -6,7 +6,7 @@
  */
 export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-shape-button">
+        <li class="tie-shape-button">
             <div class="tui-image-editor-button rect">
                 <div>
                     <svg class="svg_ic-submenu">

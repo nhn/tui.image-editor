@@ -25,8 +25,8 @@ class Icon extends Submenu {
         this._iconMap = {};
 
         this._els = {
-            registIconButton: this.selector('#tie-icon-image-file'),
-            addIconButton: this.selector('#tie-icon-add-button'),
+            registIconButton: this.selector('.tie-icon-image-file'),
+            addIconButton: this.selector('.tie-icon-add-button'),
             iconColorpicker: new Colorpicker(
                 this.selector('#tie-icon-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             )

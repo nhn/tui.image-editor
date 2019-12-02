@@ -30,7 +30,7 @@ class Shape extends Submenu {
         this.options = SHAPE_DEFAULT_OPTION;
 
         this._els = {
-            shapeSelectButton: this.selector('#tie-shape-button'),
+            shapeSelectButton: this.selector('.tie-shape-button'),
             shapeColorButton: this.selector('#tie-shape-color-button'),
             strokeRange: new Range(this.selector('#tie-stroke-range'), defaultShapeStrokeValus),
             strokeRangeValue: this.selector('#tie-stroke-range-value'),
