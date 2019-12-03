@@ -996,11 +996,11 @@ class Graphics {
      * @private
      */
     _onPathCreated(obj) {
-        const objCenter = obj.path.getCenterPoint();
-        obj.path.set(extend({}, consts.fObjectOptions.SELECTION_STYLE, {
-            left: objCenter.x,
-            top: objCenter.y
-        }));
+        const {x: left, y: top} = obj.path.getCenterPoint();
+        obj.path.set(extend({
+            left,
+            top
+        }, consts.fObjectOptions.SELECTION_STYLE));
 
         const params = this.createObjectProperties(obj.path);
 
