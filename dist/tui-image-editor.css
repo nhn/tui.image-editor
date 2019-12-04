@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.7.0
+ * @version 3.7.1
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -261,7 +261,7 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item .tui-image-editor-button.preset {
   margin: 0 9px 20px 5px;
 }
-.tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item label {
+.tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-submenu-item label > span {
   display: inline-block;
   cursor: pointer;
   padding-top: 5px;
@@ -300,14 +300,14 @@ body > textarea {
   text-align: left;
   margin-right: 30px;
 }
-.tui-image-editor-container .tui-image-editor-submenu-align label {
+.tui-image-editor-container .tui-image-editor-submenu-align label > span {
   width: 55px;
   white-space: nowrap;
 }
 .tui-image-editor-container .tui-image-editor-submenu-align:first-child {
   margin-right: 0;
 }
-.tui-image-editor-container .tui-image-editor-submenu-align:first-child label {
+.tui-image-editor-container .tui-image-editor-submenu-align:first-child label > span {
   width: 70px;
 }
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-crop .tui-image-editor-submenu > div.tui-image-editor-menu-crop,
@@ -355,12 +355,13 @@ body > textarea {
   height: 14px;
   opacity: 0;
 }
-.tui-image-editor-container .tui-image-editor-checkbox input + label {
+.tui-image-editor-container .tui-image-editor-checkbox > label > span {
   color: #fff;
   height: 14px;
   position: relative;
 }
-.tui-image-editor-container .tui-image-editor-checkbox input + label:before {
+.tui-image-editor-container .tui-image-editor-checkbox input + label:before,
+.tui-image-editor-container .tui-image-editor-checkbox > label > span:before {
   content: '';
   position: absolute;
   width: 14px;
@@ -377,7 +378,7 @@ body > textarea {
   padding-top: 1px;
   box-sizing: border-box;
 }
-.tui-image-editor-container .tui-image-editor-checkbox input[type='checkbox']:checked + label:before {
+.tui-image-editor-container .tui-image-editor-checkbox input[type='checkbox']:checked + span:before {
   background-size: cover;
   background-image: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAAfSC3RAAAAAXNSR0IArs4c6QAAAMBJREFUKBWVkjEOwjAMRe2WgZW7IIHEDdhghhuwcQ42rlJugAQS54Cxa5cq1QM5TUpByZfS2j9+dlJVt/tX5ZxbS4ZU9VLkQvSHKTIGRaVJYFmKrBbTCJxE2UgCdDzMZDkHrOV6b95V0US6UmgKodujEZbJg0B0ZgEModO5lrY1TMQf1TpyJGBEjD+E2NPN7ukIUDiF/BfEXgRiGEw8NgkffYGYwCi808fpn/6OvfUfsDr/Vc1IfRf8sKnFVqeiVQfDu0tf/nWH9gAAAABJRU5ErkJggg==");
 }
@@ -705,7 +706,7 @@ body > textarea {
   top: 0;
   bottom: inherit;
 }
-.tui-image-editor-container #tie-icon-add-button .tui-image-editor-button {
+.tui-image-editor-container .tie-icon-add-button .tui-image-editor-button {
   min-width: 42px;
 }
 .tui-image-editor-container .svg_ic-menu {
@@ -828,7 +829,8 @@ body > textarea {
 .tui-image-editor-container .filter-color-item .tui-image-editor-checkbox {
   margin-top: 0;
 }
-.tui-image-editor-container .filter-color-item .tui-image-editor-checkbox input + label:before {
+.tui-image-editor-container .filter-color-item .tui-image-editor-checkbox input + label:before,
+.tui-image-editor-container .filter-color-item .tui-image-editor-checkbox > label:before {
   left: -16px;
 }
 .tui-image-editor-container .color-picker {
@@ -857,73 +859,73 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-submenu svg > use.normal {
   display: block;
 }
-#tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] svg > use.active,
-#tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] svg > use.active,
-#tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype="icon-location"] svg > use.active,
-#tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype="icon-polygon"] svg > use.active,
-#tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype="icon-star"] svg > use.active,
-#tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype="icon-star-2"] svg > use.active,
-#tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype="icon-arrow-3"] svg > use.active,
-#tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype="icon-arrow-2"] svg > use.active,
-#tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype="icon-arrow"] svg > use.active {
+.tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] svg > use.active,
+.tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] svg > use.active,
+.tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype="icon-location"] svg > use.active,
+.tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype="icon-polygon"] svg > use.active,
+.tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype="icon-star"] svg > use.active,
+.tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype="icon-star-2"] svg > use.active,
+.tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype="icon-arrow-3"] svg > use.active,
+.tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype="icon-arrow-2"] svg > use.active,
+.tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype="icon-arrow"] svg > use.active {
   display: block;
 }
-#tie-draw-line-select-button.line .tui-image-editor-button.line svg > use.normal,
-#tie-draw-line-select-button.free .tui-image-editor-button.free svg > use.normal {
+.tie-draw-line-select-button.line .tui-image-editor-button.line svg > use.normal,
+.tie-draw-line-select-button.free .tui-image-editor-button.free svg > use.normal {
   display: none;
 }
-#tie-draw-line-select-button.line .tui-image-editor-button.line svg > use.active,
-#tie-draw-line-select-button.free .tui-image-editor-button.free svg > use.active {
+.tie-draw-line-select-button.line .tui-image-editor-button.line svg > use.active,
+.tie-draw-line-select-button.free .tui-image-editor-button.free svg > use.active {
   display: block;
 }
-#tie-flip-button.resetFlip .tui-image-editor-button.resetFlip svg > use.normal,
-#tie-flip-button.flipX .tui-image-editor-button.flipX svg > use.normal,
-#tie-flip-button.flipY .tui-image-editor-button.flipY svg > use.normal {
+.tie-flip-button.resetFlip .tui-image-editor-button.resetFlip svg > use.normal,
+.tie-flip-button.flipX .tui-image-editor-button.flipX svg > use.normal,
+.tie-flip-button.flipY .tui-image-editor-button.flipY svg > use.normal {
   display: none;
 }
-#tie-flip-button.resetFlip .tui-image-editor-button.resetFlip svg > use.active,
-#tie-flip-button.flipX .tui-image-editor-button.flipX svg > use.active,
-#tie-flip-button.flipY .tui-image-editor-button.flipY svg > use.active {
+.tie-flip-button.resetFlip .tui-image-editor-button.resetFlip svg > use.active,
+.tie-flip-button.flipX .tui-image-editor-button.flipX svg > use.active,
+.tie-flip-button.flipY .tui-image-editor-button.flipY svg > use.active {
   display: block;
 }
-#tie-mask-apply.apply.active .tui-image-editor-button.apply label {
+.tie-mask-apply.apply.active .tui-image-editor-button.apply label {
   color: #fff;
 }
-#tie-mask-apply.apply.active .tui-image-editor-button.apply svg > use.active {
+.tie-mask-apply.apply.active .tui-image-editor-button.apply svg > use.active {
   display: block;
 }
-#tie-crop-button .tui-image-editor-button.apply,
-#tie-crop-preset-button .tui-image-editor-button.apply {
+.tie-crop-button .tui-image-editor-button.apply,
+.tie-crop-preset-button .tui-image-editor-button.apply {
   margin-right: 24px;
 }
-#tie-crop-button .tui-image-editor-button.preset.active svg > use.active,
-#tie-crop-preset-button .tui-image-editor-button.preset.active svg > use.active {
+.tie-crop-button .tui-image-editor-button.preset.active svg > use.active,
+.tie-crop-preset-button .tui-image-editor-button.preset.active svg > use.active {
   display: block;
 }
-#tie-crop-button .tui-image-editor-button.apply.active svg > use.active,
-#tie-crop-preset-button .tui-image-editor-button.apply.active svg > use.active {
+.tie-crop-button .tui-image-editor-button.apply.active svg > use.active,
+.tie-crop-preset-button .tui-image-editor-button.apply.active svg > use.active {
   display: block;
 }
-#tie-shape-button.rect .tui-image-editor-button.rect svg > use.normal,
-#tie-shape-button.circle .tui-image-editor-button.circle svg > use.normal,
-#tie-shape-button.triangle .tui-image-editor-button.triangle svg > use.normal {
+.tie-shape-button.rect .tui-image-editor-button.rect svg > use.normal,
+.tie-shape-button.circle .tui-image-editor-button.circle svg > use.normal,
+.tie-shape-button.triangle .tui-image-editor-button.triangle svg > use.normal {
   display: none;
 }
-#tie-shape-button.rect .tui-image-editor-button.rect svg > use.active,
-#tie-shape-button.circle .tui-image-editor-button.circle svg > use.active,
-#tie-shape-button.triangle .tui-image-editor-button.triangle svg > use.active {
+.tie-shape-button.rect .tui-image-editor-button.rect svg > use.active,
+.tie-shape-button.circle .tui-image-editor-button.circle svg > use.active,
+.tie-shape-button.triangle .tui-image-editor-button.triangle svg > use.active {
   display: block;
 }
-#tie-text-effect-button .tui-image-editor-button.active svg > use.active {
+.tie-text-effect-button .tui-image-editor-button.active svg > use.active {
   display: block;
 }
-#tie-text-align-button.left .tui-image-editor-button.left svg > use.active,
-#tie-text-align-button.center .tui-image-editor-button.center svg > use.active,
-#tie-text-align-button.right .tui-image-editor-button.right svg > use.active {
+.tie-text-align-button.left .tui-image-editor-button.left svg > use.active,
+.tie-text-align-button.center .tui-image-editor-button.center svg > use.active,
+.tie-text-align-button.right .tui-image-editor-button.right svg > use.active {
   display: block;
 }
-#tie-mask-image-file,
-#tie-icon-image-file {
+.tie-mask-image-file,
+.tie-icon-image-file {
   opacity: 0;
   position: absolute;
   width: 100%;
