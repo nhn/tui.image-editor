@@ -66,11 +66,11 @@ class Ui {
         this._initMenuEvent = false;
 
         this._els = {
-            'undo': this._menuElement.querySelector('#tie-btn-undo'),
-            'redo': this._menuElement.querySelector('#tie-btn-redo'),
-            'reset': this._menuElement.querySelector('#tie-btn-reset'),
-            'delete': this._menuElement.querySelector('#tie-btn-delete'),
-            'deleteAll': this._menuElement.querySelector('#tie-btn-delete-all'),
+            'undo': this._menuElement.querySelector('.tie-btn-undo'),
+            'redo': this._menuElement.querySelector('.tie-btn-redo'),
+            'reset': this._menuElement.querySelector('.tie-btn-reset'),
+            'delete': this._menuElement.querySelector('.tie-btn-delete'),
+            'deleteAll': this._menuElement.querySelector('.tie-btn-delete-all'),
             'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
             'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
         };

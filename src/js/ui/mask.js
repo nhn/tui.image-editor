@@ -19,8 +19,8 @@ class Mask extends Submenu {
         });
 
         this._els = {
-            applyButton: this.selector('#tie-mask-apply'),
-            maskImageButton: this.selector('#tie-mask-image-file')
+            applyButton: this.selector('.tie-mask-apply'),
+            maskImageButton: this.selector('.tie-mask-image-file')
         };
     }
 

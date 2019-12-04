@@ -6,7 +6,7 @@
  */
 export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-text-effect-button">
+        <li class="tie-text-effect-button">
             <div class="tui-image-editor-button bold">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -40,7 +40,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
-        <li id="tie-text-align-button">
+        <li class="tie-text-align-button">
             <div class="tui-image-editor-button left">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -79,15 +79,15 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="tie-text-color" title="${locale.localize('Color')}"></div>
+            <div class="tie-text-color" title="${locale.localize('Color')}"></div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">${locale.localize('Text size')}</label>
-            <div id="tie-text-range"></div>
-            <input id="tie-text-range-value" class="tui-image-editor-range-value" value="0" />
+            <div class="tie-text-range"></div>
+            <input class="tie-text-range-value tui-image-editor-range-value" value="0" />
         </li>
     </ul>
 `);

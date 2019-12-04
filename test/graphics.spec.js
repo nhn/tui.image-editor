@@ -34,6 +34,20 @@ describe('Graphics', () => {
         expect(graphics._componentMap).not.toBe(null);
     });
 
+    it('After the path has been drawn, "origin" should change to "left top-> center center" and "position" should change to the center coordinates of path.', () => {
+        const pathObj = new fabric.Path('M 0 0 L 100 0 L 100 100 L 0 100 z');
+        const expectPosition = pathObj.getCenterPoint();
+        const expectX = expectPosition.x;
+        const expectY = expectPosition.y;
+
+        graphics._onPathCreated({path: pathObj});
+
+        expect(pathObj.originX).toBe('center');
+        expect(pathObj.originY).toBe('center');
+        expect(pathObj.left).toBe(expectX);
+        expect(pathObj.top).toBe(expectY);
+    });
+
     it('can attach canvas events', () => {
         const onMousedown = jasmine.createSpy('onMousedown');
         const onObjectAdded = jasmine.createSpy('onObjectAdded');
