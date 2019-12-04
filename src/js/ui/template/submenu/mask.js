@@ -9,7 +9,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li>
             <div class="tui-image-editor-button">
                 <div>
-                    <input type="file" accept="image/*" id="tie-mask-image-file">
+                    <input type="file" accept="image/*" class="tie-mask-image-file">
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}#${normal.name}-ic-mask-load" class="normal"/>
                         <use xlink:href="${active.path}#${active.name}-ic-mask-load" class="active"/>
@@ -21,7 +21,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
-        <li id="tie-mask-apply" class="tui-image-editor-newline apply" style="margin-top: 22px;margin-bottom: 5px">
+        <li class="tie-mask-apply tui-image-editor-newline apply" style="margin-top: 22px;margin-bottom: 5px">
             <div class="tui-image-editor-button apply">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${normal.path}#${normal.name}-ic-apply" class="normal"/>

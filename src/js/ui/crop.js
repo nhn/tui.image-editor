@@ -21,9 +21,9 @@ class Crop extends Submenu {
         this.status = 'active';
 
         this._els = {
-            apply: this.selector('#tie-crop-button .apply'),
-            cancel: this.selector('#tie-crop-button .cancel'),
-            preset: this.selector('#tie-crop-preset-button')
+            apply: this.selector('.tie-crop-button .apply'),
+            cancel: this.selector('.tie-crop-button .cancel'),
+            preset: this.selector('.tie-crop-preset-button')
         };
 
         this.defaultPresetButton = this._els.preset.querySelector('.preset-none');

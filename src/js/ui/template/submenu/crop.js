@@ -6,7 +6,7 @@
  */
 export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-crop-preset-button">
+        <li class="tie-crop-preset-button">
             <div class="tui-image-editor-button preset preset-none active">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -90,7 +90,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
-        <li id="tie-crop-button" class="action">
+        <li class="tie-crop-button action">
             <div class="tui-image-editor-button apply">
                 <svg class="svg_ic-menu">
                     <use xlink:href="${normal.path}#${normal.name}-ic-apply" class="normal"/>

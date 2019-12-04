@@ -30,15 +30,15 @@ class Shape extends Submenu {
         this.options = SHAPE_DEFAULT_OPTION;
 
         this._els = {
-            shapeSelectButton: this.selector('#tie-shape-button'),
-            shapeColorButton: this.selector('#tie-shape-color-button'),
-            strokeRange: new Range(this.selector('#tie-stroke-range'), defaultShapeStrokeValus),
-            strokeRangeValue: this.selector('#tie-stroke-range-value'),
+            shapeSelectButton: this.selector('.tie-shape-button'),
+            shapeColorButton: this.selector('.tie-shape-color-button'),
+            strokeRange: new Range(this.selector('.tie-stroke-range'), defaultShapeStrokeValus),
+            strokeRangeValue: this.selector('.tie-stroke-range-value'),
             fillColorpicker: new Colorpicker(
-                this.selector('#tie-color-fill'), '', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-color-fill'), '', this.toggleDirection, this.usageStatistics
             ),
             strokeColorpicker: new Colorpicker(
-                this.selector('#tie-color-stroke'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-color-stroke'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             )
         };
 

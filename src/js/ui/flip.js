@@ -20,7 +20,7 @@ class Flip extends Submenu {
         this.flipStatus = false;
 
         this._els = {
-            flipButton: this.selector('#tie-flip-button')
+            flipButton: this.selector('.tie-flip-button')
         };
     }
 

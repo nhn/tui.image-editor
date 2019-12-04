@@ -333,6 +333,7 @@ export default {
                 this.stopDrawingMode();
                 this.ui.changeMenu('crop');
             },
+            /* eslint-disable */
             preset: presetType => {
                 switch (presetType) {
                     case 'preset-square':

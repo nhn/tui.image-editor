@@ -6,7 +6,7 @@
  */
 export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-draw-line-select-button">
+        <li class="tie-draw-line-select-button">
             <div class="tui-image-editor-button free">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -34,15 +34,15 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="tie-draw-color" title="${locale.localize('Color')}"></div>
+            <div class="tie-draw-color" title="${locale.localize('Color')}"></div>
         </li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">${locale.localize('Range')}</label>
-            <div id="tie-draw-range"></div>
-            <input id="tie-draw-range-value" class="tui-image-editor-range-value" value="0" />
+            <div class="tie-draw-range"></div>
+            <input class="tie-draw-range-value tui-image-editor-range-value" value="0" />
         </li>
     </ul>
 `);
