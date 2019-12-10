@@ -44,14 +44,15 @@ export default ({
     .tie-text-align-button.right .tui-image-editor-button.right label,
     .tie-mask-apply.apply.active .tui-image-editor-button.apply label,
     .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,
-    .tui-image-editor-container .tui-image-editor-checkbox input + label {
+    .tui-image-editor-container .tui-image-editor-checkbox label > span {
         ${subMenuLabelActive}
     }
     .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,
-    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label {
+    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label,
+    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label > span {
         ${subMenuLabelNormal}
     }
-    .tui-image-editor-container .tui-image-editor-range-wrap label {
+    .tui-image-editor-container .tui-image-editor-range-wrap label > span {
         ${subMenuRangeTitle}
     }
     .tui-image-editor-container .tui-image-editor-partition > div {
@@ -61,10 +62,10 @@ export default ({
     .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {
         ${submenuPartitionHorizontal}
     }
-    .tui-image-editor-container .tui-image-editor-checkbox input + label:before {
+    .tui-image-editor-container .tui-image-editor-checkbox label > span:before {
         ${submenuCheckbox}
     }
-    .tui-image-editor-container .tui-image-editor-checkbox input:checked + label:before {
+    .tui-image-editor-container .tui-image-editor-checkbox label > input:checked + span:before {
         border: 0;
     }
     .tui-image-editor-container .tui-image-editor-virtual-range-pointer {
