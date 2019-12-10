@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.7.1
+ * @version 3.7.2
  * @author NHN FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -686,7 +686,7 @@ body > textarea {
 }
 .tui-image-editor-container.top .tui-image-editor-submenu {
   top: 0;
-  bottom: inherit;
+  bottom: auto;
 }
 .tui-image-editor-container.top .tui-image-editor-submenu > div {
   padding-top: 24px;
