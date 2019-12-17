@@ -32,6 +32,9 @@ const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, Cus
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
 
+const DEFAULT_CSS_SCALE_MIN = 0.05;
+const DEFAULT_CSS_SCALE_STEP = 0.02;
+
 const cssOnly = {
     cssOnly: true
 };
@@ -134,6 +137,8 @@ class Graphics {
          */
         this._componentMap = {};
 
+        this._scale = 1;
+
         /**
          * fabric event handlers
          * @type {Object.<string, function>}
@@ -141,6 +146,7 @@ class Graphics {
          */
         this._handler = {
             onMouseDown: this._onMouseDown.bind(this),
+            onMouseWheel: this._onMouseWheel.bind(this),
             onObjectAdded: this._onObjectAdded.bind(this),
             onObjectRemoved: this._onObjectRemoved.bind(this),
             onObjectMoved: this._onObjectMoved.bind(this),
@@ -907,6 +913,7 @@ class Graphics {
         const handler = this._handler;
         canvas.on({
             'mouse:down': handler.onMouseDown,
+            'mouse:wheel': handler.onMouseWheel,
             'object:added': handler.onObjectAdded,
             'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
@@ -917,6 +924,17 @@ class Graphics {
             'selection:created': handler.onSelectionCreated,
             'selection:updated': handler.onObjectSelected
         });
+    }
+
+    _onMouseWheel(event) {
+        const wheel = event.e.wheelDelta;
+        if (wheel > 0) {
+            this._scale += DEFAULT_CSS_SCALE_STEP;
+        } else if (this._scale > DEFAULT_CSS_SCALE_MIN) {
+            this._scale -= DEFAULT_CSS_SCALE_STEP;
+        }
+        this._canvas.lowerCanvasEl.style.transform = `scale(${this._scale})`;
+        this._canvas.upperCanvasEl.style.transform = `scale(${this._scale})`;
     }
 
     /**
