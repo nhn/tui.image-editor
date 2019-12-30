@@ -20,6 +20,8 @@ class Range {
 
         this._addClickEvent();
         this._addDragEvent();
+        this._addTouchEvent();
+
         this.value = options.value;
         this.trigger('change');
     }
@@ -100,9 +102,15 @@ class Range {
     _addClickEvent() {
         this.rangeElement.addEventListener('click', event => {
             event.stopPropagation();
-            if (event.target.className !== 'tui-image-editor-range') {
+            // sometimes there is more than one class on the element this is why we need to use indexOf instead
+            // all classes below are part of the range element
+            if (event.target.className &&
+                event.target.className.indexOf('tui-image-editor-range') === -1 &&
+                event.target.className.indexOf('tui-image-editor-virtual-range-bar') === -1 &&
+                event.target.className.indexOf('tui-image-editor-virtual-range-subbar') === -1) {
                 return;
             }
+
             const touchPx = event.offsetX;
             const ratio = touchPx / this.rangeWidth;
             const value = (this._absMax * ratio) + this._min;
@@ -111,6 +119,28 @@ class Range {
             this._value = value;
 
             this.fire('change', value, true);
+        });
+    }
+
+    /**
+     * Add Range touch event
+     * @private
+     */
+    _addTouchEvent() {
+        this.pointer.addEventListener('touchstart', event => {
+            if (!event.touches || event.touches.length !== 1) {
+                return;
+            }
+
+            this.firstPosition = event.touches[0].screenX;
+            this.firstLeft = toInteger(this.pointer.style.left) || 0;
+            this.touchEventHandler = {
+                changeAngle: this._changeAngleTouch.bind(this),
+                stopChangingAngle: this._stopChangingAngleTouch.bind(this)
+            };
+
+            document.addEventListener('touchmove', this.touchEventHandler.changeAngle);
+            document.addEventListener('touchend', this.touchEventHandler.stopChangingAngle);
         });
     }
 
@@ -133,12 +163,33 @@ class Range {
     }
 
     /**
+     * change angle event for touch events
+     * @param {object} event - change event
+     */
+    _changeAngleTouch(event) {
+        if (!event.touches || event.touches.length !== 1) {
+            return;
+        }
+
+        this._applyScreenX(event.touches[0].screenX);
+    }
+
+    /**
      * change angle event
      * @param {object} event - change event
      * @private
      */
     _changeAngle(event) {
-        const changePosition = event.screenX;
+        this._applyScreenX(event.screenX);
+    }
+
+    /**
+     * Apply a screenX position to the range
+     * @param {number} screenX - screenX position to apply to the range
+     * @private
+     */
+    _applyScreenX(screenX) {
+        const changePosition = screenX;
         const diffPosition = changePosition - this.firstPosition;
         let touchPx = this.firstLeft + diffPosition;
         touchPx = touchPx > this.rangeWidth ? this.rangeWidth : touchPx;
@@ -164,6 +215,16 @@ class Range {
         this.fire('change', this._value, true);
         document.removeEventListener('mousemove', this.dragEventHandler.changeAngle);
         document.removeEventListener('mouseup', this.dragEventHandler.stopChangingAngle);
+    }
+
+    /**
+     * stop change angle event for touch event
+     * @private
+     */
+    _stopChangingAngleTouch() {
+        this.fire('change', this._value, true);
+        document.removeEventListener('touchmove', this.touchEventHandler.changeAngle);
+        document.removeEventListener('touchend', this.touchEventHandler.stopChangingAngle);
     }
 }
 
