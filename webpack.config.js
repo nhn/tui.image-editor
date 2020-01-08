@@ -3,9 +3,10 @@
  * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
  */
 const pkg = require('./package.json');
+const path = require('path');
 const webpack = require('webpack');
 const SafeUmdPlugin = require('safe-umd-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const isProduction = process.argv.indexOf('-p') > -1;
 
@@ -22,8 +23,8 @@ module.exports = {
     output: {
         library: ['tui', 'ImageEditor'],
         libraryTarget: 'umd',
-        path: 'dist',
-        publicPath: 'dist',
+        path: path.resolve(__dirname, 'dist'),
+        publicPath: '/dist',
         filename: `${FILENAME}.js`
     },
     externals: {
@@ -50,7 +51,7 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                exclude: /node_modules|bower_components|dist/,
+                exclude: /node_modules|bower_components/,
                 loader: 'eslint-loader',
                 enforce: 'pre',
                 options: {
@@ -59,17 +60,36 @@ module.exports = {
                 }
             }, {
                 test: /\.js$/,
-                exclude: /node_modules|bower_components|dist/,
+                exclude: /node_modules|bower_components/,
                 loader: 'babel-loader?cacheDirectory',
                 options: {
                     babelrc: true
                 }
+            }, {
+                test: /\.styl$/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: 'css-loader',
+                        options: {
+                            sourceMap: true
+                        }
+                    },
+                    {
+                        loader: 'stylus-loader',
+                        options: {
+                            sourceMap: true
+                        }
+                    }
+                ]
             }
         ]
     },
     plugins: [
         new webpack.BannerPlugin(BANNER),
-        new ExtractTextPlugin(`${FILENAME}.css`),
+        new MiniCssExtractPlugin({
+            filename: `${FILENAME}.css`
+        }),
         new SafeUmdPlugin()
     ],
     devServer: {
