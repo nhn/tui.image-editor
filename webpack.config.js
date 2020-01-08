@@ -18,9 +18,6 @@ const BANNER = [
 ].join('\n');
 
 module.exports = {
-    eslint: {
-        failOnError: isProduction
-    },
     entry: './src/index.js',
     output: {
         library: ['tui', 'ImageEditor'],
@@ -50,24 +47,24 @@ module.exports = {
         }
     },
     module: {
-        preLoaders: [
+        rules: [
             {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'eslint-loader'
-            }
-        ],
-        loaders: [
-            {
+                exclude: /node_modules|bower_components|dist/,
+                loader: 'eslint-loader',
+                enforce: 'pre',
+                options: {
+                    failOnWarning: false,
+                    failOnError: false
+                }
+            }, {
                 test: /\.js$/,
-                exclude: /(node_modules|bower_components)/,
-                loader: 'babel'
-            },
-            {
-                test: /\.styl$/,
-                loader: ExtractTextPlugin.extract('css-loader?sourceMap!stylus-loader?paths=src/css/')
+                exclude: /node_modules|bower_components|dist/,
+                loader: 'babel-loader?cacheDirectory',
+                options: {
+                    babelrc: true
+                }
             }
-
         ]
     },
     plugins: [
