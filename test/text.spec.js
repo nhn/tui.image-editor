@@ -114,6 +114,7 @@ describe('Text', () => {
         });
 
         it('should attach the created "textarea" element on canvas container.', () => {
+            console.log('TEXTAREA - ', $textarea);
             expect($textarea.length).toEqual(1);
         });
 
