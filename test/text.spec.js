@@ -130,11 +130,9 @@ describe('Text', () => {
 
     it('_removeTextarea() should remove "textarea" element on canvas container.', () => {
         text._createTextarea();
-        // text._removeTextarea();
+        text._removeTextarea();
 
         const $textarea = $(text.getCanvasElement().parentNode).find('textarea');
-
-        console.log('TEXTAREA - ', $textarea.length, $textarea);
 
         expect($textarea.length).toEqual(0);
     });
