@@ -7,6 +7,8 @@ const path = require('path');
 const webpack = require('webpack');
 const SafeUmdPlugin = require('safe-umd-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const OptimizaeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const isProduction = process.argv.indexOf('-p') > -1;
 
@@ -19,6 +21,7 @@ const BANNER = [
 ].join('\n');
 
 module.exports = {
+    mode: isProduction ? 'production' : 'development',
     entry: './src/index.js',
     output: {
         library: ['tui', 'ImageEditor'],
@@ -27,7 +30,7 @@ module.exports = {
         publicPath: '/dist',
         filename: `${FILENAME}.js`
     },
-    externals: {
+    externals: [{
         'tui-code-snippet': {
             'commonjs': 'tui-code-snippet',
             'commonjs2': 'tui-code-snippet',
@@ -46,7 +49,7 @@ module.exports = {
             'amd': 'fabric',
             'root': 'fabric'
         }
-    },
+    }],
     module: {
         rules: [
             {
@@ -92,6 +95,22 @@ module.exports = {
         }),
         new SafeUmdPlugin()
     ],
+    optimization: {
+        minimizer: [
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: true
+            }),
+            new OptimizaeCSSAssetsPlugin({
+                cssProcessorOptions: {
+                    map: {
+                        inline: false
+                    }
+                }
+            })
+        ]
+    },
     devServer: {
         historyApiFallback: false,
         progress: true,
