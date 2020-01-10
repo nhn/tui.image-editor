@@ -186,7 +186,7 @@ function resizeEditor() {
 }
 
 function getBrushSettings() {
-    var brushWidth = $inputBrushWidthRange.val();
+    var brushWidth = parseInt($inputBrushWidthRange.val(), 10);
     var brushColor = brushColorpicker.getColor();
 
     return {

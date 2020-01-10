@@ -6,7 +6,7 @@
  */
 export default ({locale, iconStyle: {normal, active}}) => (`
     <ul class="tui-image-editor-submenu-item">
-        <li id="tie-icon-add-button">
+        <li class="tie-icon-add-button">
             <div class="tui-image-editor-button" data-icontype="icon-arrow">
                 <div>
                     <svg class="svg_ic-submenu">
@@ -130,10 +130,10 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li class="tui-image-editor-partition">
             <div></div>
         </li>
-        <li id="tie-icon-add-button">
+        <li class="tie-icon-add-button">
             <div class="tui-image-editor-button" style="margin:0">
                 <div>
-                    <input type="file" accept="image/*" id="tie-icon-image-file">
+                    <input type="file" accept="image/*" class="tie-icon-image-file">
                     <svg class="svg_ic-submenu">
                         <use xlink:href="${normal.path}#${normal.name}-ic-icon-load" class="normal"/>
                         <use xlink:href="${active.path}#${active.name}-ic-icon-load" class="active"/>
@@ -148,7 +148,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div></div>
         </li>
         <li>
-            <div id="tie-icon-color" title="${locale.localize('Color')}"></div>
+            <div class="tie-icon-color" title="${locale.localize('Color')}"></div>
         </li>
     </ul>
 `);

@@ -27,13 +27,13 @@ class Text extends Submenu {
         };
         this.align = 'left';
         this._els = {
-            textEffectButton: this.selector('#tie-text-effect-button'),
-            textAlignButton: this.selector('#tie-text-align-button'),
+            textEffectButton: this.selector('.tie-text-effect-button'),
+            textAlignButton: this.selector('.tie-text-align-button'),
             textColorpicker: new Colorpicker(
-                this.selector('#tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             ),
-            textRange: new Range(this.selector('#tie-text-range'), defaultTextRangeValus),
-            textRangeValue: this.selector('#tie-text-range-value')
+            textRange: new Range(this.selector('.tie-text-range'), defaultTextRangeValus),
+            textRangeValue: this.selector('.tie-text-range-value')
         };
     }
 
@@ -104,7 +104,7 @@ class Text extends Submenu {
             'italic': {fontStyle: 'italic'},
             'underline': {
                 underline: true,
-                textDecoraiton: 'underline'
+                textDecoration: 'underline'
             }
         }[styleType];
 

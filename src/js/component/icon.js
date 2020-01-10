@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add icon module
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';

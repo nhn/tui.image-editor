@@ -4,7 +4,7 @@
  */
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
 import Flip from './component/flip';
@@ -657,7 +657,7 @@ class Graphics {
      *     @param {string} [props.fontStyle] Type of inclination (normal / italic)
      *     @param {string} [props.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [props.textAlign] Type of text align (left / center / right)
-     *     @param {string} [props.textDecoraiton] Type of line (underline / line-throgh / overline)
+     *     @param {string} [props.textDecoration] Type of line (underline / line-through / overline)
      * @returns {Object} applied properties
      */
     setObjectProperties(id, props) {
@@ -996,7 +996,11 @@ class Graphics {
      * @private
      */
     _onPathCreated(obj) {
-        obj.path.set(consts.fObjectOptions.SELECTION_STYLE);
+        const {x: left, y: top} = obj.path.getCenterPoint();
+        obj.path.set(extend({
+            left,
+            top
+        }, consts.fObjectOptions.SELECTION_STYLE));
 
         const params = this.createObjectProperties(obj.path);
 

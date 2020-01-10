@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/icon.js"
  */
-import {fabric} from 'fabric';
+import fabric from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Icon from '../src/js/component/icon';
@@ -41,9 +41,10 @@ describe('Icon', () => {
         icon.add('arrow');
 
         const activeObj = canvas.getActiveObject();
+        const halfStrokeWidth = activeObj.strokeWidth / 2;
 
-        expect(activeObj.left).toEqual(centerPos.x);
-        expect(activeObj.top).toEqual(centerPos.y);
+        expect(activeObj.left + halfStrokeWidth).toEqual(centerPos.x);
+        expect(activeObj.top + halfStrokeWidth).toEqual(centerPos.y);
     });
 
     it('add() should create the arrow icon when parameter value is "arrow".', () => {
