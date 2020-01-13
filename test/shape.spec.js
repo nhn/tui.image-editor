@@ -6,6 +6,7 @@ import fabric from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Shape from '../src/js/component/shape';
+import {resize} from '../src/js/helper/shapeResizeHelper';
 
 describe('Shape', () => {
     let canvas, graphics, mockImage, fEvent, shape, shapeObj;
@@ -30,6 +31,32 @@ describe('Shape', () => {
         canvas.forEachObject(obj => {
             canvas.remove(obj);
         });
+    });
+
+    it('The origin direction and position value initially adjusted at resize must be calculated correctly.', () => {
+        const pointer = canvas.getPointer(fEvent.e);
+        const settings = {
+            strokeWidth: 0,
+            type: 'rect',
+            left: 150,
+            top: 200,
+            width: 40,
+            height: 40,
+            originX: 'center',
+            originY: 'center'
+        };
+
+        shape.add('rect', settings);
+        [shapeObj] = canvas.getObjects();
+
+        spyOn(shapeObj, 'set').and.callThrough();
+
+        resize(shapeObj, pointer);
+
+        const [{left: resultLeft, top: resultTop}] = shapeObj.set.calls.first().args;
+
+        expect(resultLeft).toBe(settings.left - (settings.width / 2));
+        expect(resultTop).toBe(settings.top - (settings.height / 2));
     });
 
     it('The rectagle object is created on canvas.', () => {
