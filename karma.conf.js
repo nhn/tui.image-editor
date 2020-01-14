@@ -151,14 +151,7 @@ module.exports = function(config) {
                         }
                     }, {
                         test: /\.styl$/,
-                        use: [
-                            {
-                                loader: 'css-loader'
-                            },
-                            {
-                                loader: 'stylus-loader'
-                            }
-                        ]
+                        use: ['css-loader', 'stylus-loader']
                     }
                 ]
             }
