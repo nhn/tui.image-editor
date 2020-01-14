@@ -54,7 +54,7 @@ module.exports = {
         rules: [
             {
                 test: /\.js$/,
-                exclude: /node_modules|bower_components/,
+                exclude: /node_modules/,
                 loader: 'eslint-loader',
                 enforce: 'pre',
                 options: {
@@ -63,7 +63,7 @@ module.exports = {
                 }
             }, {
                 test: /\.js$/,
-                exclude: /node_modules|bower_components/,
+                exclude: /node_modules/,
                 loader: 'babel-loader?cacheDirectory',
                 options: {
                     babelrc: true
