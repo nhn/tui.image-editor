@@ -81,7 +81,7 @@ function adjustOriginByStartPoint(pointer, shape) {
     const {originX, originY} = originPositions;
     const origin = shape.getPointByOrigin(originX, originY);
     const left = shape.left - (centerPoint.x - origin.x);
-    const top = shape.top - (centerPoint.x - origin.y);
+    const top = shape.top - (centerPoint.y - origin.y);
 
     shape.set({
         originX,
@@ -106,6 +106,7 @@ function adjustOriginByMovingPointer(pointer, shape) {
     const {originX, originY} = originPositions;
 
     shape.setPositionByOrigin(origin, originX, originY);
+    shape.setCoords();
 }
 
 /**
