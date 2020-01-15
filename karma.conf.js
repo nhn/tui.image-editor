@@ -130,13 +130,13 @@ module.exports = function(config) {
                     {
                         test: /\.js$/,
                         include: /src/,
-                        exclude: /node_modules|bower_components/,
+                        exclude: /node_modules/,
                         loader: 'eslint-loader',
                         enforce: 'pre'
                     },
                     {
                         test: /\.js$/,
-                        exclude: /(test|bower_components|node_modules)/,
+                        exclude: /(test|node_modules)/,
                         loader: 'istanbul-instrumenter-loader',
                         query: {
                             esModules: true
@@ -144,21 +144,14 @@ module.exports = function(config) {
                     },
                     {
                         test: /\.js$/,
-                        exclude: /node_modules|bower_components/,
+                        exclude: /node_modules/,
                         loader: 'babel-loader?cacheDirectory',
                         options: {
                             babelrc: true
                         }
                     }, {
                         test: /\.styl$/,
-                        use: [
-                            {
-                                loader: 'css-loader'
-                            },
-                            {
-                                loader: 'stylus-loader'
-                            }
-                        ]
+                        use: ['css-loader', 'stylus-loader']
                     }
                 ]
             }
