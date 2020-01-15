@@ -191,22 +191,9 @@ $ npm install --save tui-image-editor # Latest version
 $ npm install --save tui-image-editor@<version> # Specific version
 ```
 
-##### 2. `fabric.js` installation
-And you should add **postInstall** script to your `package.json`. 
-_This process will be removed when `fabric.js` updated to v2.7.0 and bundled with TOAST UI ImageEditor together._
+##### 2. If the installation of the `fabric.js` dependency module does not go smoothly
 
-```js
-{
-    // ...
-    "scripts": {
-        // ...
-        "postInstall": "npm install --no-save --no-optional fabric@^1.6.7"
-    }
-    // ...
-}
-```
-
-Or you can add `fabric` as dependency. **But** there is [some steps](https://github.com/fabricjs/fabric.js#install-with-npm) to be installed well.
+To solve the problem, you need to refer to [Some Steps](https://github.com/fabricjs/fabric.js#install-with-npm) to solve the problem.
 
 #### bower
 
