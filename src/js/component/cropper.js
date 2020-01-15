@@ -133,6 +133,21 @@ class Cropper extends Component {
     }
 
     /**
+     * Change cropzone visible
+     * @param {boolean} visible - cropzone visible state
+     */
+    changeVisible(visible) {
+        const cropzone = this._cropzone;
+        if (!cropzone) {
+            return;
+        }
+
+        cropzone.set({
+            visible
+        });
+    }
+
+    /**
      * onMousedown handler in fabric canvas
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      * @private

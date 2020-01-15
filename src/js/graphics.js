@@ -403,7 +403,13 @@ class Graphics {
      * @returns {string} A DOMString containing the requested data URI.
      */
     toDataURL(options) {
-        return this._canvas && this._canvas.toDataURL(options);
+        const cropper = this.getComponent(components.CROPPER);
+        cropper.changeVisible(false);
+
+        const dataUrl = this._canvas && this._canvas.toDataURL(options);
+        cropper.changeVisible(true);
+
+        return dataUrl;
     }
 
     /**
