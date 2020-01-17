@@ -932,7 +932,8 @@ class Graphics {
      */
     _onMouseDown(fEvent) {
         const originPointer = this._canvas.getPointer(fEvent.e);
-        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
+
+        this.lazyFire(events.MOUSE_DOWN, () => [fEvent.e, originPointer]);
     }
 
     /**
@@ -966,10 +967,9 @@ class Graphics {
      * @private
      */
     _onObjectMoved(fEvent) {
-        const {target} = fEvent;
-        const params = this.createObjectProperties(target);
-
-        this.fire(events.OBJECT_MOVED, params);
+        this.lazyFire(events.OBJECT_MOVED, () => (
+            [this.createObjectProperties(fEvent.target), 'a']
+        ), fEvent.target);
     }
 
     /**
@@ -978,10 +978,9 @@ class Graphics {
      * @private
      */
     _onObjectScaled(fEvent) {
-        const {target} = fEvent;
-        const params = this.createObjectProperties(target);
-
-        this.fire(events.OBJECT_SCALED, params);
+        this.lazyFire(events.OBJECT_SCALED, () => (
+            [this.createObjectProperties(fEvent.target)]
+        ), fEvent.target);
     }
 
     /**
@@ -990,10 +989,9 @@ class Graphics {
      * @private
      */
     _onObjectSelected(fEvent) {
-        const {target} = fEvent;
-        const params = this.createObjectProperties(target);
-
-        this.fire(events.OBJECT_ACTIVATED, params);
+        this.lazyFire(events.OBJECT_ACTIVATED, () => (
+            [this.createObjectProperties(fEvent.target)]
+        ), fEvent.target);
     }
 
     /**
@@ -1018,7 +1016,7 @@ class Graphics {
      * @private
      */
     _onSelectionCleared() {
-        this.fire(events.SELECTION_CLEARED);
+        this.lazyFire(events.SELECTION_CLEARED);
     }
 
     /**
@@ -1028,6 +1026,14 @@ class Graphics {
      */
     _onSelectionCreated(fEvent) {
         this.fire(events.SELECTION_CREATED, fEvent.target);
+    }
+
+    lazyFire(eventType, paramsMaker = () => [], target = {}) {
+        if (target.lazyEventDelegator) {
+            target.lazyEventDelegator(() => this.fire(eventType, ...paramsMaker()));
+        } else {
+            this.fire(eventType, ...paramsMaker());
+        }
     }
 
     /**

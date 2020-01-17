@@ -396,6 +396,9 @@ export default {
      */
     setReAction() {
         this.on({
+            'mousedown': (a, b) => {
+                console.log('MD',a,b);
+            },
             undoStackChanged: length => {
                 if (length) {
                     this.ui.changeUndoButtonStatus(true);
@@ -405,6 +408,9 @@ export default {
                     this.ui.changeResetButtonStatus(false);
                 }
                 this.ui.resizeEditor();
+            },
+            objectMoved: aa => {
+                console.log('ACTION MOVIED', aa);
             },
             redoStackChanged: length => {
                 if (length) {
@@ -472,6 +478,7 @@ export default {
                 }
             },
             objectScaled: obj => {
+                console.log('SCALED',obj);
                 if (['i-text', 'text'].indexOf(obj.type) > -1) {
                     this.ui.text.fontSize = util.toInteger(obj.fontSize);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
@@ -487,6 +494,7 @@ export default {
                 }
             },
             selectionCleared: () => {
+                console.log('SELECTION_CLEARED');
                 this.activeObjectId = null;
                 if (this.ui.submenu === 'text') {
                     this.changeCursor('text');

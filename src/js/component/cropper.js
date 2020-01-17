@@ -101,6 +101,12 @@ class Cropper extends Component {
         canvas.discardActiveObject();
         canvas.add(this._cropzone);
         canvas.on('mouse:down', this._listeners.mousedown);
+        /*
+        this._cropzone.on('moving', () => {
+            console.log('CROPPER');
+            this.graphics.fire()
+        });
+        */
         canvas.selection = false;
         canvas.defaultCursor = 'crosshair';
 
