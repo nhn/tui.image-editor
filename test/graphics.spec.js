@@ -140,12 +140,12 @@ describe('Graphics', () => {
 
     it('Cropzone must be hidden initially and then redisplayed after completion at toDataURL is executed with a cropzone present', () => {
         const cropper = graphics.getComponent(components.CROPPER);
-        spyOn(cropper, 'changeVisible');
+        spyOn(cropper, 'changeVisibility');
 
         graphics.startDrawingMode(drawingModes.CROPPER);
         graphics.toDataURL();
 
-        expect(cropper.changeVisible.calls.allArgs()).toEqual([[false], [true]]);
+        expect(cropper.changeVisibility.calls.allArgs()).toEqual([[false], [true]]);
     });
 
     it('can set brush setting into LINE_DRAWING, FREE_DRAWING', () => {

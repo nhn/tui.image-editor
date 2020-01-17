@@ -404,10 +404,10 @@ class Graphics {
      */
     toDataURL(options) {
         const cropper = this.getComponent(components.CROPPER);
-        cropper.changeVisible(false);
+        cropper.changeVisibility(false);
 
         const dataUrl = this._canvas && this._canvas.toDataURL(options);
-        cropper.changeVisible(true);
+        cropper.changeVisibility(true);
 
         return dataUrl;
     }

@@ -136,15 +136,10 @@ class Cropper extends Component {
      * Change cropzone visible
      * @param {boolean} visible - cropzone visible state
      */
-    changeVisible(visible) {
-        const cropzone = this._cropzone;
-        if (!cropzone) {
-            return;
+    changeVisibility(visible) {
+        if (this._cropzone) {
+            this._cropzone.set({visible});
         }
-
-        cropzone.set({
-            visible
-        });
     }
 
     /**
