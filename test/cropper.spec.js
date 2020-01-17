@@ -296,6 +296,16 @@ describe('Cropper', () => {
                 .toBe((16 / 9).toFixed(1));
         });
 
+        it('Even in situations with floating point problems, should calculate the exact width you expect.', () => {
+            spyOn(canvas, 'getWidth').and.returnValue(408);
+            spyOn(canvas, 'getHeight').and.returnValue(312);
+            spyOn(cropper._cropzone, 'set').and.callThrough();
+
+            cropper.setCropzoneRect(16 / 9);
+
+            expect(cropper._cropzone.set.calls.first().args[0].width).toBe(408);
+        });
+
         it('should remove cropzone of cropper when falsy is passed', () => {
             cropper.setCropzoneRect();
             expect(cropper.getCropzoneRect()).toBeFalsy();
