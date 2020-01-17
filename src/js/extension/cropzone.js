@@ -46,7 +46,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         });
     },
 
-    _renderCropzone() {
+    _renderCropzone(ctx) {
         const cropzoneDashLineWidth = 7;
         const cropzoneDashLineOffset = 7;
 
@@ -57,7 +57,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const originalScaleY = originalFlipY / this.scaleY;
 
         // Set original scale
-        const ctx = this.canvas.getContext();
         ctx.scale(originalScaleX, originalScaleY);
 
         // Render outer rect
@@ -90,12 +89,10 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      * @override
      */
-    _render() {
-        const ctx = this.canvas.getContext();
-
+    _render(ctx) {
         this.callSuper('_render', ctx);
 
-        this._renderCropzone();
+        this._renderCropzone(ctx);
     },
 
     /**
