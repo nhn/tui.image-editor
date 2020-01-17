@@ -418,7 +418,7 @@ $btnChangeTextStyle.on('click', function() {
             styleObjKey = 'fontStyle';
             break;
         case 'underline':
-            styleObjKey = 'textDecoration';
+            styleObjKey = 'underline';
             break;
         case 'left':
             styleObjKey = 'textAlign';
