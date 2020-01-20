@@ -153,6 +153,34 @@ class Range {
         this.rangeElement.appendChild(this.bar);
     }
 
+    _addInputEvent() {
+        if (this.rangeInputElement) {
+            this.rangeInputElement.addEventListener('keydown', ev => {
+                let value = this._changeValidValueForInputText(ev.target.value);
+
+                if (ev.keyCode === 38) {
+                    value += 1;
+                } else if (ev.keyCode === 40) {
+                    value -= 1;
+                }
+
+                value = clamp(value, this._min, this.max);
+                if (this._value !== value) {
+                    this.value = value;
+                    this.fire('change', value, false);
+                }
+            });
+
+            /*
+            this.rangeInputElement.addEventListener('blur', ev => {
+                const value = this._changeValidValueForInputText(ev.target.value);
+
+                this.fire('change', clamp(value, this._min, this.max), true);
+            });
+            */
+        }
+    }
+
     /**
      * Add range input editing event
      * @private

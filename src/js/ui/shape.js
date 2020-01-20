@@ -158,6 +158,7 @@ class Shape extends Submenu {
     /**
      * Change stroke range
      * @param {number} value - stroke range value
+     * @param {boolean} isLast - Is last change
      * @private
      */
     _changeStrokeRangeHandler(value) {

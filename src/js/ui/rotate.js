@@ -1,7 +1,7 @@
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/rotate';
-import {toInteger, clamp} from '../util';
+import {toInteger} from '../util';
 import {defaultRotateRangeValus} from '../consts';
 
 const CLOCKWISE = 30;
