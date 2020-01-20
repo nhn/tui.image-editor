@@ -32,8 +32,10 @@ class Text extends Submenu {
             textColorpicker: new Colorpicker(
                 this.selector('.tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             ),
-            textRange: new Range(this.selector('.tie-text-range'), defaultTextRangeValus),
-            textRangeValue: this.selector('.tie-text-range-value')
+            textRange: new Range({
+                range: this.selector('.tie-text-range'),
+                rangeInput: this.selector('.tie-text-range-value')
+            }, defaultTextRangeValus)
         };
     }
 
@@ -47,8 +49,8 @@ class Text extends Submenu {
         this._els.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
         this._els.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
         this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
-        this._els.textRangeValue.value = this._els.textRange.value;
-        this._els.textRangeValue.setAttribute('readonly', true);
+        // this._els.textRangeValue.value = this._els.textRange.value;
+        // this._els.textRangeValue.setAttribute('readonly', true);
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
@@ -88,7 +90,7 @@ class Text extends Submenu {
      */
     set fontSize(value) {
         this._els.textRange.value = value;
-        this._els.textRangeValue.value = value;
+        // this._els.textRangeValue.value = value;
     }
 
     /**
@@ -136,15 +138,14 @@ class Text extends Submenu {
     /**
      * text align set handler
      * @param {number} value - range value
+     * @param {boolean} isLast - Is last change
      * @private
      */
-    _changeTextRnageHandler(value) {
-        value = toInteger(value);
-        if (toInteger(this._els.textRangeValue.value) !== value) {
+    _changeTextRnageHandler(value, isLast) {
+        if (!isLast) {
             this.actions.changeTextStyle({
                 fontSize: value
             });
-            this._els.textRangeValue.value = value;
         }
     }
 

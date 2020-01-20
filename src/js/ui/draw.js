@@ -27,8 +27,10 @@ class Draw extends Submenu {
             drawColorpicker: new Colorpicker(
                 this.selector('.tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics
             ),
-            drawRange: new Range(this.selector('.tie-draw-range'), defaultDrawRangeValus),
-            drawRangeValue: this.selector('.tie-draw-range-value')
+            drawRange: new Range({
+                range: this.selector('.tie-draw-range'),
+                rangeInput: this.selector('.tie-draw-range-value')
+            }, defaultDrawRangeValus)
         };
 
         this.type = null;
@@ -47,8 +49,8 @@ class Draw extends Submenu {
         this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
         this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
         this._els.drawRange.on('change', this._changeDrawRange.bind(this));
-        this._els.drawRangeValue.value = this._els.drawRange.value;
-        this._els.drawRangeValue.setAttribute('readonly', true);
+        // this._els.drawRangeValue.value = this._els.drawRange.value;
+        // this._els.drawRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -125,8 +127,8 @@ class Draw extends Submenu {
      * @private
      */
     _changeDrawRange(value) {
-        value = util.toInteger(value);
-        this._els.drawRangeValue.value = value;
+        // value = util.toInteger(value);
+        // this._els.drawRangeValue.value = value;
         this.width = value;
         if (!this.type) {
             this.changeStartMode();

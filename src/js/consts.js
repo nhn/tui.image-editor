@@ -182,17 +182,20 @@ module.exports = {
         tintOpacityRange: {
             min: 0,
             max: 1,
-            value: 0.7
+            value: 0.7,
+            useDecimal: true
         },
         removewhiteDistanceRange: {
             min: 0,
             max: 1,
-            value: 0.2
+            value: 0.2,
+            useDecimal: true
         },
         brightnessRange: {
             min: -1,
             max: 1,
-            value: 0
+            value: 0,
+            useDecimal: true
         },
         noiseRange: {
             min: 0,
@@ -207,7 +210,8 @@ module.exports = {
         colorfilterThresholeRange: {
             min: 0,
             max: 1,
-            value: 0.2
+            value: 0.2,
+            useDecimal: true
         }
     }
 };

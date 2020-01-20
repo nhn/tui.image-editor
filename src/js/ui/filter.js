@@ -109,6 +109,7 @@ class Filter extends Submenu {
      * @param {string} filter - filter name
      */
     _changeRangeValue(applyFilter, filter) {
+        console.log('-------', applyFilter, filter);
         const apply = this.checkedMap[filter].checked;
         const type = filterNameMap[filter];
 
@@ -178,23 +179,23 @@ class Filter extends Submenu {
     _makeControlElement() {
         this._els = {
             removewhiteDistanceRange: new Range(
-                this.selector('.tie-removewhite-distance-range'),
+                {range: this.selector('.tie-removewhite-distance-range')},
                 FILTER_RANGE.removewhiteDistanceRange
             ),
             brightnessRange: new Range(
-                this.selector('.tie-brightness-range'),
+                {range: this.selector('.tie-brightness-range')},
                 FILTER_RANGE.brightnessRange
             ),
             noiseRange: new Range(
-                this.selector('.tie-noise-range'),
+                {range: this.selector('.tie-noise-range')},
                 FILTER_RANGE.noiseRange
             ),
             pixelateRange: new Range(
-                this.selector('.tie-pixelate-range'),
+                {range: this.selector('.tie-pixelate-range')},
                 FILTER_RANGE.pixelateRange
             ),
             colorfilterThresholeRange: new Range(
-                this.selector('.tie-colorfilter-threshole-range'),
+                {range: this.selector('.tie-colorfilter-threshole-range')},
                 FILTER_RANGE.colorfilterThresholeRange
             ),
             filterTintColor: new Colorpicker(
@@ -234,7 +235,7 @@ class Filter extends Submenu {
         pickerControl.appendChild(rangeWrap);
         pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
-        return new Range(range, FILTER_RANGE.tintOpacityRange);
+        return new Range({range}, FILTER_RANGE.tintOpacityRange);
     }
 
     /**

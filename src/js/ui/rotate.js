@@ -1,7 +1,7 @@
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/rotate';
-import {toInteger, clamp} from '../util';
+import {toInteger} from '../util';
 import {defaultRotateRangeValus} from '../consts';
 
 const CLOCKWISE = 30;
@@ -26,8 +26,10 @@ class Rotate extends Submenu {
 
         this._els = {
             rotateButton: this.selector('.tie-retate-button'),
-            rotateRange: new Range(this.selector('.tie-rotate-range'), defaultRotateRangeValus),
-            rotateRangeValue: this.selector('.tie-ratate-range-value')
+            rotateRange: new Range({
+                range: this.selector('.tie-rotate-range'),
+                rangeInput: this.selector('.tie-ratate-range-value')
+            }, defaultRotateRangeValus)
         };
     }
 
@@ -35,10 +37,9 @@ class Rotate extends Submenu {
         let resultAngle = angle;
 
         if (type === 'rotate') {
-            resultAngle = parseInt(this._els.rotateRangeValue.value, 10) + angle;
+            resultAngle = parseInt(this._els.rotateRange.value, 10) + angle;
         }
 
-        this._els.rotateRangeValue.value = resultAngle;
         this._setRangeBarRatio(resultAngle);
     }
 
@@ -57,25 +58,6 @@ class Rotate extends Submenu {
         this.actions = actions;
         this._els.rotateButton.addEventListener('click', this._changeRotateForButton.bind(this));
         this._els.rotateRange.on('change', this._changeRotateForRange.bind(this));
-        this._els.rotateRangeValue.addEventListener('keydown', ev => {
-            const replaceValue = ev.target.value.replace(/^(-?)([0-9]*)[^0-9]*([0-9]*)$/g, '$1$2$3') || 0;
-            const value = toInteger(replaceValue);
-            let nextValue = value;
-
-            if (ev.keyCode === 38) {
-                nextValue += 1;
-            } else if (ev.keyCode === 40) {
-                nextValue -= 1;
-            }
-
-            this._changeRotateForRange(clamp(nextValue, -360, 360), false);
-        });
-        this._els.rotateRangeValue.addEventListener('blur', ev => {
-            const replaceValue = ev.target.value.replace(/^(-?)([0-9]*)[^0-9]*([0-9]*)$/g, '$1$2$3') || 0;
-            const value = toInteger(replaceValue);
-
-            this._changeRotateForRange(clamp(value, -360, 360), true);
-        });
     }
 
     /**
@@ -85,9 +67,7 @@ class Rotate extends Submenu {
      * @private
      */
     _changeRotateForRange(value, isLast) {
-        console.log('JJ123123 - ', value, isLast);
         const angle = toInteger(value);
-        // this._els.rotateRangeValue.value = angle;
         this.actions.setAngle(angle, !isLast);
         this._value = angle;
     }
@@ -99,7 +79,7 @@ class Rotate extends Submenu {
      */
     _changeRotateForButton(event) {
         const button = event.target.closest('.tui-image-editor-button');
-        const angle = this._els.rotateRangeValue.value;
+        const angle = this._els.rotateRange.value;
 
         if (button) {
             const rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);
