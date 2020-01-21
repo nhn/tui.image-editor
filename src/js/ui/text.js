@@ -134,13 +134,12 @@ class Text extends Submenu {
     /**
      * text align set handler
      * @param {number} value - range value
-     * @param {boolean} isLast - Is last change
      * @private
      */
-    _changeTextRnageHandler(value, isLast) {
+    _changeTextRnageHandler(value) {
         this.actions.changeTextStyle({
             fontSize: value
-        }, !isLast);
+        });
     }
 
     /**

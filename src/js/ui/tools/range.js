@@ -155,29 +155,46 @@ class Range {
 
     _addInputEvent() {
         if (this.rangeInputElement) {
-            this.rangeInputElement.addEventListener('keydown', ev => {
-                let value = this._changeValidValueForInputText(ev.target.value);
+            this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
+            this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
+            this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
+        }
+    }
 
-                if (ev.keyCode === 38) {
-                    value += 1;
-                } else if (ev.keyCode === 40) {
-                    value -= 1;
-                }
+    _changeValueWithInputKeyEvent(ev) {
+        if ([38, 40].indexOf(ev.keyCode) < 0) {
+            return;
+        }
 
-                value = clamp(value, this._min, this.max);
-                if (this._value !== value) {
-                    this.value = value;
-                    this.fire('change', value, false);
-                }
-            });
+        let value = Number(ev.target.value);
 
-            /*
-            this.rangeInputElement.addEventListener('blur', ev => {
-                const value = this._changeValidValueForInputText(ev.target.value);
+        if (ev.keyCode === 38) {
+            value += 1;
+        } else if (ev.keyCode === 40) {
+            value -= 1;
+        }
 
-                this.fire('change', clamp(value, this._min, this.max), true);
-            });
-            */
+        value = clamp(value, this._min, this.max);
+
+        this.value = value;
+        this.fire('change', value, false);
+    }
+
+    _changeValueWithInput(isLast, ev) {
+        if ([38, 40].indexOf(ev.keyCode) >= 0) {
+            return;
+        }
+
+        const stringValue = this._filterForInputText(ev.target.value);
+        const waitForChange = !stringValue || isNaN(stringValue);
+        ev.target.value = stringValue;
+
+        if (!waitForChange) {
+            let value = this._useDecimal ? Number(stringValue) : toInteger(stringValue);
+            value = clamp(value, this._min, this.max);
+
+            this.value = value;
+            this.fire('change', value, isLast);
         }
     }
 
