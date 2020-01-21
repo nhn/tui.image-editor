@@ -176,70 +176,62 @@ describe('Cropzone', () => {
             };
         let expected, actual;
 
-        cropzone.__corner = 'tl';
         expected = {
             width: 1,
             height: 2,
             left: 3,
             top: 4
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'tl');
         expect(expected).toEqual(actual);
 
-        cropzone.__corner = 'tr';
         expected = {
             width: 5,
             height: 2,
             top: 4
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'tr');
         expect(expected).toEqual(actual);
 
-        cropzone.__corner = 'bl';
         expected = {
             width: 1,
             height: 6,
             left: 3
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'bl');
         expect(expected).toEqual(actual);
 
-        cropzone.__corner = 'br';
         expected = {
             width: 5,
             height: 6
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'br');
         expect(expected).toEqual(actual);
 
-        cropzone.__corner = 'ml';
         expected = {
             width: 1,
             left: 3
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'ml');
         expect(expected).toEqual(actual);
 
-        cropzone.__corner = 'mt';
         expected = {
             height: 2,
             top: 4
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'mt');
         expect(expected).toEqual(actual);
 
-        cropzone.__corner = 'mr';
         expected = {
             width: 5
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'mr');
         expect(expected).toEqual(actual);
 
-        cropzone.__corner = 'mb';
         expected = {
             height: 6
         };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR);
+        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'mb');
         expect(expected).toEqual(actual);
     });
 });
