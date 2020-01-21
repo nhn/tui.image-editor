@@ -33,8 +33,8 @@ class Shape extends Submenu {
             shapeSelectButton: this.selector('.tie-shape-button'),
             shapeColorButton: this.selector('.tie-shape-color-button'),
             strokeRange: new Range({
-                range: this.selector('.tie-stroke-range'),
-                rangeInput: this.selector('.tie-stroke-range-value')
+                slider: this.selector('.tie-stroke-range'),
+                input: this.selector('.tie-stroke-range-value')
             }, defaultShapeStrokeValus),
             fillColorpicker: new Colorpicker(
                 this.selector('.tie-color-fill'), '', this.toggleDirection, this.usageStatistics

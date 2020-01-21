@@ -28,8 +28,8 @@ class Draw extends Submenu {
                 this.selector('.tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics
             ),
             drawRange: new Range({
-                range: this.selector('.tie-draw-range'),
-                rangeInput: this.selector('.tie-draw-range-value')
+                slider: this.selector('.tie-draw-range'),
+                input: this.selector('.tie-draw-range-value')
             }, defaultDrawRangeValus)
         };
 

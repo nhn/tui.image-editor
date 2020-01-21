@@ -27,8 +27,8 @@ class Rotate extends Submenu {
         this._els = {
             rotateButton: this.selector('.tie-retate-button'),
             rotateRange: new Range({
-                range: this.selector('.tie-rotate-range'),
-                rangeInput: this.selector('.tie-ratate-range-value')
+                slider: this.selector('.tie-rotate-range'),
+                input: this.selector('.tie-ratate-range-value')
             }, defaultRotateRangeValus)
         };
     }

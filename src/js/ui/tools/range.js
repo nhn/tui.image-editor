@@ -10,8 +10,8 @@ class Range {
     constructor(rangeElements, options = {}) {
         this._value = options.value || 0;
 
-        this.rangeElement = rangeElements.range;
-        this.rangeInputElement = rangeElements.rangeInput;
+        this.rangeElement = rangeElements.slider;
+        this.rangeInputElement = rangeElements.input;
 
         this._drawRangeElement();
 
@@ -21,6 +21,14 @@ class Range {
         this._useDecimal = options.useDecimal;
         this._absMax = (this._min * -1) + this._max;
         this.realTimeEvent = options.realTimeEvent || false;
+
+        this.eventHandler = {
+            changeValue: this._changeSlide.bind(this),
+            stopChangingValue: this._stopChangingSlide.bind(this),
+            changeInput: this._changeValueWithInput.bind(this, false),
+            changeInputFinally: this._changeValueWithInput.bind(this, true),
+            changeInputWithArrow: this._changeValueWithInputKeyEvent.bind(this)
+        };
 
         this._addClickEvent();
         this._addDragEvent();
@@ -106,29 +114,46 @@ class Range {
 
     _addInputEvent() {
         if (this.rangeInputElement) {
-            this.rangeInputElement.addEventListener('keydown', ev => {
-                let value = this._changeValidValueForInputText(ev.target.value);
+            this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
+            this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
+            this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
+        }
+    }
 
-                if (ev.keyCode === 38) {
-                    value += 1;
-                } else if (ev.keyCode === 40) {
-                    value -= 1;
-                }
+    _changeValueWithInputKeyEvent(ev) {
+        if ([38, 40].indexOf(ev.keyCode) < 0) {
+            return;
+        }
 
-                value = clamp(value, this._min, this.max);
-                if (this._value !== value) {
-                    this.value = value;
-                    this.fire('change', value, false);
-                }
-            });
+        let value = Number(ev.target.value);
 
-            /*
-            this.rangeInputElement.addEventListener('blur', ev => {
-                const value = this._changeValidValueForInputText(ev.target.value);
+        if (ev.keyCode === 38) {
+            value += 1;
+        } else if (ev.keyCode === 40) {
+            value -= 1;
+        }
 
-                this.fire('change', clamp(value, this._min, this.max), true);
-            });
-            */
+        value = clamp(value, this._min, this.max);
+
+        this.value = value;
+        this.fire('change', value, false);
+    }
+
+    _changeValueWithInput(isLast, ev) {
+        if ([38, 40].indexOf(ev.keyCode) >= 0) {
+            return;
+        }
+
+        const stringValue = this._filterForInputText(ev.target.value);
+        const waitForChange = !stringValue || isNaN(stringValue);
+        ev.target.value = stringValue;
+
+        if (!waitForChange) {
+            let value = this._useDecimal ? Number(stringValue) : toInteger(stringValue);
+            value = clamp(value, this._min, this.max);
+
+            this.value = value;
+            this.fire('change', value, isLast);
         }
     }
 
@@ -161,13 +186,9 @@ class Range {
         this.pointer.addEventListener('mousedown', event => {
             this.firstPosition = event.screenX;
             this.firstLeft = toInteger(this.pointer.style.left) || 0;
-            this.dragEventHandler = {
-                changeValue: this._changeValue.bind(this),
-                stopChangingValue: this._stopChangingValue.bind(this)
-            };
 
-            document.addEventListener('mousemove', this.dragEventHandler.changeValue);
-            document.addEventListener('mouseup', this.dragEventHandler.stopChangingValue);
+            document.addEventListener('mousemove', this.eventHandler.changeValue);
+            document.addEventListener('mouseup', this.eventHandler.stopChangingValue);
         });
     }
 
@@ -176,7 +197,7 @@ class Range {
      * @param {object} event - change event
      * @private
      */
-    _changeValue(event) {
+    _changeSlide(event) {
         const changePosition = event.screenX;
         const diffPosition = changePosition - this.firstPosition;
         let touchPx = this.firstLeft + diffPosition;
@@ -189,9 +210,7 @@ class Range {
         const ratio = touchPx / this.rangeWidth;
         const resultValue = (this._absMax * ratio) + this._min;
         const value = this._useDecimal ? resultValue : toInteger(resultValue);
-
         const changedValue = this.value !== value;
-        console.log('move', changedValue, this._useDecimal,this.value, value);
 
         if (changedValue) {
             this.value = value;
@@ -205,17 +224,21 @@ class Range {
      * stop change angle event
      * @private
      */
-    _stopChangingValue() {
+    _stopChangingSlide() {
         this.fire('change', this._value, true);
 
-        document.removeEventListener('mousemove', this.dragEventHandler.changeValue);
-        document.removeEventListener('mouseup', this.dragEventHandler.stopChangingValue);
+        document.removeEventListener('mousemove', this.eventHandler.changeValue);
+        document.removeEventListener('mouseup', this.eventHandler.stopChangingValue);
     }
 
-    _changeValidValueForInputText(textValue) {
-        const value = textValue.replace(/^(-?)([0-9]*)[^0-9]*([0-9]*)$/g, '$1$2$3') || 0;
-
-        return this.useDecimal ? value : toInteger(value);
+    /**
+     * Unnecessary string filtering.
+     * @param {string} inputValue - origin string of input
+     * @returns {string} filtered string
+     * @private
+     */
+    _filterForInputText(inputValue) {
+        return inputValue.replace(/(-?)([0-9]*)[^0-9]*([0-9]*)/g, '$1$2$3');
     }
 }
 

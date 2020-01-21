@@ -2,7 +2,6 @@ import Range from './tools/range';
 import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/text';
-import {toInteger} from '../util';
 import {defaultTextRangeValus} from '../consts';
 
 /**
@@ -33,8 +32,8 @@ class Text extends Submenu {
                 this.selector('.tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             ),
             textRange: new Range({
-                range: this.selector('.tie-text-range'),
-                rangeInput: this.selector('.tie-text-range-value')
+                slider: this.selector('.tie-text-range'),
+                input: this.selector('.tie-text-range-value')
             }, defaultTextRangeValus)
         };
     }
@@ -49,8 +48,6 @@ class Text extends Submenu {
         this._els.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
         this._els.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
         this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
-        // this._els.textRangeValue.value = this._els.textRange.value;
-        // this._els.textRangeValue.setAttribute('readonly', true);
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
@@ -138,15 +135,12 @@ class Text extends Submenu {
     /**
      * text align set handler
      * @param {number} value - range value
-     * @param {boolean} isLast - Is last change
      * @private
      */
-    _changeTextRnageHandler(value, isLast) {
-        if (!isLast) {
-            this.actions.changeTextStyle({
-                fontSize: value
-            });
-        }
+    _changeTextRnageHandler(value) {
+        this.actions.changeTextStyle({
+            fontSize: value
+        });
     }
 
     /**
