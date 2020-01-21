@@ -91,6 +91,10 @@ class Range {
         this.fire(type, this._value);
     }
 
+    /**
+     * Calculate slider width
+     * @returns {number} - slider width
+     */
     _getRangeWidth() {
         const getElementWidth = element => toInteger(window.getComputedStyle(element, null).width);
 
