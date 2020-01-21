@@ -44,7 +44,7 @@ class Range {
             changeSlide: this._changeSlide.bind(this),
             changeSlideFinally: this._changeSlideFinally.bind(this),
             changeInput: this._changeValueWithInput.bind(this, false),
-            stopChangingInput: this._changeValueWithInput.bind(this, true),
+            changeInputFinally: this._changeValueWithInput.bind(this, true),
             changeInputWithArrow: this._changeValueWithInputKeyEvent.bind(this)
         };
 
@@ -161,7 +161,19 @@ class Range {
         if (this.rangeInputElement) {
             this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
             this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
-            this.rangeInputElement.addEventListener('blur', this.eventHandler.stopChangingInput);
+            this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
+        }
+    }
+
+    /**
+     * Remove range input editing event
+     * @private
+     */
+    _removeInputEvent() {
+        if (this.rangeInputElement) {
+            this.rangeInputElement.removeEventListener('keydown', this.eventHandler.changeInputWithArrow);
+            this.rangeInputElement.removeEventListener('keyup', this.eventHandler.changeInput);
+            this.rangeInputElement.removeEventListener('blur', this.eventHandler.changeInputFinally);
         }
     }
 
