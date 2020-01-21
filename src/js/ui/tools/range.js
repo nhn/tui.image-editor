@@ -44,7 +44,7 @@ class Range {
             changeSlide: this._changeSlide.bind(this),
             changeSlideFinally: this._changeSlideFinally.bind(this),
             changeInput: this._changeValueWithInput.bind(this, false),
-            changeInputFinally: this._changeValueWithInput.bind(this, true),
+            stopChangingInput: this._changeValueWithInput.bind(this, true),
             changeInputWithArrow: this._changeValueWithInputKeyEvent.bind(this)
         };
 
@@ -153,51 +153,6 @@ class Range {
         this.rangeElement.appendChild(this.bar);
     }
 
-    _addInputEvent() {
-        if (this.rangeInputElement) {
-            this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
-            this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
-            this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
-        }
-    }
-
-    _changeValueWithInputKeyEvent(ev) {
-        if ([38, 40].indexOf(ev.keyCode) < 0) {
-            return;
-        }
-
-        let value = Number(ev.target.value);
-
-        if (ev.keyCode === 38) {
-            value += 1;
-        } else if (ev.keyCode === 40) {
-            value -= 1;
-        }
-
-        value = clamp(value, this._min, this.max);
-
-        this.value = value;
-        this.fire('change', value, false);
-    }
-
-    _changeValueWithInput(isLast, ev) {
-        if ([38, 40].indexOf(ev.keyCode) >= 0) {
-            return;
-        }
-
-        const stringValue = this._filterForInputText(ev.target.value);
-        const waitForChange = !stringValue || isNaN(stringValue);
-        ev.target.value = stringValue;
-
-        if (!waitForChange) {
-            let value = this._useDecimal ? Number(stringValue) : toInteger(stringValue);
-            value = clamp(value, this._min, this.max);
-
-            this.value = value;
-            this.fire('change', value, isLast);
-        }
-    }
-
     /**
      * Add range input editing event
      * @private
@@ -206,7 +161,7 @@ class Range {
         if (this.rangeInputElement) {
             this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
             this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
-            this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
+            this.rangeInputElement.addEventListener('blur', this.eventHandler.stopChangingInput);
         }
     }
 

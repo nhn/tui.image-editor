@@ -109,7 +109,6 @@ class Filter extends Submenu {
      * @param {string} filter - filter name
      */
     _changeRangeValue(applyFilter, filter) {
-        console.log('-------', applyFilter, filter);
         const apply = this.checkedMap[filter].checked;
         const type = filterNameMap[filter];
 
