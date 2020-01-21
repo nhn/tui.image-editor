@@ -49,8 +49,6 @@ class Draw extends Submenu {
         this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
         this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
         this._els.drawRange.on('change', this._changeDrawRange.bind(this));
-        // this._els.drawRangeValue.value = this._els.drawRange.value;
-        // this._els.drawRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -127,8 +125,6 @@ class Draw extends Submenu {
      * @private
      */
     _changeDrawRange(value) {
-        // value = util.toInteger(value);
-        // this._els.drawRangeValue.value = value;
         this.width = value;
         if (!this.type) {
             this.changeStartMode();

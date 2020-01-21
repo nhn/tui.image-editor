@@ -87,7 +87,6 @@ class Text extends Submenu {
      */
     set fontSize(value) {
         this._els.textRange.value = value;
-        // this._els.textRangeValue.value = value;
     }
 
     /**

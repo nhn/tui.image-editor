@@ -63,7 +63,6 @@ class Shape extends Submenu {
         this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
         this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
-        // this._els.strokeRangeValue.value = this._els.strokeRange.value;
     }
 
     /**
@@ -159,7 +158,6 @@ class Shape extends Submenu {
     /**
      * Change stroke range
      * @param {number} value - stroke range value
-     * @param {boolean} isLast - Is last change
      * @private
      */
     _changeStrokeRangeHandler(value) {
