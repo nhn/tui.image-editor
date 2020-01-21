@@ -23,10 +23,12 @@ class Range {
         this.realTimeEvent = options.realTimeEvent || false;
 
         this.eventHandler = {
-            changeSlide: this._changeSlide.bind(this),
+            startChangingSlide: this._startChangingSlide.bind(this),
             stopChangingSlide: this._stopChangingSlide.bind(this),
+            changeSlide: this._changeSlide.bind(this),
+            changeSlideFinally: this._changeSlideFinally.bind(this),
             changeInput: this._changeValueWithInput.bind(this, false),
-            stopChangingInput: this._changeValueWithInput.bind(this, true),
+            changeInputFinally: this._changeValueWithInput.bind(this, true),
             changeInputWithArrow: this._changeValueWithInputKeyEvent.bind(this)
         };
 
@@ -35,6 +37,19 @@ class Range {
         this._addInputEvent();
         this.value = options.value;
         this.trigger('change');
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeClickEvent();
+        this._removeDragEvent();
+        this._removeInputEvent();
+        this.rangeElement.innerHTML = '';
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
     }
 
     /**
@@ -130,7 +145,19 @@ class Range {
         if (this.rangeInputElement) {
             this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
             this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
-            this.rangeInputElement.addEventListener('blur', this.eventHandler.stopChangingInput);
+            this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
+        }
+    }
+
+    /**
+     * Remove range input editing event
+     * @private
+     */
+    _removeInputEvent() {
+        if (this.rangeInputElement) {
+            this.rangeInputElement.removeEventListener('keydown', this.eventHandler.changeInputWithArrow);
+            this.rangeInputElement.removeEventListener('keyup', this.eventHandler.changeInput);
+            this.rangeInputElement.removeEventListener('blur', this.eventHandler.changeInputFinally);
         }
     }
 
@@ -191,20 +218,15 @@ class Range {
      * @private
      */
     _addClickEvent() {
-        this.rangeElement.addEventListener('click', event => {
-            event.stopPropagation();
-            if (event.target.className !== 'tui-image-editor-range') {
-                return;
-            }
-            const touchPx = event.offsetX;
-            const ratio = touchPx / this.rangeWidth;
-            const value = (this._absMax * ratio) + this._min;
-            this.pointer.style.left = `${ratio * this.rangeWidth}px`;
-            this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
-            this.value = value;
+        this.rangeElement.addEventListener('click', this.eventHandler.changeSlideFinally);
+    }
 
-            this.fire('change', value, true);
-        });
+    /**
+     * Remove Range click event
+     * @private
+     */
+    _removeClickEvent() {
+        this.rangeElement.removeEventListener('click', this.eventHandler.changeSlideFinally);
     }
 
     /**
@@ -212,13 +234,15 @@ class Range {
      * @private
      */
     _addDragEvent() {
-        this.pointer.addEventListener('mousedown', event => {
-            this.firstPosition = event.screenX;
-            this.firstLeft = toInteger(this.pointer.style.left) || 0;
+        this.pointer.addEventListener('mousedown', this.eventHandler.startChangingSlide);
+    }
 
-            document.addEventListener('mousemove', this.eventHandler.changeSlide);
-            document.addEventListener('mouseup', this.eventHandler.stopChangingSlide);
-        });
+    /**
+     * Remove Range drag event
+     * @private
+     */
+    _removeDragEvent() {
+        this.pointer.removeEventListener('mousedown', this.eventHandler.startChangingSlide);
     }
 
     /**
@@ -247,6 +271,29 @@ class Range {
                 this.fire('change', this._value, false);
             }
         }
+    }
+
+    _changeSlideFinally(event) {
+        event.stopPropagation();
+        if (event.target.className !== 'tui-image-editor-range') {
+            return;
+        }
+        const touchPx = event.offsetX;
+        const ratio = touchPx / this.rangeWidth;
+        const value = (this._absMax * ratio) + this._min;
+        this.pointer.style.left = `${ratio * this.rangeWidth}px`;
+        this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
+        this.value = value;
+
+        this.fire('change', value, true);
+    }
+
+    _startChangingSlide(event) {
+        this.firstPosition = event.screenX;
+        this.firstLeft = toInteger(this.pointer.style.left) || 0;
+
+        document.addEventListener('mousemove', this.eventHandler.changeSlide);
+        document.addEventListener('mouseup', this.eventHandler.stopChangingSlide);
     }
 
     /**
