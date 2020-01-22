@@ -37,21 +37,25 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         options.type = 'cropzone';
 
         this.callSuper('initialize', options);
+        this._addEventHandler();
 
         this.canvas = canvas;
         this.options = options;
-        this.lazyEventCache = () => {};
+    },
+    lazyEventDelegator(graphicsEvent) {
+        const [eventName, eventTrigger] = graphicsEvent;
 
+        this.lazyEventTrigger[eventName] = eventTrigger;
+    },
+    _addEventHandler() {
+        this.lazyEventTrigger = {
+            [events.OBJECT_MOVED]: () => {},
+            [events.OBJECT_SCALED]: () => {}
+        };
         this.on({
             'moving': this._onMoving.bind(this),
             'scaling': this._onScaling.bind(this)
         });
-    },
-    lazyEventDelegator(eventTrigger) {
-        this.lazyEventCache = eventTrigger;
-    },
-    _lazyEventTrigger() {
-        this.lazyEventCache();
     },
     _renderCropzone(ctx) {
         const cropzoneDashLineWidth = 7;
@@ -274,14 +278,14 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _onMoving() {
-        console.log('CROPZONE');
         const {height, width, left, top} = this;
         const maxLeft = this.canvas.getWidth() - width;
         const maxTop = this.canvas.getHeight() - height;
 
         this.left = clamp(left, 0, maxLeft);
         this.top = clamp(top, 0, maxTop);
-        this._lazyEventTrigger(events.OBJECT_MOVED);
+
+        this.lazyEventTrigger[events.OBJECT_MOVED]();
     },
 
     /**
@@ -296,7 +300,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         // On scaling cropzone,
         // change real width and height and fix scaleFactor to 1
         this.scale(1).set(settings);
-        this._lazyEventTrigger(events.OBJECT_SCALED);
+
+        this.lazyEventTrigger[events.OBJECT_SCALED]();
     },
 
     /**

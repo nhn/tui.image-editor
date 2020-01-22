@@ -318,6 +318,15 @@ describe('Cropper', () => {
         });
     });
 
+    /*
+    it('Scaling Event', () => {
+        graphics.startDrawingMode(drawingModes.CROPPER);
+        spyOn(graphics.getComponent(components.CROPPER)._cropzone, 'isValid').and.returnValue(true);
+        expect(graphics.getCropzoneRect()).toBeTruthy();
+        canvas.fire('object:scaling', {});
+    });
+    */
+
     describe('"end()"', () => {
         it('should set cropzone of cropper to null', () => {
             cropper.start();

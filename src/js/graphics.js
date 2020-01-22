@@ -933,7 +933,7 @@ class Graphics {
     _onMouseDown(fEvent) {
         const originPointer = this._canvas.getPointer(fEvent.e);
 
-        this.lazyFire(events.MOUSE_DOWN, () => [fEvent.e, originPointer]);
+        this._lazyFire(events.MOUSE_DOWN, () => [fEvent.e, originPointer]);
     }
 
     /**
@@ -967,8 +967,9 @@ class Graphics {
      * @private
      */
     _onObjectMoved(fEvent) {
-        this.lazyFire(events.OBJECT_MOVED, () => (
-            [this.createObjectProperties(fEvent.target), 'a']
+        console.log('eventTARGET - ', fEvent.target);
+        this._lazyFire(events.OBJECT_MOVED, () => (
+            [this.createObjectProperties(fEvent.target)]
         ), fEvent.target);
     }
 
@@ -978,7 +979,7 @@ class Graphics {
      * @private
      */
     _onObjectScaled(fEvent) {
-        this.lazyFire(events.OBJECT_SCALED, () => (
+        this._lazyFire(events.OBJECT_SCALED, () => (
             [this.createObjectProperties(fEvent.target)]
         ), fEvent.target);
     }
@@ -989,7 +990,7 @@ class Graphics {
      * @private
      */
     _onObjectSelected(fEvent) {
-        this.lazyFire(events.OBJECT_ACTIVATED, () => (
+        this._lazyFire(events.OBJECT_ACTIVATED, () => (
             [this.createObjectProperties(fEvent.target)]
         ), fEvent.target);
     }
@@ -1016,7 +1017,7 @@ class Graphics {
      * @private
      */
     _onSelectionCleared() {
-        this.lazyFire(events.SELECTION_CLEARED);
+        this._lazyFire(events.SELECTION_CLEARED);
     }
 
     /**
@@ -1028,11 +1029,18 @@ class Graphics {
         this.fire(events.SELECTION_CREATED, fEvent.target);
     }
 
-    lazyFire(eventType, paramsMaker = () => [], target = {}) {
+    /**
+     * Lazy event emitter
+     * @param {string} eventName - event name
+     * @param {Function} paramsMaker - make param function
+     * @param {Object} [target] - Bbject of the event owner.
+     * @private
+     */
+    _lazyFire(eventName, paramsMaker = () => [], target = {}) {
         if (target.lazyEventDelegator) {
-            target.lazyEventDelegator(() => this.fire(eventType, ...paramsMaker()));
+            target.lazyEventDelegator([eventName, () => this.fire(eventName, ...paramsMaker())]);
         } else {
-            this.fire(eventType, ...paramsMaker());
+            this.fire(eventName, ...paramsMaker());
         }
     }
 
