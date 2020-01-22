@@ -53,7 +53,7 @@ describe('UI', () => {
         it('Instance of the menu specified in the option must be created.', () => {
             spyOn(ui, '_makeMenuElement');
             const getConstructorName = constructor => (
-                constructor.toString().match(/^function\s(.+)\(/)[1]
+                constructor.toString().match(/^function\s(.+?)\(/)[1]
             );
 
             ui._makeSubMenu();

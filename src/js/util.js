@@ -3,11 +3,11 @@
  * @fileoverview Util
  */
 import {forEach, sendHostname} from 'tui-code-snippet';
+const FLOATING_POINT_DIGIT = 2;
 const {min, max} = Math;
 let hostnameSent = false;
 
 module.exports = {
-
     /**
      * Clamp value
      * @param {number} value - Value
@@ -186,5 +186,13 @@ module.exports = {
         }
 
         return new Blob([uInt8Array], {type: mimeString});
+    },
+    /**
+     * Fix floating point diff.
+     * @param {number} value - original value
+     * @returns {number} fixed value
+     */
+    fixFloatingPoint(value) {
+        return Number(value.toFixed(FLOATING_POINT_DIGIT));
     }
 };

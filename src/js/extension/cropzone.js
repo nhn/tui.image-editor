@@ -46,7 +46,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         });
     },
 
-    _renderCropzone() {
+    _renderCropzone(ctx) {
         const cropzoneDashLineWidth = 7;
         const cropzoneDashLineOffset = 7;
 
@@ -57,7 +57,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const originalScaleY = originalFlipY / this.scaleY;
 
         // Set original scale
-        const ctx = this.canvas.getContext();
         ctx.scale(originalScaleX, originalScaleY);
 
         // Render outer rect
@@ -90,12 +89,10 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      * @override
      */
-    _render() {
-        const ctx = this.canvas.getContext();
-
+    _render(ctx) {
         this.callSuper('_render', ctx);
 
-        this._renderCropzone();
+        this._renderCropzone(ctx);
     },
 
     /**
@@ -284,8 +281,9 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _onScaling(fEvent) {
+        const selectedCorner = fEvent.transform.corner;
         const pointer = this.canvas.getPointer(fEvent.e);
-        const settings = this._calcScalingSizeFromPointer(pointer);
+        const settings = this._calcScalingSizeFromPointer(pointer, selectedCorner);
 
         // On scaling cropzone,
         // change real width and height and fix scaleFactor to 1
@@ -295,10 +293,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     /**
      * Calc scaled size from mouse pointer with selected corner
      * @param {{x: number, y: number}} pointer - Mouse position
+     * @param {string} selectedCorner - selected corner type
      * @returns {Object} Having left or(and) top or(and) width or(and) height.
      * @private
      */
-    _calcScalingSizeFromPointer(pointer) {
+    _calcScalingSizeFromPointer(pointer, selectedCorner) {
         const pointerX = pointer.x,
             pointerY = pointer.y,
             tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY),
@@ -308,7 +307,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
          * @todo: 일반 객체에서 shift 조합키를 누르면 free size scaling이 됨 --> 확인해볼것
          *      canvas.class.js // _scaleObject: function(...){...}
          */
-        return this._makeScalingSettings(tlScalingSize, brScalingSize);
+        return this._makeScalingSettings(tlScalingSize, brScalingSize, selectedCorner);
     },
 
     /**
@@ -357,10 +356,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * Make scaling settings
      * @param {{width: number, height: number, left: number, top: number}} tl - Top-Left setting
      * @param {{width: number, height: number}} br - Bottom-Right setting
+     * @param {string} selectedCorner - selected corner type
      * @returns {{width: ?number, height: ?number, left: ?number, top: ?number}} Position setting
      * @private
      */
-    _makeScalingSettings(tl, br) {
+    _makeScalingSettings(tl, br, selectedCorner) {
         const tlWidth = tl.width;
         const tlHeight = tl.height;
         const brHeight = br.height;
@@ -369,7 +369,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const tlTop = tl.top;
         let settings;
 
-        switch (this.__corner) {
+        switch (selectedCorner) {
             case CORNER_TYPE_TOP_LEFT:
                 settings = tl;
                 break;

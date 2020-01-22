@@ -7,7 +7,7 @@ import fabric from 'fabric';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
 import {keyCodes, componentNames} from '../consts';
-import {clamp} from '../util';
+import {clamp, fixFloatingPoint} from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
 const DEFAULT_OPTION = {
@@ -130,6 +130,16 @@ class Cropper extends Component {
 
         fabric.util.removeListener(document, 'keydown', this._listeners.keydown);
         fabric.util.removeListener(document, 'keyup', this._listeners.keyup);
+    }
+
+    /**
+     * Change cropzone visible
+     * @param {boolean} visible - cropzone visible state
+     */
+    changeVisibility(visible) {
+        if (this._cropzone) {
+            this._cropzone.set({visible});
+        }
     }
 
     /**
@@ -328,7 +338,7 @@ class Cropper extends Component {
         [width, height] = snippet.map([width, height], sizeValue => sizeValue * scaleWidth);
 
         const scaleHeight = getScale(height, originalHeight);
-        [width, height] = snippet.map([width, height], sizeValue => sizeValue * scaleHeight);
+        [width, height] = snippet.map([width, height], sizeValue => fixFloatingPoint(sizeValue * scaleHeight));
 
         return {
             top: (originalHeight - height) / 2,

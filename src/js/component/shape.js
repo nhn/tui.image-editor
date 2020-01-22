@@ -359,6 +359,7 @@ class Shape extends Component {
             this._shapeObj.set({
                 isRegular: this._withShiftKey
             });
+
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
         }
