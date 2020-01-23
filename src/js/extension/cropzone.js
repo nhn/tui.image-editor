@@ -15,6 +15,7 @@ const CORNER_TYPE_MIDDLE_RIGHT = 'mr';
 const CORNER_TYPE_MIDDLE_BOTTOM = 'mb';
 const CORNER_TYPE_BOTTOM_LEFT = 'bl';
 const CORNER_TYPE_BOTTOM_RIGHT = 'br';
+const NOOP_FUNCTION = () => {};
 
 /**
  * Cropzone object
@@ -42,15 +43,22 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         this.canvas = canvas;
         this.options = options;
     },
-    lazyEventDelegator(graphicsEvent) {
-        const [eventName, eventTrigger] = graphicsEvent;
 
-        this.lazyEventTrigger[eventName] = eventTrigger;
+    eventDelegation(eventName) {
+        const isRegisted = this.canvasEventTrigger[eventName] !== NOOP_FUNCTION;
+
+        if ([events.OBJECT_MOVED, events.OBJECT_SCALED].indexOf(eventName) < 0) {
+            return 'none';
+        }
+
+        return isRegisted ? 'registed' : eventTrigger => {
+            this.canvasEventTrigger[eventName] = eventTrigger;
+        };
     },
     _addEventHandler() {
-        this.lazyEventTrigger = {
-            [events.OBJECT_MOVED]: () => {},
-            [events.OBJECT_SCALED]: () => {}
+        this.canvasEventTrigger = {
+            [events.OBJECT_MOVED]: NOOP_FUNCTION,
+            [events.OBJECT_SCALED]: NOOP_FUNCTION
         };
         this.on({
             'moving': this._onMoving.bind(this),
@@ -285,7 +293,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         this.left = clamp(left, 0, maxLeft);
         this.top = clamp(top, 0, maxTop);
 
-        this.lazyEventTrigger[events.OBJECT_MOVED]();
+        this.canvasEventTrigger[events.OBJECT_MOVED](this);
     },
 
     /**
@@ -301,7 +309,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         // change real width and height and fix scaleFactor to 1
         this.scale(1).set(settings);
 
-        this.lazyEventTrigger[events.OBJECT_SCALED]();
+        this.canvasEventTrigger[events.OBJECT_SCALED](this);
     },
 
     /**

@@ -7,6 +7,8 @@ import fabric from 'fabric';
 import $ from 'jquery';
 import Cropper from '../src/js/component/cropper';
 import Graphics from '../src/js/graphics';
+import consts from '../src/js/consts';
+import Cropzone from '../src/js/extension/cropzone';
 
 describe('Cropper', () => {
     let cropper, graphics, canvas;
@@ -318,15 +320,6 @@ describe('Cropper', () => {
         });
     });
 
-    /*
-    it('Scaling Event', () => {
-        graphics.startDrawingMode(drawingModes.CROPPER);
-        spyOn(graphics.getComponent(components.CROPPER)._cropzone, 'isValid').and.returnValue(true);
-        expect(graphics.getCropzoneRect()).toBeTruthy();
-        canvas.fire('object:scaling', {});
-    });
-    */
-
     describe('"end()"', () => {
         it('should set cropzone of cropper to null', () => {
             cropper.start();
@@ -348,6 +341,26 @@ describe('Cropper', () => {
             expect(objects[0].evented).toBe(true);
             expect(objects[1].evented).toBe(true);
             expect(objects[2].evented).toBe(true);
+        });
+    });
+    describe('canvas event delegator', () => {
+        it('The event of an object with an eventDelegator must fire the graphics.fire registered with the trigger.', () => {
+            const events = consts.eventNames;
+            const cropzone = new Cropzone(canvas, {
+                left: -10,
+                top: -10,
+                width: 100,
+                height: 100
+            }, {});
+            const fEvent = {
+                target: cropzone
+            };
+            spyOn(graphics, 'fire');
+            canvas.fire('object:scaling', fEvent);
+
+            expect(graphics.fire.calls.count()).toBe(0);
+            cropzone.canvasEventTrigger[events.OBJECT_SCALED](cropzone);
+            expect(graphics.fire.calls.count()).toBe(1);
         });
     });
 });

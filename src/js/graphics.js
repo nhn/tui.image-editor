@@ -932,8 +932,7 @@ class Graphics {
      */
     _onMouseDown(fEvent) {
         const originPointer = this._canvas.getPointer(fEvent.e);
-
-        this._lazyFire(events.MOUSE_DOWN, () => [fEvent.e, originPointer]);
+        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
     }
 
     /**
@@ -967,10 +966,7 @@ class Graphics {
      * @private
      */
     _onObjectMoved(fEvent) {
-        console.log('eventTARGET - ', fEvent.target);
-        this._lazyFire(events.OBJECT_MOVED, () => (
-            [this.createObjectProperties(fEvent.target)]
-        ), fEvent.target);
+        this._lazyFire(events.OBJECT_MOVED, object => this.createObjectProperties(object), fEvent.target);
     }
 
     /**
@@ -979,9 +975,29 @@ class Graphics {
      * @private
      */
     _onObjectScaled(fEvent) {
-        this._lazyFire(events.OBJECT_SCALED, () => (
-            [this.createObjectProperties(fEvent.target)]
-        ), fEvent.target);
+        this._lazyFire(events.OBJECT_SCALED, object => this.createObjectProperties(object), fEvent.target);
+    }
+
+    /**
+     * Lazy event emitter
+     * @param {string} eventName - event name
+     * @param {Function} paramsMaker - make param function
+     * @param {Object} [target] - Bbject of the event owner.
+     * @private
+     */
+    _lazyFire(eventName, paramsMaker = () => {}, target) {
+        const existEventDelegation = target && target.eventDelegation;
+        const eventDelegationRegister = existEventDelegation ? target.eventDelegation(eventName) : 'none';
+
+        if (['none', 'registed'].indexOf(eventDelegationRegister) < 0) {
+            eventDelegationRegister(object => {
+                this.fire(eventName, paramsMaker(object));
+            });
+        }
+
+        if (eventDelegationRegister === 'none') {
+            this.fire(eventName, paramsMaker(target));
+        }
     }
 
     /**
@@ -990,9 +1006,10 @@ class Graphics {
      * @private
      */
     _onObjectSelected(fEvent) {
-        this._lazyFire(events.OBJECT_ACTIVATED, () => (
-            [this.createObjectProperties(fEvent.target)]
-        ), fEvent.target);
+        const {target} = fEvent;
+        const params = this.createObjectProperties(target);
+
+        this.fire(events.OBJECT_ACTIVATED, params);
     }
 
     /**
@@ -1017,7 +1034,7 @@ class Graphics {
      * @private
      */
     _onSelectionCleared() {
-        this._lazyFire(events.SELECTION_CLEARED);
+        this.fire(events.SELECTION_CLEARED);
     }
 
     /**
@@ -1027,21 +1044,6 @@ class Graphics {
      */
     _onSelectionCreated(fEvent) {
         this.fire(events.SELECTION_CREATED, fEvent.target);
-    }
-
-    /**
-     * Lazy event emitter
-     * @param {string} eventName - event name
-     * @param {Function} paramsMaker - make param function
-     * @param {Object} [target] - Bbject of the event owner.
-     * @private
-     */
-    _lazyFire(eventName, paramsMaker = () => [], target = {}) {
-        if (target.lazyEventDelegator) {
-            target.lazyEventDelegator([eventName, () => this.fire(eventName, ...paramsMaker())]);
-        } else {
-            this.fire(eventName, ...paramsMaker());
-        }
     }
 
     /**
