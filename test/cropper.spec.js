@@ -8,7 +8,6 @@ import $ from 'jquery';
 import Cropper from '../src/js/component/cropper';
 import Graphics from '../src/js/graphics';
 import consts from '../src/js/consts';
-import Cropzone from '../src/js/extension/cropzone';
 
 describe('Cropper', () => {
     let cropper, graphics, canvas;
@@ -345,17 +344,15 @@ describe('Cropper', () => {
     });
     describe('canvas event delegator', () => {
         it('The event of an object with an eventDelegator must fire the graphics.fire registered with the trigger.', () => {
-            const events = consts.eventNames;
-            const cropzone = new Cropzone(canvas, {
-                left: -10,
-                top: -10,
-                width: 100,
-                height: 100
-            }, {});
-            const fEvent = {
-                target: cropzone
-            };
+            cropper.start();
             spyOn(graphics, 'fire');
+            const events = consts.eventNames;
+            const fEvent = {
+                target: cropper._cropzone
+            };
+
+            const cropzone = cropper._cropzone;
+
             canvas.fire('object:scaling', fEvent);
 
             expect(graphics.fire.calls.count()).toBe(0);
