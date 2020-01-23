@@ -985,7 +985,7 @@ class Graphics {
      * @param {Object} [target] - Bbject of the event owner.
      * @private
      */
-    _lazyFire(eventName, paramsMaker = () => {}, target) {
+    _lazyFire(eventName, paramsMaker, target) {
         const existEventDelegation = target && target.eventDelegation;
         const eventDelegationRegister = existEventDelegation ? target.eventDelegation(eventName) : 'none';
 
