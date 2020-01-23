@@ -276,7 +276,7 @@ describe('commandFactory', () => {
             expect(mockImage.angle).toBe(30);
         });
 
-        xit('"undo()" should restore angle', done => {
+        it('"undo()" should restore angle', done => {
             const originalAngle = mockImage.angle;
 
             invoker.execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 100).then(() => (
