@@ -10,6 +10,15 @@ import consts from '../consts';
 const {componentNames, rejectMessages, commandNames} = consts;
 const {TEXT} = componentNames;
 
+/**
+ * Calculate undo fontSize
+ * @param {Component} textComp - text component
+ * @returns {number} - angle for undo state
+ */
+function getUndoFontSize(textComp) {
+    return textComp.lastfontSizeUndoStack;
+}
+
 const command = {
     name: commandNames.CHANGE_TEXT_STYLE,
 
@@ -25,9 +34,10 @@ const command = {
      *     @param {string} [styles.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styles.textAlign] Type of text align (left / center / right)
      *     @param {string} [styles.textDecoration] Type of line (underline / line-through / overline)
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      */
-    execute(graphics, id, styles) {
+    execute(graphics, id, styles, isSilent) {
         const textComp = graphics.getComponent(TEXT);
         const targetObj = graphics.getObject(id);
 
@@ -38,8 +48,20 @@ const command = {
         this.undoData.object = targetObj;
         this.undoData.styles = {};
         snippet.forEachOwnProperties(styles, (value, key) => {
-            this.undoData.styles[key] = targetObj[key];
+            let undoValue = targetObj[key];
+
+            if (!isSilent && !snippet.isExisty(this.undoData.styles[key])) {
+                undoValue = textComp.lastfontSizeUndoStack;
+                textComp.lastfontSizeUndoStack = targetObj[key];
+                this.undoData.styles[key] = undoValue;
+            } else {
+                this.undoData.styles[key] = undoValue;
+            }
         });
+
+        if (styles.fontSize && styles.fontSize === targetObj.fontSize) {
+            delete styles.fontSize;
+        }
 
         return textComp.setStyle(targetObj, styles);
     },

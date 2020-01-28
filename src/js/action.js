@@ -41,8 +41,19 @@ export default {
                 this.ui.rotate.setRangeBarAngle('setAngle', angle);
             }
         };
+        const setFontSizeBarOnAction = textStyle => {
+            console.log(textStyle);
+            if (this.ui.submenu === 'text') {
+                const {fontSize} = textStyle;
+
+                if (fontSize) {
+                    this.ui.text.fontSize = fontSize;
+                }
+            }
+        };
         const onEndUndoRedo = result => {
             setAngleRangeBarOnAction(result);
+            setFontSizeBarOnAction(result);
 
             return result;
         };
@@ -264,9 +275,9 @@ export default {
      */
     _textAction() {
         return extend({
-            changeTextStyle: styleObj => {
+            changeTextStyle: (styleObj, isSilent) => {
                 if (this.activeObjectId) {
-                    this.changeTextStyle(this.activeObjectId, styleObj);
+                    this.changeTextStyle(this.activeObjectId, styleObj, isSilent);
                 }
             }
         }, this._commonAction());
@@ -396,6 +407,9 @@ export default {
      */
     setReAction() {
         this.on({
+            textEditing: (vv) => {
+                console.log('TEXTCHANGED');
+            },
             undoStackChanged: length => {
                 if (length) {
                     this.ui.changeUndoButtonStatus(true);
