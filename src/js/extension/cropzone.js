@@ -5,6 +5,7 @@
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import {clamp} from '../util';
+import {eventNames as events} from '../consts';
 
 const CORNER_TYPE_TOP_LEFT = 'tl';
 const CORNER_TYPE_TOP_RIGHT = 'tr';
@@ -14,6 +15,7 @@ const CORNER_TYPE_MIDDLE_RIGHT = 'mr';
 const CORNER_TYPE_MIDDLE_BOTTOM = 'mb';
 const CORNER_TYPE_BOTTOM_LEFT = 'bl';
 const CORNER_TYPE_BOTTOM_RIGHT = 'br';
+const NOOP_FUNCTION = () => {};
 
 /**
  * Cropzone object
@@ -36,16 +38,35 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         options.type = 'cropzone';
 
         this.callSuper('initialize', options);
+        this._addEventHandler();
 
         this.canvas = canvas;
         this.options = options;
+    },
+    canvasEventDelegation(eventName) {
+        let delegationState = 'unregisted';
+        const isRegisted = this.canvasEventTrigger[eventName] !== NOOP_FUNCTION;
+        if (isRegisted) {
+            delegationState = 'registed';
+        } else if ([events.OBJECT_MOVED, events.OBJECT_SCALED].indexOf(eventName) < 0) {
+            delegationState = 'none';
+        }
 
+        return delegationState;
+    },
+    canvasEventRegister(eventName, eventTrigger) {
+        this.canvasEventTrigger[eventName] = eventTrigger;
+    },
+    _addEventHandler() {
+        this.canvasEventTrigger = {
+            [events.OBJECT_MOVED]: NOOP_FUNCTION,
+            [events.OBJECT_SCALED]: NOOP_FUNCTION
+        };
         this.on({
             'moving': this._onMoving.bind(this),
             'scaling': this._onScaling.bind(this)
         });
     },
-
     _renderCropzone(ctx) {
         const cropzoneDashLineWidth = 7;
         const cropzoneDashLineOffset = 7;
@@ -273,6 +294,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         this.left = clamp(left, 0, maxLeft);
         this.top = clamp(top, 0, maxTop);
+
+        this.canvasEventTrigger[events.OBJECT_MOVED](this);
     },
 
     /**
@@ -288,6 +311,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         // On scaling cropzone,
         // change real width and height and fix scaleFactor to 1
         this.scale(1).set(settings);
+
+        this.canvasEventTrigger[events.OBJECT_SCALED](this);
     },
 
     /**
