@@ -43,17 +43,19 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         this.canvas = canvas;
         this.options = options;
     },
-
-    eventDelegation(eventName) {
+    canvasEventDelegation(eventName) {
+        let delegationState = 'unregisted';
         const isRegisted = this.canvasEventTrigger[eventName] !== NOOP_FUNCTION;
-
-        if ([events.OBJECT_MOVED, events.OBJECT_SCALED].indexOf(eventName) < 0) {
-            return 'none';
+        if (isRegisted) {
+            delegationState = 'registed';
+        } else if ([events.OBJECT_MOVED, events.OBJECT_SCALED].indexOf(eventName) < 0) {
+            delegationState = 'none';
         }
 
-        return isRegisted ? 'registed' : eventTrigger => {
-            this.canvasEventTrigger[eventName] = eventTrigger;
-        };
+        return delegationState;
+    },
+    canvasEventRegister(eventName, eventTrigger) {
+        this.canvasEventTrigger[eventName] = eventTrigger;
     },
     _addEventHandler() {
         this.canvasEventTrigger = {

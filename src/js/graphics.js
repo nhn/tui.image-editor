@@ -982,20 +982,20 @@ class Graphics {
      * Lazy event emitter
      * @param {string} eventName - event name
      * @param {Function} paramsMaker - make param function
-     * @param {Object} [target] - Bbject of the event owner.
+     * @param {Object} [target] - Object of the event owner.
      * @private
      */
     _lazyFire(eventName, paramsMaker, target) {
-        const existEventDelegation = target && target.eventDelegation;
-        const eventDelegationRegister = existEventDelegation ? target.eventDelegation(eventName) : 'none';
+        const existEventDelegation = target && target.canvasEventDelegation;
+        const delegationState = existEventDelegation ? target.canvasEventDelegation(eventName) : 'none';
 
-        if (['none', 'registed'].indexOf(eventDelegationRegister) < 0) {
-            eventDelegationRegister(object => {
+        if (delegationState === 'unregisted') {
+            target.canvasEventRegister(eventName, object => {
                 this.fire(eventName, paramsMaker(object));
             });
         }
 
-        if (eventDelegationRegister === 'none') {
+        if (delegationState === 'none') {
             this.fire(eventName, paramsMaker(target));
         }
     }
