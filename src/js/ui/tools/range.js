@@ -1,5 +1,8 @@
 import snippet from 'tui-code-snippet';
 import {toInteger, clamp} from '../../util';
+import {keyCodes} from '../../consts';
+
+const INPUT_FILTER_REGEXP = /(-?)([0-9]*)[^0-9]*([0-9]*)/g;
 
 /**
  * Range control class
@@ -7,6 +10,19 @@ import {toInteger, clamp} from '../../util';
  * @ignore
  */
 class Range {
+    /**
+     * @constructor
+     * @extends {View}
+     * @param {Object} rangeElements - Html resources for creating sliders
+     *  @param {HTMLElement} rangeElements.slider - b
+     *  @param {HTMLElement} [rangeElements.input] - c
+     * @param {Object} options - Slider make options
+     *  @param {number} options.min - min value
+     *  @param {number} options.max - max value
+     *  @param {number} options.value - default value
+     *  @param {number} [options.useDecimal] - Decimal point processing.
+     *  @param {number} [options.realTimeEvent] - Reflect live events.
+     */
     constructor(rangeElements, options = {}) {
         this._value = options.value || 0;
 
@@ -169,22 +185,40 @@ class Range {
     _changeValueWithInputKeyEvent(event) {
         const {keyCode, target} = event;
 
-        if ([38, 40].indexOf(keyCode) < 0) {
+        if ([keyCodes.ARROW_UP, keyCodes.ARROW_DOWN].indexOf(keyCode) < 0) {
             return;
         }
 
         let value = Number(target.value);
 
-        if (keyCode === 38) {
-            value += 1;
-        } else if (keyCode === 40) {
-            value -= 1;
+        value = this._valueUpDownForKeyEvent(value, keyCode);
+
+        const unChanged = value < this._min || value > this._max;
+
+        if (!unChanged) {
+            const clampValue = clamp(value, this._min, this.max);
+            this.value = clampValue;
+            this.fire('change', clampValue, false);
+        }
+    }
+
+    /**
+     * value up down for input
+     * @param {number} value - original value number
+     * @param {number} keyCode - input event key code
+     * @returns {number} value - changed value
+     * @private
+     */
+    _valueUpDownForKeyEvent(value, keyCode) {
+        const step = this._useDecimal ? 0.1 : 1;
+
+        if (keyCode === keyCodes.ARROW_UP) {
+            value += step;
+        } else if (keyCode === keyCodes.ARROW_DOWN) {
+            value -= step;
         }
 
-        value = clamp(value, this._min, this.max);
-
-        this.value = value;
-        this.fire('change', value, false);
+        return value;
     }
 
     /**
@@ -196,7 +230,7 @@ class Range {
     _changeValueWithInput(isLast, event) {
         const {keyCode, target} = event;
 
-        if ([38, 40].indexOf(keyCode) >= 0) {
+        if ([keyCodes.ARROW_UP, keyCodes.ARROW_DOWN].indexOf(keyCode) >= 0) {
             return;
         }
 
@@ -263,9 +297,9 @@ class Range {
         const ratio = touchPx / this.rangeWidth;
         const resultValue = (this._absMax * ratio) + this._min;
         const value = this._useDecimal ? resultValue : toInteger(resultValue);
-        const changedValue = this.value !== value;
+        const isValueChanged = this.value !== value;
 
-        if (changedValue) {
+        if (isValueChanged) {
             this.value = value;
             if (this.realTimeEvent) {
                 this.fire('change', this._value, false);
@@ -314,7 +348,7 @@ class Range {
      * @private
      */
     _filterForInputText(inputValue) {
-        return inputValue.replace(/(-?)([0-9]*)[^0-9]*([0-9]*)/g, '$1$2$3');
+        return inputValue.replace(INPUT_FILTER_REGEXP, '$1$2$3');
     }
 }
 

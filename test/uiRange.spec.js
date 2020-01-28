@@ -2,11 +2,12 @@ import Range from '../src/js/ui/tools/range';
 import {defaultRotateRangeValus} from '../src/js/consts';
 
 describe('Range', () => {
-    let range, input;
+    let range, input, slider;
     beforeEach(() => {
         input = document.createElement('input');
+        slider = document.createElement('div');
         range = new Range({
-            slider: document.createElement('div'),
+            slider,
             input
         }, defaultRotateRangeValus);
     });

@@ -5,6 +5,7 @@
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import {clamp} from '../util';
+import {eventNames as events} from '../consts';
 
 const CORNER_TYPE_TOP_LEFT = 'tl';
 const CORNER_TYPE_TOP_RIGHT = 'tr';
@@ -14,6 +15,7 @@ const CORNER_TYPE_MIDDLE_RIGHT = 'mr';
 const CORNER_TYPE_MIDDLE_BOTTOM = 'mb';
 const CORNER_TYPE_BOTTOM_LEFT = 'bl';
 const CORNER_TYPE_BOTTOM_RIGHT = 'br';
+const NOOP_FUNCTION = () => {};
 
 /**
  * Cropzone object
@@ -36,16 +38,35 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         options.type = 'cropzone';
 
         this.callSuper('initialize', options);
+        this._addEventHandler();
 
         this.canvas = canvas;
         this.options = options;
+    },
+    canvasEventDelegation(eventName) {
+        let delegationState = 'unregisted';
+        const isRegisted = this.canvasEventTrigger[eventName] !== NOOP_FUNCTION;
+        if (isRegisted) {
+            delegationState = 'registed';
+        } else if ([events.OBJECT_MOVED, events.OBJECT_SCALED].indexOf(eventName) < 0) {
+            delegationState = 'none';
+        }
 
+        return delegationState;
+    },
+    canvasEventRegister(eventName, eventTrigger) {
+        this.canvasEventTrigger[eventName] = eventTrigger;
+    },
+    _addEventHandler() {
+        this.canvasEventTrigger = {
+            [events.OBJECT_MOVED]: NOOP_FUNCTION,
+            [events.OBJECT_SCALED]: NOOP_FUNCTION
+        };
         this.on({
             'moving': this._onMoving.bind(this),
             'scaling': this._onScaling.bind(this)
         });
     },
-
     _renderCropzone(ctx) {
         const cropzoneDashLineWidth = 7;
         const cropzoneDashLineOffset = 7;
@@ -273,6 +294,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         this.left = clamp(left, 0, maxLeft);
         this.top = clamp(top, 0, maxTop);
+
+        this.canvasEventTrigger[events.OBJECT_MOVED](this);
     },
 
     /**
@@ -281,21 +304,25 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _onScaling(fEvent) {
+        const selectedCorner = fEvent.transform.corner;
         const pointer = this.canvas.getPointer(fEvent.e);
-        const settings = this._calcScalingSizeFromPointer(pointer);
+        const settings = this._calcScalingSizeFromPointer(pointer, selectedCorner);
 
         // On scaling cropzone,
         // change real width and height and fix scaleFactor to 1
         this.scale(1).set(settings);
+
+        this.canvasEventTrigger[events.OBJECT_SCALED](this);
     },
 
     /**
      * Calc scaled size from mouse pointer with selected corner
      * @param {{x: number, y: number}} pointer - Mouse position
+     * @param {string} selectedCorner - selected corner type
      * @returns {Object} Having left or(and) top or(and) width or(and) height.
      * @private
      */
-    _calcScalingSizeFromPointer(pointer) {
+    _calcScalingSizeFromPointer(pointer, selectedCorner) {
         const pointerX = pointer.x,
             pointerY = pointer.y,
             tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY),
@@ -305,7 +332,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
          * @todo: 일반 객체에서 shift 조합키를 누르면 free size scaling이 됨 --> 확인해볼것
          *      canvas.class.js // _scaleObject: function(...){...}
          */
-        return this._makeScalingSettings(tlScalingSize, brScalingSize);
+        return this._makeScalingSettings(tlScalingSize, brScalingSize, selectedCorner);
     },
 
     /**
@@ -354,10 +381,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * Make scaling settings
      * @param {{width: number, height: number, left: number, top: number}} tl - Top-Left setting
      * @param {{width: number, height: number}} br - Bottom-Right setting
+     * @param {string} selectedCorner - selected corner type
      * @returns {{width: ?number, height: ?number, left: ?number, top: ?number}} Position setting
      * @private
      */
-    _makeScalingSettings(tl, br) {
+    _makeScalingSettings(tl, br, selectedCorner) {
         const tlWidth = tl.width;
         const tlHeight = tl.height;
         const brHeight = br.height;
@@ -366,7 +394,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const tlTop = tl.top;
         let settings;
 
-        switch (this.__corner) {
+        switch (selectedCorner) {
             case CORNER_TYPE_TOP_LEFT:
                 settings = tl;
                 break;

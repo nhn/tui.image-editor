@@ -27,12 +27,12 @@ const {isUndefined, forEach, CustomEvents} = snippet;
  *      @param {string} options.includeUI.loadImage.path - image path
  *      @param {string} options.includeUI.loadImage.name - image name
  *    @param {Object} [options.includeUI.theme] - Theme object
- *    @param {Array} [options.includeUI.menu] - It can be selected when only specific menu is used. [default all]
+ *    @param {Array} [options.includeUI.menu] - It can be selected when only specific menu is used, Default values are \['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'\].
  *    @param {string} [options.includeUI.initMenu] - The first menu to be selected and started.
  *    @param {Object} [options.includeUI.uiSize] - ui size of editor
  *      @param {string} options.includeUI.uiSize.width - width of ui
  *      @param {string} options.includeUI.uiSize.height - height of ui
- *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position [top | bottom | left | right]
+ *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position('top', 'bottom', 'left', 'right')
  *  @param {number} options.cssMaxWidth - Canvas css-max-width
  *  @param {number} options.cssMaxHeight - Canvas css-max-height
  *  @param {Object} [options.selectionStyle] - selection style
