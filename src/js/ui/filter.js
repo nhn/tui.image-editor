@@ -178,23 +178,23 @@ class Filter extends Submenu {
     _makeControlElement() {
         this._els = {
             removewhiteDistanceRange: new Range(
-                this.selector('.tie-removewhite-distance-range'),
+                {slider: this.selector('.tie-removewhite-distance-range')},
                 FILTER_RANGE.removewhiteDistanceRange
             ),
             brightnessRange: new Range(
-                this.selector('.tie-brightness-range'),
+                {slider: this.selector('.tie-brightness-range')},
                 FILTER_RANGE.brightnessRange
             ),
             noiseRange: new Range(
-                this.selector('.tie-noise-range'),
+                {slider: this.selector('.tie-noise-range')},
                 FILTER_RANGE.noiseRange
             ),
             pixelateRange: new Range(
-                this.selector('.tie-pixelate-range'),
+                {slider: this.selector('.tie-pixelate-range')},
                 FILTER_RANGE.pixelateRange
             ),
             colorfilterThresholeRange: new Range(
-                this.selector('.tie-colorfilter-threshole-range'),
+                {slider: this.selector('.tie-colorfilter-threshole-range')},
                 FILTER_RANGE.colorfilterThresholeRange
             ),
             filterTintColor: new Colorpicker(
@@ -225,16 +225,16 @@ class Filter extends Submenu {
     _pickerWithRange(pickerControl) {
         const rangeWrap = document.createElement('div');
         const rangelabel = document.createElement('label');
-        const range = document.createElement('div');
+        const slider = document.createElement('div');
 
-        range.id = 'tie-filter-tint-opacity';
+        slider.id = 'tie-filter-tint-opacity';
         rangelabel.innerHTML = 'Opacity';
         rangeWrap.appendChild(rangelabel);
-        rangeWrap.appendChild(range);
+        rangeWrap.appendChild(slider);
         pickerControl.appendChild(rangeWrap);
         pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
-        return new Range(range, FILTER_RANGE.tintOpacityRange);
+        return new Range({slider}, FILTER_RANGE.tintOpacityRange);
     }
 
     /**

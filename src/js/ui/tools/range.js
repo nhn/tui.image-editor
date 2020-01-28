@@ -1,5 +1,8 @@
 import snippet from 'tui-code-snippet';
-import {toInteger} from '../../util';
+import {toInteger, clamp} from '../../util';
+import {keyCodes} from '../../consts';
+
+const INPUT_FILTER_REGEXP = /(-?)([0-9]*)[^0-9]*([0-9]*)/g;
 
 /**
  * Range control class
@@ -7,21 +10,62 @@ import {toInteger} from '../../util';
  * @ignore
  */
 class Range {
-    constructor(rangeElement, options = {}) {
+    /**
+     * @constructor
+     * @extends {View}
+     * @param {Object} rangeElements - Html resources for creating sliders
+     *  @param {HTMLElement} rangeElements.slider - b
+     *  @param {HTMLElement} [rangeElements.input] - c
+     * @param {Object} options - Slider make options
+     *  @param {number} options.min - min value
+     *  @param {number} options.max - max value
+     *  @param {number} options.value - default value
+     *  @param {number} [options.useDecimal] - Decimal point processing.
+     *  @param {number} [options.realTimeEvent] - Reflect live events.
+     */
+    constructor(rangeElements, options = {}) {
         this._value = options.value || 0;
-        this.rangeElement = rangeElement;
+
+        this.rangeElement = rangeElements.slider;
+        this.rangeInputElement = rangeElements.input;
+
         this._drawRangeElement();
 
-        this.rangeWidth = toInteger(window.getComputedStyle(rangeElement, null).width) - 12;
+        this.rangeWidth = this._getRangeWidth();
         this._min = options.min || 0;
         this._max = options.max || 100;
+        this._useDecimal = options.useDecimal;
         this._absMax = (this._min * -1) + this._max;
         this.realTimeEvent = options.realTimeEvent || false;
 
+        this.eventHandler = {
+            startChangingSlide: this._startChangingSlide.bind(this),
+            stopChangingSlide: this._stopChangingSlide.bind(this),
+            changeSlide: this._changeSlide.bind(this),
+            changeSlideFinally: this._changeSlideFinally.bind(this),
+            changeInput: this._changeValueWithInput.bind(this, false),
+            changeInputFinally: this._changeValueWithInput.bind(this, true),
+            changeInputWithArrow: this._changeValueWithInputKeyEvent.bind(this)
+        };
+
         this._addClickEvent();
         this._addDragEvent();
+        this._addInputEvent();
         this.value = options.value;
         this.trigger('change');
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeClickEvent();
+        this._removeDragEvent();
+        this._removeInputEvent();
+        this.rangeElement.innerHTML = '';
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
     }
 
     /**
@@ -52,6 +96,8 @@ class Range {
      * @param {Boolean} fire whether fire custom event or not
      */
     set value(value) {
+        value = this._useDecimal ? value : toInteger(value);
+
         const absValue = value - this._min;
         let leftPosition = (absValue * this.rangeWidth) / this._absMax;
 
@@ -61,7 +107,11 @@ class Range {
 
         this.pointer.style.left = `${leftPosition}px`;
         this.subbar.style.right = `${this.rangeWidth - leftPosition}px`;
+
         this._value = value;
+        if (this.rangeInputElement) {
+            this.rangeInputElement.value = value;
+        }
     }
 
     /**
@@ -70,6 +120,16 @@ class Range {
      */
     trigger(type) {
         this.fire(type, this._value);
+    }
+
+    /**
+     * Calculate slider width
+     * @returns {number} - slider width
+     */
+    _getRangeWidth() {
+        const getElementWidth = element => toInteger(window.getComputedStyle(element, null).width);
+
+        return getElementWidth(this.rangeElement) - getElementWidth(this.pointer);
     }
 
     /**
@@ -94,24 +154,113 @@ class Range {
     }
 
     /**
+     * Add range input editing event
+     * @private
+     */
+    _addInputEvent() {
+        if (this.rangeInputElement) {
+            this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
+            this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
+            this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
+        }
+    }
+
+    /**
+     * Remove range input editing event
+     * @private
+     */
+    _removeInputEvent() {
+        if (this.rangeInputElement) {
+            this.rangeInputElement.removeEventListener('keydown', this.eventHandler.changeInputWithArrow);
+            this.rangeInputElement.removeEventListener('keyup', this.eventHandler.changeInput);
+            this.rangeInputElement.removeEventListener('blur', this.eventHandler.changeInputFinally);
+        }
+    }
+
+    /**
+     * change angle event
+     * @param {object} event - key event
+     * @private
+     */
+    _changeValueWithInputKeyEvent(event) {
+        const {keyCode, target} = event;
+
+        if ([keyCodes.ARROW_UP, keyCodes.ARROW_DOWN].indexOf(keyCode) < 0) {
+            return;
+        }
+
+        let value = Number(target.value);
+
+        value = this._valueUpDownForKeyEvent(value, keyCode);
+
+        const unChanged = value < this._min || value > this._max;
+
+        if (!unChanged) {
+            const clampValue = clamp(value, this._min, this.max);
+            this.value = clampValue;
+            this.fire('change', clampValue, false);
+        }
+    }
+
+    /**
+     * value up down for input
+     * @param {number} value - original value number
+     * @param {number} keyCode - input event key code
+     * @returns {number} value - changed value
+     * @private
+     */
+    _valueUpDownForKeyEvent(value, keyCode) {
+        const step = this._useDecimal ? 0.1 : 1;
+
+        if (keyCode === keyCodes.ARROW_UP) {
+            value += step;
+        } else if (keyCode === keyCodes.ARROW_DOWN) {
+            value -= step;
+        }
+
+        return value;
+    }
+
+    /**
+     * change angle event
+     * @param {boolean} isLast - Is last change
+     * @param {object} event - key event
+     * @private
+     */
+    _changeValueWithInput(isLast, event) {
+        const {keyCode, target} = event;
+
+        if ([keyCodes.ARROW_UP, keyCodes.ARROW_DOWN].indexOf(keyCode) >= 0) {
+            return;
+        }
+
+        const stringValue = this._filterForInputText(target.value);
+        const waitForChange = !stringValue || isNaN(stringValue);
+        target.value = stringValue;
+
+        if (!waitForChange) {
+            let value = this._useDecimal ? Number(stringValue) : toInteger(stringValue);
+            value = clamp(value, this._min, this.max);
+
+            this.value = value;
+            this.fire('change', value, isLast);
+        }
+    }
+
+    /**
      * Add Range click event
      * @private
      */
     _addClickEvent() {
-        this.rangeElement.addEventListener('click', event => {
-            event.stopPropagation();
-            if (event.target.className !== 'tui-image-editor-range') {
-                return;
-            }
-            const touchPx = event.offsetX;
-            const ratio = touchPx / this.rangeWidth;
-            const value = (this._absMax * ratio) + this._min;
-            this.pointer.style.left = `${ratio * this.rangeWidth}px`;
-            this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
-            this._value = value;
+        this.rangeElement.addEventListener('click', this.eventHandler.changeSlideFinally);
+    }
 
-            this.fire('change', value, true);
-        });
+    /**
+     * Remove Range click event
+     * @private
+     */
+    _removeClickEvent() {
+        this.rangeElement.removeEventListener('click', this.eventHandler.changeSlideFinally);
     }
 
     /**
@@ -119,17 +268,15 @@ class Range {
      * @private
      */
     _addDragEvent() {
-        this.pointer.addEventListener('mousedown', event => {
-            this.firstPosition = event.screenX;
-            this.firstLeft = toInteger(this.pointer.style.left) || 0;
-            this.dragEventHandler = {
-                changeAngle: this._changeAngle.bind(this),
-                stopChangingAngle: this._stopChangingAngle.bind(this)
-            };
+        this.pointer.addEventListener('mousedown', this.eventHandler.startChangingSlide);
+    }
 
-            document.addEventListener('mousemove', this.dragEventHandler.changeAngle);
-            document.addEventListener('mouseup', this.dragEventHandler.stopChangingAngle);
-        });
+    /**
+     * Remove Range drag event
+     * @private
+     */
+    _removeDragEvent() {
+        this.pointer.removeEventListener('mousedown', this.eventHandler.startChangingSlide);
     }
 
     /**
@@ -137,7 +284,7 @@ class Range {
      * @param {object} event - change event
      * @private
      */
-    _changeAngle(event) {
+    _changeSlide(event) {
         const changePosition = event.screenX;
         const diffPosition = changePosition - this.firstPosition;
         let touchPx = this.firstLeft + diffPosition;
@@ -146,24 +293,62 @@ class Range {
 
         this.pointer.style.left = `${touchPx}px`;
         this.subbar.style.right = `${this.rangeWidth - touchPx}px`;
+
+        const ratio = touchPx / this.rangeWidth;
+        const resultValue = (this._absMax * ratio) + this._min;
+        const value = this._useDecimal ? resultValue : toInteger(resultValue);
+        const isValueChanged = this.value !== value;
+
+        if (isValueChanged) {
+            this.value = value;
+            if (this.realTimeEvent) {
+                this.fire('change', this._value, false);
+            }
+        }
+    }
+
+    _changeSlideFinally(event) {
+        event.stopPropagation();
+        if (event.target.className !== 'tui-image-editor-range') {
+            return;
+        }
+        const touchPx = event.offsetX;
         const ratio = touchPx / this.rangeWidth;
         const value = (this._absMax * ratio) + this._min;
+        this.pointer.style.left = `${ratio * this.rangeWidth}px`;
+        this.subbar.style.right = `${(1 - ratio) * this.rangeWidth}px`;
+        this.value = value;
 
-        this._value = value;
+        this.fire('change', value, true);
+    }
 
-        if (this.realTimeEvent) {
-            this.fire('change', value, false);
-        }
+    _startChangingSlide(event) {
+        this.firstPosition = event.screenX;
+        this.firstLeft = toInteger(this.pointer.style.left) || 0;
+
+        document.addEventListener('mousemove', this.eventHandler.changeSlide);
+        document.addEventListener('mouseup', this.eventHandler.stopChangingSlide);
     }
 
     /**
      * stop change angle event
      * @private
      */
-    _stopChangingAngle() {
+    _stopChangingSlide() {
         this.fire('change', this._value, true);
-        document.removeEventListener('mousemove', this.dragEventHandler.changeAngle);
-        document.removeEventListener('mouseup', this.dragEventHandler.stopChangingAngle);
+
+        document.removeEventListener('mousemove', this.eventHandler.changeSlide);
+        document.removeEventListener('mouseup', this.eventHandler.stopChangingSlide);
+    }
+
+    /**
+     * Unnecessary string filtering.
+     * @param {string} inputValue - origin string of input
+     * @returns {string} filtered string
+     * @private
+     */
+    _filterForInputText(inputValue) {
+        return inputValue.replace(INPUT_FILTER_REGEXP, '$1$2$3');
     }
 }
 

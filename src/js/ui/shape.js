@@ -32,8 +32,10 @@ class Shape extends Submenu {
         this._els = {
             shapeSelectButton: this.selector('.tie-shape-button'),
             shapeColorButton: this.selector('.tie-shape-color-button'),
-            strokeRange: new Range(this.selector('.tie-stroke-range'), defaultShapeStrokeValus),
-            strokeRangeValue: this.selector('.tie-stroke-range-value'),
+            strokeRange: new Range({
+                slider: this.selector('.tie-stroke-range'),
+                input: this.selector('.tie-stroke-range-value')
+            }, defaultShapeStrokeValus),
             fillColorpicker: new Colorpicker(
                 this.selector('.tie-color-fill'), '', this.toggleDirection, this.usageStatistics
             ),
@@ -61,8 +63,6 @@ class Shape extends Submenu {
         this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
         this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
-        this._els.strokeRangeValue.value = this._els.strokeRange.value;
-        this._els.strokeRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -162,8 +162,6 @@ class Shape extends Submenu {
      */
     _changeStrokeRangeHandler(value) {
         this.options.strokeWidth = toInteger(value);
-        this._els.strokeRangeValue.value = toInteger(value);
-
         this.actions.changeShape({
             strokeWidth: value
         });
