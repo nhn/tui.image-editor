@@ -96,7 +96,9 @@ module.exports = {
         Y: 89,
         SHIFT: 16,
         BACKSPACE: 8,
-        DEL: 46
+        DEL: 46,
+        ARROW_DOWN: 40,
+        ARROW_UP: 38
     },
 
     /**
