@@ -1045,10 +1045,8 @@ class ImageEditor {
         let result = null;
 
         if (isSilent) {
-            console.log('A');
             result = this.executeSilent(commands.CHANGE_TEXT_STYLE, id, styleObj);
         } else {
-            console.log('B', styleObj);
             result = this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
         }
 

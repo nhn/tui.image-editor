@@ -11,12 +11,31 @@ const {componentNames, rejectMessages, commandNames} = consts;
 const {TEXT} = componentNames;
 
 /**
- * Calculate undo fontSize
- * @param {Component} textComp - text component
- * @returns {number} - angle for undo state
+ * Make undoData
+ * @param {object} styles - text styles
+ * @param {Component} targetObj - text component
+ * @param {boolean} isSilent - is silent execution or not
+ * @returns {object} - undo data
  */
-function getUndoFontSize(textComp) {
-    return textComp.lastfontSizeUndoStack;
+function makeUndoData(styles, targetObj, isSilent) {
+    const undoData = {};
+
+    undoData.object = targetObj;
+    undoData.styles = {};
+
+    snippet.forEachOwnProperties(styles, (value, key) => {
+        let undoValue = targetObj[key];
+
+        if (!isSilent && !snippet.isExisty(undoData.styles[key]) && key === 'fontSize') {
+            undoValue = targetObj.lastfontSizeUndoStack;
+            targetObj.lastfontSizeUndoStack = targetObj[key];
+            undoData.styles[key] = undoValue;
+        } else {
+            undoData.styles[key] = undoValue;
+        }
+    });
+
+    return undoData;
 }
 
 const command = {
@@ -40,27 +59,13 @@ const command = {
     execute(graphics, id, styles, isSilent) {
         const textComp = graphics.getComponent(TEXT);
         const targetObj = graphics.getObject(id);
+        const isRedo = Object.keys(this.undoData).length;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
-
-        this.undoData.object = targetObj;
-        this.undoData.styles = {};
-        snippet.forEachOwnProperties(styles, (value, key) => {
-            let undoValue = targetObj[key];
-
-            if (!isSilent && !snippet.isExisty(this.undoData.styles[key])) {
-                undoValue = textComp.lastfontSizeUndoStack;
-                textComp.lastfontSizeUndoStack = targetObj[key];
-                this.undoData.styles[key] = undoValue;
-            } else {
-                this.undoData.styles[key] = undoValue;
-            }
-        });
-
-        if (styles.fontSize && styles.fontSize === targetObj.fontSize) {
-            delete styles.fontSize;
+        if (!isRedo) {
+            this.undoData = makeUndoData(styles, targetObj, isSilent);
         }
 
         return textComp.setStyle(targetObj, styles);

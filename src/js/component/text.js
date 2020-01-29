@@ -125,12 +125,6 @@ class Text extends Component {
          * @type {boolean}
          */
         this.useItext = graphics.useItext;
-
-        /**
-         * last fontSize for undostack
-         * @type {number}
-         */
-        this.lastfontSizeUndoStack = 50;
     }
 
     /**
@@ -290,7 +284,7 @@ class Text extends Component {
     setStyle(activeObj, styleObj) {
         return new Promise(resolve => {
             snippet.forEach(styleObj, (val, key) => {
-                if (activeObj[key] === val) {
+                if (activeObj[key] === val && key !== 'fontSize') {
                     styleObj[key] = resetStyles[key] || '';
                 }
             }, this);
@@ -298,7 +292,6 @@ class Text extends Component {
             activeObj.set(styleObj);
 
             this.getCanvas().renderAll();
-            console.log('STYLEOBJ', styleObj);
             resolve(styleObj);
         });
     }

@@ -41,19 +41,8 @@ export default {
                 this.ui.rotate.setRangeBarAngle('setAngle', angle);
             }
         };
-        const setFontSizeBarOnAction = textStyle => {
-            console.log(textStyle);
-            if (this.ui.submenu === 'text') {
-                const {fontSize} = textStyle;
-
-                if (fontSize) {
-                    this.ui.text.fontSize = fontSize;
-                }
-            }
-        };
         const onEndUndoRedo = result => {
             setAngleRangeBarOnAction(result);
-            setFontSizeBarOnAction(result);
 
             return result;
         };
@@ -70,12 +59,14 @@ export default {
             undo: () => {
                 if (!this.isEmptyUndoStack()) {
                     exitCropOnAction();
+                    this.deactivateAll();
                     this.undo().then(onEndUndoRedo);
                 }
             },
             redo: () => {
                 if (!this.isEmptyRedoStack()) {
                     exitCropOnAction();
+                    this.deactivateAll();
                     this.redo().then(onEndUndoRedo);
                 }
             },
@@ -407,9 +398,6 @@ export default {
      */
     setReAction() {
         this.on({
-            textEditing: (vv) => {
-                console.log('TEXTCHANGED');
-            },
             undoStackChanged: length => {
                 if (length) {
                     this.ui.changeUndoButtonStatus(true);
@@ -458,6 +446,8 @@ export default {
                     if (this.ui.submenu !== 'text') {
                         this.ui.changeMenu('text', false, false);
                     }
+
+                    this.ui.text.setTextStyleStateOnAction(obj);
                 } else if (obj.type === 'icon') {
                     this.stopDrawingMode();
                     if (this.ui.submenu !== 'icon') {
@@ -473,7 +463,10 @@ export default {
                     styles: {
                         fill: this.ui.text.textColor,
                         fontSize: util.toInteger(this.ui.text.fontSize),
-                        fontFamily: 'Noto Sans'
+                        fontFamily: 'Noto Sans',
+                        fontStyle: this.ui.text.fontStyle,
+                        fontWeight: this.ui.text.fontWeight,
+                        underline: this.ui.text.underline
                     }
                 }).then(() => {
                     this.changeCursor('default');

@@ -5,8 +5,7 @@
 import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
 import consts from '../consts';
-
-const {componentNames, commandNames} = consts;
+const {componentNames, commandNames, rejectMessages} = consts;
 const {TEXT} = componentNames;
 
 const command = {
@@ -31,8 +30,22 @@ const command = {
     execute(graphics, text, options) {
         const textComp = graphics.getComponent(TEXT);
 
+        if (this.undoData.object) {
+            return new Promise((resolve, reject) => {
+                if (!graphics.contains(this.undoData.object)) {
+                    graphics.add(this.undoData.object);
+                    resolve(this.undoData.object);
+                } else {
+                    reject(rejectMessages.redo);
+                }
+            });
+        }
+
         return textComp.add(text, options).then(objectProps => {
-            this.undoData.object = graphics.getObject(objectProps.id);
+            const textObject = graphics.getObject(objectProps.id);
+            textObject.lastfontSizeUndoStack = textObject.fontSize;
+
+            this.undoData.object = textObject;
 
             return objectProps;
         });

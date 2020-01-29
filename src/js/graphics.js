@@ -1108,7 +1108,9 @@ class Graphics {
             'fontSize',
             'fontStyle',
             'textAlign',
-            'textDecoration'
+            'textDecoration',
+            'underline',
+            'fontWeight'
         ];
         const props = {};
         extend(props, util.getProperties(obj, predefinedKeys));

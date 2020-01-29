@@ -65,6 +65,10 @@ class Text extends Submenu {
         this.actions.modeChange('text');
     }
 
+    set textColor(color) {
+        this._els.textColorpicker.color = color;
+    }
+
     /**
      * Get text color
      * @returns {string} - text color
@@ -87,6 +91,57 @@ class Text extends Submenu {
      */
     set fontSize(value) {
         this._els.textRange.value = value;
+    }
+
+    /**
+     * get font style
+     * @returns {string} - font style
+     */
+    get fontStyle() {
+        return this.effect.italic ? 'italic' : 'normal';
+    }
+
+    /**
+     * get font weight
+     * @returns {string} - font weight
+     */
+    get fontWeight() {
+        return this.effect.bold ? 'bold' : 'normal';
+    }
+
+    /**
+     * get text underline text underline
+     * @returns {boolean} - true or false
+     */
+    get underline() {
+        return this.effect.underline;
+    }
+
+    setTextStyleStateOnAction(textStyle = {}) {
+        const {fill, fontSize, fontStyle, fontWeight, underline, textAlign} = textStyle;
+
+        this.textColor = fill;
+        this.fontSize = fontSize;
+        this.setEffactState('italic', fontStyle);
+        this.setEffactState('bold', fontWeight);
+        this.setEffactState('underline', underline);
+        this.setAlignState(textAlign);
+    }
+
+    setEffactState(effactName, value) {
+        const effactValue = value === 'italic' || value === 'bold' || value === true;
+        const button = this._els.textEffectButton.querySelector(`.tui-image-editor-button.${effactName}`);
+
+        this.effect[effactName] = effactValue;
+
+        button.classList[effactValue ? 'add' : 'remove']('active');
+    }
+
+    setAlignState(value) {
+        const button = this._els.textAlignButton;
+        button.classList.remove(this.align);
+        button.classList.add(value);
+        this.align = value;
     }
 
     /**
