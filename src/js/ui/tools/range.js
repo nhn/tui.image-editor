@@ -178,18 +178,6 @@ class Range {
     }
 
     /**
-     * Remove range input editing event
-     * @private
-     */
-    _removeInputEvent() {
-        if (this.rangeInputElement) {
-            this.rangeInputElement.removeEventListener('keydown', this.eventHandler.changeInputWithArrow);
-            this.rangeInputElement.removeEventListener('keyup', this.eventHandler.changeInput);
-            this.rangeInputElement.removeEventListener('blur', this.eventHandler.changeInputFinally);
-        }
-    }
-
-    /**
      * change angle event
      * @param {object} event - key event
      * @private
