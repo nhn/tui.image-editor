@@ -19,6 +19,12 @@ const {componentNames} = consts;
 class Rotation extends Component {
     constructor(graphics) {
         super(componentNames.ROTATION, graphics);
+
+        /**
+         * last angle for undostack
+         * @type {number}
+         */
+        this.lastAngleForUndoStack = 0;
     }
 
     /**
