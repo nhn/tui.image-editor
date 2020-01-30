@@ -156,8 +156,7 @@ class Text extends Submenu {
             'bold': {fontWeight: 'bold'},
             'italic': {fontStyle: 'italic'},
             'underline': {
-                underline: true,
-                textDecoration: 'underline'
+                underline: true
             }
         }[styleType];
 

@@ -1108,7 +1108,6 @@ class Graphics {
             'fontSize',
             'fontStyle',
             'textAlign',
-            'textDecoration',
             'underline',
             'fontWeight'
         ];
