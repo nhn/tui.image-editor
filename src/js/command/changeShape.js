@@ -10,6 +10,35 @@ import consts from '../consts';
 const {componentNames, rejectMessages, commandNames} = consts;
 const {SHAPE} = componentNames;
 
+/**
+ * Make undoData
+ * @param {object} options - shape options
+ * @param {Component} targetObj - shape component
+ * @param {boolean} isSilent - is silent execution or not
+ * @returns {object} - undo data
+ */
+function makeUndoData(options, targetObj, isSilent) {
+    const undoData = {
+        object: targetObj,
+        options: {}
+    };
+
+    snippet.forEachOwnProperties(options, (value, key) => {
+        let undoValue = targetObj[key];
+
+        if (!isSilent && key === 'strokeWidth') {
+            undoValue = targetObj.lastStrokeWidthUndoStack;
+            targetObj.lastStrokeWidthUndoStack = targetObj[key];
+
+            undoData.options[key] = undoValue;
+        } else {
+            undoData.options[key] = undoValue;
+        }
+    });
+
+    return undoData;
+}
+
 const command = {
     name: commandNames.CHANGE_SHAPE,
 
@@ -28,21 +57,21 @@ const command = {
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      */
-    execute(graphics, id, options) {
+    execute(graphics, id, options, isSilent) {
         const shapeComp = graphics.getComponent(SHAPE);
         const targetObj = graphics.getObject(id);
+        const isRedo = Object.keys(this.undoData).length;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        this.undoData.object = targetObj;
-        this.undoData.options = {};
-        snippet.forEachOwnProperties(options, (value, key) => {
-            this.undoData.options[key] = targetObj[key];
-        });
+        if (!isRedo) {
+            snippet.extend(this.undoData, makeUndoData(options, targetObj, isSilent));
+        }
 
         return shapeComp.change(targetObj, options);
     },

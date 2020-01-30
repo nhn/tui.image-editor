@@ -299,9 +299,9 @@ export default {
      */
     _shapeAction() {
         return extend({
-            changeShape: changeShapeObject => {
+            changeShape: (changeShapeObject, isSilent) => {
                 if (this.activeObjectId) {
-                    this.changeShape(this.activeObjectId, changeShapeObject);
+                    this.changeShape(this.activeObjectId, changeShapeObject, isSilent);
                 }
             },
             setDrawingShape: shapeType => {
