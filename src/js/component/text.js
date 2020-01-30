@@ -291,7 +291,7 @@ class Text extends Component {
             activeObj.set(styleObj);
 
             this.getCanvas().renderAll();
-            resolve(styleObj);
+            resolve();
         });
     }
 

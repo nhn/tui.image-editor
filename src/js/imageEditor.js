@@ -1042,15 +1042,9 @@ class ImageEditor {
      * });
      */
     changeTextStyle(id, styleObj, isSilent) {
-        let result = null;
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
-        if (isSilent) {
-            result = this.executeSilent(commands.CHANGE_TEXT_STYLE, id, styleObj);
-        } else {
-            result = this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
-        }
-
-        return result;
+        return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
     }
 
     /**

@@ -279,9 +279,10 @@ describe('commandFactory', () => {
             invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
                 fontSize: 30,
                 underline: true
-            }).then(changedTextObject => {
-                expect(changedTextObject.fontSize).toBe(30);
-                expect(changedTextObject.underline).toBe(true);
+            }).then(() => {
+                const textObject = graphics.getObject(textObjectId);
+                expect(textObject.fontSize).toBe(30);
+                expect(textObject.underline).toBe(true);
                 done();
             });
         });
@@ -289,9 +290,10 @@ describe('commandFactory', () => {
             invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
                 fontSize: 30,
                 underline: true
-            }).then(() => invoker.undo()).then(changedTextObject => {
-                expect(changedTextObject.fontSize).toBe(defaultFontSize);
-                expect(changedTextObject.underline).toBe(defaultUnderline);
+            }).then(() => invoker.undo()).then(() => {
+                const textObject = graphics.getObject(textObjectId);
+                expect(textObject.fontSize).toBe(defaultFontSize);
+                expect(textObject.underline).toBe(defaultUnderline);
                 done();
             });
         });

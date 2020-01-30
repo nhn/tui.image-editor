@@ -26,7 +26,7 @@ function makeUndoData(styles, targetObj, isSilent) {
     snippet.forEachOwnProperties(styles, (value, key) => {
         let undoValue = targetObj[key];
 
-        if (!isSilent && !snippet.isExisty(undoData.styles[key]) && key === 'fontSize') {
+        if (!isSilent && key === 'fontSize') {
             undoValue = targetObj.lastfontSizeUndoStack;
             targetObj.lastfontSizeUndoStack = targetObj[key];
             undoData.styles[key] = undoValue;
@@ -65,7 +65,7 @@ const command = {
             return Promise.reject(rejectMessages.noObject);
         }
         if (!isRedo) {
-            this.undoData = makeUndoData(styles, targetObj, isSilent);
+            snippet.extend(this.undoData, makeUndoData(styles, targetObj, isSilent));
         }
 
         return textComp.setStyle(targetObj, styles);
