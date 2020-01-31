@@ -288,6 +288,10 @@ class Text extends Component {
                 }
             }, this);
 
+            if ('textDecoration' in styleObj) {
+                snippet.extend(styleObj, this._getTextDecorationAdaptObject(styleObj.textDecoration));
+            }
+
             activeObj.set(styleObj);
 
             this.getCanvas().renderAll();
@@ -348,6 +352,19 @@ class Text extends Component {
      */
     getCanvasRatio() {
         return this._ratio;
+    }
+
+    /**
+     * Get text decoration adapt object
+     * @param {string} textDecoration - text decoration option string
+     * @returns {object} adapt object for override
+     */
+    _getTextDecorationAdaptObject(textDecoration) {
+        return {
+            underline: textDecoration === 'underline',
+            linetrought: textDecoration === 'line-through',
+            overline: textDecoration === 'overline'
+        };
     }
 
     /**

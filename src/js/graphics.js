@@ -1108,7 +1108,7 @@ class Graphics {
             'fontSize',
             'fontStyle',
             'textAlign',
-            'underline',
+            'textDecoration',
             'fontWeight'
         ];
         const props = {};

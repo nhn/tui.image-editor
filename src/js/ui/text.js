@@ -118,18 +118,18 @@ class Text extends Submenu {
     }
 
     setTextStyleStateOnAction(textStyle = {}) {
-        const {fill, fontSize, fontStyle, fontWeight, underline, textAlign} = textStyle;
+        const {fill, fontSize, fontStyle, fontWeight, textDecoration, textAlign} = textStyle;
 
         this.textColor = fill;
         this.fontSize = fontSize;
         this.setEffactState('italic', fontStyle);
         this.setEffactState('bold', fontWeight);
-        this.setEffactState('underline', underline);
+        this.setEffactState('underline', textDecoration);
         this.setAlignState(textAlign);
     }
 
     setEffactState(effactName, value) {
-        const effactValue = value === 'italic' || value === 'bold' || value === true;
+        const effactValue = value === 'italic' || value === 'bold' || value === 'underline';
         const button = this._els.textEffectButton.querySelector(`.tui-image-editor-button.${effactName}`);
 
         this.effect[effactName] = effactValue;
@@ -155,9 +155,7 @@ class Text extends Submenu {
         const styleObj = {
             'bold': {fontWeight: 'bold'},
             'italic': {fontStyle: 'italic'},
-            'underline': {
-                underline: true
-            }
+            'underline': {textDecoration: 'underline'}
         }[styleType];
 
         this.effect[styleType] = !this.effect[styleType];
