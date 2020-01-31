@@ -54,7 +54,7 @@ class Filter extends Submenu {
      *   @param {Function} actions.applyFilter - apply filter option
      */
     addEvent({applyFilter}) {
-        const changeRangeValue = filterName => this._changeRangeValue.bind(this, applyFilter, filterName);
+        const changeRangeValue = filterName => this._changeFilterState.bind(this, applyFilter, filterName);
         const changeCheckBox = filterName => this._changeFilterCheckbox.bind(this, applyFilter, filterName);
         const changeColor = filterName => this._changeFilterColor.bind(this, applyFilter, filterName);
 
@@ -72,14 +72,11 @@ class Filter extends Submenu {
         this._els.noiseRange.on('change', changeRangeValue('noise'));
         this._els.brightnessRange.on('change', changeRangeValue('brightness'));
         this._els.blendType.addEventListener('change', changeRangeValue('blend'));
-
         this._els.filterBlendColor.on('change', changeColor('blend'));
         this._els.filterMultiplyColor.on('change', changeColor('multiply'));
         this._els.filterTintColor.on('change', changeColor('tint'));
-
         this._els.tintOpacity.on('change', changeRangeValue('tint'));
         this._els.blendType.addEventListener('click', event => event.stopPropagation());
-
         this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
@@ -88,17 +85,16 @@ class Filter extends Submenu {
     setFilterState(chagedFilterInfos) {
         const {type, options, action} = chagedFilterInfos;
         const filterName = this._getFilterNameFromOptions(type, options);
-        if (action === 'add') {
-            this.checkedMap[filterName].checked = true;
-            this._setFilterAdd(filterName, options);
-        }
 
         if (action === 'remove') {
             this.checkedMap[filterName].checked = false;
+        } else {
+            this.checkedMap[filterName].checked = true;
+            this._setFilterState(filterName, options);
         }
     }
 
-    _setFilterAdd(filterName, options) {
+    _setFilterState(filterName, options) { // eslint-disable-line
         if (filterName === 'colorFilter') {
             this._els.colorfilterThresholeRange.value = options.distance;
         } else if (filterName === 'removeWhite') {
@@ -136,11 +132,11 @@ class Filter extends Submenu {
     }
 
     _changeFilterColor(applyFilter, filterName) {
-        this._changeRangeValue(applyFilter, filterName, null, true);
+        this._changeFilterState(applyFilter, filterName, null, true);
     }
 
     _changeFilterCheckbox(applyFilter, filterName) {
-        this._changeRangeValue(applyFilter, filterName, null, true);
+        this._changeFilterState(applyFilter, filterName, null, true);
     }
 
     /**
@@ -150,7 +146,7 @@ class Filter extends Submenu {
      * @param {string} value - filter value
      * @param {boolean} isLast - Is last change
      */
-    _changeRangeValue(applyFilter, filterName, value, isLast) {
+    _changeFilterState(applyFilter, filterName, value, isLast) {
         const apply = this.checkedMap[filterName].checked;
         const type = filterNameMap[filterName];
 
