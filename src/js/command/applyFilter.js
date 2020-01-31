@@ -2,11 +2,24 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Apply a filter into an image
  */
+import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
 import consts from '../consts';
 
 const {componentNames, rejectMessages, commandNames} = consts;
 const {FILTER} = componentNames;
+
+function makeMaskOption (graphics, options) {
+    const maskObj = graphics.getObject(options.maskObjId);
+
+    if (!(maskObj && maskObj.isType('image'))) {
+        return Promise.reject(rejectMessages.invalidParameters);
+    }
+
+    options = {
+        mask: maskObj
+    };
+}
 
 const command = {
     name: commandNames.APPLY_FILTER,
@@ -14,31 +27,29 @@ const command = {
     /**
      * Apply a filter into an image
      * @param {Graphics} graphics - Graphics instance
-     * @param {string} type - Filter type
+     * @param {string} type - Filter name
      * @param {Object} options - Filter options
      *  @param {number} options.maskObjId - masking image object id
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      */
-    execute(graphics, type, options) {
+    execute(graphics, type, options, isSilent) {
         const filterComp = graphics.getComponent(FILTER);
 
         if (type === 'mask') {
-            const maskObj = graphics.getObject(options.maskObjId);
-
-            if (!(maskObj && maskObj.isType('image'))) {
-                return Promise.reject(rejectMessages.invalidParameters);
-            }
-
-            options = {
-                mask: maskObj
-            };
+            makeMaskOption(graphics, filterComp);
         }
 
         if (type === 'mask') {
             this.undoData.object = options.mask;
             graphics.remove(options.mask);
-        } else {
-            this.undoData.options = filterComp.getOptions(type);
+        } else if (!isSilent) {
+            const isRedo = !snippet.isUndefined(this.undoData.options);
+
+            if (!isRedo) {
+                this.undoData.options = filterComp.filterChangedStateForUndoStack[type] || null;
+                filterComp.filterChangedStateForUndoStack[type] = snippet.extend({}, options);
+            }
         }
 
         return filterComp.add(type, options);

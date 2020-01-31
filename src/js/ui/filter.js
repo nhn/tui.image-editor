@@ -4,7 +4,7 @@ import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/filter';
 import {toInteger, toCamelCase} from '../util';
-import {defaultFilterRangeValus as FILTER_RANGE} from '../consts';
+import {defaultFilterRangeValus as FILTER_RANGE, filterNameMap} from '../consts';
 
 const PICKER_CONTROL_HEIGHT = '130px';
 const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
@@ -25,29 +25,6 @@ const FILTER_OPTIONS = [
     'multiply',
     'blend'
 ];
-const filterNameMap = {
-    grayscale: 'grayscale',
-    invert: 'invert',
-    sepia: 'sepia',
-    sepia2: 'vintage',
-    blur: 'blur',
-    sharpen: 'sharpen',
-    emboss: 'emboss',
-    removeWhite: 'removeColor',
-    brightness: 'brightness',
-    contrast: 'contrast',
-    saturation: 'saturation',
-    vintage: 'vintage',
-    polaroid: 'polaroid',
-    noise: 'noise',
-    pixelate: 'pixelate',
-    colorFilter: 'removeColor',
-    tint: 'blendColor',
-    multiply: 'blendColor',
-    blend: 'blendColor',
-    hue: 'hue',
-    gamma: 'gamma'
-};
 
 /**
  * Filter ui class
@@ -77,42 +54,107 @@ class Filter extends Submenu {
      *   @param {Function} actions.applyFilter - apply filter option
      */
     addEvent({applyFilter}) {
-        const changeRangeValue = this._changeRangeValue.bind(this, applyFilter);
+        const changeRangeValue = filterName => this._changeRangeValue.bind(this, applyFilter, filterName);
+        const changeCheckBox = filterName => this._changeFilterCheckbox.bind(this, applyFilter, filterName);
+        const changeColor = filterName => this._changeFilterColor.bind(this, applyFilter, filterName);
 
         snippet.forEach(FILTER_OPTIONS, filter => {
             const filterCheckElement = this.selector(`.tie-${filter}`);
             const filterNameCamelCase = toCamelCase(filter);
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
 
-            filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
+            filterCheckElement.addEventListener('change', changeCheckBox(filterNameCamelCase));
         });
 
-        this._els.removewhiteDistanceRange.on('change', () => changeRangeValue('removeWhite'));
-        this._els.colorfilterThresholeRange.on('change', () => changeRangeValue('colorFilter'));
-        this._els.pixelateRange.on('change', () => changeRangeValue('pixelate'));
-        this._els.noiseRange.on('change', () => changeRangeValue('noise'));
-        this._els.brightnessRange.on('change', () => changeRangeValue('brightness'));
-        this._els.blendType.addEventListener('change', () => changeRangeValue('blend'));
-        this._els.filterBlendColor.on('change', () => changeRangeValue('blend'));
-        this._els.filterMultiplyColor.on('change', () => changeRangeValue('multiply'));
-        this._els.tintOpacity.on('change', () => changeRangeValue('tint'));
-        this._els.filterTintColor.on('change', () => changeRangeValue('tint'));
+        this._els.removewhiteDistanceRange.on('change', changeRangeValue('removeWhite'));
+        this._els.colorfilterThresholeRange.on('change', changeRangeValue('colorFilter'));
+        this._els.pixelateRange.on('change', changeRangeValue('pixelate'));
+        this._els.noiseRange.on('change', changeRangeValue('noise'));
+        this._els.brightnessRange.on('change', changeRangeValue('brightness'));
+        this._els.blendType.addEventListener('change', changeRangeValue('blend'));
+
+        this._els.filterBlendColor.on('change', changeColor('blend'));
+        this._els.filterMultiplyColor.on('change', changeColor('multiply'));
+        this._els.filterTintColor.on('change', changeColor('tint'));
+
+        this._els.tintOpacity.on('change', changeRangeValue('tint'));
         this._els.blendType.addEventListener('click', event => event.stopPropagation());
+
         this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
     }
 
+    setFilterState(chagedFilterInfos) {
+        const {type, options, action} = chagedFilterInfos;
+        const filterName = this._getFilterNameFromOptions(type, options);
+        if (action === 'add') {
+            this.checkedMap[filterName].checked = true;
+            this._setFilterAdd(filterName, options);
+        }
+
+        if (action === 'remove') {
+            this.checkedMap[filterName].checked = false;
+        }
+    }
+
+    _setFilterAdd(filterName, options) {
+        if (filterName === 'colorFilter') {
+            this._els.colorfilterThresholeRange.value = options.distance;
+        } else if (filterName === 'removeWhite') {
+            this._els.removewhiteDistanceRange.value = options.distance;
+        } else if (filterName === 'pixelate') {
+            this._els.pixelateRange.value = options.blocksize;
+        } else if (filterName === 'brightness') {
+            this._els.brightnessRange.value = options.brightness;
+        } else if (filterName === 'noise') {
+            this._els.noiseRange.value = options.noise;
+        } else if (filterName === 'tint') {
+            this._els.tintOpacity.value = options.alpha;
+            this._els.filterTintColor.color = options.color;
+        } else if (filterName === 'blend') {
+            this._els.filterBlendColor.color = options.color;
+        } else if (filterName === 'multiply') {
+            this._els.filterMultiplyColor.color = options.color;
+        }
+    }
+
+    _getFilterNameFromOptions(type, options) {
+        let filterName = type;
+
+        if (type === 'removeColor') {
+            filterName = snippet.isExisty(options.useAlpha) ? 'removeWhite' : 'colorFilter';
+        } else if (type === 'blendColor') {
+            filterName = {
+                add: 'blend',
+                multiply: 'multiply',
+                tint: 'tint'
+            }[options.mode];
+        }
+
+        return filterName;
+    }
+
+    _changeFilterColor(applyFilter, filterName) {
+        this._changeRangeValue(applyFilter, filterName, null, true);
+    }
+
+    _changeFilterCheckbox(applyFilter, filterName) {
+        this._changeRangeValue(applyFilter, filterName, null, true);
+    }
+
     /**
      * Add event for filter
      * @param {Function} applyFilter - actions for firter
-     * @param {string} filter - filter name
+     * @param {string} filterName - filter name
+     * @param {string} value - filter value
+     * @param {boolean} isLast - Is last change
      */
-    _changeRangeValue(applyFilter, filter) {
-        const apply = this.checkedMap[filter].checked;
-        const type = filterNameMap[filter];
+    _changeRangeValue(applyFilter, filterName, value, isLast) {
+        const apply = this.checkedMap[filterName].checked;
+        const type = filterNameMap[filterName];
 
-        const checkboxGroup = this.checkedMap[filter].closest('.tui-image-editor-checkbox-group');
+        const checkboxGroup = this.checkedMap[filterName].closest('.tui-image-editor-checkbox-group');
         if (checkboxGroup) {
             if (apply) {
                 checkboxGroup.classList.remove('tui-image-editor-disabled');
@@ -120,7 +162,7 @@ class Filter extends Submenu {
                 checkboxGroup.classList.add('tui-image-editor-disabled');
             }
         }
-        applyFilter(apply, type, this._getFilterOption(filter));
+        applyFilter(apply, type, this._getFilterOption(filterName), !isLast);
     }
 
     /**

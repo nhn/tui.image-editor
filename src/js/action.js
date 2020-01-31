@@ -41,8 +41,14 @@ export default {
                 this.ui.rotate.setRangeBarAngle('setAngle', angle);
             }
         };
+        const setFilterSateRangeBarOnAction = filterOptions => {
+            if (this.ui.submenu === 'filter') {
+                this.ui.filter.setFilterState(filterOptions);
+            }
+        };
         const onEndUndoRedo = result => {
             setAngleRangeBarOnAction(result);
+            setFilterSateRangeBarOnAction(result);
 
             return result;
         };
@@ -381,9 +387,10 @@ export default {
      */
     _filterAction() {
         return extend({
-            applyFilter: (applying, type, options) => {
+            applyFilter: (applying, type, options, isSilent) => {
+
                 if (applying) {
-                    this.applyFilter(type, options);
+                    this.applyFilter(type, options, isSilent);
                 } else if (this.hasFilter(type)) {
                     this.removeFilter(type);
                 }

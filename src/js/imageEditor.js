@@ -1268,6 +1268,7 @@ class ImageEditor {
      * @param {string} type - Filter type
      * @param {Object} options - Options to apply filter
      *  @param {number} options.maskObjId - masking image object id
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise<FilterResult, ErrorMsg>}
      * @example
      * imageEditor.applyFilter('Grayscale');
@@ -1279,8 +1280,10 @@ class ImageEditor {
      *     console.log('error: ', message);
      * });;
      */
-    applyFilter(type, options) {
-        return this.execute(commands.APPLY_FILTER, type, options);
+    applyFilter(type, options, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](commands.APPLY_FILTER, type, options);
     }
 
     /**

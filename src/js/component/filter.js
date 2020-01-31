@@ -13,7 +13,7 @@ import Sharpen from '../extension/sharpen';
 import Emboss from '../extension/emboss';
 import ColorFilter from '../extension/colorFilter';
 
-const {rejectMessages} = consts;
+const {rejectMessages, filterNameMap} = consts;
 const {filters} = fabric.Image;
 filters.Mask = Mask;
 filters.Blur = Blur;
@@ -31,6 +31,8 @@ filters.ColorFilter = ColorFilter;
 class Filter extends Component {
     constructor(graphics) {
         super(consts.componentNames.FILTER, graphics);
+
+        this.filterChangedStateForUndoStack = {};
     }
 
     /**
@@ -58,7 +60,8 @@ class Filter extends Component {
                 canvas.renderAll();
                 resolve({
                     type,
-                    action: 'add'
+                    action: 'add',
+                    options
                 });
             });
         });
@@ -73,6 +76,7 @@ class Filter extends Component {
         return new Promise((resolve, reject) => {
             const sourceImg = this._getSourceImage();
             const canvas = this.getCanvas();
+            const options = this.getOptions(type);
 
             if (!sourceImg.filters.length) {
                 reject(rejectMessages.unsupportedOperation);
@@ -84,7 +88,8 @@ class Filter extends Component {
                 canvas.renderAll();
                 resolve({
                     type,
-                    action: 'remove'
+                    action: 'remove',
+                    options
                 });
             });
         });

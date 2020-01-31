@@ -153,6 +153,30 @@ module.exports = {
         'icon-bubble': 'M44 48L34 58V48H12C5.373 48 0 42.627 0 36V12C0 5.373 5.373 0 12 0h40c6.627 0 12 5.373 12 12v24c0 6.627-5.373 12-12 12h-8z'
     },
 
+    filterNameMap: {
+        grayscale: 'grayscale',
+        invert: 'invert',
+        sepia: 'sepia',
+        sepia2: 'vintage',
+        blur: 'blur',
+        sharpen: 'sharpen',
+        emboss: 'emboss',
+        removeWhite: 'removeColor',
+        brightness: 'brightness',
+        contrast: 'contrast',
+        saturation: 'saturation',
+        vintage: 'vintage',
+        polaroid: 'polaroid',
+        noise: 'noise',
+        pixelate: 'pixelate',
+        colorFilter: 'removeColor',
+        tint: 'blendColor',
+        multiply: 'blendColor',
+        blend: 'blendColor',
+        hue: 'hue',
+        gamma: 'gamma'
+    },
+
     defaultRotateRangeValus: {
         realTimeEvent: true,
         min: -360,
@@ -182,34 +206,40 @@ module.exports = {
 
     defaultFilterRangeValus: {
         tintOpacityRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1,
             value: 0.7,
             useDecimal: true
         },
         removewhiteDistanceRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1,
             value: 0.2,
             useDecimal: true
         },
         brightnessRange: {
+            realTimeEvent: true,
             min: -1,
             max: 1,
             value: 0,
             useDecimal: true
         },
         noiseRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1000,
             value: 100
         },
         pixelateRange: {
+            realTimeEvent: true,
             min: 2,
             max: 20,
             value: 4
         },
         colorfilterThresholeRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1,
             value: 0.2,
