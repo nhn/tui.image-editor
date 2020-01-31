@@ -157,7 +157,6 @@ module.exports = {
         grayscale: 'grayscale',
         invert: 'invert',
         sepia: 'sepia',
-        sepia2: 'vintage',
         blur: 'blur',
         sharpen: 'sharpen',
         emboss: 'emboss',
