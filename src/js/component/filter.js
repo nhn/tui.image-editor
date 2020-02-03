@@ -13,7 +13,7 @@ import Sharpen from '../extension/sharpen';
 import Emboss from '../extension/emboss';
 import ColorFilter from '../extension/colorFilter';
 
-const {rejectMessages, filterNameMap} = consts;
+const {rejectMessages} = consts;
 const {filters} = fabric.Image;
 filters.Mask = Mask;
 filters.Blur = Blur;

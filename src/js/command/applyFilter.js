@@ -9,16 +9,32 @@ import consts from '../consts';
 const {componentNames, rejectMessages, commandNames} = consts;
 const {FILTER} = componentNames;
 
-function makeMaskOption (graphics, options) {
-    const maskObj = graphics.getObject(options.maskObjId);
+/**
+ * Make undoData
+ * @param {Graphics} graphics - Graphics instance
+ * @param {string} type - Filter name
+ * @param {Component} filterComp - filter component
+ * @param {Object} options - Filter options
+ *  @param {number} options.maskObjId - masking image object id
+ * @param {boolean} isSilent - is silent execution or not
+ * @returns {object} - undo data
+ */
+function makeUndoData(graphics, type, filterComp, options, isSilent) {
+    const undoData = {};
 
-    if (!(maskObj && maskObj.isType('image'))) {
-        return Promise.reject(rejectMessages.invalidParameters);
+    if (type === 'mask') {
+        undoData.object = options.mask;
+        graphics.remove(options.mask);
+    } else if (!isSilent) {
+        const isRedo = !snippet.isUndefined(undoData.options);
+
+        if (!isRedo) {
+            undoData.options = filterComp.filterChangedStateForUndoStack[type] || null;
+            filterComp.filterChangedStateForUndoStack[type] = snippet.extend({}, options);
+        }
     }
 
-    options = {
-        mask: maskObj
-    };
+    return undoData;
 }
 
 const command = {
@@ -37,20 +53,18 @@ const command = {
         const filterComp = graphics.getComponent(FILTER);
 
         if (type === 'mask') {
-            makeMaskOption(graphics, filterComp);
-        }
+            const maskObj = graphics.getObject(options.maskObjId);
 
-        if (type === 'mask') {
-            this.undoData.object = options.mask;
-            graphics.remove(options.mask);
-        } else if (!isSilent) {
-            const isRedo = !snippet.isUndefined(this.undoData.options);
-
-            if (!isRedo) {
-                this.undoData.options = filterComp.filterChangedStateForUndoStack[type] || null;
-                filterComp.filterChangedStateForUndoStack[type] = snippet.extend({}, options);
+            if (!(maskObj && maskObj.isType('image'))) {
+                return Promise.reject(rejectMessages.invalidParameters);
             }
+
+            options = {
+                mask: maskObj
+            };
         }
+
+        snippet.extend(this.undoData, makeUndoData(graphics, type, filterComp, options, isSilent));
 
         return filterComp.add(type, options);
     },
