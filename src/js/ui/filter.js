@@ -4,7 +4,7 @@ import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/filter';
 import {toInteger, toCamelCase} from '../util';
-import {defaultFilterRangeValus as FILTER_RANGE, filterNameMap} from '../consts';
+import {defaultFilterRangeValus as FILTER_RANGE} from '../consts';
 
 const PICKER_CONTROL_HEIGHT = '130px';
 const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
@@ -25,6 +25,29 @@ const FILTER_OPTIONS = [
     'multiply',
     'blend'
 ];
+
+const filterNameMap = {
+    grayscale: 'grayscale',
+    invert: 'invert',
+    sepia: 'sepia',
+    blur: 'blur',
+    sharpen: 'sharpen',
+    emboss: 'emboss',
+    removeWhite: 'removeColor',
+    brightness: 'brightness',
+    contrast: 'contrast',
+    saturation: 'saturation',
+    vintage: 'vintage',
+    polaroid: 'polaroid',
+    noise: 'noise',
+    pixelate: 'pixelate',
+    colorFilter: 'removeColor',
+    tint: 'blendColor',
+    multiply: 'blendColor',
+    blend: 'blendColor',
+    hue: 'hue',
+    gamma: 'gamma'
+};
 
 /**
  * Filter ui class
@@ -82,6 +105,13 @@ class Filter extends Submenu {
         this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
     }
 
+    /**
+     * Set filter for undo changed
+     * @param {Object} chagedFilterInfos - changed command infos
+     *   @param {string} type - filter type
+     *   @param {string} action - add or remove
+     *   @param {Object} options - filter options
+     */
     setFilterState(chagedFilterInfos) {
         const {type, options, action} = chagedFilterInfos;
         const filterName = this._getFilterNameFromOptions(type, options);
@@ -94,6 +124,12 @@ class Filter extends Submenu {
         this.checkedMap[filterName].checked = !isRemove;
     }
 
+    /**
+     * Set filter for undo changed
+     * @param {string} filterName - filter name
+     * @param {Object} options - filter options
+     * @private
+     */
     _setFilterState(filterName, options) { // eslint-disable-line
         if (filterName === 'colorFilter') {
             this._els.colorfilterThresholeRange.value = options.distance;
@@ -115,6 +151,13 @@ class Filter extends Submenu {
         }
     }
 
+    /**
+     * Get filter name
+     * @param {string} type - filter type
+     * @param {Object} options - filter options
+     * @returns {string} filter name
+     * @private
+     */
     _getFilterNameFromOptions(type, options) {
         let filterName = type;
 

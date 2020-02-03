@@ -12,7 +12,7 @@ const {FILTER} = componentNames;
 /**
  * Make undoData
  * @param {Graphics} graphics - Graphics instance
- * @param {string} type - Filter name
+ * @param {string} type - Filter type 
  * @param {Component} filterComp - filter component
  * @param {Object} options - Filter options
  *  @param {number} options.maskObjId - masking image object id
@@ -43,7 +43,7 @@ const command = {
     /**
      * Apply a filter into an image
      * @param {Graphics} graphics - Graphics instance
-     * @param {string} type - Filter name
+     * @param {string} type - Filter type
      * @param {Object} options - Filter options
      *  @param {number} options.maskObjId - masking image object id
      * @param {boolean} isSilent - is silent execution or not
