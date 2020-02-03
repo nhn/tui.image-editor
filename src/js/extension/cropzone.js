@@ -63,6 +63,17 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             [events.OBJECT_SCALED]: NOOP_FUNCTION
         };
         this.on({
+            'mousedown': e => {
+                if (e.transform.corner) {
+                    this.dragStartPoint = {
+                        x: e.pointer.x,
+                        y: e.pointer.y
+                    };
+                }
+            },
+            'mouseup': () => {
+                this.dragStartPoint = null;
+            },
             'moving': this._onMoving.bind(this),
             'scaling': this._onScaling.bind(this)
         });
@@ -323,16 +334,62 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _calcScalingSizeFromPointer(pointer, selectedCorner) {
-        const pointerX = pointer.x,
-            pointerY = pointer.y,
-            tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY),
-            brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
+        const pointerX = pointer.x;
+        const pointerY = pointer.y;
+        const tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY);
+        const brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
+        // const trScalingSize = this._topRight(pointerX, pointerY);
+
+        if (selectedCorner === CORNER_TYPE_TOP_LEFT) {
+            return tlScalingSize;
+        } else if (selectedCorner === CORNER_TYPE_BOTTOM_RIGHT) {
+            return brScalingSize;
+        }
 
         /*
          * @todo: 일반 객체에서 shift 조합키를 누르면 free size scaling이 됨 --> 확인해볼것
          *      canvas.class.js // _scaleObject: function(...){...}
          */
         return this._makeScalingSettings(tlScalingSize, brScalingSize, selectedCorner);
+    },
+    _topRight(x, y) { // eslint-disable-line
+        const rect = this.getBoundingRect(false, true);
+        const bottom = rect.height + this.top;
+        const right = rect.width + this.left;
+        let top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
+
+        if (this.dragStartPoint && this.options.presetRatio) {
+            const {presetRatio} = this.options;
+            const {x: startX, y: startY} = this.dragStartPoint;
+            const leftDiff = left - startX;
+            const topDiff = top - startY;
+            const newTop = startY + (leftDiff / presetRatio);
+            const newLeft = startX + (topDiff * presetRatio);
+
+            if (leftDiff <= topDiff) {
+                if (newTop >= 0) {
+                    top = newTop;
+                } else {
+                    top = 0;
+                    left = left + (newTop * -1 * presetRatio);
+                }
+            } else if (leftDiff > topDiff) {
+                if (newLeft >= 0) {
+                    left = newLeft;
+                } else {
+                    left = 0;
+                    top = top + (newLeft * -1 / presetRatio);
+                }
+            }
+        }
+
+        // When scaling "Top-Left corner": It fixes right and bottom coordinates
+        return {
+            top,
+            left: this.left,
+            width: right - this.left,
+            height: bottom - top
+        };
     },
 
     /**
@@ -342,12 +399,37 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @returns {{top: number, left: number, width: number, height: number}}
      * @private
      */
-    _calcTopLeftScalingSizeFromPointer(x, y) {
+    _calcTopLeftScalingSizeFromPointer(x, y) { // eslint-disable-line
         const rect = this.getBoundingRect(false, true);
         const bottom = rect.height + this.top;
         const right = rect.width + this.left;
-        const top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
-        const left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
+        let top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
+        let left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
+
+        if (this.dragStartPoint && this.options.presetRatio) {
+            const {presetRatio} = this.options;
+            const {x: startX, y: startY} = this.dragStartPoint;
+            const leftDiff = left - startX;
+            const topDiff = top - startY;
+            const newTop = startY + (leftDiff / presetRatio);
+            const newLeft = startX + (topDiff * presetRatio);
+
+            if (leftDiff <= topDiff) {
+                if (newTop >= 0) {
+                    top = newTop;
+                } else {
+                    top = 0;
+                    left = left + (newTop * -1 * presetRatio);
+                }
+            } else if (leftDiff > topDiff) {
+                if (newLeft >= 0) {
+                    left = newLeft;
+                } else {
+                    left = 0;
+                    top = top + (newLeft * -1 / presetRatio);
+                }
+            }
+        }
 
         // When scaling "Top-Left corner": It fixes right and bottom coordinates
         return {
@@ -365,14 +447,46 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @returns {{width: number, height: number}}
      * @private
      */
-    _calcBottomRightScalingSizeFromPointer(x, y) {
+    _calcBottomRightScalingSizeFromPointer(x, y) { //eslint-disable-line
         const {width: maxX, height: maxY} = this.canvas;
         const {left, top} = this;
+        const getScale = (value, orignalValue) => (value > orignalValue) ? orignalValue / value : 1;
+
+        let width = clamp(x, (left + 1), maxX) - left; // (width = x - left), (left + 1 <= x <= maxX)
+        let height = clamp(y, (top + 1), maxY) - top; // (height = y - top), (top + 1 <= y <= maxY)
+        const right = width + left;
+        const bottom = height + top;
+
+        if (this.dragStartPoint && this.options.presetRatio) {
+            const {presetRatio} = this.options;
+            const {x: startX, y: startY} = this.dragStartPoint;
+            const leftDiff = startX - right;
+            const topDiff = startY - bottom;
+
+            const newHeight = width / presetRatio;
+            const newWidth = height * presetRatio;
+
+            if (leftDiff <= topDiff) {
+                if (newHeight + top <= maxY) {
+                    height = newHeight;
+                } else {
+                    height = maxY;
+                    width = height * presetRatio;
+                }
+            } else if (leftDiff > topDiff) {
+                if (newWidth + left <= maxX) {
+                    width = newWidth;
+                } else {
+                    width = maxX;
+                    height = width / presetRatio;
+                }
+            }
+        }
 
         // When scaling "Bottom-Right corner": It fixes left and top coordinates
         return {
-            width: clamp(x, (left + 1), maxX) - left, // (width = x - left), (left + 1 <= x <= maxX)
-            height: clamp(y, (top + 1), maxY) - top // (height = y - top), (top + 1 <= y <= maxY)
+            width,
+            height
         };
     },
 

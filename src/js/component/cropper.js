@@ -97,6 +97,7 @@ class Cropper extends Component {
             lockScalingFlip: true,
             lockRotation: true
         }, this.graphics.cropSelectionStyle);
+        // this._cropzone.lockUniScaling = true;
 
         canvas.discardActiveObject();
         canvas.add(this._cropzone);
@@ -308,6 +309,7 @@ class Cropper extends Component {
         canvas.remove(cropzone);
 
         cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
+        cropzone.options.presetRatio = presetRatio;
 
         canvas.add(cropzone);
         canvas.selection = true;
