@@ -327,6 +327,37 @@ describe('commandFactory', () => {
         });
     });
 
+    describe('shapeCommand', () => {
+        let shapeObjectId;
+        const defaultStrokeWidth = 12;
+        beforeEach(done => {
+            invoker.execute(commands.ADD_SHAPE, graphics, 'rect', {
+                strokeWidth: defaultStrokeWidth
+            }).then(shapeObject => {
+                shapeObjectId = shapeObject.id;
+                done();
+            });
+        });
+        it('"changeShape" should set strokeWidth', done => {
+            invoker.execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, {
+                strokeWidth: 50
+            }).then(() => {
+                const shapeObject = graphics.getObject(shapeObjectId);
+                expect(shapeObject.strokeWidth).toBe(50);
+                done();
+            });
+        });
+        it('"redo()" should restore strokeWidth', done => {
+            invoker.execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, {
+                strokeWidth: 50
+            }).then(() => invoker.undo()).then(() => {
+                const shapeObject = graphics.getObject(shapeObjectId);
+                expect(shapeObject.strokeWidth).toBe(defaultStrokeWidth);
+                done();
+            });
+        });
+    });
+
     describe('clearCommand', () => {
         let canvasContext;
 

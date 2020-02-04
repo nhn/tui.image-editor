@@ -79,6 +79,14 @@ class Command {
     }
 
     /**
+     * command for redo if undoData exists
+     * @returns {boolean} isRedo
+     */
+    isRedo() {
+        return Object.keys(this.undoData).length;
+    }
+
+    /**
      * Attach execute callabck
      * @param {function} callback - Callback after execution
      * @returns {Command} this
