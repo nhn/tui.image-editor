@@ -1037,14 +1037,17 @@ class ImageEditor {
      *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
      *     @param {string} [styleObj.textDecoration] Type of line (underline / line-through / overline)
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      * @example
      * imageEditor.changeTextStyle(id, {
      *     fontStyle: 'italic'
      * });
      */
-    changeTextStyle(id, styleObj) {
-        return this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
+    changeTextStyle(id, styleObj, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
     }
 
     /**

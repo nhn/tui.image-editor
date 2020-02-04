@@ -260,6 +260,45 @@ describe('commandFactory', () => {
         });
     });
 
+    describe('textCommand', () => {
+        let textObjectId;
+        const defaultFontSize = 50;
+        const defaultUnderline = false;
+        beforeEach(done => {
+            invoker.execute(commands.ADD_TEXT, graphics, 'text', {
+                styles: {
+                    fontSize: defaultFontSize,
+                    underline: false
+                }
+            }).then(textObject => {
+                textObjectId = textObject.id;
+                done();
+            });
+        });
+        it('"changeTextStyle" should set text style', done => {
+            invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
+                fontSize: 30,
+                underline: true
+            }).then(() => {
+                const textObject = graphics.getObject(textObjectId);
+                expect(textObject.fontSize).toBe(30);
+                expect(textObject.underline).toBe(true);
+                done();
+            });
+        });
+        it('"undo()" should restore fontSize', done => {
+            invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
+                fontSize: 30,
+                underline: true
+            }).then(() => invoker.undo()).then(() => {
+                const textObject = graphics.getObject(textObjectId);
+                expect(textObject.fontSize).toBe(defaultFontSize);
+                expect(textObject.underline).toBe(defaultUnderline);
+                done();
+            });
+        });
+    });
+
     describe('rotationImageCommand', () => {
         it('"rotate()" should add angle', () => {
             const originAngle = mockImage.angle;
