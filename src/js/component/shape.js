@@ -181,7 +181,9 @@ class Shape extends Component {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
             options = this._extendOptions(options);
+
             const shapeObj = this._createInstance(type, options);
+            shapeObj.lastUndoStackForShape = options;
 
             this._bindEventOnShape(shapeObj);
 

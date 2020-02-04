@@ -947,6 +947,7 @@ class ImageEditor {
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {boolean} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      * @example
      * // call after selecting shape object on canvas
@@ -967,8 +968,10 @@ class ImageEditor {
      *     ry: 100
      * });
      */
-    changeShape(id, options) {
-        return this.execute(commands.CHANGE_SHAPE, id, options);
+    changeShape(id, options, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](commands.CHANGE_SHAPE, id, options);
     }
 
     /**
@@ -1034,14 +1037,17 @@ class ImageEditor {
      *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
      *     @param {string} [styleObj.textDecoration] Type of line (underline / line-through / overline)
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      * @example
      * imageEditor.changeTextStyle(id, {
      *     fontStyle: 'italic'
      * });
      */
-    changeTextStyle(id, styleObj) {
-        return this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
+    changeTextStyle(id, styleObj, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
     }
 
     /**

@@ -167,7 +167,7 @@ module.exports = {
     },
 
     defaultShapeStrokeValus: {
-        realTimeEvent: false,
+        realTimeEvent: true,
         min: 2,
         max: 300,
         value: 3

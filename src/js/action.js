@@ -65,12 +65,14 @@ export default {
             undo: () => {
                 if (!this.isEmptyUndoStack()) {
                     exitCropOnAction();
+                    this.deactivateAll();
                     this.undo().then(onEndUndoRedo);
                 }
             },
             redo: () => {
                 if (!this.isEmptyRedoStack()) {
                     exitCropOnAction();
+                    this.deactivateAll();
                     this.redo().then(onEndUndoRedo);
                 }
             },
@@ -270,9 +272,9 @@ export default {
      */
     _textAction() {
         return extend({
-            changeTextStyle: styleObj => {
+            changeTextStyle: (styleObj, isSilent) => {
                 if (this.activeObjectId) {
-                    this.changeTextStyle(this.activeObjectId, styleObj);
+                    this.changeTextStyle(this.activeObjectId, styleObj, isSilent);
                 }
             }
         }, this._commonAction());
@@ -305,9 +307,9 @@ export default {
      */
     _shapeAction() {
         return extend({
-            changeShape: changeShapeObject => {
+            changeShape: (changeShapeObject, isSilent) => {
                 if (this.activeObjectId) {
-                    this.changeShape(this.activeObjectId, changeShapeObject);
+                    this.changeShape(this.activeObjectId, changeShapeObject, isSilent);
                 }
             },
             setDrawingShape: shapeType => {
@@ -451,6 +453,8 @@ export default {
                     if (this.ui.submenu !== 'text') {
                         this.ui.changeMenu('text', false, false);
                     }
+
+                    this.ui.text.setTextStyleStateOnAction(obj);
                 } else if (obj.type === 'icon') {
                     this.stopDrawingMode();
                     if (this.ui.submenu !== 'icon') {
@@ -461,13 +465,18 @@ export default {
             },
             /* eslint-enable complexity */
             addText: pos => {
+                const {
+                    textColor: fill,
+                    fontSize,
+                    fontStyle,
+                    fontWeight,
+                    underline
+                } = this.ui.text;
+                const fontFamily = 'Noto Sans';
+
                 this.addText('Double Click', {
                     position: pos.originPosition,
-                    styles: {
-                        fill: this.ui.text.textColor,
-                        fontSize: util.toInteger(this.ui.text.fontSize),
-                        fontFamily: 'Noto Sans'
-                    }
+                    styles: {fill, fontSize, fontFamily, fontStyle, fontWeight, underline}
                 }).then(() => {
                     this.changeCursor('default');
                 });
