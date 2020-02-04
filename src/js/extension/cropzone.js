@@ -63,17 +63,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             [events.OBJECT_SCALED]: NOOP_FUNCTION
         };
         this.on({
-            'mousedown': e => {
-                if (e.transform.corner) {
-                    this.dragStartPoint = {
-                        x: e.pointer.x,
-                        y: e.pointer.y
-                    };
-                }
-            },
-            'mouseup': () => {
-                this.dragStartPoint = null;
-            },
             'moving': this._onMoving.bind(this),
             'scaling': this._onScaling.bind(this)
         });
@@ -368,11 +357,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @returns {{width: number, height: number}}
      * @private
      */
-    adjustRatioSize({width, height, ratio, scaleTo, maxWidth, maxHeight}) {
+    adjustRatioSize({width, height, scaleTo, maxWidth, maxHeight}) {
         if (scaleTo === 'width') {
-            height = width / ratio;
+            height = width / this.presetRatio;
         } else {
-            width = height * ratio;
+            width = height * this.presetRatio;
         }
 
         const maxScaleFactor = Math.min(maxWidth / width, maxHeight / height);
@@ -395,10 +384,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeTL({x, y}) {
-        // const {width: maxX, height: maxY} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
-
         const bottom = rect.height + rect.top;
         const right = rect.width + rect.left;
 
@@ -410,26 +396,22 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         let width = clamp(right - x, minWidth, maxWidth);
         let height = clamp(bottom - y, minHeight, maxHeight);
 
-        if (this.dragStartPoint && presetRatio) {
+        if (this.presetRatio) {
             const dx = rect.left - x;
             const dy = rect.top - y;
             const scaleTo = dx > dy ? 'width' : 'height';
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo,
                 maxWidth,
                 maxHeight
             }));
         }
 
-        const left = right - width;
-        const top = bottom - height;
-
         return {
-            left,
-            top,
+            left: right - width,
+            top: bottom - height,
             width,
             height
         };
@@ -445,7 +427,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _resizeMT({y}) {
         const {width: maxX} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
         const bottom = rect.height + rect.top;
 
@@ -457,11 +438,10 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const {left} = rect;
         let {width} = rect;
 
-        if (this.dragStartPoint && presetRatio) {
+        if (this.presetRatio) {
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo: 'height',
                 maxWidth,
                 maxHeight
@@ -488,7 +468,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _resizeTR({x, y}) {
         const {width: maxX} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
 
         const right = rect.width + rect.left;
@@ -502,14 +481,13 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         let width = clamp(x - rect.left, minWidth, maxWidth);
         let height = clamp(bottom - y, minHeight, maxHeight);
 
-        if (this.dragStartPoint && presetRatio) {
+        if (this.presetRatio) {
             const dx = x - right;
             const dy = rect.top - y;
             const scaleTo = dx > dy ? 'width' : 'height';
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo,
                 maxWidth,
                 maxHeight
@@ -536,7 +514,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _resizeBL({x, y}) {
         const {height: maxY} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
 
         const right = rect.width + rect.left;
@@ -551,7 +528,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         let width = clamp(right - x, minWidth, maxWidth);
         let height = clamp(y - rect.top, minHeight, maxHeight);
 
-        if (this.dragStartPoint && presetRatio) {
+        if (this.presetRatio) {
             const dx = rect.left - x;
             const dy = y - bottom;
             const scaleTo = dx > dy ? 'width' : 'height';
@@ -559,7 +536,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo,
                 maxWidth,
                 maxHeight
@@ -586,7 +562,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _resizeBR({x, y}) {
         const {width: maxX, height: maxY} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
 
         const bottom = rect.height + rect.top;
@@ -601,7 +576,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         let width = clamp(x - rect.left, minWidth, maxWidth);
         let height = clamp(y - rect.top, minHeight, maxHeight);
 
-        if (this.dragStartPoint && presetRatio) {
+        if (this.presetRatio) {
             const dx = x - right;
             const dy = y - bottom;
             const scaleTo = dx > dy ? 'width' : 'height';
@@ -609,7 +584,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo,
                 maxWidth,
                 maxHeight
@@ -634,7 +608,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _resizeMB({y}) {
         const {width: maxX, height: maxY} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
 
         const maxWidth = maxX - rect.left;
@@ -644,11 +617,10 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         let {width} = rect;
         let height = clamp(y - rect.top, minHeight, maxHeight);
 
-        if (this.dragStartPoint && presetRatio) {
+        if (this.presetRatio) {
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo: 'height',
                 maxWidth,
                 maxHeight
@@ -673,7 +645,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _resizeML({x}) {
         const {height: maxY} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
 
         const right = rect.width + rect.left;
@@ -685,11 +656,10 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         let width = clamp(right - x, minWidth, maxWidth);
         let {height} = rect;
 
-        if (presetRatio) {
+        if (this.presetRatio) {
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo: 'width',
                 maxWidth,
                 maxHeight
@@ -716,7 +686,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _resizeMR({x}) {
         const {width: maxX, height: maxY} = this.canvas;
-        const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
 
         const maxWidth = maxX - rect.left;
@@ -726,11 +695,10 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         let width = clamp(x - rect.left, minWidth, maxWidth);
         let {height} = rect;
 
-        if (presetRatio) {
+        if (this.presetRatio) {
             ({width, height} = this.adjustRatioSize({
                 width,
                 height,
-                presetRatio,
                 scaleTo: 'width',
                 maxWidth,
                 maxHeight

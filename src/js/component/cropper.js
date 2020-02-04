@@ -11,6 +11,7 @@ import {clamp, fixFloatingPoint} from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
 const DEFAULT_OPTION = {
+    presetRatio: null,
     top: -10,
     left: -10,
     height: 1,
@@ -308,8 +309,7 @@ class Cropper extends Component {
         canvas.selection = false;
         canvas.remove(cropzone);
 
-        cropzone.set(presetRatio ? this._getPresetCropSizePosition(presetRatio) : DEFAULT_OPTION);
-        cropzone.options.presetRatio = presetRatio;
+        cropzone.set(presetRatio ? this._getPresetPropertiesForCropSize(presetRatio) : DEFAULT_OPTION);
 
         canvas.add(cropzone);
         canvas.selection = true;
@@ -320,12 +320,12 @@ class Cropper extends Component {
     }
 
     /**
-     * Set a cropzone square
+     * get a cropzone square info
      * @param {number} presetRatio - preset ratio
-     * @returns {{left: number, top: number, width: number, height: number}}
+     * @returns {{presetRatio: number, left: number, top: number, width: number, height: number}}
      * @private
      */
-    _getPresetCropSizePosition(presetRatio) {
+    _getPresetPropertiesForCropSize(presetRatio) {
         const canvas = this.getCanvas();
         const originalWidth = canvas.getWidth();
         const originalHeight = canvas.getHeight();
@@ -343,6 +343,7 @@ class Cropper extends Component {
         [width, height] = snippet.map([width, height], sizeValue => fixFloatingPoint(sizeValue * scaleHeight));
 
         return {
+            presetRatio,
             top: (originalHeight - height) / 2,
             left: (originalWidth - width) / 2,
             width,
