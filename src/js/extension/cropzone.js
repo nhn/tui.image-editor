@@ -338,12 +338,23 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const pointerY = pointer.y;
         const tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY);
         const brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
-        // const trScalingSize = this._topRight(pointerX, pointerY);
 
         if (selectedCorner === CORNER_TYPE_TOP_LEFT) {
-            return tlScalingSize;
+            return this.resizeTL(pointerX, pointerY);
+        } else if (selectedCorner === CORNER_TYPE_MIDDLE_TOP) {
+            return this.resizeT(pointerY);
+        } else if (selectedCorner === CORNER_TYPE_TOP_RIGHT) {
+            return this.resizeTR(pointerX, pointerY);
+        } else if (selectedCorner === CORNER_TYPE_BOTTOM_LEFT) {
+            return this.resizeBL(pointerX, pointerY);
         } else if (selectedCorner === CORNER_TYPE_BOTTOM_RIGHT) {
-            return brScalingSize;
+            return this.resizeBR(pointerX, pointerY);
+        } else if (selectedCorner === CORNER_TYPE_MIDDLE_BOTTOM) {
+            return this.resizeB(pointerY);
+        } else if (selectedCorner === CORNER_TYPE_MIDDLE_LEFT) {
+            return this.resizeL(pointerX);
+        } else if (selectedCorner === CORNER_TYPE_MIDDLE_RIGHT) {
+            return this.resizeR(pointerX);
         }
 
         /*
@@ -352,43 +363,322 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
          */
         return this._makeScalingSettings(tlScalingSize, brScalingSize, selectedCorner);
     },
-    _topRight(x, y) { // eslint-disable-line
-        const rect = this.getBoundingRect(false, true);
-        const bottom = rect.height + this.top;
-        const right = rect.width + this.left;
-        let top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
 
-        if (this.dragStartPoint && this.options.presetRatio) {
-            const {presetRatio} = this.options;
-            const {x: startX, y: startY} = this.dragStartPoint;
-            const leftDiff = left - startX;
-            const topDiff = top - startY;
-            const newTop = startY + (leftDiff / presetRatio);
-            const newLeft = startX + (topDiff * presetRatio);
-
-            if (leftDiff <= topDiff) {
-                if (newTop >= 0) {
-                    top = newTop;
-                } else {
-                    top = 0;
-                    left = left + (newTop * -1 * presetRatio);
-                }
-            } else if (leftDiff > topDiff) {
-                if (newLeft >= 0) {
-                    left = newLeft;
-                } else {
-                    left = 0;
-                    top = top + (newLeft * -1 / presetRatio);
-                }
-            }
+    adjustRatioSize({width, height, presetRatio, scaleTo, maxWidth, maxHeight}) {
+        if (scaleTo === 'width') {
+            height = width / presetRatio;
+        } else {
+            width = height * presetRatio;
         }
 
-        // When scaling "Top-Left corner": It fixes right and bottom coordinates
+        const maxScaleFactor = Math.min(maxWidth / width, maxHeight / height);
+        if (maxScaleFactor <= 1) {
+            [width, height] = [width, height].map(v => v * maxScaleFactor);
+        }
+
         return {
+            width,
+            height
+        };
+    },
+
+    resizeTL(x, y) {
+        // const {width: maxX, height: maxY} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+
+        const bottom = rect.height + rect.top;
+        const right = rect.width + rect.left;
+
+        const maxWidth = right;
+        const minWidth = 1;
+        const maxHeight = bottom;
+        const minHeight = 1;
+
+        let width = clamp(right - x, minWidth, maxWidth);
+        let height = clamp(bottom - y, minHeight, maxHeight);
+
+        if (this.dragStartPoint && presetRatio) {
+            const dx = rect.left - x;
+            const dy = rect.top - y;
+            const scaleTo = dx > dy ? 'width' : 'height';
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo,
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        const left = right - width;
+        const top = bottom - height;
+
+        return {
+            left,
             top,
-            left: this.left,
-            width: right - this.left,
-            height: bottom - top
+            width,
+            height
+        };
+    },
+
+    resizeT(y) {
+        const {width: maxX} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+        const bottom = rect.height + rect.top;
+
+        const maxWidth = maxX - rect.left;
+        const maxHeight = bottom;
+        const minHeight = 1;
+
+        let height = clamp(bottom - y, minHeight, maxHeight);
+        const {left} = rect;
+        let {width} = rect;
+
+        if (this.dragStartPoint && presetRatio) {
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo: 'height',
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        const top = bottom - height;
+
+        return {
+            left,
+            top,
+            height,
+            width
+        };
+    },
+    resizeTR(x, y) {
+        const {width: maxX} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+
+        const right = rect.width + rect.left;
+        const bottom = rect.height + rect.top;
+
+        const maxWidth = maxX - rect.left;
+        const minWidth = 1;
+        const maxHeight = bottom;
+        const minHeight = 1;
+
+        let width = clamp(x - rect.left, minWidth, maxWidth);
+        let height = clamp(bottom - y, minHeight, maxHeight);
+
+        if (this.dragStartPoint && presetRatio) {
+            const dx = x - right;
+            const dy = rect.top - y;
+            const scaleTo = dx > dy ? 'width' : 'height';
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo,
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        const top = bottom - height;
+
+        return {
+            left: rect.left,
+            top,
+            width,
+            height
+        };
+    },
+
+    resizeBL(x, y) {
+        const {height: maxY} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+
+        const right = rect.width + rect.left;
+        const bottom = rect.height + rect.top;
+
+        const maxWidth = right;
+        const minWidth = 1;
+
+        const maxHeight = maxY - rect.top;
+        const minHeight = 1;
+
+        let width = clamp(right - x, minWidth, maxWidth);
+        let height = clamp(y - rect.top, minHeight, maxHeight);
+
+        if (this.dragStartPoint && presetRatio) {
+            const dx = rect.left - x;
+            const dy = y - bottom;
+            const scaleTo = dx > dy ? 'width' : 'height';
+
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo,
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        const left = right - width;
+
+        return {
+            left,
+            top: rect.top,
+            width,
+            height
+        };
+    },
+
+    resizeBR(x, y) {
+        const {width: maxX, height: maxY} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+
+        const bottom = rect.height + rect.top;
+        const right = rect.width + rect.left;
+
+        const maxWidth = maxX - rect.left;
+        const minWidth = 1;
+
+        const maxHeight = maxY - rect.top;
+        const minHeight = 1;
+
+        let width = clamp(x - rect.left, minWidth, maxWidth);
+        let height = clamp(y - rect.top, minHeight, maxHeight);
+
+        if (this.dragStartPoint && presetRatio) {
+            const dx = x - right;
+            const dy = y - bottom;
+            const scaleTo = dx > dy ? 'width' : 'height';
+
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo,
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        return {
+            left: rect.left,
+            top: rect.top,
+            width,
+            height
+        };
+    },
+
+    resizeB(y) {
+        const {width: maxX, height: maxY} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+
+        const maxWidth = maxX - rect.left;
+        const maxHeight = maxY - rect.top;
+        const minHeight = 1;
+
+        let {width} = rect;
+        let height = clamp(y - rect.top, minHeight, maxHeight);
+
+        if (this.dragStartPoint && presetRatio) {
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo: 'height',
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        return {
+            left: rect.left,
+            top: rect.top,
+            width,
+            height
+        };
+    },
+
+    resizeL(x) {
+        const {height: maxY} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+
+        const right = rect.width + rect.left;
+
+        const maxWidth = right;
+        const minWidth = 1;
+        const maxHeight = maxY - rect.top;
+
+        let width = clamp(right - x, minWidth, maxWidth);
+        let {height} = rect;
+
+        if (presetRatio) {
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo: 'width',
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        const left = right - width;
+
+        return {
+            left,
+            top: rect.top,
+            width,
+            height
+        };
+    },
+
+    /**
+     * Calc scaling size with control R
+     * @param {number} x - Mouse position X
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    resizeR(x) {
+        const {width: maxX, height: maxY} = this.canvas;
+        const {presetRatio} = this.options;
+        const rect = this.getBoundingRect(false, true);
+
+        const maxWidth = maxX - rect.left;
+        const minWidth = 1;
+        const maxHeight = maxY - rect.top;
+
+        let width = clamp(x - rect.left, minWidth, maxWidth);
+        let {height} = rect;
+
+        if (presetRatio) {
+            ({width, height} = this.adjustRatioSize({
+                width,
+                height,
+                presetRatio,
+                scaleTo: 'width',
+                maxWidth,
+                maxHeight
+            }));
+        }
+
+        return {
+            left: rect.left,
+            top: rect.top,
+            width,
+            height
         };
     },
 
@@ -405,31 +695,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const right = rect.width + this.left;
         let top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
         let left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
-
-        if (this.dragStartPoint && this.options.presetRatio) {
-            const {presetRatio} = this.options;
-            const {x: startX, y: startY} = this.dragStartPoint;
-            const leftDiff = left - startX;
-            const topDiff = top - startY;
-            const newTop = startY + (leftDiff / presetRatio);
-            const newLeft = startX + (topDiff * presetRatio);
-
-            if (leftDiff <= topDiff) {
-                if (newTop >= 0) {
-                    top = newTop;
-                } else {
-                    top = 0;
-                    left = left + (newTop * -1 * presetRatio);
-                }
-            } else if (leftDiff > topDiff) {
-                if (newLeft >= 0) {
-                    left = newLeft;
-                } else {
-                    left = 0;
-                    top = top + (newLeft * -1 / presetRatio);
-                }
-            }
-        }
 
         // When scaling "Top-Left corner": It fixes right and bottom coordinates
         return {
@@ -450,38 +715,11 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     _calcBottomRightScalingSizeFromPointer(x, y) { //eslint-disable-line
         const {width: maxX, height: maxY} = this.canvas;
         const {left, top} = this;
-        const getScale = (value, orignalValue) => (value > orignalValue) ? orignalValue / value : 1;
 
         let width = clamp(x, (left + 1), maxX) - left; // (width = x - left), (left + 1 <= x <= maxX)
         let height = clamp(y, (top + 1), maxY) - top; // (height = y - top), (top + 1 <= y <= maxY)
         const right = width + left;
         const bottom = height + top;
-
-        if (this.dragStartPoint && this.options.presetRatio) {
-            const {presetRatio} = this.options;
-            const {x: startX, y: startY} = this.dragStartPoint;
-            const leftDiff = startX - right;
-            const topDiff = startY - bottom;
-
-            const newHeight = width / presetRatio;
-            const newWidth = height * presetRatio;
-
-            if (leftDiff <= topDiff) {
-                if (newHeight + top <= maxY) {
-                    height = newHeight;
-                } else {
-                    height = maxY;
-                    width = height * presetRatio;
-                }
-            } else if (leftDiff > topDiff) {
-                if (newWidth + left <= maxX) {
-                    width = newWidth;
-                } else {
-                    width = maxX;
-                    height = width / presetRatio;
-                }
-            }
-        }
 
         // When scaling "Bottom-Right corner": It fixes left and top coordinates
         return {
