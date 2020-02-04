@@ -18,10 +18,10 @@ const {TEXT} = componentNames;
  * @returns {object} - undo data
  */
 function makeUndoData(styles, targetObj, isSilent) {
-    const undoData = {};
-
-    undoData.object = targetObj;
-    undoData.styles = {};
+    const undoData = {
+        object: targetObj,
+        styles: {}
+    };
 
     snippet.forEachOwnProperties(styles, (value, key) => {
         let undoValue = targetObj[key];
@@ -29,10 +29,9 @@ function makeUndoData(styles, targetObj, isSilent) {
         if (!isSilent && key === 'fontSize') {
             undoValue = targetObj.lastfontSizeUndoStack;
             targetObj.lastfontSizeUndoStack = targetObj[key];
-            undoData.styles[key] = undoValue;
-        } else {
-            undoData.styles[key] = undoValue;
         }
+
+        undoData.styles[key] = undoValue;
     });
 
     return undoData;

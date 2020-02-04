@@ -31,10 +31,12 @@ const command = {
         const textComp = graphics.getComponent(TEXT);
 
         if (this.undoData.object) {
+            const undoObject = this.undoData.object;
+
             return new Promise((resolve, reject) => {
-                if (!graphics.contains(this.undoData.object)) {
-                    graphics.add(this.undoData.object);
-                    resolve(this.undoData.object);
+                if (!graphics.contains(undoObject)) {
+                    graphics.add(undoObject);
+                    resolve(undoObject);
                 } else {
                     reject(rejectMessages.redo);
                 }
@@ -42,7 +44,8 @@ const command = {
         }
 
         return textComp.add(text, options).then(objectProps => {
-            const textObject = graphics.getObject(objectProps.id);
+            const {id} = objectProps;
+            const textObject = graphics.getObject(id);
             textObject.lastfontSizeUndoStack = textObject.fontSize;
 
             this.undoData.object = textObject;
