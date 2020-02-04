@@ -26,14 +26,12 @@ function makeUndoData(options, targetObj, isSilent) {
     snippet.forEachOwnProperties(options, (value, key) => {
         let undoValue = targetObj[key];
 
-        if (!isSilent && key === 'strokeWidth') {
-            undoValue = targetObj.lastStrokeWidthUndoStack;
-            targetObj.lastStrokeWidthUndoStack = targetObj[key];
-
-            undoData.options[key] = undoValue;
-        } else {
-            undoData.options[key] = undoValue;
+        if (!isSilent) {
+            undoValue = targetObj.lastUndoStackForShape[key];
+            targetObj.lastUndoStackForShape[key] = targetObj[key];
         }
+
+        undoData.options[key] = undoValue;
     });
 
     return undoData;
@@ -63,13 +61,12 @@ const command = {
     execute(graphics, id, options, isSilent) {
         const shapeComp = graphics.getComponent(SHAPE);
         const targetObj = graphics.getObject(id);
-        const isRedo = Object.keys(this.undoData).length;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        if (!isRedo) {
+        if (!this.isRedo()) {
             snippet.extend(this.undoData, makeUndoData(options, targetObj, isSilent));
         }
 
