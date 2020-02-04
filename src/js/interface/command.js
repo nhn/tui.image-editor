@@ -6,6 +6,7 @@ import errorMessage from '../factory/errorMessage';
 
 const createMessage = errorMessage.create;
 const errorTypes = errorMessage.types;
+let cacheUndoDataForSilent = null;
 
 /**
  * Command class
@@ -82,8 +83,16 @@ class Command {
      * command for redo if undoData exists
      * @returns {boolean} isRedo
      */
-    isRedo() {
+    get isRedo() {
         return Object.keys(this.undoData).length;
+    }
+
+    get cacheUndoDataForSilent() {
+        return cacheUndoDataForSilent;
+    }
+
+    set cacheUndoDataForSilent(value) {
+        cacheUndoDataForSilent = value;
     }
 
     /**

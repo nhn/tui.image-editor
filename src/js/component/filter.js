@@ -31,8 +31,6 @@ filters.ColorFilter = ColorFilter;
 class Filter extends Component {
     constructor(graphics) {
         super(consts.componentNames.FILTER, graphics);
-
-        this.filterChangedStateForUndoStack = {};
     }
 
     /**

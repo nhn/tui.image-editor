@@ -66,7 +66,7 @@ const command = {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        if (!this.isRedo()) {
+        if (!this.isRedo) {
             snippet.extend(this.undoData, makeUndoData(options, targetObj, isSilent));
         }
 

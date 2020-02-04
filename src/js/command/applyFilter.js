@@ -11,30 +11,45 @@ const {FILTER} = componentNames;
 
 /**
  * Make undoData
- * @param {Graphics} graphics - Graphics instance
  * @param {string} type - Filter type 
- * @param {Component} filterComp - filter component
+ * @param {Object} prevfilterOption - prev Filter options
  * @param {Object} options - Filter options
- *  @param {number} options.maskObjId - masking image object id
- * @param {boolean} isSilent - is silent execution or not
+ * @param {object} cacheUndoData - cached undo data
+ *   @param {object} cacheUndoData.options - filter option
  * @returns {object} - undo data
  */
-function makeUndoData(graphics, type, filterComp, options, isSilent) {
+function makeUndoData(type, prevfilterOption, options, cacheUndoData) {
     const undoData = {};
 
     if (type === 'mask') {
         undoData.object = options.mask;
-        graphics.remove(options.mask);
-    } else if (!isSilent) {
-        const isRedo = !snippet.isUndefined(undoData.options);
+    }
 
-        if (!isRedo) {
-            undoData.options = filterComp.filterChangedStateForUndoStack[type] || null;
-            filterComp.filterChangedStateForUndoStack[type] = snippet.extend({}, options);
-        }
+    if (!cacheUndoData) {
+        undoData.options = prevfilterOption;
+    } else {
+        undoData.options = cacheUndoData.options;
     }
 
     return undoData;
+}
+
+/**
+ * Make mask option
+ * @param {Graphics} graphics - Graphics instance
+ * @param {number} maskObjId - masking image object id
+ * @returns {object} - mask option
+ */
+function makeMaskOption(graphics, maskObjId) {
+    const maskObj = graphics.getObject(maskObjId);
+
+    if (!(maskObj && maskObj.isType('image'))) {
+        return Promise.reject(rejectMessages.invalidParameters);
+    }
+
+    return {
+        mask: maskObj
+    };
 }
 
 const command = {
@@ -53,18 +68,20 @@ const command = {
         const filterComp = graphics.getComponent(FILTER);
 
         if (type === 'mask') {
-            const maskObj = graphics.getObject(options.maskObjId);
-
-            if (!(maskObj && maskObj.isType('image'))) {
-                return Promise.reject(rejectMessages.invalidParameters);
-            }
-
-            options = {
-                mask: maskObj
-            };
+            snippet.extend(options, makeMaskOption(graphics, options.maskObjId));
+            graphics.remove(options.mask);
         }
+        if (!this.isRedo) {
+            const prevfilterOption = filterComp.getOptions(type);
+            const undoData = makeUndoData(type, prevfilterOption, options, this.cacheUndoDataForSilent, isSilent);
 
-        snippet.extend(this.undoData, makeUndoData(graphics, type, filterComp, options, isSilent));
+            if (!isSilent) {
+                snippet.extend(this.undoData, undoData);
+                this.cacheUndoDataForSilent = null;
+            } else if (!this.cacheUndoDataForSilent) {
+                this.cacheUndoDataForSilent = undoData;
+            }
+        }
 
         return filterComp.add(type, options);
     },
