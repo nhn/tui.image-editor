@@ -334,41 +334,45 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _calcScalingSizeFromPointer(pointer, selectedCorner) {
-        const pointerX = pointer.x;
-        const pointerY = pointer.y;
-        const tlScalingSize = this._calcTopLeftScalingSizeFromPointer(pointerX, pointerY);
-        const brScalingSize = this._calcBottomRightScalingSizeFromPointer(pointerX, pointerY);
+        const isCornerTypeValid = this._cornerTypeValid(selectedCorner);
+        const scalingMathodName = `_resize${selectedCorner.toUpperCase()}`;
 
-        if (selectedCorner === CORNER_TYPE_TOP_LEFT) {
-            return this.resizeTL(pointerX, pointerY);
-        } else if (selectedCorner === CORNER_TYPE_MIDDLE_TOP) {
-            return this.resizeT(pointerY);
-        } else if (selectedCorner === CORNER_TYPE_TOP_RIGHT) {
-            return this.resizeTR(pointerX, pointerY);
-        } else if (selectedCorner === CORNER_TYPE_BOTTOM_LEFT) {
-            return this.resizeBL(pointerX, pointerY);
-        } else if (selectedCorner === CORNER_TYPE_BOTTOM_RIGHT) {
-            return this.resizeBR(pointerX, pointerY);
-        } else if (selectedCorner === CORNER_TYPE_MIDDLE_BOTTOM) {
-            return this.resizeB(pointerY);
-        } else if (selectedCorner === CORNER_TYPE_MIDDLE_LEFT) {
-            return this.resizeL(pointerX);
-        } else if (selectedCorner === CORNER_TYPE_MIDDLE_RIGHT) {
-            return this.resizeR(pointerX);
-        }
-
-        /*
-         * @todo: 일반 객체에서 shift 조합키를 누르면 free size scaling이 됨 --> 확인해볼것
-         *      canvas.class.js // _scaleObject: function(...){...}
-         */
-        return this._makeScalingSettings(tlScalingSize, brScalingSize, selectedCorner);
+        return isCornerTypeValid && this[scalingMathodName](pointer);
     },
 
-    adjustRatioSize({width, height, presetRatio, scaleTo, maxWidth, maxHeight}) {
+    /**
+     * Align with cropzone ratio
+     * @param {string} selectedCorner - selected corner type
+     * @returns {{width: number, height: number}}
+     * @private
+     */
+    _cornerTypeValid(selectedCorner) {
+        return [CORNER_TYPE_TOP_LEFT,
+            CORNER_TYPE_TOP_RIGHT,
+            CORNER_TYPE_MIDDLE_TOP,
+            CORNER_TYPE_MIDDLE_LEFT,
+            CORNER_TYPE_MIDDLE_RIGHT,
+            CORNER_TYPE_MIDDLE_BOTTOM,
+            CORNER_TYPE_BOTTOM_LEFT,
+            CORNER_TYPE_BOTTOM_RIGHT].indexOf(selectedCorner) >= 0;
+    },
+
+    /**
+     * Align with cropzone ratio
+     * @param {Object} position - Mouse position
+     *   @param {number} width - cropzone width
+     *   @param {number} height - cropzone height
+     *   @param {number} ratio - cropzone ratio
+     *   @param {number} maxWidth - limit max width
+     *   @param {number} maxHeight - limit max height
+     * @returns {{width: number, height: number}}
+     * @private
+     */
+    adjustRatioSize({width, height, ratio, scaleTo, maxWidth, maxHeight}) {
         if (scaleTo === 'width') {
-            height = width / presetRatio;
+            height = width / ratio;
         } else {
-            width = height * presetRatio;
+            width = height * ratio;
         }
 
         const maxScaleFactor = Math.min(maxWidth / width, maxHeight / height);
@@ -382,7 +386,15 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         };
     },
 
-    resizeTL(x, y) {
+    /**
+     * Calc scaling dimension with control TL
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeTL({x, y}) {
         // const {width: maxX, height: maxY} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -423,7 +435,15 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         };
     },
 
-    resizeT(y) {
+    /**
+     * Calc scaling dimension with control MT
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeMT({y}) {
         const {width: maxX} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -457,7 +477,16 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             width
         };
     },
-    resizeTR(x, y) {
+
+    /**
+     * Calc scaling dimension with control TR
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeTR({x, y}) {
         const {width: maxX} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -497,7 +526,15 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         };
     },
 
-    resizeBL(x, y) {
+    /**
+     * Calc scaling dimension with control BL
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeBL({x, y}) {
         const {height: maxY} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -539,7 +576,15 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         };
     },
 
-    resizeBR(x, y) {
+    /**
+     * Calc scaling dimension with control BR
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeBR({x, y}) {
         const {width: maxX, height: maxY} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -579,7 +624,15 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         };
     },
 
-    resizeB(y) {
+    /**
+     * Calc scaling dimension with control MB
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeMB({y}) {
         const {width: maxX, height: maxY} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -610,7 +663,15 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         };
     },
 
-    resizeL(x) {
+    /**
+     * Calc scaling dimension with control ML
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeML({x}) {
         const {height: maxY} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -646,12 +707,14 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     },
 
     /**
-     * Calc scaling size with control R
-     * @param {number} x - Mouse position X
+     * Calc scaling dimension with control MR
+     * @param {Object} position - Mouse position
+     *   @param {string} x - Mouse position x
+     *   @param {string} y - Mouse position y
      * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
-    resizeR(x) {
+    _resizeMR({x}) {
         const {width: maxX, height: maxY} = this.canvas;
         const {presetRatio} = this.options;
         const rect = this.getBoundingRect(false, true);
@@ -681,120 +744,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             height
         };
     },
-
-    /**
-     * Calc scaling size(position + dimension) from left-top corner
-     * @param {number} x - Mouse position X
-     * @param {number} y - Mouse position Y
-     * @returns {{top: number, left: number, width: number, height: number}}
-     * @private
-     */
-    _calcTopLeftScalingSizeFromPointer(x, y) { // eslint-disable-line
-        const rect = this.getBoundingRect(false, true);
-        const bottom = rect.height + this.top;
-        const right = rect.width + this.left;
-        let top = clamp(y, 0, bottom - 1); // 0 <= top <= (bottom - 1)
-        let left = clamp(x, 0, right - 1); // 0 <= left <= (right - 1)
-
-        // When scaling "Top-Left corner": It fixes right and bottom coordinates
-        return {
-            top,
-            left,
-            width: right - left,
-            height: bottom - top
-        };
-    },
-
-    /**
-     * Calc scaling size from right-bottom corner
-     * @param {number} x - Mouse position X
-     * @param {number} y - Mouse position Y
-     * @returns {{width: number, height: number}}
-     * @private
-     */
-    _calcBottomRightScalingSizeFromPointer(x, y) { //eslint-disable-line
-        const {width: maxX, height: maxY} = this.canvas;
-        const {left, top} = this;
-
-        let width = clamp(x, (left + 1), maxX) - left; // (width = x - left), (left + 1 <= x <= maxX)
-        let height = clamp(y, (top + 1), maxY) - top; // (height = y - top), (top + 1 <= y <= maxY)
-        const right = width + left;
-        const bottom = height + top;
-
-        // When scaling "Bottom-Right corner": It fixes left and top coordinates
-        return {
-            width,
-            height
-        };
-    },
-
-    /* eslint-disable complexity */
-    /**
-     * Make scaling settings
-     * @param {{width: number, height: number, left: number, top: number}} tl - Top-Left setting
-     * @param {{width: number, height: number}} br - Bottom-Right setting
-     * @param {string} selectedCorner - selected corner type
-     * @returns {{width: ?number, height: ?number, left: ?number, top: ?number}} Position setting
-     * @private
-     */
-    _makeScalingSettings(tl, br, selectedCorner) {
-        const tlWidth = tl.width;
-        const tlHeight = tl.height;
-        const brHeight = br.height;
-        const brWidth = br.width;
-        const tlLeft = tl.left;
-        const tlTop = tl.top;
-        let settings;
-
-        switch (selectedCorner) {
-            case CORNER_TYPE_TOP_LEFT:
-                settings = tl;
-                break;
-            case CORNER_TYPE_TOP_RIGHT:
-                settings = {
-                    width: brWidth,
-                    height: tlHeight,
-                    top: tlTop
-                };
-                break;
-            case CORNER_TYPE_BOTTOM_LEFT:
-                settings = {
-                    width: tlWidth,
-                    height: brHeight,
-                    left: tlLeft
-                };
-                break;
-            case CORNER_TYPE_BOTTOM_RIGHT:
-                settings = br;
-                break;
-            case CORNER_TYPE_MIDDLE_LEFT:
-                settings = {
-                    width: tlWidth,
-                    left: tlLeft
-                };
-                break;
-            case CORNER_TYPE_MIDDLE_TOP:
-                settings = {
-                    height: tlHeight,
-                    top: tlTop
-                };
-                break;
-            case CORNER_TYPE_MIDDLE_RIGHT:
-                settings = {
-                    width: brWidth
-                };
-                break;
-            case CORNER_TYPE_MIDDLE_BOTTOM:
-                settings = {
-                    height: brHeight
-                };
-                break;
-            default:
-                break;
-        }
-
-        return settings;
-    }, /* eslint-enable complexity */
 
     /**
      * Return the whether this cropzone is valid
