@@ -14,14 +14,9 @@ const {TEXT} = componentNames;
  * Make undoData
  * @param {object} styles - text styles
  * @param {Component} targetObj - text component
- * @param {object} cacheUndoData - cached undo data
  * @returns {object} - undo data
  */
-function makeUndoData(styles, targetObj, cacheUndoData) {
-    if (cacheUndoData) {
-        return snippet.extend({}, cacheUndoData);
-    }
-
+function makeUndoData(styles, targetObj) {
     const undoData = {
         object: targetObj,
         styles: {}
@@ -60,14 +55,9 @@ const command = {
             return Promise.reject(rejectMessages.noObject);
         }
         if (!this.isRedo) {
-            const undoData = makeUndoData(styles, targetObj, this.cacheUndoDataForSilent);
+            const undoData = makeUndoData(styles, targetObj);
 
-            if (!isSilent) {
-                snippet.extend(this.undoData, undoData);
-                this.cacheUndoDataForSilent = null;
-            } else if (!this.cacheUndoDataForSilent) {
-                this.cacheUndoDataForSilent = undoData;
-            }
+            this.setUndoData(undoData, isSilent);
         }
 
         return textComp.setStyle(targetObj, styles);

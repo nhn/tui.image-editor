@@ -80,15 +80,6 @@ class Command {
         throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'undo'));
     }
 
-    setUndoData(undoData, isSilent) {
-        if (!isSilent) {
-            snippet.extend(this.undoData, undoData);
-            cacheUndoDataForSilent = null;
-        } else if (!this.cacheUndoDataForSilent) {
-            cacheUndoDataForSilent = undoData;
-        }
-    }
-
     /**
      * command for redo if undoData exists
      * @returns {boolean} isRedo
@@ -97,12 +88,21 @@ class Command {
         return Object.keys(this.undoData).length;
     }
 
-    get cacheUndoDataForSilent() {
-        return cacheUndoDataForSilent;
-    }
-
-    set cacheUndoDataForSilent(value) {
-        cacheUndoDataForSilent = value;
+    /**
+     * Set undoData action
+     * @param {Object} undoData - maked undo data
+     * @param {boolean} isSilent - is silent execution or not
+     */
+    setUndoData(undoData, isSilent) {
+        if (cacheUndoDataForSilent) {
+            undoData = cacheUndoDataForSilent;
+        }
+        if (!isSilent) {
+            snippet.extend(this.undoData, undoData);
+            cacheUndoDataForSilent = null;
+        } else if (!this.cacheUndoDataForSilent) {
+            cacheUndoDataForSilent = undoData;
+        }
     }
 
     /**

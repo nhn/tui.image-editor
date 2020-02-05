@@ -2,7 +2,6 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Rotate an image
  */
-import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
 import consts from '../consts';
 
@@ -12,12 +11,11 @@ const {ROTATION} = componentNames;
 /**
  * Make undo data
  * @param {Component} rotationComp - rotation component
- * @param {object} cacheUndoData - cached undo data
  * @returns {object} - undodata
  */
-function makeUndoData(rotationComp, cacheUndoData) {
+function makeUndoData(rotationComp) {
     return {
-        angle: cacheUndoData ? cacheUndoData.angle : rotationComp.getCurrentAngle()
+        angle: rotationComp.getCurrentAngle()
     };
 }
 
@@ -36,14 +34,9 @@ const command = {
         const rotationComp = graphics.getComponent(ROTATION);
 
         if (!this.isRedo) {
-            const undoData = makeUndoData(rotationComp, this.cacheUndoDataForSilent);
+            const undoData = makeUndoData(rotationComp);
 
-            if (!isSilent) {
-                snippet.extend(this.undoData, undoData);
-                this.cacheUndoDataForSilent = null;
-            } else if (!this.cacheUndoDataForSilent) {
-                this.cacheUndoDataForSilent = undoData;
-            }
+            this.setUndoData(undoData, isSilent);
         }
 
         return rotationComp[type](angle);

@@ -14,22 +14,16 @@ const {FILTER} = componentNames;
  * @param {string} type - Filter type 
  * @param {Object} prevfilterOption - prev Filter options
  * @param {Object} options - Filter options
- * @param {object} cacheUndoData - cached undo data
- *   @param {object} cacheUndoData.options - filter option
  * @returns {object} - undo data
  */
-function makeUndoData(type, prevfilterOption, options, cacheUndoData) {
+function makeUndoData(type, prevfilterOption, options) {
     const undoData = {};
 
     if (type === 'mask') {
         undoData.object = options.mask;
     }
 
-    if (!cacheUndoData) {
-        undoData.options = prevfilterOption;
-    } else {
-        undoData.options = cacheUndoData.options;
-    }
+    undoData.options = prevfilterOption;
 
     return undoData;
 }
@@ -73,14 +67,9 @@ const command = {
         }
         if (!this.isRedo) {
             const prevfilterOption = filterComp.getOptions(type);
-            const undoData = makeUndoData(type, prevfilterOption, options, this.cacheUndoDataForSilent, isSilent);
+            const undoData = makeUndoData(type, prevfilterOption, options);
 
-            if (!isSilent) {
-                snippet.extend(this.undoData, undoData);
-                this.cacheUndoDataForSilent = null;
-            } else if (!this.cacheUndoDataForSilent) {
-                this.cacheUndoDataForSilent = undoData;
-            }
+            this.setUndoData(undoData, isSilent);
         }
 
         return filterComp.add(type, options);

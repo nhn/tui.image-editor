@@ -14,14 +14,9 @@ const {SHAPE} = componentNames;
  * Make undoData
  * @param {object} options - shape options
  * @param {Component} targetObj - shape component
- * @param {object} cacheUndoData - cached undo data
  * @returns {object} - undo data
  */
-function makeUndoData(options, targetObj, cacheUndoData) {
-    if (cacheUndoData) {
-        return snippet.extend({}, cacheUndoData);
-    }
-
+function makeUndoData(options, targetObj) {
     const undoData = {
         object: targetObj,
         options: {}
@@ -64,7 +59,7 @@ const command = {
         }
 
         if (!this.isRedo) {
-            const undoData = makeUndoData(options, targetObj, this.cacheUndoDataForSilent);
+            const undoData = makeUndoData(options, targetObj);
 
             this.setUndoData(undoData, isSilent);
         }
