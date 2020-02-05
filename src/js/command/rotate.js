@@ -10,19 +10,15 @@ const {componentNames, commandNames} = consts;
 const {ROTATION} = componentNames;
 
 /**
- * Calculate undo angle
- * @param {string} type - execute type
+ * Make undo data
  * @param {Component} rotationComp - rotation component
- * @returns {number} - angle for undo state
+ * @param {object} cacheUndoData - cached undo data
+ * @returns {object} - undodata
  */
-function getUndoAngle(type, rotationComp) {
-    let undoAngle = rotationComp.getCurrentAngle();
-
-    if (type === 'setAngle') {
-        undoAngle = rotationComp.lastAngleForUndoStack;
-    }
-
-    return undoAngle;
+function makeUndoData(rotationComp, cacheUndoData) {
+    return {
+        angle: cacheUndoData ? cacheUndoData.angle : rotationComp.getCurrentAngle()
+    };
 }
 
 const command = {
@@ -39,9 +35,15 @@ const command = {
     execute(graphics, type, angle, isSilent) {
         const rotationComp = graphics.getComponent(ROTATION);
 
-        if (!isSilent && !snippet.isExisty(this.undoData.angle)) {
-            this.undoData.angle = getUndoAngle(type, rotationComp);
-            rotationComp.lastAngleForUndoStack = angle;
+        if (!this.isRedo) {
+            const undoData = makeUndoData(rotationComp, this.cacheUndoDataForSilent);
+
+            if (!isSilent) {
+                snippet.extend(this.undoData, undoData);
+                this.cacheUndoDataForSilent = null;
+            } else if (!this.cacheUndoDataForSilent) {
+                this.cacheUndoDataForSilent = undoData;
+            }
         }
 
         return rotationComp[type](angle);

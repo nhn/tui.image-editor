@@ -46,7 +46,6 @@ const command = {
         return textComp.add(text, options).then(objectProps => {
             const {id} = objectProps;
             const textObject = graphics.getObject(id);
-            textObject.lastfontSizeUndoStack = textObject.fontSize;
 
             this.undoData.object = textObject;
 

@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Command interface
  */
+import snippet from 'tui-code-snippet';
 import errorMessage from '../factory/errorMessage';
 
 const createMessage = errorMessage.create;
@@ -77,6 +78,15 @@ class Command {
      */
     undo() {
         throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'undo'));
+    }
+
+    setUndoData(undoData, isSilent) {
+        if (!isSilent) {
+            snippet.extend(this.undoData, undoData);
+            cacheUndoDataForSilent = null;
+        } else if (!this.cacheUndoDataForSilent) {
+            cacheUndoDataForSilent = undoData;
+        }
     }
 
     /**
