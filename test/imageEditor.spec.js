@@ -6,7 +6,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
-import util from '../src/js/util';
+import fabric from 'fabric';
 import consts from '../src/js/consts';
 
 describe('ImageEditor', () => {
@@ -72,6 +72,20 @@ describe('ImageEditor', () => {
             });
 
             expect(spyCallback).not.toHaveBeenCalled();
+        });
+
+        it('"backgroundImageRotated" event should be raised when the background image angle changes.', done => {
+            const {BACKGROUND_IMAGE_ROTATED} = consts.eventNames;
+
+            imageEditor._graphics.setCanvasImage('', new fabric.Image());
+            spyOn(imageEditor, 'fire').and.callThrough();
+
+            imageEditor.setAngle(32).then(() => imageEditor.rotate(10)).then(() => {
+                const {calls} = imageEditor.fire;
+                expect(calls.first().args).toEqual([BACKGROUND_IMAGE_ROTATED, 32]);
+                expect(calls.mostRecent().args).toEqual([BACKGROUND_IMAGE_ROTATED, 42]);
+                done();
+            });
         });
 
         describe('removeActiveObject()', () => {

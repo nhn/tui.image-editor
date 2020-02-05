@@ -7,7 +7,7 @@ import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import consts from '../consts';
 
-const {componentNames} = consts;
+const {componentNames, eventNames: {BACKGROUND_IMAGE_ROTATED}} = consts;
 
 /**
  * Image Rotation component
@@ -53,9 +53,12 @@ class Rotation extends Component {
         const canvasImage = this.getCanvasImage();
         const oldImageCenter = canvasImage.getCenterPoint();
         canvasImage.set({angle}).setCoords();
+
         this.adjustCanvasDimension();
         const newImageCenter = canvasImage.getCenterPoint();
         this._rotateForEachObject(oldImageCenter, newImageCenter, angle - oldAngle);
+
+        this.fire(BACKGROUND_IMAGE_ROTATED, angle);
 
         return Promise.resolve(angle);
     }

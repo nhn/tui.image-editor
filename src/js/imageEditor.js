@@ -17,6 +17,22 @@ const commands = consts.commandNames;
 const {keyCodes, rejectMessages} = consts;
 const {isUndefined, forEach, CustomEvents} = snippet;
 
+const {
+    MOUSE_DOWN,
+    OBJECT_MOVED,
+    OBJECT_SCALED,
+    OBJECT_ACTIVATED,
+    ADD_TEXT,
+    ADD_OBJECT,
+    TEXT_EDITING,
+    TEXT_CHANGED,
+    ICON_CREATE_RESIZE,
+    ICON_CREATE_END,
+    SELECTION_CLEARED,
+    SELECTION_CREATED,
+    ADD_OBJECT_AFTER,
+    BACKGROUND_IMAGE_ROTATED} = events;
+
 /**
  * Image editor
  * @class
@@ -135,7 +151,8 @@ class ImageEditor {
             iconCreateResize: this._onIconCreateResize.bind(this),
             iconCreateEnd: this._onIconCreateEnd.bind(this),
             selectionCleared: this._selectionCleared.bind(this),
-            selectionCreated: this._selectionCreated.bind(this)
+            selectionCreated: this._selectionCreated.bind(this),
+            backgroundImageRotated: this._backgroundImageRotated.bind(this)
         };
 
         this._attachInvokerEvents();
@@ -274,19 +291,20 @@ class ImageEditor {
      */
     _attachGraphicsEvents() {
         this._graphics.on({
-            'mousedown': this._handlers.mousedown,
-            'objectMoved': this._handlers.objectMoved,
-            'objectScaled': this._handlers.objectScaled,
-            'objectActivated': this._handlers.objectActivated,
-            'addText': this._handlers.addText,
-            'addObject': this._handlers.addObject,
-            'textEditing': this._handlers.textEditing,
-            'textChanged': this._handlers.textChanged,
-            'iconCreateResize': this._handlers.iconCreateResize,
-            'iconCreateEnd': this._handlers.iconCreateEnd,
-            'selectionCleared': this._handlers.selectionCleared,
-            'selectionCreated': this._handlers.selectionCreated,
-            'addObjectAfter': this._handlers.addObjectAfter
+            [MOUSE_DOWN]: this._handlers.mousedown,
+            [OBJECT_MOVED]: this._handlers.objectMoved,
+            [OBJECT_SCALED]: this._handlers.objectScaled,
+            [OBJECT_ACTIVATED]: this._handlers.objectActivated,
+            [ADD_TEXT]: this._handlers.addText,
+            [ADD_OBJECT]: this._handlers.addObject,
+            [TEXT_EDITING]: this._handlers.textEditing,
+            [TEXT_CHANGED]: this._handlers.textChanged,
+            [ICON_CREATE_RESIZE]: this._handlers.iconCreateResize,
+            [ICON_CREATE_END]: this._handlers.iconCreateEnd,
+            [SELECTION_CLEARED]: this._handlers.selectionCleared,
+            [SELECTION_CREATED]: this._handlers.selectionCreated,
+            [ADD_OBJECT_AFTER]: this._handlers.addObjectAfter,
+            [BACKGROUND_IMAGE_ROTATED]: this._handlers.backgroundImageRotated
         });
     }
 
@@ -1170,6 +1188,15 @@ class ImageEditor {
      */
     _selectionCreated(eventTarget) {
         this.fire(events.SELECTION_CREATED, eventTarget);
+    }
+
+    /**
+     * 'backgroundImageRotated' event handler
+     * @param {number} angle - backgroud image angle
+     * @private
+     */
+    _backgroundImageRotated(angle) {
+        this.fire(events.BACKGROUND_IMAGE_ROTATED, angle);
     }
 
     /**
