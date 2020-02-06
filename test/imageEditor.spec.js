@@ -74,18 +74,17 @@ describe('ImageEditor', () => {
             expect(spyCallback).not.toHaveBeenCalled();
         });
 
-        it('"backgroundImageRotated" event should be raised when the background image angle changes.', done => {
-            const {BACKGROUND_IMAGE_ROTATED} = consts.eventNames;
+        it('"objectRotated" event should be fire at object is rotate.', () => {
+            const canvas = imageEditor._graphics.getCanvas();
+            const obj = new fabric.Object({});
+            const mock = {target: obj};
+            canvas.add(obj);
 
-            imageEditor._graphics.setCanvasImage('', new fabric.Image());
             spyOn(imageEditor, 'fire').and.callThrough();
 
-            imageEditor.setAngle(32).then(() => imageEditor.rotate(10)).then(() => {
-                const {calls} = imageEditor.fire;
-                expect(calls.first().args).toEqual([BACKGROUND_IMAGE_ROTATED, 32]);
-                expect(calls.mostRecent().args).toEqual([BACKGROUND_IMAGE_ROTATED, 42]);
-                done();
-            });
+            canvas.fire('object:rotating', mock);
+
+            expect(imageEditor.fire.calls.mostRecent().args[0]).toBe('objectRotated');
         });
 
         describe('removeActiveObject()', () => {

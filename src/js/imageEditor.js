@@ -22,6 +22,7 @@ const {
     OBJECT_MOVED,
     OBJECT_SCALED,
     OBJECT_ACTIVATED,
+    OBJECT_ROTATED,
     ADD_TEXT,
     ADD_OBJECT,
     TEXT_EDITING,
@@ -30,8 +31,7 @@ const {
     ICON_CREATE_END,
     SELECTION_CLEARED,
     SELECTION_CREATED,
-    ADD_OBJECT_AFTER,
-    BACKGROUND_IMAGE_ROTATED} = events;
+    ADD_OBJECT_AFTER} = events;
 
 /**
  * Image editor
@@ -142,6 +142,7 @@ class ImageEditor {
             objectActivated: this._onObjectActivated.bind(this),
             objectMoved: this._onObjectMoved.bind(this),
             objectScaled: this._onObjectScaled.bind(this),
+            objectRotated: this._onObjectRotated.bind(this),
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
@@ -151,8 +152,7 @@ class ImageEditor {
             iconCreateResize: this._onIconCreateResize.bind(this),
             iconCreateEnd: this._onIconCreateEnd.bind(this),
             selectionCleared: this._selectionCleared.bind(this),
-            selectionCreated: this._selectionCreated.bind(this),
-            backgroundImageRotated: this._backgroundImageRotated.bind(this)
+            selectionCreated: this._selectionCreated.bind(this)
         };
 
         this._attachInvokerEvents();
@@ -294,6 +294,7 @@ class ImageEditor {
             [MOUSE_DOWN]: this._handlers.mousedown,
             [OBJECT_MOVED]: this._handlers.objectMoved,
             [OBJECT_SCALED]: this._handlers.objectScaled,
+            [OBJECT_ROTATED]: this._handlers.objectRotated,
             [OBJECT_ACTIVATED]: this._handlers.objectActivated,
             [ADD_TEXT]: this._handlers.addText,
             [ADD_OBJECT]: this._handlers.addObject,
@@ -303,8 +304,7 @@ class ImageEditor {
             [ICON_CREATE_END]: this._handlers.iconCreateEnd,
             [SELECTION_CLEARED]: this._handlers.selectionCleared,
             [SELECTION_CREATED]: this._handlers.selectionCreated,
-            [ADD_OBJECT_AFTER]: this._handlers.addObjectAfter,
-            [BACKGROUND_IMAGE_ROTATED]: this._handlers.backgroundImageRotated
+            [ADD_OBJECT_AFTER]: this._handlers.addObjectAfter
         });
     }
 
@@ -492,6 +492,25 @@ class ImageEditor {
          * });
          */
         this.fire(events.OBJECT_SCALED, props);
+    }
+
+    /**
+     * 'objectRotated' event handler
+     * @param {ObjectProps} props - object properties
+     * @private
+     */
+    _onObjectRotated(props) {
+        /**
+         * The event when scale factor is changed
+         * @event ImageEditor#objectRotated
+         * @param {ObjectProps} props - object properties
+         * @example
+         * imageEditor.on('objectRotated', function(props) {
+         *     console.log(props);
+         *     console.log(props.type);
+         * });
+         */
+        this.fire(events.OBJECT_ROTATED, props);
     }
 
     /**
@@ -1188,15 +1207,6 @@ class ImageEditor {
      */
     _selectionCreated(eventTarget) {
         this.fire(events.SELECTION_CREATED, eventTarget);
-    }
-
-    /**
-     * 'backgroundImageRotated' event handler
-     * @param {number} angle - backgroud image angle
-     * @private
-     */
-    _backgroundImageRotated(angle) {
-        this.fire(events.BACKGROUND_IMAGE_ROTATED, angle);
     }
 
     /**
