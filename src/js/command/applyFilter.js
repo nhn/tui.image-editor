@@ -10,6 +10,12 @@ const {componentNames, rejectMessages, commandNames} = consts;
 const {FILTER} = componentNames;
 
 /**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
  * Make undoData
  * @param {string} type - Filter type 
  * @param {Object} prevfilterOption - prev Filter options
@@ -69,7 +75,7 @@ const command = {
             const prevfilterOption = filterComp.getOptions(type);
             const undoData = makeUndoData(type, prevfilterOption, options);
 
-            this.setUndoData(undoData, isSilent);
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return filterComp.add(type, options);

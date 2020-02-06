@@ -7,7 +7,6 @@ import errorMessage from '../factory/errorMessage';
 
 const createMessage = errorMessage.create;
 const errorTypes = errorMessage.types;
-let cacheUndoDataForSilent = null;
 
 /**
  * Command class
@@ -91,18 +90,22 @@ class Command {
     /**
      * Set undoData action
      * @param {Object} undoData - maked undo data
+     * @param {Object} chchedUndoDataForSilent - chched undo data
      * @param {boolean} isSilent - is silent execution or not
+     * @returns {Object} chchedUndoDataForSilent
      */
-    setUndoData(undoData, isSilent) {
-        if (cacheUndoDataForSilent) {
-            undoData = cacheUndoDataForSilent;
+    setUndoData(undoData, chchedUndoDataForSilent, isSilent) {
+        if (chchedUndoDataForSilent) {
+            undoData = chchedUndoDataForSilent;
         }
         if (!isSilent) {
             snippet.extend(this.undoData, undoData);
-            cacheUndoDataForSilent = null;
-        } else if (!this.cacheUndoDataForSilent) {
-            cacheUndoDataForSilent = undoData;
+            chchedUndoDataForSilent = null;
+        } else if (!chchedUndoDataForSilent) {
+            chchedUndoDataForSilent = undoData;
         }
+
+        return chchedUndoDataForSilent;
     }
 
     /**

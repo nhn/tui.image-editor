@@ -11,6 +11,12 @@ const {componentNames, rejectMessages, commandNames} = consts;
 const {TEXT} = componentNames;
 
 /**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
  * Make undoData
  * @param {object} styles - text styles
  * @param {Component} targetObj - text component
@@ -57,7 +63,7 @@ const command = {
         if (!this.isRedo) {
             const undoData = makeUndoData(styles, targetObj);
 
-            this.setUndoData(undoData, isSilent);
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return textComp.setStyle(targetObj, styles);

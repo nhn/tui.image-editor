@@ -11,6 +11,12 @@ const {componentNames, rejectMessages, commandNames} = consts;
 const {SHAPE} = componentNames;
 
 /**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
  * Make undoData
  * @param {object} options - shape options
  * @param {Component} targetObj - shape component
@@ -61,7 +67,7 @@ const command = {
         if (!this.isRedo) {
             const undoData = makeUndoData(options, targetObj);
 
-            this.setUndoData(undoData, isSilent);
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return shapeComp.change(targetObj, options);

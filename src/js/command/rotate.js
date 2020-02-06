@@ -9,6 +9,12 @@ const {componentNames, commandNames} = consts;
 const {ROTATION} = componentNames;
 
 /**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
  * Make undo data
  * @param {Component} rotationComp - rotation component
  * @returns {object} - undodata
@@ -36,7 +42,7 @@ const command = {
         if (!this.isRedo) {
             const undoData = makeUndoData(rotationComp);
 
-            this.setUndoData(undoData, isSilent);
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return rotationComp[type](angle);
