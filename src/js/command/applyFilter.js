@@ -34,24 +34,6 @@ function makeUndoData(type, prevfilterOption, options) {
     return undoData;
 }
 
-/**
- * Make mask option
- * @param {Graphics} graphics - Graphics instance
- * @param {number} maskObjId - masking image object id
- * @returns {object} - mask option
- */
-function makeMaskOption(graphics, maskObjId) {
-    const maskObj = graphics.getObject(maskObjId);
-
-    if (!(maskObj && maskObj.isType('image'))) {
-        return Promise.reject(rejectMessages.invalidParameters);
-    }
-
-    return {
-        mask: maskObj
-    };
-}
-
 const command = {
     name: commandNames.APPLY_FILTER,
 
@@ -68,7 +50,13 @@ const command = {
         const filterComp = graphics.getComponent(FILTER);
 
         if (type === 'mask') {
-            snippet.extend(options, makeMaskOption(graphics, options.maskObjId));
+            const maskObj = graphics.getObject(options.maskObjId);
+
+            if (!(maskObj && maskObj.isType('image'))) {
+                return Promise.reject(rejectMessages.invalidParameters);
+            }
+
+            snippet.extend(options, {mask: maskObj});
             graphics.remove(options.mask);
         }
         if (!this.isRedo) {
