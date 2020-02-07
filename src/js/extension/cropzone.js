@@ -355,9 +355,8 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      */
     _calcScalingSizeFromPointer(pointer, selectedCorner) {
         const isCornerTypeValid = cornerTypeValid(selectedCorner);
-        const scalingMathodName = `_resize${selectedCorner.toUpperCase()}`;
 
-        return isCornerTypeValid && this[scalingMathodName](pointer);
+        return isCornerTypeValid && this._resizeCropZone(pointer, selectedCorner);
     },
 
     /**
@@ -370,14 +369,16 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @returns {{width: number, height: number}}
      * @private
      */
-    adjustRatioCropzoneSize({width, height, maxWidth, maxHeight, scaleTo}) {
+    adjustRatioCropzoneSize({width, height, leftMaker, topMaker, maxWidth, maxHeight, scaleTo}) {
         width = maxWidth ? clamp(width, 1, maxWidth) : width;
         height = maxHeight ? clamp(height, 1, maxHeight) : height;
 
         if (!this.presetRatio) {
             return {
                 width,
-                height
+                height,
+                left: leftMaker(width),
+                top: topMaker(height)
             };
         }
 
@@ -394,8 +395,105 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         return {
             width,
-            height
+            height,
+            left: leftMaker(width),
+            top: topMaker(height)
         };
+    },
+
+    /**
+     * Calc scaling dimension
+     * @param {Object} position - Mouse position
+     * @param {string} corner - corner type
+     * @returns {{left: number, top: number, width: number, height: number}}
+     * @private
+     */
+    _resizeCropZone({x, y}, corner) {
+        const {rectWidth,
+            rectHeight,
+            rectTop,
+            rectLeft,
+            rectBottom,
+            rectRight,
+            canvasWidth,
+            canvasHeight} = this._getCropzoneRectInfo();
+
+        const resizeInfoMap = {
+            tl: {
+                width: rectRight - x,
+                height: rectBottom - y,
+                leftMaker: newWidth => rectRight - newWidth,
+                topMaker: newHeight => rectBottom - newHeight,
+                maxWidth: rectRight,
+                maxHeight: rectBottom,
+                scaleTo: getScaleBasis(rectLeft - x, rectTop - y)
+            },
+            tr: {
+                width: x - rectLeft,
+                height: rectBottom - y,
+                leftMaker: () => rectLeft,
+                topMaker: newHeight => rectBottom - newHeight,
+                maxWidth: canvasWidth - rectLeft,
+                maxHeight: rectBottom,
+                scaleTo: getScaleBasis(x - rectRight, rectTop - y)
+            },
+            mt: {
+                width: rectWidth,
+                height: rectBottom - y,
+                leftMaker: () => rectLeft,
+                topMaker: newHeight => rectBottom - newHeight,
+                maxWidth: canvasWidth - rectLeft,
+                maxHeight: rectBottom,
+                scaleTo: 'height'
+            },
+            ml: {
+                width: rectRight - x,
+                height: rectHeight,
+                leftMaker: newWidth => rectRight - newWidth,
+                topMaker: () => rectTop,
+                maxWidth: rectRight,
+                maxHeight: canvasHeight - rectTop,
+                scaleTo: 'width'
+            },
+            mr: {
+                width: x - rectLeft,
+                height: rectHeight,
+                leftMaker: () => rectLeft,
+                topMaker: () => rectTop,
+                maxWidth: canvasWidth - rectLeft,
+                maxHeight: canvasHeight - rectTop,
+                scaleTo: 'width'
+            },
+            mb: {
+                width: rectWidth,
+                height: y - rectTop,
+                leftMaker: () => rectLeft,
+                topMaker: () => rectTop,
+                maxWidth: canvasWidth - rectLeft,
+                maxHeight: canvasHeight - rectTop,
+                scaleTo: 'height'
+            },
+            bl: {
+                width: rectRight - x,
+                height: y - rectTop,
+                leftMaker: newWidth => rectRight - newWidth,
+                topMaker: () => rectTop,
+                maxWidth: rectRight,
+                maxHeight: canvasHeight - rectTop,
+                scaleTo: getScaleBasis(rectLeft - x, y - rectBottom)
+            },
+            br: {
+                width: x - rectLeft,
+                height: y - rectTop,
+                leftMaker: () => rectLeft,
+                topMaker: () => rectTop,
+                maxWidth: canvasWidth - rectLeft,
+                maxHeight: canvasHeight - rectTop,
+                scaleTo: getScaleBasis(x - rectRight, y - rectBottom)
+            }
+        };
+
+        return this.adjustRatioCropzoneSize(resizeInfoMap[corner]);
     },
 
     /**
@@ -421,212 +519,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             rectBottom: rectTop + rectHeight,
             canvasWidth,
             canvasHeight
-        };
-    },
-    /**
-     * Calc scaling dimension with control TL
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeTL({x, y}) {
-        const {rectTop, rectLeft, rectBottom, rectRight} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: rectRight - x,
-            height: rectBottom - y,
-            maxWidth: rectRight,
-            maxHeight: rectBottom,
-            scaleTo: getScaleBasis(rectLeft - x, rectTop - y)
-        });
-
-        return {
-            left: rectRight - width,
-            top: rectBottom - height,
-            width,
-            height
-        };
-    },
-
-    /**
-     * Calc scaling dimension with control MT
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeMT({y}) {
-        const {rectLeft, rectWidth, canvasWidth, rectBottom} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: rectWidth,
-            height: rectBottom - y,
-            maxWidth: canvasWidth - rectLeft,
-            maxHeight: rectBottom,
-            scaleTo: 'height'
-        });
-
-        return {
-            left: rectLeft,
-            top: rectBottom - height,
-            height,
-            width
-        };
-    },
-
-    /**
-     * Calc scaling dimension with control TR
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeTR({x, y}) {
-        const {rectTop, rectLeft, canvasWidth, rectRight, rectBottom} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: x - rectLeft,
-            height: rectBottom - y,
-            maxWidth: canvasWidth - rectLeft,
-            maxHeight: rectBottom,
-            scaleTo: getScaleBasis(x - rectRight, rectTop - y)
-        });
-
-        return {
-            left: rectLeft,
-            top: rectBottom - height,
-            width,
-            height
-        };
-    },
-
-    /**
-     * Calc scaling dimension with control BL
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeBL({x, y}) {
-        const {rectTop, rectLeft, canvasHeight, rectRight, rectBottom} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: rectRight - x,
-            height: y - rectTop,
-            maxWidth: rectRight,
-            maxHeight: canvasHeight - rectTop,
-            scaleTo: getScaleBasis(rectLeft - x, y - rectBottom)
-        });
-
-        return {
-            left: rectRight - width,
-            top: rectTop,
-            width,
-            height
-        };
-    },
-
-    /**
-     * Calc scaling dimension with control BR
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeBR({x, y}) {
-        const {rectTop, rectLeft, rectBottom, rectRight, canvasWidth, canvasHeight} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: x - rectLeft,
-            height: y - rectTop,
-            maxWidth: canvasWidth - rectLeft,
-            maxHeight: canvasHeight - rectTop,
-            scaleTo: getScaleBasis(x - rectRight, y - rectBottom)
-        });
-
-        return {
-            left: rectLeft,
-            top: rectTop,
-            width,
-            height
-        };
-    },
-
-    /**
-     * Calc scaling dimension with control MB
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeMB({y}) {
-        const {rectTop, rectLeft, rectWidth, canvasWidth, canvasHeight} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: rectWidth,
-            height: y - rectTop,
-            maxWidth: canvasWidth - rectLeft,
-            maxHeight: canvasHeight - rectTop,
-            scaleTo: 'height'
-        });
-
-        return {
-            left: rectLeft,
-            top: rectTop,
-            width,
-            height
-        };
-    },
-
-    /**
-     * Calc scaling dimension with control ML
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeML({x}) {
-        const {rectTop, rectHeight, rectRight, canvasHeight} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: rectRight - x,
-            height: rectHeight,
-            maxWidth: rectRight,
-            maxHeight: canvasHeight - rectTop,
-            scaleTo: 'width'
-        });
-
-        return {
-            left: rectRight - width,
-            top: rectTop,
-            width,
-            height
-        };
-    },
-    /**
-     * Calc scaling dimension with control MR
-     * @param {Object} position - Mouse position
-     *   @param {string} x - Mouse position x
-     *   @param {string} y - Mouse position y
-     * @returns {{left: number, top: number, width: number, height: number}}
-     * @private
-     */
-    _resizeMR({x}) {
-        const {rectTop, rectLeft, rectHeight, canvasWidth, canvasHeight} = this._getCropzoneRectInfo();
-        const {width, height} = this.adjustRatioCropzoneSize({
-            width: x - rectLeft,
-            height: rectHeight,
-            maxWidth: canvasWidth - rectLeft,
-            maxHeight: canvasHeight - rectTop,
-            scaleTo: 'width'
-        });
-
-        return {
-            left: rectLeft,
-            top: rectTop,
-            width,
-            height
         };
     },
 
