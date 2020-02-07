@@ -98,7 +98,6 @@ class Cropper extends Component {
             lockScalingFlip: true,
             lockRotation: true
         }, this.graphics.cropSelectionStyle);
-        // this._cropzone.lockUniScaling = true;
 
         canvas.discardActiveObject();
         canvas.add(this._cropzone);

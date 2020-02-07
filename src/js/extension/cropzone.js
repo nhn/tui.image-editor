@@ -15,7 +15,38 @@ const CORNER_TYPE_MIDDLE_RIGHT = 'mr';
 const CORNER_TYPE_MIDDLE_BOTTOM = 'mb';
 const CORNER_TYPE_BOTTOM_LEFT = 'bl';
 const CORNER_TYPE_BOTTOM_RIGHT = 'br';
+const CORNER_TYPE_LIST = [
+    CORNER_TYPE_TOP_LEFT,
+    CORNER_TYPE_TOP_RIGHT,
+    CORNER_TYPE_MIDDLE_TOP,
+    CORNER_TYPE_MIDDLE_LEFT,
+    CORNER_TYPE_MIDDLE_RIGHT,
+    CORNER_TYPE_MIDDLE_BOTTOM,
+    CORNER_TYPE_BOTTOM_LEFT,
+    CORNER_TYPE_BOTTOM_RIGHT
+];
 const NOOP_FUNCTION = () => {};
+
+/**
+ * Align with cropzone ratio
+ * @param {string} selectedCorner - selected corner type
+ * @returns {{width: number, height: number}}
+ * @private
+ */
+function cornerTypeValid(selectedCorner) {
+    return CORNER_TYPE_LIST.indexOf(selectedCorner) >= 0;
+}
+
+/**
+ * return scale basis type
+ * @param {number} diffX - X distance of the cursor and corner.
+ * @param {number} diffY - Y distance of the cursor and corner.
+ * @returns {string}
+ * @private
+ */
+function getScaleBasis(diffX, diffY) {
+    return diffX > diffY ? 'width' : 'height';
+}
 
 /**
  * Cropzone object
@@ -323,7 +354,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _calcScalingSizeFromPointer(pointer, selectedCorner) {
-        const isCornerTypeValid = this._cornerTypeValid(selectedCorner);
+        const isCornerTypeValid = cornerTypeValid(selectedCorner);
         const scalingMathodName = `_resize${selectedCorner.toUpperCase()}`;
 
         return isCornerTypeValid && this[scalingMathodName](pointer);
@@ -331,33 +362,25 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
     /**
      * Align with cropzone ratio
-     * @param {string} selectedCorner - selected corner type
+     * @param {number} width - cropzone width
+     * @param {number} height - cropzone height
+     * @param {number} maxWidth - limit max width
+     * @param {number} maxHeight - limit max height
+     * @param {number} scaleTo - cropzone ratio
      * @returns {{width: number, height: number}}
      * @private
      */
-    _cornerTypeValid(selectedCorner) {
-        return [CORNER_TYPE_TOP_LEFT,
-            CORNER_TYPE_TOP_RIGHT,
-            CORNER_TYPE_MIDDLE_TOP,
-            CORNER_TYPE_MIDDLE_LEFT,
-            CORNER_TYPE_MIDDLE_RIGHT,
-            CORNER_TYPE_MIDDLE_BOTTOM,
-            CORNER_TYPE_BOTTOM_LEFT,
-            CORNER_TYPE_BOTTOM_RIGHT].indexOf(selectedCorner) >= 0;
-    },
+    adjustRatioCropzoneSize({width, height, maxWidth, maxHeight, scaleTo}) {
+        width = maxWidth ? clamp(width, 1, maxWidth) : width;
+        height = maxHeight ? clamp(height, 1, maxHeight) : height;
 
-    /**
-     * Align with cropzone ratio
-     * @param {Object} position - Mouse position
-     *   @param {number} width - cropzone width
-     *   @param {number} height - cropzone height
-     *   @param {number} ratio - cropzone ratio
-     *   @param {number} maxWidth - limit max width
-     *   @param {number} maxHeight - limit max height
-     * @returns {{width: number, height: number}}
-     * @private
-     */
-    adjustRatioSize({width, height, scaleTo, maxWidth, maxHeight}) {
+        if (!this.presetRatio) {
+            return {
+                width,
+                height
+            };
+        }
+
         if (scaleTo === 'width') {
             height = width / this.presetRatio;
         } else {
@@ -376,6 +399,31 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     },
 
     /**
+     * Get dimension last state cropzone
+     * @returns {{rectTop: number, rectLeft: number, rectWidth: number, rectHeight: number}}
+     * @private
+     */
+    _getCropzoneRectInfo() {
+        const {width: canvasWidth, height: canvasHeight} = this.canvas;
+        const {
+            top: rectTop,
+            left: rectLeft,
+            width: rectWidth,
+            height: rectHeight
+        } = this.getBoundingRect(false, true);
+
+        return {
+            rectTop,
+            rectLeft,
+            rectWidth,
+            rectHeight,
+            rectRight: rectLeft + rectWidth,
+            rectBottom: rectTop + rectHeight,
+            canvasWidth,
+            canvasHeight
+        };
+    },
+    /**
      * Calc scaling dimension with control TL
      * @param {Object} position - Mouse position
      *   @param {string} x - Mouse position x
@@ -384,34 +432,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeTL({x, y}) {
-        const rect = this.getBoundingRect(false, true);
-        const bottom = rect.height + rect.top;
-        const right = rect.width + rect.left;
-
-        const maxWidth = right;
-        const minWidth = 1;
-        const maxHeight = bottom;
-        const minHeight = 1;
-
-        let width = clamp(right - x, minWidth, maxWidth);
-        let height = clamp(bottom - y, minHeight, maxHeight);
-
-        if (this.presetRatio) {
-            const dx = rect.left - x;
-            const dy = rect.top - y;
-            const scaleTo = dx > dy ? 'width' : 'height';
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo,
-                maxWidth,
-                maxHeight
-            }));
-        }
+        const {rectTop, rectLeft, rectBottom, rectRight} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: rectRight - x,
+            height: rectBottom - y,
+            maxWidth: rectRight,
+            maxHeight: rectBottom,
+            scaleTo: getScaleBasis(rectLeft - x, rectTop - y)
+        });
 
         return {
-            left: right - width,
-            top: bottom - height,
+            left: rectRight - width,
+            top: rectBottom - height,
             width,
             height
         };
@@ -426,33 +458,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeMT({y}) {
-        const {width: maxX} = this.canvas;
-        const rect = this.getBoundingRect(false, true);
-        const bottom = rect.height + rect.top;
-
-        const maxWidth = maxX - rect.left;
-        const maxHeight = bottom;
-        const minHeight = 1;
-
-        let height = clamp(bottom - y, minHeight, maxHeight);
-        const {left} = rect;
-        let {width} = rect;
-
-        if (this.presetRatio) {
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo: 'height',
-                maxWidth,
-                maxHeight
-            }));
-        }
-
-        const top = bottom - height;
+        const {rectLeft, rectWidth, canvasWidth, rectBottom} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: rectWidth,
+            height: rectBottom - y,
+            maxWidth: canvasWidth - rectLeft,
+            maxHeight: rectBottom,
+            scaleTo: 'height'
+        });
 
         return {
-            left,
-            top,
+            left: rectLeft,
+            top: rectBottom - height,
             height,
             width
         };
@@ -467,38 +484,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeTR({x, y}) {
-        const {width: maxX} = this.canvas;
-        const rect = this.getBoundingRect(false, true);
-
-        const right = rect.width + rect.left;
-        const bottom = rect.height + rect.top;
-
-        const maxWidth = maxX - rect.left;
-        const minWidth = 1;
-        const maxHeight = bottom;
-        const minHeight = 1;
-
-        let width = clamp(x - rect.left, minWidth, maxWidth);
-        let height = clamp(bottom - y, minHeight, maxHeight);
-
-        if (this.presetRatio) {
-            const dx = x - right;
-            const dy = rect.top - y;
-            const scaleTo = dx > dy ? 'width' : 'height';
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo,
-                maxWidth,
-                maxHeight
-            }));
-        }
-
-        const top = bottom - height;
+        const {rectTop, rectLeft, canvasWidth, rectRight, rectBottom} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: x - rectLeft,
+            height: rectBottom - y,
+            maxWidth: canvasWidth - rectLeft,
+            maxHeight: rectBottom,
+            scaleTo: getScaleBasis(x - rectRight, rectTop - y)
+        });
 
         return {
-            left: rect.left,
-            top,
+            left: rectLeft,
+            top: rectBottom - height,
             width,
             height
         };
@@ -513,40 +510,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeBL({x, y}) {
-        const {height: maxY} = this.canvas;
-        const rect = this.getBoundingRect(false, true);
-
-        const right = rect.width + rect.left;
-        const bottom = rect.height + rect.top;
-
-        const maxWidth = right;
-        const minWidth = 1;
-
-        const maxHeight = maxY - rect.top;
-        const minHeight = 1;
-
-        let width = clamp(right - x, minWidth, maxWidth);
-        let height = clamp(y - rect.top, minHeight, maxHeight);
-
-        if (this.presetRatio) {
-            const dx = rect.left - x;
-            const dy = y - bottom;
-            const scaleTo = dx > dy ? 'width' : 'height';
-
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo,
-                maxWidth,
-                maxHeight
-            }));
-        }
-
-        const left = right - width;
+        const {rectTop, rectLeft, canvasHeight, rectRight, rectBottom} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: rectRight - x,
+            height: y - rectTop,
+            maxWidth: rectRight,
+            maxHeight: canvasHeight - rectTop,
+            scaleTo: getScaleBasis(rectLeft - x, y - rectBottom)
+        });
 
         return {
-            left,
-            top: rect.top,
+            left: rectRight - width,
+            top: rectTop,
             width,
             height
         };
@@ -561,38 +536,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeBR({x, y}) {
-        const {width: maxX, height: maxY} = this.canvas;
-        const rect = this.getBoundingRect(false, true);
-
-        const bottom = rect.height + rect.top;
-        const right = rect.width + rect.left;
-
-        const maxWidth = maxX - rect.left;
-        const minWidth = 1;
-
-        const maxHeight = maxY - rect.top;
-        const minHeight = 1;
-
-        let width = clamp(x - rect.left, minWidth, maxWidth);
-        let height = clamp(y - rect.top, minHeight, maxHeight);
-
-        if (this.presetRatio) {
-            const dx = x - right;
-            const dy = y - bottom;
-            const scaleTo = dx > dy ? 'width' : 'height';
-
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo,
-                maxWidth,
-                maxHeight
-            }));
-        }
+        const {rectTop, rectLeft, rectBottom, rectRight, canvasWidth, canvasHeight} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: x - rectLeft,
+            height: y - rectTop,
+            maxWidth: canvasWidth - rectLeft,
+            maxHeight: canvasHeight - rectTop,
+            scaleTo: getScaleBasis(x - rectRight, y - rectBottom)
+        });
 
         return {
-            left: rect.left,
-            top: rect.top,
+            left: rectLeft,
+            top: rectTop,
             width,
             height
         };
@@ -607,29 +562,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeMB({y}) {
-        const {width: maxX, height: maxY} = this.canvas;
-        const rect = this.getBoundingRect(false, true);
-
-        const maxWidth = maxX - rect.left;
-        const maxHeight = maxY - rect.top;
-        const minHeight = 1;
-
-        let {width} = rect;
-        let height = clamp(y - rect.top, minHeight, maxHeight);
-
-        if (this.presetRatio) {
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo: 'height',
-                maxWidth,
-                maxHeight
-            }));
-        }
+        const {rectTop, rectLeft, rectWidth, canvasWidth, canvasHeight} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: rectWidth,
+            height: y - rectTop,
+            maxWidth: canvasWidth - rectLeft,
+            maxHeight: canvasHeight - rectTop,
+            scaleTo: 'height'
+        });
 
         return {
-            left: rect.left,
-            top: rect.top,
+            left: rectLeft,
+            top: rectTop,
             width,
             height
         };
@@ -644,38 +588,22 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeML({x}) {
-        const {height: maxY} = this.canvas;
-        const rect = this.getBoundingRect(false, true);
-
-        const right = rect.width + rect.left;
-
-        const maxWidth = right;
-        const minWidth = 1;
-        const maxHeight = maxY - rect.top;
-
-        let width = clamp(right - x, minWidth, maxWidth);
-        let {height} = rect;
-
-        if (this.presetRatio) {
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo: 'width',
-                maxWidth,
-                maxHeight
-            }));
-        }
-
-        const left = right - width;
+        const {rectTop, rectHeight, rectRight, canvasHeight} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: rectRight - x,
+            height: rectHeight,
+            maxWidth: rectRight,
+            maxHeight: canvasHeight - rectTop,
+            scaleTo: 'width'
+        });
 
         return {
-            left,
-            top: rect.top,
+            left: rectRight - width,
+            top: rectTop,
             width,
             height
         };
     },
-
     /**
      * Calc scaling dimension with control MR
      * @param {Object} position - Mouse position
@@ -685,29 +613,18 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
      * @private
      */
     _resizeMR({x}) {
-        const {width: maxX, height: maxY} = this.canvas;
-        const rect = this.getBoundingRect(false, true);
-
-        const maxWidth = maxX - rect.left;
-        const minWidth = 1;
-        const maxHeight = maxY - rect.top;
-
-        let width = clamp(x - rect.left, minWidth, maxWidth);
-        let {height} = rect;
-
-        if (this.presetRatio) {
-            ({width, height} = this.adjustRatioSize({
-                width,
-                height,
-                scaleTo: 'width',
-                maxWidth,
-                maxHeight
-            }));
-        }
+        const {rectTop, rectLeft, rectHeight, canvasWidth, canvasHeight} = this._getCropzoneRectInfo();
+        const {width, height} = this.adjustRatioCropzoneSize({
+            width: x - rectLeft,
+            height: rectHeight,
+            maxWidth: canvasWidth - rectLeft,
+            maxHeight: canvasHeight - rectTop,
+            scaleTo: 'width'
+        });
 
         return {
-            left: rect.left,
-            top: rect.top,
+            left: rectLeft,
+            top: rectTop,
             width,
             height
         };
