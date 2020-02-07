@@ -158,13 +158,14 @@ class Shape extends Submenu {
     /**
      * Change stroke range
      * @param {number} value - stroke range value
+     * @param {boolean} isLast - Is last change
      * @private
      */
-    _changeStrokeRangeHandler(value) {
+    _changeStrokeRangeHandler(value, isLast) {
         this.options.strokeWidth = toInteger(value);
         this.actions.changeShape({
             strokeWidth: value
-        });
+        }, !isLast);
 
         this.actions.setDrawingShape(this.type, this.options);
     }

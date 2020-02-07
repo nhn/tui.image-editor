@@ -10,6 +10,31 @@ import consts from '../consts';
 const {componentNames, rejectMessages, commandNames} = consts;
 const {SHAPE} = componentNames;
 
+/**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
+ * Make undoData
+ * @param {object} options - shape options
+ * @param {Component} targetObj - shape component
+ * @returns {object} - undo data
+ */
+function makeUndoData(options, targetObj) {
+    const undoData = {
+        object: targetObj,
+        options: {}
+    };
+
+    snippet.forEachOwnProperties(options, (value, key) => {
+        undoData.options[key] = targetObj[key];
+    });
+
+    return undoData;
+}
+
 const command = {
     name: commandNames.CHANGE_SHAPE,
 
@@ -28,9 +53,10 @@ const command = {
      *      @param {number} [options.left] - Shape x position
      *      @param {number} [options.top] - Shape y position
      *      @param {number} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      */
-    execute(graphics, id, options) {
+    execute(graphics, id, options, isSilent) {
         const shapeComp = graphics.getComponent(SHAPE);
         const targetObj = graphics.getObject(id);
 
@@ -38,11 +64,11 @@ const command = {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        this.undoData.object = targetObj;
-        this.undoData.options = {};
-        snippet.forEachOwnProperties(options, (value, key) => {
-            this.undoData.options[key] = targetObj[key];
-        });
+        if (!this.isRedo) {
+            const undoData = makeUndoData(options, targetObj);
+
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
+        }
 
         return shapeComp.change(targetObj, options);
     },

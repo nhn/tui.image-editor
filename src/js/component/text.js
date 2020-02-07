@@ -21,7 +21,6 @@ const resetStyles = {
     fontStyle: 'normal',
     fontWeight: 'normal',
     textAlign: 'left',
-    textDecoration: '',
     underline: false
 };
 const {browser} = snippet;
@@ -284,10 +283,14 @@ class Text extends Component {
     setStyle(activeObj, styleObj) {
         return new Promise(resolve => {
             snippet.forEach(styleObj, (val, key) => {
-                if (activeObj[key] === val) {
+                if (activeObj[key] === val && key !== 'fontSize') {
                     styleObj[key] = resetStyles[key] || '';
                 }
             }, this);
+
+            if ('textDecoration' in styleObj) {
+                snippet.extend(styleObj, this._getTextDecorationAdaptObject(styleObj.textDecoration));
+            }
 
             activeObj.set(styleObj);
 
@@ -349,6 +352,19 @@ class Text extends Component {
      */
     getCanvasRatio() {
         return this._ratio;
+    }
+
+    /**
+     * Get text decoration adapt object
+     * @param {string} textDecoration - text decoration option string
+     * @returns {object} adapt object for override
+     */
+    _getTextDecorationAdaptObject(textDecoration) {
+        return {
+            underline: textDecoration === 'underline',
+            linetrought: textDecoration === 'line-through',
+            overline: textDecoration === 'overline'
+        };
     }
 
     /**

@@ -107,7 +107,7 @@ describe('Cropzone', () => {
 
     it('"_resizeBL" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-
+      
         expect(cropzone._resizeCropZone({
             x: 30,
             y: 40
@@ -121,7 +121,7 @@ describe('Cropzone', () => {
 
     it('"_resizeBR" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-
+      
         expect(cropzone._resizeCropZone({
             x: 30,
             y: 40
@@ -146,6 +146,7 @@ describe('Cropzone', () => {
                 x: 20,
                 y: 20
             }, cornerType);
+
             expect(width / height).toEqual(presetRatio);
         });
     });

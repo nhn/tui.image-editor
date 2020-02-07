@@ -12,7 +12,7 @@ const FILTER_OPTIONS = [
     'grayscale',
     'invert',
     'sepia',
-    'sepia2',
+    'vintage',
     'blur',
     'sharpen',
     'emboss',
@@ -25,11 +25,11 @@ const FILTER_OPTIONS = [
     'multiply',
     'blend'
 ];
+
 const filterNameMap = {
     grayscale: 'grayscale',
     invert: 'invert',
     sepia: 'sepia',
-    sepia2: 'vintage',
     blur: 'blur',
     sharpen: 'sharpen',
     emboss: 'emboss',
@@ -72,47 +72,163 @@ class Filter extends Submenu {
     }
 
     /**
+     * Destroy
+     */
+    destroy() {
+        this._removeEvent();
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
+     * Remove event for filter
+     */
+    removeEvent() {
+        snippet.forEach(FILTER_OPTIONS, filter => {
+            const filterCheckElement = this.selector(`.tie-${filter}`);
+            const filterNameCamelCase = toCamelCase(filter);
+
+            filterCheckElement.removeEventListener('change', this.handler[filterNameCamelCase]);
+        });
+
+        this._els.removewhiteDistanceRange.off();
+        this._els.colorfilterThresholeRange.off();
+        this._els.pixelateRange.off();
+        this._els.noiseRange.off();
+        this._els.brightnessRange.off();
+        this._els.filterBlendColor.off();
+        this._els.filterMultiplyColor.off();
+        this._els.filterTintColor.off();
+        this._els.tintOpacity.off();
+        this._els.filterMultiplyColor.off();
+        this._els.filterTintColor.off();
+        this._els.filterBlendColor.off();
+
+        this._els.blendType.removeEventListener('change', this.handler.changeBlendFilter);
+        this._els.blendType.removeEventListener('click', this.handler.changeBlendFilter);
+    }
+
+    /**
      * Add event for filter
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.applyFilter - apply filter option
      */
     addEvent({applyFilter}) {
-        const changeRangeValue = this._changeRangeValue.bind(this, applyFilter);
+        const changeFilterState = filterName => this._changeFilterState.bind(this, applyFilter, filterName);
+        const changeFilterStateForRange =
+            filterName => (value, isLast) => this._changeFilterState(applyFilter, filterName, isLast);
+
+        this.handler = {
+            changeBlendFilter: changeFilterState('blend'),
+            blandTypeClick: event => event.stopPropagation()
+        };
 
         snippet.forEach(FILTER_OPTIONS, filter => {
             const filterCheckElement = this.selector(`.tie-${filter}`);
             const filterNameCamelCase = toCamelCase(filter);
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
+            this.handler[filterNameCamelCase] = changeFilterState(filterNameCamelCase);
 
-            filterCheckElement.addEventListener('change', () => changeRangeValue(filterNameCamelCase));
+            filterCheckElement.addEventListener('change', this.handler[filterNameCamelCase]);
         });
 
-        this._els.removewhiteDistanceRange.on('change', () => changeRangeValue('removeWhite'));
-        this._els.colorfilterThresholeRange.on('change', () => changeRangeValue('colorFilter'));
-        this._els.pixelateRange.on('change', () => changeRangeValue('pixelate'));
-        this._els.noiseRange.on('change', () => changeRangeValue('noise'));
-        this._els.brightnessRange.on('change', () => changeRangeValue('brightness'));
-        this._els.blendType.addEventListener('change', () => changeRangeValue('blend'));
-        this._els.filterBlendColor.on('change', () => changeRangeValue('blend'));
-        this._els.filterMultiplyColor.on('change', () => changeRangeValue('multiply'));
-        this._els.tintOpacity.on('change', () => changeRangeValue('tint'));
-        this._els.filterTintColor.on('change', () => changeRangeValue('tint'));
-        this._els.blendType.addEventListener('click', event => event.stopPropagation());
+        this._els.removewhiteDistanceRange.on('change', changeFilterStateForRange('removeWhite'));
+        this._els.colorfilterThresholeRange.on('change', changeFilterStateForRange('colorFilter'));
+        this._els.pixelateRange.on('change', changeFilterStateForRange('pixelate'));
+        this._els.noiseRange.on('change', changeFilterStateForRange('noise'));
+        this._els.brightnessRange.on('change', changeFilterStateForRange('brightness'));
+        this._els.blendType.addEventListener('change', this.handler.changeBlendFilter);
+        this._els.filterBlendColor.on('change', this.handler.changeBlendFilter);
+        this._els.filterMultiplyColor.on('change', changeFilterState('multiply'));
+        this._els.filterTintColor.on('change', changeFilterState('tint'));
+        this._els.tintOpacity.on('change', changeFilterStateForRange('tint'));
+        this._els.blendType.addEventListener('click', this.handler.blandTypeClick);
         this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
     }
 
     /**
+     * Set filter for undo changed
+     * @param {Object} chagedFilterInfos - changed command infos
+     *   @param {string} type - filter type
+     *   @param {string} action - add or remove
+     *   @param {Object} options - filter options
+     */
+    setFilterState(chagedFilterInfos) {
+        const {type, options, action} = chagedFilterInfos;
+        const filterName = this._getFilterNameFromOptions(type, options);
+        const isRemove = action === 'remove';
+
+        if (!isRemove) {
+            this._setFilterState(filterName, options);
+        }
+
+        this.checkedMap[filterName].checked = !isRemove;
+    }
+
+    /**
+     * Set filter for undo changed
+     * @param {string} filterName - filter name
+     * @param {Object} options - filter options
+     * @private
+     */
+    _setFilterState(filterName, options) { // eslint-disable-line
+        if (filterName === 'colorFilter') {
+            this._els.colorfilterThresholeRange.value = options.distance;
+        } else if (filterName === 'removeWhite') {
+            this._els.removewhiteDistanceRange.value = options.distance;
+        } else if (filterName === 'pixelate') {
+            this._els.pixelateRange.value = options.blocksize;
+        } else if (filterName === 'brightness') {
+            this._els.brightnessRange.value = options.brightness;
+        } else if (filterName === 'noise') {
+            this._els.noiseRange.value = options.noise;
+        } else if (filterName === 'tint') {
+            this._els.tintOpacity.value = options.alpha;
+            this._els.filterTintColor.color = options.color;
+        } else if (filterName === 'blend') {
+            this._els.filterBlendColor.color = options.color;
+        } else if (filterName === 'multiply') {
+            this._els.filterMultiplyColor.color = options.color;
+        }
+    }
+
+    /**
+     * Get filter name
+     * @param {string} type - filter type
+     * @param {Object} options - filter options
+     * @returns {string} filter name
+     * @private
+     */
+    _getFilterNameFromOptions(type, options) {
+        let filterName = type;
+
+        if (type === 'removeColor') {
+            filterName = snippet.isExisty(options.useAlpha) ? 'removeWhite' : 'colorFilter';
+        } else if (type === 'blendColor') {
+            filterName = {
+                add: 'blend',
+                multiply: 'multiply',
+                tint: 'tint'
+            }[options.mode];
+        }
+
+        return filterName;
+    }
+
+    /**
      * Add event for filter
      * @param {Function} applyFilter - actions for firter
-     * @param {string} filter - filter name
+     * @param {string} filterName - filter name
+     * @param {boolean} [isLast] - Is last change
      */
-    _changeRangeValue(applyFilter, filter) {
-        const apply = this.checkedMap[filter].checked;
-        const type = filterNameMap[filter];
+    _changeFilterState(applyFilter, filterName, isLast = true) {
+        const apply = this.checkedMap[filterName].checked;
+        const type = filterNameMap[filterName];
 
-        const checkboxGroup = this.checkedMap[filter].closest('.tui-image-editor-checkbox-group');
+        const checkboxGroup = this.checkedMap[filterName].closest('.tui-image-editor-checkbox-group');
         if (checkboxGroup) {
             if (apply) {
                 checkboxGroup.classList.remove('tui-image-editor-disabled');
@@ -120,7 +236,7 @@ class Filter extends Submenu {
                 checkboxGroup.classList.add('tui-image-editor-disabled');
             }
         }
-        applyFilter(apply, type, this._getFilterOption(filter));
+        applyFilter(apply, type, this._getFilterOption(filterName), !isLast);
     }
 
     /**

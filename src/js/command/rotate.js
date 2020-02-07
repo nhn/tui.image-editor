@@ -2,7 +2,6 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Rotate an image
  */
-import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
 import consts from '../consts';
 
@@ -10,19 +9,20 @@ const {componentNames, commandNames} = consts;
 const {ROTATION} = componentNames;
 
 /**
- * Calculate undo angle
- * @param {string} type - execute type
- * @param {Component} rotationComp - rotation component
- * @returns {number} - angle for undo state
+ * Chched data for undo
+ * @type {Object}
  */
-function getUndoAngle(type, rotationComp) {
-    let undoAngle = rotationComp.getCurrentAngle();
+let chchedUndoDataForSilent = null;
 
-    if (type === 'setAngle') {
-        undoAngle = rotationComp.lastAngleForUndoStack;
-    }
-
-    return undoAngle;
+/**
+ * Make undo data
+ * @param {Component} rotationComp - rotation component
+ * @returns {object} - undodata
+ */
+function makeUndoData(rotationComp) {
+    return {
+        angle: rotationComp.getCurrentAngle()
+    };
 }
 
 const command = {
@@ -39,9 +39,10 @@ const command = {
     execute(graphics, type, angle, isSilent) {
         const rotationComp = graphics.getComponent(ROTATION);
 
-        if (!isSilent && !snippet.isExisty(this.undoData.angle)) {
-            this.undoData.angle = getUndoAngle(type, rotationComp);
-            rotationComp.lastAngleForUndoStack = angle;
+        if (!this.isRedo) {
+            const undoData = makeUndoData(rotationComp);
+
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return rotationComp[type](angle);

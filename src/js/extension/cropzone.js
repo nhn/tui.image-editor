@@ -400,7 +400,33 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             top: topMaker(height)
         };
     },
+  
+    /**
+     * Get dimension last state cropzone
+     * @returns {{rectTop: number, rectLeft: number, rectWidth: number, rectHeight: number}}
+     * @private
+     */
+    _getCropzoneRectInfo() {
+        const {width: canvasWidth, height: canvasHeight} = this.canvas;
+        const {
+            top: rectTop,
+            left: rectLeft,
+            width: rectWidth,
+            height: rectHeight
+        } = this.getBoundingRect(false, true);
 
+        return {
+            rectTop,
+            rectLeft,
+            rectWidth,
+            rectHeight,
+            rectRight: rectLeft + rectWidth,
+            rectBottom: rectTop + rectHeight,
+            canvasWidth,
+            canvasHeight
+        };
+    },
+  
     /**
      * Calc scaling dimension
      * @param {Object} position - Mouse position
@@ -494,32 +520,6 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         };
 
         return this.adjustRatioCropzoneSize(resizeInfoMap[corner]);
-    },
-
-    /**
-     * Get dimension last state cropzone
-     * @returns {{rectTop: number, rectLeft: number, rectWidth: number, rectHeight: number}}
-     * @private
-     */
-    _getCropzoneRectInfo() {
-        const {width: canvasWidth, height: canvasHeight} = this.canvas;
-        const {
-            top: rectTop,
-            left: rectLeft,
-            width: rectWidth,
-            height: rectHeight
-        } = this.getBoundingRect(false, true);
-
-        return {
-            rectTop,
-            rectLeft,
-            rectWidth,
-            rectHeight,
-            rectRight: rectLeft + rectWidth,
-            rectBottom: rectTop + rectHeight,
-            canvasWidth,
-            canvasHeight
-        };
     },
 
     /**

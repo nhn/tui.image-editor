@@ -10,6 +10,31 @@ import consts from '../consts';
 const {componentNames, rejectMessages, commandNames} = consts;
 const {TEXT} = componentNames;
 
+/**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
+ * Make undoData
+ * @param {object} styles - text styles
+ * @param {Component} targetObj - text component
+ * @returns {object} - undo data
+ */
+function makeUndoData(styles, targetObj) {
+    const undoData = {
+        object: targetObj,
+        styles: {}
+    };
+    snippet.forEachOwnProperties(styles, (value, key) => {
+        const undoValue = targetObj[key];
+        undoData.styles[key] = undoValue;
+    });
+
+    return undoData;
+}
+
 const command = {
     name: commandNames.CHANGE_TEXT_STYLE,
 
@@ -25,21 +50,21 @@ const command = {
      *     @param {string} [styles.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styles.textAlign] Type of text align (left / center / right)
      *     @param {string} [styles.textDecoration] Type of line (underline / line-through / overline)
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      */
-    execute(graphics, id, styles) {
+    execute(graphics, id, styles, isSilent) {
         const textComp = graphics.getComponent(TEXT);
         const targetObj = graphics.getObject(id);
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
+        if (!this.isRedo) {
+            const undoData = makeUndoData(styles, targetObj);
 
-        this.undoData.object = targetObj;
-        this.undoData.styles = {};
-        snippet.forEachOwnProperties(styles, (value, key) => {
-            this.undoData.styles[key] = targetObj[key];
-        });
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
+        }
 
         return textComp.setStyle(targetObj, styles);
     },
