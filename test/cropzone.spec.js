@@ -80,10 +80,10 @@ describe('Cropzone', () => {
     it('"_resizeTL" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
 
-        expect(cropzone._resizeTL({
+        expect(cropzone._resizeCropZone({
             x: 30,
             y: 40
-        })).toEqual({
+        }, 'tl')).toEqual({
             left: 30,
             top: 40,
             width: 80,
@@ -94,10 +94,10 @@ describe('Cropzone', () => {
     it('"_resizeTR" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
 
-        expect(cropzone._resizeTR({
+        expect(cropzone._resizeCropZone({
             x: 80,
             y: 50
-        })).toEqual({
+        }, 'tr')).toEqual({
             left: 10,
             top: 50,
             width: 70,
@@ -107,11 +107,11 @@ describe('Cropzone', () => {
 
     it('"_resizeBL" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-
-        expect(cropzone._resizeBL({
+      
+        expect(cropzone._resizeCropZone({
             x: 30,
             y: 40
-        })).toEqual({
+        }, 'bl')).toEqual({
             left: 30,
             top: 10,
             width: 80,
@@ -121,11 +121,11 @@ describe('Cropzone', () => {
 
     it('"_resizeBR" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-
-        expect(cropzone._resizeBR({
+      
+        expect(cropzone._resizeCropZone({
             x: 30,
             y: 40
-        })).toEqual({
+        }, 'br')).toEqual({
             left: 10,
             top: 10,
             width: 20,
@@ -141,11 +141,12 @@ describe('Cropzone', () => {
             presetRatio
         }), {});
 
-        snippet.forEach(['TL', 'TR', 'MT', 'ML', 'MR', 'MB', 'BL', 'BR'], conerType => {
-            const {width, height} = cropzone[`_resize${conerType}`]({
+        snippet.forEach(['tl', 'tr', 'mt', 'ml', 'mr', 'mb', 'bl', 'br'], cornerType => {
+            const {width, height} = cropzone._resizeCropZone({
                 x: 20,
                 y: 20
-            });
+            }, cornerType);
+
             expect(width / height).toEqual(presetRatio);
         });
     });
