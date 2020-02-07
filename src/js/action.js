@@ -41,14 +41,14 @@ export default {
                 this.ui.rotate.setRangeBarAngle('setAngle', angle);
             }
         };
-        const setFilterSateRangeBarOnAction = filterOptions => {
+        const setFilterStateRangeBarOnAction = filterOptions => {
             if (this.ui.submenu === 'filter') {
                 this.ui.filter.setFilterState(filterOptions);
             }
         };
         const onEndUndoRedo = result => {
             setAngleRangeBarOnAction(result);
-            setFilterSateRangeBarOnAction(result);
+            setFilterStateRangeBarOnAction(result);
 
             return result;
         };

@@ -2,11 +2,11 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Command interface
  */
+import snippet from 'tui-code-snippet';
 import errorMessage from '../factory/errorMessage';
 
 const createMessage = errorMessage.create;
 const errorTypes = errorMessage.types;
-let cacheUndoDataForSilent = null;
 
 /**
  * Command class
@@ -87,12 +87,25 @@ class Command {
         return Object.keys(this.undoData).length;
     }
 
-    get cacheUndoDataForSilent() {
-        return cacheUndoDataForSilent;
-    }
+    /**
+     * Set undoData action
+     * @param {Object} undoData - maked undo data
+     * @param {Object} chchedUndoDataForSilent - chched undo data
+     * @param {boolean} isSilent - is silent execution or not
+     * @returns {Object} chchedUndoDataForSilent
+     */
+    setUndoData(undoData, chchedUndoDataForSilent, isSilent) {
+        if (chchedUndoDataForSilent) {
+            undoData = chchedUndoDataForSilent;
+        }
+        if (!isSilent) {
+            snippet.extend(this.undoData, undoData);
+            chchedUndoDataForSilent = null;
+        } else if (!chchedUndoDataForSilent) {
+            chchedUndoDataForSilent = undoData;
+        }
 
-    set cacheUndoDataForSilent(value) {
-        cacheUndoDataForSilent = value;
+        return chchedUndoDataForSilent;
     }
 
     /**
