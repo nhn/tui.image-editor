@@ -400,7 +400,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             top: topMaker(height)
         };
     },
-  
+
     /**
      * Get dimension last state cropzone
      * @returns {{rectTop: number, rectLeft: number, rectWidth: number, rectHeight: number}}
@@ -426,7 +426,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
             canvasHeight
         };
     },
-  
+
     /**
      * Calc scaling dimension
      * @param {Object} position - Mouse position
