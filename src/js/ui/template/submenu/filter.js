@@ -26,7 +26,7 @@ export default ({locale}) => (`
                 </div>
                 <div class="tui-image-editor-checkbox">
                     <label>
-                        <input type="checkbox" class="tie-sepia2">
+                        <input type="checkbox" class="tie-vintage">
                         <span>${locale.localize('Sepia2')}</span>
                     </label>
                 </div>

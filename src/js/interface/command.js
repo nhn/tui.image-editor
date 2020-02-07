@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Command interface
  */
+import snippet from 'tui-code-snippet';
 import errorMessage from '../factory/errorMessage';
 
 const createMessage = errorMessage.create;
@@ -82,8 +83,29 @@ class Command {
      * command for redo if undoData exists
      * @returns {boolean} isRedo
      */
-    isRedo() {
+    get isRedo() {
         return Object.keys(this.undoData).length;
+    }
+
+    /**
+     * Set undoData action
+     * @param {Object} undoData - maked undo data
+     * @param {Object} chchedUndoDataForSilent - chched undo data
+     * @param {boolean} isSilent - is silent execution or not
+     * @returns {Object} chchedUndoDataForSilent
+     */
+    setUndoData(undoData, chchedUndoDataForSilent, isSilent) {
+        if (chchedUndoDataForSilent) {
+            undoData = chchedUndoDataForSilent;
+        }
+        if (!isSilent) {
+            snippet.extend(this.undoData, undoData);
+            chchedUndoDataForSilent = null;
+        } else if (!chchedUndoDataForSilent) {
+            chchedUndoDataForSilent = undoData;
+        }
+
+        return chchedUndoDataForSilent;
     }
 
     /**

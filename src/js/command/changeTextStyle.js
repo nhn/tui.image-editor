@@ -58,12 +58,11 @@ const command = {
     execute(graphics, id, styles, isSilent) {
         const textComp = graphics.getComponent(TEXT);
         const targetObj = graphics.getObject(id);
-        const isRedo = Object.keys(this.undoData).length;
 
         if (!targetObj) {
             return Promise.reject(rejectMessages.noObject);
         }
-        if (!isRedo) {
+        if (!this.isRedo) {
             snippet.extend(this.undoData, makeUndoData(styles, targetObj, isSilent));
         }
 
