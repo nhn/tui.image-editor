@@ -11,27 +11,25 @@ const {componentNames, rejectMessages, commandNames} = consts;
 const {SHAPE} = componentNames;
 
 /**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
  * Make undoData
  * @param {object} options - shape options
  * @param {Component} targetObj - shape component
- * @param {boolean} isSilent - is silent execution or not
  * @returns {object} - undo data
  */
-function makeUndoData(options, targetObj, isSilent) {
+function makeUndoData(options, targetObj) {
     const undoData = {
         object: targetObj,
         options: {}
     };
 
     snippet.forEachOwnProperties(options, (value, key) => {
-        let undoValue = targetObj[key];
-
-        if (!isSilent) {
-            undoValue = targetObj.lastUndoStackForShape[key];
-            targetObj.lastUndoStackForShape[key] = targetObj[key];
-        }
-
-        undoData.options[key] = undoValue;
+        undoData.options[key] = targetObj[key];
     });
 
     return undoData;
@@ -67,7 +65,9 @@ const command = {
         }
 
         if (!this.isRedo) {
-            snippet.extend(this.undoData, makeUndoData(options, targetObj, isSilent));
+            const undoData = makeUndoData(options, targetObj);
+
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return shapeComp.change(targetObj, options);

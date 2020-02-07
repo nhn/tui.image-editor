@@ -11,26 +11,24 @@ const {componentNames, rejectMessages, commandNames} = consts;
 const {TEXT} = componentNames;
 
 /**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
  * Make undoData
  * @param {object} styles - text styles
  * @param {Component} targetObj - text component
- * @param {boolean} isSilent - is silent execution or not
  * @returns {object} - undo data
  */
-function makeUndoData(styles, targetObj, isSilent) {
+function makeUndoData(styles, targetObj) {
     const undoData = {
         object: targetObj,
         styles: {}
     };
-
     snippet.forEachOwnProperties(styles, (value, key) => {
-        let undoValue = targetObj[key];
-
-        if (!isSilent && key === 'fontSize') {
-            undoValue = targetObj.lastfontSizeUndoStack;
-            targetObj.lastfontSizeUndoStack = targetObj[key];
-        }
-
+        const undoValue = targetObj[key];
         undoData.styles[key] = undoValue;
     });
 
@@ -63,7 +61,9 @@ const command = {
             return Promise.reject(rejectMessages.noObject);
         }
         if (!this.isRedo) {
-            snippet.extend(this.undoData, makeUndoData(styles, targetObj, isSilent));
+            const undoData = makeUndoData(styles, targetObj);
+
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return textComp.setStyle(targetObj, styles);

@@ -90,22 +90,23 @@ class Command {
     /**
      * Set undoData action
      * @param {Object} undoData - maked undo data
-     * @param {Object} chchedUndoDataForSilent - chched undo data
+     * @param {Object} cachedUndoDataForSilent - cached undo data
      * @param {boolean} isSilent - is silent execution or not
-     * @returns {Object} chchedUndoDataForSilent
+     * @returns {Object} cachedUndoDataForSilent
      */
-    setUndoData(undoData, chchedUndoDataForSilent, isSilent) {
-        if (chchedUndoDataForSilent) {
-            undoData = chchedUndoDataForSilent;
-        }
-        if (!isSilent) {
-            snippet.extend(this.undoData, undoData);
-            chchedUndoDataForSilent = null;
-        } else if (!chchedUndoDataForSilent) {
-            chchedUndoDataForSilent = undoData;
+    setUndoData(undoData, cachedUndoDataForSilent, isSilent) {
+        if (cachedUndoDataForSilent) {
+            undoData = cachedUndoDataForSilent;
         }
 
-        return chchedUndoDataForSilent;
+        if (!isSilent) {
+            snippet.extend(this.undoData, undoData);
+            cachedUndoDataForSilent = null;
+        } else if (!cachedUndoDataForSilent) {
+            cachedUndoDataForSilent = undoData;
+        }
+
+        return cachedUndoDataForSilent;
     }
 
     /**

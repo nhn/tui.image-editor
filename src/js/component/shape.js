@@ -183,7 +183,6 @@ class Shape extends Component {
             options = this._extendOptions(options);
 
             const shapeObj = this._createInstance(type, options);
-            shapeObj.lastUndoStackForShape = options;
 
             this._bindEventOnShape(shapeObj);
 
