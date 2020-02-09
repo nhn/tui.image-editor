@@ -1,7 +1,7 @@
 import snippet from 'tui-code-snippet';
 import util from './util';
 import mainContainer from './ui/template/mainContainer';
-import controls from './ui/template/controls';
+import {controls, menuSvgItem} from './ui/template/controls';
 
 import Theme from './ui/theme/theme';
 import Shape from './ui/shape';
@@ -159,6 +159,7 @@ class Ui {
      */
     changeUndoButtonStatus(enableStatus) {
         if (enableStatus) {
+            console.log(this._els.undo);
             this._els.undo.classList.add('enabled');
         } else {
             this._els.undo.classList.remove('enabled');
@@ -268,7 +269,9 @@ class Ui {
             const SubComponentClass = SUB_UI_COMPONENT[menuName.replace(/^[a-z]/, $0 => $0.toUpperCase())];
 
             // make menu element
-            this._makeMenuElement(menuName);
+            const menuElementElement =
+                this._makeMenuElement(menuName, this._makeMenuSvgElementElementTemplate(menuName));
+            this._menuElement.appendChild(menuElementElement);
 
             // menu btn element
             this._els[menuName] = this._menuElement.querySelector(`#tie-btn-${menuName}`);
@@ -289,6 +292,7 @@ class Ui {
      * @private
      */
     _makeUiElement(element) {
+        console.log('make');
         let selectedElement;
 
         window.snippet = snippet;
@@ -304,7 +308,6 @@ class Ui {
         selectedElement.innerHTML = controls({
             locale: this._locale,
             biImage: this.theme.getStyle('common.bi'),
-            iconStyle: this.theme.getStyle('menu.icon'),
             loadButtonStyle: this.theme.getStyle('loadButton'),
             downloadButtonStyle: this.theme.getStyle('downloadButton')
         }) +
@@ -317,6 +320,13 @@ class Ui {
             downloadButtonStyle: this.theme.getStyle('downloadButton'),
             submenuStyle: this.theme.getStyle('submenu')
         });
+        this._menuElement = selector('.tui-image-editor-menu');
+
+        ['undo', 'redo', 'reset', 'delete', 'detete-all'].forEach(menuName => {
+            const menuElementElement =
+                this._makeMenuElement(menuName, this._makeMenuSvgElementElementTemplate(menuName));
+            this._menuElement.appendChild(menuElementElement);
+        });
 
         this._selectedElement = selectedElement;
         this._selectedElement.classList.add(this.options.menuBarPosition);
@@ -324,8 +334,30 @@ class Ui {
         this._mainElement = selector('.tui-image-editor-main');
         this._editorElementWrap = selector('.tui-image-editor-wrap');
         this._editorElement = selector('.tui-image-editor');
-        this._menuElement = selector('.tui-image-editor-menu');
         this._subMenuElement = selector('.tui-image-editor-submenu');
+    }
+
+    _makeMenuSvgElementElementTemplate(menuName) {
+        const {normal, active, hover} = this.theme.getStyle('menu.icon');
+
+        return menuSvgItem([
+            {
+                menuName,
+                className: 'normal',
+                path: normal.path,
+                name: normal.name
+            }, {
+                menuName,
+                className: 'active',
+                path: active.path,
+                name: active.name
+            }, {
+                menuName,
+                className: 'hover',
+                path: hover.path,
+                name: hover.name
+            }
+        ]);
     }
 
     /**
@@ -333,23 +365,17 @@ class Ui {
      * @param {string} menuName - menu name
      * @private
      */
-    _makeMenuElement(menuName) {
+    _makeMenuElement(menuName, svgTemplate) {
         const btnElement = document.createElement('li');
-        const {normal, active, hover} = this.theme.getStyle('menu.icon');
-        const menuItemHtml = `
-            <svg class="svg_ic-menu">
-                <use xlink:href="${normal.path}#${normal.name}-ic-${menuName}" class="normal"/>
-                <use xlink:href="${active.path}#${active.name}-ic-${menuName}" class="active"/>
-                <use xlink:href="${hover.path}#${hover.name}-ic-${menuName}" class="hover"/>
-            </svg>
-        `;
+        const btnClassList = btnElement.classList;
+        btnClassList.add('tui-image-editor-item');
+        btnClassList.add(`tie-btn-${menuName}`);
+        btnClassList.add('normal');
+        btnElement.innerHTML = svgTemplate;
+        btnElement.setAttribute('tooltip-content',
+            this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase())));
 
-        btnElement.id = `tie-btn-${menuName}`;
-        btnElement.className = 'tui-image-editor-item normal';
-        btnElement.setAttribute('tooltip-content', this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase())));
-        btnElement.innerHTML = menuItemHtml;
-
-        this._menuElement.appendChild(btnElement);
+        return btnElement;
     }
 
     /**
