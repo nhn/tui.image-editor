@@ -88,6 +88,12 @@ module.exports = {
     ),
 
     /**
+     * Editor help features
+     * @type {Array.<string>}
+     */
+    helpMenus: ['undo', 'redo', 'reset', 'delete', 'deleteAll'],
+
+    /**
      * Shortcut key values
      * @type {Object.<string, number>}
      */

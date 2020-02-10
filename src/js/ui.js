@@ -1,4 +1,5 @@
 import snippet from 'tui-code-snippet';
+import {helpMenus as HELP_MENUS} from './consts';
 import util from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
@@ -28,7 +29,6 @@ const SUB_UI_COMPONENT = {
 };
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
-const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
 
 /**
  * Ui class
@@ -83,8 +83,8 @@ class Ui {
      * Destroys the instance.
      */
     destroy() {
-        this._removeAllEvent();
-        this._destroyMenu();
+        this._removeUiEvent();
+        this._destroyAllMenu();
         this._selectedElement.innerHTML = '';
 
         snippet.forEach(this, (value, key) => {
@@ -368,16 +368,23 @@ class Ui {
 
     /**
      * Add help action event
-     * @param {string} helpName - help menu name
      * @private
      */
-    _addHelpActionEvent(helpName) {
-        this.eventHandler[helpName] = () => this._actions.main[helpName]();
-        this._els[helpName].addEventListener('click', this.eventHandler[helpName]);
+    _addHelpActionEvent() {
+        snippet.forEach(HELP_MENUS, helpName => {
+            this.eventHandler[helpName] = () => this._actions.main[helpName]();
+            this._els[helpName].addEventListener('click', this.eventHandler[helpName]);
+        });
     }
 
-    _removeHelpActionEvent(helpName) {
-        this._els[helpName].removeEventListener('click', this.eventHandler[helpName]);
+    /**
+     * Remove help action event
+     * @private
+     */
+    _removeHelpActionEvent() {
+        snippet.forEach(HELP_MENUS, helpName => {
+            this._els[helpName].removeEventListener('click', this.eventHandler[helpName]);
+        });
     }
 
     /**
@@ -420,18 +427,9 @@ class Ui {
      * @param {string} menuName - menu name
      * @private
      */
-    _addMenuEvent(menuName) {
+    _addMainMenuEvent(menuName) {
         this.eventHandler[menuName] = () => this.changeMenu(menuName);
         this._els[menuName].addEventListener('click', this.eventHandler[menuName]);
-    }
-
-    /**
-     * Remove menu event
-     * @param {string} menuName - menu name
-     * @private
-     */
-    _removeMenuEvent(menuName) {
-        this._els[menuName].removeEventListener('click', this.eventHandler[menuName]);
     }
 
     /**
@@ -441,6 +439,23 @@ class Ui {
      */
     _addSubMenuEvent(menuName) {
         this[menuName].addEvent(this._actions[menuName]);
+    }
+
+    _addMenuEvent() {
+        snippet.forEach(this.options.menu, menuName => {
+            this._addMainMenuEvent(menuName);
+            this._addSubMenuEvent(menuName);
+        });
+    }
+
+    /**
+     * Remove menu event
+     * @private
+     */
+    _removeMainMenuEvent() {
+        snippet.forEach(this.options.menu, menuName => {
+            this._els[menuName].removeEventListener('click', this.eventHandler[menuName]);
+        });
     }
 
     /**
@@ -461,33 +476,21 @@ class Ui {
             return;
         }
 
-        snippet.forEach(HELP_MENUS, menuName => {
-            this._addHelpActionEvent(menuName);
-        });
-
+        this._addHelpActionEvent();
         this._addDownloadEvent();
-
-        snippet.forEach(this.options.menu, menuName => {
-            this._addMenuEvent(menuName);
-            this._addSubMenuEvent(menuName);
-        });
+        this._addMenuEvent();
         this._initMenu();
         this._initMenuEvent = true;
     }
 
-    _removeAllEvent() {
-        snippet.forEach(HELP_MENUS, menuName => {
-            this._removeHelpActionEvent(menuName);
-        });
+    _removeUiEvent() {
+        this._removeHelpActionEvent();
         this._removeDownloadEvent();
         this._removeLoadEvent();
-
-        snippet.forEach(this.options.menu, menuName => {
-            this._removeMenuEvent(menuName);
-        });
+        this._removeMainMenuEvent();
     }
 
-    _destroyMenu() {
+    _destroyAllMenu() {
         snippet.forEach(this.options.menu, menuName => {
             this[menuName].destroy();
         });

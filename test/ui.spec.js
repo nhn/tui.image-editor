@@ -5,6 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import UI from '../src/js/ui';
+import {helpMenus as HELP_MENUS} from '../src/js/consts';
 
 describe('UI', () => {
     let ui;
@@ -20,6 +21,33 @@ describe('UI', () => {
             menuBarPosition: 'bottom'
         };
         ui = new UI(document.createElement('div'), uiOptions, {});
+    });
+
+    describe('Destroy()', () => {
+        it('"_destroyAllMenu()" The "destroy" function of all menu instances must be executed.', () => {
+            snippet.forEach(uiOptions.menu, menuName => {
+                spyOn(ui[menuName], 'destroy');
+            });
+
+            ui._destroyAllMenu();
+
+            snippet.forEach(uiOptions.menu, menuName => {
+                expect(ui[menuName].destroy).toHaveBeenCalled();
+            });
+        });
+
+        it('"_removeUiEvent()" must execute "removeEventListener" of all menus.', () => {
+            const allUiButtonElementName = [...uiOptions.menu, ...HELP_MENUS];
+            snippet.forEach(allUiButtonElementName, elementName => {
+                spyOn(ui._els[elementName], 'removeEventListener');
+            });
+
+            ui._removeUiEvent();
+
+            snippet.forEach(allUiButtonElementName, elementName => {
+                expect(ui._els[elementName].removeEventListener).toHaveBeenCalled();
+            });
+        });
     });
 
     describe('_changeMenu()', () => {
