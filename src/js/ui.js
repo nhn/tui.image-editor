@@ -28,6 +28,7 @@ const SUB_UI_COMPONENT = {
 };
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
+const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
 
 /**
  * Ui class
@@ -53,7 +54,7 @@ class Ui {
         this.uiSize = {};
         this._locale = new Locale(this.options.locale);
         this.theme = new Theme(this.options.theme);
-
+        this.eventHandler = {};
         this._submenuChangeTransection = false;
         this._selectedElement = null;
         this._mainElement = null;
@@ -76,6 +77,19 @@ class Ui {
         };
 
         this._makeSubMenu();
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeAllEvent();
+        this._destroyMenu();
+        this._selectedElement.innerHTML = '';
+
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
     }
 
     /**
@@ -358,9 +372,12 @@ class Ui {
      * @private
      */
     _addHelpActionEvent(helpName) {
-        this._els[helpName].addEventListener('click', () => {
-            this._actions.main[helpName]();
-        });
+        this.eventHandler[helpName] = () => this._actions.main[helpName]();
+        this._els[helpName].addEventListener('click', this.eventHandler[helpName]);
+    }
+
+    _removeHelpActionEvent(helpName) {
+        this._els[helpName].removeEventListener('click', this.eventHandler[helpName]);
     }
 
     /**
@@ -368,10 +385,15 @@ class Ui {
      * @private
      */
     _addDownloadEvent() {
+        this.eventHandler.download = () => this._actions.main.download();
         snippet.forEach(this._els.download, element => {
-            element.addEventListener('click', () => {
-                this._actions.main.download();
-            });
+            element.addEventListener('click', this.eventHandler.download);
+        });
+    }
+
+    _removeDownloadEvent() {
+        snippet.forEach(this._els.download, element => {
+            element.removeEventListener('click', this.eventHandler.download);
         });
     }
 
@@ -380,10 +402,16 @@ class Ui {
      * @private
      */
     _addLoadEvent() {
+        this.eventHandler.loadImage = event => this._actions.main.load(event.target.files[0]);
+
         snippet.forEach(this._els.load, element => {
-            element.addEventListener('change', event => {
-                this._actions.main.load(event.target.files[0]);
-            });
+            element.addEventListener('change', this.eventHandler.loadImage);
+        });
+    }
+
+    _removeLoadEvent() {
+        snippet.forEach(this._els.load, element => {
+            element.removeEventListener('change', this.eventHandler.loadImage);
         });
     }
 
@@ -393,9 +421,17 @@ class Ui {
      * @private
      */
     _addMenuEvent(menuName) {
-        this._els[menuName].addEventListener('click', () => {
-            this.changeMenu(menuName);
-        });
+        this.eventHandler[menuName] = () => this.changeMenu(menuName);
+        this._els[menuName].addEventListener('click', this.eventHandler[menuName]);
+    }
+
+    /**
+     * Remove menu event
+     * @param {string} menuName - menu name
+     * @private
+     */
+    _removeMenuEvent(menuName) {
+        this._els[menuName].removeEventListener('click', this.eventHandler[menuName]);
     }
 
     /**
@@ -425,11 +461,9 @@ class Ui {
             return;
         }
 
-        this._addHelpActionEvent('undo');
-        this._addHelpActionEvent('redo');
-        this._addHelpActionEvent('reset');
-        this._addHelpActionEvent('delete');
-        this._addHelpActionEvent('deleteAll');
+        snippet.forEach(HELP_MENUS, menuName => {
+            this._addHelpActionEvent(menuName);
+        });
 
         this._addDownloadEvent();
 
@@ -439,6 +473,24 @@ class Ui {
         });
         this._initMenu();
         this._initMenuEvent = true;
+    }
+
+    _removeAllEvent() {
+        snippet.forEach(HELP_MENUS, menuName => {
+            this._removeHelpActionEvent(menuName);
+        });
+        this._removeDownloadEvent();
+        this._removeLoadEvent();
+
+        snippet.forEach(this.options.menu, menuName => {
+            this._removeMenuEvent(menuName);
+        });
+    }
+
+    _destroyMenu() {
+        snippet.forEach(this.options.menu, menuName => {
+            this[menuName].destroy();
+        });
     }
 
     /**

@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/rotate';
@@ -33,6 +34,17 @@ class Rotate extends Submenu {
         };
     }
 
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.rotateRange.destroy();
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
     setRangeBarAngle(type, angle) {
         let resultAngle = angle;
 
@@ -54,10 +66,21 @@ class Rotate extends Submenu {
      *   @param {Function} actions.setAngle - set angle action
      */
     addEvent(actions) {
+        this.eventHandler.changeRotate = this._changeRotateForButton.bind(this);
+
         // {rotate, setAngle}
         this.actions = actions;
-        this._els.rotateButton.addEventListener('click', this._changeRotateForButton.bind(this));
+        this._els.rotateButton.addEventListener('click', this.eventHandler.changeRotate);
         this._els.rotateRange.on('change', this._changeRotateForRange.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.rotateButton.removeEventListener('click', this.eventHandler.changeRotate);
+        this._els.rotateRange.off();
     }
 
     /**

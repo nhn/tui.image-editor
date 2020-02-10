@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import util from '../util';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
@@ -39,16 +40,40 @@ class Draw extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.drawColorpicker.destroy();
+        this._els.drawRange.destroy();
+
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
      * Add event for draw
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.setDrawMode - set draw mode
      */
     addEvent(actions) {
-        this.actions = actions;
+        this.eventHandler.changeDrawType = this._changeDrawType.bind(this);
 
-        this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
+        this.actions = actions;
+        this._els.lineSelectButton.addEventListener('click', this.eventHandler.changeDrawType);
         this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
         this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.lineSelectButton.removeEventListener('click', this.eventHandler.changeDrawType);
+        this._els.drawColorpicker.off();
+        this._els.drawRange.off();
     }
 
     /**

@@ -30,6 +30,16 @@ class Crop extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
      * Add event for crop
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.crop - crop action
@@ -37,26 +47,45 @@ class Crop extends Submenu {
      *   @param {Function} actions.preset - draw rectzone at a predefined ratio
      */
     addEvent(actions) {
+        this.eventHandler = {
+            apply: this._applyEventHandler.bind(this),
+            cancel: this._cancelEventHandler.bind(this),
+            cropzonePreset: this._cropzonePresetEventHandler.bind(this)
+        };
         this.actions = actions;
-        this._els.apply.addEventListener('click', () => {
-            this.actions.crop();
-            this._els.apply.classList.remove('active');
-        });
+        this._els.apply.addEventListener('click', this.eventHandler.apply);
+        this._els.cancel.addEventListener('click', this.eventHandler.cancel);
+        this._els.preset.addEventListener('click', this.eventHandler.cropzonePreset);
+    }
 
-        this._els.cancel.addEventListener('click', () => {
-            this.actions.cancel();
-            this._els.apply.classList.remove('active');
-        });
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.apply.removeEventListener('click', this.eventHandler.apply);
+        this._els.cancel.removeEventListener('click', this.eventHandler.cancel);
+        this._els.preset.removeEventListener('click', this.eventHandler.cropzonePreset);
+    }
 
-        this._els.preset.addEventListener('click', event => {
-            const button = event.target.closest('.tui-image-editor-button.preset');
-            if (button) {
-                const [presetType] = button.className.match(/preset-[^\s]+/);
+    _applyEventHandler() {
+        this.actions.crop();
+        this._els.apply.classList.remove('active');
+    }
 
-                this._setPresetButtonActive(button);
-                this.actions.preset(presetType);
-            }
-        });
+    _cancelEventHandler() {
+        this.actions.cancel();
+        this._els.apply.classList.remove('active');
+    }
+
+    _cropzonePresetEventHandler(event) {
+        const button = event.target.closest('.tui-image-editor-button.preset');
+        if (button) {
+            const [presetType] = button.className.match(/preset-[^\s]+/);
+
+            this._setPresetButtonActive(button);
+            this.actions.preset(presetType);
+        }
     }
 
     /**

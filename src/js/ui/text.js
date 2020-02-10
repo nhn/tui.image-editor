@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Range from './tools/range';
 import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
@@ -39,16 +40,44 @@ class Text extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.textColorpicker.destroy();
+        this._els.textRange.destroy();
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
      * Add event for text
      * @param {Object} actions - actions for text
      *   @param {Function} actions.changeTextStyle - change text style
      */
     addEvent(actions) {
+        this.eventHandler = {
+            setTextEffect: this._setTextEffectHandler.bind(this),
+            setTextAlign: this._setTextAlignHandler.bind(this)
+        };
+
         this.actions = actions;
-        this._els.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
-        this._els.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
+        this._els.textEffectButton.addEventListener('click', this.eventHandler.setTextEffect);
+        this._els.textAlignButton.addEventListener('click', this.eventHandler.setTextAlign);
         this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.textEffectButton.removeEventListener('click', this.eventHandler.setTextEffect);
+        this._els.textAlignButton.removeEventListener('click', this.eventHandler.setTextAlign);
+        this._els.textRange.off();
+        this._els.textColorpicker.off();
     }
 
     /**

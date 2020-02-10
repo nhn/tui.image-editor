@@ -72,10 +72,11 @@ class Filter extends Submenu {
     }
 
     /**
-     * Destroy
+     * Destroys the instance.
      */
     destroy() {
         this._removeEvent();
+        this._destroyToolInstance();
         snippet.forEach(this, (value, key) => {
             this[key] = null;
         });
@@ -84,7 +85,7 @@ class Filter extends Submenu {
     /**
      * Remove event for filter
      */
-    removeEvent() {
+    _removeEvent() {
         snippet.forEach(FILTER_OPTIONS, filter => {
             const filterCheckElement = this.selector(`.tie-${filter}`);
             const filterNameCamelCase = toCamelCase(filter);
@@ -101,12 +102,21 @@ class Filter extends Submenu {
         this._els.filterMultiplyColor.off();
         this._els.filterTintColor.off();
         this._els.tintOpacity.off();
-        this._els.filterMultiplyColor.off();
-        this._els.filterTintColor.off();
-        this._els.filterBlendColor.off();
 
         this._els.blendType.removeEventListener('change', this.handler.changeBlendFilter);
         this._els.blendType.removeEventListener('click', this.handler.changeBlendFilter);
+    }
+
+    _destroyToolInstance() {
+        this._els.removewhiteDistanceRange.destroy();
+        this._els.colorfilterThresholeRange.destroy();
+        this._els.pixelateRange.destroy();
+        this._els.noiseRange.destroy();
+        this._els.brightnessRange.destroy();
+        this._els.filterBlendColor.destroy();
+        this._els.filterMultiplyColor.destroy();
+        this._els.filterTintColor.destroy();
+        this._els.tintOpacity.destroy();
     }
 
     /**

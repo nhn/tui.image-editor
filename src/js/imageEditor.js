@@ -1377,6 +1377,10 @@ class ImageEditor {
      * Destroy
      */
     destroy() {
+        if (this.ui) {
+            this.ui.destroy();
+        }
+
         this.stopDrawingMode();
         this._detachDomEvents();
         this._graphics.destroy();

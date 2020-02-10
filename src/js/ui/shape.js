@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
 import Submenu from './submenuBase';
@@ -49,20 +50,46 @@ class Shape extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.strokeRange.destroy();
+        this._els.fillColorpicker.destroy();
+        this._els.strokeColorpicker.destroy();
+
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
      * Add event for shape
      * @param {Object} actions - actions for shape
      *   @param {Function} actions.changeShape - change shape mode
      *   @param {Function} actions.setDrawingShape - set dreawing shape
      */
     addEvent(actions) {
+        this.eventHandler.shapeSelect = this._changeShapeHandler.bind(this);
         this.actions = actions;
 
-        this._els.shapeSelectButton.addEventListener('click', this._changeShapeHandler.bind(this));
+        this._els.shapeSelectButton.addEventListener('click', this.eventHandler.shapeSelect);
         this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
         this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
         this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
         this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.shapeSelectButton.removeEventListener('click', this.eventHandler.shapeSelect);
+        this._els.strokeRange.off();
+        this._els.fillColorpicker.off();
+        this._els.strokeColorpicker.off();
     }
 
     /**

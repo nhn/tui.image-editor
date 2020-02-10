@@ -34,6 +34,17 @@ class Icon extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.iconColorpicker.destroy();
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
      * Add event for icon
      * @param {Object} actions - actions for icon
      *   @param {Function} actions.registCustomIcon - register icon
@@ -41,11 +52,25 @@ class Icon extends Submenu {
      *   @param {Function} actions.changeColor - change icon color
      */
     addEvent(actions) {
-        this.actions = actions;
+        this.eventHandler = {
+            registerIcon: this._registeIconHandler.bind(this),
+            addIcon: this._addIconHandler.bind(this)
+        };
 
+        this.actions = actions;
         this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
-        this._els.registIconButton.addEventListener('change', this._registeIconHandler.bind(this));
-        this._els.addIconButton.addEventListener('click', this._addIconHandler.bind(this));
+        this._els.registIconButton.addEventListener('change', this.eventHandler.registerIcon);
+        this._els.addIconButton.addEventListener('click', this.eventHandler.addIcon);
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.iconColorpicker.off();
+        this._els.registIconButton.removeEventListener('change', this.eventHandler.registerIcon);
+        this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
     }
 
     /**

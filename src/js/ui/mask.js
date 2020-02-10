@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
 import util from '../util';
 import templateHtml from './template/submenu/mask';
@@ -25,15 +26,39 @@ class Mask extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        snippet.forEach(this, (value, key) => {
+            this[key] = null;
+        });
+    }
+
+    /**
      * Add event for mask
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.loadImageFromURL - load image action
      *   @param {Function} actions.applyFilter - apply filter action
      */
     addEvent(actions) {
+        this.eventHandler = {
+            loadMaskFile: this._loadMaskFile.bind(this),
+            applyMask: this._applyMask.bind(this)
+        };
+
         this.actions = actions;
-        this._els.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
-        this._els.applyButton.addEventListener('click', this._applyMask.bind(this));
+        this._els.maskImageButton.addEventListener('change', this.eventHandler.loadMaskFile);
+        this._els.applyButton.addEventListener('click', this.eventHandler.applyMask);
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.maskImageButton.removeEventListener('change', this.eventHandler.loadMaskFile);
+        this._els.applyButton.removeEventListener('click', this.eventHandler.applyMask);
     }
 
     /**
