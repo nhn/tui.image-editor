@@ -94,6 +94,8 @@ module.exports = {
     keyCodes: {
         Z: 90,
         Y: 89,
+        C: 67,
+        V: 86,
         SHIFT: 16,
         BACKSPACE: 8,
         DEL: 46,
@@ -134,7 +136,8 @@ module.exports = {
         rotation: 'The current angle is same the old angle.',
         undo: 'The promise of undo command is reject.',
         unsupportedOperation: 'Unsupported operation.',
-        unsupportedType: 'Unsupported object type.'
+        unsupportedType: 'Unsupported object type.',
+        pasteFailed: 'Paste object failed.'
     },
 
     /**

@@ -115,6 +115,8 @@ class ImageEditor {
             }
         );
 
+        this._clipboard = null;
+
         /**
          * Event handler list
          * @type {Object}
@@ -322,7 +324,11 @@ class ImageEditor {
         const isModifierKey = (ctrlKey || metaKey);
 
         if (isModifierKey) {
-            if (keyCode === keyCodes.Z) {
+            if (keyCode === keyCodes.C && activeObject) {
+                this._clipboard = activeObject;
+            } else if (keyCode === keyCodes.V && this._clipboard) {
+                this._pasteObjects();
+            } else if (keyCode === keyCodes.Z) {
                 // There is no error message on shortcut when it's empty
                 this.undo()['catch'](() => {
                 });
@@ -341,7 +347,71 @@ class ImageEditor {
             this.removeActiveObject();
         }
     }
-    /* eslint-enable complexity */
+
+    _pasteObjects() {
+        this.deactivateAll();
+        const targetObject = this._clipboard;
+        const isGroupSelect = targetObject.type === 'activeSelection';
+
+        if (isGroupSelect) {
+            this._addCloneObjectStream(targetObject.getObjects()).then(addedObjectIds => {
+                const group = this._graphics.getActivateGroupFromObjectIds(addedObjectIds);
+                this._graphics.deactivateAll();
+                this._graphics.setActiveObject(group);
+                this._graphics.renderAll();
+                // this._clipboard = group;
+            });
+        } else {
+            this._addCloneObject(targetObject);
+        }
+    }
+
+    makeClonedObjectPosition({left, top, width, height}) {
+        const {width: canvasWidth, height: canvasHeight} = this._graphics.getCanvasSize();
+        const rightEdge = left + (width / 2);
+        const bottomEdge = top + (height / 2);
+
+        return {
+            left: rightEdge + 10 > canvasWidth ? left - 10 : left + 10,
+            top: bottomEdge + 10 > canvasHeight ? top - 10 : top + 10,
+            width,
+            height
+        };
+    }
+
+    _addCloneObject(clonedObject) {
+        const clonedObjectOptions = this._graphics.createObjectProperties(clonedObject);
+        const {left, top, width, height} = clonedObjectOptions;
+
+        snippet.extend(clonedObjectOptions, this.makeClonedObjectPosition({
+            left,
+            top,
+            width,
+            height
+        }));
+
+        return this.addShape(clonedObject.type, clonedObjectOptions);
+    }
+
+    _addCloneObjectStream(targetObjects, addedObjectIds = []) {
+        if (!targetObjects.length && addedObjectIds.length) {
+            return new Promise((resolve, reject) => {
+                if (!addedObjectIds.length) {
+                    reject(rejectMessages.pasteFailed);
+                }
+
+                resolve(addedObjectIds || []);
+            });
+        }
+
+        const targetObject = targetObjects.pop();
+
+        return this._addCloneObject(targetObject).then(addedObjectInfo => {
+            addedObjectIds.push(addedObjectInfo.id);
+
+            return this._addCloneObjectStream(targetObjects, addedObjectIds);
+        });
+    }
 
     /**
      * Remove Active Object

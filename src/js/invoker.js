@@ -150,8 +150,14 @@ class Invoker {
      * @returns {Promise}
      */
     execute(...args) {
+
+        console.log('START', args);
+
         if (this._isLocked) {
+            console.log('JJJJ');
             return Promise.reject(rejectMessages.isLock);
+        } else {
+            console.log('WWWW');
         }
 
         let [command] = args;

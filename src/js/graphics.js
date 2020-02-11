@@ -317,6 +317,18 @@ class Graphics {
     }
 
     /**
+     * Get Activate object group from object ids
+     * @param {Array} objectIds - object ids
+     * @returns {Object} target - target object group
+     */
+    getActivateGroupFromObjectIds(objectIds) {
+        const canvas = this.getCanvas();
+        const objects = snippet.map(objectIds, id => this.getObject(id));
+
+        return new fabric.ActiveSelection(objects, {canvas});
+    }
+
+    /**
      * Activates an object or group
      * @param {Object} target - target object or group
      */
@@ -1079,7 +1091,9 @@ class Graphics {
             'fill',
             'stroke',
             'strokeWidth',
-            'opacity'
+            'opacity',
+            'rx',
+            'ry'
         ];
         const props = {
             id: stamp(obj),
