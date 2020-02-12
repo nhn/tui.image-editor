@@ -210,7 +210,6 @@ class ImageEditor {
         fabric.enableGLFiltering = false;
     }
 
-
     /**
      * Set selection style by init option
      * @param {Object} selectionStyle - Selection styles
