@@ -26,8 +26,10 @@ class Rotate extends Submenu {
 
         this._els = {
             rotateButton: this.selector('.tie-retate-button'),
-            rotateRange: new Range(this.selector('.tie-rotate-range'), defaultRotateRangeValus),
-            rotateRangeValue: this.selector('.tie-ratate-range-value')
+            rotateRange: new Range({
+                slider: this.selector('.tie-rotate-range'),
+                input: this.selector('.tie-ratate-range-value')
+            }, defaultRotateRangeValus)
         };
     }
 
@@ -35,10 +37,9 @@ class Rotate extends Submenu {
         let resultAngle = angle;
 
         if (type === 'rotate') {
-            resultAngle = parseInt(this._els.rotateRangeValue.value, 10) + angle;
+            resultAngle = parseInt(this._els.rotateRange.value, 10) + angle;
         }
 
-        this._els.rotateRangeValue.value = resultAngle;
         this._setRangeBarRatio(resultAngle);
     }
 
@@ -57,7 +58,6 @@ class Rotate extends Submenu {
         this.actions = actions;
         this._els.rotateButton.addEventListener('click', this._changeRotateForButton.bind(this));
         this._els.rotateRange.on('change', this._changeRotateForRange.bind(this));
-        this._els.rotateRangeValue.setAttribute('readonly', true);
     }
 
     /**
@@ -68,7 +68,6 @@ class Rotate extends Submenu {
      */
     _changeRotateForRange(value, isLast) {
         const angle = toInteger(value);
-        this._els.rotateRangeValue.value = angle;
         this.actions.setAngle(angle, !isLast);
         this._value = angle;
     }
@@ -80,7 +79,7 @@ class Rotate extends Submenu {
      */
     _changeRotateForButton(event) {
         const button = event.target.closest('.tui-image-editor-button');
-        const angle = this._els.rotateRangeValue.value;
+        const angle = this._els.rotateRange.value;
 
         if (button) {
             const rotateType = this.getButtonType(button, ['counterclockwise', 'clockwise']);

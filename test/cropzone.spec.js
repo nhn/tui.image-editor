@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/extension/cropzone.js"
  */
+import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import Cropzone from '../src/js/extension/cropzone';
 
@@ -76,162 +77,77 @@ describe('Cropzone', () => {
         expect(cropzone.isValid()).toBe(true);
     });
 
-    it('"_calcTopLeftScalingSizeFromPointer()"' +
-        ' should return scaling size(position + dimension)', () => {
+    it('"_resizeTL" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-        let mousePointerX, mousePointerY,
-            expected, actual;
 
-        mousePointerX = 20;
-        mousePointerY = 30;
-        expected = {
-            left: 20,
-            top: 30,
-            width: 90,
-            height: 80
-        };
-        actual = cropzone._calcTopLeftScalingSizeFromPointer(mousePointerX, mousePointerY);
-        expect(actual).toEqual(expected);
-
-        mousePointerX = -10;
-        mousePointerY = 0;
-        expected = {
-            left: 0,
-            top: 0,
-            width: 110,
-            height: 110
-        };
-        actual = cropzone._calcTopLeftScalingSizeFromPointer(mousePointerX, mousePointerY);
-        expect(actual).toEqual(expected);
-
-        mousePointerX = 200;
-        mousePointerY = 300;
-        expected = {
-            left: 109,
-            top: 109,
-            width: 1,
-            height: 1
-        };
-        actual = cropzone._calcTopLeftScalingSizeFromPointer(mousePointerX, mousePointerY);
-        expect(actual).toEqual(expected);
+        expect(cropzone._resizeCropZone({
+            x: 30,
+            y: 40
+        }, 'tl')).toEqual({
+            left: 30,
+            top: 40,
+            width: 80,
+            height: 70
+        });
     });
 
-    it('"_calcBottomRightScalingSizeFromPointer()"' +
-        ' should return scaling size(dimension)', () => {
+    it('"_resizeTR" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-        let mousePointerX, mousePointerY,
-            expected, actual;
 
-        // mocking canvas
-        cropzone.canvas = {
-            width: 400,
-            height: 400
-        };
-
-        mousePointerX = 20;
-        mousePointerY = 30;
-        expected = {
-            width: 10,
-            height: 20
-        };
-        actual = cropzone._calcBottomRightScalingSizeFromPointer(mousePointerX, mousePointerY);
-        expect(actual).toEqual(expected);
-
-        mousePointerX = -10;
-        mousePointerY = 0;
-        expected = {
-            width: 1,
-            height: 1
-        };
-        actual = cropzone._calcBottomRightScalingSizeFromPointer(mousePointerX, mousePointerY);
-        expect(actual).toEqual(expected);
-
-        mousePointerX = 200;
-        mousePointerY = 300;
-        expected = {
-            width: 190,
-            height: 290
-        };
-        actual = cropzone._calcBottomRightScalingSizeFromPointer(mousePointerX, mousePointerY);
-        expect(actual).toEqual(expected);
+        expect(cropzone._resizeCropZone({
+            x: 80,
+            y: 50
+        }, 'tr')).toEqual({
+            left: 10,
+            top: 50,
+            width: 70,
+            height: 60
+        });
     });
 
-    it('should be "cropzone" type', () => {
+    it('"_resizeBL" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-        expect(cropzone.isType('cropzone')).toBe(true);
+      
+        expect(cropzone._resizeCropZone({
+            x: 30,
+            y: 40
+        }, 'bl')).toEqual({
+            left: 30,
+            top: 10,
+            width: 80,
+            height: 30
+        });
     });
 
-    it('"_makeScalingSettings()" ' +
-        'should return suitable position&dimension values from corner', () => {
+    it('"_resizeBR" should give the expected value at run', () => {
         const cropzone = new Cropzone(canvas, options, {});
-        const mockTL = {
-                width: 1,
-                height: 2,
-                left: 3,
-                top: 4
-            },
-            mockBR = {
-                width: 5,
-                height: 6
-            };
-        let expected, actual;
+      
+        expect(cropzone._resizeCropZone({
+            x: 30,
+            y: 40
+        }, 'br')).toEqual({
+            left: 10,
+            top: 10,
+            width: 20,
+            height: 30
+        });
+    });
 
-        expected = {
-            width: 1,
-            height: 2,
-            left: 3,
-            top: 4
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'tl');
-        expect(expected).toEqual(actual);
+    it('should yield the result of maintaining the ratio at running the resize function at a fixed rate', () => {
+        const presetRatio = 5 / 4;
+        const cropzone = new Cropzone(canvas, snippet.extend({}, options, {
+            width: 50,
+            height: 40,
+            presetRatio
+        }), {});
 
-        expected = {
-            width: 5,
-            height: 2,
-            top: 4
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'tr');
-        expect(expected).toEqual(actual);
+        snippet.forEach(['tl', 'tr', 'mt', 'ml', 'mr', 'mb', 'bl', 'br'], cornerType => {
+            const {width, height} = cropzone._resizeCropZone({
+                x: 20,
+                y: 20
+            }, cornerType);
 
-        expected = {
-            width: 1,
-            height: 6,
-            left: 3
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'bl');
-        expect(expected).toEqual(actual);
-
-        expected = {
-            width: 5,
-            height: 6
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'br');
-        expect(expected).toEqual(actual);
-
-        expected = {
-            width: 1,
-            left: 3
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'ml');
-        expect(expected).toEqual(actual);
-
-        expected = {
-            height: 2,
-            top: 4
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'mt');
-        expect(expected).toEqual(actual);
-
-        expected = {
-            width: 5
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'mr');
-        expect(expected).toEqual(actual);
-
-        expected = {
-            height: 6
-        };
-        actual = cropzone._makeScalingSettings(mockTL, mockBR, 'mb');
-        expect(expected).toEqual(actual);
+            expect(width / height).toEqual(presetRatio);
+        });
     });
 });

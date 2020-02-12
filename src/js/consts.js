@@ -96,7 +96,9 @@ module.exports = {
         Y: 89,
         SHIFT: 16,
         BACKSPACE: 8,
-        DEL: 46
+        DEL: 46,
+        ARROW_DOWN: 40,
+        ARROW_UP: 38
     },
 
     /**
@@ -165,7 +167,7 @@ module.exports = {
     },
 
     defaultShapeStrokeValus: {
-        realTimeEvent: false,
+        realTimeEvent: true,
         min: 2,
         max: 300,
         value: 3
@@ -180,34 +182,44 @@ module.exports = {
 
     defaultFilterRangeValus: {
         tintOpacityRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1,
-            value: 0.7
+            value: 0.7,
+            useDecimal: true
         },
         removewhiteDistanceRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1,
-            value: 0.2
+            value: 0.2,
+            useDecimal: true
         },
         brightnessRange: {
+            realTimeEvent: true,
             min: -1,
             max: 1,
-            value: 0
+            value: 0,
+            useDecimal: true
         },
         noiseRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1000,
             value: 100
         },
         pixelateRange: {
+            realTimeEvent: true,
             min: 2,
             max: 20,
             value: 4
         },
         colorfilterThresholeRange: {
+            realTimeEvent: true,
             min: 0,
             max: 1,
-            value: 0.2
+            value: 0.2,
+            useDecimal: true
         }
     }
 };

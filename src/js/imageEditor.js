@@ -18,6 +18,59 @@ const {keyCodes, rejectMessages} = consts;
 const {isUndefined, forEach, CustomEvents} = snippet;
 
 /**
+ * Image filter result
+ * @typedef {object} FilterResult
+ * @property {string} type - filter type like 'mask', 'Grayscale' and so on
+ * @property {string} action - action type like 'add', 'remove'
+ */
+
+/**
+ * Flip status
+ * @typedef {object} FlipStatus
+ * @property {boolean} flipX - x axis
+ * @property {boolean} flipY - y axis
+ * @property {Number} angle - angle
+ */
+/**
+ * Rotation status
+ * @typedef {Number} RotateStatus
+ * @property {Number} angle - angle
+ */
+
+/**
+ * Old and new Size
+ * @typedef {object} SizeChange
+ * @property {Number} oldWidth - old width
+ * @property {Number} oldHeight - old height
+ * @property {Number} newWidth - new width
+ * @property {Number} newHeight - new height
+ */
+
+/**
+ * @typedef {string} ErrorMsg - {string} error message
+ */
+
+/**
+ * @typedef {object} ObjectProps - graphics object properties
+ * @property {number} id - object id
+ * @property {string} type - object type
+ * @property {string} text - text content
+ * @property {(string | number)} left - Left
+ * @property {(string | number)} top - Top
+ * @property {(string | number)} width - Width
+ * @property {(string | number)} height - Height
+ * @property {string} fill - Color
+ * @property {string} stroke - Stroke
+ * @property {(string | number)} strokeWidth - StrokeWidth
+ * @property {string} fontFamily - Font type for text
+ * @property {number} fontSize - Font Size
+ * @property {string} fontStyle - Type of inclination (normal / italic)
+ * @property {string} fontWeight - Type of thicker or thinner looking (normal / bold)
+ * @property {string} textAlign - Type of text align (left / center / right)
+ * @property {string} textDecoration - Type of line (underline / line-through / overline)
+ */
+
+/**
  * Image editor
  * @class
  * @param {string|HTMLElement} wrapper - Wrapper's element or selector
@@ -156,61 +209,6 @@ class ImageEditor {
         }
         fabric.enableGLFiltering = false;
     }
-
-    /**
-     * Image filter result
-     * @typedef {Object} FilterResult
-     * @property {string} type - Filter type like 'mask', 'Grayscale' and so on
-     * @property {string} action - Action type like 'add', 'remove'
-     */
-
-    /**
-     * Flip status
-     * @typedef {Object} FlipStatus
-     * @property {boolean} flipX - X axis
-     * @property {boolean} flipY - Y axis
-     * @property {Number} angle - Angle
-     */
-    /**
-     * Rotation status
-     * @typedef {Number} RotateStatus
-     * @property {Number} angle - Angle
-     */
-
-    /**
-     * Old and new Size
-     * @typedef {Object} SizeChange
-     * @property {Number} oldWidth - Old width
-     * @property {Number} oldHeight - Old height
-     * @property {Number} newWidth - New width
-     * @property {Number} newHeight - New height
-     */
-
-    /**
-     * Error message is {String} type
-     * @typedef {String} ErrorMsg
-     */
-
-    /**
-     * Graphics object properties
-     * @typedef {Object} ObjectProps
-     * @property {number} id - object id
-     * @property {string} type - object type
-     * @property {string} text - text content
-     * @property {(string | number)} left - Left
-     * @property {(string | number)} top - Top
-     * @property {(string | number)} width - Width
-     * @property {(string | number)} height - Height
-     * @property {string} fill - Color
-     * @property {string} stroke - Stroke
-     * @property {(string | number)} strokeWidth - StrokeWidth
-     * @property {string} fontFamily - Font type for text
-     * @property {number} fontSize - Font Size
-     * @property {string} fontStyle - Type of inclination (normal / italic)
-     * @property {string} fontWeight - Type of thicker or thinner looking (normal / bold)
-     * @property {string} textAlign - Type of text align (left / center / right)
-     * @property {string} textDecoration - Type of line (underline / line-through / overline)
-     */
 
     /**
      * Set selection style by init option
@@ -949,6 +947,7 @@ class ImageEditor {
      *      @param {number} [options.rx] - Radius x value (When type option is 'circle', this options can use)
      *      @param {number} [options.ry] - Radius y value (When type option is 'circle', this options can use)
      *      @param {boolean} [options.isRegular] - Whether resizing shape has 1:1 ratio or not
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      * @example
      * // call after selecting shape object on canvas
@@ -969,8 +968,10 @@ class ImageEditor {
      *     ry: 100
      * });
      */
-    changeShape(id, options) {
-        return this.execute(commands.CHANGE_SHAPE, id, options);
+    changeShape(id, options, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](commands.CHANGE_SHAPE, id, options);
     }
 
     /**
@@ -1036,14 +1037,17 @@ class ImageEditor {
      *     @param {string} [styleObj.fontWeight] Type of thicker or thinner looking (normal / bold)
      *     @param {string} [styleObj.textAlign] Type of text align (left / center / right)
      *     @param {string} [styleObj.textDecoration] Type of line (underline / line-through / overline)
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      * @example
      * imageEditor.changeTextStyle(id, {
      *     fontStyle: 'italic'
      * });
      */
-    changeTextStyle(id, styleObj) {
-        return this.execute(commands.CHANGE_TEXT_STYLE, id, styleObj);
+    changeTextStyle(id, styleObj, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
     }
 
     /**
@@ -1270,6 +1274,7 @@ class ImageEditor {
      * @param {string} type - Filter type
      * @param {Object} options - Options to apply filter
      *  @param {number} options.maskObjId - masking image object id
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise<FilterResult, ErrorMsg>}
      * @example
      * imageEditor.applyFilter('Grayscale');
@@ -1281,8 +1286,10 @@ class ImageEditor {
      *     console.log('error: ', message);
      * });;
      */
-    applyFilter(type, options) {
-        return this.execute(commands.APPLY_FILTER, type, options);
+    applyFilter(type, options, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](commands.APPLY_FILTER, type, options);
     }
 
     /**

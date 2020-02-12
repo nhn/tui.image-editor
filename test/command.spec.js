@@ -260,6 +260,45 @@ describe('commandFactory', () => {
         });
     });
 
+    describe('textCommand', () => {
+        let textObjectId;
+        const defaultFontSize = 50;
+        const defaultUnderline = false;
+        beforeEach(done => {
+            invoker.execute(commands.ADD_TEXT, graphics, 'text', {
+                styles: {
+                    fontSize: defaultFontSize,
+                    underline: false
+                }
+            }).then(textObject => {
+                textObjectId = textObject.id;
+                done();
+            });
+        });
+        it('"changeTextStyle" should set text style', done => {
+            invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
+                fontSize: 30,
+                underline: true
+            }).then(() => {
+                const textObject = graphics.getObject(textObjectId);
+                expect(textObject.fontSize).toBe(30);
+                expect(textObject.underline).toBe(true);
+                done();
+            });
+        });
+        it('"undo()" should restore fontSize', done => {
+            invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
+                fontSize: 30,
+                underline: true
+            }).then(() => invoker.undo()).then(() => {
+                const textObject = graphics.getObject(textObjectId);
+                expect(textObject.fontSize).toBe(defaultFontSize);
+                expect(textObject.underline).toBe(defaultUnderline);
+                done();
+            });
+        });
+    });
+
     describe('rotationImageCommand', () => {
         it('"rotate()" should add angle', () => {
             const originAngle = mockImage.angle;
@@ -276,13 +315,44 @@ describe('commandFactory', () => {
             expect(mockImage.angle).toBe(30);
         });
 
-        xit('"undo()" should restore angle', done => {
+        it('"undo()" should restore angle', done => {
             const originalAngle = mockImage.angle;
 
             invoker.execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 100).then(() => (
                 invoker.undo()
             )).then(() => {
                 expect(mockImage.angle).toBe(originalAngle);
+                done();
+            });
+        });
+    });
+
+    describe('shapeCommand', () => {
+        let shapeObjectId;
+        const defaultStrokeWidth = 12;
+        beforeEach(done => {
+            invoker.execute(commands.ADD_SHAPE, graphics, 'rect', {
+                strokeWidth: defaultStrokeWidth
+            }).then(shapeObject => {
+                shapeObjectId = shapeObject.id;
+                done();
+            });
+        });
+        it('"changeShape" should set strokeWidth', done => {
+            invoker.execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, {
+                strokeWidth: 50
+            }).then(() => {
+                const shapeObject = graphics.getObject(shapeObjectId);
+                expect(shapeObject.strokeWidth).toBe(50);
+                done();
+            });
+        });
+        it('"redo()" should restore strokeWidth', done => {
+            invoker.execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, {
+                strokeWidth: 50
+            }).then(() => invoker.undo()).then(() => {
+                const shapeObject = graphics.getObject(shapeObjectId);
+                expect(shapeObject.strokeWidth).toBe(defaultStrokeWidth);
                 done();
             });
         });

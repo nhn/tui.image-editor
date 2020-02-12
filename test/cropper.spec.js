@@ -7,6 +7,7 @@ import fabric from 'fabric';
 import $ from 'jquery';
 import Cropper from '../src/js/component/cropper';
 import Graphics from '../src/js/graphics';
+import consts from '../src/js/consts';
 
 describe('Cropper', () => {
     let cropper, graphics, canvas;
@@ -339,6 +340,24 @@ describe('Cropper', () => {
             expect(objects[0].evented).toBe(true);
             expect(objects[1].evented).toBe(true);
             expect(objects[2].evented).toBe(true);
+        });
+    });
+    describe('canvas event delegator', () => {
+        it('The event of an object with an eventDelegator must fire the graphics.fire registered with the trigger.', () => {
+            cropper.start();
+            spyOn(graphics, 'fire');
+            const events = consts.eventNames;
+            const fEvent = {
+                target: cropper._cropzone
+            };
+
+            const cropzone = cropper._cropzone;
+
+            canvas.fire('object:scaling', fEvent);
+
+            expect(graphics.fire.calls.count()).toBe(0);
+            cropzone.canvasEventTrigger[events.OBJECT_SCALED](cropzone);
+            expect(graphics.fire.calls.count()).toBe(1);
         });
     });
 });

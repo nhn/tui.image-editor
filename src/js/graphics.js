@@ -966,10 +966,7 @@ class Graphics {
      * @private
      */
     _onObjectMoved(fEvent) {
-        const {target} = fEvent;
-        const params = this.createObjectProperties(target);
-
-        this.fire(events.OBJECT_MOVED, params);
+        this._lazyFire(events.OBJECT_MOVED, object => this.createObjectProperties(object), fEvent.target);
     }
 
     /**
@@ -978,10 +975,29 @@ class Graphics {
      * @private
      */
     _onObjectScaled(fEvent) {
-        const {target} = fEvent;
-        const params = this.createObjectProperties(target);
+        this._lazyFire(events.OBJECT_SCALED, object => this.createObjectProperties(object), fEvent.target);
+    }
 
-        this.fire(events.OBJECT_SCALED, params);
+    /**
+     * Lazy event emitter
+     * @param {string} eventName - event name
+     * @param {Function} paramsMaker - make param function
+     * @param {Object} [target] - Object of the event owner.
+     * @private
+     */
+    _lazyFire(eventName, paramsMaker, target) {
+        const existEventDelegation = target && target.canvasEventDelegation;
+        const delegationState = existEventDelegation ? target.canvasEventDelegation(eventName) : 'none';
+
+        if (delegationState === 'unregisted') {
+            target.canvasEventRegister(eventName, object => {
+                this.fire(eventName, paramsMaker(object));
+            });
+        }
+
+        if (delegationState === 'none') {
+            this.fire(eventName, paramsMaker(target));
+        }
     }
 
     /**
@@ -1092,7 +1108,8 @@ class Graphics {
             'fontSize',
             'fontStyle',
             'textAlign',
-            'textDecoration'
+            'textDecoration',
+            'fontWeight'
         ];
         const props = {};
         extend(props, util.getProperties(obj, predefinedKeys));

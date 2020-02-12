@@ -2,11 +2,37 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Apply a filter into an image
  */
+import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
 import consts from '../consts';
 
 const {componentNames, rejectMessages, commandNames} = consts;
 const {FILTER} = componentNames;
+
+/**
+ * Chched data for undo
+ * @type {Object}
+ */
+let chchedUndoDataForSilent = null;
+
+/**
+ * Make undoData
+ * @param {string} type - Filter type 
+ * @param {Object} prevfilterOption - prev Filter options
+ * @param {Object} options - Filter options
+ * @returns {object} - undo data
+ */
+function makeUndoData(type, prevfilterOption, options) {
+    const undoData = {};
+
+    if (type === 'mask') {
+        undoData.object = options.mask;
+    }
+
+    undoData.options = prevfilterOption;
+
+    return undoData;
+}
 
 const command = {
     name: commandNames.APPLY_FILTER,
@@ -17,9 +43,10 @@ const command = {
      * @param {string} type - Filter type
      * @param {Object} options - Filter options
      *  @param {number} options.maskObjId - masking image object id
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise}
      */
-    execute(graphics, type, options) {
+    execute(graphics, type, options, isSilent) {
         const filterComp = graphics.getComponent(FILTER);
 
         if (type === 'mask') {
@@ -29,16 +56,14 @@ const command = {
                 return Promise.reject(rejectMessages.invalidParameters);
             }
 
-            options = {
-                mask: maskObj
-            };
-        }
-
-        if (type === 'mask') {
-            this.undoData.object = options.mask;
+            snippet.extend(options, {mask: maskObj});
             graphics.remove(options.mask);
-        } else {
-            this.undoData.options = filterComp.getOptions(type);
+        }
+        if (!this.isRedo) {
+            const prevfilterOption = filterComp.getOptions(type);
+            const undoData = makeUndoData(type, prevfilterOption, options);
+
+            chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
         return filterComp.add(type, options);

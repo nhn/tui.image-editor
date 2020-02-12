@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.7.3
+// Type definitions for TOAST UI Image Editor v3.8.0
 // TypeScript Version: 3.2.2
 
 declare namespace tuiImageEditor {
@@ -260,13 +260,13 @@ declare namespace tuiImageEditor {
         public addText(text: string, options?: IGenerateTextOptions): Promise<ITextObjectProps>;
         public applyFilter(type: string, options?: {
             maskObjId: number
-        }): Promise<IFilterResolveObject>;
+        }, isSilent?: boolean): Promise<IFilterResolveObject>;
         public changeCursor(cursorType: string): void;
         public changeIconColor(id: number, color: string): Promise<void>;
         public changeSelectableAll(selectable: boolean): void;
-        public changeShape(id: number, options?: IShapeOptions): Promise<void>;
+        public changeShape(id: number, options?: IShapeOptions, isSilent?: boolean): Promise<void>;
         public changeText(id: number, text?: string): Promise<void>;
-        public changeTextStyle(id: number, styleObj: ITextStyleConfig): Promise<void>;
+        public changeTextStyle(id: number, styleObj: ITextStyleConfig, isSilent?: boolean): Promise<void>;
         public clearObjects(): Promise<void>;
         public clearRedoStack(): void;
         public clearUndoStack(): void;
@@ -294,8 +294,8 @@ declare namespace tuiImageEditor {
         public removeObject(id: number): Promise<void>;
         public resetFlip(): Promise<IFlipXYResolveObject>;
         public resizeCanvasDimension(dimension: ICanvasSize): Promise<void>;
-        public rotate(angle: AngleType): Promise<AngleType>;
-        public setAngle(angle: AngleType): Promise<AngleType>;
+        public rotate(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
+        public setAngle(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
         public setBrush(option: IBrushOptions): void;
         public setCropzoneRect(mode?: number): void;
         public setDrawingShape(type: string, options?: IShapeOptions): void;

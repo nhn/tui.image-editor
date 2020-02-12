@@ -8,17 +8,18 @@ describe('Filter', () => {
     let imageEditor;
     const imageURL = 'base/test/fixtures/sampleImage.jpg';
 
-    beforeAll(done => {
+    beforeEach(done => {
         imageEditor = new ImageEditor(document.createElement('div'), {
             cssMaxWidth: 700,
             cssMaxHeight: 500
         });
         imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => {
+            imageEditor.clearUndoStack();
             done();
         });
     });
 
-    afterAll(() => {
+    afterEach(() => {
         imageEditor.destroy();
     });
 
@@ -32,7 +33,21 @@ describe('Filter', () => {
         });
     });
 
+    it('applyFilter() can not add undo stack at isSilent', done => {
+        const isSilent = true;
+
+        imageEditor.applyFilter('colorFilter', {}, isSilent).then(() => {
+            expect(imageEditor.isEmptyUndoStack()).toBe(true);
+            done();
+        })['catch'](() => {
+            fail();
+            done();
+        });
+    });
+
     it('hasFilter', () => {
+        imageEditor.applyFilter('colorFilter');
+
         expect(imageEditor.hasFilter('invert')).toBe(false);
         expect(imageEditor.hasFilter('colorFilter')).toBe(true);
     });
