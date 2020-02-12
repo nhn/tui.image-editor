@@ -501,7 +501,7 @@ class ImageEditor {
      */
     _onObjectRotated(props) {
         /**
-         * The event when scale factor is changed
+         * The event when object angle is changed
          * @event ImageEditor#objectRotated
          * @param {ObjectProps} props - object properties
          * @example

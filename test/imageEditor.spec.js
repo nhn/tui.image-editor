@@ -9,6 +9,8 @@ import ImageEditor from '../src/js/imageEditor';
 import fabric from 'fabric';
 import consts from '../src/js/consts';
 
+const {OBJECT_ROTATED} = consts.eventNames;
+
 describe('ImageEditor', () => {
     // hostnameSent module scope variable can not be reset.
     // maintain cases with xit as it always fail, if you want to test these cases, change xit to fit one by one
@@ -84,7 +86,7 @@ describe('ImageEditor', () => {
 
             canvas.fire('object:rotating', mock);
 
-            expect(imageEditor.fire.calls.mostRecent().args[0]).toBe('objectRotated');
+            expect(imageEditor.fire.calls.mostRecent().args[0]).toBe(OBJECT_ROTATED);
         });
 
         describe('removeActiveObject()', () => {
