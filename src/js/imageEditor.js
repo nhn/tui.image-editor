@@ -18,6 +18,59 @@ const {keyCodes, rejectMessages} = consts;
 const {isUndefined, forEach, CustomEvents} = snippet;
 
 /**
+ * Image filter result
+ * @typedef {object} FilterResult
+ * @property {string} type - filter type like 'mask', 'Grayscale' and so on
+ * @property {string} action - action type like 'add', 'remove'
+ */
+
+/**
+ * Flip status
+ * @typedef {object} FlipStatus
+ * @property {boolean} flipX - x axis
+ * @property {boolean} flipY - y axis
+ * @property {Number} angle - angle
+ */
+/**
+ * Rotation status
+ * @typedef {Number} RotateStatus
+ * @property {Number} angle - angle
+ */
+
+/**
+ * Old and new Size
+ * @typedef {object} SizeChange
+ * @property {Number} oldWidth - old width
+ * @property {Number} oldHeight - old height
+ * @property {Number} newWidth - new width
+ * @property {Number} newHeight - new height
+ */
+
+/**
+ * @typedef {string} ErrorMsg - {string} error message
+ */
+
+/**
+ * @typedef {object} ObjectProps - graphics object properties
+ * @property {number} id - object id
+ * @property {string} type - object type
+ * @property {string} text - text content
+ * @property {(string | number)} left - Left
+ * @property {(string | number)} top - Top
+ * @property {(string | number)} width - Width
+ * @property {(string | number)} height - Height
+ * @property {string} fill - Color
+ * @property {string} stroke - Stroke
+ * @property {(string | number)} strokeWidth - StrokeWidth
+ * @property {string} fontFamily - Font type for text
+ * @property {number} fontSize - Font Size
+ * @property {string} fontStyle - Type of inclination (normal / italic)
+ * @property {string} fontWeight - Type of thicker or thinner looking (normal / bold)
+ * @property {string} textAlign - Type of text align (left / center / right)
+ * @property {string} textDecoration - Type of line (underline / line-through / overline)
+ */
+
+/**
  * Image editor
  * @class
  * @param {string|HTMLElement} wrapper - Wrapper's element or selector
@@ -157,58 +210,6 @@ class ImageEditor {
         fabric.enableGLFiltering = false;
     }
 
-    /**
-     * Image filter result
-     * @typedef {Object} FilterResult
-     * @property {string} type - filter type like 'mask', 'Grayscale' and so on
-     * @property {string} action - action type like 'add', 'remove'
-     */
-
-    /**
-     * Flip status
-     * @typedef {Object} FlipStatus
-     * @property {boolean} flipX - x axis
-     * @property {boolean} flipY - y axis
-     * @property {Number} angle - angle
-     */
-    /**
-     * Rotation status
-     * @typedef {Number} RotateStatus
-     * @property {Number} angle - angle
-     */
-
-    /**
-     * Old and new Size
-     * @typedef {Object} SizeChange
-     * @property {Number} oldWidth - old width
-     * @property {Number} oldHeight - old height
-     * @property {Number} newWidth - new width
-     * @property {Number} newHeight - new height
-     */
-
-    /**
-     * @typedef {string} ErrorMsg - {string} error message
-     */
-
-    /**
-     * @typedef {Object} ObjectProps - graphics object properties
-     * @property {number} id - object id
-     * @property {string} type - object type
-     * @property {string} text - text content
-     * @property {(string | number)} left - Left
-     * @property {(string | number)} top - Top
-     * @property {(string | number)} width - Width
-     * @property {(string | number)} height - Height
-     * @property {string} fill - Color
-     * @property {string} stroke - Stroke
-     * @property {(string | number)} strokeWidth - StrokeWidth
-     * @property {string} fontFamily - Font type for text
-     * @property {number} fontSize - Font Size
-     * @property {string} fontStyle - Type of inclination (normal / italic)
-     * @property {string} fontWeight - Type of thicker or thinner looking (normal / bold)
-     * @property {string} textAlign - Type of text align (left / center / right)
-     * @property {string} textDecoration - Type of line (underline / line-through / overline)
-     */
 
     /**
      * Set selection style by init option
