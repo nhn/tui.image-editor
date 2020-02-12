@@ -144,68 +144,15 @@ class Ui {
     }
 
     /**
-     * Change undo button status
+     * Change help button status
+     * @param {string} buttonType - target button type
      * @param {Boolean} enableStatus - enabled status
      * @ignore
      */
-    changeUndoButtonStatus(enableStatus) {
-        if (enableStatus) {
-            this._buttonElements.undo.classList.add('enabled');
-        } else {
-            this._buttonElements.undo.classList.remove('enabled');
-        }
-    }
+    changeHelpButtonEnabled(buttonType, enableStatus) {
+        const buttonClassList = this._buttonElements[buttonType].classList;
 
-    /**
-     * Change redo button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeRedoButtonStatus(enableStatus) {
-        if (enableStatus) {
-            this._buttonElements.redo.classList.add('enabled');
-        } else {
-            this._buttonElements.redo.classList.remove('enabled');
-        }
-    }
-
-    /**
-     * Change reset button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeResetButtonStatus(enableStatus) {
-        if (enableStatus) {
-            this._buttonElements.reset.classList.add('enabled');
-        } else {
-            this._buttonElements.reset.classList.remove('enabled');
-        }
-    }
-
-    /**
-     * Change delete-all button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeDeleteAllButtonEnabled(enableStatus) {
-        if (enableStatus) {
-            this._buttonElements.deleteAll.classList.add('enabled');
-        } else {
-            this._buttonElements.deleteAll.classList.remove('enabled');
-        }
-    }
-
-    /**
-     * Change delete button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeDeleteButtonEnabled(enableStatus) {
-        if (enableStatus) {
-            this._buttonElements['delete'].classList.add('enabled');
-        } else {
-            this._buttonElements['delete'].classList.remove('enabled');
-        }
+        buttonClassList[enableStatus ? 'add' : 'remove']('enabled');
     }
 
     /**
@@ -332,7 +279,6 @@ class Ui {
 
     /**
      * Make tooltip for help menus
-     * @param {string} menuName - menu name
      * @private
      */
     _makeHelpMenuTooltip() {
