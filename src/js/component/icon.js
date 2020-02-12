@@ -39,12 +39,6 @@ class Icon extends Component {
          * @type {Object}
          */
         this._pathMap = pathMap;
-
-        /**
-         * Option to add icon to drag.
-         * @type {boolean}
-         */
-        this.useDragAddIcon = graphics.useDragAddIcon;
     }
 
     /**
@@ -62,7 +56,7 @@ class Icon extends Component {
             const path = this._pathMap[type];
             const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
             const registerdIcon = Object.keys(consts.defaultIconPath).indexOf(type) >= 0;
-            const useDragAddIcon = this.useDragAddIcon && registerdIcon;
+            const useDragAddIcon = this.graphics.useDragAddIcon && registerdIcon;
             const icon = path ? this._createIcon(path) : null;
 
             if (!icon) {
@@ -71,7 +65,8 @@ class Icon extends Component {
 
             icon.set(snippet.extend({
                 type: 'icon',
-                fill: this._oColor
+                fill: this._oColor,
+                iconType: type
             }, selectionStyle, options, this.graphics.controlStyle));
 
             canvas.add(icon).setActiveObject(icon);
