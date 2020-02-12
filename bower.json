@@ -28,8 +28,8 @@
     "webpack.*.js"
   ],
   "dependencies": {
-    "fabric": "~1.6.4",
-    "tui-code-snippet": "^1.4.0",
+    "fabric": "3.6.0",
+    "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.0"
   },
   "devDependencies": {
