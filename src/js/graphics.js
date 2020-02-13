@@ -318,12 +318,11 @@ class Graphics {
 
     /**
      * Get Activate object group from object ids
-     * @param {Array} objectIds - object ids
+     * @param {Array.<Object>} objects - fabric objects
      * @returns {Object} target - target object group
      */
-    getActivateGroupFromObjectIds(objectIds) {
+    getActivateGroupFromObjects(objects) {
         const canvas = this.getCanvas();
-        const objects = snippet.map(objectIds, id => this.getObject(id));
 
         return new fabric.ActiveSelection(objects, {canvas});
     }

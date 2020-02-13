@@ -231,6 +231,7 @@ class ImageEditor {
 
         if (applyGroupSelectionStyle) {
             this.on('selectionCreated', eventTarget => {
+                console.log('kkkkkkkkk');
                 if (eventTarget.type === 'activeSelection') {
                     eventTarget.set(selectionStyle);
                 }
@@ -349,23 +350,19 @@ class ImageEditor {
     }
 
     _pasteObjects() {
-        const tempUseDragAddIcon = this._graphics.useDragAddIcon;
         const targetObject = this._clipboard;
         const isGroupSelect = targetObject.type === 'activeSelection';
 
-        this._graphics.useDragAddIcon = false;
-        this.deactivateAll();
+        this._graphics._canvas.discardActiveObject();
+
         if (isGroupSelect) {
-            this._addCloneObjectStream(targetObject.getObjects()).then(addedObjectIds => {
-                const group = this._graphics.getActivateGroupFromObjectIds(addedObjectIds);
-                this._graphics.deactivateAll();
-                this._graphics.setActiveObject(group);
-                this._graphics.renderAll();
-                this._graphics.useDragAddIcon = tempUseDragAddIcon;
+            this._addObjectStream(targetObject.getObjects()).then(addedObjects => {
+                const groupObject = this._graphics.getActivateGroupFromObjects(addedObjects);
+                this._graphics.setActiveObject(groupObject);
             });
         } else {
-            this._addCloneObject(targetObject).then(() => {
-                this._graphics.useDragAddIcon = tempUseDragAddIcon;
+            this._addCloneObject(targetObject).then(addedObject => {
+                this._graphics.setActiveObject(addedObject);
             });
         }
     }
@@ -381,60 +378,34 @@ class ImageEditor {
         };
     }
 
-    _addCloneObject(clonedObject) {
-        const clonedObjectOptions = this._graphics.createObjectProperties(clonedObject);
-        const {left, top, width, height} = clonedObjectOptions;
-        const newPosition = this.makeClonedObjectPosition({
-            left,
-            top,
-            width,
-            height
-        });
-
-        snippet.extend(clonedObjectOptions, newPosition);
-
-        let resultPromise = null;
-
-        if (clonedObject.type === 'shape') {
-            resultPromise = this.addShape(clonedObject.type, clonedObjectOptions);
-        } else if (clonedObject.type === 'icon') {
-            resultPromise = this.addIcon(clonedObject.iconType, clonedObjectOptions);
-        } else if (clonedObject.type === 'path') {
-        } else if (clonedObject.type === 'line') {
-        } else if (clonedObject.type === 'text' || clonedObject.type === 'i-text') {
-            resultPromise = this.addText(clonedObject.text, {
-                styles: {
-                    fill: clonedObject.fill,
-                    fontSize: clonedObject.fontSize,
-                    fontWeight: clonedObject.fontWeight
-                },
-                position: {
-                    x: newPosition.left,
-                    y: newPosition.top
-                }
-            });
-        }
-
-        return resultPromise;
-    }
-
-    _addCloneObjectStream(targetObjects, addedObjectIds = []) {
-        if (!targetObjects.length && addedObjectIds.length) {
-            return new Promise((resolve, reject) => {
-                if (!addedObjectIds.length) {
-                    reject(rejectMessages.pasteFailed);
-                }
-
-                resolve(addedObjectIds || []);
-            });
-        }
-
+    _addObjectStream(targetObjects, addedObjects = []) {
         const targetObject = targetObjects.pop();
 
-        return this._addCloneObject(targetObject).then(addedObjectInfo => {
-            addedObjectIds.push(addedObjectInfo.id);
+        return !targetObject ? addedObjects : this._addCloneObject(targetObject).then(addedObject => {
+            addedObjects.push(addedObject);
 
-            return this._addCloneObjectStream(targetObjects, addedObjectIds);
+            return this._addObjectStream(targetObjects, addedObjects);
+        });
+    }
+
+    _addCloneObject(clonedObject) {
+        return this._cloneObject(clonedObject).then(colllon => {
+            colllon.set(snippet.extend(this.makeClonedObjectPosition({
+                left: colllon.left,
+                top: colllon.top,
+                width: colllon.width,
+                height: colllon.height
+            }), consts.fObjectOptions.SELECTION_STYLE));
+
+            return this.execute(commands.ADD_OBJECT, colllon);
+        });
+    }
+
+    _cloneObject(targetObject) {
+        return new Promise(resolve => {
+            targetObject.clone(cloned => {
+                resolve(cloned);
+            });
         });
     }
 
@@ -1237,6 +1208,7 @@ class ImageEditor {
      * @private
      */
     _onAddObject(objectProps) {
+        console.log('addObject');
         const obj = this._graphics.getObject(objectProps.id);
         this._pushAddObjectCommand(obj);
     }
