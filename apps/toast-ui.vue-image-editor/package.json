@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-image-editor",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Vue wrapper component for tui.imageEditor",
   "main": "dist/toastui-vue-image-editor.js",
   "files": [
@@ -10,8 +10,7 @@
   "scripts": {
     "build:dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "serve": "vue serve ./example/App.vue",
-    "postinstall": "npm install --no-save --no-optional fabric@^3.3.2"
+    "serve": "vue serve ./example/App.vue"
   },
   "homepage": "https://github.com/nhn/toast-ui.vue-image-editor",
   "bugs": "https://github.com/nhn/toast-ui.vue-image-editor/issues",
@@ -37,6 +36,7 @@
     "webpack-cli": "^3.1.2"
   },
   "dependencies": {
-    "tui-image-editor": "^3.7.0"
+    "fabric": "3.6.0",
+    "tui-image-editor": "^3.8.0"
   }
 }
