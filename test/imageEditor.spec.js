@@ -6,7 +6,6 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
-import util from '../src/js/util';
 import consts from '../src/js/consts';
 
 describe('ImageEditor', () => {
@@ -106,5 +105,48 @@ describe('ImageEditor', () => {
                 expect(imageEditor.removeObject).toHaveBeenCalled();
             });
         });
+
+        describe('_pasteFabricObject()', () => {
+            let graphics, canvas, targetObject1, targetObject2;
+
+            beforeEach(() => {
+                graphics = imageEditor._graphics;
+                canvas = graphics.getCanvas();
+                targetObject1 = new fabric.Object({});
+                targetObject2 = new fabric.Object({});
+
+                canvas.add(targetObject1);
+                canvas.add(targetObject2);
+            });
+
+            it('Group objects must be duplicated as many as the number of objects in the group.', done => {
+                const groupObject = graphics.getActivateGroupFromObjects(canvas.getObjects());
+
+                imageEditor._targetObjectForCopyPaste = groupObject;
+
+                imageEditor._pasteFabricObject().then(() => {
+                    expect(canvas.getObjects().length).toBe(4);
+                    done();
+                });
+            });
+
+            it('Only one object should be duplicated.', done => {
+                imageEditor._targetObjectForCopyPaste = targetObject1;
+
+                imageEditor._pasteFabricObject().then(() => {
+                    expect(canvas.getObjects().length).toBe(3);
+                    done();
+                });
+            });
+        });
     });
 });
+
+
+
+
+
+
+
+
+

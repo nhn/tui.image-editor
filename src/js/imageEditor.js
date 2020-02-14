@@ -115,7 +115,12 @@ class ImageEditor {
             }
         );
 
-        this._clipboard = null;
+        /**
+         * target fabric object for copy paste feature
+         * @type {fabric.Object}
+         * @private
+         */
+        this._targetObjectForCopyPaste = null;
 
         /**
          * Event handler list
@@ -231,7 +236,6 @@ class ImageEditor {
 
         if (applyGroupSelectionStyle) {
             this.on('selectionCreated', eventTarget => {
-                console.log('kkkkkkkkk');
                 if (eventTarget.type === 'activeSelection') {
                     eventTarget.set(selectionStyle);
                 }
@@ -326,9 +330,9 @@ class ImageEditor {
 
         if (isModifierKey) {
             if (keyCode === keyCodes.C && activeObject) {
-                this._clipboard = activeObject;
-            } else if (keyCode === keyCodes.V && this._clipboard) {
-                this._pasteObjects();
+                this._targetObjectForCopyPaste = activeObject;
+            } else if (keyCode === keyCodes.V && this._targetObjectForCopyPaste) {
+                this._pasteFabricObject();
             } else if (keyCode === keyCodes.Z) {
                 // There is no error message on shortcut when it's empty
                 this.undo()['catch'](() => {
@@ -349,64 +353,53 @@ class ImageEditor {
         }
     }
 
-    _pasteObjects() {
-        const targetObject = this._clipboard;
+    /**
+     * Paste fabric object
+     * @returns {Promise}
+     */
+    _pasteFabricObject() {
+        const targetObject = this._targetObjectForCopyPaste;
         const isGroupSelect = targetObject.type === 'activeSelection';
+        const targetObjects = isGroupSelect ? targetObject.getObjects() : [targetObject];
 
-        this._graphics._canvas.discardActiveObject();
+        this.discardSelection();
 
-        if (isGroupSelect) {
-            this._addObjectStream(targetObject.getObjects()).then(addedObjects => {
-                const groupObject = this._graphics.getActivateGroupFromObjects(addedObjects);
-                this._graphics.setActiveObject(groupObject);
-            });
-        } else {
-            this._addCloneObject(targetObject).then(addedObject => {
-                this._graphics.setActiveObject(addedObject);
-            });
-        }
+        return this._cloneFabricObjectStream(targetObjects).then(addedObjects => {
+            if (addedObjects.length > 1) {
+                this._targetObjectForCopyPaste = this._graphics.getActivateGroupFromObjects(addedObjects);
+            } else {
+                ([this._targetObjectForCopyPaste] = addedObjects);
+            }
+
+            this._graphics.setActiveObject(this._targetObjectForCopyPaste);
+        });
     }
 
-    makeClonedObjectPosition({left, top, width, height}) {
-        const {width: canvasWidth, height: canvasHeight} = this._graphics.getCanvasSize();
-        const rightEdge = left + (width / 2);
-        const bottomEdge = top + (height / 2);
-
-        return {
-            left: rightEdge + 10 > canvasWidth ? left - 10 : left + 10,
-            top: bottomEdge + 10 > canvasHeight ? top - 10 : top + 10
-        };
-    }
-
-    _addObjectStream(targetObjects, addedObjects = []) {
+    /**
+     * clone fabric object Sequential processing for prevent invoke lock
+     * @param {fabric.Object} targetObjects - fabric object
+     * @param {Array.<fabric.Object>} addedObjects - added fabric object list
+     * @returns {Promise}
+     */
+    _cloneFabricObjectStream(targetObjects, addedObjects = []) {
         const targetObject = targetObjects.pop();
 
-        return !targetObject ? addedObjects : this._addCloneObject(targetObject).then(addedObject => {
+        return !targetObject ? addedObjects : this._cloneFabricObject(targetObject).then(addedObject => {
             addedObjects.push(addedObject);
 
-            return this._addObjectStream(targetObjects, addedObjects);
+            return this._cloneFabricObjectStream(targetObjects, addedObjects);
         });
     }
 
-    _addCloneObject(clonedObject) {
-        return this._cloneObject(clonedObject).then(colllon => {
-            colllon.set(snippet.extend(this.makeClonedObjectPosition({
-                left: colllon.left,
-                top: colllon.top,
-                width: colllon.width,
-                height: colllon.height
-            }), consts.fObjectOptions.SELECTION_STYLE));
-
-            return this.execute(commands.ADD_OBJECT, colllon);
-        });
-    }
-
-    _cloneObject(targetObject) {
-        return new Promise(resolve => {
-            targetObject.clone(cloned => {
-                resolve(cloned);
-            });
-        });
+    /**
+     * clone fabric object
+     * @param {fabric.Object} targetObject - fabric object
+     * @returns {Promise}
+     */
+    _cloneFabricObject(targetObject) {
+        return this._graphics.cloneFabricObjectForPaste(targetObject).then(clonedObject => (
+            this.execute(commands.ADD_OBJECT, clonedObject)
+        ));
     }
 
     /**
@@ -1208,7 +1201,6 @@ class ImageEditor {
      * @private
      */
     _onAddObject(objectProps) {
-        console.log('addObject');
         const obj = this._graphics.getObject(objectProps.id);
         this._pushAddObjectCommand(obj);
     }

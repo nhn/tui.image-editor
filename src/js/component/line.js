@@ -119,8 +119,6 @@ class Line extends Component {
             evented: false
         });
 
-        console.log('LINE', this._line);
-
         this._line.set(consts.fObjectOptions.SELECTION_STYLE);
 
         canvas.add(this._line);

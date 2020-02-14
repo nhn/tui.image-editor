@@ -1090,9 +1090,7 @@ class Graphics {
             'fill',
             'stroke',
             'strokeWidth',
-            'opacity',
-            'rx',
-            'ry'
+            'opacity'
         ];
         const props = {
             id: stamp(obj),
@@ -1148,6 +1146,40 @@ class Graphics {
      */
     _removeFabricObject(id) {
         delete this._objects[id];
+    }
+
+    /**
+     * Clone fabric object
+     * @param {fabric.Object} targetObject - fabric object
+     * @returns {Promise}
+     */
+    cloneFabricObject(targetObject) {
+        return new Promise(resolve => {
+            targetObject.clone(cloned => {
+                resolve(cloned);
+            });
+        });
+    }
+
+    /**
+     * Changed position clone fabric object
+     * @param {fabric.Object} targetObject - fabric object
+     * @returns {Promise}
+     */
+    cloneFabricObjectForPaste(targetObject) {
+        return this.cloneFabricObject(targetObject).then(clonedObject => {
+            const {left, top, width, height} = clonedObject;
+            const {width: canvasWidth, height: canvasHeight} = this.getCanvasSize();
+            const rightEdge = left + (width / 2);
+            const bottomEdge = top + (height / 2);
+
+            clonedObject.set(snippet.extend({
+                left: rightEdge + 10 > canvasWidth ? left - 10 : left + 10,
+                top: bottomEdge + 10 > canvasHeight ? top - 10 : top + 10
+            }, consts.fObjectOptions.SELECTION_STYLE));
+
+            return clonedObject;
+        });
     }
 }
 

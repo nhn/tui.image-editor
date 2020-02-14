@@ -349,7 +349,6 @@ class Shape extends Component {
 
         if (!shape) {
             this.add(this._type, {
-                radius: 10,
                 left: startPointX,
                 top: startPointY,
                 width,

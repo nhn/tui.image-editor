@@ -136,8 +136,7 @@ module.exports = {
         rotation: 'The current angle is same the old angle.',
         undo: 'The promise of undo command is reject.',
         unsupportedOperation: 'Unsupported operation.',
-        unsupportedType: 'Unsupported object type.',
-        pasteFailed: 'Paste object failed.'
+        unsupportedType: 'Unsupported object type.'
     },
 
     /**
