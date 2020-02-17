@@ -252,6 +252,7 @@ Add dependencies & initialize ImageEditor class with given element to make an im
 
 ```javascript
 var ImageEditor = require('tui-image-editor');
+var FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
 var blackTheme = require('./js/theme/black-theme.js');
 var locale_ru_RU = { // override default English locale to your custom
     'Crop': 'Обзрезать',
@@ -298,6 +299,7 @@ If you using TypeScript, You must `import module = require('module')` on importi
 
 ```typescript
 import ImageEditor = require('tui-image-editor');
+var FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
 
 const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
     cssMaxWidth: 700,
