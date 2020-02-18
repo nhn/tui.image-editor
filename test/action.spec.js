@@ -18,7 +18,15 @@ describe('Ui', () => {
                 loadImage: false,
                 initMenu: 'flip',
                 menuBarPosition: 'bottom',
-                applyCropSelectionStyle: true
+                applyCropSelectionStyle: true,
+                theme: {
+                    'menu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
+                    'menu.activeIcon.path': 'base/test/fixtures/icon-b.svg',
+                    'menu.disabledIcon.path': 'base/test/fixtures/icon-a.svg',
+                    'menu.hoverIcon.path': 'base/test/fixtures/icon-c.svg',
+                    'submenu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
+                    'submenu.activeIcon.path': 'base/test/fixtures/icon-c.svg'
+                }
             }
         });
         actions = imageEditorMock.getActions();
@@ -54,9 +62,7 @@ describe('Ui', () => {
 
         it('Undo() API should be executed When the undo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyUndoStack').and.returnValue(false);
-            spyOn(imageEditorMock, 'undo').and.returnValue(new Promise(resolve => {
-                resolve();
-            }));
+            spyOn(imageEditorMock, 'undo').and.returnValue({then: () => {}});
 
             mainAction.undo();
 
@@ -65,9 +71,7 @@ describe('Ui', () => {
 
         it('Redo() API should be executed When the redo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyRedoStack').and.returnValue(false);
-            spyOn(imageEditorMock, 'redo').and.returnValue(new Promise(resolve => {
-                resolve();
-            }));
+            spyOn(imageEditorMock, 'redo').and.returnValue({then: () => {}});
 
             mainAction.redo();
 
