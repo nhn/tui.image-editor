@@ -1,4 +1,5 @@
 import snippet from 'tui-code-snippet';
+import {HELP_MENUS} from './consts';
 import util from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
@@ -28,7 +29,6 @@ const SUB_UI_COMPONENT = {
 };
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
-const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
 
 /**
  * Ui class
@@ -54,7 +54,7 @@ class Ui {
         this.uiSize = {};
         this._locale = new Locale(this.options.locale);
         this.theme = new Theme(this.options.theme);
-
+        this.eventHandler = {};
         this._submenuChangeTransection = false;
         this._selectedElement = null;
         this._mainElement = null;
@@ -67,6 +67,17 @@ class Ui {
         this._initMenuEvent = false;
 
         this._makeSubMenu();
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeUiEvent();
+        this._destroyAllMenu();
+        this._selectedElement.innerHTML = '';
+
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -313,12 +324,22 @@ class Ui {
 
     /**
      * Add help action event
-     * @param {string} helpName - help menu name
      * @private
      */
-    _addHelpActionEvent(helpName) {
-        this._buttonElements[helpName].addEventListener('click', () => {
-            this._actions.main[helpName]();
+    _addHelpActionEvent() {
+        snippet.forEach(HELP_MENUS, helpName => {
+            this.eventHandler[helpName] = () => this._actions.main[helpName]();
+            this._buttonElements[helpName].addEventListener('click', this.eventHandler[helpName]);
+        });
+    }
+
+    /**
+     * Remove help action event
+     * @private
+     */
+    _removeHelpActionEvent() {
+        snippet.forEach(HELP_MENUS, helpName => {
+            this._buttonElements[helpName].removeEventListener('click', this.eventHandler[helpName]);
         });
     }
 
@@ -337,10 +358,15 @@ class Ui {
      * @private
      */
     _addDownloadEvent() {
+        this.eventHandler.download = () => this._actions.main.download();
         snippet.forEach(this._buttonElements.download, element => {
-            element.addEventListener('click', () => {
-                this._actions.main.download();
-            });
+            element.addEventListener('click', this.eventHandler.download);
+        });
+    }
+
+    _removeDownloadEvent() {
+        snippet.forEach(this._buttonElements.download, element => {
+            element.removeEventListener('click', this.eventHandler.download);
         });
     }
 
@@ -349,10 +375,20 @@ class Ui {
      * @private
      */
     _addLoadEvent() {
+        this.eventHandler.loadImage = event => this._actions.main.load(event.target.files[0]);
+
         snippet.forEach(this._buttonElements.load, element => {
-            element.addEventListener('change', event => {
-                this._actions.main.load(event.target.files[0]);
-            });
+            element.addEventListener('change', this.eventHandler.loadImage);
+        });
+    }
+
+    /**
+     * Remmove load event
+     * @private
+     */
+    _removeLoadEvent() {
+        snippet.forEach(this._buttonElements.load, element => {
+            element.removeEventListener('change', this.eventHandler.loadImage);
         });
     }
 
@@ -361,10 +397,9 @@ class Ui {
      * @param {string} menuName - menu name
      * @private
      */
-    _addMenuEvent(menuName) {
-        this._buttonElements[menuName].addEventListener('click', () => {
-            this.changeMenu(menuName);
-        });
+    _addMainMenuEvent(menuName) {
+        this.eventHandler[menuName] = () => this.changeMenu(menuName);
+        this._buttonElements[menuName].addEventListener('click', this.eventHandler[menuName]);
     }
 
     /**
@@ -377,7 +412,28 @@ class Ui {
     }
 
     /**
-     * get editor area element
+     * Add menu event
+     * @private
+     */
+    _addMenuEvent() {
+        snippet.forEach(this.options.menu, menuName => {
+            this._addMainMenuEvent(menuName);
+            this._addSubMenuEvent(menuName);
+        });
+    }
+
+    /**
+     * Remove menu event
+     * @private
+     */
+    _removeMainMenuEvent() {
+        snippet.forEach(this.options.menu, menuName => {
+            this._buttonElements[menuName].removeEventListener('click', this.eventHandler[menuName]);
+        });
+    }
+
+    /**
+     * Get editor area element
      * @returns {HTMLElement} editor area html element
      * @ignore
      */
@@ -394,18 +450,32 @@ class Ui {
             return;
         }
 
-        snippet.forEach(HELP_MENUS, menuName => {
-            this._addHelpActionEvent(menuName);
-        });
-
+        this._addHelpActionEvent();
         this._addDownloadEvent();
-
-        snippet.forEach(this.options.menu, menuName => {
-            this._addMenuEvent(menuName);
-            this._addSubMenuEvent(menuName);
-        });
+        this._addMenuEvent();
         this._initMenu();
         this._initMenuEvent = true;
+    }
+
+    /**
+     * Remove ui event
+     * @private
+     */
+    _removeUiEvent() {
+        this._removeHelpActionEvent();
+        this._removeDownloadEvent();
+        this._removeLoadEvent();
+        this._removeMainMenuEvent();
+    }
+
+    /**
+     * Destroy all menu instance
+     * @private
+     */
+    _destroyAllMenu() {
+        snippet.forEach(this.options.menu, menuName => {
+            this[menuName].destroy();
+        });
     }
 
     /**

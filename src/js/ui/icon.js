@@ -2,7 +2,7 @@ import snippet from 'tui-code-snippet';
 import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/icon';
-import {isSupportFileApi} from '../util';
+import {isSupportFileApi, assignmentForDestroy} from '../util';
 import {defaultIconPath} from '../consts';
 
 /**
@@ -25,12 +25,22 @@ class Icon extends Submenu {
         this._iconMap = {};
 
         this._els = {
-            registIconButton: this.selector('.tie-icon-image-file'),
+            registrIconButton: this.selector('.tie-icon-image-file'),
             addIconButton: this.selector('.tie-icon-add-button'),
             iconColorpicker: new Colorpicker(
                 this.selector('.tie-icon-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             )
         };
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.iconColorpicker.destroy();
+
+        assignmentForDestroy(this);
     }
 
     /**
@@ -41,11 +51,28 @@ class Icon extends Submenu {
      *   @param {Function} actions.changeColor - change icon color
      */
     addEvent(actions) {
-        this.actions = actions;
+        const registerIcon = this._registerIconHandler.bind(this);
+        const addIcon = this._addIconHandler.bind(this);
 
+        this.eventHandler = {
+            registerIcon,
+            addIcon
+        };
+
+        this.actions = actions;
         this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
-        this._els.registIconButton.addEventListener('change', this._registeIconHandler.bind(this));
-        this._els.addIconButton.addEventListener('click', this._addIconHandler.bind(this));
+        this._els.registrIconButton.addEventListener('change', registerIcon);
+        this._els.addIconButton.addEventListener('click', addIcon);
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.iconColorpicker.off();
+        this._els.registrIconButton.removeEventListener('change', this.eventHandler.registerIcon);
+        this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
     }
 
     /**
@@ -121,7 +148,7 @@ class Icon extends Submenu {
      * @param {object} event - file change event object
      * @private
      */
-    _registeIconHandler(event) {
+    _registerIconHandler(event) {
         let imgUrl;
 
         if (!isSupportFileApi) {

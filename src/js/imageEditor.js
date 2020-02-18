@@ -1419,6 +1419,10 @@ class ImageEditor {
         this._graphics.destroy();
         this._graphics = null;
 
+        if (this.ui) {
+            this.ui.destroy();
+        }
+
         forEach(this, (value, key) => {
             this[key] = null;
         }, this);
