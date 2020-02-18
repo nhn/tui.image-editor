@@ -64,11 +64,11 @@ class Rotate extends Submenu {
      *   @param {Function} actions.setAngle - set angle action
      */
     addEvent(actions) {
-        this.eventHandler.changeRotate = this._changeRotateForButton.bind(this);
+        this.eventHandler.rotationAngleChanged = this._changeRotateForButton.bind(this);
 
         // {rotate, setAngle}
         this.actions = actions;
-        this._els.rotateButton.addEventListener('click', this.eventHandler.changeRotate);
+        this._els.rotateButton.addEventListener('click', this.eventHandler.rotationAngleChanged);
         this._els.rotateRange.on('change', this._changeRotateForRange.bind(this));
     }
 
@@ -77,7 +77,7 @@ class Rotate extends Submenu {
      * @private
      */
     _removeEvent() {
-        this._els.rotateButton.removeEventListener('click', this.eventHandler.changeRotate);
+        this._els.rotateButton.removeEventListener('click', this.eventHandler.rotationAngleChanged);
         this._els.rotateRange.off();
     }
 
