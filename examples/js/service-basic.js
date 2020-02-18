@@ -444,9 +444,7 @@ $btnRotateCounterClockWise.on('click', function() {
 
 $inputRotationRange.on('mousedown', function() {
     var changeAngle = function() {
-        imageEditor.setAngle(parseInt($inputRotationRange.val(), 10))['catch'](function() {
-            return {};
-        });
+        imageEditor.setAngle(parseInt($inputRotationRange.val(), 10))['catch'](function() {});
     };
     $(document).on('mousemove', changeAngle);
     $(document).on('mouseup', function stopChangingAngle() {
@@ -456,9 +454,7 @@ $inputRotationRange.on('mousedown', function() {
 });
 
 $inputRotationRange.on('change', function() {
-    imageEditor.setAngle(parseInt($inputRotationRange.val(), 10))['catch'](function() {
-        return {};
-    });
+    imageEditor.setAngle(parseInt($inputRotationRange.val(), 10))['catch'](function() {});
 });
 
 $inputBrushWidthRange.on('change', function() {
