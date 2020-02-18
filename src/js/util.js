@@ -187,6 +187,7 @@ module.exports = {
 
         return new Blob([uInt8Array], {type: mimeString});
     },
+
     /**
      * Fix floating point diff.
      * @param {number} value - original value
@@ -194,5 +195,15 @@ module.exports = {
      */
     fixFloatingPoint(value) {
         return Number(value.toFixed(FLOATING_POINT_DIGIT));
+    },
+
+    /**
+     * Assignment for destroying objects.
+     * @param {Object} targetObject - object to be removed.
+     */
+    assignmentForDestroy(targetObject) {
+        forEach(targetObject, (value, key) => {
+            targetObject[key] = null;
+        });
     }
 };

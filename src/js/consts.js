@@ -6,6 +6,12 @@ import util from './util';
 
 module.exports = {
     /**
+     * Editor help features
+     * @type {Array.<string>}
+     */
+    HELP_MENUS: ['undo', 'redo', 'reset', 'delete', 'deleteAll'],
+
+    /**
      * Component names
      * @type {Object.<string, string>}
      */
@@ -87,12 +93,6 @@ module.exports = {
         'TEXT',
         'SHAPE'
     ),
-
-    /**
-     * Editor help features
-     * @type {Array.<string>}
-     */
-    helpMenus: ['undo', 'redo', 'reset', 'delete', 'deleteAll'],
 
     /**
      * Shortcut key values

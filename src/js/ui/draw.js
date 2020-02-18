@@ -1,4 +1,3 @@
-import snippet from 'tui-code-snippet';
 import util from '../util';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
@@ -25,7 +24,7 @@ class Draw extends Submenu {
 
         this._els = {
             lineSelectButton: this.selector('.tie-draw-line-select-button'),
-            drawColorpicker: new Colorpicker(
+            drawColorPicker: new Colorpicker(
                 this.selector('.tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics
             ),
             drawRange: new Range({
@@ -35,7 +34,7 @@ class Draw extends Submenu {
         };
 
         this.type = null;
-        this.color = this._els.drawColorpicker.color;
+        this.color = this._els.drawColorPicker.color;
         this.width = this._els.drawRange.value;
     }
 
@@ -44,12 +43,10 @@ class Draw extends Submenu {
      */
     destroy() {
         this._removeEvent();
-        this._els.drawColorpicker.destroy();
+        this._els.drawColorPicker.destroy();
         this._els.drawRange.destroy();
 
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -62,7 +59,7 @@ class Draw extends Submenu {
 
         this.actions = actions;
         this._els.lineSelectButton.addEventListener('click', this.eventHandler.changeDrawType);
-        this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
+        this._els.drawColorPicker.on('change', this._changeDrawColor.bind(this));
         this._els.drawRange.on('change', this._changeDrawRange.bind(this));
     }
 
@@ -72,7 +69,7 @@ class Draw extends Submenu {
      */
     _removeEvent() {
         this._els.lineSelectButton.removeEventListener('click', this.eventHandler.changeDrawType);
-        this._els.drawColorpicker.off();
+        this._els.drawColorPicker.off();
         this._els.drawRange.off();
     }
 

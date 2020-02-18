@@ -1,9 +1,8 @@
-import snippet from 'tui-code-snippet';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/shape';
-import {toInteger} from '../util';
+import {toInteger, assignmentForDestroy} from '../util';
 import {defaultShapeStrokeValus} from '../consts';
 
 const SHAPE_DEFAULT_OPTION = {
@@ -58,9 +57,7 @@ class Shape extends Submenu {
         this._els.fillColorpicker.destroy();
         this._els.strokeColorpicker.destroy();
 
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+        assignmentForDestroy(this);
     }
 
     /**
@@ -70,10 +67,10 @@ class Shape extends Submenu {
      *   @param {Function} actions.setDrawingShape - set dreawing shape
      */
     addEvent(actions) {
-        this.eventHandler.shapeSelect = this._changeShapeHandler.bind(this);
+        this.eventHandler.shapeTypeSelected = this._changeShapeHandler.bind(this);
         this.actions = actions;
 
-        this._els.shapeSelectButton.addEventListener('click', this.eventHandler.shapeSelect);
+        this._els.shapeSelectButton.addEventListener('click', this.eventHandler.shapeTypeSelected);
         this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
         this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
         this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
@@ -86,7 +83,7 @@ class Shape extends Submenu {
      * @private
      */
     _removeEvent() {
-        this._els.shapeSelectButton.removeEventListener('click', this.eventHandler.shapeSelect);
+        this._els.shapeSelectButton.removeEventListener('click', this.eventHandler.shapeTypeSelected);
         this._els.strokeRange.off();
         this._els.fillColorpicker.off();
         this._els.strokeColorpicker.off();

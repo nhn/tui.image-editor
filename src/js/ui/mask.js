@@ -1,4 +1,3 @@
-import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
 import util from '../util';
 import templateHtml from './template/submenu/mask';
@@ -30,9 +29,8 @@ class Mask extends Submenu {
      */
     destroy() {
         this._removeEvent();
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -42,14 +40,17 @@ class Mask extends Submenu {
      *   @param {Function} actions.applyFilter - apply filter action
      */
     addEvent(actions) {
+        const loadMaskFile = this._loadMaskFile.bind(this);
+        const applyMask = this._applyMask.bind(this);
+
         this.eventHandler = {
-            loadMaskFile: this._loadMaskFile.bind(this),
-            applyMask: this._applyMask.bind(this)
+            loadMaskFile,
+            applyMask
         };
 
         this.actions = actions;
-        this._els.maskImageButton.addEventListener('change', this.eventHandler.loadMaskFile);
-        this._els.applyButton.addEventListener('click', this.eventHandler.applyMask);
+        this._els.maskImageButton.addEventListener('change', loadMaskFile);
+        this._els.applyButton.addEventListener('click', applyMask);
     }
 
     /**

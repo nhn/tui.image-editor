@@ -1,8 +1,7 @@
-import snippet from 'tui-code-snippet';
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/rotate';
-import {toInteger} from '../util';
+import {toInteger, assignmentForDestroy} from '../util';
 import {defaultRotateRangeValus} from '../consts';
 
 const CLOCKWISE = 30;
@@ -40,9 +39,8 @@ class Rotate extends Submenu {
     destroy() {
         this._removeEvent();
         this._els.rotateRange.destroy();
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+
+        assignmentForDestroy(this);
     }
 
     setRangeBarAngle(type, angle) {

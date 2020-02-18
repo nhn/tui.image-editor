@@ -1,4 +1,4 @@
-import snippet from 'tui-code-snippet';
+import util from '../util';
 import Range from './tools/range';
 import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
@@ -46,9 +46,8 @@ class Text extends Submenu {
         this._removeEvent();
         this._els.textColorpicker.destroy();
         this._els.textRange.destroy();
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -57,14 +56,17 @@ class Text extends Submenu {
      *   @param {Function} actions.changeTextStyle - change text style
      */
     addEvent(actions) {
+        const setTextEffect = this._setTextEffectHandler.bind(this);
+        const setTextAlign = this._setTextAlignHandler.bind(this);
+
         this.eventHandler = {
-            setTextEffect: this._setTextEffectHandler.bind(this),
-            setTextAlign: this._setTextAlignHandler.bind(this)
+            setTextEffect,
+            setTextAlign
         };
 
         this.actions = actions;
-        this._els.textEffectButton.addEventListener('click', this.eventHandler.setTextEffect);
-        this._els.textAlignButton.addEventListener('click', this.eventHandler.setTextAlign);
+        this._els.textEffectButton.addEventListener('click', setTextEffect);
+        this._els.textAlignButton.addEventListener('click', setTextAlign);
         this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
@@ -74,8 +76,10 @@ class Text extends Submenu {
      * @private
      */
     _removeEvent() {
-        this._els.textEffectButton.removeEventListener('click', this.eventHandler.setTextEffect);
-        this._els.textAlignButton.removeEventListener('click', this.eventHandler.setTextAlign);
+        const {setTextEffect, setTextAlign} = this.eventHandler;
+
+        this._els.textEffectButton.removeEventListener('click', setTextEffect);
+        this._els.textAlignButton.removeEventListener('click', setTextAlign);
         this._els.textRange.off();
         this._els.textColorpicker.off();
     }

@@ -1,5 +1,5 @@
 import snippet from 'tui-code-snippet';
-import {helpMenus as HELP_MENUS} from './consts';
+import {HELP_MENUS} from './consts';
 import util from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
@@ -29,7 +29,6 @@ const SUB_UI_COMPONENT = {
 };
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
-const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
 
 /**
  * Ui class
@@ -78,9 +77,7 @@ class Ui {
         this._destroyAllMenu();
         this._selectedElement.innerHTML = '';
 
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -385,6 +382,10 @@ class Ui {
         });
     }
 
+    /**
+     * Remmove load event
+     * @private
+     */
     _removeLoadEvent() {
         snippet.forEach(this._buttonElements.load, element => {
             element.removeEventListener('change', this.eventHandler.loadImage);
@@ -410,6 +411,10 @@ class Ui {
         this[menuName].addEvent(this._actions[menuName]);
     }
 
+    /**
+     * Add menu event
+     * @private
+     */
     _addMenuEvent() {
         snippet.forEach(this.options.menu, menuName => {
             this._addMainMenuEvent(menuName);
@@ -423,12 +428,12 @@ class Ui {
      */
     _removeMainMenuEvent() {
         snippet.forEach(this.options.menu, menuName => {
-            this._els[menuName].removeEventListener('click', this.eventHandler[menuName]);
+            this._buttonElements[menuName].removeEventListener('click', this.eventHandler[menuName]);
         });
     }
 
     /**
-     * get editor area element
+     * Get editor area element
      * @returns {HTMLElement} editor area html element
      * @ignore
      */
@@ -452,6 +457,10 @@ class Ui {
         this._initMenuEvent = true;
     }
 
+    /**
+     * Remove ui event
+     * @private
+     */
     _removeUiEvent() {
         this._removeHelpActionEvent();
         this._removeDownloadEvent();
@@ -459,6 +468,10 @@ class Ui {
         this._removeMainMenuEvent();
     }
 
+    /**
+     * Destroy all menu instance
+     * @private
+     */
     _destroyAllMenu() {
         snippet.forEach(this.options.menu, menuName => {
             this[menuName].destroy();

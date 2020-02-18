@@ -1,5 +1,6 @@
 import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
+import util from '../util';
 import templateHtml from './template/submenu/crop';
 
 /**
@@ -34,9 +35,8 @@ class Crop extends Submenu {
      */
     destroy() {
         this._removeEvent();
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -47,15 +47,20 @@ class Crop extends Submenu {
      *   @param {Function} actions.preset - draw rectzone at a predefined ratio
      */
     addEvent(actions) {
+        const apply = this._applyEventHandler.bind(this);
+        const cancel = this._cancelEventHandler.bind(this);
+        const cropzonePreset = this._cropzonePresetEventHandler.bind(this);
+
         this.eventHandler = {
-            apply: this._applyEventHandler.bind(this),
-            cancel: this._cancelEventHandler.bind(this),
-            cropzonePreset: this._cropzonePresetEventHandler.bind(this)
+            apply,
+            cancel,
+            cropzonePreset
         };
+
         this.actions = actions;
-        this._els.apply.addEventListener('click', this.eventHandler.apply);
-        this._els.cancel.addEventListener('click', this.eventHandler.cancel);
-        this._els.preset.addEventListener('click', this.eventHandler.cropzonePreset);
+        this._els.apply.addEventListener('click', apply);
+        this._els.cancel.addEventListener('click', cancel);
+        this._els.preset.addEventListener('click', cropzonePreset);
     }
 
     /**

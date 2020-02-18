@@ -5,7 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import UI from '../src/js/ui';
-import {helpMenus as HELP_MENUS} from '../src/js/consts';
+import {HELP_MENUS} from '../src/js/consts';
 
 describe('UI', () => {
     let ui;
@@ -39,13 +39,13 @@ describe('UI', () => {
         it('"_removeUiEvent()" must execute "removeEventListener" of all menus.', () => {
             const allUiButtonElementName = [...uiOptions.menu, ...HELP_MENUS];
             snippet.forEach(allUiButtonElementName, elementName => {
-                spyOn(ui._els[elementName], 'removeEventListener');
+                spyOn(ui._buttonElements[elementName], 'removeEventListener');
             });
 
             ui._removeUiEvent();
 
             snippet.forEach(allUiButtonElementName, elementName => {
-                expect(ui._els[elementName].removeEventListener).toHaveBeenCalled();
+                expect(ui._buttonElements[elementName].removeEventListener).toHaveBeenCalled();
             });
         });
     });
