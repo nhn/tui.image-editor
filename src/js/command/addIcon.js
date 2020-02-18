@@ -3,7 +3,7 @@
  * @fileoverview Add an icon
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js/library/es6/promise';
+import Promise from 'core-js/es/promise';
 import consts from '../consts';
 
 const {componentNames, commandNames} = consts;

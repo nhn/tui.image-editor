@@ -4,7 +4,7 @@
  */
 
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
+import Promise from 'core-js/es/promise';
 import ImageEditor from '../src/js/imageEditor';
 import fabric from 'fabric';
 import consts from '../src/js/consts';

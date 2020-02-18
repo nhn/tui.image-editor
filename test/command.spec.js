@@ -3,7 +3,7 @@
  * @fileoverview Tests command with command-factory
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
+import Promise from 'core-js/es/promise';
 import fabric from 'fabric';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';

@@ -3,7 +3,7 @@
  * @fileoverview Set object properties
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js/library/es6/promise';
+import Promise from 'core-js/es/promise';
 import consts from '../consts';
 
 const {commandNames, rejectMessages} = consts;
