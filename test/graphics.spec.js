@@ -201,7 +201,7 @@ describe('Graphics', () => {
         expect(graphics.hasFilter('Grayscale')).toBe(false);
     });
 
-    describe('pasteFabricObject()', () => {
+    describe('pasteObject()', () => {
         let targetObject1, targetObject2;
 
         beforeEach(() => {
@@ -217,7 +217,7 @@ describe('Graphics', () => {
             graphics.setActiveObject(groupObject);
             graphics.resetTargetObjectForCopyPaste();
 
-            graphics.pasteFabricObject().then(() => {
+            graphics.pasteObject().then(() => {
                 expect(canvas.getObjects().length).toBe(4);
                 done();
             });
@@ -227,7 +227,7 @@ describe('Graphics', () => {
             graphics.setActiveObject(targetObject1);
             graphics.resetTargetObjectForCopyPaste();
 
-            graphics.pasteFabricObject().then(() => {
+            graphics.pasteObject().then(() => {
                 expect(canvas.getObjects().length).toBe(3);
                 done();
             });

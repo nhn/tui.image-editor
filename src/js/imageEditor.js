@@ -340,7 +340,7 @@ class ImageEditor {
             if (keyCode === keyCodes.C) {
                 this._graphics.resetTargetObjectForCopyPaste();
             } else if (keyCode === keyCodes.V) {
-                this._graphics.pasteFabricObject();
+                this._graphics.pasteObject();
                 this.clearRedoStack();
             } else if (keyCode === keyCodes.Z) {
                 // There is no error message on shortcut when it's empty

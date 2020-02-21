@@ -1211,7 +1211,7 @@ class Graphics {
      * Paste fabric object
      * @returns {Promise}
      */
-    pasteFabricObject() {
+    pasteObject() {
         if (!this.targetObjectForCopyPaste) {
             return Promise.resolve([]);
         }
@@ -1223,7 +1223,7 @@ class Graphics {
 
         this.discardSelection();
 
-        return this._cloneFabricObjectStream(targetObjects).then(addedObjects => {
+        return this._cloneObject(targetObjects).then(addedObjects => {
             if (addedObjects.length > 1) {
                 newTargetObject = this.getActiveSelectionFromObjects(addedObjects);
             } else {
@@ -1235,25 +1235,25 @@ class Graphics {
     }
 
     /**
-     * clone fabric object Sequential processing for prevent invoke lock
+     * Clone object
      * @param {fabric.Object} targetObjects - fabric object
      * @returns {Promise}
      */
-    _cloneFabricObjectStream(targetObjects) {
+    _cloneObject(targetObjects) {
         const addedObjects = snippet.map(targetObjects, targetObject => (
-            this._cloneFabricObjectItem(targetObject)
+            this._cloneObjectItem(targetObject)
         ));
 
         return Promise.all(addedObjects);
     }
 
     /**
-     * clone fabric object
+     * Clone object one item
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
      */
-    _cloneFabricObjectItem(targetObject) {
-        return this._cloneFabricObjectForPaste(targetObject).then(clonedObject => {
+    _cloneObjectItem(targetObject) {
+        return this._copyFabricObjectForPaste(targetObject).then(clonedObject => {
             const objectProperties = this.createObjectProperties(clonedObject);
             this.add(clonedObject);
 
@@ -1268,10 +1268,10 @@ class Graphics {
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
      */
-    _cloneFabricObjectForPaste(targetObject) {
+    _copyFabricObjectForPaste(targetObject) {
         const addExtraPx = (value, isReverse) => isReverse ? value - EXTRA_PX_FOR_PASTE : value + EXTRA_PX_FOR_PASTE;
 
-        return this._cloneFabricObject(targetObject).then(clonedObject => {
+        return this._copyFabricObject(targetObject).then(clonedObject => {
             const {left, top, width, height} = clonedObject;
             const {width: canvasWidth, height: canvasHeight} = this.getCanvasSize();
             const rightEdge = left + (width / 2);
@@ -1287,11 +1287,11 @@ class Graphics {
     }
 
     /**
-     * Clone fabric object
+     * Copy fabric object
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
      */
-    _cloneFabricObject(targetObject) {
+    _copyFabricObject(targetObject) {
         return new Promise(resolve => {
             targetObject.clone(cloned => {
                 resolve(cloned);
