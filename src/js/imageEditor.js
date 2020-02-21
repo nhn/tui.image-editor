@@ -316,14 +316,11 @@ class ImageEditor {
     /* eslint-disable complexity */
     _onKeyDown(e) {
         const {ctrlKey, keyCode, metaKey} = e;
-        const activeObject = this._graphics.getActiveObject();
-        const activeObjectGroup = this._graphics.getActiveObjects();
-        const existRemoveObject = activeObject || (activeObjectGroup && activeObjectGroup.size());
         const isModifierKey = (ctrlKey || metaKey);
 
         if (isModifierKey) {
             if (keyCode === keyCodes.C) {
-                this._graphics.setTargetObjectForCopyPaste();
+                this._graphics.resetTargetObjectForCopyPaste();
             } else if (keyCode === keyCodes.V) {
                 this._graphics.pasteFabricObject();
                 this.clearRedoStack();
@@ -339,9 +336,9 @@ class ImageEditor {
         }
 
         const isDeleteKey = keyCode === keyCodes.BACKSPACE || keyCode === keyCodes.DEL;
-        const isEditing = activeObject && activeObject.isEditing;
+        const isRemoveReady = this._graphics.isReadyRemoveObject();
 
-        if (!isEditing && isDeleteKey && existRemoveObject) {
+        if (isRemoveReady && isDeleteKey) {
             e.preventDefault();
             this.removeActiveObject();
         }
@@ -351,34 +348,9 @@ class ImageEditor {
      * Remove Active Object
      */
     removeActiveObject() {
-        const activeObject = this._graphics.getActiveObject();
-        const activeObjectGroup = this._graphics.getActiveObjects();
+        const activeObjectId = this._graphics.getActiveObjectIdForRemove();
 
-        if (activeObjectGroup && activeObjectGroup.size()) {
-            this.discardSelection();
-            this._removeObjectStream(activeObjectGroup.getObjects());
-        } else if (activeObject) {
-            const activeObjectId = this._graphics.getObjectId(activeObject);
-            this.removeObject(activeObjectId);
-        }
-    }
-
-    /**
-     * RemoveObject Sequential processing for prevent invoke lock
-     * @param {Array.<Object>} targetObjects - target Objects for remove
-     * @returns {object} targetObjects
-     * @private
-     */
-    _removeObjectStream(targetObjects) {
-        if (!targetObjects.length) {
-            return true;
-        }
-
-        const targetObject = targetObjects.pop();
-
-        return this.removeObject(this._graphics.getObjectId(targetObject)).then(() => (
-            this._removeObjectStream(targetObjects)
-        ));
+        this.removeObject(activeObjectId);
     }
 
     /**

@@ -315,6 +315,34 @@ class Graphics {
     }
 
     /**
+     * Returns the object ID to delete the object.
+     * @returns {number} object id for remove
+     */
+    getActiveObjectIdForRemove() {
+        const activeObject = this.getActiveObject();
+        const isSelection = activeObject.type === 'activeSelection';
+
+        if (isSelection) {
+            const group = new fabric.Group();
+            group.add(...activeObject.getObjects());
+
+            return this._addFabricObject(group);
+        }
+
+        return this.getObjectId(activeObject);
+    }
+
+    /**
+     * Verify that you are ready to erase the object.
+     * @returns {boolean} ready for object remove
+     */
+    isReadyRemoveObject() {
+        const activeObject = this.getActiveObject();
+
+        return activeObject && !activeObject.isEditing;
+    }
+
+    /**
      * Gets an active group object
      * @returns {Object} active group object instance
      */
@@ -325,11 +353,11 @@ class Graphics {
     }
 
     /**
-     * Get Active object group from object ids
+     * Get Active object Selection from object ids
      * @param {Array.<Object>} objects - fabric objects
      * @returns {Object} target - target object group
      */
-    getActiveGroupFromObjects(objects) {
+    getActiveSelectionFromObjects(objects) {
         const canvas = this.getCanvas();
 
         return new fabric.ActiveSelection(objects, {canvas});
@@ -1157,9 +1185,9 @@ class Graphics {
     }
 
     /**
-     * Set targetObjectForCopyPaste value
+     * Reset targetObjectForCopyPaste value from activeObject
      */
-    setTargetObjectForCopyPaste() {
+    resetTargetObjectForCopyPaste() {
         const activeObject = this.getActiveObject();
 
         if (activeObject) {
@@ -1185,11 +1213,11 @@ class Graphics {
 
         return this._cloneFabricObjectStream(targetObjects).then(addedObjects => {
             if (addedObjects.length > 1) {
-                newTargetObject = this.getActiveGroupFromObjects(addedObjects);
+                newTargetObject = this.getActiveSelectionFromObjects(addedObjects);
             } else {
                 ([newTargetObject] = addedObjects);
             }
-            this.setTargetObjectForCopyPaste(newTargetObject);
+            this.targetObjectForCopyPaste = newTargetObject;
             this.setActiveObject(newTargetObject);
         });
     }
