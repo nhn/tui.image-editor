@@ -1238,6 +1238,7 @@ class Graphics {
      * Clone object
      * @param {fabric.Object} targetObjects - fabric object
      * @returns {Promise}
+     * @private
      */
     _cloneObject(targetObjects) {
         const addedObjects = snippet.map(targetObjects, targetObject => (
@@ -1251,6 +1252,7 @@ class Graphics {
      * Clone object one item
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
+     * @private
      */
     _cloneObjectItem(targetObject) {
         return this._copyFabricObjectForPaste(targetObject).then(clonedObject => {
@@ -1264,9 +1266,10 @@ class Graphics {
     }
 
     /**
-     * Changed position clone fabric object
+     * Copy fabric object with Changed position for copy and paste
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
+     * @private
      */
     _copyFabricObjectForPaste(targetObject) {
         const addExtraPx = (value, isReverse) => isReverse ? value - EXTRA_PX_FOR_PASTE : value + EXTRA_PX_FOR_PASTE;
@@ -1290,6 +1293,7 @@ class Graphics {
      * Copy fabric object
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
+     * @private
      */
     _copyFabricObject(targetObject) {
         return new Promise(resolve => {
