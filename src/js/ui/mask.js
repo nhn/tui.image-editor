@@ -25,15 +25,41 @@ class Mask extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+
+        util.assignmentForDestroy(this);
+    }
+
+    /**
      * Add event for mask
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.loadImageFromURL - load image action
      *   @param {Function} actions.applyFilter - apply filter action
      */
     addEvent(actions) {
+        const loadMaskFile = this._loadMaskFile.bind(this);
+        const applyMask = this._applyMask.bind(this);
+
+        this.eventHandler = {
+            loadMaskFile,
+            applyMask
+        };
+
         this.actions = actions;
-        this._els.maskImageButton.addEventListener('change', this._loadMaskFile.bind(this));
-        this._els.applyButton.addEventListener('click', this._applyMask.bind(this));
+        this._els.maskImageButton.addEventListener('change', loadMaskFile);
+        this._els.applyButton.addEventListener('click', applyMask);
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.maskImageButton.removeEventListener('change', this.eventHandler.loadMaskFile);
+        this._els.applyButton.removeEventListener('click', this.eventHandler.applyMask);
     }
 
     /**

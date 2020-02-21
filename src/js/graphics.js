@@ -153,6 +153,7 @@ class Graphics {
             onObjectRemoved: this._onObjectRemoved.bind(this),
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
+            onObjectRotated: this._onObjectRotated.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
             onPathCreated: this._onPathCreated.bind(this),
             onSelectionCleared: this._onSelectionCleared.bind(this),
@@ -964,6 +965,7 @@ class Graphics {
             'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
+            'object:rotating': handler.onObjectRotated,
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
             'selection:cleared': handler.onSelectionCleared,
@@ -1023,6 +1025,15 @@ class Graphics {
      */
     _onObjectScaled(fEvent) {
         this._lazyFire(events.OBJECT_SCALED, object => this.createObjectProperties(object), fEvent.target);
+    }
+
+    /**
+     * "object:rotating" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onObjectRotated(fEvent) {
+        this._lazyFire(events.OBJECT_ROTATED, object => this.createObjectProperties(object), fEvent.target);
     }
 
     /**
@@ -1126,7 +1137,8 @@ class Graphics {
             'fill',
             'stroke',
             'strokeWidth',
-            'opacity'
+            'opacity',
+            'angle'
         ];
         const props = {
             id: stamp(obj),

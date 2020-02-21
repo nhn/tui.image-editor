@@ -85,7 +85,7 @@ export default {
                 });
             },
             delete: () => {
-                this.ui.changeDeleteButtonEnabled(false);
+                this.ui.changeHelpButtonEnabled('delete', false);
                 exitCropOnAction();
                 this.removeActiveObject();
                 this.activeObjectId = null;
@@ -93,8 +93,8 @@ export default {
             deleteAll: () => {
                 exitCropOnAction();
                 this.clearObjects();
-                this.ui.changeDeleteButtonEnabled(false);
-                this.ui.changeDeleteAllButtonEnabled(false);
+                this.ui.changeHelpButtonEnabled('delete', false);
+                this.ui.changeHelpButtonEnabled('deleteAll', false);
             },
             load: file => {
                 if (!util.isSupportFileApi()) {
@@ -407,19 +407,19 @@ export default {
         this.on({
             undoStackChanged: length => {
                 if (length) {
-                    this.ui.changeUndoButtonStatus(true);
-                    this.ui.changeResetButtonStatus(true);
+                    this.ui.changeHelpButtonEnabled('undo', true);
+                    this.ui.changeHelpButtonEnabled('reset', true);
                 } else {
-                    this.ui.changeUndoButtonStatus(false);
-                    this.ui.changeResetButtonStatus(false);
+                    this.ui.changeHelpButtonEnabled('undo', false);
+                    this.ui.changeHelpButtonEnabled('reset', false);
                 }
                 this.ui.resizeEditor();
             },
             redoStackChanged: length => {
                 if (length) {
-                    this.ui.changeRedoButtonStatus(true);
+                    this.ui.changeHelpButtonEnabled('redo', true);
                 } else {
-                    this.ui.changeRedoButtonStatus(false);
+                    this.ui.changeHelpButtonEnabled('redo', false);
                 }
                 this.ui.resizeEditor();
             },
@@ -427,8 +427,8 @@ export default {
             objectActivated: obj => {
                 this.activeObjectId = obj.id;
 
-                this.ui.changeDeleteButtonEnabled(true);
-                this.ui.changeDeleteAllButtonEnabled(true);
+                this.ui.changeHelpButtonEnabled('delete', true);
+                this.ui.changeHelpButtonEnabled('deleteAll', true);
 
                 if (obj.type === 'cropzone') {
                     this.ui.crop.changeApplyButtonStatus(true);

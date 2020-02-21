@@ -15,19 +15,19 @@ describe('Theme', () => {
         it('In case of icon type, the object should be returned as it is.', () => {
             const expected = {
                 active: {
-                    path: 'icon-b.svg',
+                    path: 'base/test/fixtures/icon-b.svg',
                     name: 'icon-b'
                 },
                 normal: {
-                    path: 'icon-d.svg',
+                    path: 'base/test/fixtures/icon-d.svg',
                     name: 'icon-d'
                 },
                 disabled: {
-                    path: 'icon-a.svg',
+                    path: 'base/test/fixtures/icon-a.svg',
                     name: 'icon-a'
                 },
                 hover: {
-                    path: 'icon-c.svg',
+                    path: 'base/test/fixtures/icon-c.svg',
                     name: 'icon-c'
                 }
             };

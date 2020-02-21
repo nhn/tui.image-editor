@@ -113,6 +113,12 @@ module.exports = function(config) {
                 watched: false,
                 included: false,
                 served: true
+            },
+            {
+                pattern: 'test/fixtures/*.svg',
+                watched: false,
+                included: false,
+                served: true
             }
         ],
         preprocessors: {

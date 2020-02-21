@@ -3,7 +3,7 @@ import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/filter';
-import {toInteger, toCamelCase} from '../util';
+import {toInteger, toCamelCase, assignmentForDestroy} from '../util';
 import {defaultFilterRangeValus as FILTER_RANGE} from '../consts';
 
 const PICKER_CONTROL_HEIGHT = '130px';
@@ -49,6 +49,20 @@ const filterNameMap = {
     gamma: 'gamma'
 };
 
+const RANGE_INSTANCE_NAMES = [
+    'removewhiteDistanceRange',
+    'colorfilterThresholeRange',
+    'pixelateRange',
+    'noiseRange',
+    'brightnessRange',
+    'tintOpacity'
+];
+const COLORPICKER_INSTANCE_NAMES = [
+    'filterBlendColor',
+    'filterMultiplyColor',
+    'filterTintColor'
+];
+
 /**
  * Filter ui class
  * @class
@@ -72,41 +86,38 @@ class Filter extends Submenu {
     }
 
     /**
-     * Destroy
+     * Destroys the instance.
      */
     destroy() {
         this._removeEvent();
-        snippet.forEach(this, (value, key) => {
-            this[key] = null;
-        });
+        this._destroyToolInstance();
+
+        assignmentForDestroy(this);
     }
 
     /**
      * Remove event for filter
      */
-    removeEvent() {
+    _removeEvent() {
         snippet.forEach(FILTER_OPTIONS, filter => {
             const filterCheckElement = this.selector(`.tie-${filter}`);
             const filterNameCamelCase = toCamelCase(filter);
 
-            filterCheckElement.removeEventListener('change', this.handler[filterNameCamelCase]);
+            filterCheckElement.removeEventListener('change', this.eventHandler[filterNameCamelCase]);
         });
 
-        this._els.removewhiteDistanceRange.off();
-        this._els.colorfilterThresholeRange.off();
-        this._els.pixelateRange.off();
-        this._els.noiseRange.off();
-        this._els.brightnessRange.off();
-        this._els.filterBlendColor.off();
-        this._els.filterMultiplyColor.off();
-        this._els.filterTintColor.off();
-        this._els.tintOpacity.off();
-        this._els.filterMultiplyColor.off();
-        this._els.filterTintColor.off();
-        this._els.filterBlendColor.off();
+        snippet.forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], instanceName => {
+            this._els[instanceName].off();
+        });
 
-        this._els.blendType.removeEventListener('change', this.handler.changeBlendFilter);
-        this._els.blendType.removeEventListener('click', this.handler.changeBlendFilter);
+        this._els.blendType.removeEventListener('change', this.eventHandler.changeBlendFilter);
+        this._els.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
+    }
+
+    _destroyToolInstance() {
+        snippet.forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], instanceName => {
+            this._els[instanceName].destroy();
+        });
     }
 
     /**
@@ -119,7 +130,7 @@ class Filter extends Submenu {
         const changeFilterStateForRange =
             filterName => (value, isLast) => this._changeFilterState(applyFilter, filterName, isLast);
 
-        this.handler = {
+        this.eventHandler = {
             changeBlendFilter: changeFilterState('blend'),
             blandTypeClick: event => event.stopPropagation()
         };
@@ -128,9 +139,9 @@ class Filter extends Submenu {
             const filterCheckElement = this.selector(`.tie-${filter}`);
             const filterNameCamelCase = toCamelCase(filter);
             this.checkedMap[filterNameCamelCase] = filterCheckElement;
-            this.handler[filterNameCamelCase] = changeFilterState(filterNameCamelCase);
+            this.eventHandler[filterNameCamelCase] = changeFilterState(filterNameCamelCase);
 
-            filterCheckElement.addEventListener('change', this.handler[filterNameCamelCase]);
+            filterCheckElement.addEventListener('change', this.eventHandler[filterNameCamelCase]);
         });
 
         this._els.removewhiteDistanceRange.on('change', changeFilterStateForRange('removeWhite'));
@@ -138,15 +149,17 @@ class Filter extends Submenu {
         this._els.pixelateRange.on('change', changeFilterStateForRange('pixelate'));
         this._els.noiseRange.on('change', changeFilterStateForRange('noise'));
         this._els.brightnessRange.on('change', changeFilterStateForRange('brightness'));
-        this._els.blendType.addEventListener('change', this.handler.changeBlendFilter);
-        this._els.filterBlendColor.on('change', this.handler.changeBlendFilter);
+
+        this._els.filterBlendColor.on('change', this.eventHandler.changeBlendFilter);
         this._els.filterMultiplyColor.on('change', changeFilterState('multiply'));
         this._els.filterTintColor.on('change', changeFilterState('tint'));
         this._els.tintOpacity.on('change', changeFilterStateForRange('tint'));
-        this._els.blendType.addEventListener('click', this.handler.blandTypeClick);
         this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
+
+        this._els.blendType.addEventListener('change', this.eventHandler.changeBlendFilter);
+        this._els.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
     }
 
     /**

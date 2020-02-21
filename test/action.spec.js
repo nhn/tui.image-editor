@@ -18,7 +18,15 @@ describe('Ui', () => {
                 loadImage: false,
                 initMenu: 'flip',
                 menuBarPosition: 'bottom',
-                applyCropSelectionStyle: true
+                applyCropSelectionStyle: true,
+                theme: {
+                    'menu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
+                    'menu.activeIcon.path': 'base/test/fixtures/icon-b.svg',
+                    'menu.disabledIcon.path': 'base/test/fixtures/icon-a.svg',
+                    'menu.hoverIcon.path': 'base/test/fixtures/icon-c.svg',
+                    'submenu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
+                    'submenu.activeIcon.path': 'base/test/fixtures/icon-c.svg'
+                }
             }
         });
         actions = imageEditorMock.getActions();
@@ -54,9 +62,7 @@ describe('Ui', () => {
 
         it('Undo() API should be executed When the undo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyUndoStack').and.returnValue(false);
-            spyOn(imageEditorMock, 'undo').and.returnValue(new Promise(resolve => {
-                resolve();
-            }));
+            spyOn(imageEditorMock, 'undo').and.returnValue({then: () => {}});
 
             mainAction.undo();
 
@@ -65,9 +71,7 @@ describe('Ui', () => {
 
         it('Redo() API should be executed When the redo action occurs', () => {
             spyOn(imageEditorMock, 'isEmptyRedoStack').and.returnValue(false);
-            spyOn(imageEditorMock, 'redo').and.returnValue(new Promise(resolve => {
-                resolve();
-            }));
+            spyOn(imageEditorMock, 'redo').and.returnValue({then: () => {}});
 
             mainAction.redo();
 
@@ -86,13 +90,15 @@ describe('Ui', () => {
 
         it('clearObjects() API should be run and the enabled state should be changed When the deleteAll action occurs', () => {
             spyOn(imageEditorMock, 'clearObjects');
-            spyOn(imageEditorMock.ui, 'changeDeleteButtonEnabled');
-            spyOn(imageEditorMock.ui, 'changeDeleteAllButtonEnabled');
+            spyOn(imageEditorMock.ui, 'changeHelpButtonEnabled');
 
             mainAction.deleteAll();
+
+            const changeHelpButtonCalls = imageEditorMock.ui.changeHelpButtonEnabled.calls;
+
             expect(imageEditorMock.clearObjects).toHaveBeenCalled();
-            expect(imageEditorMock.ui.changeDeleteButtonEnabled).toHaveBeenCalled();
-            expect(imageEditorMock.ui.changeDeleteAllButtonEnabled).toHaveBeenCalled();
+            expect(changeHelpButtonCalls.argsFor(0)[0]).toBe('delete');
+            expect(changeHelpButtonCalls.argsFor(1)[0]).toBe('deleteAll');
         });
 
         it('loadImageFromFile() API should be executed When the load action occurs', done => {
@@ -371,49 +377,42 @@ describe('Ui', () => {
     describe('reAction', () => {
         beforeEach(() => {
             imageEditorMock.setReAction();
+            spyOn(imageEditorMock.ui, 'changeHelpButtonEnabled');
         });
 
         describe('undoStackChanged', () => {
             it('If the undo stack has a length greater than zero, the state of changeUndoButtonStatus, changeResetButtonStatus should be true.', () => {
-                spyOn(imageEditorMock.ui, 'changeUndoButtonStatus');
-                spyOn(imageEditorMock.ui, 'changeResetButtonStatus');
                 imageEditorMock.fire('undoStackChanged', 1);
 
-                expect(imageEditorMock.ui.changeUndoButtonStatus.calls.mostRecent().args[0]).toBe(true);
-                expect(imageEditorMock.ui.changeResetButtonStatus.calls.mostRecent().args[0]).toBe(true);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual(['undo', true]);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(1)).toEqual(['reset', true]);
             });
 
             it('If the undo stack has a length of 0, the state of changeUndoButtonStatus, changeResetButtonStatus should be false.', () => {
-                spyOn(imageEditorMock.ui, 'changeUndoButtonStatus');
-                spyOn(imageEditorMock.ui, 'changeResetButtonStatus');
                 imageEditorMock.fire('undoStackChanged', 0);
 
-                expect(imageEditorMock.ui.changeUndoButtonStatus.calls.mostRecent().args[0]).toBe(false);
-                expect(imageEditorMock.ui.changeResetButtonStatus.calls.mostRecent().args[0]).toBe(false);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual(['undo', false]);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(1)).toEqual(['reset', false]);
             });
         });
 
         describe('redoStackChanged', () => {
             it('If the redo stack is greater than zero length, the state of changeRedoButtonStatus should be true.', () => {
-                spyOn(imageEditorMock.ui, 'changeRedoButtonStatus');
                 imageEditorMock.fire('redoStackChanged', 1);
-                expect(imageEditorMock.ui.changeRedoButtonStatus.calls.mostRecent().args[0]).toBe(true);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual(['redo', true]);
             });
 
             it('If the redo stack has a length of zero, the state of changeRedoButtonStatus should be false.', () => {
-                spyOn(imageEditorMock.ui, 'changeRedoButtonStatus');
                 imageEditorMock.fire('redoStackChanged', 0);
-                expect(imageEditorMock.ui.changeRedoButtonStatus.calls.mostRecent().args[0]).toBe(false);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual(['redo', false]);
             });
         });
 
         describe('objectActivated', () => {
             it('When objectActivated occurs, the state of the delete button should be enabled.', () => {
-                spyOn(imageEditorMock.ui, 'changeDeleteButtonEnabled');
-                spyOn(imageEditorMock.ui, 'changeDeleteAllButtonEnabled');
                 imageEditorMock.fire('objectActivated', {id: 1});
-                expect(imageEditorMock.ui.changeDeleteButtonEnabled.calls.mostRecent().args[0]).toBe(true);
-                expect(imageEditorMock.ui.changeDeleteAllButtonEnabled.calls.mostRecent().args[0]).toBe(true);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual(['delete', true]);
+                expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(1)).toEqual(['deleteAll', true]);
             });
 
             it('When objectActivated\'s target is cropzone, changeApplyButtonStatus should be enabled.', () => {

@@ -6,6 +6,12 @@ import util from './util';
 
 module.exports = {
     /**
+     * Editor help features
+     * @type {Array.<string>}
+     */
+    HELP_MENUS: ['undo', 'redo', 'reset', 'delete', 'deleteAll'],
+
+    /**
      * Component names
      * @type {Object.<string, string>}
      */
@@ -57,6 +63,7 @@ module.exports = {
         OBJECT_MOVED: 'objectMoved',
         OBJECT_SCALED: 'objectScaled',
         OBJECT_CREATED: 'objectCreated',
+        OBJECT_ROTATED: 'objectRotated',
         TEXT_EDITING: 'textEditing',
         TEXT_CHANGED: 'textChanged',
         ICON_CREATE_RESIZE: 'iconCreateResize',

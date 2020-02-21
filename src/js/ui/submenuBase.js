@@ -19,6 +19,7 @@ class Submenu {
         this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
         this.colorPickerControls = [];
         this.usageStatistics = usageStatistics;
+        this.eventHandler = {};
         this._makeSubMenuElement({
             locale,
             name,

@@ -24,7 +24,7 @@ class Draw extends Submenu {
 
         this._els = {
             lineSelectButton: this.selector('.tie-draw-line-select-button'),
-            drawColorpicker: new Colorpicker(
+            drawColorPicker: new Colorpicker(
                 this.selector('.tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics
             ),
             drawRange: new Range({
@@ -34,8 +34,19 @@ class Draw extends Submenu {
         };
 
         this.type = null;
-        this.color = this._els.drawColorpicker.color;
+        this.color = this._els.drawColorPicker.color;
         this.width = this._els.drawRange.value;
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.drawColorPicker.destroy();
+        this._els.drawRange.destroy();
+
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -44,11 +55,22 @@ class Draw extends Submenu {
      *   @param {Function} actions.setDrawMode - set draw mode
      */
     addEvent(actions) {
-        this.actions = actions;
+        this.eventHandler.changeDrawType = this._changeDrawType.bind(this);
 
-        this._els.lineSelectButton.addEventListener('click', this._changeDrawType.bind(this));
-        this._els.drawColorpicker.on('change', this._changeDrawColor.bind(this));
+        this.actions = actions;
+        this._els.lineSelectButton.addEventListener('click', this.eventHandler.changeDrawType);
+        this._els.drawColorPicker.on('change', this._changeDrawColor.bind(this));
         this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.lineSelectButton.removeEventListener('click', this.eventHandler.changeDrawType);
+        this._els.drawColorPicker.off();
+        this._els.drawRange.off();
     }
 
     /**

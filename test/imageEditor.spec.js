@@ -6,7 +6,10 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
+import fabric from 'fabric';
 import consts from '../src/js/consts';
+
+const {OBJECT_ROTATED} = consts.eventNames;
 
 describe('ImageEditor', () => {
     // hostnameSent module scope variable can not be reset.
@@ -52,6 +55,19 @@ describe('ImageEditor', () => {
             });
 
             expect(spyCallback).not.toHaveBeenCalled();
+        });
+
+        it('"objectRotated" event should be fire at object is rotate.', () => {
+            const canvas = imageEditor._graphics.getCanvas();
+            const obj = new fabric.Object({});
+            const mock = {target: obj};
+            canvas.add(obj);
+
+            spyOn(imageEditor, 'fire').and.callThrough();
+
+            canvas.fire('object:rotating', mock);
+
+            expect(imageEditor.fire.calls.mostRecent().args[0]).toBe(OBJECT_ROTATED);
         });
     });
 });
