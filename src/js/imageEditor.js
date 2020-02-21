@@ -116,13 +116,6 @@ class ImageEditor {
         );
 
         /**
-         * target fabric object for copy paste feature
-         * @type {fabric.Object}
-         * @private
-         */
-        this._targetObjectForCopyPaste = null;
-
-        /**
          * Event handler list
          * @type {Object}
          * @private
@@ -329,10 +322,11 @@ class ImageEditor {
         const isModifierKey = (ctrlKey || metaKey);
 
         if (isModifierKey) {
-            if (keyCode === keyCodes.C && activeObject) {
-                this._targetObjectForCopyPaste = activeObject;
-            } else if (keyCode === keyCodes.V && this._targetObjectForCopyPaste) {
-                this._pasteFabricObject();
+            if (keyCode === keyCodes.C) {
+                this._graphics.setTargetObjectForCopyPaste(activeObject);
+            } else if (keyCode === keyCodes.V) {
+                this._graphics.pasteFabricObject();
+                this.clearRedoStack();
             } else if (keyCode === keyCodes.Z) {
                 // There is no error message on shortcut when it's empty
                 this.undo()['catch'](() => {
@@ -351,58 +345,6 @@ class ImageEditor {
             e.preventDefault();
             this.removeActiveObject();
         }
-    }
-
-    /**
-     * Paste fabric object
-     * @returns {Promise}
-     */
-    _pasteFabricObject() {
-        const targetObject = this._targetObjectForCopyPaste;
-        const isGroupSelect = targetObject.type === 'activeSelection';
-        const targetObjects = isGroupSelect ? targetObject.getObjects() : [targetObject];
-
-        this.discardSelection();
-
-        return this._cloneFabricObjectStream(targetObjects).then(addedObjects => {
-            if (addedObjects.length > 1) {
-                this._targetObjectForCopyPaste = this._graphics.getActiveGroupFromObjects(addedObjects);
-            } else {
-                ([this._targetObjectForCopyPaste] = addedObjects);
-            }
-
-            this._graphics.setActiveObject(this._targetObjectForCopyPaste);
-        });
-    }
-
-    /**
-     * clone fabric object Sequential processing for prevent invoke lock
-     * @param {fabric.Object} targetObjects - fabric object
-     * @param {Array.<fabric.Object>} addedObjects - added fabric object list
-     * @returns {Promise}
-     */
-    _cloneFabricObjectStream(targetObjects, addedObjects = []) {
-        const targetObject = targetObjects.pop();
-        if (!targetObject) {
-            return addedObjects;
-        }
-
-        return this._cloneFabricObject(targetObject).then(addedObject => {
-            addedObjects.push(addedObject);
-
-            return this._cloneFabricObjectStream(targetObjects, addedObjects);
-        });
-    }
-
-    /**
-     * clone fabric object
-     * @param {fabric.Object} targetObject - fabric object
-     * @returns {Promise}
-     */
-    _cloneFabricObject(targetObject) {
-        return this._graphics.cloneFabricObjectForPaste(targetObject).then(clonedObject => (
-            this.execute(commands.ADD_OBJECT, clonedObject)
-        ));
     }
 
     /**

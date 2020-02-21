@@ -95,6 +95,13 @@ class Graphics {
         this.cropSelectionStyle = {};
 
         /**
+         * target fabric object for copy paste feature
+         * @type {fabric.Object}
+         * @private
+         */
+        this.targetObjectForCopyPaste = null;
+
+        /**
          * Image name
          * @type {string}
          */
@@ -1150,15 +1157,68 @@ class Graphics {
     }
 
     /**
-     * Clone fabric object
+     * Set targetObjectForCopyPaste value
+     * @param {fabric.Object} targetObject - fabric object
+     */
+    setTargetObjectForCopyPaste(targetObject) {
+        if (targetObject) {
+            this.targetObjectForCopyPaste = targetObject;
+        }
+    }
+
+    /**
+     * Paste fabric object
+     * @returns {Promise}
+     */
+    pasteFabricObject() {
+        if (!this.targetObjectForCopyPaste) {
+            return Promise.resolve([]);
+        }
+
+        const targetObject = this.targetObjectForCopyPaste;
+        const isGroupSelect = targetObject.type === 'activeSelection';
+        const targetObjects = isGroupSelect ? targetObject.getObjects() : [targetObject];
+        let newTargetObject = null;
+
+        this.discardSelection();
+
+        return this._cloneFabricObjectStream(targetObjects).then(addedObjects => {
+            if (addedObjects.length > 1) {
+                newTargetObject = this.getActiveGroupFromObjects(addedObjects);
+            } else {
+                ([newTargetObject] = addedObjects);
+            }
+            this.setTargetObjectForCopyPaste(newTargetObject);
+            this.setActiveObject(newTargetObject);
+        });
+    }
+
+    /**
+     * clone fabric object Sequential processing for prevent invoke lock
+     * @param {fabric.Object} targetObjects - fabric object
+     * @returns {Promise}
+     */
+    _cloneFabricObjectStream(targetObjects) {
+        const addedObjects = snippet.map(targetObjects, targetObject => (
+            this._cloneFabricObjectItem(targetObject)
+        ));
+
+        return Promise.all(addedObjects);
+    }
+
+    /**
+     * clone fabric object
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
      */
-    cloneFabricObject(targetObject) {
-        return new Promise(resolve => {
-            targetObject.clone(cloned => {
-                resolve(cloned);
-            });
+    _cloneFabricObjectItem(targetObject) {
+        return this._cloneFabricObjectForPaste(targetObject).then(clonedObject => {
+            const objectProperties = this.createObjectProperties(clonedObject);
+            this.add(clonedObject);
+
+            this.fire(events.ADD_OBJECT, objectProperties);
+
+            return clonedObject;
         });
     }
 
@@ -1167,10 +1227,10 @@ class Graphics {
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
      */
-    cloneFabricObjectForPaste(targetObject) {
+    _cloneFabricObjectForPaste(targetObject) {
         const addExtraPx = (value, isReverse) => isReverse ? value - EXTRA_PX_FOR_PASTE : value + EXTRA_PX_FOR_PASTE;
 
-        return this.cloneFabricObject(targetObject).then(clonedObject => {
+        return this._cloneFabricObject(targetObject).then(clonedObject => {
             const {left, top, width, height} = clonedObject;
             const {width: canvasWidth, height: canvasHeight} = this.getCanvasSize();
             const rightEdge = left + (width / 2);
@@ -1182,6 +1242,19 @@ class Graphics {
             }, consts.fObjectOptions.SELECTION_STYLE));
 
             return clonedObject;
+        });
+    }
+
+    /**
+     * Clone fabric object
+     * @param {fabric.Object} targetObject - fabric object
+     * @returns {Promise}
+     */
+    _cloneFabricObject(targetObject) {
+        return new Promise(resolve => {
+            targetObject.clone(cloned => {
+                resolve(cloned);
+            });
         });
     }
 }
