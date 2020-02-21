@@ -31,6 +31,7 @@ const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, Cus
 
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
+const EXTRA_PX_FOR_PASTE = 10;
 
 const cssOnly = {
     cssOnly: true
@@ -317,11 +318,11 @@ class Graphics {
     }
 
     /**
-     * Get Activate object group from object ids
+     * Get Active object group from object ids
      * @param {Array.<Object>} objects - fabric objects
      * @returns {Object} target - target object group
      */
-    getActivateGroupFromObjects(objects) {
+    getActiveGroupFromObjects(objects) {
         const canvas = this.getCanvas();
 
         return new fabric.ActiveSelection(objects, {canvas});
@@ -1167,6 +1168,8 @@ class Graphics {
      * @returns {Promise}
      */
     cloneFabricObjectForPaste(targetObject) {
+        const addExtraPx = (value, isReverse) => isReverse ? value - EXTRA_PX_FOR_PASTE : value + EXTRA_PX_FOR_PASTE;
+
         return this.cloneFabricObject(targetObject).then(clonedObject => {
             const {left, top, width, height} = clonedObject;
             const {width: canvasWidth, height: canvasHeight} = this.getCanvasSize();
@@ -1174,8 +1177,8 @@ class Graphics {
             const bottomEdge = top + (height / 2);
 
             clonedObject.set(snippet.extend({
-                left: rightEdge + 10 > canvasWidth ? left - 10 : left + 10,
-                top: bottomEdge + 10 > canvasHeight ? top - 10 : top + 10
+                left: addExtraPx(left, rightEdge + EXTRA_PX_FOR_PASTE > canvasWidth),
+                top: addExtraPx(top, bottomEdge + EXTRA_PX_FOR_PASTE > canvasHeight)
             }, consts.fObjectOptions.SELECTION_STYLE));
 
             return clonedObject;

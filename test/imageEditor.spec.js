@@ -120,7 +120,7 @@ describe('ImageEditor', () => {
             });
 
             it('Group objects must be duplicated as many as the number of objects in the group.', done => {
-                const groupObject = graphics.getActivateGroupFromObjects(canvas.getObjects());
+                const groupObject = graphics.getActiveGroupFromObjects(canvas.getObjects());
 
                 imageEditor._targetObjectForCopyPaste = groupObject;
 
@@ -141,12 +141,3 @@ describe('ImageEditor', () => {
         });
     });
 });
-
-
-
-
-
-
-
-
-

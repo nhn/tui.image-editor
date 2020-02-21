@@ -366,7 +366,7 @@ class ImageEditor {
 
         return this._cloneFabricObjectStream(targetObjects).then(addedObjects => {
             if (addedObjects.length > 1) {
-                this._targetObjectForCopyPaste = this._graphics.getActivateGroupFromObjects(addedObjects);
+                this._targetObjectForCopyPaste = this._graphics.getActiveGroupFromObjects(addedObjects);
             } else {
                 ([this._targetObjectForCopyPaste] = addedObjects);
             }
@@ -383,8 +383,11 @@ class ImageEditor {
      */
     _cloneFabricObjectStream(targetObjects, addedObjects = []) {
         const targetObject = targetObjects.pop();
+        if (!targetObject) {
+            return addedObjects;
+        }
 
-        return !targetObject ? addedObjects : this._cloneFabricObject(targetObject).then(addedObject => {
+        return this._cloneFabricObject(targetObject).then(addedObject => {
             addedObjects.push(addedObject);
 
             return this._cloneFabricObjectStream(targetObjects, addedObjects);
