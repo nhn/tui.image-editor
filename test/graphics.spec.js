@@ -214,7 +214,8 @@ describe('Graphics', () => {
 
         it('Group objects must be duplicated as many as the number of objects in the group.', done => {
             const groupObject = graphics.getActiveGroupFromObjects(canvas.getObjects());
-            graphics.setTargetObjectForCopyPaste(groupObject);
+            graphics.setActiveObject(groupObject);
+            graphics.setTargetObjectForCopyPaste();
 
             graphics.pasteFabricObject().then(() => {
                 expect(canvas.getObjects().length).toBe(4);
@@ -223,7 +224,8 @@ describe('Graphics', () => {
         });
 
         it('Only one object should be duplicated.', done => {
-            graphics.setTargetObjectForCopyPaste(targetObject1);
+            graphics.setActiveObject(targetObject1);
+            graphics.setTargetObjectForCopyPaste();
 
             graphics.pasteFabricObject().then(() => {
                 expect(canvas.getObjects().length).toBe(3);

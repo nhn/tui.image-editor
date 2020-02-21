@@ -1158,11 +1158,12 @@ class Graphics {
 
     /**
      * Set targetObjectForCopyPaste value
-     * @param {fabric.Object} targetObject - fabric object
      */
-    setTargetObjectForCopyPaste(targetObject) {
-        if (targetObject) {
-            this.targetObjectForCopyPaste = targetObject;
+    setTargetObjectForCopyPaste() {
+        const activeObject = this.getActiveObject();
+
+        if (activeObject) {
+            this.targetObjectForCopyPaste = activeObject;
         }
     }
 

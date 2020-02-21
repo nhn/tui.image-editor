@@ -323,7 +323,7 @@ class ImageEditor {
 
         if (isModifierKey) {
             if (keyCode === keyCodes.C) {
-                this._graphics.setTargetObjectForCopyPaste(activeObject);
+                this._graphics.setTargetObjectForCopyPaste();
             } else if (keyCode === keyCodes.V) {
                 this._graphics.pasteFabricObject();
                 this.clearRedoStack();
