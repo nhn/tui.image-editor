@@ -65,27 +65,6 @@ var $inputBrushWidthRange = $('#input-brush-range');
 var $inputStrokeWidthRange = $('#input-stroke-range');
 var $inputCheckTransparent = $('#input-check-transparent');
 
-// Colorpicker
-var iconColorpicker = tui.colorPicker.create({
-    container: $('#tui-icon-color-picker')[0],
-    color: '#000000'
-});
-
-var textColorpicker = tui.colorPicker.create({
-    container: $('#tui-text-color-picker')[0],
-    color: '#000000'
-});
-
-var brushColorpicker = tui.colorPicker.create({
-    container: $('#tui-brush-color-picker')[0],
-    color: '#000000'
-});
-
-var shapeColorpicker = tui.colorPicker.create({
-    container: $('#tui-shape-color-picker')[0],
-    color: '#000000'
-});
-
 // Create image editor
 var imageEditor = new tui.ImageEditor('.tui-image-editor', {
     cssMaxWidth: document.documentElement.clientWidth,
@@ -95,6 +74,62 @@ var imageEditor = new tui.ImageEditor('.tui-image-editor', {
         rotatingPointOffset: 100
     }
 });
+
+// Colorpicker
+// var iconColorpicker, textColorpicker, brushColorpicker, shapeColorpicker;
+var colorChangeHandler = {
+    text: function(event) {
+        imageEditor.changeTextStyle(activeObjectId, {
+            fill: event.color
+        });
+    },
+    icon: function(event) {
+        imageEditor.changeIconColor(activeObjectId, event.color);
+    },
+    brush: function(event) {
+        imageEditor.setBrush({
+            color: hexToRGBa(event.color, 0.5)
+        });
+    },
+    shape: function(event) {
+        var colorType = $('[name="select-color-type"]:checked').val();
+        var isTransparent = $inputCheckTransparent.prop('checked');
+        var color = event.color;
+
+        if (isTransparent) {
+            return;
+        }
+
+        if (colorType === 'stroke') {
+            imageEditor.changeShape(activeObjectId, {
+                stroke: color
+            });
+        } else if (colorType === 'fill') {
+            imageEditor.changeShape(activeObjectId, {
+                fill: color
+            });
+        }
+    }
+};
+
+var createColorPicker = function(type) {
+    const container = $('#tui-' + type + '-color-picker')[0];
+    const instance = tui.colorPicker.create({
+        container: container,
+        color: '#000000'
+    });
+
+    instance.on('selectColor', colorChangeHandler[type]);
+
+    return instance;
+};
+var colorPickerInstance = createColorPicker('shape');
+var renewColorPickerInstance = function(type) {
+    if (colorPickerInstance) {
+        colorPickerInstance.destroy();
+    }
+    colorPickerInstance = createColorPicker(type);
+};
 
 var $displayingSubMenu, $displayingHiddenMenu;
 
@@ -130,7 +165,7 @@ function base64ToBlob(data) {
 
 function getBrushSettings() {
     var brushWidth = $inputBrushWidthRange.val();
-    var brushColor = brushColorpicker.getColor();
+    var brushColor = colorPickerInstance.getColor();
 
     return {
         width: brushWidth,
@@ -158,13 +193,13 @@ function setTextToolbar(obj) {
     var fontColor = obj.fill;
 
     $inputTextSizeRange.val(fontSize);
-    textColorpicker.setColor(fontColor);
+    colorPickerInstance.setColor(fontColor);
 }
 
 function setIconToolbar(obj) {
     var iconColor = obj.fill;
 
-    iconColorpicker.setColor(iconColor);
+    colorPickerInstance.setColor(iconColor);
 }
 
 function setShapeToolbar(obj) {
@@ -176,14 +211,14 @@ function setShapeToolbar(obj) {
         isTransparent = (strokeColor === 'transparent');
 
         if (!isTransparent) {
-            shapeColorpicker.setColor(strokeColor);
+            colorPickerInstance.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
         fillColor = obj.fill;
         isTransparent = (fillColor === 'transparent');
 
         if (!isTransparent) {
-            shapeColorpicker.setColor(fillColor);
+            colorPickerInstance.setColor(fillColor);
         }
     }
 
@@ -262,6 +297,12 @@ $menuButtons.on('click', function() {
 $submenuButtons.on('click', function() {
     $displayingHiddenMenu.hide();
     $displayingHiddenMenu = $(this).parent().find(hiddenmenuClass).show();
+    var id = $displayingHiddenMenu.parent('li').find('button').attr('id') || '';
+    var matchColorPickerButton = id.match(/([a-z]+)-color$/);
+    var colorPickerInstanceType = matchColorPickerButton && id.match(/([a-z]+)-color$/)[1];
+    if (colorPickerInstanceType) {
+        renewColorPickerInstance(colorPickerInstanceType);
+    }
 });
 
 $btnShowMenu.on('click', function() {
@@ -389,10 +430,6 @@ $btnAddCustomIcon.on('click', function() {
     imageEditor.addIcon('customArrow');
 });
 
-iconColorpicker.on('selectColor', function(event) {
-    imageEditor.changeIconColor(activeObjectId, event.color);
-});
-
 // Text menu action
 $btnAddText.on('click', function() {
     var initText = 'DoubleClick';
@@ -444,12 +481,6 @@ $inputTextSizeRange.on('change', function() {
     });
 });
 
-textColorpicker.on('selectColor', function(event) {
-    imageEditor.changeTextStyle(activeObjectId, {
-        fill: event.color
-    });
-});
-
 // Draw line menu action
 $btnFreeDrawing.on('click', function() {
     var settings = getBrushSettings();
@@ -468,12 +499,6 @@ $btnLineDrawing.on('click', function() {
 $inputBrushWidthRange.on('change', function() {
     imageEditor.setBrush({
         width: parseInt($(this).val(), 10)
-    });
-});
-
-brushColorpicker.on('selectColor', function(event) {
-    imageEditor.setBrush({
-        color: hexToRGBa(event.color, 0.5)
     });
 });
 
@@ -528,29 +553,9 @@ $inputCheckTransparent.on('change', function() {
     var color;
 
     if (!isTransparent) {
-        color = shapeColorpicker.getColor();
+        color = colorPickerInstance.getColor();
     } else {
         color = 'transparent';
-    }
-
-    if (colorType === 'stroke') {
-        imageEditor.changeShape(activeObjectId, {
-            stroke: color
-        });
-    } else if (colorType === 'fill') {
-        imageEditor.changeShape(activeObjectId, {
-            fill: color
-        });
-    }
-});
-
-shapeColorpicker.on('selectColor', function(event) {
-    var colorType = $('[name="select-color-type"]:checked').val();
-    var isTransparent = $inputCheckTransparent.prop('checked');
-    var color = event.color;
-
-    if (isTransparent) {
-        return;
     }
 
     if (colorType === 'stroke') {
