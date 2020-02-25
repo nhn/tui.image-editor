@@ -85,6 +85,7 @@
   "dependencies": {
     "core-js": "2.4.1",
     "fabric": "3.6.0",
+    "svg-inline-loader": "^0.8.2",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.0"
   }

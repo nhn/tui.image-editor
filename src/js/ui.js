@@ -308,9 +308,9 @@ class Ui {
         const {normal, active, hover} = this.theme.getStyle('menu.icon');
         const menuItemHtml = `
             <svg class="svg_ic-menu">
-                <use xlink:href="${normal.path}#${normal.name}-ic-${menuName}" class="normal"/>
-                <use xlink:href="${active.path}#${active.name}-ic-${menuName}" class="active"/>
-                <use xlink:href="${hover.path}#${hover.name}-ic-${menuName}" class="hover"/>
+                <use xlink:href="#ic-${menuName}" class="normal normal-color"/>
+                <use xlink:href="#ic-${menuName}" class="active active-color"/>
+                <use xlink:href="#ic-${menuName}" class="hover hover-color"/>
             </svg>
         `;
 

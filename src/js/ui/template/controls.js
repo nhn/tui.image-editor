@@ -6,16 +6,16 @@ export default ({locale, biImage, iconStyle: {normal, hover, disabled}, loadButt
         <ul class="tui-image-editor-menu">
             <li class="tie-btn-undo tui-image-editor-item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-undo" class="enabled"/>
-                    <use xlink:href="${disabled.path}#${disabled.name}-ic-undo" class="normal"/>
-                    <use xlink:href="${hover.path}#${hover.name}-ic-undo" class="hover"/>
+                    <use xlink:href="#ic-undo" class="enabled normal-color"/>
+                    <use xlink:href="#ic-undo" class="normal disabled-color"/>
+                    <use xlink:href="#ic-undo" class="hover hover-color"/>
                 </svg>
             </li>
             <li class="tie-btn-redo tui-image-editor-item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-redo" class="enabled"/>
-                    <use xlink:href="${disabled.path}#${disabled.name}-ic-redo" class="normal"/>
-                    <use xlink:href="${hover.path}#${hover.name}-ic-redo" class="hover"/>
+                    <use xlink:href="#ic-redo" class="enabled normal-color"/>
+                    <use xlink:href="#ic-redo" class="normal disabled-color"/>
+                    <use xlink:href="#ic-redo" class="hover hover-color"/>
                 </svg>
             </li>
             <li class="tie-btn-reset tui-image-editor-item">

@@ -1,7 +1,8 @@
-import {extend, forEach} from 'tui-code-snippet';
+import {extend, forEach, keys, map, reduce} from 'tui-code-snippet';
 import {styleLoad} from '../../util';
 import style from '../template/style';
 import standardTheme from './standard';
+import icon from '../template/icon.svg';
 
 /**
  * Theme manager
@@ -13,6 +14,11 @@ class Theme {
     constructor(customTheme) {
         this.styles = this._changeToObject(extend(standardTheme, customTheme));
         styleLoad(this._styleMaker());
+
+        const aa = document.createElement('div');
+        aa.innerHTML = icon;
+
+        document.head.appendChild(aa);
     }
 
     /**
@@ -29,12 +35,17 @@ class Theme {
                 result = this.styles[type].image;
                 break;
             case 'menu.icon':
-            case 'submenu.icon':
                 result = {
                     active: this.styles[`${firstProperty}.activeIcon`],
                     normal: this.styles[`${firstProperty}.normalIcon`],
                     hover: this.styles[`${firstProperty}.hoverIcon`],
                     disabled: this.styles[`${firstProperty}.disabledIcon`]
+                };
+                break;
+            case 'submenu.icon':
+                result = {
+                    active: this.styles[`${firstProperty}.activeIcon`],
+                    normal: this.styles[`${firstProperty}.normalIcon`]
                 };
                 break;
             case 'submenu.label':
@@ -76,7 +87,7 @@ class Theme {
         const submenuLabelStyle = this.getStyle('submenu.label');
         const submenuPartitionStyle = this.getStyle('submenu.partition');
 
-        return style({
+        const makeStyleObject = {
             subMenuLabelActive: submenuLabelStyle.active,
             subMenuLabelNormal: submenuLabelStyle.normal,
             submenuPartitionVertical: submenuPartitionStyle.vertical,
@@ -96,8 +107,34 @@ class Theme {
             submenuColorpickerButton: this.getStyle('colorpicker.button'),
             submenuCheckbox: this.getStyle('checkbox'),
             menuIconSize: this.getStyle('menu.iconSize'),
-            submenuIconSize: this.getStyle('submenu.iconSize')
-        });
+            submenuIconSize: this.getStyle('submenu.iconSize'),
+            menuIconStyle: this.getStyle('menu.icon'),
+            submenuIconStyle: this.getStyle('submenu.icon')
+        };
+
+        console.log(this.getStyle('menu.icon'));
+        console.log(this.getStyle('submenu.icon'));
+
+        /*
+        menuIconColorList: reduce([[], ...keys(menuIconStyle)], (stored, iconType) => {
+            const iconConfig = menuIconStyle[iconType];
+
+            stored.push({[iconType]: iconConfig.color});
+
+            return stored;
+        }),
+        submenuIconColorList: reduce([[], ...keys(submenuIconStyle)], (stored, iconType) => {
+            const iconConfig = submenuIconStyle[iconType];
+
+            stored.push({[iconType]: iconConfig.color});
+
+            return stored;
+        })
+        */
+
+        console.log(makeStyleObject);
+
+        return style(makeStyleObject);
     }
 
     /**

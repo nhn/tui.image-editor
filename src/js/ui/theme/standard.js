@@ -170,28 +170,23 @@ export default {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': 'icon-d.svg',
-    'menu.normalIcon.name': 'icon-d',
-    'menu.activeIcon.path': 'icon-b.svg',
-    'menu.activeIcon.name': 'icon-b',
-    'menu.disabledIcon.path': 'icon-a.svg',
-    'menu.disabledIcon.name': 'icon-a',
-    'menu.hoverIcon.path': 'icon-c.svg',
-    'menu.hoverIcon.name': 'icon-c',
+    'menu.normalIcon.color': '#8a8a8a',
+    // 'menu.normalIcon.path': '#8a8a8a',
+    'menu.activeIcon.color': '#555555',
+    'menu.disabledIcon.color': '#434343',
+    'menu.hoverIcon.color': '#e9e9e9',
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
+
+    // submenu icons
+    'submenu.normalIcon.color': '#8a8a8a',
+    'submenu.activeIcon.color': '#e9e9e9',
+    'submenu.iconSize.width': '32px',
+    'submenu.iconSize.height': '32px',
 
     // submenu primary color
     'submenu.backgroundColor': '#1e1e1e',
     'submenu.partition.color': '#3c3c3c',
-
-    // submenu icons
-    'submenu.normalIcon.path': 'icon-d.svg',
-    'submenu.normalIcon.name': 'icon-d',
-    'submenu.activeIcon.path': 'icon-c.svg',
-    'submenu.activeIcon.name': 'icon-c',
-    'submenu.iconSize.width': '32px',
-    'submenu.iconSize.height': '32px',
 
     // submenu labels
     'submenu.normalLabel.color': '#8a8a8a',
