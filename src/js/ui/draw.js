@@ -12,11 +12,12 @@ const DRAW_OPACITY = 0.7;
  * @ignore
  */
 class Draw extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, iconStyle, svgIconMaker, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'draw',
             iconStyle,
+            svgIconMaker,
             menuBarPosition,
             templateHtml,
             usageStatistics

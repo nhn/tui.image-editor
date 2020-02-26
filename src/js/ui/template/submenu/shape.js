@@ -4,33 +4,24 @@
  * @param {Object} active - iconStyle
  * @returns {string}
  */
-export default ({locale, iconStyle: {normal, active}}) => (`
+export default ({locale, svgIconMaker}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-shape-button">
             <div class="tui-image-editor-button rect">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-shape-rectangle" class="normal normal-color"/>
-                        <use xlink:href="#ic-shape-rectangle" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'shape-rectangle', true)}
                 </div>
                 <label> ${locale.localize('Rectangle')} </label>
             </div>
             <div class="tui-image-editor-button circle">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-shape-circle" class="normal normal-color"/>
-                        <use xlink:href="#ic-shape-circle" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'shape-circle', true)}
                 </div>
                 <label> ${locale.localize('Circle')} </label>
             </div>
             <div class="tui-image-editor-button triangle">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-shape-triangle" class="normal normal-color"/>
-                        <use xlink:href="#ic-shape-triangle" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'shape-triangle', true)}
                 </div>
                 <label> ${locale.localize('Triangle')} </label>
             </div>

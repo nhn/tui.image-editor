@@ -4,16 +4,13 @@
  * @param {Object} active - iconStyle
  * @returns {string}
  */
-export default ({locale, iconStyle: {normal, active}}) => (`
+export default ({locale, svgIconMaker}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li>
             <div class="tui-image-editor-button">
                 <div>
                     <input type="file" accept="image/*" class="tie-mask-image-file">
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-mask-load" class="normal normal-color"/>
-                        <use xlink:href="#ic-mask-load" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'mask-load', true)}
                 </div>
                 <label> ${locale.localize('Load Mask Image')} </label>
             </div>
@@ -23,10 +20,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         </li>
         <li class="tie-mask-apply tui-image-editor-newline apply" style="margin-top: 22px;margin-bottom: 5px">
             <div class="tui-image-editor-button apply">
-                <svg class="svg_ic-menu">
-                    <use xlink:href="#ic-apply" class="normal normal-color"/>
-                    <use xlink:href="#ic-apply" class="active active-color"/>
-                </svg>
+                ${svgIconMaker(['normal', 'active'], 'apply')}
                 <label>
                     ${locale.localize('Apply')}
                 </label>

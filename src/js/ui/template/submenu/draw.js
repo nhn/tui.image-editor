@@ -4,15 +4,12 @@
  * @param {Object} active - iconStyle
  * @returns {string}
  */
-export default ({locale, iconStyle: {normal, active}}) => (`
+export default ({locale, svgIconMaker}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-draw-line-select-button">
             <div class="tui-image-editor-button free">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-draw-free" class="normal normal-color"/>
-                        <use xlink:href="#ic-draw-free" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'draw-free', true)}
                 </div>
                 <label>
                     ${locale.localize('Free')}
@@ -20,10 +17,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button line">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-draw-line" class="normal normal-color"/>
-                        <use xlink:href="#ic-draw-line" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'draw-line', true)}
                 </div>
                 <label>
                     ${locale.localize('Straight')}

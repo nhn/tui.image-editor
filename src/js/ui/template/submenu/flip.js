@@ -4,15 +4,12 @@
  * @param {Object} active - iconStyle
  * @returns {string}
  */
-export default ({locale, iconStyle: {normal, active}}) => (`
+export default ({locale, svgIconMaker}) => (`
     <ul class="tie-flip-button tui-image-editor-submenu-item">
         <li>
             <div class="tui-image-editor-button flipX">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-flip-x" class="normal normal-color"/>
-                        <use xlink:href="#ic-flip-x" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'flip-x', true)}
                 </div>
                 <label>
                     ${locale.localize('Flip X')}
@@ -20,10 +17,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button flipY">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-flip-y" class="normal normal-color"/>
-                        <use xlink:href="#ic-flip-y" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'flip-y', true)}
                 </div>
                 <label>
                     ${locale.localize('Flip Y')}
@@ -36,10 +30,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li>
             <div class="tui-image-editor-button resetFlip">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-flip-reset" class="normal normal-color"/>
-                        <use xlink:href="#ic-flip-reset" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'flip-reset', true)}
                 </div>
                 <label>
                     ${locale.localize('Reset')}

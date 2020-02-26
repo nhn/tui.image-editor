@@ -4,15 +4,12 @@
  * @param {Object} active - iconStyle
  * @returns {string}
  */
-export default ({locale, iconStyle: {normal, active}}) => (`
+export default ({locale, svgIconMaker}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-icon-add-button">
             <div class="tui-image-editor-button" data-icontype="icon-arrow">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-arrow" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-arrow" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-arrow', true)}
                 </div>
                 <label>
                     ${locale.localize('Arrow')}
@@ -20,10 +17,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-arrow-2">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-arrow-2" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-arrow-2" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-arrow-2', true)}
                 </div>
                 <label>
                     ${locale.localize('Arrow-2')}
@@ -31,10 +25,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-arrow-3">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-arrow-3" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-arrow-3" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-arrow-3', true)}
                 </div>
                 <label>
                     ${locale.localize('Arrow-3')}
@@ -42,10 +33,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-star">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-star" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-star" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-star', true)}
                 </div>
                 <label>
                     ${locale.localize('Star-1')}
@@ -53,10 +41,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-star-2">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-star-2" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-star-2" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-star-2', true)}
                 </div>
                 <label>
                     ${locale.localize('Star-2')}
@@ -65,10 +50,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-polygon">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-polygon" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-polygon" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-polygon', true)}
                 </div>
                 <label>
                     ${locale.localize('Polygon')}
@@ -77,10 +59,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-location">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-location" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-location" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-location', true)}
                 </div>
                 <label>
                     ${locale.localize('Location')}
@@ -89,10 +68,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-heart">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-heart" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-heart" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-heart', true)}
                 </div>
                 <label>
                     ${locale.localize('Heart')}
@@ -101,10 +77,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-bubble">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-bubble" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-bubble" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-bubble', true)}
                 </div>
                 <label>
                     ${locale.localize('Bubble')}
@@ -118,10 +91,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" style="margin:0">
                 <div>
                     <input type="file" accept="image/*" class="tie-icon-image-file">
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="#ic-icon-load" class="normal normal-color"/>
-                        <use xlink:href="#ic-icon-load" class="active active-color"/>
-                    </svg>
+                    ${svgIconMaker(['normal', 'active'], 'icon-load', true)}
                 </div>
                 <label>
                     ${locale.localize('Custom icon')}

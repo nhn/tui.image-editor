@@ -107,35 +107,41 @@ export default ({
     .tui-image-editor-container .tui-image-editor-header-logo > img {
         ${biSize}
     }
-    .tui-image-editor-menu use.normal-color {
+    .tui-image-editor-container .tui-image-editor-controls .help svg > use.disabled,
+    .tui-image-editor-container .tui-image-editor-controls .help.enabled svg > use.normal {
+        display: block;
+    }
+    .tui-image-editor-container .tui-image-editor-controls .help.enabled svg > use.disabled {
+        display: none;
+    }
+    .tui-image-editor-menu use.normal.use-default {
         fill-rule: evenodd;
         fill: ${menuIconStyle.normal.color};
         stroke: ${menuIconStyle.normal.color};
     }
-    .tui-image-editor-menu use.active-color {
+    .tui-image-editor-menu use.active.use-default {
         fill-rule: evenodd;
         fill: ${menuIconStyle.active.color};
         stroke: ${menuIconStyle.active.color};
     }
-    .tui-image-editor-menu use.hover-color {
+    .tui-image-editor-menu use.hover.use-default {
         fill-rule: evenodd;
         fill: ${menuIconStyle.hover.color};
         stroke: ${menuIconStyle.hover.color};
     }
-    .tui-image-editor-menu use.disabled-color {
+    .tui-image-editor-menu use.disabled.use-default {
         fill-rule: evenodd;
         fill: ${menuIconStyle.disabled.color};
         stroke: ${menuIconStyle.disabled.color};
     }
-    .tui-image-editor-submenu use.normal-color {
+    .tui-image-editor-submenu use.normal.use-default {
         fill-rule: evenodd;
         fill: ${submenuIconStyle.normal.color};
         stroke: ${submenuIconStyle.normal.color};
     }
-    .tui-image-editor-submenu use.active-color {
+    .tui-image-editor-submenu use.active.use-default {
         fill-rule: evenodd;
         fill: ${submenuIconStyle.active.color};
         stroke: ${submenuIconStyle.active.color};
     }
-
 `);

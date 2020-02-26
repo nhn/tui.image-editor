@@ -15,10 +15,7 @@ class Theme {
         this.styles = this._changeToObject(extend(standardTheme, customTheme));
         styleLoad(this._styleMaker());
 
-        const aa = document.createElement('div');
-        aa.innerHTML = icon;
-
-        document.head.appendChild(aa);
+        this._defaultSvgIconLoad();
     }
 
     /**
@@ -87,7 +84,7 @@ class Theme {
         const submenuLabelStyle = this.getStyle('submenu.label');
         const submenuPartitionStyle = this.getStyle('submenu.partition');
 
-        const makeStyleObject = {
+        return style({
             subMenuLabelActive: submenuLabelStyle.active,
             subMenuLabelNormal: submenuLabelStyle.normal,
             submenuPartitionVertical: submenuPartitionStyle.vertical,
@@ -110,31 +107,7 @@ class Theme {
             submenuIconSize: this.getStyle('submenu.iconSize'),
             menuIconStyle: this.getStyle('menu.icon'),
             submenuIconStyle: this.getStyle('submenu.icon')
-        };
-
-        console.log(this.getStyle('menu.icon'));
-        console.log(this.getStyle('submenu.icon'));
-
-        /*
-        menuIconColorList: reduce([[], ...keys(menuIconStyle)], (stored, iconType) => {
-            const iconConfig = menuIconStyle[iconType];
-
-            stored.push({[iconType]: iconConfig.color});
-
-            return stored;
-        }),
-        submenuIconColorList: reduce([[], ...keys(submenuIconStyle)], (stored, iconType) => {
-            const iconConfig = submenuIconStyle[iconType];
-
-            stored.push({[iconType]: iconConfig.color});
-
-            return stored;
-        })
-        */
-
-        console.log(makeStyleObject);
-
-        return style(makeStyleObject);
+        });
     }
 
     /**
@@ -186,6 +159,40 @@ class Theme {
      */
     _toUnderScore(targetString) {
         return targetString.replace(/([A-Z])/g, ($0, $1) => `-${$1.toLowerCase()}`);
+    }
+
+    _defaultSvgIconLoad() {
+        if (!document.getElementById('tui-image-editor-svg-default-icons')) {
+            const parser = new DOMParser();
+            const dom = parser.parseFromString(icon, 'text/xml');
+
+            document.body.appendChild(dom.documentElement);
+        }
+    }
+
+    _makeIconClass(iconType, isSubmenu) {
+        const iconStyleInfo = isSubmenu ? this.getStyle('submenu.icon') : this.getStyle('menu.icon');
+        const {path, name} = iconStyleInfo[iconType];
+
+        return path && name ? iconType : `${iconType} use-default`;
+    }
+
+    _makeSvgIconPrefix(iconType, isSubmenu) {
+        const iconStyleInfo = isSubmenu ? this.getStyle('submenu.icon') : this.getStyle('menu.icon');
+        const {path, name} = iconStyleInfo[iconType];
+
+        return path && name ? `${path}#${name}-` : '#';
+    }
+
+    _makeSvgItem(useIconTypes, menuName, isSubmenu) {
+        return map(useIconTypes, iconType => (
+            `<use xlink:href="${this._makeSvgIconPrefix(iconType, isSubmenu)}ic-${this._toUnderScore(menuName)}" 
+                class="${this._makeIconClass(iconType, isSubmenu)}"/>`
+        )).join('');
+    }
+
+    makeMenSvgIconSet(useIconTypes, menuName, isSubmenu = false) {
+        return `<svg class="svg_ic-${isSubmenu ? 'submenu' : 'menu'}">${this._makeSvgItem(useIconTypes, menuName, isSubmenu)}</svg>`;
     }
 }
 

@@ -2,7 +2,7 @@ import snippet from 'tui-code-snippet';
 import {HELP_MENUS} from './consts';
 import util from './util';
 import mainContainer from './ui/template/mainContainer';
-import controls from './ui/template/controls';
+import {controls, partition} from './ui/template/controls';
 
 import Theme from './ui/theme/theme';
 import Shape from './ui/shape';
@@ -161,6 +161,7 @@ class Ui {
      * @ignore
      */
     changeHelpButtonEnabled(buttonType, enableStatus) {
+        console.log(buttonType, this._buttonElements[buttonType]);
         const buttonClassList = this._buttonElements[buttonType].classList;
 
         buttonClassList[enableStatus ? 'add' : 'remove']('enabled');
@@ -220,12 +221,13 @@ class Ui {
             this._makeMenuElement(menuName);
 
             // menu btn element
-            this._buttonElements[menuName] = this._menuElement.querySelector(`#tie-btn-${menuName}`);
+            this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
                 iconStyle: this.theme.getStyle('submenu.icon'),
+                svgIconMaker: this.theme.makeMenSvgIconSet.bind(this.theme),
                 menuBarPosition: this.options.menuBarPosition,
                 usageStatistics: this.options.usageStatistics
             });
@@ -253,7 +255,6 @@ class Ui {
         selectedElement.innerHTML = controls({
             locale: this._locale,
             biImage: this.theme.getStyle('common.bi'),
-            iconStyle: this.theme.getStyle('menu.icon'),
             loadButtonStyle: this.theme.getStyle('loadButton'),
             downloadButtonStyle: this.theme.getStyle('downloadButton')
         }) +
@@ -275,26 +276,23 @@ class Ui {
         this._editorElement = selector('.tui-image-editor');
         this._menuElement = selector('.tui-image-editor-menu');
         this._subMenuElement = selector('.tui-image-editor-submenu');
-
         this._buttonElements = {
-            'undo': this._menuElement.querySelector('.tie-btn-undo'),
-            'redo': this._menuElement.querySelector('.tie-btn-redo'),
-            'reset': this._menuElement.querySelector('.tie-btn-reset'),
-            'delete': this._menuElement.querySelector('.tie-btn-delete'),
-            'deleteAll': this._menuElement.querySelector('.tie-btn-delete-all'),
             'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
             'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
         };
-        this._makeHelpMenuTooltip();
+
+        this._makeHelpMenu();
     }
 
-    /**
-     * Make tooltip for help menus
-     * @private
-     */
-    _makeHelpMenuTooltip() {
+    _makeHelpMenu() {
+        // const helpMenuWithPartition = [...HELP_MENUS.slice(0, 3), '', ...HELP_MENUS.slice(4), ''];
+
         snippet.forEach(HELP_MENUS, menuName => {
-            this._addTooltipAttribute(this._buttonElements[menuName], menuName);
+            // console.log('MENUNAME', menuName);
+            this._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
+            if (menuName) {
+                this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
+            }
         });
     }
 
@@ -303,20 +301,19 @@ class Ui {
      * @param {string} menuName - menu name
      * @private
      */
-    _makeMenuElement(menuName) {
+    _makeMenuElement(menuName, useIconTypes = ['normal', 'active', 'hover'], menuType = 'normal') {
+        if (!menuName) {
+            console.log('ss');
+            this._menuElement.appendChild(partition());
+
+            return;
+        }
+
         const btnElement = document.createElement('li');
-        const {normal, active, hover} = this.theme.getStyle('menu.icon');
-        const menuItemHtml = `
-            <svg class="svg_ic-menu">
-                <use xlink:href="#ic-${menuName}" class="normal normal-color"/>
-                <use xlink:href="#ic-${menuName}" class="active active-color"/>
-                <use xlink:href="#ic-${menuName}" class="hover hover-color"/>
-            </svg>
-        `;
+        const menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
 
         this._addTooltipAttribute(btnElement, menuName);
-        btnElement.id = `tie-btn-${menuName}`;
-        btnElement.className = 'tui-image-editor-item normal';
+        btnElement.className = `tie-btn-${menuName} tui-image-editor-item ${menuType}`;
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);

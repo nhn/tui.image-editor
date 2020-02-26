@@ -13,7 +13,7 @@ class Submenu {
      * @param {*} templateHtml - template for SubMenuElement
      * @param {boolean} [usageStatistics=false] - template for SubMenuElement
      */
-    constructor(subMenuElement, {locale, name, iconStyle, menuBarPosition, templateHtml, usageStatistics}) {
+    constructor(subMenuElement, {locale, name, iconStyle, svgIconMaker, menuBarPosition, templateHtml, usageStatistics}) {
         this.subMenuElement = subMenuElement;
         this.menuBarPosition = menuBarPosition;
         this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
@@ -24,6 +24,7 @@ class Submenu {
             locale,
             name,
             iconStyle,
+            svgIconMaker,
             templateHtml
         });
     }
@@ -90,12 +91,13 @@ class Submenu {
      * @param {*} templateHtml - template for SubMenuElement
      * @private
      */
-    _makeSubMenuElement({locale, name, iconStyle, templateHtml}) {
+    _makeSubMenuElement({locale, name, iconStyle, svgIconMaker, templateHtml}) {
         const iconSubMenu = document.createElement('div');
         iconSubMenu.className = `tui-image-editor-menu-${name}`;
         iconSubMenu.innerHTML = templateHtml({
             locale,
-            iconStyle
+            iconStyle,
+            svgIconMaker
         });
 
         this.subMenuElement.appendChild(iconSubMenu);
