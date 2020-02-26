@@ -10,10 +10,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-arrow">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-arrow"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-arrow"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-arrow" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-arrow" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -23,10 +21,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-arrow-2">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-arrow-2"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-arrow-2"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-arrow-2" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-arrow-2" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -36,10 +32,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-arrow-3">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-arrow-3"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-arrow-3"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-arrow-3" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-arrow-3" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -49,8 +43,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-star">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-star" class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-star" class="active"/>
+                        <use xlink:href="#ic-icon-star" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-star" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -60,10 +54,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-star-2">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-star-2"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-star-2"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-star-2" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-star-2" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -74,10 +66,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-polygon">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-polygon"
-                            class="normal"/>
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-polygon"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-polygon" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-polygon" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -88,10 +78,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-location">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-location"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-location"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-location" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-location" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -102,10 +90,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-heart">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-heart"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-heart"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-heart" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-heart" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -116,10 +102,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button" data-icontype="icon-bubble">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-bubble"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-bubble"
-                            class="active"/>
+                        <use xlink:href="#ic-icon-bubble" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-bubble" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -135,8 +119,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
                 <div>
                     <input type="file" accept="image/*" class="tie-icon-image-file">
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-icon-load" class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-icon-load" class="active"/>
+                        <use xlink:href="#ic-icon-load" class="normal normal-color"/>
+                        <use xlink:href="#ic-icon-load" class="active active-color"/>
                     </svg>
                 </div>
                 <label>

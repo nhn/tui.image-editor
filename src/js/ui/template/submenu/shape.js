@@ -10,10 +10,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button rect">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-shape-rectangle"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-shape-rectangle"
-                            class="active"/>
+                        <use xlink:href="#ic-shape-rectangle" class="normal normal-color"/>
+                        <use xlink:href="#ic-shape-rectangle" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Rectangle')} </label>
@@ -21,10 +19,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button circle">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-shape-circle"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-shape-circle"
-                            class="active"/>
+                        <use xlink:href="#ic-shape-circle" class="normal normal-color"/>
+                        <use xlink:href="#ic-shape-circle" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Circle')} </label>
@@ -32,10 +28,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button triangle">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-shape-triangle"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-shape-triangle"
-                            class="active"/>
+                        <use xlink:href="#ic-shape-triangle" class="normal normal-color"/>
+                        <use xlink:href="#ic-shape-triangle" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Triangle')} </label>

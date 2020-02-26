@@ -10,10 +10,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button preset preset-none active">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-shape-rectangle"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-shape-rectangle"
-                            class="active"/>
+                        <use xlink:href="#ic-shape-rectangle" class="normal normal-color"/>
+                        <use xlink:href="#ic-shape-rectangle" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Custom')} </label>
@@ -21,10 +19,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button preset preset-square">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-crop"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-crop"
-                            class="active"/>
+                        <use xlink:href="#ic-crop" class="normal normal-color"/>
+                        <use xlink:href="#ic-crop" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Square')} </label>
@@ -32,10 +28,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button preset preset-3-2">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-crop"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-crop"
-                            class="active"/>
+                        <use xlink:href="#ic-crop" class="normal normal-color"/>
+                        <use xlink:href="#ic-crop" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('3:2')} </label>
@@ -43,10 +37,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button preset preset-4-3">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-crop"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-crop"
-                            class="active"/>
+                        <use xlink:href="#ic-crop" class="normal normal-color"/>
+                        <use xlink:href="#ic-crop" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('4:3')} </label>
@@ -54,10 +46,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button preset preset-5-4">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-crop"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-crop"
-                            class="active"/>
+                        <use xlink:href="#ic-crop" class="normal normal-color"/>
+                        <use xlink:href="#ic-crop" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('5:4')} </label>
@@ -65,10 +55,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button preset preset-7-5">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-crop"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-crop"
-                            class="active"/>
+                        <use xlink:href="#ic-crop" class="normal normal-color"/>
+                        <use xlink:href="#ic-crop" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('7:5')} </label>
@@ -76,10 +64,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button preset preset-16-9">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-crop"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-crop"
-                            class="active"/>
+                        <use xlink:href="#ic-crop" class="normal normal-color"/>
+                        <use xlink:href="#ic-crop" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('16:9')} </label>
@@ -93,8 +79,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li class="tie-crop-button action">
             <div class="tui-image-editor-button apply">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-apply" class="normal"/>
-                    <use xlink:href="${active.path}#${active.name}-ic-apply" class="active"/>
+                    <use xlink:href="#ic-apply" class="normal normal-color"/>
+                    <use xlink:href="#ic-apply" class="active active-color"/>
                 </svg>
                 <label>
                     ${locale.localize('Apply')}
@@ -102,8 +88,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button cancel">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-cancel" class="normal"/>
-                    <use xlink:href="${active.path}#${active.name}-ic-cancel" class="active"/>
+                    <use xlink:href="#ic-cancel" class="normal normal-color"/>
+                    <use xlink:href="#ic-cancel" class="active active-color"/>
                 </svg>
                 <label>
                     ${locale.localize('Cancel')}

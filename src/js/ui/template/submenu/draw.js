@@ -10,8 +10,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button free">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-draw-free" class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-draw-free" class="active"/>
+                        <use xlink:href="#ic-draw-free" class="normal normal-color"/>
+                        <use xlink:href="#ic-draw-free" class="active active-color"/>
                     </svg>
                 </div>
                 <label>
@@ -21,8 +21,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button line">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-draw-line" class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-draw-line" class="active"/>
+                        <use xlink:href="#ic-draw-line" class="normal normal-color"/>
+                        <use xlink:href="#ic-draw-line" class="active active-color"/>
                     </svg>
                 </div>
                 <label>

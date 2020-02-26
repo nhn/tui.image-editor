@@ -11,8 +11,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
                 <div>
                     <input type="file" accept="image/*" class="tie-mask-image-file">
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-mask-load" class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-mask-load" class="active"/>
+                        <use xlink:href="#ic-mask-load" class="normal normal-color"/>
+                        <use xlink:href="#ic-mask-load" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Load Mask Image')} </label>
@@ -24,8 +24,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
         <li class="tie-mask-apply tui-image-editor-newline apply" style="margin-top: 22px;margin-bottom: 5px">
             <div class="tui-image-editor-button apply">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-apply" class="normal"/>
-                    <use xlink:href="${active.path}#${active.name}-ic-apply" class="active"/>
+                    <use xlink:href="#ic-apply" class="normal normal-color"/>
+                    <use xlink:href="#ic-apply" class="active active-color"/>
                 </svg>
                 <label>
                     ${locale.localize('Apply')}

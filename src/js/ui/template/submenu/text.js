@@ -10,8 +10,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button bold">
                 <div>
                     <svg class="svg_ic-submenu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-text-bold" class="normal"/>
-                    <use xlink:href="${active.path}#${active.name}-ic-text-bold" class="active"/>
+                        <use xlink:href="#ic-text-bold" class="normal normal-color"/>
+                        <use xlink:href="#ic-text-bold" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Bold')} </label>
@@ -19,8 +19,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button italic">
                 <div>
                     <svg class="svg_ic-submenu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-text-italic" class="normal"/>
-                    <use xlink:href="${active.path}#${active.name}-ic-text-italic" class="active"/>
+                        <use xlink:href="#ic-text-italic" class="normal normal-color"/>
+                        <use xlink:href="#ic-text-italic" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Italic')} </label>
@@ -28,10 +28,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button underline">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-text-underline"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-text-underline"
-                            class="active"/>
+                        <use xlink:href="#ic-text-underline" class="normal normal-color"/>
+                        <use xlink:href="#ic-text-underline" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Underline')} </label>
@@ -44,10 +42,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button left">
                 <div>
                     <svg class="svg_ic-submenu">
-                     <use xlink:href="${normal.path}#${normal.name}-ic-text-align-left"
-                        class="normal"/>
-                     <use xlink:href="${active.path}#${active.name}-ic-text-align-left"
-                        class="active"/>
+                        <use xlink:href="#ic-text-align-left" class="normal normal-color"/>
+                        <use xlink:href="#ic-text-align-left" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Left')} </label>
@@ -55,10 +51,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button center">
                 <div>
                     <svg class="svg_ic-submenu">
-                     <use xlink:href="${normal.path}#${normal.name}-ic-text-align-center"
-                        class="normal"/>
-                     <use xlink:href="${active.path}#${active.name}-ic-text-align-center"
-                        class="active"/>
+                     <use xlink:href="#ic-text-align-center" class="normal normal-color"/>
+                     <use xlink:href="#ic-text-align-center" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Center')} </label>
@@ -66,10 +60,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button right">
                 <div>
                     <svg class="svg_ic-submenu">
-                     <use xlink:href="${normal.path}#${normal.name}-ic-text-align-right"
-                        class="normal"/>
-                     <use xlink:href="${active.path}#${active.name}-ic-text-align-right"
-                        class="active"/>
+                     <use xlink:href="#ic-text-align-right" class="normal normal-color"/>
+                     <use xlink:href="#ic-text-align-right" class="active active-color"/>
                     </svg>
                 </div>
                 <label> ${locale.localize('Right')} </label>

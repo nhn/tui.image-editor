@@ -10,10 +10,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button clockwise">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-rotate-clockwise"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-rotate-clockwise"
-                            class="active"/>
+                        <use xlink:href="#ic-rotate-clockwise" class="normal normal-color"/>
+                        <use xlink:href="#ic-rotate-clockwise" class="active active-color"/>
                     </svg>
                 </div>
                 <label> 30 </label>
@@ -21,10 +19,8 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             <div class="tui-image-editor-button counterclockwise">
                 <div>
                     <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-rotate-counterclockwise"
-                            class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-rotate-counterclockwise"
-                            class="active"/>
+                        <use xlink:href="#ic-rotate-counterclockwise" class="normal normal-color"/>
+                        <use xlink:href="#ic-rotate-counterclockwise" class="active active-color"/>
                     </svg>
                 </div>
                 <label> -30 </label>

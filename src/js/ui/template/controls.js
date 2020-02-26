@@ -20,9 +20,9 @@ export default ({locale, biImage, iconStyle: {normal, hover, disabled}, loadButt
             </li>
             <li class="tie-btn-reset tui-image-editor-item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-reset" class="enabled"/>
-                    <use xlink:href="${disabled.path}#${disabled.name}-ic-reset" class="normal"/>
-                    <use xlink:href="${hover.path}#${hover.name}-ic-reset" class="hover"/>
+                    <use xlink:href="#ic-reset" class="enabled normal-color"/>
+                    <use xlink:href="#ic-reset" class="normal disabled-color"/>
+                    <use xlink:href="#ic-reset" class="hover hover-color"/>
                 </svg>
             </li>
             <li class="tui-image-editor-item">
@@ -30,16 +30,16 @@ export default ({locale, biImage, iconStyle: {normal, hover, disabled}, loadButt
             </li>
             <li class="tie-btn-delete tui-image-editor-item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-delete" class="enabled"/>
-                    <use xlink:href="${disabled.path}#${disabled.name}-ic-delete" class="normal"/>
-                    <use xlink:href="${hover.path}#${hover.name}-ic-delete" class="hover"/>
+                    <use xlink:href="#ic-delete" class="enabled normal-color"/>
+                    <use xlink:href="#ic-delete" class="normal disabled-color"/>
+                    <use xlink:href="#ic-delete" class="hover hover-color"/>
                 </svg>
             </li>
             <li class="tie-btn-delete-all tui-image-editor-item">
                 <svg class="svg_ic-menu">
-                    <use xlink:href="${normal.path}#${normal.name}-ic-delete-all" class="enabled"/>
-                    <use xlink:href="${disabled.path}#${disabled.name}-ic-delete-all" class="normal"/>
-                    <use xlink:href="${hover.path}#${hover.name}-ic-delete-all" class="hover"/>
+                    <use xlink:href="#ic-delete-all" class="enabled normal-color"/>
+                    <use xlink:href="#ic-delete-all" class="normal disabled-color"/>
+                    <use xlink:href="#ic-delete-all" class="hover hover-color"/>
                 </svg>
             </li>
             <li class="tui-image-editor-item">
