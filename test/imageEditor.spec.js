@@ -44,29 +44,10 @@ describe('ImageEditor', () => {
             expect(snippet.sendHostname).not.toHaveBeenCalled();
         });
 
-        it('removeObjectStream () must be executed as many times as the length of the Object array.', done => {
-            const promise = new Promise(resolve => {
-                resolve();
-            });
-
-            spyOn(imageEditor, '_removeObjectStream').and.callThrough();
-            spyOn(imageEditor, 'removeObject').and.returnValue(promise);
-
-            const removeJobsSequens = [1, 2, 3, 4];
-            const expected = removeJobsSequens.length + 1;
-            const removeObjectStremPromise = imageEditor._removeObjectStream(removeJobsSequens);
-
-            removeObjectStremPromise.then(() => {
-                expect(imageEditor._removeObjectStream.calls.count()).toBe(expected);
-                done();
-            });
-        });
-
         it('`preventDefault` of BACKSPACE key events should not be executed when object is selected state.', () => {
             const spyCallback = jasmine.createSpy();
 
             spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(null);
-            spyOn(imageEditor._graphics, 'getActiveObjects').and.returnValue(null);
 
             imageEditor._onKeyDown({
                 keyCode: consts.keyCodes.BACKSPACE,
@@ -87,39 +68,6 @@ describe('ImageEditor', () => {
             canvas.fire('object:rotating', mock);
 
             expect(imageEditor.fire.calls.mostRecent().args[0]).toBe(OBJECT_ROTATED);
-        });
-
-        describe('removeActiveObject()', () => {
-            it('_removeObjectStream should be executed when group exists.', () => {
-                spyOn(imageEditor._graphics, 'getActiveObject');
-                const activeSelection = {
-                    type: 'activeSelection',
-                    size() {
-                        return 3;
-                    },
-                    getObjects() {
-                        return [1, 2, 3];
-                    }
-                };
-                spyOn(imageEditor._graphics, 'getActiveObjects').and.returnValue(activeSelection);
-                spyOn(imageEditor, '_removeObjectStream');
-                spyOn(imageEditor, 'discardSelection');
-
-                imageEditor.removeActiveObject();
-
-                expect(imageEditor.discardSelection).toHaveBeenCalled();
-                expect(imageEditor._removeObjectStream).toHaveBeenCalled();
-            });
-
-            it('removeObject must be executed when group does not exist.', () => {
-                spyOn(imageEditor._graphics, 'getActiveObjects').and.returnValue(null);
-                spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(jasmine.any(Object));
-                spyOn(imageEditor._graphics, 'getObjectId');
-                spyOn(imageEditor, 'removeObject');
-
-                imageEditor.removeActiveObject();
-                expect(imageEditor.removeObject).toHaveBeenCalled();
-            });
         });
     });
 });

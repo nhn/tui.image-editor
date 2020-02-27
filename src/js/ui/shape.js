@@ -98,13 +98,13 @@ class Shape extends Submenu {
      */
     setShapeStatus({strokeWidth, strokeColor, fillColor}) {
         this._els.strokeRange.value = strokeWidth;
-        this._els.strokeRange.trigger('change');
-
         this._els.strokeColorpicker.color = strokeColor;
         this._els.fillColorpicker.color = fillColor;
         this.options.stroke = strokeColor;
         this.options.fill = fillColor;
         this.options.strokeWidth = strokeWidth;
+
+        this.actions.setDrawingShape(this.type, {strokeWidth});
     }
 
     /**
