@@ -107,13 +107,6 @@ export default ({
     .tui-image-editor-container .tui-image-editor-header-logo > img {
         ${biSize}
     }
-    .tui-image-editor-container .tui-image-editor-controls .help svg > use.disabled,
-    .tui-image-editor-container .tui-image-editor-controls .help.enabled svg > use.normal {
-        display: block;
-    }
-    .tui-image-editor-container .tui-image-editor-controls .help.enabled svg > use.disabled {
-        display: none;
-    }
     .tui-image-editor-menu use.normal.use-default {
         fill-rule: evenodd;
         fill: ${menuIconStyle.normal.color};

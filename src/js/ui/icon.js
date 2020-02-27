@@ -11,11 +11,10 @@ import {defaultIconPath} from '../consts';
  * @ignore
  */
 class Icon extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, svgIconMaker, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, svgIconMaker, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'icon',
-            iconStyle,
             svgIconMaker,
             menuBarPosition,
             templateHtml,

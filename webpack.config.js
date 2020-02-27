@@ -52,7 +52,6 @@ module.exports = {
     }],
     module: {
         rules: [
-            /*
             {
                 test: /\.js$/,
                 exclude: /node_modules/,
@@ -62,9 +61,7 @@ module.exports = {
                     failOnWarning: false,
                     failOnError: false
                 }
-            }, 
-            */
-            {
+            }, {
                 test: /\.js$/,
                 exclude: /node_modules/,
                 loader: 'babel-loader?cacheDirectory',

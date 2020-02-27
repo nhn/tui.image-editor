@@ -18,15 +18,7 @@ describe('Ui', () => {
                 loadImage: false,
                 initMenu: 'flip',
                 menuBarPosition: 'bottom',
-                applyCropSelectionStyle: true,
-                theme: {
-                    'menu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
-                    'menu.activeIcon.path': 'base/test/fixtures/icon-b.svg',
-                    'menu.disabledIcon.path': 'base/test/fixtures/icon-a.svg',
-                    'menu.hoverIcon.path': 'base/test/fixtures/icon-c.svg',
-                    'submenu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
-                    'submenu.activeIcon.path': 'base/test/fixtures/icon-c.svg'
-                }
+                applyCropSelectionStyle: true
             }
         });
         actions = imageEditorMock.getActions();

@@ -11,11 +11,10 @@ import {defaultTextRangeValus} from '../consts';
  * @ignore
  */
 class Text extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, svgIconMaker, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, svgIconMaker, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'text',
-            iconStyle,
             svgIconMaker,
             menuBarPosition,
             templateHtml,

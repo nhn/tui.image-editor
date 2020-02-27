@@ -8,11 +8,10 @@ import templateHtml from './template/submenu/mask';
  * @ignore
  */
 class Mask extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, svgIconMaker, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, svgIconMaker, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'mask',
-            iconStyle,
             svgIconMaker,
             menuBarPosition,
             templateHtml,

@@ -1,7 +1,7 @@
 /**
- * @param {Locale} locale - Translate text
- * @param {Object} normal - iconStyle
- * @param {Object} active - iconStyle
+ * @param {Object} submenuInfo - submenu info for make template
+ *   @param {Locale} locale - Translate text
+ *   @param {Function} svgIconMaker - svg icon generator
  * @returns {string}
  */
 export default ({locale, svgIconMaker}) => (`

@@ -17,11 +17,10 @@ const SHAPE_DEFAULT_OPTION = {
  * @ignore
  */
 class Shape extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, svgIconMaker, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, svgIconMaker, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'shape',
-            iconStyle,
             svgIconMaker,
             menuBarPosition,
             templateHtml,

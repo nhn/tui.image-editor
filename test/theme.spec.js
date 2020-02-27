@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/cropper.js"
  */
+import snippet from 'tui-code-snippet';
 import Theme from '../src/js/ui/theme/theme';
 import defaultTheme from '../src/js/ui/theme/standard';
 
@@ -10,29 +11,28 @@ describe('Theme', () => {
     beforeEach(() => {
         theme = new Theme(defaultTheme);
     });
-
     describe('getStyle()', () => {
-        it('In case of icon type, the object should be returned as it is.', () => {
-            const expected = {
-                active: {
-                    path: 'base/test/fixtures/icon-b.svg',
-                    name: 'icon-b'
-                },
-                normal: {
-                    path: 'base/test/fixtures/icon-d.svg',
-                    name: 'icon-d'
-                },
-                disabled: {
-                    path: 'base/test/fixtures/icon-a.svg',
-                    name: 'icon-a'
-                },
-                hover: {
-                    path: 'base/test/fixtures/icon-c.svg',
-                    name: 'icon-c'
-                }
-            };
 
-            expect(theme.getStyle('menu.icon')).toEqual(expected);
+        it('When the user sets the icon file location, the path and name information must be included.', () => {
+            const addUserIconPath = 'base/test/fixtures/icon-d.svg';
+            const addUserIconName = 'icon-d';
+            const themeForIconPathSet = new Theme(snippet.extend({}, defaultTheme, {
+                'menu.normalIcon.path': addUserIconPath,
+                'menu.normalIcon.name': addUserIconName
+            }));
+            const {normal: {path, name}} = themeForIconPathSet.getStyle('menu.icon');
+
+            expect(path).toEqual('base/test/fixtures/icon-d.svg');
+            expect(name).toEqual('icon-d');
+        });
+
+        it('should return default icon color information.', () => {
+            const {normal, active, disabled, hover} = theme.getStyle('menu.icon');
+
+            expect(normal.color).toEqual('#8a8a8a');
+            expect(active.color).toEqual('#555555');
+            expect(disabled.color).toEqual('#434343');
+            expect(hover.color).toEqual('#e9e9e9');
         });
 
         it('In normal types, cssText should be returned.', () => {
@@ -78,6 +78,24 @@ describe('Theme', () => {
             };
             const expected = 'background-color: #fff;background-image: url(./img/bg.png);border: 1px solid #ddd;color: #222;font-family: NotoSans, sans-serif;font-size: 12px';
             expect(theme._makeCssText(styleObject)).toBe(expected);
+        });
+    });
+
+    describe('_makeSvgItem()', () => {
+        it('When using the default icon, a svg set with the path prefix and no use-default class should be created.', () => {
+            const useTagString = theme._makeSvgItem(['normal'], 'crop');
+
+            expect(useTagString).toBe('<use xlink:href="#ic-crop" class="normal use-default"/>');
+        });
+
+        it('Setting the icon file should create a svg path with the prefix.', () => {
+            const themeForIconPathSet = new Theme(snippet.extend({}, defaultTheme, {
+                'menu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
+                'menu.normalIcon.name': 'icon-d'
+            }));
+            const useTagString = themeForIconPathSet._makeSvgItem(['normal'], 'crop');
+
+            expect(useTagString).toBe('<use xlink:href="base/test/fixtures/icon-d.svg#icon-d-ic-crop" class="normal"/>');
         });
     });
 });

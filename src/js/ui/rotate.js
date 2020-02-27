@@ -13,11 +13,10 @@ const COUNTERCLOCKWISE = -30;
  * @ignore
  */
 class Rotate extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, svgIconMaker, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, svgIconMaker, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'rotate',
-            iconStyle,
             svgIconMaker,
             menuBarPosition,
             templateHtml,

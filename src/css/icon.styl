@@ -30,5 +30,11 @@
         .active svg > use.normal,
         .enabled svg > use.normal
             display: none;
+        .help svg > use.disabled,
+        .help.enabled svg > use.normal
+            display: block;
+        .help.enabled svg > use.disabled
+            display: none;
+
     .{prefix}-controls:hover
         z-index: 3;

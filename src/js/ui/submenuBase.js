@@ -13,7 +13,7 @@ class Submenu {
      * @param {*} templateHtml - template for SubMenuElement
      * @param {boolean} [usageStatistics=false] - template for SubMenuElement
      */
-    constructor(subMenuElement, {locale, name, iconStyle, svgIconMaker, menuBarPosition, templateHtml, usageStatistics}) {
+    constructor(subMenuElement, {locale, name, svgIconMaker, menuBarPosition, templateHtml, usageStatistics}) {
         this.subMenuElement = subMenuElement;
         this.menuBarPosition = menuBarPosition;
         this.toggleDirection = menuBarPosition === 'top' ? 'down' : 'up';
@@ -23,7 +23,6 @@ class Submenu {
         this._makeSubMenuElement({
             locale,
             name,
-            iconStyle,
             svgIconMaker,
             templateHtml
         });

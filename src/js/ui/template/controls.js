@@ -1,4 +1,4 @@
-export const controls = ({locale, biImage, loadButtonStyle, downloadButtonStyle}) => (`
+export default ({locale, biImage, loadButtonStyle, downloadButtonStyle}) => (`
     <div class="tui-image-editor-controls">
         <div class="tui-image-editor-controls-logo">
             <img src="${biImage}" />
@@ -15,10 +15,4 @@ export const controls = ({locale, biImage, loadButtonStyle, downloadButtonStyle}
             </button>
         </div>
     </div>
-`);
-
-export const partition = () => (`
-    <li class="tui-image-editor-item">
-        <div class="tui-image-editor-icpartition"></div>
-    </li>
 `);

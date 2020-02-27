@@ -2,7 +2,7 @@ import snippet from 'tui-code-snippet';
 import {HELP_MENUS} from './consts';
 import util from './util';
 import mainContainer from './ui/template/mainContainer';
-import {controls, partition} from './ui/template/controls';
+import controls from './ui/template/controls';
 
 import Theme from './ui/theme/theme';
 import Shape from './ui/shape';
@@ -161,7 +161,6 @@ class Ui {
      * @ignore
      */
     changeHelpButtonEnabled(buttonType, enableStatus) {
-        console.log(buttonType, this._buttonElements[buttonType]);
         const buttonClassList = this._buttonElements[buttonType].classList;
 
         buttonClassList[enableStatus ? 'add' : 'remove']('enabled');
@@ -226,7 +225,6 @@ class Ui {
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
-                iconStyle: this.theme.getStyle('submenu.icon'),
                 svgIconMaker: this.theme.makeMenSvgIconSet.bind(this.theme),
                 menuBarPosition: this.options.menuBarPosition,
                 usageStatistics: this.options.usageStatistics
@@ -281,14 +279,23 @@ class Ui {
             'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
         };
 
-        this._makeHelpMenu();
+        this._addHelpMenus();
     }
 
-    _makeHelpMenu() {
-        // const helpMenuWithPartition = [...HELP_MENUS.slice(0, 3), '', ...HELP_MENUS.slice(4), ''];
+    /**
+     * Add help menu
+     * @private
+     */
+    _addHelpMenus() {
+        const helpMenuWithPartition = [...HELP_MENUS.slice(0, 3), '', ...HELP_MENUS.slice(3), ''];
 
-        snippet.forEach(HELP_MENUS, menuName => {
-            // console.log('MENUNAME', menuName);
+        snippet.forEach(helpMenuWithPartition, menuName => {
+            if (!menuName) {
+                this._makeMenuPartitionElement();
+
+                return;
+            }
+
             this._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
             if (menuName) {
                 this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
@@ -297,18 +304,27 @@ class Ui {
     }
 
     /**
-     * Make menu ui dom element
+     * Make menu partition element
+     * @private
+     */
+    _makeMenuPartitionElement() {
+        const partitionElement = document.createElement('li');
+        const partitionInnerElement = document.createElement('div');
+        partitionElement.className = 'tui-image-editor-item';
+        partitionInnerElement.className = 'tui-image-editor-icpartition';
+        partitionElement.appendChild(partitionInnerElement);
+
+        this._menuElement.appendChild(partitionElement);
+    }
+
+    /**
+     * Make menu button element
      * @param {string} menuName - menu name
+     * @param {Array} useIconTypes - Possible values are  \['normal', 'active', 'hover', 'disabled'\]
+     * @param {string} menuType - 'normal' or 'help'
      * @private
      */
     _makeMenuElement(menuName, useIconTypes = ['normal', 'active', 'hover'], menuType = 'normal') {
-        if (!menuName) {
-            console.log('ss');
-            this._menuElement.appendChild(partition());
-
-            return;
-        }
-
         const btnElement = document.createElement('li');
         const menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
 
