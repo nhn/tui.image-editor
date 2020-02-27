@@ -25,47 +25,23 @@ var blackTheme = {
     'downloadButton.fontFamily': '\'Noto Sans\', sans-serif',
     'downloadButton.fontSize': '12px',
 
-    // // main icons
-    // 'menu.normalIcon.color': '#8a8a8a',
-    // 'menu.activeIcon.color': '#555555',
-    // 'menu.disabledIcon.color': '#434343',
-    // 'menu.hoverIcon.color': '#e9e9e9',
-    // 'menu.iconSize.width': '24px',
-    // 'menu.iconSize.height': '24px',
-
-    // // submenu icons
-    // 'submenu.normalIcon.color': '#8a8a8a',
-    // 'submenu.activeIcon.color': '#e9e9e9',
-    // 'submenu.iconSize.width': '32px',
-    // 'submenu.iconSize.height': '32px',
-
-    // // submenu primary color
-    // 'submenu.backgroundColor': '#1e1e1e',
-    // 'submenu.partition.color': '#3c3c3c',
-
     // main icons
-    'menu.normalIcon.path': '../dist/svg/icon-d.svg',
-    'menu.normalIcon.name': 'icon-d',
-    'menu.activeIcon.path': '../dist/svg/icon-b.svg',
-    'menu.activeIcon.name': 'icon-b',
-    'menu.disabledIcon.path': '../dist/svg/icon-a.svg',
-    'menu.disabledIcon.name': 'icon-a',
-    'menu.hoverIcon.path': '../dist/svg/icon-c.svg',
-    'menu.hoverIcon.name': 'icon-c',
+    'menu.normalIcon.color': '#8a8a8a',
+    'menu.activeIcon.color': '#555555',
+    'menu.disabledIcon.color': '#434343',
+    'menu.hoverIcon.color': '#e9e9e9',
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
 
-    // submenu primary color
-    'submenu.backgroundColor': 'transparent',
-    'submenu.partition.color': '#e5e5e5',
-
     // submenu icons
-    'submenu.normalIcon.path': '../dist/svg/icon-d.svg',
-    'submenu.normalIcon.name': 'icon-d',
-    'submenu.activeIcon.path': '../dist/svg/icon-b.svg',
-    'submenu.activeIcon.name': 'icon-b',
+    'submenu.normalIcon.color': '#8a8a8a',
+    'submenu.activeIcon.color': '#e9e9e9',
     'submenu.iconSize.width': '32px',
     'submenu.iconSize.height': '32px',
+
+    // submenu primary color
+    'submenu.backgroundColor': '#1e1e1e',
+    'submenu.partition.color': '#3c3c3c',
 
     // submenu labels
     'submenu.normalLabel.color': '#8a8a8a',

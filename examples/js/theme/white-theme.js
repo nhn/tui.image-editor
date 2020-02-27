@@ -34,9 +34,8 @@ var whiteTheme = {
     'menu.iconSize.height': '24px',
 
     // submenu icons
-    'submenu.normalIcon.color': '../dist/svg/icon-d.svg',
-    'submenu.activeIcon.color': '../dist/svg/icon-b.svg',
-    'submenu.activeIcon.name': 'icon-b',
+    'submenu.normalIcon.color': '#8a8a8a',
+    'submenu.activeIcon.color': '#555555',
     'submenu.iconSize.width': '32px',
     'submenu.iconSize.height': '32px',
 

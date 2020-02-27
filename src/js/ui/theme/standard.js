@@ -25,16 +25,26 @@
  * @property {string} downloadButton.color - download button foreground color
  * @property {string} downloadButton.fontFamily - download button font type
  * @property {string} downloadButton.fontSize - download button font size
- * @property {string} menu.normalIcon.path - Menu default icon svg bundle file path
- * @property {string} menu.normalIcon.name - Menu default icon svg bundle name
+ * @property {string} menu.normalIcon.color - Menu normal color for default icon
+ * @property {string} menu.normalIcon.path - Menu normal icon svg bundle file path
+ * @property {string} menu.normalIcon.name - Menu normal icon svg bundle name
+ * @property {string} menu.activeIcon.color - Menu active color for default icon
  * @property {string} menu.activeIcon.path - Menu active icon svg bundle file path
  * @property {string} menu.activeIcon.name - Menu active icon svg bundle name
+ * @property {string} menu.disabled.color - Menu disabled color for default icon
+ * @property {string} menu.disabled.path - Menu disabled icon svg bundle file path
+ * @property {string} menu.disabled.name - Menu disabled icon svg bundle name
+ * @property {string} menu.hover.color - Menu default icon hover color
+ * @property {string} menu.hover.path - Menu hover icon svg bundle file path
+ * @property {string} menu.hover.name - Menu hover icon svg bundle name
  * @property {string} menu.iconSize.width - Menu icon Size Width
  * @property {string} menu.iconSize.height - Menu Icon Size Height
  * @property {string} submenu.backgroundColor - Sub-menu area background color
  * @property {string} submenu.partition.color - Submenu partition line color
+ * @property {string} submenu.normalIcon.color - Submenu normal color for default icon
  * @property {string} submenu.normalIcon.path - Submenu default icon svg bundle file path
  * @property {string} submenu.normalIcon.name - Submenu default icon svg bundle name
+ * @property {string} submenu.activeIcon.color - Submenu active color for default icon
  * @property {string} submenu.activeIcon.path - Submenu active icon svg bundle file path
  * @property {string} submenu.activeIcon.name - Submenu active icon svg bundle name
  * @property {string} submenu.iconSize.width - Submenu icon Size Width
