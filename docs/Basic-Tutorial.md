@@ -39,7 +39,87 @@ imageEditor.loadImageFromURL('img/sampleImage.jpg', 'My sample image')
 
 <br>
 
-### 4. Localization
+### 4. Menu, Submenu svg icon setting
+
+In the image below, the red and blue areas are set using the svg icon.
+
+![svgIcon](https://user-images.githubusercontent.com/35218826/75416627-1ca5e780-5972-11ea-9a55-b179686536de.png)
+
+#### Two ways to set the icon
+
+1. **Use default svg built** into imageEditor without setting svg file path (Features added since version v3.9.0).
+    * This is the default setting for Image Editor.
+    * It's easy to change the color to match the icon state as shown below, but it uses the built-in default shape so you can't change the icon's appearance.
+        ```js
+        var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+             includeUI: {
+                 ...
+                 theme: {
+                    'menu.normalIcon.color': '#8a8a8a',
+                    'menu.activeIcon.color': '#555555',
+                    'menu.disabledIcon.color': '#434343',
+                    'menu.hoverIcon.color': '#e9e9e9',
+                    'submenu.normalIcon.color': '#8a8a8a',
+                    'submenu.activeIcon.color': '#e9e9e9',
+                 }
+                 ...
+        });
+        ```
+
+2. There is a way to use the **actual physical svg file** and **set the file location manually**.
+    * This is used when you want to completely reconfigure the svg icon itself rather than the built-in icon.
+    * The disadvantage is that the color must be set by modifying the svg file directly.
+    * Need to set the path and name for each icon state as shown below.
+        ```js
+        var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+             includeUI: {
+                 ...
+                 theme: {
+                    'menu.normalIcon.path': '../dist/svg/icon-d.svg',
+                    'menu.normalIcon.name': 'icon-d',
+                    'menu.activeIcon.path': '../dist/svg/icon-b.svg',
+                    'menu.activeIcon.name': 'icon-b',
+                    'menu.disabledIcon.path': '../dist/svg/icon-a.svg',
+                    'menu.disabledIcon.name': 'icon-a',
+                    'menu.hoverIcon.path': '../dist/svg/icon-c.svg',
+                    'menu.hoverIcon.name': 'icon-c',
+                    'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
+                    'submenu.normalIcon.name': 'icon-a',
+                    'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
+                    'submenu.activeIcon.name': 'icon-c'
+                 }
+                 ...
+        });
+        ```
+    * How to get svg file sample
+        * In the project folder where `tui-image-editor` is installed, the file is in the path described below
+        ```bash
+        // or use cdn (https://uicdn.toast.com/tui-image-editor/latest/svg/icon-a.svg)
+        $ cd node_modules/tui-image-editor/dist/svg
+        ```
+        * Or just get the file via cdn.
+            * https://uicdn.toast.com/tui-image-editor/latest/svg/icon-a.svg
+            * https://uicdn.toast.com/tui-image-editor/latest/svg/icon-b.svg
+            * https://uicdn.toast.com/tui-image-editor/latest/svg/icon-c.svg
+            * https://uicdn.toast.com/tui-image-editor/latest/svg/icon-d.svg
+        
+
+        * Don't forget to use the icon name setting of the `includeUI.theme` option to match the $ {iconName} part of the file.
+        ```svg
+        icon-a.svg file
+        submenu.activeIcon.name <-> iconName
+        ...
+        <symbol id="${iconName}-ic-apply" viewBox="0 0 24 24">
+            <g fill="none" fill-rule="evenodd">
+                <path d="M0 0h24v24H0z"/>
+                <path stroke="#434343" d="M4 12.011l5 5L20.011 6"/>
+            </g>
+        </symbol>
+        ...
+        ```
+
+
+### 5. Localization
 ImageEditor provide feature to customize all of inscriptions. Look at example.
 
 ```js
