@@ -29,7 +29,7 @@
 * [Usage](#-usage)
   * [HTML](#html)
   * [JavaScript](#javascript)
-  * [Menu svg icon setting](#-menu-svg-icon-setting)
+  * [Menu svg icon setting](#menu-svg-icon-setting)
   * [TypeScript](#-typescript)
 * [Development](#-development)
   * [Setup](#setup)
@@ -302,7 +302,7 @@ var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
 1. **Use default svg built** into imageEditor without setting svg file path (Features added since version v3.9.0).
 2. There is a way to use the **actual physical svg file** and **set the file location manually**.
 
-Can find more details in [this document]().
+Can find more details in [this document](https://github.com/nhn/tui.image-editor/blob/master/docs/Basic-Tutorial.md#4-menu-submenu-svg-icon-setting).
 
 ### TypeScript
 If you using TypeScript, You must `import module = require('module')` on importing.
