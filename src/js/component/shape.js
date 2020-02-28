@@ -9,27 +9,20 @@ import consts from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
 import {extend, inArray} from 'tui-code-snippet';
 
-const {rejectMessages, eventNames} = consts;
+const {rejectMessages, eventNames, SHAPE_DEFAULT_OPTIONS} = consts;
 const KEY_CODES = consts.keyCodes;
-
-const DEFAULT_TYPE = 'rect';
-const DEFAULT_WIDTH = 20;
-const DEFAULT_HEIGHT = 20;
-
-const DEFAULT_OPTIONS = {
+const SHAPE_INIT_OPTIONS = extend({
     strokeWidth: 1,
     stroke: '#000000',
     fill: '#ffffff',
     width: 1,
     height: 1,
     rx: 0,
-    ry: 0,
-    lockSkewingX: true,
-    lockSkewingY: true,
-    lockUniScaling: false,
-    bringForward: true,
-    isRegular: false
-};
+    ry: 0
+}, SHAPE_DEFAULT_OPTIONS);
+const DEFAULT_TYPE = 'rect';
+const DEFAULT_WIDTH = 20;
+const DEFAULT_HEIGHT = 20;
 
 const shapeType = ['rect', 'circle', 'triangle'];
 
@@ -63,7 +56,7 @@ class Shape extends Component {
          * @type {Object}
          * @private
          */
-        this._options = extend({}, DEFAULT_OPTIONS);
+        this._options = extend({}, SHAPE_INIT_OPTIONS);
 
         /**
          * Whether the shape object is selected or not
@@ -259,7 +252,7 @@ class Shape extends Component {
     _extendOptions(options) {
         const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
 
-        options = extend({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
+        options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
 
         if (options.isRegular) {
             options.lockUniScaling = true;
