@@ -47,7 +47,6 @@ const backstoreOnly = {
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
- *  @param {boolean} option.useItext - Use IText in text mode
  *  @param {boolean} option.useDragAddIcon - Use dragable add in icon mode
  * @ignore
  */
@@ -55,7 +54,6 @@ class Graphics {
     constructor(element, {
         cssMaxWidth,
         cssMaxHeight,
-        useItext = false,
         useDragAddIcon = false
     } = {}) {
         /**
@@ -75,12 +73,6 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
-
-        /**
-         * Use Itext mode for text component
-         * @type {boolean}
-         */
-        this.useItext = useItext;
 
         /**
          * Use add drag icon mode for icon component
