@@ -1,15 +1,15 @@
 /**
  * @param {Object} submenuInfo - submenu info for make template
  *   @param {Locale} locale - Translate text
- *   @param {Function} svgIconMaker - svg icon generator
+ *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, svgIconMaker}) => (`
+export default ({locale, makeSvgIcon}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-icon-add-button">
             <div class="tui-image-editor-button" data-icontype="icon-arrow">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-arrow', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-arrow', true)}
                 </div>
                 <label>
                     ${locale.localize('Arrow')}
@@ -17,7 +17,7 @@ export default ({locale, svgIconMaker}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-arrow-2">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-arrow-2', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-arrow-2', true)}
                 </div>
                 <label>
                     ${locale.localize('Arrow-2')}
@@ -25,7 +25,7 @@ export default ({locale, svgIconMaker}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-arrow-3">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-arrow-3', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-arrow-3', true)}
                 </div>
                 <label>
                     ${locale.localize('Arrow-3')}
@@ -33,7 +33,7 @@ export default ({locale, svgIconMaker}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-star">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-star', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-star', true)}
                 </div>
                 <label>
                     ${locale.localize('Star-1')}
@@ -41,7 +41,7 @@ export default ({locale, svgIconMaker}) => (`
             </div>
             <div class="tui-image-editor-button" data-icontype="icon-star-2">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-star-2', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-star-2', true)}
                 </div>
                 <label>
                     ${locale.localize('Star-2')}
@@ -50,7 +50,7 @@ export default ({locale, svgIconMaker}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-polygon">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-polygon', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-polygon', true)}
                 </div>
                 <label>
                     ${locale.localize('Polygon')}
@@ -59,7 +59,7 @@ export default ({locale, svgIconMaker}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-location">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-location', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-location', true)}
                 </div>
                 <label>
                     ${locale.localize('Location')}
@@ -68,7 +68,7 @@ export default ({locale, svgIconMaker}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-heart">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-heart', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-heart', true)}
                 </div>
                 <label>
                     ${locale.localize('Heart')}
@@ -77,7 +77,7 @@ export default ({locale, svgIconMaker}) => (`
 
             <div class="tui-image-editor-button" data-icontype="icon-bubble">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'icon-bubble', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-bubble', true)}
                 </div>
                 <label>
                     ${locale.localize('Bubble')}
@@ -91,7 +91,7 @@ export default ({locale, svgIconMaker}) => (`
             <div class="tui-image-editor-button" style="margin:0">
                 <div>
                     <input type="file" accept="image/*" class="tie-icon-image-file">
-                    ${svgIconMaker(['normal', 'active'], 'icon-load', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'icon-load', true)}
                 </div>
                 <label>
                     ${locale.localize('Custom icon')}

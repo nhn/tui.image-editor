@@ -1,15 +1,15 @@
 /**
  * @param {Object} submenuInfo - submenu info for make template
  *   @param {Locale} locale - Translate text
- *   @param {Function} svgIconMaker - svg icon generator
+ *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, svgIconMaker}) => (`
+export default ({locale, makeSvgIcon}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-draw-line-select-button">
             <div class="tui-image-editor-button free">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'draw-free', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'draw-free', true)}
                 </div>
                 <label>
                     ${locale.localize('Free')}
@@ -17,7 +17,7 @@ export default ({locale, svgIconMaker}) => (`
             </div>
             <div class="tui-image-editor-button line">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'draw-line', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'draw-line', true)}
                 </div>
                 <label>
                     ${locale.localize('Straight')}

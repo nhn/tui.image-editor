@@ -1,15 +1,15 @@
 /**
  * @param {Object} submenuInfo - submenu info for make template
  *   @param {Locale} locale - Translate text
- *   @param {Function} svgIconMaker - svg icon generator
+ *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, svgIconMaker}) => (`
+export default ({locale, makeSvgIcon}) => (`
     <ul class="tie-flip-button tui-image-editor-submenu-item">
         <li>
             <div class="tui-image-editor-button flipX">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'flip-x', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'flip-x', true)}
                 </div>
                 <label>
                     ${locale.localize('Flip X')}
@@ -17,7 +17,7 @@ export default ({locale, svgIconMaker}) => (`
             </div>
             <div class="tui-image-editor-button flipY">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'flip-y', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'flip-y', true)}
                 </div>
                 <label>
                     ${locale.localize('Flip Y')}
@@ -30,7 +30,7 @@ export default ({locale, svgIconMaker}) => (`
         <li>
             <div class="tui-image-editor-button resetFlip">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'flip-reset', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'flip-reset', true)}
                 </div>
                 <label>
                     ${locale.localize('Reset')}

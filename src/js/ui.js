@@ -225,7 +225,7 @@ class Ui {
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
-                svgIconMaker: this.theme.makeMenSvgIconSet.bind(this.theme),
+                makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
                 menuBarPosition: this.options.menuBarPosition,
                 usageStatistics: this.options.usageStatistics
             });
@@ -283,22 +283,33 @@ class Ui {
     }
 
     /**
+     * make array for help menu output, including partitions.
+     * @returns {Array}
+     * @private
+     */
+    _makeHelpMenuWithPartition() {
+        const helpMenuWithPartition = [...HELP_MENUS, ''];
+        helpMenuWithPartition.splice(3, 0, '');
+
+        return helpMenuWithPartition;
+    }
+
+    /**
      * Add help menu
      * @private
      */
     _addHelpMenus() {
-        const helpMenuWithPartition = [...HELP_MENUS.slice(0, 3), '', ...HELP_MENUS.slice(3), ''];
+        const helpMenuWithPartition = this._makeHelpMenuWithPartition();
 
         snippet.forEach(helpMenuWithPartition, menuName => {
             if (!menuName) {
                 this._makeMenuPartitionElement();
+            } else {
+                this._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
 
-                return;
-            }
-
-            this._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
-            if (menuName) {
-                this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
+                if (menuName) {
+                    this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
+                }
             }
         });
     }

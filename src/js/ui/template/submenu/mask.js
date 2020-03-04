@@ -1,16 +1,16 @@
 /**
  * @param {Object} submenuInfo - submenu info for make template
  *   @param {Locale} locale - Translate text
- *   @param {Function} svgIconMaker - svg icon generator
+ *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, svgIconMaker}) => (`
+export default ({locale, makeSvgIcon}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li>
             <div class="tui-image-editor-button">
                 <div>
                     <input type="file" accept="image/*" class="tie-mask-image-file">
-                    ${svgIconMaker(['normal', 'active'], 'mask-load', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'mask-load', true)}
                 </div>
                 <label> ${locale.localize('Load Mask Image')} </label>
             </div>
@@ -20,7 +20,7 @@ export default ({locale, svgIconMaker}) => (`
         </li>
         <li class="tie-mask-apply tui-image-editor-newline apply" style="margin-top: 22px;margin-bottom: 5px">
             <div class="tui-image-editor-button apply">
-                ${svgIconMaker(['normal', 'active'], 'apply')}
+                ${makeSvgIcon(['normal', 'active'], 'apply')}
                 <label>
                     ${locale.localize('Apply')}
                 </label>
