@@ -104,20 +104,6 @@
     'submenu.normalIcon.color': '#8a8a8a',
     'submenu.activeIcon.color': '#e9e9e9',
 
-    // icons (svg icon file setting)
-    // 'menu.normalIcon.path': '../dist/svg/icon-d.svg',
-    // 'menu.normalIcon.name': 'icon-d',
-    // 'menu.activeIcon.path': '../dist/svg/icon-b.svg',
-    // 'menu.activeIcon.name': 'icon-b',
-    // 'menu.disabledIcon.path': '../dist/svg/icon-a.svg',
-    // 'menu.disabledIcon.name': 'icon-a',
-    // 'menu.hoverIcon.path': '../dist/svg/icon-c.svg',
-    // 'menu.hoverIcon.name': 'icon-c',
-    // 'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
-    // 'submenu.normalIcon.name': 'icon-a',
-    // 'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
-    // 'submenu.activeIcon.name': 'icon-c',
-
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
     'submenu.iconSize.width': '32px',

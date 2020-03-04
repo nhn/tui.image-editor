@@ -51,7 +51,7 @@ In the image below, the red and blue areas are set using the svg icon.
     * This is the default setting for Image Editor.
     * It's easy to change the color to match the icon state as shown below, but it uses the built-in default shape so you can't change the icon's appearance.
         ```js
-        var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+        const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
              includeUI: {
                  ...
                  theme: {
@@ -66,12 +66,12 @@ In the image below, the red and blue areas are set using the svg icon.
         });
         ```
 
-2. There is a way to use the **actual physical svg file** and **set the file location manually**.
+2. There is a way to use the **your svg file** and **set the file location manually**.
     * This is used when you want to completely reconfigure the svg icon itself rather than the built-in icon.
     * The disadvantage is that the color must be set by modifying the svg file directly.
     * Need to set the path and name for each icon state as shown below.
         ```js
-        var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+        const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
              includeUI: {
                  ...
                  theme: {
@@ -129,7 +129,7 @@ var locale_ru_RU = { // override default English locale to your custom
     // etc...
 };
 // Image editor
-var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
      includeUI: {
          loadImage: {
              path: 'img/sampleImage.jpg',
