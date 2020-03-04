@@ -3,7 +3,6 @@
  * @fileoverview Graphics module
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
 import fabric from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';

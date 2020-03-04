@@ -36,7 +36,7 @@
     "eslint-config-tui": "^1.0.1",
     "eslint-loader": "^2.0.0",
     "file-saver": "^1.3.3",
-    "istanbul-instrumenter-loader": "^1.0.0",
+    "istanbul-instrumenter-loader": "^3.0.1",
     "jasmine-core": "^2.4.1",
     "jasmine-jquery": "^2.1.1",
     "jquery": "^3.4.0",
@@ -83,6 +83,7 @@
     "tslint": "tslint index.d.ts"
   },
   "dependencies": {
+    "core-js": "^3.6.4",
     "fabric": "3.6.0",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.0"

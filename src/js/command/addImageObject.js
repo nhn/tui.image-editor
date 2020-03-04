@@ -3,7 +3,6 @@
  * @fileoverview Add an image object
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js/library/es6/promise';
 import {commandNames} from '../consts';
 
 const command = {

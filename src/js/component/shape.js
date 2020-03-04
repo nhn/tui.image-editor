@@ -3,7 +3,6 @@
  * @fileoverview Shape component
  */
 import fabric from 'fabric';
-import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import {rejectMessages, eventNames, keyCodes as KEY_CODES, componentNames, fObjectOptions} from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';

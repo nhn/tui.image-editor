@@ -4,7 +4,6 @@
  */
 import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
-import Promise from 'core-js/library/es6/promise';
 import {commandNames, rejectMessages} from '../consts';
 
 const command = {

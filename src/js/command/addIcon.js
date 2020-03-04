@@ -3,7 +3,6 @@
  * @fileoverview Add an icon
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js/library/es6/promise';
 import {componentNames, commandNames} from '../consts';
 
 const {ICON} = componentNames;

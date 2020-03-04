@@ -3,7 +3,6 @@
  * @fileoverview Image rotation module
  */
 import fabric from 'fabric';
-import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import {componentNames} from '../consts';
 

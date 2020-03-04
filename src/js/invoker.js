@@ -3,7 +3,6 @@
  * @fileoverview Invoker - invoke commands
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
 import commandFactory from './factory/command';
 import {eventNames, rejectMessages} from './consts';
 

@@ -2,7 +2,6 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image loader
  */
-import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
 import {componentNames, rejectMessages} from '../consts';
 
