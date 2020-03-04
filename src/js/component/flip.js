@@ -5,9 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
-import consts from '../consts';
-
-const {componentNames, rejectMessages} = consts;
+import {componentNames, rejectMessages} from '../consts';
 
 /**
  * Flip
@@ -16,7 +14,7 @@ const {componentNames, rejectMessages} = consts;
  * @extends {Component}
  * @ignore
  */
-class Flip extends Component {
+export default class Flip extends Component {
     constructor(graphics) {
         super(componentNames.FLIP, graphics);
     }
@@ -145,5 +143,3 @@ class Flip extends Component {
         });
     }
 }
-
-module.exports = Flip;

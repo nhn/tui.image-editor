@@ -20,13 +20,9 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
-import consts from './consts';
-import util from './util';
+import {getProperties} from './util';
+import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
-const components = consts.componentNames;
-const events = consts.eventNames;
-
-const {drawingModes, fObjectOptions} = consts;
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
 
 const DEFAULT_CSS_MAX_WIDTH = 1000;
@@ -943,7 +939,7 @@ class Graphics {
     _callbackAfterLoadingImageObject(obj) {
         const centerPos = this.getCanvasImage().getCenterPoint();
 
-        obj.set(consts.fObjectOptions.SELECTION_STYLE);
+        obj.set(fObjectOptions.SELECTION_STYLE);
         obj.set({
             left: centerPos.x,
             top: centerPos.y,
@@ -1080,7 +1076,7 @@ class Graphics {
         obj.path.set(extend({
             left,
             top
-        }, consts.fObjectOptions.SELECTION_STYLE));
+        }, fObjectOptions.SELECTION_STYLE));
 
         const params = this.createObjectProperties(obj.path);
 
@@ -1145,7 +1141,7 @@ class Graphics {
             type: obj.type
         };
 
-        extend(props, util.getProperties(obj, predefinedKeys));
+        extend(props, getProperties(obj, predefinedKeys));
 
         if (['i-text', 'text'].indexOf(obj.type) > -1) {
             extend(props, this._createTextProperties(obj, props));
@@ -1171,7 +1167,7 @@ class Graphics {
             'fontWeight'
         ];
         const props = {};
-        extend(props, util.getProperties(obj, predefinedKeys));
+        extend(props, getProperties(obj, predefinedKeys));
 
         return props;
     }
@@ -1283,7 +1279,7 @@ class Graphics {
             clonedObject.set(snippet.extend({
                 left: addExtraPx(left, rightEdge + EXTRA_PX_FOR_PASTE > canvasWidth),
                 top: addExtraPx(top, bottomEdge + EXTRA_PX_FOR_PASTE > canvasHeight)
-            }, consts.fObjectOptions.SELECTION_STYLE));
+            }, fObjectOptions.SELECTION_STYLE));
 
             return clonedObject;
         });
@@ -1305,4 +1301,5 @@ class Graphics {
 }
 
 CustomEvents.mixin(Graphics);
-module.exports = Graphics;
+
+export default Graphics;

@@ -8,9 +8,7 @@ import fabric from 'fabric';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import Graphics from '../src/js/graphics';
-import consts from '../src/js/consts';
-
-const commands = consts.commandNames;
+import {commandNames as commands} from '../src/js/consts';
 
 describe('commandFactory', () => {
     let invoker, mockImage, canvas, graphics;

@@ -1,5 +1,5 @@
 import snippet from 'tui-code-snippet';
-import util from '../util';
+import {assignmentForDestroy} from '../util';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/flip';
 
@@ -8,7 +8,7 @@ import templateHtml from './template/submenu/flip';
  * @class
  * @ignore
  */
-class Flip extends Submenu {
+export default class Flip extends Submenu {
     constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
@@ -31,7 +31,7 @@ class Flip extends Submenu {
     destroy() {
         this._removeEvent();
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
@@ -83,5 +83,3 @@ class Flip extends Submenu {
         }
     }
 }
-
-export default Flip;

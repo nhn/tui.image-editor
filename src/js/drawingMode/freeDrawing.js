@@ -3,17 +3,14 @@
  * @fileoverview FreeDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
-import consts from '../consts';
-
-const {drawingModes} = consts;
-const components = consts.componentNames;
+import {drawingModes, componentNames as components} from '../consts';
 
 /**
  * FreeDrawingMode class
  * @class
  * @ignore
  */
-class FreeDrawingMode extends DrawingMode {
+export default class FreeDrawingMode extends DrawingMode {
     constructor() {
         super(drawingModes.FREE_DRAWING);
     }
@@ -39,5 +36,3 @@ class FreeDrawingMode extends DrawingMode {
         freeDrawing.end();
     }
 }
-
-module.exports = FreeDrawingMode;

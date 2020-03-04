@@ -10,7 +10,7 @@ import fabric from 'fabric';
  * @extends {fabric.Image.filters.BlendImage}
  * @ignore
  */
-const Mask = fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends Mask.prototype */{
+export default fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends Mask.prototype */{
     /**
      * Apply filter to canvas element
      * @param {Object} pipelineState - Canvas element to apply filter
@@ -87,5 +87,3 @@ const Mask = fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends
         }
     }
 });
-
-module.exports = Mask;

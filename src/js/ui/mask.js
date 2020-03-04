@@ -1,5 +1,5 @@
 import Submenu from './submenuBase';
-import util from '../util';
+import {assignmentForDestroy, isSupportFileApi} from '../util';
 import templateHtml from './template/submenu/mask';
 
 /**
@@ -30,7 +30,7 @@ class Mask extends Submenu {
     destroy() {
         this._removeEvent();
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
@@ -79,7 +79,7 @@ class Mask extends Submenu {
     _loadMaskFile(event) {
         let imgUrl;
 
-        if (!util.isSupportFileApi()) {
+        if (!isSupportFileApi()) {
             alert('This browser does not support file-api');
         }
 

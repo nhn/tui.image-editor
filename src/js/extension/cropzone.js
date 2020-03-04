@@ -56,7 +56,7 @@ function getScaleBasis(diffX, diffY) {
  * @extends {fabric.Rect}
  * @ignore
  */
-const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
+export default fabric.util.createClass(fabric.Rect, /** @lends Cropzone.prototype */{
     /**
      * Constructor
      * @param {Object} canvas canvas
@@ -536,4 +536,3 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
     }
 });
 
-module.exports = Cropzone;

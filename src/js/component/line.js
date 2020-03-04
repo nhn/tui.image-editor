@@ -4,9 +4,7 @@
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
-import consts from '../consts';
-
-const {eventNames} = consts;
+import {eventNames, componentNames, fObjectOptions} from '../consts';
 
 /**
  * Line
@@ -15,9 +13,9 @@ const {eventNames} = consts;
  * @extends {Component}
  * @ignore
  */
-class Line extends Component {
+export default class Line extends Component {
     constructor(graphics) {
-        super(consts.componentNames.LINE, graphics);
+        super(componentNames.LINE, graphics);
 
         /**
          * Brush width
@@ -119,7 +117,7 @@ class Line extends Component {
             evented: false
         });
 
-        this._line.set(consts.fObjectOptions.SELECTION_STYLE);
+        this._line.set(fObjectOptions.SELECTION_STYLE);
 
         canvas.add(this._line);
 
@@ -167,5 +165,3 @@ class Line extends Component {
         });
     }
 }
-
-module.exports = Line;

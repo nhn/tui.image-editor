@@ -5,10 +5,7 @@
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import Graphics from '../src/js/graphics';
-import consts from '../src/js/consts';
-
-const {drawingModes} = consts;
-const components = consts.componentNames;
+import {drawingModes, componentNames as components} from '../src/js/consts';
 
 describe('Graphics', () => {
     const cssMaxWidth = 900;

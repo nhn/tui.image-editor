@@ -34,7 +34,7 @@ function register(command) {
     commands[command.name] = command;
 }
 
-module.exports = {
+export default {
     create,
     register
 };

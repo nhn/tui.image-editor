@@ -4,9 +4,7 @@
  */
 import commandFactory from '../factory/command';
 import Promise from 'core-js/library/es6/promise';
-import consts from '../consts';
-
-const {commandNames, rejectMessages} = consts;
+import {commandNames, rejectMessages} from '../consts';
 
 const command = {
     name: commandNames.REMOVE_OBJECT,
@@ -40,4 +38,4 @@ const command = {
 
 commandFactory.register(command);
 
-module.exports = command;
+export default command;

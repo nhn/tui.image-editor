@@ -3,17 +3,14 @@
  * @fileoverview TextDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
-import consts from '../consts';
-
-const {drawingModes} = consts;
-const components = consts.componentNames;
+import {drawingModes, componentNames as components} from '../consts';
 
 /**
  * TextDrawingMode class
  * @class
  * @ignore
  */
-class TextDrawingMode extends DrawingMode {
+export default class TextDrawingMode extends DrawingMode {
     constructor() {
         super(drawingModes.TEXT);
     }
@@ -38,5 +35,3 @@ class TextDrawingMode extends DrawingMode {
         text.end();
     }
 }
-
-module.exports = TextDrawingMode;

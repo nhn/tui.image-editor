@@ -5,9 +5,7 @@
 import fabric from 'fabric';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
-import consts from '../consts';
-
-const {componentNames} = consts;
+import {componentNames} from '../consts';
 
 /**
  * Image Rotation component
@@ -16,7 +14,7 @@ const {componentNames} = consts;
  * @param {Graphics} graphics - Graphics instance
  * @ignore
  */
-class Rotation extends Component {
+export default class Rotation extends Component {
     constructor(graphics) {
         super(componentNames.ROTATION, graphics);
     }
@@ -94,5 +92,3 @@ class Rotation extends Component {
         return this.setAngle(current + additionalAngle);
     }
 }
-
-module.exports = Rotation;

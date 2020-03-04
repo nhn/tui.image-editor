@@ -6,10 +6,7 @@ import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
-import consts from '../consts';
-
-const events = consts.eventNames;
-const {rejectMessages} = consts;
+import {eventNames as events, rejectMessages, componentNames, fObjectOptions, defaultIconPath} from '../consts';
 
 const pathMap = {
     arrow: 'M 0 90 H 105 V 120 L 160 60 L 105 0 V 30 H 0 Z',
@@ -24,9 +21,9 @@ const pathMap = {
  * @extends {Component}
  * @ignore
  */
-class Icon extends Component {
+export default class Icon extends Component {
     constructor(graphics) {
-        super(consts.componentNames.ICON, graphics);
+        super(componentNames.ICON, graphics);
 
         /**
          * Default icon color
@@ -60,8 +57,8 @@ class Icon extends Component {
         return new Promise((resolve, reject) => {
             const canvas = this.getCanvas();
             const path = this._pathMap[type];
-            const selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
-            const registerdIcon = Object.keys(consts.defaultIconPath).indexOf(type) >= 0;
+            const selectionStyle = fObjectOptions.SELECTION_STYLE;
+            const registerdIcon = Object.keys(defaultIconPath).indexOf(type) >= 0;
             const useDragAddIcon = this.useDragAddIcon && registerdIcon;
             const icon = path ? this._createIcon(path) : null;
 
@@ -153,5 +150,3 @@ class Icon extends Component {
         return new fabric.Path(path);
     }
 }
-
-module.exports = Icon;

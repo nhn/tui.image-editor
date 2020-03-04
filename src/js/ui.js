@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
 import {HELP_MENUS} from './consts';
-import util from './util';
+import {getSelector, assignmentForDestroy} from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
 
@@ -45,7 +45,7 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
  *     @param {string} options.uiSize.height - height of ui
  * @param {Object} actions - ui action instance
  */
-class Ui {
+export default class Ui {
     constructor(element, options, actions) {
         this.options = this._initializeOption(options);
         this._actions = actions;
@@ -77,7 +77,7 @@ class Ui {
         this._destroyAllMenu();
         this._selectedElement.innerHTML = '';
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
@@ -247,7 +247,7 @@ class Ui {
         } else {
             selectedElement = document.querySelector(element);
         }
-        const selector = util.getSelector(selectedElement);
+        const selector = getSelector(selectedElement);
 
         selectedElement.classList.add('tui-image-editor-container');
         selectedElement.innerHTML = controls({
@@ -634,5 +634,3 @@ class Ui {
         editorElementStyle.left = `${left}px`;
     }
 }
-
-export default Ui;

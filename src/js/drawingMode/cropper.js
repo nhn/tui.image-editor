@@ -3,17 +3,14 @@
  * @fileoverview CropperDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
-import consts from '../consts';
-
-const {drawingModes} = consts;
-const components = consts.componentNames;
+import {drawingModes, componentNames as components} from '../consts';
 
 /**
  * CropperDrawingMode class
  * @class
  * @ignore
  */
-class CropperDrawingMode extends DrawingMode {
+export default class CropperDrawingMode extends DrawingMode {
     constructor() {
         super(drawingModes.CROPPER);
     }
@@ -38,5 +35,3 @@ class CropperDrawingMode extends DrawingMode {
         cropper.end();
     }
 }
-
-module.exports = CropperDrawingMode;

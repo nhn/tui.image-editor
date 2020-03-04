@@ -7,13 +7,12 @@ import Promise from 'core-js/library/es6/promise';
 import fabric from 'fabric';
 import Component from '../interface/component';
 import Mask from '../extension/mask';
-import consts from '../consts';
+import {rejectMessages, componentNames} from '../consts';
 import Blur from '../extension/blur';
 import Sharpen from '../extension/sharpen';
 import Emboss from '../extension/emboss';
 import ColorFilter from '../extension/colorFilter';
 
-const {rejectMessages} = consts;
 const {filters} = fabric.Image;
 filters.Mask = Mask;
 filters.Blur = Blur;
@@ -28,9 +27,9 @@ filters.ColorFilter = ColorFilter;
  * @extends {Component}
  * @ignore
  */
-class Filter extends Component {
+export default class Filter extends Component {
     constructor(graphics) {
-        super(consts.componentNames.FILTER, graphics);
+        super(componentNames.FILTER, graphics);
     }
 
     /**
@@ -230,5 +229,3 @@ class Filter extends Component {
         return type.charAt(0).toUpperCase() + type.slice(1);
     }
 }
-
-module.exports = Filter;

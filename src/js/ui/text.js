@@ -1,4 +1,4 @@
-import util from '../util';
+import {assignmentForDestroy} from '../util';
 import Range from './tools/range';
 import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
@@ -10,7 +10,7 @@ import {defaultTextRangeValus} from '../consts';
  * @class
  * @ignore
  */
-class Text extends Submenu {
+export default class Text extends Submenu {
     constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
@@ -47,7 +47,7 @@ class Text extends Submenu {
         this._els.textColorpicker.destroy();
         this._els.textRange.destroy();
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
@@ -240,5 +240,3 @@ class Text extends Submenu {
         });
     }
 }
-
-export default Text;

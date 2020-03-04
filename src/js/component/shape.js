@@ -5,12 +5,9 @@
 import fabric from 'fabric';
 import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
-import consts from '../consts';
+import {rejectMessages, eventNames, keyCodes as KEY_CODES, componentNames, fObjectOptions} from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
 import {extend, inArray} from 'tui-code-snippet';
-
-const {rejectMessages, eventNames} = consts;
-const KEY_CODES = consts.keyCodes;
 
 const DEFAULT_TYPE = 'rect';
 const DEFAULT_WIDTH = 20;
@@ -40,9 +37,9 @@ const shapeType = ['rect', 'circle', 'triangle'];
  * @extends {Component}
  * @ignore
  */
-class Shape extends Component {
+export default class Shape extends Component {
     constructor(graphics) {
-        super(consts.componentNames.SHAPE, graphics);
+        super(componentNames.SHAPE, graphics);
 
         /**
          * Object of The drawing shape
@@ -257,7 +254,7 @@ class Shape extends Component {
      * @private
      */
     _extendOptions(options) {
-        const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
+        const selectionStyles = fObjectOptions.SELECTION_STYLE;
 
         options = extend({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
 
@@ -426,5 +423,3 @@ class Shape extends Component {
         }
     }
 }
-
-module.exports = Shape;

@@ -23,4 +23,4 @@ import './js/command/rotate';
 import './js/command/setObjectProperties';
 import './js/command/setObjectPosition';
 
-module.exports = ImageEditor;
+export default ImageEditor;

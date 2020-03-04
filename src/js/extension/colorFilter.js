@@ -10,7 +10,7 @@ import fabric from 'fabric';
  * @extends {fabric.Image.filters.BaseFilter}
  * @ignore
  */
-const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /** @lends BaseFilter.prototype */{
+export default fabric.util.createClass(fabric.Image.filters.BaseFilter, /** @lends BaseFilter.prototype */{
     /**
      * Filter type
      * @param {String} type
@@ -98,5 +98,3 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
         return color;
     }
 });
-
-module.exports = ColorFilter;

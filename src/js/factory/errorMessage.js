@@ -22,7 +22,7 @@ const map = {
     }
 };
 
-module.exports = {
+export default {
     types: snippet.extend({}, types),
 
     create(type, ...args) {

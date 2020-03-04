@@ -7,9 +7,9 @@ import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import ImageEditor from '../src/js/imageEditor';
 import fabric from 'fabric';
-import consts from '../src/js/consts';
+import {eventNames, keyCodes} from '../src/js/consts';
 
-const {OBJECT_ROTATED} = consts.eventNames;
+const {OBJECT_ROTATED} = eventNames;
 
 describe('ImageEditor', () => {
     // hostnameSent module scope variable can not be reset.
@@ -50,7 +50,7 @@ describe('ImageEditor', () => {
             spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(null);
 
             imageEditor._onKeyDown({
-                keyCode: consts.keyCodes.BACKSPACE,
+                keyCode: keyCodes.BACKSPACE,
                 preventDefault: spyCallback
             });
 
