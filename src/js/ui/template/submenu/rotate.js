@@ -1,21 +1,21 @@
 /**
  * @param {Object} submenuInfo - submenu info for make template
  *   @param {Locale} locale - Translate text
- *   @param {Function} svgIconMaker - svg icon generator
+ *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, svgIconMaker}) => (`
+export default ({locale, makeSvgIcon}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-retate-button">
             <div class="tui-image-editor-button clockwise">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'rotate-clockwise', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'rotate-clockwise', true)}
                 </div>
                 <label> 30 </label>
             </div>
             <div class="tui-image-editor-button counterclockwise">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'rotate-counterclockwise', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'rotate-counterclockwise', true)}
                 </div>
                 <label> -30 </label>
             </div>

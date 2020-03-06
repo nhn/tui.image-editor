@@ -9,11 +9,11 @@ import templateHtml from './template/submenu/crop';
  * @ignore
  */
 class Crop extends Submenu {
-    constructor(subMenuElement, {locale, svgIconMaker, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'crop',
-            svgIconMaker,
+            makeSvgIcon,
             menuBarPosition,
             templateHtml,
             usageStatistics

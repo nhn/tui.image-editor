@@ -200,4 +200,37 @@ describe('Graphics', () => {
     it('has the filter', () => {
         expect(graphics.hasFilter('Grayscale')).toBe(false);
     });
+
+    describe('pasteObject()', () => {
+        let targetObject1, targetObject2;
+
+        beforeEach(() => {
+            targetObject1 = new fabric.Object({});
+            targetObject2 = new fabric.Object({});
+
+            canvas.add(targetObject1);
+            canvas.add(targetObject2);
+        });
+
+        it('Group objects must be duplicated as many as the number of objects in the group.', done => {
+            const groupObject = graphics.getActiveSelectionFromObjects(canvas.getObjects());
+            graphics.setActiveObject(groupObject);
+            graphics.resetTargetObjectForCopyPaste();
+
+            graphics.pasteObject().then(() => {
+                expect(canvas.getObjects().length).toBe(4);
+                done();
+            });
+        });
+
+        it('Only one object should be duplicated.', done => {
+            graphics.setActiveObject(targetObject1);
+            graphics.resetTargetObjectForCopyPaste();
+
+            graphics.pasteObject().then(() => {
+                expect(canvas.getObjects().length).toBe(3);
+                done();
+            });
+        });
+    });
 });

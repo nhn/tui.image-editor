@@ -15,7 +15,7 @@ class Theme {
         this.styles = this._changeToObject(extend({}, standardTheme, customTheme));
         styleLoad(this._styleMaker());
 
-        this._defaultSvgIconLoad();
+        this._loadDefaultSvgIcon();
     }
 
     /**
@@ -165,7 +165,7 @@ class Theme {
      * Load defulat svg icon 
      * @private
      */
-    _defaultSvgIconLoad() {
+    _loadDefaultSvgIcon() {
         if (!document.getElementById('tui-image-editor-svg-default-icons')) {
             const parser = new DOMParser();
             const dom = parser.parseFromString(icon, 'text/xml');

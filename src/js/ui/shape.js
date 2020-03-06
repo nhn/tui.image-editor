@@ -17,11 +17,11 @@ const SHAPE_DEFAULT_OPTION = {
  * @ignore
  */
 class Shape extends Submenu {
-    constructor(subMenuElement, {locale, svgIconMaker, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'shape',
-            svgIconMaker,
+            makeSvgIcon,
             menuBarPosition,
             templateHtml,
             usageStatistics
@@ -98,13 +98,13 @@ class Shape extends Submenu {
      */
     setShapeStatus({strokeWidth, strokeColor, fillColor}) {
         this._els.strokeRange.value = strokeWidth;
-        this._els.strokeRange.trigger('change');
-
         this._els.strokeColorpicker.color = strokeColor;
         this._els.fillColorpicker.color = fillColor;
         this.options.stroke = strokeColor;
         this.options.fill = fillColor;
         this.options.strokeWidth = strokeWidth;
+
+        this.actions.setDrawingShape(this.type, {strokeWidth});
     }
 
     /**

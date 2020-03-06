@@ -1,51 +1,51 @@
 /**
  * @param {Object} submenuInfo - submenu info for make template
  *   @param {Locale} locale - Translate text
- *   @param {Function} svgIconMaker - svg icon generator
+ *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, svgIconMaker}) => (`
+export default ({locale, makeSvgIcon}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-crop-preset-button">
             <div class="tui-image-editor-button preset preset-none active">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'shape-rectangle', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'shape-rectangle', true)}
                 </div>
                 <label> ${locale.localize('Custom')} </label>
             </div>
             <div class="tui-image-editor-button preset preset-square">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'crop', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
                 </div>
                 <label> ${locale.localize('Square')} </label>
             </div>
             <div class="tui-image-editor-button preset preset-3-2">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'crop', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
                 </div>
                 <label> ${locale.localize('3:2')} </label>
             </div>
             <div class="tui-image-editor-button preset preset-4-3">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'crop', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
                 </div>
                 <label> ${locale.localize('4:3')} </label>
             </div>
             <div class="tui-image-editor-button preset preset-5-4">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'crop', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
                 </div>
                 <label> ${locale.localize('5:4')} </label>
             </div>
             <div class="tui-image-editor-button preset preset-7-5">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'crop', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
                 </div>
                 <label> ${locale.localize('7:5')} </label>
             </div>
             <div class="tui-image-editor-button preset preset-16-9">
                 <div>
-                    ${svgIconMaker(['normal', 'active'], 'crop', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
                 </div>
                 <label> ${locale.localize('16:9')} </label>
             </div>
@@ -57,13 +57,13 @@ export default ({locale, svgIconMaker}) => (`
         </li>
         <li class="tie-crop-button action">
             <div class="tui-image-editor-button apply">
-                ${svgIconMaker(['normal', 'active'], 'apply')}
+                ${makeSvgIcon(['normal', 'active'], 'apply')}
                 <label>
                     ${locale.localize('Apply')}
                 </label>
             </div>
             <div class="tui-image-editor-button cancel">
-                ${svgIconMaker(['normal', 'active'], 'cancel')}
+                ${makeSvgIcon(['normal', 'active'], 'cancel')}
                 <label>
                     ${locale.localize('Cancel')}
                 </label>
