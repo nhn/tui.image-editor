@@ -321,8 +321,8 @@ class Ui {
     _makeMenuPartitionElement() {
         const partitionElement = document.createElement('li');
         const partitionInnerElement = document.createElement('div');
-        partitionElement.className = 'tui-image-editor-item';
-        partitionInnerElement.className = 'tui-image-editor-icpartition';
+        partitionElement.className = util.cls('item');
+        partitionInnerElement.className = util.cls('icpartition');
         partitionElement.appendChild(partitionInnerElement);
 
         this._menuElement.appendChild(partitionElement);
@@ -340,7 +340,8 @@ class Ui {
         const menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
 
         this._addTooltipAttribute(btnElement, menuName);
-        btnElement.className = `tie-btn-${menuName} tui-image-editor-item ${menuType}`;
+
+        btnElement.className = `tie-btn-${menuName} ${util.cls('item')} ${menuType}`;
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -517,7 +518,8 @@ class Ui {
         this._addLoadEvent();
 
         const gridVisual = document.createElement('div');
-        gridVisual.className = 'tui-image-editor-grid-visual';
+
+        gridVisual.className = util.cls('grid-visual');
         const grid = `<table>
            <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>
            <tr><td></td><td></td><td></td></tr>
