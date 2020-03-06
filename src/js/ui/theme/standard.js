@@ -96,29 +96,22 @@
     'downloadButton.fontFamily': 'NotoSans, sans-serif',
     'downloadButton.fontSize': '12px',
 
-    // main icons
-    'menu.normalIcon.path': '../dist/svg/icon-d.svg',
-    'menu.normalIcon.name': 'icon-d',
-    'menu.activeIcon.path': '../dist/svg/icon-b.svg',
-    'menu.activeIcon.name': 'icon-b',
-    'menu.disabledIcon.path': '../dist/svg/icon-a.svg',
-    'menu.disabledIcon.name': 'icon-a',
-    'menu.hoverIcon.path': '../dist/svg/icon-c.svg',
-    'menu.hoverIcon.name': 'icon-c',
+    // icons default
+    'menu.normalIcon.color': '#8a8a8a',
+    'menu.activeIcon.color': '#555555',
+    'menu.disabledIcon.color': '#434343',
+    'menu.hoverIcon.color': '#e9e9e9',
+    'submenu.normalIcon.color': '#8a8a8a',
+    'submenu.activeIcon.color': '#e9e9e9',
+
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
+    'submenu.iconSize.width': '32px',
+    'submenu.iconSize.height': '32px',
 
     // submenu primary color
     'submenu.backgroundColor': '#1e1e1e',
     'submenu.partition.color': '#858585',
-
-    // submenu icons
-    'submenu.normalIcon.path': '../dist/svg/icon-a.svg',
-    'submenu.normalIcon.name': 'icon-a',
-    'submenu.activeIcon.path': '../dist/svg/icon-c.svg',
-    'submenu.activeIcon.name': 'icon-c',
-    'submenu.iconSize.width': '32px',
-    'submenu.iconSize.height': '32px',
 
     // submenu labels
     'submenu.normalLabel.color': '#858585',
@@ -181,16 +174,17 @@ export default {
 
     // main icons
     'menu.normalIcon.color': '#8a8a8a',
-    // 'menu.normalIcon.path': '#8a8a8a',
     'menu.activeIcon.color': '#555555',
     'menu.disabledIcon.color': '#434343',
     'menu.hoverIcon.color': '#e9e9e9',
-    'menu.iconSize.width': '24px',
-    'menu.iconSize.height': '24px',
 
     // submenu icons
     'submenu.normalIcon.color': '#8a8a8a',
     'submenu.activeIcon.color': '#e9e9e9',
+
+    'menu.iconSize.width': '24px',
+    'menu.iconSize.height': '24px',
+
     'submenu.iconSize.width': '32px',
     'submenu.iconSize.height': '32px',
 

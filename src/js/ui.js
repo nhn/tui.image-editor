@@ -340,7 +340,6 @@ class Ui {
         const menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
 
         this._addTooltipAttribute(btnElement, menuName);
-
         btnElement.className = `tie-btn-${menuName} ${util.cls('item')} ${menuType}`;
         btnElement.innerHTML = menuItemHtml;
 
