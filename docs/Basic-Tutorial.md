@@ -39,15 +39,15 @@ imageEditor.loadImageFromURL('img/sampleImage.jpg', 'My sample image')
 
 <br>
 
-### 4. Menu, Submenu svg icon setting
+### 4. Menu, Submenu SVG icon setting
 
-In the image below, the red and blue areas are set using the svg icon.
+In the image below, the red and blue areas are set using the SVG icon.
 
 ![svgIcon](https://user-images.githubusercontent.com/35218826/75416627-1ca5e780-5972-11ea-9a55-b179686536de.png)
 
 #### Two ways to set the icon
 
-1. **Use default svg built** into imageEditor without setting svg file path (Features added since version v3.9.0).
+1. **Use default SVG built** into imageEditor without setting SVG file path (Features added since version v3.9.0).
     * This is the default setting for Image Editor.
     * It's easy to change the color to match the icon state as shown below, but it uses the built-in default shape so you can't change the icon's appearance.
         ```js
@@ -66,9 +66,9 @@ In the image below, the red and blue areas are set using the svg icon.
         });
         ```
 
-2. There is a way to use the **your svg file** and **set the file location manually**.
-    * This is used when you want to completely reconfigure the svg icon itself rather than the built-in icon.
-    * The disadvantage is that the color must be set by modifying the svg file directly.
+2. There is a way to use the **your SVG file** and **set the file location manually**.
+    * This is used when you want to completely reconfigure the SVG icon itself rather than the built-in icon.
+    * The disadvantage is that the color must be set by modifying the SVG file directly.
     * Need to set the path and name for each icon state as shown below.
         ```js
         const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
@@ -91,7 +91,7 @@ In the image below, the red and blue areas are set using the svg icon.
                  ...
         });
         ```
-    * How to get svg file sample
+    * How to get SVG file sample
         * In the project folder where `tui-image-editor` is installed, the file is in the path described below
         ```bash
         // or use cdn (https://uicdn.toast.com/tui-image-editor/latest/svg/icon-a.svg)
