@@ -4,6 +4,7 @@
  */
 import {forEach, sendHostname} from 'tui-code-snippet';
 const FLOATING_POINT_DIGIT = 2;
+const CSS_PREFIX = 'tui-image-editor-';
 const {min, max} = Math;
 let hostnameSent = false;
 
@@ -204,4 +205,18 @@ export function assignmentForDestroy(targetObject) {
     forEach(targetObject, (value, key) => {
         targetObject[key] = null;
     });
+}
+
+/**
+ * Make class name for ui
+ * @param {String} str  - main string of className
+ * @param {String} prefix - prefix string of className
+ * @returns {String} class name
+ */
+export function cls(str = '', prefix = '') {
+    if (str.charAt(0) === '.') {
+        return `.${CSS_PREFIX}${prefix}${str.slice(1)}`;
+    }
+
+    return `${CSS_PREFIX}${prefix}${str}`;
 }

@@ -69,11 +69,10 @@ const COLORPICKER_INSTANCE_NAMES = [
  * @ignore
  */
 export default class Filter extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'filter',
-            iconStyle,
             menuBarPosition,
             templateHtml,
             usageStatistics

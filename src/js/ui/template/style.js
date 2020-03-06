@@ -16,7 +16,9 @@ export default ({
     submenuDisabledRangeSubbar,
     submenuIconSize,
     menuIconSize,
-    biSize
+    biSize,
+    menuIconStyle,
+    submenuIconStyle
 }) => (`
     .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] label,
     .tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] label,
@@ -105,5 +107,34 @@ export default ({
     .tui-image-editor-container .tui-image-editor-header-logo > img {
         ${biSize}
     }
-
+    .tui-image-editor-menu use.normal.use-default {
+        fill-rule: evenodd;
+        fill: ${menuIconStyle.normal.color};
+        stroke: ${menuIconStyle.normal.color};
+    }
+    .tui-image-editor-menu use.active.use-default {
+        fill-rule: evenodd;
+        fill: ${menuIconStyle.active.color};
+        stroke: ${menuIconStyle.active.color};
+    }
+    .tui-image-editor-menu use.hover.use-default {
+        fill-rule: evenodd;
+        fill: ${menuIconStyle.hover.color};
+        stroke: ${menuIconStyle.hover.color};
+    }
+    .tui-image-editor-menu use.disabled.use-default {
+        fill-rule: evenodd;
+        fill: ${menuIconStyle.disabled.color};
+        stroke: ${menuIconStyle.disabled.color};
+    }
+    .tui-image-editor-submenu use.normal.use-default {
+        fill-rule: evenodd;
+        fill: ${submenuIconStyle.normal.color};
+        stroke: ${submenuIconStyle.normal.color};
+    }
+    .tui-image-editor-submenu use.active.use-default {
+        fill-rule: evenodd;
+        fill: ${submenuIconStyle.active.color};
+        stroke: ${submenuIconStyle.active.color};
+    }
 `);

@@ -158,6 +158,9 @@ module.exports = function(config) {
                     }, {
                         test: /\.styl$/,
                         use: ['css-loader', 'stylus-loader']
+                    }, {
+                        test: /\.svg$/,
+                        loader: 'svg-inline-loader'
                     }
                 ]
             }
