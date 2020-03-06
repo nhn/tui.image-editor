@@ -25,16 +25,26 @@
  * @property {string} downloadButton.color - download button foreground color
  * @property {string} downloadButton.fontFamily - download button font type
  * @property {string} downloadButton.fontSize - download button font size
- * @property {string} menu.normalIcon.path - Menu default icon svg bundle file path
- * @property {string} menu.normalIcon.name - Menu default icon svg bundle name
+ * @property {string} menu.normalIcon.color - Menu normal color for default icon
+ * @property {string} menu.normalIcon.path - Menu normal icon svg bundle file path
+ * @property {string} menu.normalIcon.name - Menu normal icon svg bundle name
+ * @property {string} menu.activeIcon.color - Menu active color for default icon
  * @property {string} menu.activeIcon.path - Menu active icon svg bundle file path
  * @property {string} menu.activeIcon.name - Menu active icon svg bundle name
+ * @property {string} menu.disabled.color - Menu disabled color for default icon
+ * @property {string} menu.disabled.path - Menu disabled icon svg bundle file path
+ * @property {string} menu.disabled.name - Menu disabled icon svg bundle name
+ * @property {string} menu.hover.color - Menu default icon hover color
+ * @property {string} menu.hover.path - Menu hover icon svg bundle file path
+ * @property {string} menu.hover.name - Menu hover icon svg bundle name
  * @property {string} menu.iconSize.width - Menu icon Size Width
  * @property {string} menu.iconSize.height - Menu Icon Size Height
  * @property {string} submenu.backgroundColor - Sub-menu area background color
  * @property {string} submenu.partition.color - Submenu partition line color
+ * @property {string} submenu.normalIcon.color - Submenu normal color for default icon
  * @property {string} submenu.normalIcon.path - Submenu default icon svg bundle file path
  * @property {string} submenu.normalIcon.name - Submenu default icon svg bundle name
+ * @property {string} submenu.activeIcon.color - Submenu active color for default icon
  * @property {string} submenu.activeIcon.path - Submenu active icon svg bundle file path
  * @property {string} submenu.activeIcon.name - Submenu active icon svg bundle name
  * @property {string} submenu.iconSize.width - Submenu icon Size Width
@@ -170,28 +180,23 @@ export default {
     'downloadButton.fontSize': '12px',
 
     // main icons
-    'menu.normalIcon.path': 'icon-d.svg',
-    'menu.normalIcon.name': 'icon-d',
-    'menu.activeIcon.path': 'icon-b.svg',
-    'menu.activeIcon.name': 'icon-b',
-    'menu.disabledIcon.path': 'icon-a.svg',
-    'menu.disabledIcon.name': 'icon-a',
-    'menu.hoverIcon.path': 'icon-c.svg',
-    'menu.hoverIcon.name': 'icon-c',
+    'menu.normalIcon.color': '#8a8a8a',
+    // 'menu.normalIcon.path': '#8a8a8a',
+    'menu.activeIcon.color': '#555555',
+    'menu.disabledIcon.color': '#434343',
+    'menu.hoverIcon.color': '#e9e9e9',
     'menu.iconSize.width': '24px',
     'menu.iconSize.height': '24px',
+
+    // submenu icons
+    'submenu.normalIcon.color': '#8a8a8a',
+    'submenu.activeIcon.color': '#e9e9e9',
+    'submenu.iconSize.width': '32px',
+    'submenu.iconSize.height': '32px',
 
     // submenu primary color
     'submenu.backgroundColor': '#1e1e1e',
     'submenu.partition.color': '#3c3c3c',
-
-    // submenu icons
-    'submenu.normalIcon.path': 'icon-d.svg',
-    'submenu.normalIcon.name': 'icon-d',
-    'submenu.activeIcon.path': 'icon-c.svg',
-    'submenu.activeIcon.name': 'icon-c',
-    'submenu.iconSize.width': '32px',
-    'submenu.iconSize.height': '32px',
 
     // submenu labels
     'submenu.normalLabel.color': '#8a8a8a',

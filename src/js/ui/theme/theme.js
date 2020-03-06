@@ -1,7 +1,8 @@
-import {extend, forEach} from 'tui-code-snippet';
+import {extend, forEach, map} from 'tui-code-snippet';
 import {styleLoad} from '../../util';
 import style from '../template/style';
 import standardTheme from './standard';
+import icon from '../template/icon.svg';
 
 /**
  * Theme manager
@@ -11,8 +12,10 @@ import standardTheme from './standard';
  */
 class Theme {
     constructor(customTheme) {
-        this.styles = this._changeToObject(extend(standardTheme, customTheme));
+        this.styles = this._changeToObject(extend({}, standardTheme, customTheme));
         styleLoad(this._styleMaker());
+
+        this._loadDefaultSvgIcon();
     }
 
     /**
@@ -29,12 +32,17 @@ class Theme {
                 result = this.styles[type].image;
                 break;
             case 'menu.icon':
-            case 'submenu.icon':
                 result = {
                     active: this.styles[`${firstProperty}.activeIcon`],
                     normal: this.styles[`${firstProperty}.normalIcon`],
                     hover: this.styles[`${firstProperty}.hoverIcon`],
                     disabled: this.styles[`${firstProperty}.disabledIcon`]
+                };
+                break;
+            case 'submenu.icon':
+                result = {
+                    active: this.styles[`${firstProperty}.activeIcon`],
+                    normal: this.styles[`${firstProperty}.normalIcon`]
                 };
                 break;
             case 'submenu.label':
@@ -96,7 +104,9 @@ class Theme {
             submenuColorpickerButton: this.getStyle('colorpicker.button'),
             submenuCheckbox: this.getStyle('checkbox'),
             menuIconSize: this.getStyle('menu.iconSize'),
-            submenuIconSize: this.getStyle('submenu.iconSize')
+            submenuIconSize: this.getStyle('submenu.iconSize'),
+            menuIconStyle: this.getStyle('menu.icon'),
+            submenuIconStyle: this.getStyle('submenu.icon')
         });
     }
 
@@ -149,6 +159,76 @@ class Theme {
      */
     _toUnderScore(targetString) {
         return targetString.replace(/([A-Z])/g, ($0, $1) => `-${$1.toLowerCase()}`);
+    }
+
+    /**
+     * Load defulat svg icon 
+     * @private
+     */
+    _loadDefaultSvgIcon() {
+        if (!document.getElementById('tui-image-editor-svg-default-icons')) {
+            const parser = new DOMParser();
+            const dom = parser.parseFromString(icon, 'text/xml');
+
+            document.body.appendChild(dom.documentElement);
+        }
+    }
+
+    /**
+     * Make className for svg icon
+     * @param {string} iconType - normal' or 'active' or 'hover' or 'disabled
+     * @param {boolean} isSubmenu - submenu icon or not.
+     * @returns {string}
+     * @private
+     */
+    _makeIconClassName(iconType, isSubmenu) {
+        const iconStyleInfo = isSubmenu ? this.getStyle('submenu.icon') : this.getStyle('menu.icon');
+        const {path, name} = iconStyleInfo[iconType];
+
+        return path && name ? iconType : `${iconType} use-default`;
+    }
+
+    /**
+     * Make svg use link path name
+     * @param {string} iconType - normal' or 'active' or 'hover' or 'disabled
+     * @param {boolean} isSubmenu - submenu icon or not.
+     * @returns {string}
+     * @private
+     */
+    _makeSvgIconPrefix(iconType, isSubmenu) {
+        const iconStyleInfo = isSubmenu ? this.getStyle('submenu.icon') : this.getStyle('menu.icon');
+        const {path, name} = iconStyleInfo[iconType];
+
+        return path && name ? `${path}#${name}-` : '#';
+    }
+
+    /**
+     * Make svg use link path name
+     * @param {Array.<string>} useIconTypes - normal' or 'active' or 'hover' or 'disabled
+     * @param {string} menuName - menu name
+     * @param {boolean} isSubmenu - submenu icon or not.
+     * @returns {string}
+     * @private
+     */
+    _makeSvgItem(useIconTypes, menuName, isSubmenu) {
+        return map(useIconTypes, iconType => {
+            const svgIconPrefix = this._makeSvgIconPrefix(iconType, isSubmenu);
+            const iconName = this._toUnderScore(menuName);
+            const svgIconClassName = this._makeIconClassName(iconType, isSubmenu);
+
+            return `<use xlink:href="${svgIconPrefix}ic-${iconName}" class="${svgIconClassName}"/>`;
+        }).join('');
+    }
+
+    /**
+     * Make svg icon set
+     * @param {Array.<string>} useIconTypes - normal' or 'active' or 'hover' or 'disabled
+     * @param {string} menuName - menu name
+     * @param {boolean} isSubmenu - submenu icon or not.
+     * @returns {string}
+     */
+    makeMenSvgIconSet(useIconTypes, menuName, isSubmenu = false) {
+        return `<svg class="svg_ic-${isSubmenu ? 'submenu' : 'menu'}">${this._makeSvgItem(useIconTypes, menuName, isSubmenu)}</svg>`;
     }
 }
 
