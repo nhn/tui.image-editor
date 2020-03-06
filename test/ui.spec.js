@@ -141,7 +141,7 @@ describe('UI', () => {
     describe('_setEditorPosition()', () => {
         beforeEach(() => {
             ui._editorElement = document.createElement('div');
-            spyOn(ui, '_getEditorDimension').and.returnValue({
+            spyOn(ui, '_getCanvasMaxDimension').and.returnValue({
                 width: 300,
                 height: 300
             });
