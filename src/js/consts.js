@@ -28,6 +28,31 @@ export const componentNames = keyMirror(
 );
 
 /**
+ * Shape default option
+ * @type {Object}
+ */
+export const SHAPE_DEFAULT_OPTIONS = {
+    lockSkewingX: true,
+    lockSkewingY: true,
+    lockUniScaling: false,
+    bringForward: true,
+    isRegular: false
+};
+
+/**
+ * Cropzone default option
+ * @type {Object}
+ */
+export const CROPZONE_DEFAULT_OPTIONS = {
+    hasRotatingPoint: false,
+    hasBorders: false,
+    lockScalingFlip: true,
+    lockRotation: true,
+    lockSkewingX: true,
+    lockSkewingY: true
+};
+
+/**
  * Command names
  * @type {Object.<string, string>}
  */

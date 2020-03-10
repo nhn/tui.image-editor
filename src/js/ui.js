@@ -131,7 +131,7 @@ export default class Ui {
             this._setUiSize(uiSize);
         }
 
-        const {width, height} = this._getEditorDimension();
+        const {width, height} = this._getCanvasMaxDimension();
         const editorElementStyle = this._editorElement.style;
         const {menuBarPosition} = this.options;
 
@@ -600,16 +600,14 @@ export default class Ui {
     }
 
     /**
-     * Get editor dimension
+     * Get canvas max Dimension
      * @returns {Object} - width & height of editor
      * @private
      */
-    _getEditorDimension() {
-        const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
-        const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;
-
-        const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
-        const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
+    _getCanvasMaxDimension() {
+        const {maxWidth, maxHeight} = this._editorContainerElement.style;
+        const width = parseFloat(maxWidth);
+        const height = parseFloat(maxHeight);
 
         return {
             width,
@@ -623,7 +621,7 @@ export default class Ui {
      * @private
      */
     _setEditorPosition(menuBarPosition) { // eslint-disable-line complexity
-        const {width, height} = this._getEditorDimension();
+        const {width, height} = this._getCanvasMaxDimension();
         const editorElementStyle = this._editorElement.style;
         let top = 0;
         let left = 0;

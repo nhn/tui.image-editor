@@ -6,7 +6,7 @@ import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import Component from '../interface/component';
 import Cropzone from '../extension/cropzone';
-import {keyCodes, componentNames} from '../consts';
+import {keyCodes, componentNames, CROPZONE_DEFAULT_OPTIONS} from '../consts';
 import {clamp, fixFloatingPoint} from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
@@ -84,7 +84,7 @@ export default class Cropper extends Component {
             obj.evented = false;
         });
 
-        this._cropzone = new Cropzone(canvas, {
+        this._cropzone = new Cropzone(canvas, snippet.extend({
             left: 0,
             top: 0,
             width: 0.5,
@@ -92,12 +92,8 @@ export default class Cropper extends Component {
             strokeWidth: 0, // {@link https://github.com/kangax/fabric.js/issues/2860}
             cornerSize: 10,
             cornerColor: 'black',
-            fill: 'transparent',
-            hasRotatingPoint: false,
-            hasBorders: false,
-            lockScalingFlip: true,
-            lockRotation: true
-        }, this.graphics.cropSelectionStyle);
+            fill: 'transparent'
+        }, CROPZONE_DEFAULT_OPTIONS, this.graphics.cropSelectionStyle));
 
         canvas.discardActiveObject();
         canvas.add(this._cropzone);

@@ -23,7 +23,6 @@ import {getProperties} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
-
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
 const EXTRA_PX_FOR_PASTE = 10;
