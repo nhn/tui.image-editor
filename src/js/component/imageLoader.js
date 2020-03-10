@@ -2,6 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image loader
  */
+import Promise from 'core-js-pure/features/promise';
 import Component from '../interface/component';
 import {componentNames, rejectMessages} from '../consts';
 
@@ -17,7 +18,7 @@ const imageOption = {
  * @param {Graphics} graphics - Graphics instance
  * @ignore
  */
-export default class ImageLoader extends Component {
+class ImageLoader extends Component {
     constructor(graphics) {
         super(componentNames.IMAGE_LOADER, graphics);
     }
@@ -80,3 +81,4 @@ export default class ImageLoader extends Component {
     }
 }
 
+export default ImageLoader;

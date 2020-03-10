@@ -7,7 +7,7 @@ import fabric from 'fabric';
 import $ from 'jquery';
 import Cropper from '../src/js/component/cropper';
 import Graphics from '../src/js/graphics';
-import {eventNames} from '../src/js/consts';
+import {eventNames, CROPZONE_DEFAULT_OPTIONS} from '../src/js/consts';
 
 describe('Cropper', () => {
     let cropper, graphics, canvas;
@@ -26,8 +26,6 @@ describe('Cropper', () => {
         });
 
         it('should be applied predefined default options When creating a cropzone', () => {
-            const {CROPZONE_DEFAULT_OPTIONS} = consts;
-
             cropper.start();
             const cropzone = cropper._cropzone;
 

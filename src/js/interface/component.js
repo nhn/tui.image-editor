@@ -10,7 +10,7 @@
  * @param {Graphics} graphics - Graphics instance
  * @ignore
  */
-export default class Component {
+class Component {
     constructor(name, graphics) {
         /**
          * Component name
@@ -124,3 +124,5 @@ export default class Component {
         this.graphics.adjustCanvasDimension();
     }
 }
+
+export default Component;

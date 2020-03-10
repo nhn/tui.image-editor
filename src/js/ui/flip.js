@@ -8,7 +8,7 @@ import templateHtml from './template/submenu/flip';
  * @class
  * @ignore
  */
-export default class Flip extends Submenu {
+class Flip extends Submenu {
     constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
@@ -83,3 +83,5 @@ export default class Flip extends Submenu {
         }
     }
 }
+
+export default Flip;

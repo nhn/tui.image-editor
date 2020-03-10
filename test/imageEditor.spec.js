@@ -4,6 +4,7 @@
  */
 
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 import ImageEditor from '../src/js/imageEditor';
 import fabric from 'fabric';
 import {eventNames, keyCodes} from '../src/js/consts';

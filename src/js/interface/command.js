@@ -16,7 +16,7 @@ const errorTypes = errorMessage.types;
  * @param {Array} args - passing arguments on execute, undo
  * @ignore
  */
-export default class Command {
+class Command {
     constructor(actions, args) {
         /**
          * command name
@@ -131,3 +131,5 @@ export default class Command {
         return this;
     }
 }
+
+export default Command;

@@ -68,7 +68,7 @@ const COLORPICKER_INSTANCE_NAMES = [
  * @class
  * @ignore
  */
-export default class Filter extends Submenu {
+class Filter extends Submenu {
     constructor(subMenuElement, {locale, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
@@ -452,3 +452,5 @@ export default class Filter extends Submenu {
         });
     }
 }
+
+export default Filter;

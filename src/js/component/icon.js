@@ -4,6 +4,7 @@
  */
 import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 import Component from '../interface/component';
 import {eventNames as events, rejectMessages, componentNames, fObjectOptions, defaultIconPath} from '../consts';
 
@@ -20,7 +21,7 @@ const pathMap = {
  * @extends {Component}
  * @ignore
  */
-export default class Icon extends Component {
+class Icon extends Component {
     constructor(graphics) {
         super(componentNames.ICON, graphics);
 
@@ -149,3 +150,5 @@ export default class Icon extends Component {
         return new fabric.Path(path);
     }
 }
+
+export default Icon;

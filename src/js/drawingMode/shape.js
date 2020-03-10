@@ -10,7 +10,7 @@ import {drawingModes, componentNames as components} from '../consts';
  * @class
  * @ignore
  */
-export default class ShapeDrawingMode extends DrawingMode {
+class ShapeDrawingMode extends DrawingMode {
     constructor() {
         super(drawingModes.SHAPE);
     }
@@ -35,3 +35,5 @@ export default class ShapeDrawingMode extends DrawingMode {
         shape.end();
     }
 }
+
+export default ShapeDrawingMode;

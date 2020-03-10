@@ -45,7 +45,7 @@ const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
  *     @param {string} options.uiSize.height - height of ui
  * @param {Object} actions - ui action instance
  */
-export default class Ui {
+class Ui {
     constructor(element, options, actions) {
         this.options = this._initializeOption(options);
         this._actions = actions;
@@ -657,3 +657,5 @@ export default class Ui {
         editorElementStyle.left = `${left}px`;
     }
 }
+
+export default Ui;

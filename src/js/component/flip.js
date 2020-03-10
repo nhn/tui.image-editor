@@ -3,6 +3,7 @@
  * @fileoverview Image flip module
  */
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 import Component from '../interface/component';
 import {componentNames, rejectMessages} from '../consts';
 
@@ -13,7 +14,7 @@ import {componentNames, rejectMessages} from '../consts';
  * @extends {Component}
  * @ignore
  */
-export default class Flip extends Component {
+class Flip extends Component {
     constructor(graphics) {
         super(componentNames.FLIP, graphics);
     }
@@ -142,3 +143,5 @@ export default class Flip extends Component {
         });
     }
 }
+
+export default Flip;

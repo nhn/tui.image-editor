@@ -26,7 +26,6 @@ module.exports = {
     output: {
         library: ['tui', 'ImageEditor'],
         libraryTarget: 'umd',
-        libraryExport: 'default',
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/dist',
         filename: `${FILENAME}.js`

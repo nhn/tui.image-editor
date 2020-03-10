@@ -3,6 +3,7 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 import Invoker from './invoker';
 import UI from './ui';
 import action from './action';

@@ -3,6 +3,7 @@
  * @fileoverview Image rotation module
  */
 import fabric from 'fabric';
+import Promise from 'core-js-pure/features/promise';
 import Component from '../interface/component';
 import {componentNames} from '../consts';
 
@@ -13,7 +14,7 @@ import {componentNames} from '../consts';
  * @param {Graphics} graphics - Graphics instance
  * @ignore
  */
-export default class Rotation extends Component {
+class Rotation extends Component {
     constructor(graphics) {
         super(componentNames.ROTATION, graphics);
     }
@@ -91,3 +92,5 @@ export default class Rotation extends Component {
         return this.setAngle(current + additionalAngle);
     }
 }
+
+export default Rotation;

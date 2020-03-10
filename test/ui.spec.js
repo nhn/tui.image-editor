@@ -3,6 +3,7 @@
  * @fileoverview Test cases of "src/js/ui.js"
  */
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 import UI from '../src/js/ui';
 import {HELP_MENUS} from '../src/js/consts';
 

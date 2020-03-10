@@ -13,7 +13,7 @@ import {eventNames, componentNames, fObjectOptions} from '../consts';
  * @extends {Component}
  * @ignore
  */
-export default class Line extends Component {
+class Line extends Component {
     constructor(graphics) {
         super(componentNames.LINE, graphics);
 
@@ -165,3 +165,5 @@ export default class Line extends Component {
         });
     }
 }
+
+export default Line;

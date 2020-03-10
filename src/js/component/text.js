@@ -4,6 +4,7 @@
  */
 import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 import Component from '../interface/component';
 import {eventNames as events, componentNames, fObjectOptions} from '../consts';
 import {makeStyleText} from '../util';
@@ -47,7 +48,7 @@ const DBCLICK_TIME = 500;
  * @extends {Component}
  * @ignore
  */
-export default class Text extends Component {
+class Text extends Component {
     constructor(graphics) {
         super(componentNames.TEXT, graphics);
 
@@ -668,3 +669,5 @@ export default class Text extends Component {
         this._textarea.focus();
     }
 }
+
+export default Text;

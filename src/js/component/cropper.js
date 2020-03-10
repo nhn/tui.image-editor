@@ -25,7 +25,7 @@ const DEFAULT_OPTION = {
  * @class Cropper
  * @ignore
  */
-export default class Cropper extends Component {
+class Cropper extends Component {
     constructor(graphics) {
         super(componentNames.CROPPER, graphics);
 
@@ -368,3 +368,5 @@ export default class Cropper extends Component {
         }
     }
 }
+
+export default Cropper;

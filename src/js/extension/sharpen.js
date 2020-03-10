@@ -10,7 +10,7 @@ import fabric from 'fabric';
  * @extends {fabric.Image.filters.Convolute}
  * @ignore
  */
-export default fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
+const Sharpen = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
     /**
      * Filter type
      * @param {String} type
@@ -31,3 +31,5 @@ export default fabric.util.createClass(fabric.Image.filters.Convolute, /** @lend
         this.matrix = matrix;
     }
 });
+
+export default Sharpen;

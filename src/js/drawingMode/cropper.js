@@ -10,7 +10,7 @@ import {drawingModes, componentNames as components} from '../consts';
  * @class
  * @ignore
  */
-export default class CropperDrawingMode extends DrawingMode {
+class CropperDrawingMode extends DrawingMode {
     constructor() {
         super(drawingModes.CROPPER);
     }
@@ -35,3 +35,5 @@ export default class CropperDrawingMode extends DrawingMode {
         cropper.end();
     }
 }
+
+export default CropperDrawingMode;

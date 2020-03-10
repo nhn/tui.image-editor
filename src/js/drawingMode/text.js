@@ -10,7 +10,7 @@ import {drawingModes, componentNames as components} from '../consts';
  * @class
  * @ignore
  */
-export default class TextDrawingMode extends DrawingMode {
+class TextDrawingMode extends DrawingMode {
     constructor() {
         super(drawingModes.TEXT);
     }
@@ -35,3 +35,5 @@ export default class TextDrawingMode extends DrawingMode {
         text.end();
     }
 }
+
+export default TextDrawingMode;

@@ -3,6 +3,7 @@
  * @fileoverview Add filter module
  */
 import {isUndefined, extend, forEach, filter} from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 import fabric from 'fabric';
 import Component from '../interface/component';
 import Mask from '../extension/mask';
@@ -26,7 +27,7 @@ filters.ColorFilter = ColorFilter;
  * @extends {Component}
  * @ignore
  */
-export default class Filter extends Component {
+class Filter extends Component {
     constructor(graphics) {
         super(componentNames.FILTER, graphics);
     }
@@ -228,3 +229,5 @@ export default class Filter extends Component {
         return type.charAt(0).toUpperCase() + type.slice(1);
     }
 }
+
+export default Filter;

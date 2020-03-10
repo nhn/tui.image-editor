@@ -13,7 +13,7 @@ const errorTypes = errorMessage.types;
  * @param {string} name - drawing mode name
  * @ignore
  */
-export default class DrawingMode {
+class DrawingMode {
     constructor(name) {
         /**
          * the name of drawing mode
@@ -47,3 +47,5 @@ export default class DrawingMode {
         throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'stop'));
     }
 }
+
+export default DrawingMode;

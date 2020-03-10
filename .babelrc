@@ -1,8 +1,8 @@
 {
-  presets: [
-    ['@babel/env', {
-      corejs: "3",
-      useBuiltIns: 'usage'
-    }]
-  ]
+    "presets": ["es2015"],
+    "plugins": [
+        ["transform-es2015-destructuring", {"loose": true}],
+        ["transform-es2015-for-of", {"loose": true}],
+        ["transform-es2015-spread", {"loose": true}]
+    ]
 }

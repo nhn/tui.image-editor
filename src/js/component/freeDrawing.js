@@ -13,7 +13,7 @@ import {componentNames} from '../consts';
  * @extends {Component}
  * @ignore
  */
-export default class FreeDrawing extends Component {
+class FreeDrawing extends Component {
     constructor(graphics) {
         super(componentNames.FREE_DRAWING, graphics);
 
@@ -66,3 +66,5 @@ export default class FreeDrawing extends Component {
         canvas.isDrawingMode = false;
     }
 }
+
+export default FreeDrawing;
