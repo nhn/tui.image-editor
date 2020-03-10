@@ -31,7 +31,8 @@ const {
     ICON_CREATE_END,
     SELECTION_CLEARED,
     SELECTION_CREATED,
-    ADD_OBJECT_AFTER} = events;
+    ADD_OBJECT_AFTER,
+    CANVAS_SCALED} = events;
 
 /**
  * Image filter result
@@ -205,7 +206,8 @@ class ImageEditor {
             iconCreateResize: this._onIconCreateResize.bind(this),
             iconCreateEnd: this._onIconCreateEnd.bind(this),
             selectionCleared: this._selectionCleared.bind(this),
-            selectionCreated: this._selectionCreated.bind(this)
+            selectionCreated: this._selectionCreated.bind(this),
+            canvasScaled: this._canvasScaled.bind(this)
         };
 
         this._attachInvokerEvents();
@@ -304,7 +306,8 @@ class ImageEditor {
             [ICON_CREATE_END]: this._handlers.iconCreateEnd,
             [SELECTION_CLEARED]: this._handlers.selectionCleared,
             [SELECTION_CREATED]: this._handlers.selectionCreated,
-            [ADD_OBJECT_AFTER]: this._handlers.addObjectAfter
+            [ADD_OBJECT_AFTER]: this._handlers.addObjectAfter,
+            [CANVAS_SCALED]: this._handlers.canvasScaled
         });
     }
 
@@ -1183,6 +1186,10 @@ class ImageEditor {
      */
     _selectionCreated(eventTarget) {
         this.fire(events.SELECTION_CREATED, eventTarget);
+    }
+
+    _canvasScaled(scale) {
+        this.fire(events.CANVAS_SCALED, scale);
     }
 
     /**

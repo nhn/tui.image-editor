@@ -405,6 +405,10 @@ export default {
      */
     setReAction() {
         this.on({
+            canvasScaled: scale => {
+                console.log(scale);
+                this.ui.resizeEditor();
+            },
             undoStackChanged: length => {
                 if (length) {
                     this.ui.changeHelpButtonEnabled('undo', true);
