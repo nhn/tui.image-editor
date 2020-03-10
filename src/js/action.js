@@ -406,7 +406,9 @@ export default {
     setReAction() {
         this.on({
             canvasScaled: scale => {
-                console.log(scale);
+                if (this.ui.submenu) {
+                    this.ui.changeMenu(this.ui.submenu, true);
+                }
                 this.ui.resizeEditor();
             },
             undoStackChanged: length => {
