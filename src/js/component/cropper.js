@@ -84,7 +84,7 @@ class Cropper extends Component {
             obj.evented = false;
         });
 
-        this._cropzone = new Cropzone(canvas, {
+        this._cropzone = new Cropzone(canvas, snippet.extend({
             left: 0,
             top: 0,
             width: 0.5,
@@ -93,7 +93,7 @@ class Cropper extends Component {
             cornerSize: 10,
             cornerColor: 'black',
             fill: 'transparent'
-        }, CROPZONE_DEFAULT_OPTIONS, this.graphics.cropSelectionStyle);
+        }, CROPZONE_DEFAULT_OPTIONS, this.graphics.cropSelectionStyle));
 
         canvas.discardActiveObject();
         canvas.add(this._cropzone);
