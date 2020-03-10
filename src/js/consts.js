@@ -12,6 +12,31 @@ module.exports = {
     HELP_MENUS: ['undo', 'redo', 'reset', 'delete', 'deleteAll'],
 
     /**
+     * Shape default option
+     * @type {Object}
+     */
+    SHAPE_DEFAULT_OPTIONS: {
+        lockSkewingX: true,
+        lockSkewingY: true,
+        lockUniScaling: false,
+        bringForward: true,
+        isRegular: false
+    },
+
+    /**
+     * Cropzone default option
+     * @type {Object}
+     */
+    CROPZONE_DEFAULT_OPTIONS: {
+        hasRotatingPoint: false,
+        hasBorders: false,
+        lockScalingFlip: true,
+        lockRotation: true,
+        lockSkewingX: true,
+        lockSkewingY: true
+    },
+
+    /**
      * Component names
      * @type {Object.<string, string>}
      */

@@ -23,8 +23,7 @@ import TextDrawingMode from './drawingMode/text';
 import consts from './consts';
 import util from './util';
 
-const components = consts.componentNames;
-const events = consts.eventNames;
+const {componentNames: components, eventNames: events} = consts;
 
 const {drawingModes, fObjectOptions} = consts;
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
