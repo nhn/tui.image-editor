@@ -1,7 +1,7 @@
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/rotate';
-import {toInteger} from '../util';
+import {toInteger, assignmentForDestroy} from '../util';
 import {defaultRotateRangeValus} from '../consts';
 
 const CLOCKWISE = 30;
@@ -13,11 +13,11 @@ const COUNTERCLOCKWISE = -30;
  * @ignore
  */
 class Rotate extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'rotate',
-            iconStyle,
+            makeSvgIcon,
             menuBarPosition,
             templateHtml,
             usageStatistics
@@ -31,6 +31,16 @@ class Rotate extends Submenu {
                 input: this.selector('.tie-ratate-range-value')
             }, defaultRotateRangeValus)
         };
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.rotateRange.destroy();
+
+        assignmentForDestroy(this);
     }
 
     setRangeBarAngle(type, angle) {
@@ -54,10 +64,21 @@ class Rotate extends Submenu {
      *   @param {Function} actions.setAngle - set angle action
      */
     addEvent(actions) {
+        this.eventHandler.rotationAngleChanged = this._changeRotateForButton.bind(this);
+
         // {rotate, setAngle}
         this.actions = actions;
-        this._els.rotateButton.addEventListener('click', this._changeRotateForButton.bind(this));
+        this._els.rotateButton.addEventListener('click', this.eventHandler.rotationAngleChanged);
         this._els.rotateRange.on('change', this._changeRotateForRange.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.rotateButton.removeEventListener('click', this.eventHandler.rotationAngleChanged);
+        this._els.rotateRange.off();
     }
 
     /**

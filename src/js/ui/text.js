@@ -1,3 +1,4 @@
+import util from '../util';
 import Range from './tools/range';
 import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
@@ -10,11 +11,11 @@ import {defaultTextRangeValus} from '../consts';
  * @ignore
  */
 class Text extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'text',
-            iconStyle,
+            makeSvgIcon,
             menuBarPosition,
             templateHtml,
             usageStatistics
@@ -39,16 +40,48 @@ class Text extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.textColorpicker.destroy();
+        this._els.textRange.destroy();
+
+        util.assignmentForDestroy(this);
+    }
+
+    /**
      * Add event for text
      * @param {Object} actions - actions for text
      *   @param {Function} actions.changeTextStyle - change text style
      */
     addEvent(actions) {
+        const setTextEffect = this._setTextEffectHandler.bind(this);
+        const setTextAlign = this._setTextAlignHandler.bind(this);
+
+        this.eventHandler = {
+            setTextEffect,
+            setTextAlign
+        };
+
         this.actions = actions;
-        this._els.textEffectButton.addEventListener('click', this._setTextEffectHandler.bind(this));
-        this._els.textAlignButton.addEventListener('click', this._setTextAlignHandler.bind(this));
+        this._els.textEffectButton.addEventListener('click', setTextEffect);
+        this._els.textAlignButton.addEventListener('click', setTextAlign);
         this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        const {setTextEffect, setTextAlign} = this.eventHandler;
+
+        this._els.textEffectButton.removeEventListener('click', setTextEffect);
+        this._els.textAlignButton.removeEventListener('click', setTextAlign);
+        this._els.textRange.off();
+        this._els.textColorpicker.off();
     }
 
     /**

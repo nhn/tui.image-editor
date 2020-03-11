@@ -25,6 +25,17 @@ describe('Cropper', () => {
             expect(cropper._cropzone).toBeDefined();
         });
 
+        it('should be applied predefined default options When creating a cropzone', () => {
+            const {CROPZONE_DEFAULT_OPTIONS} = consts;
+
+            cropper.start();
+            const cropzone = cropper._cropzone;
+
+            snippet.forEach(CROPZONE_DEFAULT_OPTIONS, (optionValue, optionName) => {
+                expect(cropzone[optionName]).toBe(optionValue);
+            });
+        });
+
         it('should add a cropzone to canvas', () => {
             spyOn(canvas, 'add');
             cropper.start();

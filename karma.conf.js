@@ -113,6 +113,12 @@ module.exports = function(config) {
                 watched: false,
                 included: false,
                 served: true
+            },
+            {
+                pattern: 'test/fixtures/*.svg',
+                watched: false,
+                included: false,
+                served: true
             }
         ],
         preprocessors: {
@@ -152,6 +158,9 @@ module.exports = function(config) {
                     }, {
                         test: /\.styl$/,
                         use: ['css-loader', 'stylus-loader']
+                    }, {
+                        test: /\.svg$/,
+                        loader: 'svg-inline-loader'
                     }
                 ]
             }

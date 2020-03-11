@@ -2,7 +2,7 @@ import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/shape';
-import {toInteger} from '../util';
+import {toInteger, assignmentForDestroy} from '../util';
 import {defaultShapeStrokeValus} from '../consts';
 
 const SHAPE_DEFAULT_OPTION = {
@@ -17,11 +17,11 @@ const SHAPE_DEFAULT_OPTION = {
  * @ignore
  */
 class Shape extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'shape',
-            iconStyle,
+            makeSvgIcon,
             menuBarPosition,
             templateHtml,
             usageStatistics
@@ -49,20 +49,44 @@ class Shape extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+        this._els.strokeRange.destroy();
+        this._els.fillColorpicker.destroy();
+        this._els.strokeColorpicker.destroy();
+
+        assignmentForDestroy(this);
+    }
+
+    /**
      * Add event for shape
      * @param {Object} actions - actions for shape
      *   @param {Function} actions.changeShape - change shape mode
      *   @param {Function} actions.setDrawingShape - set dreawing shape
      */
     addEvent(actions) {
+        this.eventHandler.shapeTypeSelected = this._changeShapeHandler.bind(this);
         this.actions = actions;
 
-        this._els.shapeSelectButton.addEventListener('click', this._changeShapeHandler.bind(this));
+        this._els.shapeSelectButton.addEventListener('click', this.eventHandler.shapeTypeSelected);
         this._els.strokeRange.on('change', this._changeStrokeRangeHandler.bind(this));
         this._els.fillColorpicker.on('change', this._changeFillColorHandler.bind(this));
         this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
         this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
         this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.shapeSelectButton.removeEventListener('click', this.eventHandler.shapeTypeSelected);
+        this._els.strokeRange.off();
+        this._els.fillColorpicker.off();
+        this._els.strokeColorpicker.off();
     }
 
     /**
@@ -74,13 +98,13 @@ class Shape extends Submenu {
      */
     setShapeStatus({strokeWidth, strokeColor, fillColor}) {
         this._els.strokeRange.value = strokeWidth;
-        this._els.strokeRange.trigger('change');
-
         this._els.strokeColorpicker.color = strokeColor;
         this._els.fillColorpicker.color = fillColor;
         this.options.stroke = strokeColor;
         this.options.fill = fillColor;
         this.options.strokeWidth = strokeWidth;
+
+        this.actions.setDrawingShape(this.type, {strokeWidth});
     }
 
     /**

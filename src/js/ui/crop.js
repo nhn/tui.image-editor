@@ -1,5 +1,6 @@
 import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
+import util from '../util';
 import templateHtml from './template/submenu/crop';
 
 /**
@@ -8,11 +9,11 @@ import templateHtml from './template/submenu/crop';
  * @ignore
  */
 class Crop extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'crop',
-            iconStyle,
+            makeSvgIcon,
             menuBarPosition,
             templateHtml,
             usageStatistics
@@ -30,6 +31,15 @@ class Crop extends Submenu {
     }
 
     /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeEvent();
+
+        util.assignmentForDestroy(this);
+    }
+
+    /**
      * Add event for crop
      * @param {Object} actions - actions for crop
      *   @param {Function} actions.crop - crop action
@@ -37,26 +47,50 @@ class Crop extends Submenu {
      *   @param {Function} actions.preset - draw rectzone at a predefined ratio
      */
     addEvent(actions) {
+        const apply = this._applyEventHandler.bind(this);
+        const cancel = this._cancelEventHandler.bind(this);
+        const cropzonePreset = this._cropzonePresetEventHandler.bind(this);
+
+        this.eventHandler = {
+            apply,
+            cancel,
+            cropzonePreset
+        };
+
         this.actions = actions;
-        this._els.apply.addEventListener('click', () => {
-            this.actions.crop();
-            this._els.apply.classList.remove('active');
-        });
+        this._els.apply.addEventListener('click', apply);
+        this._els.cancel.addEventListener('click', cancel);
+        this._els.preset.addEventListener('click', cropzonePreset);
+    }
 
-        this._els.cancel.addEventListener('click', () => {
-            this.actions.cancel();
-            this._els.apply.classList.remove('active');
-        });
+    /**
+     * Remove event
+     * @private
+     */
+    _removeEvent() {
+        this._els.apply.removeEventListener('click', this.eventHandler.apply);
+        this._els.cancel.removeEventListener('click', this.eventHandler.cancel);
+        this._els.preset.removeEventListener('click', this.eventHandler.cropzonePreset);
+    }
 
-        this._els.preset.addEventListener('click', event => {
-            const button = event.target.closest('.tui-image-editor-button.preset');
-            if (button) {
-                const [presetType] = button.className.match(/preset-[^\s]+/);
+    _applyEventHandler() {
+        this.actions.crop();
+        this._els.apply.classList.remove('active');
+    }
 
-                this._setPresetButtonActive(button);
-                this.actions.preset(presetType);
-            }
-        });
+    _cancelEventHandler() {
+        this.actions.cancel();
+        this._els.apply.classList.remove('active');
+    }
+
+    _cropzonePresetEventHandler(event) {
+        const button = event.target.closest('.tui-image-editor-button.preset');
+        if (button) {
+            const [presetType] = button.className.match(/preset-[^\s]+/);
+
+            this._setPresetButtonActive(button);
+            this.actions.preset(presetType);
+        }
     }
 
     /**

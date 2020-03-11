@@ -6,6 +6,37 @@ import util from './util';
 
 module.exports = {
     /**
+     * Editor help features
+     * @type {Array.<string>}
+     */
+    HELP_MENUS: ['undo', 'redo', 'reset', 'delete', 'deleteAll'],
+
+    /**
+     * Shape default option
+     * @type {Object}
+     */
+    SHAPE_DEFAULT_OPTIONS: {
+        lockSkewingX: true,
+        lockSkewingY: true,
+        lockUniScaling: false,
+        bringForward: true,
+        isRegular: false
+    },
+
+    /**
+     * Cropzone default option
+     * @type {Object}
+     */
+    CROPZONE_DEFAULT_OPTIONS: {
+        hasRotatingPoint: false,
+        hasBorders: false,
+        lockScalingFlip: true,
+        lockRotation: true,
+        lockSkewingX: true,
+        lockSkewingY: true
+    },
+
+    /**
      * Component names
      * @type {Object.<string, string>}
      */
@@ -57,6 +88,7 @@ module.exports = {
         OBJECT_MOVED: 'objectMoved',
         OBJECT_SCALED: 'objectScaled',
         OBJECT_CREATED: 'objectCreated',
+        OBJECT_ROTATED: 'objectRotated',
         TEXT_EDITING: 'textEditing',
         TEXT_CHANGED: 'textChanged',
         ICON_CREATE_RESIZE: 'iconCreateResize',
@@ -94,6 +126,8 @@ module.exports = {
     keyCodes: {
         Z: 90,
         Y: 89,
+        C: 67,
+        V: 86,
         SHIFT: 16,
         BACKSPACE: 8,
         DEL: 46,

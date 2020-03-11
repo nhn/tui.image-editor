@@ -4,6 +4,7 @@
  */
 import {forEach, sendHostname} from 'tui-code-snippet';
 const FLOATING_POINT_DIGIT = 2;
+const CSS_PREFIX = 'tui-image-editor-';
 const {min, max} = Math;
 let hostnameSent = false;
 
@@ -187,6 +188,7 @@ module.exports = {
 
         return new Blob([uInt8Array], {type: mimeString});
     },
+
     /**
      * Fix floating point diff.
      * @param {number} value - original value
@@ -194,5 +196,29 @@ module.exports = {
      */
     fixFloatingPoint(value) {
         return Number(value.toFixed(FLOATING_POINT_DIGIT));
+    },
+
+    /**
+     * Assignment for destroying objects.
+     * @param {Object} targetObject - object to be removed.
+     */
+    assignmentForDestroy(targetObject) {
+        forEach(targetObject, (value, key) => {
+            targetObject[key] = null;
+        });
+    },
+
+    /**
+     * Make class name for ui
+     * @param {String} str  - main string of className
+     * @param {String} prefix - prefix string of className
+     * @returns {String} class name
+     */
+    cls(str = '', prefix = '') {
+        if (str.charAt(0) === '.') {
+            return `.${CSS_PREFIX}${prefix}${str.slice(1)}`;
+        }
+
+        return `${CSS_PREFIX}${prefix}${str}`;
     }
 };

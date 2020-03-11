@@ -1,4 +1,5 @@
 import snippet from 'tui-code-snippet';
+import {HELP_MENUS} from './consts';
 import util from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
@@ -53,7 +54,7 @@ class Ui {
         this.uiSize = {};
         this._locale = new Locale(this.options.locale);
         this.theme = new Theme(this.options.theme);
-
+        this.eventHandler = {};
         this._submenuChangeTransection = false;
         this._selectedElement = null;
         this._mainElement = null;
@@ -65,17 +66,18 @@ class Ui {
         this._setUiSize();
         this._initMenuEvent = false;
 
-        this._els = {
-            'undo': this._menuElement.querySelector('.tie-btn-undo'),
-            'redo': this._menuElement.querySelector('.tie-btn-redo'),
-            'reset': this._menuElement.querySelector('.tie-btn-reset'),
-            'delete': this._menuElement.querySelector('.tie-btn-delete'),
-            'deleteAll': this._menuElement.querySelector('.tie-btn-delete-all'),
-            'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
-            'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
-        };
-
         this._makeSubMenu();
+    }
+
+    /**
+     * Destroys the instance.
+     */
+    destroy() {
+        this._removeUiEvent();
+        this._destroyAllMenu();
+        this._selectedElement.innerHTML = '';
+
+        util.assignmentForDestroy(this);
     }
 
     /**
@@ -129,7 +131,7 @@ class Ui {
             this._setUiSize(uiSize);
         }
 
-        const {width, height} = this._getEditorDimension();
+        const {width, height} = this._getCanvasMaxDimension();
         const editorElementStyle = this._editorElement.style;
         const {menuBarPosition} = this.options;
 
@@ -153,68 +155,15 @@ class Ui {
     }
 
     /**
-     * Change undo button status
+     * Change help button status
+     * @param {string} buttonType - target button type
      * @param {Boolean} enableStatus - enabled status
      * @ignore
      */
-    changeUndoButtonStatus(enableStatus) {
-        if (enableStatus) {
-            this._els.undo.classList.add('enabled');
-        } else {
-            this._els.undo.classList.remove('enabled');
-        }
-    }
+    changeHelpButtonEnabled(buttonType, enableStatus) {
+        const buttonClassList = this._buttonElements[buttonType].classList;
 
-    /**
-     * Change redo button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeRedoButtonStatus(enableStatus) {
-        if (enableStatus) {
-            this._els.redo.classList.add('enabled');
-        } else {
-            this._els.redo.classList.remove('enabled');
-        }
-    }
-
-    /**
-     * Change reset button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeResetButtonStatus(enableStatus) {
-        if (enableStatus) {
-            this._els.reset.classList.add('enabled');
-        } else {
-            this._els.reset.classList.remove('enabled');
-        }
-    }
-
-    /**
-     * Change delete-all button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeDeleteAllButtonEnabled(enableStatus) {
-        if (enableStatus) {
-            this._els.deleteAll.classList.add('enabled');
-        } else {
-            this._els.deleteAll.classList.remove('enabled');
-        }
-    }
-
-    /**
-     * Change delete button status
-     * @param {Boolean} enableStatus - enabled status
-     * @ignore
-     */
-    changeDeleteButtonEnabled(enableStatus) {
-        if (enableStatus) {
-            this._els['delete'].classList.add('enabled');
-        } else {
-            this._els['delete'].classList.remove('enabled');
-        }
+        buttonClassList[enableStatus ? 'add' : 'remove']('enabled');
     }
 
     /**
@@ -271,12 +220,12 @@ class Ui {
             this._makeMenuElement(menuName);
 
             // menu btn element
-            this._els[menuName] = this._menuElement.querySelector(`#tie-btn-${menuName}`);
+            this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
-                iconStyle: this.theme.getStyle('submenu.icon'),
+                makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
                 menuBarPosition: this.options.menuBarPosition,
                 usageStatistics: this.options.usageStatistics
             });
@@ -304,7 +253,6 @@ class Ui {
         selectedElement.innerHTML = controls({
             locale: this._locale,
             biImage: this.theme.getStyle('common.bi'),
-            iconStyle: this.theme.getStyle('menu.icon'),
             loadButtonStyle: this.theme.getStyle('loadButton'),
             downloadButtonStyle: this.theme.getStyle('downloadButton')
         }) +
@@ -326,27 +274,73 @@ class Ui {
         this._editorElement = selector('.tui-image-editor');
         this._menuElement = selector('.tui-image-editor-menu');
         this._subMenuElement = selector('.tui-image-editor-submenu');
+        this._buttonElements = {
+            'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
+            'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
+        };
+
+        this._addHelpMenus();
     }
 
     /**
-     * Make menu ui dom element
-     * @param {string} menuName - menu name
+     * make array for help menu output, including partitions.
+     * @returns {Array}
      * @private
      */
-    _makeMenuElement(menuName) {
-        const btnElement = document.createElement('li');
-        const {normal, active, hover} = this.theme.getStyle('menu.icon');
-        const menuItemHtml = `
-            <svg class="svg_ic-menu">
-                <use xlink:href="${normal.path}#${normal.name}-ic-${menuName}" class="normal"/>
-                <use xlink:href="${active.path}#${active.name}-ic-${menuName}" class="active"/>
-                <use xlink:href="${hover.path}#${hover.name}-ic-${menuName}" class="hover"/>
-            </svg>
-        `;
+    _makeHelpMenuWithPartition() {
+        const helpMenuWithPartition = [...HELP_MENUS, ''];
+        helpMenuWithPartition.splice(3, 0, '');
 
-        btnElement.id = `tie-btn-${menuName}`;
-        btnElement.className = 'tui-image-editor-item normal';
-        btnElement.setAttribute('tooltip-content', this._locale.localize(menuName.replace(/^[a-z]/g, $0 => $0.toUpperCase())));
+        return helpMenuWithPartition;
+    }
+
+    /**
+     * Add help menu
+     * @private
+     */
+    _addHelpMenus() {
+        const helpMenuWithPartition = this._makeHelpMenuWithPartition();
+
+        snippet.forEach(helpMenuWithPartition, menuName => {
+            if (!menuName) {
+                this._makeMenuPartitionElement();
+            } else {
+                this._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
+
+                if (menuName) {
+                    this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
+                }
+            }
+        });
+    }
+
+    /**
+     * Make menu partition element
+     * @private
+     */
+    _makeMenuPartitionElement() {
+        const partitionElement = document.createElement('li');
+        const partitionInnerElement = document.createElement('div');
+        partitionElement.className = util.cls('item');
+        partitionInnerElement.className = util.cls('icpartition');
+        partitionElement.appendChild(partitionInnerElement);
+
+        this._menuElement.appendChild(partitionElement);
+    }
+
+    /**
+     * Make menu button element
+     * @param {string} menuName - menu name
+     * @param {Array} useIconTypes - Possible values are  \['normal', 'active', 'hover', 'disabled'\]
+     * @param {string} menuType - 'normal' or 'help'
+     * @private
+     */
+    _makeMenuElement(menuName, useIconTypes = ['normal', 'active', 'hover'], menuType = 'normal') {
+        const btnElement = document.createElement('li');
+        const menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
+
+        this._addTooltipAttribute(btnElement, menuName);
+        btnElement.className = `tie-btn-${menuName} ${util.cls('item')} ${menuType}`;
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -354,13 +348,33 @@ class Ui {
 
     /**
      * Add help action event
-     * @param {string} helpName - help menu name
      * @private
      */
-    _addHelpActionEvent(helpName) {
-        this._els[helpName].addEventListener('click', () => {
-            this._actions.main[helpName]();
+    _addHelpActionEvent() {
+        snippet.forEach(HELP_MENUS, helpName => {
+            this.eventHandler[helpName] = () => this._actions.main[helpName]();
+            this._buttonElements[helpName].addEventListener('click', this.eventHandler[helpName]);
         });
+    }
+
+    /**
+     * Remove help action event
+     * @private
+     */
+    _removeHelpActionEvent() {
+        snippet.forEach(HELP_MENUS, helpName => {
+            this._buttonElements[helpName].removeEventListener('click', this.eventHandler[helpName]);
+        });
+    }
+
+    /**
+     * Add attribute for menu tooltip
+     * @param {HTMLElement} element - menu element
+     * @param {string} tooltipName - tooltipName
+     * @private
+     */
+    _addTooltipAttribute(element, tooltipName) {
+        element.setAttribute('tooltip-content', this._locale.localize(tooltipName.replace(/^[a-z]/g, $0 => $0.toUpperCase())));
     }
 
     /**
@@ -368,10 +382,15 @@ class Ui {
      * @private
      */
     _addDownloadEvent() {
-        snippet.forEach(this._els.download, element => {
-            element.addEventListener('click', () => {
-                this._actions.main.download();
-            });
+        this.eventHandler.download = () => this._actions.main.download();
+        snippet.forEach(this._buttonElements.download, element => {
+            element.addEventListener('click', this.eventHandler.download);
+        });
+    }
+
+    _removeDownloadEvent() {
+        snippet.forEach(this._buttonElements.download, element => {
+            element.removeEventListener('click', this.eventHandler.download);
         });
     }
 
@@ -380,10 +399,20 @@ class Ui {
      * @private
      */
     _addLoadEvent() {
-        snippet.forEach(this._els.load, element => {
-            element.addEventListener('change', event => {
-                this._actions.main.load(event.target.files[0]);
-            });
+        this.eventHandler.loadImage = event => this._actions.main.load(event.target.files[0]);
+
+        snippet.forEach(this._buttonElements.load, element => {
+            element.addEventListener('change', this.eventHandler.loadImage);
+        });
+    }
+
+    /**
+     * Remmove load event
+     * @private
+     */
+    _removeLoadEvent() {
+        snippet.forEach(this._buttonElements.load, element => {
+            element.removeEventListener('change', this.eventHandler.loadImage);
         });
     }
 
@@ -392,10 +421,9 @@ class Ui {
      * @param {string} menuName - menu name
      * @private
      */
-    _addMenuEvent(menuName) {
-        this._els[menuName].addEventListener('click', () => {
-            this.changeMenu(menuName);
-        });
+    _addMainMenuEvent(menuName) {
+        this.eventHandler[menuName] = () => this.changeMenu(menuName);
+        this._buttonElements[menuName].addEventListener('click', this.eventHandler[menuName]);
     }
 
     /**
@@ -408,7 +436,28 @@ class Ui {
     }
 
     /**
-     * get editor area element
+     * Add menu event
+     * @private
+     */
+    _addMenuEvent() {
+        snippet.forEach(this.options.menu, menuName => {
+            this._addMainMenuEvent(menuName);
+            this._addSubMenuEvent(menuName);
+        });
+    }
+
+    /**
+     * Remove menu event
+     * @private
+     */
+    _removeMainMenuEvent() {
+        snippet.forEach(this.options.menu, menuName => {
+            this._buttonElements[menuName].removeEventListener('click', this.eventHandler[menuName]);
+        });
+    }
+
+    /**
+     * Get editor area element
      * @returns {HTMLElement} editor area html element
      * @ignore
      */
@@ -425,20 +474,32 @@ class Ui {
             return;
         }
 
-        this._addHelpActionEvent('undo');
-        this._addHelpActionEvent('redo');
-        this._addHelpActionEvent('reset');
-        this._addHelpActionEvent('delete');
-        this._addHelpActionEvent('deleteAll');
-
+        this._addHelpActionEvent();
         this._addDownloadEvent();
-
-        snippet.forEach(this.options.menu, menuName => {
-            this._addMenuEvent(menuName);
-            this._addSubMenuEvent(menuName);
-        });
+        this._addMenuEvent();
         this._initMenu();
         this._initMenuEvent = true;
+    }
+
+    /**
+     * Remove ui event
+     * @private
+     */
+    _removeUiEvent() {
+        this._removeHelpActionEvent();
+        this._removeDownloadEvent();
+        this._removeLoadEvent();
+        this._removeMainMenuEvent();
+    }
+
+    /**
+     * Destroy all menu instance
+     * @private
+     */
+    _destroyAllMenu() {
+        snippet.forEach(this.options.menu, menuName => {
+            this[menuName].destroy();
+        });
     }
 
     /**
@@ -456,7 +517,8 @@ class Ui {
         this._addLoadEvent();
 
         const gridVisual = document.createElement('div');
-        gridVisual.className = 'tui-image-editor-grid-visual';
+
+        gridVisual.className = util.cls('grid-visual');
         const grid = `<table>
            <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>
            <tr><td></td><td></td><td></td></tr>
@@ -500,7 +562,7 @@ class Ui {
      */
     _changeMenu(menuName, toggle, discardSelection) {
         if (this.submenu) {
-            this._els[this.submenu].classList.remove('active');
+            this._buttonElements[this.submenu].classList.remove('active');
             this._mainElement.classList.remove(`tui-image-editor-menu-${this.submenu}`);
             if (discardSelection) {
                 this._actions.main.discardSelection();
@@ -512,7 +574,7 @@ class Ui {
         if (this.submenu === menuName && toggle) {
             this.submenu = null;
         } else {
-            this._els[menuName].classList.add('active');
+            this._buttonElements[menuName].classList.add('active');
             this._mainElement.classList.add(`tui-image-editor-menu-${menuName}`);
             this.submenu = menuName;
             this[this.submenu].changeStartMode();
@@ -529,7 +591,7 @@ class Ui {
         if (this.options.initMenu) {
             const evt = document.createEvent('MouseEvents');
             evt.initEvent('click', true, false);
-            this._els[this.options.initMenu].dispatchEvent(evt);
+            this._buttonElements[this.options.initMenu].dispatchEvent(evt);
         }
 
         if (this.icon) {
@@ -538,16 +600,14 @@ class Ui {
     }
 
     /**
-     * Get editor dimension
+     * Get canvas max Dimension
      * @returns {Object} - width & height of editor
      * @private
      */
-    _getEditorDimension() {
-        const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
-        const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;
-
-        const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
-        const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
+    _getCanvasMaxDimension() {
+        const {maxWidth, maxHeight} = this._editorContainerElement.style;
+        const width = parseFloat(maxWidth);
+        const height = parseFloat(maxHeight);
 
         return {
             width,
@@ -561,7 +621,7 @@ class Ui {
      * @private
      */
     _setEditorPosition(menuBarPosition) { // eslint-disable-line complexity
-        const {width, height} = this._getEditorDimension();
+        const {width, height} = this._getCanvasMaxDimension();
         const editorElementStyle = this._editorElement.style;
         let top = 0;
         let left = 0;

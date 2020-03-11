@@ -5,6 +5,7 @@
 import snippet from 'tui-code-snippet';
 import Promise from 'core-js/library/es6/promise';
 import UI from '../src/js/ui';
+import {HELP_MENUS} from '../src/js/consts';
 
 describe('UI', () => {
     let ui;
@@ -20,6 +21,33 @@ describe('UI', () => {
             menuBarPosition: 'bottom'
         };
         ui = new UI(document.createElement('div'), uiOptions, {});
+    });
+
+    describe('Destroy()', () => {
+        it('"_destroyAllMenu()" The "destroy" function of all menu instances must be executed.', () => {
+            snippet.forEach(uiOptions.menu, menuName => {
+                spyOn(ui[menuName], 'destroy');
+            });
+
+            ui._destroyAllMenu();
+
+            snippet.forEach(uiOptions.menu, menuName => {
+                expect(ui[menuName].destroy).toHaveBeenCalled();
+            });
+        });
+
+        it('"_removeUiEvent()" must execute "removeEventListener" of all menus.', () => {
+            const allUiButtonElementName = [...uiOptions.menu, ...HELP_MENUS];
+            snippet.forEach(allUiButtonElementName, elementName => {
+                spyOn(ui._buttonElements[elementName], 'removeEventListener');
+            });
+
+            ui._removeUiEvent();
+
+            snippet.forEach(allUiButtonElementName, elementName => {
+                expect(ui._buttonElements[elementName].removeEventListener).toHaveBeenCalled();
+            });
+        });
     });
 
     describe('_changeMenu()', () => {
@@ -113,7 +141,7 @@ describe('UI', () => {
     describe('_setEditorPosition()', () => {
         beforeEach(() => {
             ui._editorElement = document.createElement('div');
-            spyOn(ui, '_getEditorDimension').and.returnValue({
+            spyOn(ui, '_getCanvasMaxDimension').and.returnValue({
                 width: 300,
                 height: 300
             });
