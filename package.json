@@ -1,7 +1,7 @@
 {
   "name": "tui-image-editor",
   "author": "NHN FE Development Lab <dl_javascript@nhn.com>",
-  "version": "3.8.0",
+  "version": "3.9.0",
   "license": "MIT",
   "repository": {
     "type": "git",
