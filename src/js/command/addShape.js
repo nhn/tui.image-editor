@@ -3,7 +3,7 @@
  * @fileoverview Add a shape
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../util';
 import {componentNames, commandNames} from '../consts';
 
 const {SHAPE} = componentNames;

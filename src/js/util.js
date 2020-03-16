@@ -3,10 +3,17 @@
  * @fileoverview Util
  */
 import {forEach, sendHostname} from 'tui-code-snippet';
+import Promise from 'core-js-pure/features/promise';
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
 const {min, max} = Math;
 let hostnameSent = false;
+
+/**
+ * Export Promise Class (for simplified module path)
+ * @returns {Promise} promise class
+ */
+export {Promise};
 
 /**
  * Clamp value

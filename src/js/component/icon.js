@@ -4,7 +4,7 @@
  */
 import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../util';
 import Component from '../interface/component';
 import {eventNames as events, rejectMessages, componentNames, fObjectOptions, defaultIconPath} from '../consts';
 

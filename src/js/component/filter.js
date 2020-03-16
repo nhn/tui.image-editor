@@ -3,7 +3,7 @@
  * @fileoverview Add filter module
  */
 import {isUndefined, extend, forEach, filter} from 'tui-code-snippet';
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../util';
 import fabric from 'fabric';
 import Component from '../interface/component';
 import Mask from '../extension/mask';

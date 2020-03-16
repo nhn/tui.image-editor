@@ -3,7 +3,7 @@
  * @fileoverview change a shape
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../util';
 import commandFactory from '../factory/command';
 import {componentNames, rejectMessages, commandNames} from '../consts';
 

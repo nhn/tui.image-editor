@@ -4,8 +4,16 @@
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
-import {rejectMessages, eventNames, keyCodes as KEY_CODES, componentNames, fObjectOptions, SHAPE_DEFAULT_OPTIONS} from '../consts';
+import {
+    rejectMessages,
+    eventNames,
+    keyCodes as KEY_CODES,
+    componentNames,
+    fObjectOptions,
+    SHAPE_DEFAULT_OPTIONS
+} from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
+import {Promise} from '../util';
 import {extend, inArray} from 'tui-code-snippet';
 
 const SHAPE_INIT_OPTIONS = extend({

@@ -2,9 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image loader
  */
-import Promise from 'core-js-pure/features/promise';
 import Component from '../interface/component';
 import {componentNames, rejectMessages} from '../consts';
+import {Promise} from '../util';
 
 const imageOption = {
     padding: 0,

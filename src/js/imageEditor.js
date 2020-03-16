@@ -3,13 +3,12 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js-pure/features/promise';
 import Invoker from './invoker';
 import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import {sendHostName} from './util';
+import {sendHostName, Promise} from './util';
 import {eventNames as events, commandNames as commands, keyCodes, rejectMessages} from './consts';
 
 const {isUndefined, forEach, CustomEvents} = snippet;

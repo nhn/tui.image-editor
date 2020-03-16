@@ -3,7 +3,7 @@
  * @fileoverview Image flip module
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../util';
 import Component from '../interface/component';
 import {componentNames, rejectMessages} from '../consts';
 

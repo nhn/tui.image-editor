@@ -3,7 +3,6 @@
  * @fileoverview Graphics module
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js-pure/features/promise';
 import fabric from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
@@ -20,7 +19,7 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
-import {getProperties} from './util';
+import {getProperties, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;

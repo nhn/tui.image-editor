@@ -3,7 +3,7 @@
  * @fileoverview Add a text object
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../util';
 import {componentNames, commandNames, rejectMessages} from '../consts';
 const {TEXT} = componentNames;
 

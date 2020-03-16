@@ -3,7 +3,7 @@
  * @fileoverview Image rotation module
  */
 import fabric from 'fabric';
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../util';
 import Component from '../interface/component';
 import {componentNames} from '../consts';
 

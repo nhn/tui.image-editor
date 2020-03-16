@@ -4,10 +4,9 @@
  */
 import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js-pure/features/promise';
 import Component from '../interface/component';
 import {eventNames as events, componentNames, fObjectOptions} from '../consts';
-import {makeStyleText} from '../util';
+import {makeStyleText, Promise} from '../util';
 
 const defaultStyles = {
     fill: '#000000',
