@@ -4,12 +4,9 @@
  */
 import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
-import consts from '../consts';
-import util from '../util';
-
-const events = consts.eventNames;
+import {eventNames as events, componentNames, fObjectOptions} from '../consts';
+import {makeStyleText, Promise} from '../util';
 
 const defaultStyles = {
     fill: '#000000',
@@ -26,7 +23,7 @@ const resetStyles = {
 const {browser} = snippet;
 
 const TEXTAREA_CLASSNAME = 'tui-image-eidtor-textarea';
-const TEXTAREA_STYLES = util.makeStyleText({
+const TEXTAREA_STYLES = makeStyleText({
     position: 'absolute',
     padding: 0,
     display: 'none',
@@ -52,7 +49,7 @@ const DBCLICK_TIME = 500;
  */
 class Text extends Component {
     constructor(graphics) {
-        super(consts.componentNames.TEXT, graphics);
+        super(componentNames.TEXT, graphics);
 
         /**
          * Default text style
@@ -217,7 +214,7 @@ class Text extends Component {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
             let newText = null;
-            let selectionStyle = consts.fObjectOptions.SELECTION_STYLE;
+            let selectionStyle = fObjectOptions.SELECTION_STYLE;
             let styles = this._defaultStyles;
 
             this._setInitPos(options.position);
@@ -672,4 +669,4 @@ class Text extends Component {
     }
 }
 
-module.exports = Text;
+export default Text;

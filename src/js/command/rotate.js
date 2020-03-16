@@ -3,9 +3,8 @@
  * @fileoverview Rotate an image
  */
 import commandFactory from '../factory/command';
-import consts from '../consts';
+import {componentNames, commandNames} from '../consts';
 
-const {componentNames, commandNames} = consts;
 const {ROTATION} = componentNames;
 
 /**
@@ -65,4 +64,4 @@ const command = {
 
 commandFactory.register(command);
 
-module.exports = command;
+export default command;

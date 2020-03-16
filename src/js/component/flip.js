@@ -3,11 +3,9 @@
  * @fileoverview Image flip module
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
+import {Promise} from '../util';
 import Component from '../interface/component';
-import consts from '../consts';
-
-const {componentNames, rejectMessages} = consts;
+import {componentNames, rejectMessages} from '../consts';
 
 /**
  * Flip
@@ -146,4 +144,4 @@ class Flip extends Component {
     }
 }
 
-module.exports = Flip;
+export default Flip;

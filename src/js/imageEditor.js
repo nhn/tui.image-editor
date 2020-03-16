@@ -3,18 +3,14 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
 import Invoker from './invoker';
 import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import consts from './consts';
-import {sendHostName} from './util';
+import {sendHostName, Promise} from './util';
+import {eventNames as events, commandNames as commands, keyCodes, rejectMessages} from './consts';
 
-const events = consts.eventNames;
-const commands = consts.commandNames;
-const {keyCodes, rejectMessages} = consts;
 const {isUndefined, forEach, CustomEvents} = snippet;
 
 const {
@@ -1565,4 +1561,4 @@ class ImageEditor {
 action.mixin(ImageEditor);
 CustomEvents.mixin(ImageEditor);
 
-module.exports = ImageEditor;
+export default ImageEditor;

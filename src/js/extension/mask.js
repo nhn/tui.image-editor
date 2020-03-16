@@ -88,4 +88,4 @@ const Mask = fabric.util.createClass(fabric.Image.filters.BlendImage, /** @lends
     }
 });
 
-module.exports = Mask;
+export default Mask;

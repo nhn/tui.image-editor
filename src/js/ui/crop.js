@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
-import util from '../util';
+import {assignmentForDestroy} from '../util';
 import templateHtml from './template/submenu/crop';
 
 /**
@@ -36,7 +36,7 @@ class Crop extends Submenu {
     destroy() {
         this._removeEvent();
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
