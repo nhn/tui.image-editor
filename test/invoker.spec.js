@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/invoker.js"
  */
-import Promise from 'core-js-pure/features/promise';
+import {Promise} from '../src/js/util';
 import Invoker from '../src/js/invoker';
 import Command from '../src/js/interface/command';
 
