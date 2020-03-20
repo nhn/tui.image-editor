@@ -1,5 +1,5 @@
-const BROWSERSTACK_USERNAME = process.env.BROWSERSTACK_USERNAME;
-const BROWSERSTACK_ACCESS_KEY = process.env.BROWSERSTACK_ACCESS_KEY;
+const BROWSERSTACK_USERNAME = process.env.BROWSERSTACK_USERNAME || 'kimjinwoo4';
+const BROWSERSTACK_ACCESS_KEY = process.env.BROWSERSTACK_ACCESS_KEY || 'yopqSJLdAq3t6wbtwoXW'
 const assert = require('assert');
 const http = require('http');
 const {Builder} = require('selenium-webdriver');
@@ -10,8 +10,8 @@ const HttpAgent = new http.Agent({
 
 const urlpreset = 'http://nhn.github.io/tui.image-editor/latest';
 const testUrls = [
-    '/examples/example01-includeUi.html',
-    '/examples/example02-useApiDirect.html',
+    // '/examples/example01-includeUi.html',
+    // '/examples/example02-useApiDirect.html',
     '/examples/example03-mobile.html'
 ];
 
@@ -53,7 +53,15 @@ if (!BROWSERSTACK_USERNAME || !BROWSERSTACK_ACCESS_KEY) {
     throw Error('Id password required');
 }
 
-testAllUrl(testUrls);
+(async function() {
+    try {
+        const errorCount = await testAllUrl(testUrls);
+
+        await assert.equal(errorCount, 0);
+    } catch(err) {
+        console.log(err);
+    }
+})();
 
 async function testAllUrl(urls) {
     let errorCount = 0;
@@ -66,7 +74,7 @@ async function testAllUrl(urls) {
         printErrorLog(url, errorBrowsersInfo);
     }
 
-    assert.equal(errorCount, 0);
+    return errorCount;
 }
 
 async function testOneUrl(url) {
