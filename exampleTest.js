@@ -11,7 +11,8 @@ const HttpAgent = new http.Agent({
 const urlpreset = 'http://nhn.github.io/tui.image-editor/latest';
 const testUrls = [
     '/examples/example01-includeUi.html',
-    '/examples/example02-useApiDirect.html'
+    '/examples/example02-useApiDirect.html',
+    '/examples/example03-mobile.html'
 ];
 
 const capabilities = [
