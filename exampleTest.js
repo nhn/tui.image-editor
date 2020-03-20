@@ -59,6 +59,7 @@ if (!BROWSERSTACK_USERNAME || !BROWSERSTACK_ACCESS_KEY) {
 
         await assert.equal(errorCount, 0);
     } catch(err) {
+        process.exit(1);
         console.log(err);
     }
 })();
