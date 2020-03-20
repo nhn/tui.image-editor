@@ -53,16 +53,7 @@ if (!BROWSERSTACK_USERNAME || !BROWSERSTACK_ACCESS_KEY) {
     throw Error('Id password required');
 }
 
-(async function() {
-    try {
-        const errorCount = await testAllUrl(testUrls);
-
-        await assert.equal(errorCount, 0);
-    } catch(err) {
-        process.exit(1);
-        console.log(err);
-    }
-})();
+testAllUrl(testUrls);
 
 async function testAllUrl(urls) {
     let errorCount = 0;
@@ -75,7 +66,11 @@ async function testAllUrl(urls) {
         printErrorLog(url, errorBrowsersInfo);
     }
 
-    return errorCount;
+    try {
+        assert.equal(errorCount, 0);
+    } catch (err) {
+        process.exit(1);
+    }
 }
 
 async function testOneUrl(url) {
