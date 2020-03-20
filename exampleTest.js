@@ -53,30 +53,15 @@ if (!BROWSERSTACK_USERNAME || !BROWSERSTACK_ACCESS_KEY) {
     throw Error('Id password required');
 }
 
-testAllUrl(testUrls);
+test(testUrls).catch(err => {
+    console.log(err);
+    process.exit(1);
+});
 
-async function testAllUrl(urls) {
-    let errorCount = 0;
-
-    for(let i = 0; i <= urls.length - 1; i++) {
-        const url = urlpreset + urls[i];
-        const errorBrowsersInfo = await testOneUrl(url);
-
-        errorCount += errorBrowsersInfo.length;
-        printErrorLog(url, errorBrowsersInfo);
-    }
-
-    try {
-        assert.equal(errorCount, 0);
-    } catch (err) {
-        process.exit(1);
-    }
-}
-
-async function testOneUrl(url) {
-    const parallelPendingTests = Object.keys(capabilities).map(index => testAllPlatform(index, url));
+async function test(urls) {
+    const parallelPendingTests = Object.keys(capabilities).map(index => testPlatform(index, urls));
     const testResults = await Promise.all(parallelPendingTests);
-    return testResults.reduce((errorList, errorInfo) => {
+    const result = testResults.flat().reduce((errorList, errorInfo) => {
         if (!errorInfo.errorLogs) {
             errorInfo.errorLogs = {message: 'Not exist error catch code snippet in example page'};
             errorList.push(errorInfo);
@@ -85,28 +70,43 @@ async function testOneUrl(url) {
         }
         return errorList;
     }, []);
+
+    printErrorLog(result);
+    
+    assert.equal(result.length, 0);
 }
 
-async function testAllPlatform(index, url) {
+async function testPlatform(index, urls) {
     const driver = getDriver(index);
+    const result = [];
 
-    await driver.get(url);
-    await driver.wait(function() {
-      return driver.executeScript('return document.readyState').then(function(readyState) {
-        return readyState === 'complete';
-      });
-    }, 20000);
+    for(let i = 0; i <= urls.length - 1; i++) {
+        const url = urlpreset + urls[i];
+        await driver.get(url);
+        await driver.wait(function() {
+          return driver.executeScript('return document.readyState').then(function(readyState) {
+            return readyState === 'complete';
+          });
+        }, 20000);
 
-    const browserInfo = await driver.getCapabilities();
-    const errorLogs = await driver.executeScript('return window.errorLogs');
+        const browserInfo = await driver.getCapabilities();
+        const errorLogs = await driver.executeScript('return window.errorLogs');
+        const browserName = browserInfo.get("browserName");
+        const browserVersion = browserInfo.get("version") || browserInfo.get("browserVersion");
+
+        result.push({
+            url,
+            browserName,
+            browserVersion,
+            errorLogs
+        });
+
+        console.log('testing...', browserName, browserVersion, url);
+    }
 
     driver.quit();
 
-    return {
-        browserName: browserInfo.get("browserName"),
-        browserVersion: browserInfo.get("version") || browserInfo.get("browserVersion"),
-        errorLogs
-    };
+    return result;
 }
 
 function getDriver(index) {
@@ -117,9 +117,9 @@ function getDriver(index) {
         .build();
 }
 
-function printErrorLog(url, errorBrowsersInfo) {
-    console.log(url);
+function printErrorLog(errorBrowsersInfo) {
     errorBrowsersInfo.forEach(errorInfo => {
+        console.log(errorInfo.url);
         console.log(errorInfo.browserName, errorInfo.browserVersion, errorInfo.errorLogs);
     });
 }
