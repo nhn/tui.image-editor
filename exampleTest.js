@@ -1,21 +1,23 @@
-const BROWSERSTACK_USERNAME = process.env.BROWSERSTACK_USERNAME || 'kimjinwoo4';
-const BROWSERSTACK_ACCESS_KEY = process.env.BROWSERSTACK_ACCESS_KEY || 'yopqSJLdAq3t6wbtwoXW'
+const BROWSERSTACK_USERNAME = process.env.BROWSERSTACK_USERNAME;
+const BROWSERSTACK_ACCESS_KEY = process.env.BROWSERSTACK_ACCESS_KEY;
+
+const fs = require('fs');
+const path = require('path');
 const assert = require('assert');
 const http = require('http');
 const {Builder} = require('selenium-webdriver');
+const HttpAgent = new http.Agent({keepAlive: true});
+const testUrls = makeTestUrls();
 
-const HttpAgent = new http.Agent({
-    keepAlive: true
-});
+/**
+ * Url prefix
+ */
+const urlPrefix = 'http://nhn.github.io/tui.image-editor/latest';
 
-const urlpreset = 'http://nhn.github.io/tui.image-editor/latest';
-const testUrls = [
-    '/examples/example01-includeUi.html',
-    '/examples/example02-useApiDirect.html',
-    '/examples/example03-mobile.html'
-];
-
-
+/**
+ * Capabilities
+ * https://www.browserstack.com/automate/capabilities
+ */
 const capabilities = [
     {
         browserName: 'Firefox',
@@ -50,10 +52,6 @@ const capabilities = [
     }
 ];
 
-if (!BROWSERSTACK_USERNAME || !BROWSERSTACK_ACCESS_KEY) {
-    throw Error('Id password required');
-}
-
 test(testUrls).catch(err => {
     console.log(err);
     process.exit(1);
@@ -82,7 +80,7 @@ async function testPlatform(index, urls) {
     const result = [];
 
     for(let i = 0; i <= urls.length - 1; i++) {
-        const url = urlpreset + urls[i];
+        const url = urlPrefix + urls[i];
         await driver.get(url);
         await driver.wait(function() {
           return driver.executeScript('return document.readyState').then(function(readyState) {
@@ -102,7 +100,7 @@ async function testPlatform(index, urls) {
             errorLogs
         });
 
-        console.log('testing...', browserName, browserVersion, url);
+        console.log(browserName, browserVersion, ' - ', url);
     }
 
     driver.quit();
@@ -123,5 +121,16 @@ function printErrorLog(errorBrowsersInfo) {
         console.log(errorInfo.url);
         console.log(errorInfo.browserName, errorInfo.browserVersion, errorInfo.errorLogs);
     });
+}
+
+function makeTestUrls() {
+    const config = require(path.resolve(process.cwd(), 'tuidoc.config.json'));
+    const filePath = (config.examples || {filePath: ''}).filePath;
+    return fs.readdirSync(filePath).reduce((urls, fileName) => {
+        if (fileName.match(/html$/)) {
+            urls.push(`/${filePath}/${fileName}`);
+        }
+        return urls;
+    }, []);
 }
 
