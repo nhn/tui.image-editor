@@ -7,7 +7,7 @@ const assert = require('assert');
 const http = require('http');
 const {Builder} = require('selenium-webdriver');
 const HttpAgent = new http.Agent({keepAlive: true});
-const testUrls = makeTestUrls();
+const testUrls = getTestUrls();
 
 /**
  * Url prefix
@@ -52,12 +52,16 @@ const capabilities = [
     }
 ];
 
-test(testUrls).catch(err => {
+urlTest(testUrls).catch(err => {
     console.log(err);
     process.exit(1);
 });
 
-async function test(urls) {
+
+/**
+ * Url test
+ */
+async function urlTest(urls) {
     const parallelPendingTests = Object.keys(capabilities).map(index => testPlatform(index, urls));
     const testResults = await Promise.all(parallelPendingTests);
     const result = testResults.flat().reduce((errorList, errorInfo) => {
@@ -75,6 +79,9 @@ async function test(urls) {
     assert.equal(result.length, 0);
 }
 
+/*
+ * Test one platform
+ */
 async function testPlatform(index, urls) {
     const driver = getDriver(index);
     const result = [];
@@ -108,6 +115,9 @@ async function testPlatform(index, urls) {
     return result;
 }
 
+/**
+ * Get Selenium Builder
+ */
 function getDriver(index) {
     return new Builder()
         .usingHttpAgent(HttpAgent)
@@ -116,6 +126,9 @@ function getDriver(index) {
         .build();
 }
 
+/**
+ * Print browser error logs
+ */
 function printErrorLog(errorBrowsersInfo) {
     errorBrowsersInfo.forEach(errorInfo => {
         console.log(errorInfo.url);
@@ -123,7 +136,10 @@ function printErrorLog(errorBrowsersInfo) {
     });
 }
 
-function makeTestUrls() {
+/**
+ * Get Examples Url
+ */
+function getTestUrls() {
     const config = require(path.resolve(process.cwd(), 'tuidoc.config.json'));
     const filePath = (config.examples || {filePath: ''}).filePath;
     return fs.readdirSync(filePath).reduce((urls, fileName) => {
