@@ -3,10 +3,9 @@
  * @fileoverview Add a shape
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js/library/es6/promise';
-import consts from '../consts';
+import {Promise} from '../util';
+import {componentNames, commandNames} from '../consts';
 
-const {componentNames, commandNames} = consts;
 const {SHAPE} = componentNames;
 
 const command = {
@@ -51,4 +50,4 @@ const command = {
 
 commandFactory.register(command);
 
-module.exports = command;
+export default command;

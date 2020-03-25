@@ -1,5 +1,5 @@
 import {extend} from 'tui-code-snippet';
-import util from './util';
+import {isSupportFileApi, base64ToBlob, toInteger} from './util';
 import Imagetracer from './helper/imagetracer';
 
 export default {
@@ -97,7 +97,7 @@ export default {
                 this.ui.changeHelpButtonEnabled('deleteAll', false);
             },
             load: file => {
-                if (!util.isSupportFileApi()) {
+                if (!isSupportFileApi()) {
                     alert('This browser does not support file-api');
                 }
 
@@ -116,8 +116,8 @@ export default {
                 let imageName = this.getImageName();
                 let blob, type, w;
 
-                if (util.isSupportFileApi() && window.saveAs) {
-                    blob = util.base64ToBlob(dataURL);
+                if (isSupportFileApi() && window.saveAs) {
+                    blob = base64ToBlob(dataURL);
                     type = blob.type.split('/')[1];
                     if (imageName.split('.').pop() !== type) {
                         imageName += `.${type}`;
@@ -489,7 +489,7 @@ export default {
             },
             objectScaled: obj => {
                 if (['i-text', 'text'].indexOf(obj.type) > -1) {
-                    this.ui.text.fontSize = util.toInteger(obj.fontSize);
+                    this.ui.text.fontSize = toInteger(obj.fontSize);
                 } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
                     const {width, height} = obj;
                     const strokeValue = this.ui.shape.getStrokeValue();

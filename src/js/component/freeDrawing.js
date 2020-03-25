@@ -4,7 +4,7 @@
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
-import consts from '../consts';
+import {componentNames} from '../consts';
 
 /**
  * FreeDrawing
@@ -15,7 +15,7 @@ import consts from '../consts';
  */
 class FreeDrawing extends Component {
     constructor(graphics) {
-        super(consts.componentNames.FREE_DRAWING, graphics);
+        super(componentNames.FREE_DRAWING, graphics);
 
         /**
          * Brush width
@@ -67,4 +67,4 @@ class FreeDrawing extends Component {
     }
 }
 
-module.exports = FreeDrawing;
+export default FreeDrawing;

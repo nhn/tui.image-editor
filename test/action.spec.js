@@ -3,7 +3,7 @@
  * @fileoverview Test cases of "src/js/action.js"
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
+import {Promise} from '../src/js/util';
 import ImageEditor from '../src/js/imageEditor';
 import action from '../src/js/action';
 
@@ -18,15 +18,7 @@ describe('Ui', () => {
                 loadImage: false,
                 initMenu: 'flip',
                 menuBarPosition: 'bottom',
-                applyCropSelectionStyle: true,
-                theme: {
-                    'menu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
-                    'menu.activeIcon.path': 'base/test/fixtures/icon-b.svg',
-                    'menu.disabledIcon.path': 'base/test/fixtures/icon-a.svg',
-                    'menu.hoverIcon.path': 'base/test/fixtures/icon-c.svg',
-                    'submenu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
-                    'submenu.activeIcon.path': 'base/test/fixtures/icon-c.svg'
-                }
+                applyCropSelectionStyle: true
             }
         });
         actions = imageEditorMock.getActions();

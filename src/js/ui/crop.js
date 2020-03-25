@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
 import Submenu from './submenuBase';
-import util from '../util';
+import {assignmentForDestroy} from '../util';
 import templateHtml from './template/submenu/crop';
 
 /**
@@ -9,11 +9,11 @@ import templateHtml from './template/submenu/crop';
  * @ignore
  */
 class Crop extends Submenu {
-    constructor(subMenuElement, {locale, iconStyle, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'crop',
-            iconStyle,
+            makeSvgIcon,
             menuBarPosition,
             templateHtml,
             usageStatistics
@@ -36,7 +36,7 @@ class Crop extends Submenu {
     destroy() {
         this._removeEvent();
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**

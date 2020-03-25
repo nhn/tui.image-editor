@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
 import {HELP_MENUS} from './consts';
-import util from './util';
+import {getSelector, assignmentForDestroy, cls} from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
 
@@ -77,7 +77,7 @@ class Ui {
         this._destroyAllMenu();
         this._selectedElement.innerHTML = '';
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
@@ -131,7 +131,7 @@ class Ui {
             this._setUiSize(uiSize);
         }
 
-        const {width, height} = this._getEditorDimension();
+        const {width, height} = this._getCanvasMaxDimension();
         const editorElementStyle = this._editorElement.style;
         const {menuBarPosition} = this.options;
 
@@ -220,12 +220,12 @@ class Ui {
             this._makeMenuElement(menuName);
 
             // menu btn element
-            this._buttonElements[menuName] = this._menuElement.querySelector(`#tie-btn-${menuName}`);
+            this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
 
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
-                iconStyle: this.theme.getStyle('submenu.icon'),
+                makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
                 menuBarPosition: this.options.menuBarPosition,
                 usageStatistics: this.options.usageStatistics
             });
@@ -247,13 +247,12 @@ class Ui {
         } else {
             selectedElement = document.querySelector(element);
         }
-        const selector = util.getSelector(selectedElement);
+        const selector = getSelector(selectedElement);
 
         selectedElement.classList.add('tui-image-editor-container');
         selectedElement.innerHTML = controls({
             locale: this._locale,
             biImage: this.theme.getStyle('common.bi'),
-            iconStyle: this.theme.getStyle('menu.icon'),
             loadButtonStyle: this.theme.getStyle('loadButton'),
             downloadButtonStyle: this.theme.getStyle('downloadButton')
         }) +
@@ -275,48 +274,73 @@ class Ui {
         this._editorElement = selector('.tui-image-editor');
         this._menuElement = selector('.tui-image-editor-menu');
         this._subMenuElement = selector('.tui-image-editor-submenu');
-
         this._buttonElements = {
-            'undo': this._menuElement.querySelector('.tie-btn-undo'),
-            'redo': this._menuElement.querySelector('.tie-btn-redo'),
-            'reset': this._menuElement.querySelector('.tie-btn-reset'),
-            'delete': this._menuElement.querySelector('.tie-btn-delete'),
-            'deleteAll': this._menuElement.querySelector('.tie-btn-delete-all'),
             'download': this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
             'load': this._selectedElement.querySelectorAll('.tui-image-editor-load-btn')
         };
-        this._makeHelpMenuTooltip();
+
+        this._addHelpMenus();
     }
 
     /**
-     * Make tooltip for help menus
+     * make array for help menu output, including partitions.
+     * @returns {Array}
      * @private
      */
-    _makeHelpMenuTooltip() {
-        snippet.forEach(HELP_MENUS, menuName => {
-            this._addTooltipAttribute(this._buttonElements[menuName], menuName);
+    _makeHelpMenuWithPartition() {
+        const helpMenuWithPartition = [...HELP_MENUS, ''];
+        helpMenuWithPartition.splice(3, 0, '');
+
+        return helpMenuWithPartition;
+    }
+
+    /**
+     * Add help menu
+     * @private
+     */
+    _addHelpMenus() {
+        const helpMenuWithPartition = this._makeHelpMenuWithPartition();
+
+        snippet.forEach(helpMenuWithPartition, menuName => {
+            if (!menuName) {
+                this._makeMenuPartitionElement();
+            } else {
+                this._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
+
+                if (menuName) {
+                    this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
+                }
+            }
         });
     }
 
     /**
-     * Make menu ui dom element
-     * @param {string} menuName - menu name
+     * Make menu partition element
      * @private
      */
-    _makeMenuElement(menuName) {
+    _makeMenuPartitionElement() {
+        const partitionElement = document.createElement('li');
+        const partitionInnerElement = document.createElement('div');
+        partitionElement.className = cls('item');
+        partitionInnerElement.className = cls('icpartition');
+        partitionElement.appendChild(partitionInnerElement);
+
+        this._menuElement.appendChild(partitionElement);
+    }
+
+    /**
+     * Make menu button element
+     * @param {string} menuName - menu name
+     * @param {Array} useIconTypes - Possible values are  \['normal', 'active', 'hover', 'disabled'\]
+     * @param {string} menuType - 'normal' or 'help'
+     * @private
+     */
+    _makeMenuElement(menuName, useIconTypes = ['normal', 'active', 'hover'], menuType = 'normal') {
         const btnElement = document.createElement('li');
-        const {normal, active, hover} = this.theme.getStyle('menu.icon');
-        const menuItemHtml = `
-            <svg class="svg_ic-menu">
-                <use xlink:href="${normal.path}#${normal.name}-ic-${menuName}" class="normal"/>
-                <use xlink:href="${active.path}#${active.name}-ic-${menuName}" class="active"/>
-                <use xlink:href="${hover.path}#${hover.name}-ic-${menuName}" class="hover"/>
-            </svg>
-        `;
+        const menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
 
         this._addTooltipAttribute(btnElement, menuName);
-        btnElement.id = `tie-btn-${menuName}`;
-        btnElement.className = 'tui-image-editor-item normal';
+        btnElement.className = `tie-btn-${menuName} ${cls('item')} ${menuType}`;
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -493,7 +517,8 @@ class Ui {
         this._addLoadEvent();
 
         const gridVisual = document.createElement('div');
-        gridVisual.className = 'tui-image-editor-grid-visual';
+
+        gridVisual.className = cls('grid-visual');
         const grid = `<table>
            <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>
            <tr><td></td><td></td><td></td></tr>
@@ -575,16 +600,14 @@ class Ui {
     }
 
     /**
-     * Get editor dimension
+     * Get canvas max Dimension
      * @returns {Object} - width & height of editor
      * @private
      */
-    _getEditorDimension() {
-        const maxHeight = parseFloat(this._editorContainerElement.style.maxHeight);
-        const height = (this.imageSize.newHeight > maxHeight) ? maxHeight : this.imageSize.newHeight;
-
-        const maxWidth = parseFloat(this._editorContainerElement.style.maxWidth);
-        const width = (this.imageSize.newWidth > maxWidth) ? maxWidth : this.imageSize.newWidth;
+    _getCanvasMaxDimension() {
+        const {maxWidth, maxHeight} = this._editorContainerElement.style;
+        const width = parseFloat(maxWidth);
+        const height = parseFloat(maxHeight);
 
         return {
             width,
@@ -598,7 +621,7 @@ class Ui {
      * @private
      */
     _setEditorPosition(menuBarPosition) { // eslint-disable-line complexity
-        const {width, height} = this._getEditorDimension();
+        const {width, height} = this._getCanvasMaxDimension();
         const editorElementStyle = this._editorElement.style;
         let top = 0;
         let left = 0;

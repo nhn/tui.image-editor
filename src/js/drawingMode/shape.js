@@ -3,10 +3,7 @@
  * @fileoverview ShapeDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
-import consts from '../consts';
-
-const {drawingModes} = consts;
-const components = consts.componentNames;
+import {drawingModes, componentNames as components} from '../consts';
 
 /**
  * ShapeDrawingMode class
@@ -39,4 +36,4 @@ class ShapeDrawingMode extends DrawingMode {
     }
 }
 
-module.exports = ShapeDrawingMode;
+export default ShapeDrawingMode;

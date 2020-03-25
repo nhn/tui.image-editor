@@ -1,18 +1,15 @@
 /**
- * @param {Locale} locale - Translate text
- * @param {Object} normal - iconStyle
- * @param {Object} active - iconStyle
+ * @param {Object} submenuInfo - submenu info for make template
+ *   @param {Locale} locale - Translate text
+ *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, iconStyle: {normal, active}}) => (`
+export default ({locale, makeSvgIcon}) => (`
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-draw-line-select-button">
             <div class="tui-image-editor-button free">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-draw-free" class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-draw-free" class="active"/>
-                    </svg>
+                    ${makeSvgIcon(['normal', 'active'], 'draw-free', true)}
                 </div>
                 <label>
                     ${locale.localize('Free')}
@@ -20,10 +17,7 @@ export default ({locale, iconStyle: {normal, active}}) => (`
             </div>
             <div class="tui-image-editor-button line">
                 <div>
-                    <svg class="svg_ic-submenu">
-                        <use xlink:href="${normal.path}#${normal.name}-ic-draw-line" class="normal"/>
-                        <use xlink:href="${active.path}#${active.name}-ic-draw-line" class="active"/>
-                    </svg>
+                    ${makeSvgIcon(['normal', 'active'], 'draw-line', true)}
                 </div>
                 <label>
                     ${locale.localize('Straight')}

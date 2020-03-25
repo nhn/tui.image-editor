@@ -3,33 +3,32 @@
  * @fileoverview Shape component
  */
 import fabric from 'fabric';
-import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
-import consts from '../consts';
+import {
+    rejectMessages,
+    eventNames,
+    keyCodes as KEY_CODES,
+    componentNames,
+    fObjectOptions,
+    SHAPE_DEFAULT_OPTIONS
+} from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
+import {Promise} from '../util';
 import {extend, inArray} from 'tui-code-snippet';
 
-const {rejectMessages, eventNames} = consts;
-const KEY_CODES = consts.keyCodes;
-
-const DEFAULT_TYPE = 'rect';
-const DEFAULT_WIDTH = 20;
-const DEFAULT_HEIGHT = 20;
-
-const DEFAULT_OPTIONS = {
+const SHAPE_INIT_OPTIONS = extend({
     strokeWidth: 1,
     stroke: '#000000',
     fill: '#ffffff',
     width: 1,
     height: 1,
     rx: 0,
-    ry: 0,
-    lockSkewingX: true,
-    lockSkewingY: true,
-    lockUniScaling: false,
-    bringForward: true,
-    isRegular: false
-};
+    ry: 0
+}, SHAPE_DEFAULT_OPTIONS);
+
+const DEFAULT_TYPE = 'rect';
+const DEFAULT_WIDTH = 20;
+const DEFAULT_HEIGHT = 20;
 
 const shapeType = ['rect', 'circle', 'triangle'];
 
@@ -40,9 +39,9 @@ const shapeType = ['rect', 'circle', 'triangle'];
  * @extends {Component}
  * @ignore
  */
-class Shape extends Component {
+export default class Shape extends Component {
     constructor(graphics) {
-        super(consts.componentNames.SHAPE, graphics);
+        super(componentNames.SHAPE, graphics);
 
         /**
          * Object of The drawing shape
@@ -63,7 +62,7 @@ class Shape extends Component {
          * @type {Object}
          * @private
          */
-        this._options = extend({}, DEFAULT_OPTIONS);
+        this._options = extend({}, SHAPE_INIT_OPTIONS);
 
         /**
          * Whether the shape object is selected or not
@@ -257,9 +256,9 @@ class Shape extends Component {
      * @private
      */
     _extendOptions(options) {
-        const selectionStyles = consts.fObjectOptions.SELECTION_STYLE;
+        const selectionStyles = fObjectOptions.SELECTION_STYLE;
 
-        options = extend({}, DEFAULT_OPTIONS, this._options, selectionStyles, options);
+        options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
 
         if (options.isRegular) {
             options.lockUniScaling = true;
@@ -426,5 +425,3 @@ class Shape extends Component {
         }
     }
 }
-
-module.exports = Shape;

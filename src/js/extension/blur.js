@@ -32,4 +32,4 @@ const Blur = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends 
     }
 });
 
-module.exports = Blur;
+export default Blur;

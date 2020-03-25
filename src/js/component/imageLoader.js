@@ -2,11 +2,10 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image loader
  */
-import Promise from 'core-js/library/es6/promise';
 import Component from '../interface/component';
-import consts from '../consts';
+import {componentNames, rejectMessages} from '../consts';
+import {Promise} from '../util';
 
-const {componentNames, rejectMessages} = consts;
 const imageOption = {
     padding: 0,
     crossOrigin: 'Anonymous'
@@ -82,4 +81,4 @@ class ImageLoader extends Component {
     }
 }
 
-module.exports = ImageLoader;
+export default ImageLoader;

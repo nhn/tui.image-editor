@@ -32,4 +32,4 @@ const Sharpen = fabric.util.createClass(fabric.Image.filters.Convolute, /** @len
     }
 });
 
-module.exports = Sharpen;
+export default Sharpen;
