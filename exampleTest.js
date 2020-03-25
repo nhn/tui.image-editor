@@ -1,4 +1,4 @@
-const { BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY } = process.env;
+const {BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY} = process.env;
 
 const fs = require('fs');
 const path = require('path');
@@ -62,14 +62,17 @@ testExamplePage(testUrls).catch(err => {
  * Url test
  */
 async function testExamplePage(urls) {
-    const parallelPendingTests = Object.keys(capabilities).map(index => testPlatform(index, urls));
+    const parallelPendingTests = Object.keys(capabilities).map(index =>
+        testPlatform(capabilities[index], urls)
+    );
     const testResults = await Promise.all(parallelPendingTests);
     const result = testResults.flat().reduce((errorList, testInfo) => {
-        if (!testInfo.errorLogs) {
+        if (!Array.isArray(testInfo.errorLogs)) {
+            // When there is no error catch code in the example page.
             testInfo.errorLogs = {message: 'Not exist error catch code snippet in example page'};
-            testInfo.push(testInfo);
+            errorList.push(testInfo);
         } else if (testInfo.errorLogs.length) {
-            testInfo.push(testInfo);
+            errorList.push(testInfo);
         }
         return errorList;
     }, []);
@@ -82,8 +85,8 @@ async function testExamplePage(urls) {
 /*
  * Test one platform
  */
-async function testPlatform(index, urls) {
-    const driver = getDriver(index);
+async function testPlatform(platformInfo, urls) {
+    const driver = getDriver(platformInfo);
     const result = [];
 
     for(let i = 0; i < urls.length; i += 1) {
@@ -116,10 +119,10 @@ async function testPlatform(index, urls) {
 /**
  * Get Selenium Builder
  */
-function getDriver(index) {
+function getDriver(platformInfo) {
     return new Builder()
         .usingHttpAgent(HttpAgent)
-        .withCapabilities({...capabilities[index], build: `examplePageTest-${new Date().toLocaleDateString()}`})
+        .withCapabilities({...platformInfo, build: `examplePageTest-${new Date().toLocaleDateString()}`})
         .usingServer(`http://${BROWSERSTACK_USERNAME}:${BROWSERSTACK_ACCESS_KEY}@hub.browserstack.com/wd/hub`)
         .build();
 }
