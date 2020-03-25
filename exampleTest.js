@@ -1,5 +1,4 @@
-const BROWSERSTACK_USERNAME = process.env.BROWSERSTACK_USERNAME;
-const BROWSERSTACK_ACCESS_KEY = process.env.BROWSERSTACK_ACCESS_KEY;
+const { BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY } = process.env;
 
 const fs = require('fs');
 const path = require('path');
@@ -7,6 +6,7 @@ const assert = require('assert');
 const http = require('http');
 const {Builder} = require('selenium-webdriver');
 const HttpAgent = new http.Agent({keepAlive: true});
+const DOCUMENT_LOAD_MAX_TIMEOUT = 20000;
 const testUrls = getTestUrls();
 
 /**
@@ -52,7 +52,7 @@ const capabilities = [
     }
 ];
 
-urlTest(testUrls).catch(err => {
+testExamplePage(testUrls).catch(err => {
     console.log(err);
     process.exit(1);
 });
@@ -61,15 +61,15 @@ urlTest(testUrls).catch(err => {
 /**
  * Url test
  */
-async function urlTest(urls) {
+async function testExamplePage(urls) {
     const parallelPendingTests = Object.keys(capabilities).map(index => testPlatform(index, urls));
     const testResults = await Promise.all(parallelPendingTests);
-    const result = testResults.flat().reduce((errorList, errorInfo) => {
-        if (!errorInfo.errorLogs) {
-            errorInfo.errorLogs = {message: 'Not exist error catch code snippet in example page'};
-            errorList.push(errorInfo);
-        } else if (errorInfo.errorLogs.length) {
-            errorList.push(errorInfo);
+    const result = testResults.flat().reduce((errorList, testInfo) => {
+        if (!testInfo.errorLogs) {
+            testInfo.errorLogs = {message: 'Not exist error catch code snippet in example page'};
+            testInfo.push(testInfo);
+        } else if (testInfo.errorLogs.length) {
+            testInfo.push(testInfo);
         }
         return errorList;
     }, []);
@@ -86,14 +86,12 @@ async function testPlatform(index, urls) {
     const driver = getDriver(index);
     const result = [];
 
-    for(let i = 0; i <= urls.length - 1; i++) {
+    for(let i = 0; i < urls.length; i += 1) {
         const url = urlPrefix + urls[i];
         await driver.get(url);
-        await driver.wait(function() {
-          return driver.executeScript('return document.readyState').then(function(readyState) {
-            return readyState === 'complete';
-          });
-        }, 20000);
+        await driver.wait(() =>
+          driver.executeScript('return document.readyState').then(readyState => readyState === 'complete')
+        , DOCUMENT_LOAD_MAX_TIMEOUT);
 
         const browserInfo = await driver.getCapabilities();
         const errorLogs = await driver.executeScript('return window.errorLogs');
@@ -121,7 +119,7 @@ async function testPlatform(index, urls) {
 function getDriver(index) {
     return new Builder()
         .usingHttpAgent(HttpAgent)
-        .withCapabilities(Object.assign({}, capabilities[index], {build: `examplePageTest-${new Date().toLocaleDateString()}`}))
+        .withCapabilities({...capabilities[index], build: `examplePageTest-${new Date().toLocaleDateString()}`})
         .usingServer(`http://${BROWSERSTACK_USERNAME}:${BROWSERSTACK_ACCESS_KEY}@hub.browserstack.com/wd/hub`)
         .build();
 }
@@ -130,9 +128,9 @@ function getDriver(index) {
  * Print browser error logs
  */
 function printErrorLog(errorBrowsersInfo) {
-    errorBrowsersInfo.forEach(errorInfo => {
-        console.log(errorInfo.url);
-        console.log(errorInfo.browserName, errorInfo.browserVersion, errorInfo.errorLogs);
+    errorBrowsersInfo.forEach(({url, browserName, browserVersion, errorLogs}) => {
+        console.log(url);
+        console.log(browserName, browserVersion, errorLogs);
     });
 }
 
@@ -143,7 +141,7 @@ function getTestUrls() {
     const config = require(path.resolve(process.cwd(), 'tuidoc.config.json'));
     const filePath = (config.examples || {filePath: ''}).filePath;
     return fs.readdirSync(filePath).reduce((urls, fileName) => {
-        if (fileName.match(/html$/)) {
+        if (/html$/.test(fileName)) {
             urls.push(`/${filePath}/${fileName}`);
         }
         return urls;
