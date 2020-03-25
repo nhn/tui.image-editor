@@ -110,6 +110,28 @@ describe('Graphics', () => {
         expect(graphics.getObjects().length).toBe(0);
     });
 
+    it('Position of the group object to be deleted must be set to the last position before being removed.', () => {
+        const object = new fabric.Rect({
+            left: 10,
+            top: 10
+        });
+        const object2 = new fabric.Rect({
+            left: 5,
+            top: 20
+        });
+        canvas.add(object);
+        canvas.add(object2);
+
+        const activeSelection = graphics.getActiveSelectionFromObjects(canvas.getObjects());
+        graphics.setActiveObject(activeSelection);
+
+        const removeGroupObjectId = graphics.getActiveObjectIdForRemove();
+        const removeGroupObject = graphics.getObject(removeGroupObjectId);
+
+        expect(removeGroupObject.left).toBe(5);
+        expect(removeGroupObject.top).toBe(10);
+    });
+
     it('switches drawing modes', () => {
         let modeName;
         for (modeName in drawingModes) {
