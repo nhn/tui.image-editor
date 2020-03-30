@@ -57,7 +57,6 @@ testExamplePage(testUrls).catch(err => {
     process.exit(1);
 });
 
-
 /**
  * Url test
  */
@@ -150,4 +149,3 @@ function getTestUrls() {
         return urls;
     }, []);
 }
-
