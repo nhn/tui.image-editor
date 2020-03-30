@@ -1,20 +1,23 @@
-const BROWSERSTACK_USERNAME = process.env.BROWSERSTACK_USERNAME;
-const BROWSERSTACK_ACCESS_KEY = process.env.BROWSERSTACK_ACCESS_KEY;
+const {BROWSERSTACK_USERNAME, BROWSERSTACK_ACCESS_KEY} = process.env;
+
+const fs = require('fs');
+const path = require('path');
 const assert = require('assert');
 const http = require('http');
 const {Builder} = require('selenium-webdriver');
+const HttpAgent = new http.Agent({keepAlive: true});
+const DOCUMENT_LOAD_MAX_TIMEOUT = 20000;
+const testUrls = getTestUrls();
 
-const HttpAgent = new http.Agent({
-    keepAlive: true
-});
+/**
+ * Url prefix
+ */
+const urlPrefix = 'http://nhn.github.io/tui.image-editor/latest';
 
-const urlpreset = 'http://nhn.github.io/tui.image-editor/latest';
-const testUrls = [
-    '/examples/example01-includeUi.html',
-    '/examples/example02-useApiDirect.html',
-    '/examples/example03-mobile.html'
-];
-
+/**
+ * Capabilities
+ * https://www.browserstack.com/automate/capabilities
+ */
 const capabilities = [
     {
         browserName: 'Firefox',
@@ -49,74 +52,100 @@ const capabilities = [
     }
 ];
 
-if (!BROWSERSTACK_USERNAME || !BROWSERSTACK_ACCESS_KEY) {
-    throw Error('Id password required');
-}
+testExamplePage(testUrls).catch(err => {
+    console.log(err);
+    process.exit(1);
+});
 
-testAllUrl(testUrls);
-
-async function testAllUrl(urls) {
-    let errorCount = 0;
-
-    for(let i = 0; i <= urls.length - 1; i++) {
-        const url = urlpreset + urls[i];
-        const errorBrowsersInfo = await testOneUrl(url);
-
-        errorCount += errorBrowsersInfo.length;
-        printErrorLog(url, errorBrowsersInfo);
-    }
-
-    assert.equal(errorCount, 0);
-}
-
-async function testOneUrl(url) {
-    const parallelPendingTests = Object.keys(capabilities).map(index => testAllPlatform(index, url));
+/**
+ * Url test
+ */
+async function testExamplePage(urls) {
+    const parallelPendingTests = Object.keys(capabilities).map(index =>
+        testPlatform(capabilities[index], urls)
+    );
     const testResults = await Promise.all(parallelPendingTests);
-    return testResults.reduce((errorList, errorInfo) => {
-        if (!errorInfo.errorLogs) {
-            errorInfo.errorLogs = {message: 'Not exist error catch code snippet in example page'};
-            errorList.push(errorInfo);
-        } else if (errorInfo.errorLogs.length) {
-            errorList.push(errorInfo);
+    const result = testResults.flat().reduce((errorList, testInfo) => {
+        if (!Array.isArray(testInfo.errorLogs)) {
+            // When there is no error catch code in the example page.
+            testInfo.errorLogs = {message: 'Not exist error catch code snippet in example page'};
+            errorList.push(testInfo);
+        } else if (testInfo.errorLogs.length) {
+            errorList.push(testInfo);
         }
         return errorList;
     }, []);
+
+    printErrorLog(result);
+    
+    assert.equal(result.length, 0);
 }
 
-async function testAllPlatform(index, url) {
-    const driver = getDriver(index);
+/*
+ * Test one platform
+ */
+async function testPlatform(platformInfo, urls) {
+    const driver = getDriver(platformInfo);
+    const result = [];
 
-    await driver.get(url);
-    await driver.wait(function() {
-      return driver.executeScript('return document.readyState').then(function(readyState) {
-        return readyState === 'complete';
-      });
-    }, 20000);
+    for(let i = 0; i < urls.length; i += 1) {
+        const url = urlPrefix + urls[i];
+        await driver.get(url);
+        await driver.wait(() =>
+          driver.executeScript('return document.readyState').then(readyState => readyState === 'complete')
+        , DOCUMENT_LOAD_MAX_TIMEOUT);
 
-    const browserInfo = await driver.getCapabilities();
-    const errorLogs = await driver.executeScript('return window.errorLogs');
+        const browserInfo = await driver.getCapabilities();
+        const errorLogs = await driver.executeScript('return window.errorLogs');
+        const browserName = browserInfo.get("browserName");
+        const browserVersion = browserInfo.get("version") || browserInfo.get("browserVersion");
+
+        result.push({
+            url,
+            browserName,
+            browserVersion,
+            errorLogs
+        });
+
+        console.log(browserName, browserVersion, ' - ', url);
+    }
 
     driver.quit();
 
-    return {
-        browserName: browserInfo.get("browserName"),
-        browserVersion: browserInfo.get("version") || browserInfo.get("browserVersion"),
-        errorLogs
-    };
+    return result;
 }
 
-function getDriver(index) {
+/**
+ * Get Selenium Builder
+ */
+function getDriver(platformInfo) {
     return new Builder()
         .usingHttpAgent(HttpAgent)
-        .withCapabilities(Object.assign({}, capabilities[index], {build: `examplePageTest-${new Date().toLocaleDateString()}`}))
+        .withCapabilities({...platformInfo, build: `examplePageTest-${new Date().toLocaleDateString()}`})
         .usingServer(`http://${BROWSERSTACK_USERNAME}:${BROWSERSTACK_ACCESS_KEY}@hub.browserstack.com/wd/hub`)
         .build();
 }
 
-function printErrorLog(url, errorBrowsersInfo) {
-    console.log(url);
-    errorBrowsersInfo.forEach(errorInfo => {
-        console.log(errorInfo.browserName, errorInfo.browserVersion, errorInfo.errorLogs);
+/**
+ * Print browser error logs
+ */
+function printErrorLog(errorBrowsersInfo) {
+    errorBrowsersInfo.forEach(({url, browserName, browserVersion, errorLogs}) => {
+        console.log(url);
+        console.log(browserName, browserVersion, errorLogs);
     });
 }
 
+/**
+ * Get Examples Url
+ */
+function getTestUrls() {
+    const config = require(path.resolve(process.cwd(), 'tuidoc.config.json'));
+    const filePath = (config.examples || {filePath: ''}).filePath;
+    return fs.readdirSync(filePath).reduce((urls, fileName) => {
+        if (/html$/.test(fileName)) {
+            urls.push(`/${filePath}/${fileName}`);
+        }
+        return urls;
+    }, []);
+}

@@ -1,11 +1,8 @@
-
 name: Node.js CI
 
 on:
   schedule:
-    - cron: '0 14,22 * * *'
-  push:
-    branches: [ feat/examplePageTest ]
+    - cron: '0 22 * * *'
 
 jobs:
   build:
