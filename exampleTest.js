@@ -145,6 +145,10 @@ function printErrorLog(errorBrowsersInfo) {
  * Get Examples Url
  */
 function getTestUrls() {
+    if (!filePath) {
+        throw Error('not exist examples path at tuidoc.config.json');
+    }
+
     return fs.readdirSync(filePath).reduce((urls, fileName) => {
         if (/html$/.test(fileName)) {
             urls.push(`/${filePath}/${fileName}`);
