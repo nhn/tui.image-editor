@@ -7,7 +7,11 @@ const http = require('http');
 const {Builder} = require('selenium-webdriver');
 const HttpAgent = new http.Agent({keepAlive: true});
 const DOCUMENT_LOAD_MAX_TIMEOUT = 20000;
+const config = require(path.resolve(process.cwd(), 'tuidoc.config.json'));
+const examples = config.examples || {};
+const {globalErrorLogVariable = false, filePath = ''} = examples;
 const testUrls = getTestUrls();
+
 
 /**
  * Url prefix
@@ -87,6 +91,7 @@ async function testExamplePage(urls) {
  */
 async function testPlatform(platformInfo, urls) {
     const driver = getDriver(platformInfo);
+    const errorLogVariable = getGlobalErrorLogVariable();
     const result = [];
 
     for(let i = 0; i < urls.length; i += 1) {
@@ -97,7 +102,7 @@ async function testPlatform(platformInfo, urls) {
         , DOCUMENT_LOAD_MAX_TIMEOUT);
 
         const browserInfo = await driver.getCapabilities();
-        const errorLogs = await driver.executeScript('return window.errorLogs');
+        const errorLogs = await driver.executeScript(`return window.${errorLogVariable}`);
         const browserName = browserInfo.get("browserName");
         const browserVersion = browserInfo.get("version") || browserInfo.get("browserVersion");
 
@@ -141,8 +146,6 @@ function printErrorLog(errorBrowsersInfo) {
  * Get Examples Url
  */
 function getTestUrls() {
-    const config = require(path.resolve(process.cwd(), 'tuidoc.config.json'));
-    const filePath = (config.examples || {filePath: ''}).filePath;
     return fs.readdirSync(filePath).reduce((urls, fileName) => {
         if (/html$/.test(fileName)) {
             urls.push(`/${filePath}/${fileName}`);
@@ -151,3 +154,13 @@ function getTestUrls() {
     }, []);
 }
 
+/**
+ * Get globalErrorLogVariable for example 
+ */
+function getGlobalErrorLogVariable() {
+    if (globalErrorLogVariable) {
+        return typeof globalErrorLogVariable === 'string' ? globalErrorLogVariable : 'errorLogs';
+    }
+
+    return false;
+}
