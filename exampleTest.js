@@ -61,7 +61,6 @@ testExamplePage(testUrls).catch(err => {
     process.exit(1);
 });
 
-
 /**
  * Url test
  */
