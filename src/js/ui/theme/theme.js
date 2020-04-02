@@ -2,7 +2,7 @@ import {extend, forEach, map} from 'tui-code-snippet';
 import {styleLoad} from '../../util';
 import style from '../template/style';
 import standardTheme from './standard';
-import icon from '../template/icon.svg';
+import icon from '../../../svg/default.svg';
 
 /**
  * Theme manager
