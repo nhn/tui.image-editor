@@ -12,7 +12,6 @@ const examples = config.examples || {};
 const {globalErrorLogVariable = false, filePath = ''} = examples;
 const testUrls = getTestUrls();
 
-
 /**
  * Url prefix
  */
@@ -159,11 +158,4 @@ function getTestUrls() {
         }
         return urls;
     }, []);
-}
-
-/**
- * Get globalErrorLogVariable for example 
- */
-function getGlobalErrorLogVariable() {
-    return typeof globalErrorLogVariable === 'string' ? globalErrorLogVariable : 'errorLogs';
 }
