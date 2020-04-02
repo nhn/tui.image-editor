@@ -10,27 +10,36 @@ import {
     keyCodes as KEY_CODES,
     componentNames,
     fObjectOptions,
-    SHAPE_DEFAULT_OPTIONS
+    FILTER_SECTION_DEFAULT_OPTIONS
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
 import {Promise} from '../util';
 import {extend, inArray} from 'tui-code-snippet';
 
-const SHAPE_INIT_OPTIONS = extend({
-    strokeWidth: 1,
-    stroke: '#000000',
-    fill: '#ffffff',
-    width: 1,
-    height: 1,
-    rx: 0,
-    ry: 0
-}, SHAPE_DEFAULT_OPTIONS);
+const FILTER_SECTION_INIT_OPTIONS = extend(
+    {
+        strokeWidth: 3,
+        stroke: '#000000',
+        fill: '#ffffff',
+        width: 1,
+        height: 1,
+        rx: 0,
+        ry: 0,
+        radiusValue: 0,
+        pixelateValue: 25
+    },
+    FILTER_SECTION_DEFAULT_OPTIONS
+);
 
-const DEFAULT_TYPE = 'rect';
+const DEFAULT_TYPE = 'rect-filtersection';
 const DEFAULT_WIDTH = 20;
 const DEFAULT_HEIGHT = 20;
 
-const shapeType = ['rect', 'circle', 'triangle'];
+const filtersectionType = [
+    'rect-filtersection',
+    'circle-filtersection',
+    'triangle-filtersection'
+];
 
 /**
  * Shape
@@ -39,16 +48,16 @@ const shapeType = ['rect', 'circle', 'triangle'];
  * @extends {Component}
  * @ignore
  */
-export default class Shape extends Component {
+export default class Filtersection extends Component {
     constructor(graphics) {
-        super(componentNames.SHAPE, graphics);
+        super(componentNames.FILTER_SECTION, graphics);
 
         /**
          * Object of The drawing shape
          * @type {fabric.Object}
          * @private
          */
-        this._shapeObj = null;
+        this._filtersectionObj = null;
 
         /**
          * Type of the drawing shape
@@ -62,7 +71,7 @@ export default class Shape extends Component {
          * @type {Object}
          * @private
          */
-        this._options = extend({}, SHAPE_INIT_OPTIONS);
+        this._options = extend({}, FILTER_SECTION_INIT_OPTIONS);
 
         /**
          * Whether the shape object is selected or not
@@ -181,13 +190,15 @@ export default class Shape extends Component {
             const canvas = this.getCanvas();
             options = this._extendOptions(options);
 
-            const shapeObj = this._createInstance(type, options);
+            const filtersectionObj = this._createInstance(type, options);
 
-            this._bindEventOnShape(shapeObj);
+            this._bindEventOnFiltersection(filtersectionObj);
 
-            canvas.add(shapeObj).setActiveObject(shapeObj);
+            canvas.add(filtersectionObj).setActiveObject(filtersectionObj);
 
-            const objectProperties = this.graphics.createObjectProperties(shapeObj);
+            const objectProperties = this.graphics.createObjectProperties(
+                filtersectionObj
+            );
 
             resolve(objectProperties);
         });
@@ -196,7 +207,7 @@ export default class Shape extends Component {
     /**
      * Change the shape
      * @ignore
-     * @param {fabric.Object} shapeObj - Selected shape object on canvas
+     * @param {fabric.Object} filtersectionObj - Selected shape object on canvas
      * @param {Object} options - Shape options
      *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
@@ -208,14 +219,85 @@ export default class Shape extends Component {
      *      @param {number} [options.isRegular] - Whether scaling shape has 1:1 ratio or not
      * @returns {Promise}
      */
-    change(shapeObj, options) {
+    change(filtersectionObj, options) {
         return new Promise((resolve, reject) => {
-            if (inArray(shapeObj.get('type'), shapeType) < 0) {
+            if (inArray(filtersectionObj.get('type'), filtersectionType) < 0) {
                 reject(rejectMessages.unsupportedType);
             }
-            
-            shapeObj.set(options);
+            if (options.radiusValue) {
+                options.rx = options.radiusValue;
+                options.ry = options.radiusValue;
+            }
+            filtersectionObj.set(options);
             this.getCanvas().renderAll();
+            resolve();
+        });
+    }
+
+    apply(filtersectionObj, options) {
+        return new Promise((resolve, reject) => {
+            if (inArray(filtersectionObj.get('type'), filtersectionType) < 0) {
+                reject(rejectMessages.unsupportedType);
+            }
+            this.getCanvas().backgroundImage.clone(cloned => {
+                let {
+                    left,
+                    top,
+                    width,
+                    height
+                } = this.getCanvas().getActiveObject();
+                left = left - width / 2;
+                top = top - height / 2;
+                // const filter2 = new fabric.Image.filters.Grayscale();
+                const filter = new fabric.Image.filters.Pixelate({
+                    blocksize: filtersectionObj.pixelateValue
+                });
+                cloned.filters.push(filter);
+                // cloned.filters.push(filter2);
+                cloned.applyFilters();
+
+                const imageData = {
+                    imageName: this.getImageName(),
+                    url: cloned.toDataURL({
+                        left,
+                        top,
+                        width,
+                        height
+                    })
+                };
+
+                fabric.Image.fromURL(imageData.url, oImg => {
+                    oImg.set({
+                        top,
+                        left,
+                        lockMovementX: true,
+                        lockMovementY: true,
+                        hasControls: false,
+                        clipPath: new fabric.Rect({
+                            originX: 'center',
+                            originY: 'center',
+                            width,
+                            height,
+                            rx: filtersectionObj.radiusValue,
+                            ry: filtersectionObj.radiusValue,
+                            transparentCorners: false,
+                            dirty: true
+                        })
+                    });
+
+                    this.getCanvas().add(oImg);
+
+                    this.getCanvas().remove(filtersectionObj);
+
+                    this.getCanvas().renderAll();
+                    resolve();
+                });
+            });
+        });
+    }
+
+    unapply() {
+        return new Promise(resolve => {
             resolve();
         });
     }
@@ -231,20 +313,28 @@ export default class Shape extends Component {
         let instance;
 
         switch (type) {
-            case 'rect':
+            case 'rect-filtersection':
                 instance = new fabric.Rect(options);
                 break;
-            case 'circle':
-                instance = new fabric.Ellipse(extend({
-                    type: 'circle'
-                }, options));
+            case 'circle-filtersection':
+                instance = new fabric.Ellipse(
+                    extend(
+                        {
+                            type: 'circle'
+                        },
+                        options
+                    )
+                );
                 break;
-            case 'triangle':
+            case 'triangle-filtersection':
                 instance = new fabric.Triangle(options);
                 break;
             default:
                 instance = {};
         }
+        instance.my = {
+            type
+        };
 
         return instance;
     }
@@ -258,7 +348,13 @@ export default class Shape extends Component {
     _extendOptions(options) {
         const selectionStyles = fObjectOptions.SELECTION_STYLE;
 
-        options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
+        options = extend(
+            {},
+            FILTER_SECTION_INIT_OPTIONS,
+            this._options,
+            selectionStyles,
+            options
+        );
 
         if (options.isRegular) {
             options.lockUniScaling = true;
@@ -269,40 +365,39 @@ export default class Shape extends Component {
 
     /**
      * Bind fabric events on the creating shape object
-     * @param {fabric.Object} shapeObj - Shape object
+     * @param {fabric.Object} filtersectionObj - Shape object
      * @private
      */
-    _bindEventOnShape(shapeObj) {
+    _bindEventOnFiltersection(filtersectionObj) {
         const self = this;
         const canvas = this.getCanvas();
-
-        shapeObj.on({
+        filtersectionObj.on({
             added() {
-                self._shapeObj = this;
-                resizeHelper.setOrigins(self._shapeObj);
+                self._filtersectionObj = this;
+                resizeHelper.setOrigins(self._filtersectionObj);
             },
             selected() {
                 self._isSelected = true;
-                self._shapeObj = this;
+                self._filtersectionObj = this;
                 canvas.uniScaleTransform = true;
                 canvas.defaultCursor = 'default';
-                resizeHelper.setOrigins(self._shapeObj);
+                resizeHelper.setOrigins(self._filtersectionObj);
             },
             deselected() {
                 self._isSelected = false;
-                self._shapeObj = null;
+                self._filtersectionObj = null;
                 canvas.defaultCursor = 'crosshair';
                 canvas.uniScaleTransform = false;
             },
             modified() {
-                const currentObj = self._shapeObj;
+                const currentObj = self._filtersectionObj;
 
                 resizeHelper.adjustOriginToCenter(currentObj);
                 resizeHelper.setOrigins(currentObj);
             },
             scaling(fEvent) {
                 const pointer = canvas.getPointer(fEvent.e);
-                const currentObj = self._shapeObj;
+                const currentObj = self._filtersectionObj;
 
                 canvas.setCursor('crosshair');
                 resizeHelper.resize(currentObj, pointer, true);
@@ -318,10 +413,10 @@ export default class Shape extends Component {
     _onFabricMouseDown(fEvent) {
         if (!fEvent.target) {
             this._isSelected = false;
-            this._shapeObj = false;
+            this._filtersectionObj = false;
         }
 
-        if (!this._isSelected && !this._shapeObj) {
+        if (!this._isSelected && !this._filtersectionObj) {
             const canvas = this.getCanvas();
             this._startPoint = canvas.getPointer(fEvent.e);
 
@@ -344,9 +439,9 @@ export default class Shape extends Component {
         const startPointY = this._startPoint.y;
         const width = startPointX - pointer.x;
         const height = startPointY - pointer.y;
-        const shape = this._shapeObj;
+        const filtersection = this._filtersectionObj;
 
-        if (!shape) {
+        if (!filtersection) {
             this.add(this._type, {
                 left: startPointX,
                 top: startPointY,
@@ -356,11 +451,11 @@ export default class Shape extends Component {
                 this.fire(eventNames.ADD_OBJECT, objectProps);
             });
         } else {
-            this._shapeObj.set({
+            this._filtersectionObj.set({
                 isRegular: this._withShiftKey
             });
 
-            resizeHelper.resize(shape, pointer);
+            resizeHelper.resize(filtersection, pointer);
             canvas.renderAll();
         }
     }
@@ -373,9 +468,8 @@ export default class Shape extends Component {
         const canvas = this.getCanvas();
         const startPointX = this._startPoint.x;
         const startPointY = this._startPoint.y;
-        const shape = this._shapeObj;
-
-        if (!shape) {
+        const filtersection = this._filtersectionObj;
+        if (!filtersection) {
             this.add(this._type, {
                 left: startPointX,
                 top: startPointY,
@@ -384,9 +478,12 @@ export default class Shape extends Component {
             }).then(objectProps => {
                 this.fire(eventNames.ADD_OBJECT, objectProps);
             });
-        } else if (shape) {
-            resizeHelper.adjustOriginToCenter(shape);
-            this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
+        } else if (filtersection) {
+            resizeHelper.adjustOriginToCenter(filtersection);
+            this.fire(
+                eventNames.ADD_OBJECT_AFTER,
+                this.graphics.createObjectProperties(filtersection)
+            );
         }
 
         canvas.off({
@@ -404,8 +501,8 @@ export default class Shape extends Component {
         if (e.keyCode === KEY_CODES.SHIFT) {
             this._withShiftKey = true;
 
-            if (this._shapeObj) {
-                this._shapeObj.isRegular = true;
+            if (this._filtersectionObj) {
+                this._filtersectionObj.isRegular = true;
             }
         }
     }
@@ -419,8 +516,8 @@ export default class Shape extends Component {
         if (e.keyCode === KEY_CODES.SHIFT) {
             this._withShiftKey = false;
 
-            if (this._shapeObj) {
-                this._shapeObj.isRegular = false;
+            if (this._filtersectionObj) {
+                this._filtersectionObj.isRegular = false;
             }
         }
     }

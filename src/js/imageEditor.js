@@ -27,7 +27,8 @@ const {
     ICON_CREATE_END,
     SELECTION_CLEARED,
     SELECTION_CREATED,
-    ADD_OBJECT_AFTER} = events;
+    ADD_OBJECT_AFTER
+} = events;
 
 /**
  * Image filter result
@@ -254,10 +255,7 @@ class ImageEditor {
      * @private
      */
     _attachInvokerEvents() {
-        const {
-            UNDO_STACK_CHANGED,
-            REDO_STACK_CHANGED
-        } = events;
+        const {UNDO_STACK_CHANGED, REDO_STACK_CHANGED} = events;
 
         /**
          * Undo stack changed event
@@ -268,7 +266,10 @@ class ImageEditor {
          *     console.log(length);
          * });
          */
-        this._invoker.on(UNDO_STACK_CHANGED, this.fire.bind(this, UNDO_STACK_CHANGED));
+        this._invoker.on(
+            UNDO_STACK_CHANGED,
+            this.fire.bind(this, UNDO_STACK_CHANGED)
+        );
         /**
          * Redo stack changed event
          * @event ImageEditor#redoStackChanged
@@ -278,7 +279,10 @@ class ImageEditor {
          *     console.log(length);
          * });
          */
-        this._invoker.on(REDO_STACK_CHANGED, this.fire.bind(this, REDO_STACK_CHANGED));
+        this._invoker.on(
+            REDO_STACK_CHANGED,
+            this.fire.bind(this, REDO_STACK_CHANGED)
+        );
     }
 
     /**
@@ -330,7 +334,7 @@ class ImageEditor {
     /* eslint-disable complexity */
     _onKeyDown(e) {
         const {ctrlKey, keyCode, metaKey} = e;
-        const isModifierKey = (ctrlKey || metaKey);
+        const isModifierKey = ctrlKey || metaKey;
 
         if (isModifierKey) {
             if (keyCode === keyCodes.C) {
@@ -340,16 +344,15 @@ class ImageEditor {
                 this.clearRedoStack();
             } else if (keyCode === keyCodes.Z) {
                 // There is no error message on shortcut when it's empty
-                this.undo()['catch'](() => {
-                });
+                this.undo()['catch'](() => {});
             } else if (keyCode === keyCodes.Y) {
                 // There is no error message on shortcut when it's empty
-                this.redo()['catch'](() => {
-                });
+                this.redo()['catch'](() => {});
             }
         }
 
-        const isDeleteKey = keyCode === keyCodes.BACKSPACE || keyCode === keyCodes.DEL;
+        const isDeleteKey =
+            keyCode === keyCodes.BACKSPACE || keyCode === keyCodes.DEL;
         const isRemoveReady = this._graphics.isReadyRemoveObject();
 
         if (isRemoveReady && isDeleteKey) {
@@ -404,7 +407,11 @@ class ImageEditor {
      * @private
      */
     _pushAddObjectCommand(obj) {
-        const command = commandFactory.create(commands.ADD_OBJECT, this._graphics, obj);
+        const command = commandFactory.create(
+            commands.ADD_OBJECT,
+            this._graphics,
+            obj
+        );
         this._invoker.pushUndoStack(command);
     }
 
@@ -554,7 +561,7 @@ class ImageEditor {
     execute(commandName, ...args) {
         // Inject an Graphics instance as first parameter
         const theArgs = [this._graphics].concat(args);
-
+        
         return this._invoker.execute(commandName, ...theArgs);
     }
 
@@ -898,6 +905,10 @@ class ImageEditor {
         this._graphics.setDrawingShape(type, options);
     }
 
+    setDrawingFiltersection(type, options) {
+        this._graphics.setDrawingFiltersection(type, options);
+    }
+
     /**
      * Add shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
@@ -944,6 +955,14 @@ class ImageEditor {
         return this.execute(commands.ADD_SHAPE, type, options);
     }
 
+    addFiltersection(type, options) {
+        options = options || {};
+
+        this._setPositions(options);
+
+        return this.execute(commands.ADD_FILTER_SECTION, type, options);
+    }
+
     /**
      * Change shape
      * @param {number} id - object id
@@ -981,6 +1000,22 @@ class ImageEditor {
         const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
         return this[executeMethodName](commands.CHANGE_SHAPE, id, options);
+    }
+
+    changeFiltersection(id, options, isSilent) {
+        const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+        return this[executeMethodName](
+            commands.CHANGE_FILTER_SECTION,
+            id,
+            options
+        );
+    }
+
+    applyFiltersection(id, options = {}) {
+        this._setPositions(options);
+
+        return this.execute(commands.APPLY_FILTER_SECTION, id, options);
     }
 
     /**
@@ -1056,7 +1091,11 @@ class ImageEditor {
     changeTextStyle(id, styleObj, isSilent) {
         const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
-        return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
+        return this[executeMethodName](
+            commands.CHANGE_TEXT_STYLE,
+            id,
+            styleObj
+        );
     }
 
     /**
@@ -1395,9 +1434,13 @@ class ImageEditor {
             this.ui.destroy();
         }
 
-        forEach(this, (value, key) => {
-            this[key] = null;
-        }, this);
+        forEach(
+            this,
+            (value, key) => {
+                this[key] = null;
+            },
+            this
+        );
     }
 
     /**

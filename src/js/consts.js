@@ -24,7 +24,8 @@ export const componentNames = keyMirror(
     'TEXT',
     'ICON',
     'FILTER',
-    'SHAPE'
+    'SHAPE',
+    'FILTER_SECTION'
 );
 
 /**
@@ -32,6 +33,14 @@ export const componentNames = keyMirror(
  * @type {Object}
  */
 export const SHAPE_DEFAULT_OPTIONS = {
+    lockSkewingX: true,
+    lockSkewingY: true,
+    lockUniScaling: false,
+    bringForward: true,
+    isRegular: false
+};
+
+export const FILTER_SECTION_DEFAULT_OPTIONS = {
     lockSkewingX: true,
     lockSkewingY: true,
     lockUniScaling: false,
@@ -69,6 +78,9 @@ export const commandNames = {
     'CHANGE_ICON_COLOR': 'changeIconColor',
     'ADD_SHAPE': 'addShape',
     'CHANGE_SHAPE': 'changeShape',
+    'ADD_FILTER_SECTION': 'addFiltersection',
+    'CHANGE_FILTER_SECTION': 'changeFiltersection',
+    'APPLY_FILTER_SECTION': 'applyFiltersection',
     'ADD_TEXT': 'addText',
     'CHANGE_TEXT': 'changeText',
     'CHANGE_TEXT_STYLE': 'changeTextStyle',
@@ -115,7 +127,8 @@ export const drawingModes = keyMirror(
     'FREE_DRAWING',
     'LINE_DRAWING',
     'TEXT',
-    'SHAPE'
+    'SHAPE',
+    'FILTER_SECTION'
 );
 
 /**
@@ -204,6 +217,20 @@ export const defaultShapeStrokeValus = {
     min: 2,
     max: 300,
     value: 3
+};
+
+export const defaultFiltersectionRadiusValus = {
+    realTimeEvent: true,
+    min: 0,
+    max: 800,
+    value: 0
+};
+
+export const defaultFiltersectionPixelateValus = {
+    realTimeEvent: true,
+    min: 0,
+    max: 50,
+    value: 25
 };
 
 export const defaultTextRangeValus = {

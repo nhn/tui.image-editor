@@ -6,6 +6,7 @@ import controls from './ui/template/controls';
 
 import Theme from './ui/theme/theme';
 import Shape from './ui/shape';
+import Filtersection from './ui/filtersection';
 import Crop from './ui/crop';
 import Flip from './ui/flip';
 import Rotate from './ui/rotate';
@@ -18,6 +19,7 @@ import Locale from './ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
     Shape,
+    Filtersection,
     Crop,
     Flip,
     Rotate,
@@ -185,7 +187,7 @@ class Ui {
             },
             locale: {},
             menuIconPath: '',
-            menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
+            menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'filtersection', 'icon', 'text', 'mask', 'filter'],
             initMenu: '',
             uiSize: {
                 width: '100%',
@@ -625,7 +627,7 @@ class Ui {
         const editorElementStyle = this._editorElement.style;
         let top = 0;
         let left = 0;
-
+        
         if (this.submenu) {
             if (menuBarPosition === 'bottom') {
                 if (height > this._editorElementWrap.scrollHeight - 150) {

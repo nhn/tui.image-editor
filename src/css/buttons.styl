@@ -60,6 +60,16 @@
     svg > use.active
         display: block;
 
+/* FILTER SECTION BUTTON */
+.tie-filtersection-button
+  &.rect .{prefix}-button.rect,
+  &.circle .{prefix}-button.circle,
+  &.triangle .{prefix}-button.triangle
+    svg > use.normal
+        display: none;
+    svg > use.active
+        display: block;
+
 /* TEXT BUTTON */
 .tie-text-effect-button
     .{prefix}-button.active svg > use.active

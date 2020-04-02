@@ -13,6 +13,7 @@ export default {
         return {
             main: this._mainAction(),
             shape: this._shapeAction(),
+            filtersection: this._filtersectionAction(),
             crop: this._cropAction(),
             flip: this._flipAction(),
             rotate: this._rotateAction(),
@@ -225,7 +226,7 @@ export default {
      * @returns {Object} actions for ui draw
      * @private
      */
-    _drawAction() {
+     _drawAction() {
         return extend({
             setDrawMode: (type, settings) => {
                 this.stopDrawingMode();
@@ -248,7 +249,7 @@ export default {
      * @returns {Object} actions for ui mask
      * @private
      */
-    _maskAction() {
+     _maskAction() {
         return extend({
             loadImageFromURL: (imgUrl, file) => (
                 this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
@@ -270,7 +271,7 @@ export default {
      * @returns {Object} actions for ui text
      * @private
      */
-    _textAction() {
+     _textAction() {
         return extend({
             changeTextStyle: (styleObj, isSilent) => {
                 if (this.activeObjectId) {
@@ -285,7 +286,7 @@ export default {
      * @returns {Object} actions for ui rotate
      * @private
      */
-    _rotateAction() {
+     _rotateAction() {
         return extend({
             rotate: (angle, isSilent) => {
                 this.rotate(angle, isSilent);
@@ -318,12 +319,37 @@ export default {
         }, this._commonAction());
     },
 
+    _filtersectionAction() {
+        return extend(
+            {
+                changeFiltersection: (changeFiltersectionObject, isSilent) => {
+                    if (this.activeObjectId) {
+                        this.changeFiltersection(
+                            this.activeObjectId,
+                            changeFiltersectionObject,
+                            isSilent
+                        );
+                    }
+                },
+                applyFiltersection: () => {
+                    if (this.activeObjectId) {
+                        this.applyFiltersection(this.activeObjectId);
+                    }
+                },
+                setDrawingFiltersection: filtersectionType => {
+                    this.setDrawingFiltersection(filtersectionType);
+                }
+            },
+            this._commonAction()
+        );
+    },
+
     /**
      * Crop Action
      * @returns {Object} actions for ui crop
      * @private
      */
-    _cropAction() {
+     _cropAction() {
         return extend({
             crop: () => {
                 const cropRect = this.getCropzoneRect();
@@ -376,7 +402,7 @@ export default {
      * @returns {Object} actions for ui flip
      * @private
      */
-    _flipAction() {
+     _flipAction() {
         return extend({
             flip: flipType => this[flipType]()
         }, this._commonAction());
@@ -387,7 +413,7 @@ export default {
      * @returns {Object} actions for ui filter
      * @private
      */
-    _filterAction() {
+     _filterAction() {
         return extend({
             applyFilter: (applying, type, options, isSilent) => {
 
@@ -444,6 +470,29 @@ export default {
                     });
 
                     this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+                } else if (
+                    [
+                        'rect-filtersection',
+                        'circle-filtersection',
+                        'triangle-filtersection'
+                    ].indexOf(obj.type) > -1
+                ) {
+                    this.stopDrawingMode();
+
+                    if (this.ui.submenu !== 'filtersection') {
+                        this.ui.changeMenu('filtersection', false, false);
+                    }
+
+                    // tohle asi nebudu podporovat
+                    // this.ui.filtersection.setFiltersectionStatus({
+                    //     strokeColor: obj.stroke,
+                    //     strokeWidth: obj.strokeWidth,
+                    //     fillColor: obj.fill
+                    // });
+                    //
+                    // this.ui.filtersection.setMaxRadiusValue(
+                    //     Math.min(obj.width, obj.height)
+                    // );
                 } else if (obj.type === 'path' || obj.type === 'line') {
                     if (this.ui.submenu !== 'draw') {
                         this.ui.changeMenu('draw', false, false);
@@ -531,6 +580,13 @@ export default {
                     case 'shape':
                         this._changeActivateMode('SHAPE');
                         this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+                        break;
+                    case 'filtersection':
+                        this._changeActivateMode('FILTER_SECTION');
+                        this.setDrawingFiltersection(
+                            this.ui.filtersection.type,
+                            this.ui.filtersection.options
+                        );
                         break;
                     default:
                         break;

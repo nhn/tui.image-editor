@@ -14,10 +14,12 @@ import Text from './component/text';
 import Icon from './component/icon';
 import Filter from './component/filter';
 import Shape from './component/shape';
+import Filtersection from './component/filtersection';
 import CropperDrawingMode from './drawingMode/cropper';
 import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
+import FiltersectionDrawingMode from './drawingMode/filtersection';
 import TextDrawingMode from './drawingMode/text';
 import {getProperties, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
@@ -658,6 +660,10 @@ class Graphics {
         this.getComponent(components.SHAPE).setStates(type, options);
     }
 
+    setDrawingFiltersection(type, options) {
+        this.getComponent(components.FILTER_SECTION).setStates(type, options);
+    }
+
     /**
      * Register icon paths
      * @param {Object} pathInfos - Path infos
@@ -861,6 +867,7 @@ class Graphics {
         this._register(this._drawingModeMap, new FreeDrawingMode());
         this._register(this._drawingModeMap, new LineDrawingMode());
         this._register(this._drawingModeMap, new ShapeDrawingMode());
+        this._register(this._drawingModeMap, new FiltersectionDrawingMode());
         this._register(this._drawingModeMap, new TextDrawingMode());
     }
 
@@ -879,6 +886,7 @@ class Graphics {
         this._register(this._componentMap, new Icon(this));
         this._register(this._componentMap, new Filter(this));
         this._register(this._componentMap, new Shape(this));
+        this._register(this._componentMap, new Filtersection(this));
     }
 
     /**
@@ -1136,7 +1144,7 @@ class Graphics {
         ];
         const props = {
             id: stamp(obj),
-            type: obj.type
+            type: obj.my && obj.my.type ? obj.my.type : obj.type
         };
 
         extend(props, getProperties(obj, predefinedKeys));
@@ -1248,7 +1256,7 @@ class Graphics {
      * @returns {Promise}
      * @private
      */
-    _cloneObjectItem(targetObject) {
+     _cloneObjectItem(targetObject) {
         return this._copyFabricObjectForPaste(targetObject).then(clonedObject => {
             const objectProperties = this.createObjectProperties(clonedObject);
             this.add(clonedObject);
