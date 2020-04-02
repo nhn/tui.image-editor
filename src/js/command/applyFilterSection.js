@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview change a shape
  */
-import snippet from 'tui-code-snippet';
+// import snippet from 'tui-code-snippet';
 import {Promise} from '../util';
 import commandFactory from '../factory/command';
 import {componentNames, rejectMessages, commandNames} from '../consts';
@@ -13,7 +13,7 @@ const {FILTER_SECTION} = componentNames;
  * Chched data for undo
  * @type {Object}
  */
-let chchedUndoDataForSilent = null;
+// let chchedUndoDataForSilent = null;
 
 /**
  * Make undoData
@@ -21,18 +21,18 @@ let chchedUndoDataForSilent = null;
  * @param {Component} targetObj - shape component
  * @returns {object} - undo data
  */
-function makeUndoData(options, targetObj) {
-    const undoData = {
-        object: targetObj,
-        options: {}
-    };
-
-    snippet.forEachOwnProperties(options, (value, key) => {
-        undoData.options[key] = targetObj[key];
-    });
-
-    return undoData;
-}
+// function makeUndoData(options, targetObj) {
+//     const undoData = {
+//         object: targetObj,
+//         options: {}
+//     };
+// 
+//     snippet.forEachOwnProperties(options, (value, key) => {
+//         undoData.options[key] = targetObj[key];
+//     });
+// 
+//     return undoData;
+// }
 
 const command = {
     name: commandNames.APPLY_FILTER_SECTION,
@@ -76,7 +76,6 @@ const command = {
      * @returns {Promise}
      */
     undo() {
-
         return Promise.resolve();
     }
 };

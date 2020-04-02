@@ -213,7 +213,7 @@ export default class Shape extends Component {
             if (inArray(shapeObj.get('type'), shapeType) < 0) {
                 reject(rejectMessages.unsupportedType);
             }
-            
+
             shapeObj.set(options);
             this.getCanvas().renderAll();
             resolve();

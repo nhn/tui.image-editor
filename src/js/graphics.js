@@ -1256,7 +1256,7 @@ class Graphics {
      * @returns {Promise}
      * @private
      */
-     _cloneObjectItem(targetObject) {
+    _cloneObjectItem(targetObject) {
         return this._copyFabricObjectForPaste(targetObject).then(clonedObject => {
             const objectProperties = this.createObjectProperties(clonedObject);
             this.add(clonedObject);

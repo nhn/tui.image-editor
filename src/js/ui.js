@@ -627,7 +627,7 @@ class Ui {
         const editorElementStyle = this._editorElement.style;
         let top = 0;
         let left = 0;
-        
+
         if (this.submenu) {
             if (menuBarPosition === 'bottom') {
                 if (height > this._editorElementWrap.scrollHeight - 150) {

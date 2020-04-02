@@ -226,7 +226,7 @@ export default {
      * @returns {Object} actions for ui draw
      * @private
      */
-     _drawAction() {
+    _drawAction() {
         return extend({
             setDrawMode: (type, settings) => {
                 this.stopDrawingMode();
@@ -249,7 +249,7 @@ export default {
      * @returns {Object} actions for ui mask
      * @private
      */
-     _maskAction() {
+    _maskAction() {
         return extend({
             loadImageFromURL: (imgUrl, file) => (
                 this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
@@ -271,7 +271,7 @@ export default {
      * @returns {Object} actions for ui text
      * @private
      */
-     _textAction() {
+    _textAction() {
         return extend({
             changeTextStyle: (styleObj, isSilent) => {
                 if (this.activeObjectId) {
@@ -286,7 +286,7 @@ export default {
      * @returns {Object} actions for ui rotate
      * @private
      */
-     _rotateAction() {
+    _rotateAction() {
         return extend({
             rotate: (angle, isSilent) => {
                 this.rotate(angle, isSilent);
@@ -349,7 +349,7 @@ export default {
      * @returns {Object} actions for ui crop
      * @private
      */
-     _cropAction() {
+    _cropAction() {
         return extend({
             crop: () => {
                 const cropRect = this.getCropzoneRect();

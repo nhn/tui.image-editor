@@ -234,20 +234,20 @@ export default class Filtersection extends Component {
         });
     }
 
-    apply(filtersectionObj, options) {
+    apply(filtersectionObj) {
         return new Promise((resolve, reject) => {
             if (inArray(filtersectionObj.get('type'), filtersectionType) < 0) {
                 reject(rejectMessages.unsupportedType);
             }
             this.getCanvas().backgroundImage.clone(cloned => {
-                let {
+                const {
                     left,
                     top,
                     width,
                     height
                 } = this.getCanvas().getActiveObject();
-                left = left - width / 2;
-                top = top - height / 2;
+                const leftPosition = ((width / 2) - left);
+                const topPosition = (top - (height / 2));
                 // const filter2 = new fabric.Image.filters.Grayscale();
                 const filter = new fabric.Image.filters.Pixelate({
                     blocksize: filtersectionObj.pixelateValue
@@ -259,8 +259,8 @@ export default class Filtersection extends Component {
                 const imageData = {
                     imageName: this.getImageName(),
                     url: cloned.toDataURL({
-                        left,
-                        top,
+                        leftPosition,
+                        topPosition,
                         width,
                         height
                     })
@@ -268,8 +268,8 @@ export default class Filtersection extends Component {
 
                 fabric.Image.fromURL(imageData.url, oImg => {
                     oImg.set({
-                        top,
-                        left,
+                        leftPosition,
+                        topPosition,
                         lockMovementX: true,
                         lockMovementY: true,
                         hasControls: false,
