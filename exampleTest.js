@@ -56,6 +56,10 @@ const capabilities = [
     }
 ];
 
+if (!globalErrorLogVariable) {
+    throw Error('globalErrorLogVariable option is missing at tuidoc.config.json');
+}
+
 testExamplePage(testUrls).catch(err => {
     console.log(err);
     process.exit(1);
@@ -90,7 +94,7 @@ async function testExamplePage(urls) {
  */
 async function testPlatform(platformInfo, urls) {
     const driver = getDriver(platformInfo);
-    const errorLogVariable = getGlobalErrorLogVariable();
+    const errorLogVariable = typeof globalErrorLogVariable === 'string' ? globalErrorLogVariable : 'errorLogs';
     const result = [];
 
     for(let i = 0; i < urls.length; i += 1) {
@@ -161,9 +165,5 @@ function getTestUrls() {
  * Get globalErrorLogVariable for example 
  */
 function getGlobalErrorLogVariable() {
-    if (globalErrorLogVariable) {
-        return typeof globalErrorLogVariable === 'string' ? globalErrorLogVariable : 'errorLogs';
-    }
-
-    return false;
+    return typeof globalErrorLogVariable === 'string' ? globalErrorLogVariable : 'errorLogs';
 }
