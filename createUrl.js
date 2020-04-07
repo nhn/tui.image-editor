@@ -21,11 +21,7 @@ function getTestUrls() {
         return urls;
     }, []);
 
-    const result = testUrls.join(", ");
-
-    fs.writeFileSync("url.txt", result);
-
-    return result;
+    fs.writeFileSync("url.txt", testUrls.join(", "));
 }
 
 getTestUrls();
