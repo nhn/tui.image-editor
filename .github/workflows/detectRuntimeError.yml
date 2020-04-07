@@ -1,0 +1,27 @@
+name: detect runtime error
+
+on:
+    schedule:
+        - cron: "0 22 * * *"
+jobs:
+    makeUrl:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout repository
+              uses: actions/checkout@v2
+            - name: make url
+              run: |
+                  node createUrl.js
+            - name: set url
+              shell: bash
+              run: |
+                  value=`cat ./url.txt`
+                  echo ::set-env name=URLS::$value
+            - name: detect runtime error
+              uses: nhn/toast-ui.detect-runtime-error-actions@master
+              with:
+                  global-error-log-variable: "errorLogs"
+                  urls: ${{ env.URLS }}
+              env:
+                  BROWSERSTACK_USERNAME: ${{secrets.BROWSERSTACK_USERNAME}}
+                  BROWSERSTACK_ACCESS_KEY: ${{secrets.BROWSERSTACK_ACCESS_KEY}}
