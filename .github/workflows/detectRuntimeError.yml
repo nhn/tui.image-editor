@@ -9,18 +9,22 @@ jobs:
         steps:
             - name: checkout repository
               uses: actions/checkout@v2
-            - name: make url
+            - name: create config variable
               run: |
-                  node createUrl.js
+                  node createConfigVariable.js
+            - name: set global error variable
+              run: |
+                  errorVariable=`cat ./errorVariable.txt`
+                  echo ::set-env name=ERROR_VARIABLE::$errorVariable
             - name: set url
               shell: bash
               run: |
-                  value=`cat ./url.txt`
-                  echo ::set-env name=URLS::$value
+                  url=`cat ./url.txt`
+                  echo ::set-env name=URLS::$url
             - name: detect runtime error
               uses: nhn/toast-ui.detect-runtime-error-actions@master
               with:
-                  global-error-log-variable: "errorLogs"
+                  global-error-log-variable: ${{ env.ERROR_VARIABLE }}
                   urls: ${{ env.URLS }}
               env:
                   BROWSERSTACK_USERNAME: ${{secrets.BROWSERSTACK_USERNAME}}
