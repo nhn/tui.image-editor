@@ -98,6 +98,7 @@ const {
  *      @param {string} options.includeUI.uiSize.width - width of ui
  *      @param {string} options.includeUI.uiSize.height - height of ui
  *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position('top', 'bottom', 'left', 'right')
+ *    @param {string} [options.includeUI.defaultText="Double Click"] - Text used when adding new texts in the ui
  *  @param {number} options.cssMaxWidth - Canvas css-max-width
  *  @param {number} options.cssMaxHeight - Canvas css-max-height
  *  @param {Object} [options.selectionStyle] - selection style

@@ -470,11 +470,11 @@ export default {
                     fontSize,
                     fontStyle,
                     fontWeight,
-                    underline
+                    underline,
+                    defaultText
                 } = this.ui.text;
                 const fontFamily = 'Noto Sans';
-
-                this.addText('Double Click', {
+                this.addText(defaultText, {
                     position: pos.originPosition,
                     styles: {fill, fontSize, fontFamily, fontStyle, fontWeight, underline}
                 }).then(() => {

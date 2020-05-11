@@ -191,7 +191,8 @@ class Ui {
                 width: '100%',
                 height: '100%'
             },
-            menuBarPosition: 'bottom'
+            menuBarPosition: 'bottom',
+            defaultText: 'Double Click'
         }, options);
     }
 
@@ -226,6 +227,7 @@ class Ui {
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
                 makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
+                defaultText: this.options.defaultText,
                 menuBarPosition: this.options.menuBarPosition,
                 usageStatistics: this.options.usageStatistics
             });

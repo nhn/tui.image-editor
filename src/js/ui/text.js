@@ -11,7 +11,7 @@ import {defaultTextRangeValus} from '../consts';
  * @ignore
  */
 export default class Text extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, defaultText, makeSvgIcon, menuBarPosition, usageStatistics}) {
         super(subMenuElement, {
             locale,
             name: 'text',
@@ -35,7 +35,8 @@ export default class Text extends Submenu {
             textRange: new Range({
                 slider: this.selector('.tie-text-range'),
                 input: this.selector('.tie-text-range-value')
-            }, defaultTextRangeValus)
+            }, defaultTextRangeValus),
+            defaultText
         };
     }
 
@@ -127,6 +128,22 @@ export default class Text extends Submenu {
     }
 
     /**
+     * Get default text
+     * @returns {string} - text size
+     */
+    get defaultText() {
+        return this._els.defaultText;
+    }
+
+    /**
+     * Set default text
+     * @param {Number} value - text size
+     */
+    set defaultText(value) {
+        this._els.defaultText = value;
+    }
+
+    /**
      * get font style
      * @returns {string} - font style
      */
@@ -151,10 +168,11 @@ export default class Text extends Submenu {
     }
 
     setTextStyleStateOnAction(textStyle = {}) {
-        const {fill, fontSize, fontStyle, fontWeight, textDecoration, textAlign} = textStyle;
+        const {fill, fontSize, fontStyle, fontWeight, textDecoration, textAlign, defaultText} = textStyle;
 
         this.textColor = fill;
         this.fontSize = fontSize;
+        this.defaultText = defaultText;
         this.setEffactState('italic', fontStyle);
         this.setEffactState('bold', fontWeight);
         this.setEffactState('underline', textDecoration);
