@@ -9,11 +9,13 @@ import {eventNames as events, componentNames, fObjectOptions} from '../consts';
 import {makeStyleText, Promise} from '../util';
 
 const defaultStyles = {
+    backgroundColor: 'transparent',
     fill: '#000000',
     left: 0,
     top: 0
 };
 const resetStyles = {
+    backgroundColor: 'transparent',
     fill: '#000000',
     fontStyle: 'normal',
     fontWeight: 'normal',
@@ -207,6 +209,7 @@ class Text extends Component {
      *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
      *         @param {string} [options.styles.textDecoration] Type of line (underline / line-through / overline)
+     *         @param {string} [options.styles.background] Background color
      *     @param {{x: number, y: number}} [options.position] - Initial position
      * @returns {Promise}
      */

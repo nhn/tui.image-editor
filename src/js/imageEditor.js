@@ -988,13 +988,14 @@ class ImageEditor {
      * @param {string} text - Initial input text
      * @param {Object} [options] Options for generating text
      *     @param {Object} [options.styles] Initial styles
+     *         @param {string} [options.styles.backgroundColor] Background color
      *         @param {string} [options.styles.fill] Color
      *         @param {string} [options.styles.fontFamily] Font type for text
      *         @param {number} [options.styles.fontSize] Size
      *         @param {string} [options.styles.fontStyle] Type of inclination (normal / italic)
      *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
-     *         @param {string} [options.styles.textDecoration] Type of line (underline / line-through / overline)
+     *         @param {string} [options.styles.textDecoration] Type of line (underline / line-through / overline)]
      *     @param {{x: number, y: number}} [options.position] - Initial position
      * @returns {Promise}
      * @example

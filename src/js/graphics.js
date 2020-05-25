@@ -702,6 +702,7 @@ class Graphics {
      * Set object properties
      * @param {number} id - object id
      * @param {Object} props - props
+     *     @param {string} [props.backgroundColor] Background color
      *     @param {string} [props.fill] Color
      *     @param {string} [props.fontFamily] Font type for text
      *     @param {number} [props.fontSize] Size
@@ -1159,6 +1160,7 @@ class Graphics {
      */
     _createTextProperties(obj) {
         const predefinedKeys = [
+            'backgroundColor',
             'text',
             'fontFamily',
             'fontSize',

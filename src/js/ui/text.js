@@ -27,11 +27,14 @@ export default class Text extends Submenu {
         };
         this.align = 'left';
         this._els = {
-            textEffectButton: this.selector('.tie-text-effect-button'),
             textAlignButton: this.selector('.tie-text-align-button'),
+            textBackgroundColorpicker: new Colorpicker(
+                this.selector('.tie-text-background-color'), '', this.toggleDirection, this.usageStatistics
+            ),
             textColorpicker: new Colorpicker(
                 this.selector('.tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
             ),
+            textEffectButton: this.selector('.tie-text-effect-button'),
             textRange: new Range({
                 slider: this.selector('.tie-text-range'),
                 input: this.selector('.tie-text-range-value')
@@ -44,6 +47,7 @@ export default class Text extends Submenu {
      */
     destroy() {
         this._removeEvent();
+        this._els.textBackgroundColorpicker.destroy();
         this._els.textColorpicker.destroy();
         this._els.textRange.destroy();
 
@@ -68,6 +72,7 @@ export default class Text extends Submenu {
         this._els.textEffectButton.addEventListener('click', setTextEffect);
         this._els.textAlignButton.addEventListener('click', setTextAlign);
         this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
+        this._els.textBackgroundColorpicker.on('change', this._changeBackgroundColorHandler.bind(this));
         this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
     }
 
@@ -82,6 +87,7 @@ export default class Text extends Submenu {
         this._els.textAlignButton.removeEventListener('click', setTextAlign);
         this._els.textRange.off();
         this._els.textColorpicker.off();
+        this._els.textBackgroundColorpicker.off();
     }
 
     /**
@@ -102,12 +108,24 @@ export default class Text extends Submenu {
         this._els.textColorpicker.color = color;
     }
 
+    set textBackgroundColor(color) {
+        this._els.textBackgroundColorpicker.color = color;
+    }
+
     /**
      * Get text color
      * @returns {string} - text color
      */
     get textColor() {
         return this._els.textColorpicker.color;
+    }
+
+    /**
+     * Get text background color
+     * @returns {string} - text color
+     */
+    get textBackgroundColor() {
+        return this._els.textBackgroundColorpicker.color;
     }
 
     /**
@@ -151,8 +169,8 @@ export default class Text extends Submenu {
     }
 
     setTextStyleStateOnAction(textStyle = {}) {
-        const {fill, fontSize, fontStyle, fontWeight, textDecoration, textAlign} = textStyle;
-
+        const {backgroundColor, fill, fontSize, fontStyle, fontWeight, textDecoration, textAlign} = textStyle;
+        this.textBackgroundColor = backgroundColor;
         this.textColor = fill;
         this.fontSize = fontSize;
         this.setEffactState('italic', fontStyle);
@@ -237,6 +255,18 @@ export default class Text extends Submenu {
         color = color || 'transparent';
         this.actions.changeTextStyle({
             'fill': color
+        });
+    }
+
+    /**
+     * chage background color handler
+     * @param {string} color - change color string
+     * @private
+     */
+    _changeBackgroundColorHandler(color) {
+        color = color || 'transparent';
+        this.actions.changeTextStyle({
+            'backgroundColor': color
         });
     }
 }

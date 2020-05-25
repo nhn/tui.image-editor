@@ -23,6 +23,7 @@ const command = {
      *         @param {string} [options.styles.fontWeight] Type of thicker or thinner looking (normal / bold)
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
      *         @param {string} [options.styles.textDecoration] Type of line (underline / line-through / overline)
+     *         @param {string} [options.styles.backgroundColor] Background color
      *     @param {{x: number, y: number}} [options.position] - Initial position
      * @returns {Promise}
      */
