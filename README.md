@@ -363,8 +363,8 @@ $ npm run serve
 
 ## 🔩 Dependency
 * [fabric.js](https://github.com/fabricjs/fabric.js/releases) =3.6.0
-* [tui.code-snippet](https://github.com/nhn/tui.code-snippet/releases/tag/v1.3.0) >=1.3.0
-* [tui.color-picker](https://github.com/nhn/tui.color-picker/releases/tag/v2.2.0) >=2.2.0
+* [tui.code-snippet](https://github.com/nhn/tui.code-snippet/releases/tag/v1.5.0) >=1.5.0
+* [tui.color-picker](https://github.com/nhn/tui.color-picker/releases/tag/v2.2.6) >=2.2.6
 
 
 ## 🍞 TOAST UI Family
