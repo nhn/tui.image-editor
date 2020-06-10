@@ -6,7 +6,7 @@ import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
 import Component from '../interface/component';
 import {eventNames as events, componentNames, fObjectOptions} from '../consts';
-import {makeStyleText, Promise} from '../util';
+import {Promise} from '../util';
 
 const defaultStyles = {
     fill: '#000000',
@@ -515,10 +515,11 @@ class Text extends Component {
         const {target} = fEvent;
         const newClickTime = (new Date()).getTime();
 
-        if (target.isEditing || this._isDoubleClick(newClickTime)) {
-            if (!target.isEditing) {
-                target.enterEditing();
-            }
+        if (this._isDoubleClick(newClickTime) && !target.isEditing) {
+            target.enterEditing();
+        }
+
+        if (target.isEditing) {
             this.fire(events.TEXT_EDITING); // fire editing text event
         }
 
