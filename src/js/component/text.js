@@ -142,12 +142,7 @@ class Text extends Component {
         if (this.useItext) {
             canvas.forEachObject(obj => {
                 if (obj.type === 'i-text') {
-                    obj.set({
-                        left: obj.left - (obj.width / 2),
-                        top: obj.top - (obj.height / 2),
-                        originX: 'left',
-                        originY: 'top'
-                    });
+                    this.adjustOriginPosition(obj, 'start');
                 }
             });
         } else {
@@ -172,12 +167,7 @@ class Text extends Component {
                     if (obj.text === '') {
                         canvas.remove(obj);
                     } else {
-                        obj.set({
-                            left: obj.left + (obj.width / 2),
-                            top: obj.top + (obj.height / 2),
-                            originX: 'center',
-                            originY: 'center'
-                        });
+                        this.adjustOriginPosition(obj, 'end');
                     }
                 }
             });
@@ -193,6 +183,27 @@ class Text extends Component {
             'object:scaling': this._listeners.scaling,
             'text:editing': this._listeners.modify
         });
+    }
+
+    /**
+     * Adjust the origin position
+     * @param {fabric.Object} text - text object
+     * @param {string} editStatus - 'start' or 'end'
+     */
+    adjustOriginPosition(text, editStatus) {
+        let [originX, originY] = ['center', 'center'];
+        if (editStatus === 'start') {
+            [originX, originY] = ['left', 'top'];
+        }
+
+        const {x: left, y: top} = text.getPointByOrigin(originX, originY);
+        text.set({
+            left,
+            top,
+            originX,
+            originY
+        });
+        text.setCoords();
     }
 
     /**
