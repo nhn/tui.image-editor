@@ -142,7 +142,7 @@ class Text extends Component {
         if (this.useItext) {
             canvas.forEachObject(obj => {
                 if (obj.type === 'i-text') {
-                    this.adjustOriginToPosition(obj, 'start');
+                    this.adjustOriginPosition(obj, 'start');
                 }
             });
         } else {
@@ -167,7 +167,7 @@ class Text extends Component {
                     if (obj.text === '') {
                         canvas.remove(obj);
                     } else {
-                        this.adjustOriginToPosition(obj, 'end');
+                        this.adjustOriginPosition(obj, 'end');
                     }
                 }
             });
@@ -190,7 +190,7 @@ class Text extends Component {
      * @param {fabric.Object} text - text object
      * @param {string} editStatus - 'start' or 'end'
      */
-    adjustOriginToPosition(text, editStatus) {
+    adjustOriginPosition(text, editStatus) {
         let [originX, originY] = ['center', 'center'];
         if (editStatus === 'start') {
             [originX, originY] = ['left', 'top'];
