@@ -291,7 +291,7 @@ $inputImage.on('change', function(event) {
             resolution = this.width * this.height;
 
             if (resolution <= MAX_RESOLUTION) {
-                imageEditor.loadImageFromFile(file).then(() => {
+                imageEditor.loadImageFromFile(file).then(function() {
                     imageEditor.clearUndoStack();
                 });
             } else {
@@ -352,7 +352,7 @@ $btnCrop.on('click', function() {
 });
 
 $btnApplyCrop.on('click', function() {
-    imageEditor.crop(imageEditor.getCropzoneRect()).then(() => {
+    imageEditor.crop(imageEditor.getCropzoneRect()).then(function() {
         imageEditor.stopDrawingMode();
         $subMenus.removeClass('show');
         $hiddenMenus.removeClass('show');
@@ -565,6 +565,6 @@ shapeColorpicker.on('selectColor', function(event) {
 });
 
 // Load sample image
-imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(() => {
+imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(function() {
     imageEditor.clearUndoStack();
 });

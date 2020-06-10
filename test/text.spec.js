@@ -56,6 +56,28 @@ describe('Text', () => {
         });
     });
 
+    it('Rotated text elements must also maintain consistent left and top positions after entering and exiting drawing mode.', () => {
+        const left = 10;
+        const top = 20;
+        const newText = new fabric.IText('testString', {
+            left,
+            top,
+            width: 30,
+            height: 50,
+            angle: 40,
+            originX: 'center',
+            originY: 'center'
+        });
+        text.useItext = true;
+        canvas.add(newText);
+
+        text.start();
+        text.end();
+
+        expect(newText.left).toEqual(left);
+        expect(newText.top).toEqual(top);
+    });
+
     it('change() should change contents in the text object as input.', () => {
         text.add('text123', {});
 

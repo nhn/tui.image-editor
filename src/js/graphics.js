@@ -307,11 +307,14 @@ class Graphics {
      */
     getActiveObjectIdForRemove() {
         const activeObject = this.getActiveObject();
-        const isSelection = activeObject.type === 'activeSelection';
+        const {type, left, top} = activeObject;
+        const isSelection = type === 'activeSelection';
 
         if (isSelection) {
-            const group = new fabric.Group();
-            group.add(...activeObject.getObjects());
+            const group = new fabric.Group([...activeObject.getObjects()], {
+                left,
+                top
+            });
 
             return this._addFabricObject(group);
         }

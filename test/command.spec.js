@@ -404,8 +404,14 @@ describe('commandFactory', () => {
         let object, object2, group;
 
         beforeEach(() => {
-            object = new fabric.Rect();
-            object2 = new fabric.Rect();
+            object = new fabric.Rect({
+                left: 10,
+                top: 10
+            });
+            object2 = new fabric.Rect({
+                left: 5,
+                top: 20
+            });
             group = new fabric.Group();
 
             graphics.add(object);
@@ -447,6 +453,21 @@ describe('commandFactory', () => {
             )).then(() => {
                 expect(canvas.contains(object)).toBe(true);
                 expect(canvas.contains(object2)).toBe(true);
+                done();
+            });
+        });
+
+        it('"undo ()" should restore the position of the removed object (group). ', done => {
+            const activeSelection = graphics.getActiveSelectionFromObjects(canvas.getObjects());
+            graphics.setActiveObject(activeSelection);
+
+            invoker.execute(commands.REMOVE_OBJECT, graphics, graphics.getActiveObjectIdForRemove()).then(() => (
+                invoker.undo()
+            )).then(() => {
+                expect(object.left).toBe(10);
+                expect(object.top).toBe(10);
+                expect(object2.left).toBe(5);
+                expect(object2.top).toBe(20);
                 done();
             });
         });
