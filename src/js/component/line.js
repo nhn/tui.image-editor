@@ -4,6 +4,7 @@
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
+import ArrowLine from '../extension/arrowLine';
 import {eventNames, componentNames, fObjectOptions} from '../consts';
 
 /**
@@ -111,7 +112,15 @@ class Line extends Component {
         const pointer = canvas.getPointer(fEvent.e);
         const points = [pointer.x, pointer.y, pointer.x, pointer.y];
 
+        /*
         this._line = new fabric.Line(points, {
+            stroke: this._oColor.toRgba(),
+            strokeWidth: this._width,
+            evented: false
+        });
+        */
+
+        this._line = new ArrowLine(points, {
             stroke: this._oColor.toRgba(),
             strokeWidth: this._width,
             evented: false
