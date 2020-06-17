@@ -4,7 +4,11 @@
  */
 import fabric from 'fabric';
 
-const ArrowLine = fabric.util.createClass(fabric.Line, fabric.Observable, /** @lends Convolute.prototype */{
+const ARROW_ANGLE = 30;
+const HEAD_LINE_LENGTH_RATIO = 2.7;
+const RADIAN_CONVERSION_VALUE = 180;
+
+const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prototype */{
 
     /**
      * Line type
@@ -13,35 +17,14 @@ const ArrowLine = fabric.util.createClass(fabric.Line, fabric.Observable, /** @l
      */
     type: 'ArrowLine',
 
-    initialize(ctx, t) {
-        this.callSuper('initialize', ctx, t);
-    },
-
-    renderHead({ctx, fromX, fromY, toX, toY}) {
-        const headlen = 30;
-        const theta = 30;
-        const angle = Math.atan2(fromY - toY, fromX - toX) * 180 / Math.PI;
-        const angle1 = (angle + theta) * Math.PI / 180;
-        const angle2 = (angle - theta) * Math.PI / 180;
-        const topX = headlen * Math.cos(angle1);
-        const topY = headlen * Math.sin(angle1);
-        const botX = headlen * Math.cos(angle2);
-        const botY = headlen * Math.sin(angle2);
-
-        let arrowX = toX + topX;
-        let arrowY = toY + topY;
-
-        ctx.moveTo(arrowX, arrowY);
-        ctx.lineTo(toX, toY);
-
-        arrowX = toX + botX;
-        arrowY = toY + botY;
-        ctx.fillStyle = this.stroke;
-
-        // ctx.lineCap = "butt" || "round" || "square";
-        ctx.lineTo(arrowX, arrowY);
-        ctx.lineCap = 'round';
-        ctx.fill();
+    /**
+     * Constructor
+     * @param {Array} [points] Array of points
+     * @param {Object} [options] Options object
+     * @override
+     */
+    initialize(points, options) {
+        this.callSuper('initialize', points, options);
     },
 
     /**
@@ -50,38 +33,64 @@ const ArrowLine = fabric.util.createClass(fabric.Line, fabric.Observable, /** @l
      * @override
      */
     _render(ctx) {
-        const r = this.calcLinePoints();
-        const fromX = r.x1;
-        const fromY = r.y1;
-        const toX = r.x2;
-        const toY = r.y2;
-        const s = ctx.strokeStyle;
-
-        const angle = Math.atan2(fromY - toY, fromX - toX) * 180 / Math.PI;
-        console.log(angle);
-        // const x2 = toX - (200 * Math.cos(angle));
-        // const y2 = toY - (200 * Math.sin(angle));
+        const {x1: fromX, y1: fromY, x2: toX, y2: toY} = this.calcLinePoints();
 
         ctx.beginPath();
         ctx.moveTo(fromX, fromY);
-        // ctx.lineTo(x2, y2);
         ctx.lineTo(toX, toY);
 
-        ctx.lineWidth = this.strokeWidth;
-        ctx.strokeStyle = this.stroke || ctx.fillStyle;
-        if (this.stroke) {
-            this._renderStroke(ctx);
-        }
-        ctx.strokeStyle = s;
-
-        this.renderHead({
-            ctx,
+        this.renderHead(ctx, {
             fromX,
             fromY,
             toX,
             toY
         });
 
+        ctx.lineWidth = this.strokeWidth;
+        ctx.strokeStyle = this.stroke;
+
+        this._renderStroke(ctx);
+    },
+
+    /**
+     * Render Arrow Head
+     * @param {CanvasRenderingContext2D} ctx - Context
+     * @param {Object} linePosition - line position
+     *  @param {number} option.fromX - line start position x
+     *  @param {number} option.fromY - line start position y
+     *  @param {number} option.toX - line end position x
+     *  @param {number} option.toY - line end position y
+     * @private
+     */
+    renderHead(ctx, {fromX, fromY, toX, toY}) {
+        const headLineLength = ctx.lineWidth * HEAD_LINE_LENGTH_RATIO;
+        const angle = Math.atan2(fromY - toY, fromX - toX) * RADIAN_CONVERSION_VALUE / Math.PI;
+        const rotatedPosition = changeAngle => this.getRotatePosition(headLineLength, changeAngle, {
+            x: toX,
+            y: toY
+        });
+
+        ctx.moveTo(...rotatedPosition(angle + ARROW_ANGLE));
+        ctx.lineTo(toX, toY);
+        ctx.lineTo(...rotatedPosition(angle - ARROW_ANGLE));
+    },
+
+    /**
+     * return position from change angle.
+     * @param {number} distance - change distance
+     * @param {number} angle - change angle
+     * @param {Object} referencePosition - reference position
+     * @returns {Array}
+     * @private
+     */
+    getRotatePosition(distance, angle, referencePosition) {
+        const radian = angle * Math.PI / RADIAN_CONVERSION_VALUE;
+        const {x, y} = referencePosition;
+
+        return [
+            (distance * Math.cos(radian)) + x,
+            (distance * Math.sin(radian)) + y
+        ];
     }
 });
 

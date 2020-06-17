@@ -54,6 +54,7 @@ class Line extends Component {
         canvas.defaultCursor = 'crosshair';
         canvas.selection = false;
 
+        this.headType = setting ? setting.head : null;
         this.setBrush(setting);
 
         canvas.forEachObject(obj => {
@@ -109,23 +110,9 @@ class Line extends Component {
      */
     _onFabricMouseDown(fEvent) {
         const canvas = this.getCanvas();
-        const pointer = canvas.getPointer(fEvent.e);
-        const points = [pointer.x, pointer.y, pointer.x, pointer.y];
+        const mousePosition = canvas.getPointer(fEvent.e);
 
-        /*
-        this._line = new fabric.Line(points, {
-            stroke: this._oColor.toRgba(),
-            strokeWidth: this._width,
-            evented: false
-        });
-        */
-
-        this._line = new ArrowLine(points, {
-            stroke: this._oColor.toRgba(),
-            strokeWidth: this._width,
-            evented: false
-        });
-
+        this._line = this._createLineInstance(mousePosition);
         this._line.set(fObjectOptions.SELECTION_STYLE);
 
         canvas.add(this._line);
@@ -171,6 +158,28 @@ class Line extends Component {
         canvas.off({
             'mouse:move': this._listeners.mousemove,
             'mouse:up': this._listeners.mouseup
+        });
+    }
+
+    /**
+     * create line instance
+     * @param {Object} mousePosition - mouse position
+     *   @param {number} x - position x
+     *   @param {number} y - position y
+     * @returns {fabric.Line | ArrowLine}
+     * @private
+     */
+    _createLineInstance({x, y}) {
+        let LineClass = fabric.Line;
+
+        if (this.headType === 'arrow') {
+            LineClass = ArrowLine;
+        }
+
+        return new LineClass([x, y, x, y], {
+            stroke: this._oColor.toRgba(),
+            strokeWidth: this._width,
+            evented: false
         });
     }
 }
