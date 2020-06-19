@@ -220,6 +220,11 @@ class Text extends Component {
             }
 
             this.isPrevEditing = true;
+
+            if (options.autofocus) {
+                newText.enterEditing();
+            }
+
             resolve(this.graphics.createObjectProperties(newText));
         });
     }

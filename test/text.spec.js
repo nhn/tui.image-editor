@@ -56,6 +56,16 @@ describe('Text', () => {
         });
     });
 
+    it('Should work if there is an autofocus attribute when adding text.', () => {
+        text.add('', {
+            autofocus: true
+        });
+
+        const activeOb = canvas.getActiveObject();
+
+        expect(activeOb.isEditing).toBe(true);
+    });
+
     it('Rotated text elements must also maintain consistent left and top positions after entering and exiting drawing mode.', () => {
         const left = 10;
         const top = 20;
