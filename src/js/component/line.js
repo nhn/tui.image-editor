@@ -3,6 +3,7 @@
  * @fileoverview Free drawing module, Set brush
  */
 import fabric from 'fabric';
+import snippet from 'tui-code-snippet';
 import Component from '../interface/component';
 import {eventNames, componentNames, fObjectOptions} from '../consts';
 
@@ -125,6 +126,8 @@ class Line extends Component {
             'mouse:move': this._listeners.mousemove,
             'mouse:up': this._listeners.mouseup
         });
+
+        this.fire(eventNames.ADD_OBJECT, this._createLineEventObjectProperties());
     }
 
     /**
@@ -153,15 +156,35 @@ class Line extends Component {
      */
     _onFabricMouseUp() {
         const canvas = this.getCanvas();
-        const params = this.graphics.createObjectProperties(this._line);
 
-        this.fire(eventNames.ADD_OBJECT, params);
+        this.fire(eventNames.ADD_OBJECT_AFTER, this._createLineEventObjectProperties());
 
         this._line = null;
 
         canvas.off({
             'mouse:move': this._listeners.mousemove,
             'mouse:up': this._listeners.mouseup
+        });
+    }
+
+    /**
+     * create line event object properties
+     * @returns {Object} properties line object
+     * @private
+     */
+    _createLineEventObjectProperties() {
+        const params = this.graphics.createObjectProperties(this._line);
+        const {x1, x2, y1, y2} = this._line;
+
+        return snippet.extend({}, params, {
+            startPosition: {
+                x: x1,
+                y: y1
+            },
+            endPosition: {
+                x: x2,
+                y: y2
+            }
         });
     }
 }
