@@ -6,7 +6,7 @@ import fabric from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Line from '../src/js/component/line';
-import {eventNames, keyCodes} from '../src/js/consts';
+import {eventNames} from '../src/js/consts';
 
 describe('Line', () => {
     let canvas, graphics, mockImage, line, fEvent;
