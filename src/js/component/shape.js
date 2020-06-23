@@ -256,7 +256,7 @@ export default class Shape extends Component {
         const blurredImage = new fabric.Image(copiedCanvas);
         const patternSourceCanvas = new fabric.StaticCanvas();
         const filter = new fabric.Image.filters.Pixelate({
-            blocksize: 20
+            blocksize: 10
         });
         blurredImage.filters.push(filter);
         blurredImage.applyFilters();
@@ -413,33 +413,24 @@ export default class Shape extends Component {
     }
 
     _tempOriginalProps(instance) {
-        const layoutProps = ['angle', 'scaleX', 'scaleY', 'left', 'top'];
+        const layoutProps = ['angle', 'left', 'top'];
         const originalValues = {};
         layoutProps.forEach(prop => {
             originalValues[prop] = instance[prop];
         });
-
-        /*
-        layoutProps.width *= layoutProps.scaleX;
-        layoutProps.height *= layoutProps.scaleY;
-        layoutProps.scaleX = 1;
-        layoutProps.scaleY = 1;
-        */
 
         return originalValues;
     }
 
     _fillFilterRePositionInGroup(instance, fEvent) {
         const groupInstance = fEvent.target;
+        groupInstance.addWithUpdate();
         const originalProps = this._tempOriginalProps(instance);
 
         groupInstance.realizeTransform(instance);
-        // groupInstance.removeWithUpdate(instance);
         this._fillFilterRePosition(instance);
-        // groupInstance.addWithUpdate(instance);
 
         if (originalProps) {
-            console.log('MMM', originalProps);
             instance.set(originalProps);
         }
     }

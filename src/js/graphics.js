@@ -1091,7 +1091,16 @@ class Graphics {
      * "selction:cleared" canvas event handler
      * @private
      */
-    _onSelectionCleared() {
+    _onSelectionCleared(fEvent) {
+        /*
+        console.log('CLEARED');
+        if (fEvent.deselected.length > 0) {
+            fEvent.deselected.forEach((item => {
+                item.fire('modifiedInGroup', fEvent);
+            }));
+        }
+        */
+
         this.fire(events.SELECTION_CLEARED);
     }
 
