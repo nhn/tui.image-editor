@@ -424,7 +424,11 @@ export default class Shape extends Component {
 
     _fillFilterRePositionInGroup(instance, fEvent) {
         const groupInstance = fEvent.target;
-        groupInstance.addWithUpdate();
+
+        if (groupInstance.scaleX !== 1 || groupInstance.scaleY !== 1) {
+            groupInstance.addWithUpdate();
+        }
+
         const originalProps = this._tempOriginalProps(instance);
 
         groupInstance.realizeTransform(instance);
