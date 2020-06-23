@@ -232,21 +232,54 @@ export default class Shape extends Component {
 
         switch (type) {
             case 'rect':
-                instance = new fabric.Rect(options);
+                instance = new fabric.Rect(extend({}, options, this._makePattern()));
                 break;
             case 'circle':
                 instance = new fabric.Ellipse(extend({
                     type: 'circle'
-                }, options));
+                }, options, this._makePattern()));
                 break;
             case 'triangle':
-                instance = new fabric.Triangle(options);
+                instance = new fabric.Triangle(extend({}, options, this._makePattern()));
                 break;
             default:
                 instance = {};
         }
 
         return instance;
+    }
+
+    _makePattern() {
+        const canvas = this.getCanvas();
+        const copiedCanvas = canvas.toCanvasElement();
+
+        const blurredImage = new fabric.Image(copiedCanvas);
+        const patternSourceCanvas = new fabric.StaticCanvas();
+        const filter = new fabric.Image.filters.Pixelate({
+            blocksize: 20
+        });
+        blurredImage.filters.push(filter);
+        blurredImage.applyFilters();
+
+        patternSourceCanvas.add(blurredImage);
+        patternSourceCanvas.renderAll();
+
+        return {
+            fill: new fabric.Pattern({
+                source: () => {
+                    patternSourceCanvas.setDimensions({
+                        width: copiedCanvas.width,
+                        height: copiedCanvas.height
+                    });
+                    patternSourceCanvas.renderAll();
+
+                    return patternSourceCanvas.getElement();
+                },
+                repeat: 'no-repeat'
+            }),
+            blurredImage,
+            objectCaching: false
+        };
     }
 
     /**
@@ -295,10 +328,21 @@ export default class Shape extends Component {
                 canvas.uniScaleTransform = false;
             },
             modified() {
+                console.log('MODIFIED');
                 const currentObj = self._shapeObj;
 
                 resizeHelper.adjustOriginToCenter(currentObj);
                 resizeHelper.setOrigins(currentObj);
+                self._fillFilterRePosition();
+            },
+            modifiedInGroup(fEvent) {
+                self._fillFilterRePositionInGroup(shapeObj, fEvent);
+            },
+            moving() {
+                self._fillFilterRePosition();
+            },
+            rotating() {
+                self._fillFilterRePosition();
             },
             scaling(fEvent) {
                 const pointer = canvas.getPointer(fEvent.e);
@@ -306,6 +350,8 @@ export default class Shape extends Component {
 
                 canvas.setCursor('crosshair');
                 resizeHelper.resize(currentObj, pointer, true);
+
+                self._fillFilterRePosition();
             }
         });
     }
@@ -363,6 +409,126 @@ export default class Shape extends Component {
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
         }
+        this._fillFilterRePosition();
+    }
+
+    _tempOriginalProps(instance) {
+        const layoutProps = ['angle', 'scaleX', 'scaleY', 'left', 'top'];
+        const originalValues = {};
+        layoutProps.forEach(prop => {
+            originalValues[prop] = instance[prop];
+        });
+
+        /*
+        layoutProps.width *= layoutProps.scaleX;
+        layoutProps.height *= layoutProps.scaleY;
+        layoutProps.scaleX = 1;
+        layoutProps.scaleY = 1;
+        */
+
+        return originalValues;
+    }
+
+    _fillFilterRePositionInGroup(instance, fEvent) {
+        const groupInstance = fEvent.target;
+        const originalProps = this._tempOriginalProps(instance);
+
+        groupInstance.realizeTransform(instance);
+        // groupInstance.removeWithUpdate(instance);
+        this._fillFilterRePosition(instance);
+        // groupInstance.addWithUpdate(instance);
+
+        if (originalProps) {
+            console.log('MMM', originalProps);
+            instance.set(originalProps);
+        }
+    }
+
+    _fillFilterRePosition(instance = this._shapeObj) {
+        const originalOrigin = {
+            originX: instance.originX,
+            originY: instance.originY
+        };
+        this._adjustOriginPosition(instance, 'end');
+
+        const {blurredImage} = instance;
+
+        instance.width *= instance.scaleX;
+        instance.height *= instance.scaleY;
+        instance.scaleX = 1;
+        instance.scaleY = 1;
+
+        const as = this._getRotatedLeft(instance);
+        const diffLeft = (as.width - instance.width) / 2;
+        const diffTop = (as.height - instance.height) / 2;
+        const cropX = instance.left - (instance.width / 2);
+        const cropY = instance.top - (instance.height / 2);
+
+        this._adjustOriginPosition(blurredImage, 'end');
+        blurredImage.set('angle', instance.angle * -1);
+        blurredImage.set({
+            left: (diffLeft * -1) + (as.width / 2),
+            top: (diffTop * -1) + (as.height / 2),
+            width: as.width,
+            height: as.height,
+            cropX: cropX - diffLeft,
+            cropY: cropY - diffTop
+        });
+        this._adjustOriginPosition(blurredImage, 'start');
+        this._restoreOrigionPosition(instance, originalOrigin);
+
+        const canvas = this.getCanvas();
+        canvas.renderAll();
+    }
+
+    _getRotatedLeft(instance) {
+        const {x: ax, y: ay} = instance.getPointByOrigin('left', 'top');
+        const {x: bx, y: by} = instance.getPointByOrigin('right', 'top');
+        const {x: cx, y: cy} = instance.getPointByOrigin('left', 'bottom');
+        const {x: dx, y: dy} = instance.getPointByOrigin('right', 'bottom');
+
+        const left = Math.min(ax, bx, cx, dx);
+        const top = Math.min(ay, by, cy, dy);
+        const right = Math.max(ax, bx, cx, dx);
+        const bottom = Math.max(ay, by, cy, dy);
+
+        const width = right - left;
+        const height = bottom - top;
+
+        return {
+            left,
+            top,
+            width,
+            height
+        };
+    }
+
+    _restoreOrigionPosition(instance, originPosition) {
+        const {originX, originY} = originPosition;
+        const {x: left, y: top} = instance.getPointByOrigin(originX, originY);
+
+        instance.set({
+            left,
+            top,
+            originX,
+            originY
+        });
+    }
+
+    _adjustOriginPosition(text, editStatus) {
+        let [originX, originY] = ['center', 'center'];
+        if (editStatus === 'start') {
+            [originX, originY] = ['left', 'top'];
+        }
+
+        const {x: left, y: top} = text.getPointByOrigin(originX, originY);
+        text.set({
+            left,
+            top,
+            originX,
+            originY
+        });
+        text.setCoords();
     }
 
     /**

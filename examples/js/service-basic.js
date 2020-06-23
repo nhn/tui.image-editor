@@ -48,6 +48,7 @@ var $inputBrushWidthRange = $('#input-brush-width-range');
 var $inputFontSizeRange = $('#input-font-size-range');
 var $inputStrokeWidthRange = $('#input-stroke-width-range');
 var $inputCheckTransparent = $('#input-check-transparent');
+var $inputCheckFilter = $('#input-check-filter');
 var $inputCheckGrayscale = $('#input-check-grayscale');
 var $inputCheckInvert = $('#input-check-invert');
 var $inputCheckSepia = $('#input-check-sepia');
@@ -228,26 +229,29 @@ function setIconToolbar(obj) {
 }
 
 function setShapeToolbar(obj) {
-    var strokeColor, fillColor, isTransparent;
+    var strokeColor, fillColor, isTransparent, isFilter;
     var colorType = $selectColorType.val();
 
     if (colorType === 'stroke') {
         strokeColor = obj.stroke;
         isTransparent = (strokeColor === 'transparent');
+        isFilter = (strokeColor === 'filter');
 
-        if (!isTransparent) {
+        if (!isTransparent && !isFilter) {
             shapeColorpicker.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
         fillColor = obj.fill;
         isTransparent = (fillColor === 'transparent');
+        isFilter = (typeof fillColor === 'object');
 
-        if (!isTransparent) {
+        if (!isTransparent && !isFilter) {
             shapeColorpicker.setColor(fillColor);
         }
     }
 
     $inputCheckTransparent.prop('checked', isTransparent);
+    $inputCheckFilter.prop('checked', isFilter);
     $inputStrokeWidthRange.val(obj.strokeWidth);
 }
 
@@ -530,7 +534,9 @@ $btnDrawShape.on('click', function() {
     shapeType = $('[name="select-shape-type"]:checked').val();
 
     shapeOptions.stroke = '#000000';
-    shapeOptions.fill = '#ffffff';
+    // shapeOptions.fill = '#ffffff';
+    // shapeOptions.fill = 'transparent';
+    shapeOptions.fill = 'filter';
 
     shapeOptions.strokeWidth = Number($inputStrokeWidthRange.val());
 
@@ -568,7 +574,36 @@ $inputCheckTransparent.on('change', function() {
         });
     }
 
+    console.log(' - SHAPEOPTIONS2 - ', shapeOptions);
+
     imageEditor.setDrawingShape(shapeType, shapeOptions);
+});
+
+$inputCheckFilter.on('change', function() {
+    var colorType = $selectColorType.val();
+    var isFilter = $(this).prop('checked');
+    var color;
+
+    if (!isFilter) {
+        color = shapeColorpicker.getColor();
+    } else {
+        color = 'filter';
+    }
+
+    if (colorType === 'stroke') {
+        imageEditor.changeShape(activeObjectId, {
+            stroke: color
+        });
+    } else if (colorType === 'fill') {
+        imageEditor.changeShape(activeObjectId, {
+            fill: color
+        });
+    }
+
+    console.log(' - SHAPEOPTIONS2 - ', shapeOptions);
+
+    imageEditor.setDrawingShape(shapeType, shapeOptions);
+
 });
 
 shapeColorpicker.on('selectColor', function(event) {
@@ -907,7 +942,8 @@ $inputRangeColorFilterValue.on('change', function() {
 // Etc..
 
 // Load sample image
-imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(function(sizeValue) {
+// imageEditor.loadImageFromURL('img/sampleImage2.png', 'SampleImage').then(function(sizeValue) {
+imageEditor.loadImageFromURL('img/bg.jpg', 'SampleImage').then(function(sizeValue) {
     console.log(sizeValue);
     imageEditor.clearUndoStack();
 });
