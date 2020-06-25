@@ -48,13 +48,28 @@ class Line extends Component {
      * Start drawing line mode
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
+    setHeadOption(setting) {
+        setting = setting || {};
+        const {arrowType = {
+            start: null,
+            end: null
+        }} = setting;
+
+        this.headType = arrowType.start;
+        this.tailType = arrowType.end;
+    }
+
+    /**
+     * Start drawing line mode
+     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
+     */
     start(setting) {
         const canvas = this.getCanvas();
 
         canvas.defaultCursor = 'crosshair';
         canvas.selection = false;
 
-        this.headType = setting ? setting.head : null;
+        this.setHeadOption(setting);
         this.setBrush(setting);
 
         canvas.forEachObject(obj => {
@@ -110,9 +125,16 @@ class Line extends Component {
      */
     _onFabricMouseDown(fEvent) {
         const canvas = this.getCanvas();
-        const mousePosition = canvas.getPointer(fEvent.e);
+        const {x, y} = canvas.getPointer(fEvent.e);
 
-        this._line = this._createLineInstance(mousePosition);
+        this._line = new ArrowLine([x, y, x, y], {
+            stroke: this._oColor.toRgba(),
+            strokeWidth: this._width,
+            headType: this.headType,
+            tailType: this.tailType,
+            evented: false
+        });
+
         this._line.set(fObjectOptions.SELECTION_STYLE);
 
         canvas.add(this._line);
@@ -172,7 +194,7 @@ class Line extends Component {
     _createLineInstance({x, y}) {
         let LineClass = fabric.Line;
 
-        if (this.headType === 'arrow') {
+        if (this.headType || this.tailType) {
             LineClass = ArrowLine;
         }
 

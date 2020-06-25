@@ -68,13 +68,4 @@ describe('Line', () => {
 
         expect(canvas.getObjects()[0].get('evented')).toEqual(true);
     });
-
-    it('Must use the arrowHead instance when head option is arrow', () => {
-        line.start({
-            head: 'arrow'
-        });
-        line._onFabricMouseDown(fEvent);
-
-        expect(line._line.type).toBe('ArrowLine');
-    });
 });

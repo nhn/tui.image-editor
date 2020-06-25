@@ -186,7 +186,7 @@ function resizeEditor() {
 }
 
 function getBrushSettings() {
-    var brushWidth = parseInt($inputBrushWidthRange.val(), 10);
+    var brushWidth = parseInt($inputBrushWidthRange.val(), 15);
     var brushColor = brushColorpicker.getColor();
 
     return {
@@ -501,7 +501,7 @@ $btnDrawLine.on('click', function() {
     imageEditor.stopDrawingMode();
     $displayingSubMenu.hide();
     $displayingSubMenu = $drawLineSubMenu.show();
-    $selectLine.eq(0).change();
+    $selectLine.eq(1).change();
 });
 
 $selectLine.on('change', function() {
@@ -512,7 +512,11 @@ $selectLine.on('change', function() {
     if (mode === 'freeDrawing') {
         imageEditor.startDrawingMode('FREE_DRAWING', settings);
     } else {
-        imageEditor.startDrawingMode('LINE_DRAWING', settings);
+        imageEditor.startDrawingMode('LINE_DRAWING', Object.assign(settings, {
+            arrowType: {
+                end: 'chevron'
+            }
+        }));
     }
 });
 
