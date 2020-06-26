@@ -180,28 +180,6 @@ class Line extends Component {
             'mouse:up': this._listeners.mouseup
         });
     }
-
-    /**
-     * create line instance
-     * @param {Object} mousePosition - mouse position
-     *   @param {number} x - position x
-     *   @param {number} y - position y
-     * @returns {fabric.Line | ArrowLine}
-     * @private
-     */
-    _createLineInstance({x, y}) {
-        let LineClass = fabric.Line;
-
-        if (this.headType || this.tailType) {
-            LineClass = ArrowLine;
-        }
-
-        return new LineClass([x, y, x, y], {
-            stroke: this._oColor.toRgba(),
-            strokeWidth: this._width,
-            evented: false
-        });
-    }
 }
 
 export default Line;

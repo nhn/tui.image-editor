@@ -30,6 +30,7 @@ describe('Line', () => {
             canvas.remove(obj);
         });
     });
+
     it('_onFabricMouseDown() should insert the line.', () => {
         line._onFabricMouseDown(fEvent);
 
