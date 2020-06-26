@@ -24,11 +24,10 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      * @param {Object} [options] Options object
      * @override
      */
-    initialize(points, options) {
+    initialize(points, options = {}) {
         this.callSuper('initialize', points, options);
 
-        this.headType = options.headType;
-        this.tailType = options.tailType;
+        this.arrowType = options.arrowType;
     },
 
     /**
@@ -80,7 +79,9 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      * @private
      */
     _setDecoratorPathImplement(type, linePosition) {
-        switch (type === 'start' ? this.tailType : this.headType) {
+        const {start, end} = this.arrowType;
+
+        switch (type === 'start' ? start : end) {
             case 'triangle':
                 this._setTrianglePath(type, linePosition);
                 break;
@@ -126,8 +127,8 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
             decorateSize = this.ctx.lineWidth * CHEVRON_SIZE_RATIO;
         }
 
-        const [standardX, standardY] = type === 'start' ? [toX, toY] : [fromX, fromY];
-        const [compareX, compareY] = type === 'start' ? [fromX, fromY] : [toX, toY];
+        const [standardX, standardY] = type === 'start' ? [fromX, fromY] : [toX, toY];
+        const [compareX, compareY] = type === 'start' ? [toX, toY] : [fromX, fromY];
 
         const angle = Math.atan2(compareY - standardY, compareX - standardX) * RADIAN_CONVERSION_VALUE / Math.PI;
         const rotatedPosition = changeAngle => this.getRotatePosition(decorateSize, changeAngle, {

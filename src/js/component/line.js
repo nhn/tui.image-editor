@@ -55,8 +55,7 @@ class Line extends Component {
             end: null
         }} = setting;
 
-        this.headType = arrowType.start;
-        this.tailType = arrowType.end;
+        this._arrowType = arrowType;
     }
 
     /**
@@ -130,8 +129,7 @@ class Line extends Component {
         this._line = new ArrowLine([x, y, x, y], {
             stroke: this._oColor.toRgba(),
             strokeWidth: this._width,
-            headType: this.headType,
-            tailType: this.tailType,
+            arrowType: this._arrowType,
             evented: false
         });
 

@@ -514,7 +514,8 @@ $selectLine.on('change', function() {
     } else {
         imageEditor.startDrawingMode('LINE_DRAWING', Object.assign(settings, {
             arrowType: {
-                end: 'chevron'
+                start: 'chevron',
+                end: 'triangle'
             }
         }));
     }

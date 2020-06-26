@@ -5,39 +5,31 @@
 import ArrowLine from '../src/js/extension/arrowLine';
 
 describe('AllowLine', () => {
-    let ctx;
+    let ctx, arrowLine, linePath;
 
     beforeEach(() => {
         ctx = {
             lineWidth: 1,
             beginPath: jasmine.createSpy('beginPath'),
             moveTo: jasmine.createSpy('moveTo'),
-            lineTo: jasmine.createSpy('lineTo')
+            lineTo: jasmine.createSpy('lineTo'),
+            closePath: jasmine.createSpy('closePath')
+        };
+        arrowLine = new ArrowLine();
+        arrowLine.ctx = ctx;
+        linePath = {
+            fromX: 1,
+            fromY: 1,
+            toX: 10,
+            toY: 10
         };
     });
 
-    /*
-    it('"_render" needs to move and draw the start and end points according to the canvas api.', () => {
-        const arrowLine = new ArrowLine([0, 0, 10, 20]);
-
-        arrowLine._render(ctx);
-
-        expect(ctx.moveTo.calls.first().args).toEqual([-5, -10]);
-        expect(ctx.lineTo.calls.first().args).toEqual([5, 10]);
-    });
-    */
-
-    it('"renderHead" should draw the "v" calculated according to the angle around the end of the line.', () => {
-        const arrowLine = new ArrowLine();
-        const [fromX, fromY, toX, toY] = [0, 0, 10, 10];
-        arrowLine.headType = 'chevron';
-
-        arrowLine._setDecoratorPath({
-            fromX,
-            fromY,
-            toX,
-            toY
-        });
+    it('When attaching the "chevron" type to the endpoint, you need to draw the "v" calculated according to the angle around the "end" of the line.', () => {
+        arrowLine.arrowType = {
+            end: 'chevron'
+        };
+        arrowLine._setDecoratorPath(linePath);
 
         const firstPoint = ctx.moveTo.calls.argsFor(0).map(value => Math.round(value));
         const secondPoint = ctx.lineTo.calls.argsFor(0).map(value => Math.round(value));
@@ -46,5 +38,36 @@ describe('AllowLine', () => {
         expect(firstPoint).toEqual([9, 7]);
         expect(secondPoint).toEqual([10, 10]);
         expect(lastPoint).toEqual([7, 9]);
+    });
+
+    it('When attaching the "chevron" type to the startpoint, you need to draw the "v" calculated according to the angle around the "start" of the line.', () => {
+        arrowLine.arrowType = {
+            start: 'chevron'
+        };
+        arrowLine._setDecoratorPath(linePath);
+
+        const firstPoint = ctx.moveTo.calls.argsFor(0).map(value => Math.round(value));
+        const secondPoint = ctx.lineTo.calls.argsFor(0).map(value => Math.round(value));
+        const lastPoint = ctx.lineTo.calls.argsFor(1).map(value => Math.round(value));
+
+        expect(firstPoint).toEqual([2, 4]);
+        expect(secondPoint).toEqual([1, 1]);
+        expect(lastPoint).toEqual([4, 2]);
+    });
+
+    it('"triangle" should be a triangular shape that closes the path with closePath after drawing.', () => {
+        arrowLine.arrowType = {
+            start: 'triangle'
+        };
+        arrowLine._setDecoratorPath(linePath);
+
+        const firstPoint = ctx.moveTo.calls.argsFor(0).map(value => Math.round(value));
+        const secondPoint = ctx.lineTo.calls.argsFor(0).map(value => Math.round(value));
+        const thirdPoint = ctx.lineTo.calls.argsFor(1).map(value => Math.round(value));
+
+        expect(firstPoint).toEqual([1, 3]);
+        expect(secondPoint).toEqual([1, 1]);
+        expect(thirdPoint).toEqual([3, 1]);
+        expect(ctx.closePath.calls.count()).toBe(1);
     });
 });
