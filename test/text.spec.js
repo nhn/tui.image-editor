@@ -32,6 +32,7 @@ describe('Text', () => {
 
         beforeEach(() => {
             text.add('', {});
+
             activeObj = canvas.getActiveObject();
         });
 
