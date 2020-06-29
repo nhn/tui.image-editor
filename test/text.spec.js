@@ -36,8 +36,6 @@ describe('Text', () => {
         });
 
         it('should make the blank text object when text parameter is empty string.', () => {
-            text.add('', {});
-            activeObj = canvas.getActiveObject();
             const newText = activeObj.text;
 
             expect(newText).toEqual('');
