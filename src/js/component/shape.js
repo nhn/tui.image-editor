@@ -277,7 +277,7 @@ export default class Shape extends Component {
                 },
                 repeat: 'no-repeat'
             }),
-            blurredImage,
+            patternSourceCanvas,
             objectCaching: false
         };
     }
@@ -300,6 +300,28 @@ export default class Shape extends Component {
         return options;
     }
 
+    _reMakePatternImageSource(shapeObj) {
+        const {patternSourceCanvas} = shapeObj;
+        const [blurredImage] = patternSourceCanvas.getObjects();
+        patternSourceCanvas.remove(blurredImage);
+
+        shapeObj.visible = false;
+        const canvasa = this.getCanvas();
+        const copiedCanvas = canvasa.toCanvasElement();
+        shapeObj.visible = true;
+
+        const mm = new fabric.Image(copiedCanvas);
+        const filter = new fabric.Image.filters.Pixelate({
+            blocksize: 10
+        });
+        mm.filters.push(filter);
+        mm.applyFilters();
+
+        patternSourceCanvas.add(mm);
+
+        this._fillFilterRePosition();
+    }
+
     /**
      * Bind fabric events on the creating shape object
      * @param {fabric.Object} shapeObj - Shape object
@@ -314,12 +336,15 @@ export default class Shape extends Component {
                 self._shapeObj = this;
                 resizeHelper.setOrigins(self._shapeObj);
             },
-            selected() {
+            selected(aa) {
+                console.log('AAA', aa.type);
                 self._isSelected = true;
                 self._shapeObj = this;
                 canvas.uniScaleTransform = true;
                 canvas.defaultCursor = 'default';
                 resizeHelper.setOrigins(self._shapeObj);
+
+                // self._reMakePatternImageSource(shapeObj);
             },
             deselected() {
                 self._isSelected = false;
@@ -328,7 +353,6 @@ export default class Shape extends Component {
                 canvas.uniScaleTransform = false;
             },
             modified() {
-                console.log('MODIFIED');
                 const currentObj = self._shapeObj;
 
                 resizeHelper.adjustOriginToCenter(currentObj);
@@ -446,7 +470,8 @@ export default class Shape extends Component {
         };
         this._adjustOriginPosition(instance, 'end');
 
-        const {blurredImage} = instance;
+        const {patternSourceCanvas} = instance;
+        const [blurredImage] = patternSourceCanvas.getObjects();
 
         instance.width *= instance.scaleX;
         instance.height *= instance.scaleY;

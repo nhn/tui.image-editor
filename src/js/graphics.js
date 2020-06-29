@@ -376,6 +376,7 @@ class Graphics {
      * @returns {Component}
      */
     getComponent(name) {
+        console.log('GETCOMPONENT', name);
         return this._componentMap[name];
     }
 
@@ -1110,6 +1111,16 @@ class Graphics {
      * @private
      */
     _onSelectionCreated(fEvent) {
+
+        console.log('MMMM - ', fEvent.target.type);
+
+        if (fEvent.target.type === 'activeSelection') {
+            fEvent.target.set({
+                lockScalingY: true,
+                lockScalingX: true
+            });
+        }
+
         this.fire(events.SELECTION_CREATED, fEvent.target);
     }
 
@@ -1307,6 +1318,12 @@ class Graphics {
     _copyFabricObject(targetObject) {
         return new Promise(resolve => {
             targetObject.clone(cloned => {
+                if (cloned.fill && cloned.fill.type === 'pattern') {
+                    const shapeComp = this.getComponent(components.SHAPE);
+                    cloned.set(shapeComp._makePattern());
+                    shapeComp._bindEventOnShape(cloned);
+                    shapeComp._fillFilterRePosition(cloned);
+                }
                 resolve(cloned);
             });
         });
