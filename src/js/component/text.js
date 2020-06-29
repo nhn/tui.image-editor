@@ -104,7 +104,6 @@ class Text extends Component {
      * Start input text mode
      */
     start() {
-        console.log('START');
         const canvas = this.getCanvas();
 
         canvas.selection = false;
@@ -230,7 +229,6 @@ class Text extends Component {
             }
 
             this.isPrevEditing = true;
-
             resolve(this.graphics.createObjectProperties(newText));
         });
     }
