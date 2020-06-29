@@ -995,6 +995,7 @@ class ImageEditor {
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
      *         @param {string} [options.styles.textDecoration] Type of line (underline / line-through / overline)
      *     @param {{x: number, y: number}} [options.position] - Initial position
+     *     @param {boolean} [options.autofocus] - text autofucus, default is true
      * @returns {Promise}
      * @example
      * imageEditor.addText('init text');
