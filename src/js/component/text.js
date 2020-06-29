@@ -219,13 +219,13 @@ class Text extends Component {
 
             canvas.add(newText);
 
+            if (!canvas.getActiveObject()) {
+                canvas.setActiveObject(newText);
+            }
+
             if (options.autofocus) {
                 newText.enterEditing();
                 newText.selectAll();
-            }
-
-            if (!canvas.getActiveObject()) {
-                canvas.setActiveObject(newText);
             }
 
             this.isPrevEditing = true;
