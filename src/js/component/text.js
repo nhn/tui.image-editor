@@ -104,6 +104,7 @@ class Text extends Component {
      * Start input text mode
      */
     start() {
+        console.log('START');
         const canvas = this.getCanvas();
 
         canvas.selection = false;
@@ -202,6 +203,10 @@ class Text extends Component {
                 styles = snippet.extend(styles, options.styles);
             }
 
+            if (!snippet.isExisty(options.autofocus)) {
+                options.autofocus = true;
+            }
+
             newText = new fabric.IText(text, styles);
             selectionStyle = snippet.extend({}, selectionStyle, {
                 originX: 'left',
@@ -215,15 +220,16 @@ class Text extends Component {
 
             canvas.add(newText);
 
+            if (options.autofocus) {
+                newText.enterEditing();
+                newText.selectAll();
+            }
+
             if (!canvas.getActiveObject()) {
                 canvas.setActiveObject(newText);
             }
 
             this.isPrevEditing = true;
-
-            if (options.autofocus) {
-                newText.enterEditing();
-            }
 
             resolve(this.graphics.createObjectProperties(newText));
         });

@@ -32,11 +32,12 @@ describe('Text', () => {
 
         beforeEach(() => {
             text.add('', {});
-
             activeObj = canvas.getActiveObject();
         });
 
         it('should make the blank text object when text parameter is empty string.', () => {
+            text.add('', {});
+            activeObj = canvas.getActiveObject();
             const newText = activeObj.text;
 
             expect(newText).toEqual('');
@@ -54,16 +55,18 @@ describe('Text', () => {
             expect(activeObj.left).toEqual(mockImagePos.x);
             expect(activeObj.top).toEqual(mockImagePos.y);
         });
-    });
 
-    it('Should work if there is an autofocus attribute when adding text.', () => {
-        text.add('', {
-            autofocus: true
+        it('Default option for autofocus should be true when adding text.', done => {
+            text.add('default', {}).then(info => {
+                const newText = graphics.getObject(info.id);
+
+                expect(newText.selectionStart).toBe(0);
+                expect(newText.selectionEnd).toBe(7);
+                expect(newText.isEditing).toBe(true);
+
+                done();
+            });
         });
-
-        const activeOb = canvas.getActiveObject();
-
-        expect(activeOb.isEditing).toBe(true);
     });
 
     it('Rotated text elements must also maintain consistent left and top positions after entering and exiting drawing mode.', () => {
