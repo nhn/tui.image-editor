@@ -376,7 +376,6 @@ class Graphics {
      * @returns {Component}
      */
     getComponent(name) {
-        console.log('GETCOMPONENT', name);
         return this._componentMap[name];
     }
 
@@ -1092,16 +1091,7 @@ class Graphics {
      * "selction:cleared" canvas event handler
      * @private
      */
-    _onSelectionCleared(fEvent) {
-        /*
-        console.log('CLEARED');
-        if (fEvent.deselected.length > 0) {
-            fEvent.deselected.forEach((item => {
-                item.fire('modifiedInGroup', fEvent);
-            }));
-        }
-        */
-
+    _onSelectionCleared() {
         this.fire(events.SELECTION_CLEARED);
     }
 
@@ -1111,16 +1101,6 @@ class Graphics {
      * @private
      */
     _onSelectionCreated(fEvent) {
-
-        console.log('MMMM - ', fEvent.target.type);
-
-        if (fEvent.target.type === 'activeSelection') {
-            fEvent.target.set({
-                lockScalingY: true,
-                lockScalingX: true
-            });
-        }
-
         this.fire(events.SELECTION_CREATED, fEvent.target);
     }
 
@@ -1310,6 +1290,20 @@ class Graphics {
     }
 
     /**
+     * Get fill type of object
+     * @param {fabric.Object} targetObject - fabric object
+     * @returns {string} 'transparent' or 'color' or 'filter'
+     */
+    getObjectFillType(targetObject) {
+        const {fill} = targetObject;
+        if (fill.source) {
+            return 'filter';
+        }
+
+        return fill === 'transparent' ? fill : 'color';
+    }
+
+    /**
      * Copy fabric object
      * @param {fabric.Object} targetObject - fabric object
      * @returns {Promise}
@@ -1318,9 +1312,9 @@ class Graphics {
     _copyFabricObject(targetObject) {
         return new Promise(resolve => {
             targetObject.clone(cloned => {
-                if (cloned.fill && cloned.fill.type === 'pattern') {
+                if (this.getObjectFillType(cloned)) {
                     const shapeComp = this.getComponent(components.SHAPE);
-                    cloned.set(shapeComp._makePattern());
+                    cloned.set(shapeComp._makeDynamicFillPattern());
                     shapeComp._bindEventOnShape(cloned);
                     shapeComp._fillFilterRePosition(cloned);
                 }

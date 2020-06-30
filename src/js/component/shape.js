@@ -214,10 +214,20 @@ export default class Shape extends Component {
                 reject(rejectMessages.unsupportedType);
             }
 
-            shapeObj.set(options);
+            shapeObj.set(this._makeShapeOption(options));
             this.getCanvas().renderAll();
             resolve();
         });
+    }
+
+    /**
+     * Make shape option
+     * @param {Object} options - Options to creat the shape
+     * @returns {Object} - shape option
+     * @private
+     */
+    _makeShapeOption(options) {
+        return extend({}, options, options.fill === 'filter' ? this._makeDynamicFillPattern() : {});
     }
 
     /**
@@ -228,19 +238,19 @@ export default class Shape extends Component {
      * @private
      */
     _createInstance(type, options) {
+        const shapeOptions = this._makeShapeOption(options);
         let instance;
 
         switch (type) {
             case 'rect':
-                instance = new fabric.Rect(extend({}, options, this._makePattern()));
+                instance = new fabric.Rect(shapeOptions);
                 break;
             case 'circle':
-                instance = new fabric.Ellipse(extend({
-                    type: 'circle'
-                }, options, this._makePattern()));
+                shapeOptions.type = 'circle';
+                instance = new fabric.Ellipse(shapeOptions);
                 break;
             case 'triangle':
-                instance = new fabric.Triangle(extend({}, options, this._makePattern()));
+                instance = new fabric.Triangle(shapeOptions);
                 break;
             default:
                 instance = {};
@@ -249,27 +259,28 @@ export default class Shape extends Component {
         return instance;
     }
 
-    _makePattern() {
+    _makeDynamicFillPattern() {
         const canvas = this.getCanvas();
-        const copiedCanvas = canvas.toCanvasElement();
+        const copiedCanvasElement = canvas.toCanvasElement();
+        const fillImage = new fabric.Image(copiedCanvasElement);
 
-        const blurredImage = new fabric.Image(copiedCanvas);
         const patternSourceCanvas = new fabric.StaticCanvas();
         const filter = new fabric.Image.filters.Pixelate({
             blocksize: 10
         });
-        blurredImage.filters.push(filter);
-        blurredImage.applyFilters();
+        this._adjustOriginPosition(fillImage, 'end');
+        fillImage.filters.push(filter);
+        fillImage.applyFilters();
 
-        patternSourceCanvas.add(blurredImage);
+        patternSourceCanvas.add(fillImage);
         patternSourceCanvas.renderAll();
 
         return {
             fill: new fabric.Pattern({
                 source: () => {
                     patternSourceCanvas.setDimensions({
-                        width: copiedCanvas.width,
-                        height: copiedCanvas.height
+                        width: copiedCanvasElement.width,
+                        height: copiedCanvasElement.height
                     });
                     patternSourceCanvas.renderAll();
 
@@ -302,15 +313,15 @@ export default class Shape extends Component {
 
     _reMakePatternImageSource(shapeObj) {
         const {patternSourceCanvas} = shapeObj;
-        const [blurredImage] = patternSourceCanvas.getObjects();
-        patternSourceCanvas.remove(blurredImage);
+        const [fillImage] = patternSourceCanvas.getObjects();
+        patternSourceCanvas.remove(fillImage);
 
         shapeObj.visible = false;
         const canvasa = this.getCanvas();
-        const copiedCanvas = canvasa.toCanvasElement();
+        const copiedCanvasElement = canvasa.toCanvasElement();
         shapeObj.visible = true;
 
-        const mm = new fabric.Image(copiedCanvas);
+        const mm = new fabric.Image(copiedCanvasElement);
         const filter = new fabric.Image.filters.Pixelate({
             blocksize: 10
         });
@@ -336,15 +347,12 @@ export default class Shape extends Component {
                 self._shapeObj = this;
                 resizeHelper.setOrigins(self._shapeObj);
             },
-            selected(aa) {
-                console.log('AAA', aa.type);
+            selected() {
                 self._isSelected = true;
                 self._shapeObj = this;
                 canvas.uniScaleTransform = true;
                 canvas.defaultCursor = 'default';
                 resizeHelper.setOrigins(self._shapeObj);
-
-                // self._reMakePatternImageSource(shapeObj);
             },
             deselected() {
                 self._isSelected = false;
@@ -436,8 +444,8 @@ export default class Shape extends Component {
         this._fillFilterRePosition();
     }
 
-    _tempOriginalProps(instance) {
-        const layoutProps = ['angle', 'left', 'top'];
+    _tempOriginalPosition(instance) {
+        const layoutProps = ['left', 'top'];
         const originalValues = {};
         layoutProps.forEach(prop => {
             originalValues[prop] = instance[prop];
@@ -450,10 +458,12 @@ export default class Shape extends Component {
         const groupInstance = fEvent.target;
 
         if (groupInstance.scaleX !== 1 || groupInstance.scaleY !== 1) {
+            // Reset an group object transform state to neutral.
+            // Necessary because the scale transition state of the group affects the fill area.
             groupInstance.addWithUpdate();
         }
 
-        const originalProps = this._tempOriginalProps(instance);
+        const originalProps = this._tempOriginalPosition(instance);
 
         groupInstance.realizeTransform(instance);
         this._fillFilterRePosition(instance);
@@ -468,59 +478,40 @@ export default class Shape extends Component {
             originX: instance.originX,
             originY: instance.originY
         };
-        this._adjustOriginPosition(instance, 'end');
-
-        const {patternSourceCanvas} = instance;
-        const [blurredImage] = patternSourceCanvas.getObjects();
+        this._adjustOriginPosition(instance);
 
         instance.width *= instance.scaleX;
         instance.height *= instance.scaleY;
+        instance.rx *= instance.scaleX;
+        instance.ry *= instance.scaleY;
         instance.scaleX = 1;
         instance.scaleY = 1;
 
-        const as = this._getRotatedLeft(instance);
-        const diffLeft = (as.width - instance.width) / 2;
-        const diffTop = (as.height - instance.height) / 2;
-        const cropX = instance.left - (instance.width / 2);
-        const cropY = instance.top - (instance.height / 2);
-
-        this._adjustOriginPosition(blurredImage, 'end');
-        blurredImage.set('angle', instance.angle * -1);
-        blurredImage.set({
-            left: (diffLeft * -1) + (as.width / 2),
-            top: (diffTop * -1) + (as.height / 2),
-            width: as.width,
-            height: as.height,
-            cropX: cropX - diffLeft,
-            cropY: cropY - diffTop
-        });
-        this._adjustOriginPosition(blurredImage, 'start');
+        this._repositionFilterTypeFillImage(instance);
         this._restoreOrigionPosition(instance, originalOrigin);
-
-        const canvas = this.getCanvas();
-        canvas.renderAll();
     }
 
-    _getRotatedLeft(instance) {
-        const {x: ax, y: ay} = instance.getPointByOrigin('left', 'top');
-        const {x: bx, y: by} = instance.getPointByOrigin('right', 'top');
-        const {x: cx, y: cy} = instance.getPointByOrigin('left', 'bottom');
-        const {x: dx, y: dy} = instance.getPointByOrigin('right', 'bottom');
+    _repositionFilterTypeFillImage(instance) {
+        const {patternSourceCanvas} = instance;
+        const [fillImage] = patternSourceCanvas.getObjects();
+        const {
+            width: rotatedWidth,
+            height: rotatedHeight
+        } = resizeHelper.getRotatedDimension(instance);
+        const diffLeft = (rotatedWidth - instance.width) / 2;
+        const diffTop = (rotatedHeight - instance.height) / 2;
+        const cropX = instance.left - (instance.width / 2) - diffLeft;
+        const cropY = instance.top - (instance.height / 2) - diffTop;
 
-        const left = Math.min(ax, bx, cx, dx);
-        const top = Math.min(ay, by, cy, dy);
-        const right = Math.max(ax, bx, cx, dx);
-        const bottom = Math.max(ay, by, cy, dy);
-
-        const width = right - left;
-        const height = bottom - top;
-
-        return {
-            left,
-            top,
-            width,
-            height
-        };
+        fillImage.set({
+            angle: instance.angle * -1,
+            left: (rotatedWidth / 2) - diffLeft,
+            top: (rotatedHeight / 2) - diffTop,
+            width: rotatedWidth,
+            height: rotatedHeight,
+            cropX,
+            cropY
+        });
     }
 
     _restoreOrigionPosition(instance, originPosition) {
@@ -535,20 +526,16 @@ export default class Shape extends Component {
         });
     }
 
-    _adjustOriginPosition(text, editStatus) {
-        let [originX, originY] = ['center', 'center'];
-        if (editStatus === 'start') {
-            [originX, originY] = ['left', 'top'];
-        }
-
-        const {x: left, y: top} = text.getPointByOrigin(originX, originY);
-        text.set({
+    _adjustOriginPosition(instance) {
+        const [originX, originY] = ['center', 'center'];
+        const {x: left, y: top} = instance.getPointByOrigin(originX, originY);
+        instance.set({
             left,
             top,
             originX,
             originY
         });
-        text.setCoords();
+        instance.setCoords();
     }
 
     /**

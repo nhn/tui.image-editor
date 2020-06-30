@@ -238,5 +238,33 @@ module.exports = {
         });
 
         shape.setCoords(); // For left, top properties
+    },
+
+    /**
+     * Calculate for rotated shape dimension
+     * @param {fabric.Object} shape - Shape object
+     * @returns {Object} Rotated shape dimension
+     */
+    getRotatedDimension(shape) {
+        const {x: ax, y: ay} = shape.getPointByOrigin('left', 'top');
+        const {x: bx, y: by} = shape.getPointByOrigin('right', 'top');
+        const {x: cx, y: cy} = shape.getPointByOrigin('left', 'bottom');
+        const {x: dx, y: dy} = shape.getPointByOrigin('right', 'bottom');
+
+        const left = Math.min(ax, bx, cx, dx);
+        const top = Math.min(ay, by, cy, dy);
+        const right = Math.max(ax, bx, cx, dx);
+        const bottom = Math.max(ay, by, cy, dy);
+
+        const width = right - left;
+        const height = bottom - top;
+
+        return {
+            left,
+            top,
+            width,
+            height
+        };
     }
+
 };

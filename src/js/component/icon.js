@@ -89,6 +89,7 @@ class Icon extends Component {
     _addWithDragEvent(canvas) {
         canvas.on({
             'mouse:move': fEvent => {
+                console.log('MV');
                 canvas.selection = false;
 
                 this.fire(events.ICON_CREATE_RESIZE, {
@@ -96,6 +97,7 @@ class Icon extends Component {
                 });
             },
             'mouse:up': fEvent => {
+                console.log('MU');
                 this.fire(events.ICON_CREATE_END, {
                     moveOriginPointer: canvas.getPointer(fEvent.e)
                 });

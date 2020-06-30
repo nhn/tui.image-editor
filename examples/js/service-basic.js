@@ -229,7 +229,7 @@ function setIconToolbar(obj) {
 }
 
 function setShapeToolbar(obj) {
-    var strokeColor, fillColor, isTransparent, isFilter;
+    var strokeColor, fillColor, isTransparent, isFilter, fillType;
     var colorType = $selectColorType.val();
 
     if (colorType === 'stroke') {
@@ -241,9 +241,10 @@ function setShapeToolbar(obj) {
             shapeColorpicker.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
+        fillType = imageEditor.getObjectFillType(obj.id);
         fillColor = obj.fill;
-        isTransparent = (fillColor === 'transparent');
-        isFilter = (typeof fillColor === 'object');
+        isTransparent = (fillType === 'transparent');
+        isFilter = (fillType === 'filter');
 
         if (!isTransparent && !isFilter) {
             shapeColorpicker.setColor(fillColor);
