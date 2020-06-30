@@ -220,6 +220,16 @@ export default class Shape extends Component {
         });
     }
 
+    isShape(obj) {
+        return inArray(obj.get('type'), shapeType) >= 0;
+    }
+
+    processForCopiedObject(shapeObj) {
+        shapeObj.set(this._makeDynamicFillPattern());
+        this._bindEventOnShape(shapeObj);
+        this._rePositionFillFilter(shapeObj);
+    }
+
     /**
      * Make shape option
      * @param {Object} options - Options to creat the shape
@@ -227,7 +237,8 @@ export default class Shape extends Component {
      * @private
      */
     _makeShapeOption(options) {
-        return extend({}, options, options.fill === 'filter' ? this._makeDynamicFillPattern() : {});
+        // return extend({}, options, options.fill === 'filter' ? this._makeDynamicFillPattern() : {});
+        return extend({}, options, this._makeDynamicFillPattern());
     }
 
     /**
@@ -330,7 +341,7 @@ export default class Shape extends Component {
 
         patternSourceCanvas.add(mm);
 
-        this._fillFilterRePosition();
+        this._rePositionFillFilter();
     }
 
     /**
@@ -365,16 +376,16 @@ export default class Shape extends Component {
 
                 resizeHelper.adjustOriginToCenter(currentObj);
                 resizeHelper.setOrigins(currentObj);
-                self._fillFilterRePosition();
+                self._rePositionFillFilter();
             },
             modifiedInGroup(fEvent) {
                 self._fillFilterRePositionInGroup(shapeObj, fEvent);
             },
             moving() {
-                self._fillFilterRePosition();
+                self._rePositionFillFilter();
             },
             rotating() {
-                self._fillFilterRePosition();
+                self._rePositionFillFilter();
             },
             scaling(fEvent) {
                 const pointer = canvas.getPointer(fEvent.e);
@@ -383,7 +394,7 @@ export default class Shape extends Component {
                 canvas.setCursor('crosshair');
                 resizeHelper.resize(currentObj, pointer, true);
 
-                self._fillFilterRePosition();
+                self._rePositionFillFilter();
             }
         });
     }
@@ -441,39 +452,32 @@ export default class Shape extends Component {
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
         }
-        this._fillFilterRePosition();
-    }
-
-    _tempOriginalPosition(instance) {
-        const layoutProps = ['left', 'top'];
-        const originalValues = {};
-        layoutProps.forEach(prop => {
-            originalValues[prop] = instance[prop];
-        });
-
-        return originalValues;
+        this._rePositionFillFilter();
     }
 
     _fillFilterRePositionInGroup(instance, fEvent) {
         const groupInstance = fEvent.target;
 
         if (groupInstance.scaleX !== 1 || groupInstance.scaleY !== 1) {
-            // Reset an group object transform state to neutral.
-            // Necessary because the scale transition state of the group affects the fill area.
+            // The only way to reset the object transformation scale state to neutral.
+            // {@link https://github.com/fabricjs/fabric.js/issues/5372}
+            // This is necessary because the group's scale transition state affects the relative size of the fill area.
             groupInstance.addWithUpdate();
         }
 
-        const originalProps = this._tempOriginalPosition(instance);
+        const {angle, left, top} = instance;
 
         groupInstance.realizeTransform(instance);
-        this._fillFilterRePosition(instance);
+        this._rePositionFillFilter(instance);
 
-        if (originalProps) {
-            instance.set(originalProps);
-        }
+        instance.set({
+            angle,
+            left,
+            top
+        });
     }
 
-    _fillFilterRePosition(instance = this._shapeObj) {
+    _rePositionFillFilter(instance = this._shapeObj) {
         const originalOrigin = {
             originX: instance.originX,
             originY: instance.originY
@@ -487,11 +491,11 @@ export default class Shape extends Component {
         instance.scaleX = 1;
         instance.scaleY = 1;
 
-        this._repositionFilterTypeFillImage(instance);
+        this._rePositionFilterTypeFillImage(instance);
         this._restoreOrigionPosition(instance, originalOrigin);
     }
 
-    _repositionFilterTypeFillImage(instance) {
+    _rePositionFilterTypeFillImage(instance) {
         const {patternSourceCanvas} = instance;
         const [fillImage] = patternSourceCanvas.getObjects();
         const {
@@ -524,6 +528,8 @@ export default class Shape extends Component {
             originX,
             originY
         });
+
+        instance.setCoords();
     }
 
     _adjustOriginPosition(instance) {

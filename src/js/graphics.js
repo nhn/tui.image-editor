@@ -1312,12 +1312,11 @@ class Graphics {
     _copyFabricObject(targetObject) {
         return new Promise(resolve => {
             targetObject.clone(cloned => {
-                if (this.getObjectFillType(cloned)) {
-                    const shapeComp = this.getComponent(components.SHAPE);
-                    cloned.set(shapeComp._makeDynamicFillPattern());
-                    shapeComp._bindEventOnShape(cloned);
-                    shapeComp._fillFilterRePosition(cloned);
+                const shapeComp = this.getComponent(components.SHAPE);
+                if (shapeComp.isShape(cloned)) {
+                    shapeComp.processForCopiedObject(cloned);
                 }
+
                 resolve(cloned);
             });
         });
