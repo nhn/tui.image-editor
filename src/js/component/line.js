@@ -51,8 +51,8 @@ class Line extends Component {
     setHeadOption(setting) {
         setting = setting || {};
         const {arrowType = {
-            start: null,
-            end: null
+            head: null,
+            tail: null
         }} = setting;
 
         this._arrowType = arrowType;

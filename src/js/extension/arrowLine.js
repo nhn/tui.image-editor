@@ -64,13 +64,13 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      * @private
      */
     _setDecoratorPath(linePosition) {
-        this._setDecoratorPathImplement('start', linePosition);
-        this._setDecoratorPathImplement('end', linePosition);
+        this._setDecoratorPathImplement('head', linePosition);
+        this._setDecoratorPathImplement('tail', linePosition);
     },
 
     /**
      * Render Arrow Head
-     * @param {string} type - 'start' or 'end'
+     * @param {string} type - 'head' or 'tail'
      * @param {Object} linePosition - line position
      *  @param {number} option.fromX - line start position x
      *  @param {number} option.fromY - line start position y
@@ -79,9 +79,9 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      * @private
      */
     _setDecoratorPathImplement(type, linePosition) {
-        const {start, end} = this.arrowType;
+        const {head, tail} = this.arrowType;
 
-        switch (type === 'start' ? start : end) {
+        switch (type === 'head' ? head : tail) {
             case 'triangle':
                 this._setTrianglePath(type, linePosition);
                 break;
@@ -95,7 +95,7 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
 
     /**
      * Render Triangle Head
-     * @param {string} type - 'start' or 'end'
+     * @param {string} type - 'head' or 'tail'
      * @param {Object} linePosition - line position
      *  @param {number} option.fromX - line start position x
      *  @param {number} option.fromY - line start position y
@@ -112,7 +112,7 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
 
     /**
      * Render Chevron Head
-     * @param {string} type - 'start' or 'end'
+     * @param {string} type - 'head' or 'tail'
      * @param {Object} linePosition - line position
      *  @param {number} option.fromX - line start position x
      *  @param {number} option.fromY - line start position y
@@ -127,8 +127,8 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
             decorateSize = this.ctx.lineWidth * CHEVRON_SIZE_RATIO;
         }
 
-        const [standardX, standardY] = type === 'start' ? [fromX, fromY] : [toX, toY];
-        const [compareX, compareY] = type === 'start' ? [toX, toY] : [fromX, fromY];
+        const [standardX, standardY] = type === 'head' ? [fromX, fromY] : [toX, toY];
+        const [compareX, compareY] = type === 'head' ? [toX, toY] : [fromX, fromY];
 
         const angle = Math.atan2(compareY - standardY, compareX - standardX) * RADIAN_CONVERSION_VALUE / Math.PI;
         const rotatedPosition = changeAngle => this.getRotatePosition(decorateSize, changeAngle, {

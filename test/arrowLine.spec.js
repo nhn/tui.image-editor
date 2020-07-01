@@ -25,9 +25,9 @@ describe('AllowLine', () => {
         };
     });
 
-    it('When attaching the "chevron" type to the endpoint, you need to draw the "v" calculated according to the angle around the "end" of the line.', () => {
+    it('When attaching the "chevron" type to the endpoint, you need to draw the "v" calculated according to the angle around the "tail" of the line.', () => {
         arrowLine.arrowType = {
-            end: 'chevron'
+            tail: 'chevron'
         };
         arrowLine._setDecoratorPath(linePath);
 
@@ -40,9 +40,9 @@ describe('AllowLine', () => {
         expect(lastPoint).toEqual([7, 9]);
     });
 
-    it('When attaching the "chevron" type to the startpoint, you need to draw the "v" calculated according to the angle around the "start" of the line.', () => {
+    it('When attaching the "chevron" type to the startpoint, you need to draw the "v" calculated according to the angle around the "head" of the line.', () => {
         arrowLine.arrowType = {
-            start: 'chevron'
+            head: 'chevron'
         };
         arrowLine._setDecoratorPath(linePath);
 
@@ -57,7 +57,7 @@ describe('AllowLine', () => {
 
     it('"triangle" should be a triangular shape that closes the path with closePath after drawing.', () => {
         arrowLine.arrowType = {
-            start: 'triangle'
+            head: 'triangle'
         };
         arrowLine._setDecoratorPath(linePath);
 
