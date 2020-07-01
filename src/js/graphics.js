@@ -1023,7 +1023,7 @@ class Graphics {
         if (target.type === 'activeSelection') {
             const items = target.getObjects();
 
-            items.forEach(item => item.fire('modifiedInGroup', fEvent));
+            items.forEach(item => item.fire('modifiedInGroup', fEvent.target));
         }
     }
 
@@ -1149,6 +1149,11 @@ class Graphics {
 
         if (['i-text', 'text'].indexOf(obj.type) > -1) {
             extend(props, this._createTextProperties(obj, props));
+        } else if (['rect', 'triangle', 'circle'].indexOf(obj.type) > -1) {
+            const shapeComp = this.getComponent(components.SHAPE);
+            extend(props, {
+                fillType: shapeComp.getFillTypeFromObject(obj)
+            });
         }
 
         return props;
@@ -1287,20 +1292,6 @@ class Graphics {
 
             return clonedObject;
         });
-    }
-
-    /**
-     * Get fill type of object
-     * @param {fabric.Object} targetObject - fabric object
-     * @returns {string} 'transparent' or 'color' or 'filter'
-     */
-    getObjectFillType(targetObject) {
-        const {fill} = targetObject;
-        if (fill.source) {
-            return 'filter';
-        }
-
-        return fill === 'transparent' ? fill : 'color';
     }
 
     /**

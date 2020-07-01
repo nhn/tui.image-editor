@@ -1262,17 +1262,6 @@ class ImageEditor {
     }
 
     /**
-     * Get fill type of object
-     * @param {number} id - object id
-     * @returns {string} 'transparent' or 'color' or 'filter'
-     */
-    getObjectFillType(id) {
-        const obj = this._graphics.getObject(id);
-
-        return this._graphics.getObjectFillType(obj);
-    }
-
-    /**
      * Remove filter on canvas image
      * @param {string} type - Filter type
      * @returns {Promise<FilterResult, ErrorMsg>}

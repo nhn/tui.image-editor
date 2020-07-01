@@ -220,14 +220,78 @@ export default class Shape extends Component {
         });
     }
 
+    /**
+     * Check if the object is a shape object.
+     * @param {fabric.Object} obj - fabric object
+     * @returns {boolean}
+     */
     isShape(obj) {
         return inArray(obj.get('type'), shapeType) >= 0;
     }
 
+    /**
+     * Get fill type
+     * @param {Object | string} fillOption - shape fill option
+     * @returns {string} 'transparent' or 'color' or 'filter'
+     */
+    getFillTypeFromOption(fillOption) {
+        if (fillOption.type === 'filter' || fillOption === 'filter') {
+            return 'filter';
+        }
+
+        return fillOption === 'transparent' ? fillOption : 'color';
+    }
+
+    /**
+     * Get fill type of shape type object
+     * @param {fabric.Object} shapeObj - fabric object
+     * @returns {string} 'transparent' or 'color' or 'filter'
+     */
+    getFillTypeFromObject(shapeObj) {
+        const {fill} = shapeObj;
+        if (fill.source) {
+            return 'filter';
+        }
+
+        return fill === 'transparent' ? fill : 'color';
+    }
+
+    /**
+     * Copy object handling.
+     * @param {fabric.Object} shapeObj - Shape object
+     */
     processForCopiedObject(shapeObj) {
-        shapeObj.set(this._makeDynamicFillPattern());
         this._bindEventOnShape(shapeObj);
-        this._rePositionFillFilter(shapeObj);
+        if (this.getFillTypeFromObject(shapeObj)) {
+            shapeObj.set(this._makeDynamicFillPattern());
+            this._rePositionFillFilter(shapeObj);
+        }
+    }
+
+    /**
+     * Remake filter pattern image source
+     * @param {fabric.Object} shapeObj - Shape object
+     * @private
+     */
+    reMakePatternImageSource(shapeObj) {
+        const {patternSourceCanvas} = shapeObj;
+        const [fillImage] = patternSourceCanvas.getObjects();
+        patternSourceCanvas.remove(fillImage);
+
+        shapeObj.visible = false;
+        const canvasa = this.getCanvas();
+        const copiedCanvasElement = canvasa.toCanvasElement();
+        shapeObj.visible = true;
+
+        const newFillImage = new fabric.Image(copiedCanvasElement);
+        const filter = new fabric.Image.filters.Pixelate({
+            blocksize: 10
+        });
+        newFillImage.filters.push(filter);
+        newFillImage.applyFilters();
+
+        patternSourceCanvas.add(newFillImage);
+        this._rePositionFillFilter();
     }
 
     /**
@@ -237,8 +301,9 @@ export default class Shape extends Component {
      * @private
      */
     _makeShapeOption(options) {
-        // return extend({}, options, options.fill === 'filter' ? this._makeDynamicFillPattern() : {});
-        return extend({}, options, this._makeDynamicFillPattern());
+        const fillType = this.getFillTypeFromOption(options.fill);
+
+        return extend({}, options, fillType === 'filter' ? this._makeDynamicFillPattern() : {});
     }
 
     /**
@@ -270,6 +335,11 @@ export default class Shape extends Component {
         return instance;
     }
 
+    /**
+     * Make fill property of dynamic pattern type
+     * @returns {Object}
+     * @private
+     */
     _makeDynamicFillPattern() {
         const canvas = this.getCanvas();
         const copiedCanvasElement = canvas.toCanvasElement();
@@ -280,6 +350,7 @@ export default class Shape extends Component {
             blocksize: 10
         });
         this._adjustOriginPosition(fillImage, 'end');
+
         fillImage.filters.push(filter);
         fillImage.applyFilters();
 
@@ -299,8 +370,7 @@ export default class Shape extends Component {
                 },
                 repeat: 'no-repeat'
             }),
-            patternSourceCanvas,
-            objectCaching: false
+            patternSourceCanvas
         };
     }
 
@@ -320,28 +390,6 @@ export default class Shape extends Component {
         }
 
         return options;
-    }
-
-    _reMakePatternImageSource(shapeObj) {
-        const {patternSourceCanvas} = shapeObj;
-        const [fillImage] = patternSourceCanvas.getObjects();
-        patternSourceCanvas.remove(fillImage);
-
-        shapeObj.visible = false;
-        const canvasa = this.getCanvas();
-        const copiedCanvasElement = canvasa.toCanvasElement();
-        shapeObj.visible = true;
-
-        const mm = new fabric.Image(copiedCanvasElement);
-        const filter = new fabric.Image.filters.Pixelate({
-            blocksize: 10
-        });
-        mm.filters.push(filter);
-        mm.applyFilters();
-
-        patternSourceCanvas.add(mm);
-
-        this._rePositionFillFilter();
     }
 
     /**
@@ -378,8 +426,8 @@ export default class Shape extends Component {
                 resizeHelper.setOrigins(currentObj);
                 self._rePositionFillFilter();
             },
-            modifiedInGroup(fEvent) {
-                self._fillFilterRePositionInGroup(shapeObj, fEvent);
+            modifiedInGroup(activeSelection) {
+                self._fillFilterRePositionInGroup(shapeObj, activeSelection);
             },
             moving() {
                 self._rePositionFillFilter();
@@ -455,22 +503,26 @@ export default class Shape extends Component {
         this._rePositionFillFilter();
     }
 
-    _fillFilterRePositionInGroup(instance, fEvent) {
-        const groupInstance = fEvent.target;
-
-        if (groupInstance.scaleX !== 1 || groupInstance.scaleY !== 1) {
+    /**
+     * Reset filter area position within group selection.
+     * @param {fabric.Object} shapeObj - Shape object
+     * @param {fabric.ActiveSelection} activeSelection - Shape object
+     * @private
+     */
+    _fillFilterRePositionInGroup(shapeObj, activeSelection) {
+        if (activeSelection.scaleX !== 1 || activeSelection.scaleY !== 1) {
             // The only way to reset the object transformation scale state to neutral.
             // {@link https://github.com/fabricjs/fabric.js/issues/5372}
             // This is necessary because the group's scale transition state affects the relative size of the fill area.
-            groupInstance.addWithUpdate();
+            activeSelection.addWithUpdate();
         }
 
-        const {angle, left, top} = instance;
+        const {angle, left, top} = shapeObj;
 
-        groupInstance.realizeTransform(instance);
-        this._rePositionFillFilter(instance);
+        activeSelection.realizeTransform(shapeObj);
+        this._rePositionFillFilter(shapeObj);
 
-        instance.set({
+        shapeObj.set({
             angle,
             left,
             top

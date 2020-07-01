@@ -241,7 +241,7 @@ function setShapeToolbar(obj) {
             shapeColorpicker.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
-        fillType = imageEditor.getObjectFillType(obj.id);
+        fillType = obj.fillType;
         fillColor = obj.fill;
         isTransparent = (fillType === 'transparent');
         isFilter = (fillType === 'filter');
