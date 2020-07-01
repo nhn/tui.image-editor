@@ -386,7 +386,7 @@ export default class Shape extends Component {
             });
         } else if (shape) {
             resizeHelper.adjustOriginToCenter(shape);
-            this.fire(eventNames.ADD_OBJECT_AFTER, this.graphics.createObjectProperties(shape));
+            this.fire(eventNames.OBJECT_ADDED, this.graphics.createObjectProperties(shape));
         }
 
         canvas.off({

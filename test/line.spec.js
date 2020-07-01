@@ -71,10 +71,10 @@ describe('Line', () => {
         expect(canvas.getObjects()[0].get('evented')).toEqual(true);
     });
 
-    it('"addObjectAfter" event should fire after the line is drawn.', () => {
+    it('"objectAdded" event should fire after the line is drawn.', () => {
         spyOn(line, 'fire').and.callThrough();
         line._onFabricMouseUp(fEvent);
 
-        expect(line.fire.calls.mostRecent().args[0]).toBe(eventNames.ADD_OBJECT_AFTER);
+        expect(line.fire.calls.mostRecent().args[0]).toBe(eventNames.OBJECT_ADDED);
     });
 });

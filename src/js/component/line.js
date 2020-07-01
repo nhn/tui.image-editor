@@ -157,7 +157,7 @@ class Line extends Component {
     _onFabricMouseUp() {
         const canvas = this.getCanvas();
 
-        this.fire(eventNames.ADD_OBJECT_AFTER, this._createLineEventObjectProperties());
+        this.fire(eventNames.OBJECT_ADDED, this._createLineEventObjectProperties());
 
         this._line = null;
 
