@@ -1,9 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Free drawing module, Set brush
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
+import ArrowLine from '../extension/arrowLine';
 import {eventNames, componentNames, fObjectOptions} from '../consts';
 
 /**
@@ -47,12 +48,28 @@ class Line extends Component {
      * Start drawing line mode
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
-    start(setting) {
+    setHeadOption(setting) {
+        const {
+            arrowType = {
+                head: null,
+                tail: null
+            }
+        } = setting;
+
+        this._arrowType = arrowType;
+    }
+
+    /**
+     * Start drawing line mode
+     * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
+     */
+    start(setting = {}) {
         const canvas = this.getCanvas();
 
         canvas.defaultCursor = 'crosshair';
         canvas.selection = false;
 
+        this.setHeadOption(setting);
         this.setBrush(setting);
 
         canvas.forEachObject(obj => {
@@ -108,12 +125,13 @@ class Line extends Component {
      */
     _onFabricMouseDown(fEvent) {
         const canvas = this.getCanvas();
-        const pointer = canvas.getPointer(fEvent.e);
-        const points = [pointer.x, pointer.y, pointer.x, pointer.y];
+        const {x, y} = canvas.getPointer(fEvent.e);
+        const points = [x, y, x, y];
 
-        this._line = new fabric.Line(points, {
+        this._line = new ArrowLine(points, {
             stroke: this._oColor.toRgba(),
             strokeWidth: this._width,
+            arrowType: this._arrowType,
             evented: false
         });
 
