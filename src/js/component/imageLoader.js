@@ -31,10 +31,9 @@ class ImageLoader extends Component {
      */
     load(imageName, img) {
         let promise;
+        const canvas = this.getCanvas();
 
         if (!imageName && !img) { // Back to the initial state, not error.
-            const canvas = this.getCanvas();
-
             canvas.backgroundImage = null;
             canvas.renderAll();
 
@@ -46,6 +45,9 @@ class ImageLoader extends Component {
             promise = this._setBackgroundImage(img).then(oImage => {
                 this.setCanvasImage(imageName, oImage);
                 this.adjustCanvasDimension();
+                this.setStaticCanvasImage();
+
+                canvas.renderAll();
 
                 return oImage;
             });

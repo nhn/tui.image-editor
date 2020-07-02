@@ -464,6 +464,18 @@ class Graphics {
     }
 
     /**
+     * set static canvas image
+     * @param {string} name - Name of image
+     * @param {?fabric.Image} canvasImage - Fabric image instance
+     */
+    setStaticCanvasImage() {
+        this.canvasImageStaticInfo = {
+            lastAngle: this.canvasImage.angle,
+            copiedCanvasElement: this.canvasImage.toCanvasElement()
+        };
+    }
+
+    /**
      * Set css max dimension
      * @param {{width: number, height: number}} maxDimension - Max width & Max height
      */

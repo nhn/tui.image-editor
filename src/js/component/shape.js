@@ -14,7 +14,7 @@ import {
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
 import {Promise} from '../util';
-import {extend, inArray} from 'tui-code-snippet';
+import {extend, inArray, stamp} from 'tui-code-snippet';
 
 const SHAPE_INIT_OPTIONS = extend({
     strokeWidth: 1,
@@ -262,7 +262,7 @@ export default class Shape extends Component {
      */
     processForCopiedObject(shapeObj) {
         this._bindEventOnShape(shapeObj);
-        if (this.getFillTypeFromObject(shapeObj)) {
+        if (this.getFillTypeFromObject(shapeObj) === 'filter') {
             shapeObj.set(this._makeDynamicFillPattern());
             this._rePositionFillFilter(shapeObj);
         }
@@ -273,25 +273,30 @@ export default class Shape extends Component {
      * @param {fabric.Object} shapeObj - Shape object
      * @private
      */
-    reMakePatternImageSource(shapeObj) {
+    _reMakePatternImageSource(shapeObj) {
+        this.graphics.setStaticCanvasImage();
         const {patternSourceCanvas} = shapeObj;
         const [fillImage] = patternSourceCanvas.getObjects();
         patternSourceCanvas.remove(fillImage);
 
-        shapeObj.visible = false;
-        const canvasa = this.getCanvas();
-        const copiedCanvasElement = canvasa.toCanvasElement();
-        shapeObj.visible = true;
-
-        const newFillImage = new fabric.Image(copiedCanvasElement);
+        const {copiedCanvasElement} = this.graphics.canvasImageStaticInfo;
+        const newFillImage = new fabric.Image(copiedCanvasElement, {
+            lastAngle: this.graphics.canvasImage.angle
+        });
         const filter = new fabric.Image.filters.Pixelate({
             blocksize: 10
         });
+        const filter2 = new fabric.Image.filters.Blur({
+            blur: 0.3
+        });
+
+        this._adjustOriginPosition(newFillImage);
+
         newFillImage.filters.push(filter);
+        newFillImage.filters.push(filter2);
         newFillImage.applyFilters();
 
         patternSourceCanvas.add(newFillImage);
-        this._rePositionFillFilter();
     }
 
     /**
@@ -341,17 +346,20 @@ export default class Shape extends Component {
      * @private
      */
     _makeDynamicFillPattern() {
-        const canvas = this.getCanvas();
-        const copiedCanvasElement = canvas.toCanvasElement();
-        const fillImage = new fabric.Image(copiedCanvasElement);
-
+        const {copiedCanvasElement} = this.graphics.canvasImageStaticInfo;
+        const fillImage = new fabric.Image(copiedCanvasElement, {lastAngle: this.graphics.canvasImage.angle});
         const patternSourceCanvas = new fabric.StaticCanvas();
         const filter = new fabric.Image.filters.Pixelate({
             blocksize: 10
         });
-        this._adjustOriginPosition(fillImage, 'end');
+        const filter2 = new fabric.Image.filters.Blur({
+            blur: 0.3
+        });
+
+        this._adjustOriginPosition(fillImage);
 
         fillImage.filters.push(filter);
+        fillImage.filters.push(filter2);
         fillImage.applyFilters();
 
         patternSourceCanvas.add(fillImage);
@@ -368,6 +376,7 @@ export default class Shape extends Component {
 
                     return patternSourceCanvas.getElement();
                 },
+                objectCaching: false,
                 repeat: 'no-repeat'
             }),
             patternSourceCanvas
@@ -530,6 +539,12 @@ export default class Shape extends Component {
     }
 
     _rePositionFillFilter(instance = this._shapeObj) {
+        const {patternSourceCanvas} = instance;
+        const [fillImage] = patternSourceCanvas.getObjects();
+        if (this.graphics.canvasImage.angle !== fillImage.lastAngle) {
+            this._reMakePatternImageSource(instance);
+        }
+
         const originalOrigin = {
             originX: instance.originX,
             originY: instance.originY

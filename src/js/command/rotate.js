@@ -44,6 +44,10 @@ const command = {
             chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
         }
 
+        if (!isSilent) {
+            graphics.setStaticCanvasImage();
+        }
+
         return rotationComp[type](angle);
     },
     /**

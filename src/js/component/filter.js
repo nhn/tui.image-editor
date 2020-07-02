@@ -8,14 +8,12 @@ import fabric from 'fabric';
 import Component from '../interface/component';
 import Mask from '../extension/mask';
 import {rejectMessages, componentNames} from '../consts';
-import Blur from '../extension/blur';
 import Sharpen from '../extension/sharpen';
 import Emboss from '../extension/emboss';
 import ColorFilter from '../extension/colorFilter';
 
 const {filters} = fabric.Image;
 filters.Mask = Mask;
-filters.Blur = Blur;
 filters.Sharpen = Sharpen;
 filters.Emboss = Emboss;
 filters.ColorFilter = ColorFilter;
