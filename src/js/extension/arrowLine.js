@@ -1,5 +1,5 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Blur extending fabric.Image.filters.Convolute
  */
 import fabric from 'fabric';
@@ -37,21 +37,34 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      */
     _render(ctx) {
         const {x1: fromX, y1: fromY, x2: toX, y2: toY} = this.calcLinePoints();
-        this.ctx = ctx;
-
-        ctx.beginPath();
-        ctx.moveTo(fromX, fromY);
-        ctx.lineTo(toX, toY);
-        ctx.lineWidth = this.strokeWidth;
-
-        this._setDecoratorPath({
+        const linePosition = {
             fromX,
             fromY,
             toX,
             toY
-        });
+        };
+        this.ctx = ctx;
+        ctx.lineWidth = this.strokeWidth;
+
+        this._renderBasicLinePath(linePosition);
+        this._drawDecoratorPath(linePosition);
 
         this._renderStroke(ctx);
+    },
+
+    /**
+     * Render Basic line path
+     * @param {Object} linePosition - line position
+     *  @param {number} option.fromX - line start position x
+     *  @param {number} option.fromY - line start position y
+     *  @param {number} option.toX - line end position x
+     *  @param {number} option.toY - line end position y
+     * @private
+     */
+    _renderBasicLinePath({fromX, fromY, toX, toY}) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(fromX, fromY);
+        this.ctx.lineTo(toX, toY);
     },
 
     /**
@@ -63,9 +76,9 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      *  @param {number} option.toY - line end position y
      * @private
      */
-    _setDecoratorPath(linePosition) {
-        this._setDecoratorPathImplement('head', linePosition);
-        this._setDecoratorPathImplement('tail', linePosition);
+    _drawDecoratorPath(linePosition) {
+        this._drawDecoratorPathType('head', linePosition);
+        this._drawDecoratorPathType('tail', linePosition);
     },
 
     /**
@@ -78,15 +91,13 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      *  @param {number} option.toY - line end position y
      * @private
      */
-    _setDecoratorPathImplement(type, linePosition) {
-        const {head, tail} = this.arrowType;
-
-        switch (type === 'head' ? head : tail) {
+    _drawDecoratorPathType(type, linePosition) {
+        switch (this.arrowType[type]) {
             case 'triangle':
-                this._setTrianglePath(type, linePosition);
+                this._drawTrianglePath(type, linePosition);
                 break;
             case 'chevron':
-                this._setChevronPath(type, linePosition);
+                this._drawChevronPath(type, linePosition);
                 break;
             default:
                 break;
@@ -103,10 +114,10 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      *  @param {number} option.toY - line end position y
      * @private
      */
-    _setTrianglePath(type, linePosition) {
+    _drawTrianglePath(type, linePosition) {
         const decorateSize = this.ctx.lineWidth * TRIANGLE_SIZE_RATIO;
 
-        this._setChevronPath(type, linePosition, decorateSize);
+        this._drawChevronPath(type, linePosition, decorateSize);
         this.ctx.closePath();
     },
 
@@ -121,7 +132,7 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      * @param {number} decorateSize - decorate size
      * @private
      */
-    _setChevronPath(type, {fromX, fromY, toX, toY}, decorateSize) {
+    _drawChevronPath(type, {fromX, fromY, toX, toY}, decorateSize) {
         const {ctx} = this;
         if (!decorateSize) {
             decorateSize = this.ctx.lineWidth * CHEVRON_SIZE_RATIO;

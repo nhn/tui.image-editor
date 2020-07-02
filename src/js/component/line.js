@@ -1,5 +1,5 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Free drawing module, Set brush
  */
 import fabric from 'fabric';
@@ -49,11 +49,12 @@ class Line extends Component {
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
     setHeadOption(setting) {
-        setting = setting || {};
-        const {arrowType = {
-            head: null,
-            tail: null
-        }} = setting;
+        const {
+            arrowType = {
+                head: null,
+                tail: null
+            }
+        } = setting;
 
         this._arrowType = arrowType;
     }
@@ -62,7 +63,7 @@ class Line extends Component {
      * Start drawing line mode
      * @param {{width: ?number, color: ?string}} [setting] - Brush width & color
      */
-    start(setting) {
+    start(setting = {}) {
         const canvas = this.getCanvas();
 
         canvas.defaultCursor = 'crosshair';
@@ -125,8 +126,9 @@ class Line extends Component {
     _onFabricMouseDown(fEvent) {
         const canvas = this.getCanvas();
         const {x, y} = canvas.getPointer(fEvent.e);
+        const points = [x, y, x, y];
 
-        this._line = new ArrowLine([x, y, x, y], {
+        this._line = new ArrowLine(points, {
             stroke: this._oColor.toRgba(),
             strokeWidth: this._width,
             arrowType: this._arrowType,

@@ -29,7 +29,7 @@ describe('AllowLine', () => {
         arrowLine.arrowType = {
             tail: 'chevron'
         };
-        arrowLine._setDecoratorPath(linePath);
+        arrowLine._drawDecoratorPath(linePath);
 
         const firstPoint = ctx.moveTo.calls.argsFor(0).map(value => Math.round(value));
         const secondPoint = ctx.lineTo.calls.argsFor(0).map(value => Math.round(value));
@@ -44,7 +44,7 @@ describe('AllowLine', () => {
         arrowLine.arrowType = {
             head: 'chevron'
         };
-        arrowLine._setDecoratorPath(linePath);
+        arrowLine._drawDecoratorPath(linePath);
 
         const firstPoint = ctx.moveTo.calls.argsFor(0).map(value => Math.round(value));
         const secondPoint = ctx.lineTo.calls.argsFor(0).map(value => Math.round(value));
@@ -59,7 +59,7 @@ describe('AllowLine', () => {
         arrowLine.arrowType = {
             head: 'triangle'
         };
-        arrowLine._setDecoratorPath(linePath);
+        arrowLine._drawDecoratorPath(linePath);
 
         const firstPoint = ctx.moveTo.calls.argsFor(0).map(value => Math.round(value));
         const secondPoint = ctx.lineTo.calls.argsFor(0).map(value => Math.round(value));
