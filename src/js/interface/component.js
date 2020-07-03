@@ -44,10 +44,6 @@ class Component {
         this.graphics.setCanvasImage(name, oImage);
     }
 
-    setStaticCanvasImage() {
-        this.graphics.setStaticCanvasImage();
-    }
-
     /**
      * Returns canvas element of fabric.Canvas[[lower-canvas]]
      * @returns {HTMLCanvasElement}

@@ -266,5 +266,4 @@ module.exports = {
             height
         };
     }
-
 };

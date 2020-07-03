@@ -13,8 +13,8 @@ import {
     SHAPE_DEFAULT_OPTIONS
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
-import {Promise} from '../util';
-import {extend, inArray, stamp} from 'tui-code-snippet';
+import {Promise, changeOriginOfObject} from '../util';
+import {extend, inArray} from 'tui-code-snippet';
 
 const SHAPE_INIT_OPTIONS = extend({
     strokeWidth: 1,
@@ -263,40 +263,9 @@ export default class Shape extends Component {
     processForCopiedObject(shapeObj) {
         this._bindEventOnShape(shapeObj);
         if (this.getFillTypeFromObject(shapeObj) === 'filter') {
-            shapeObj.set(this._makeDynamicFillPattern());
+            shapeObj.set(this._makeFillPatternForFilter());
             this._rePositionFillFilter(shapeObj);
         }
-    }
-
-    /**
-     * Remake filter pattern image source
-     * @param {fabric.Object} shapeObj - Shape object
-     * @private
-     */
-    _reMakePatternImageSource(shapeObj) {
-        this.graphics.setStaticCanvasImage();
-        const {patternSourceCanvas} = shapeObj;
-        const [fillImage] = patternSourceCanvas.getObjects();
-        patternSourceCanvas.remove(fillImage);
-
-        const {copiedCanvasElement} = this.graphics.canvasImageStaticInfo;
-        const newFillImage = new fabric.Image(copiedCanvasElement, {
-            lastAngle: this.graphics.canvasImage.angle
-        });
-        const filter = new fabric.Image.filters.Pixelate({
-            blocksize: 10
-        });
-        const filter2 = new fabric.Image.filters.Blur({
-            blur: 0.3
-        });
-
-        this._adjustOriginPosition(newFillImage);
-
-        newFillImage.filters.push(filter);
-        newFillImage.filters.push(filter2);
-        newFillImage.applyFilters();
-
-        patternSourceCanvas.add(newFillImage);
     }
 
     /**
@@ -308,7 +277,7 @@ export default class Shape extends Component {
     _makeShapeOption(options) {
         const fillType = this.getFillTypeFromOption(options.fill);
 
-        return extend({}, options, fillType === 'filter' ? this._makeDynamicFillPattern() : {});
+        return extend({}, options, fillType === 'filter' ? this._makeFillPatternForFilter() : {});
     }
 
     /**
@@ -337,50 +306,9 @@ export default class Shape extends Component {
                 instance = {};
         }
 
+        console.log('INSTANCE - ', instance);
+
         return instance;
-    }
-
-    /**
-     * Make fill property of dynamic pattern type
-     * @returns {Object}
-     * @private
-     */
-    _makeDynamicFillPattern() {
-        const {copiedCanvasElement} = this.graphics.canvasImageStaticInfo;
-        const fillImage = new fabric.Image(copiedCanvasElement, {lastAngle: this.graphics.canvasImage.angle});
-        const patternSourceCanvas = new fabric.StaticCanvas();
-        const filter = new fabric.Image.filters.Pixelate({
-            blocksize: 10
-        });
-        const filter2 = new fabric.Image.filters.Blur({
-            blur: 0.3
-        });
-
-        this._adjustOriginPosition(fillImage);
-
-        fillImage.filters.push(filter);
-        fillImage.filters.push(filter2);
-        fillImage.applyFilters();
-
-        patternSourceCanvas.add(fillImage);
-        patternSourceCanvas.renderAll();
-
-        return {
-            fill: new fabric.Pattern({
-                source: () => {
-                    patternSourceCanvas.setDimensions({
-                        width: copiedCanvasElement.width,
-                        height: copiedCanvasElement.height
-                    });
-                    patternSourceCanvas.renderAll();
-
-                    return patternSourceCanvas.getElement();
-                },
-                objectCaching: false,
-                repeat: 'no-repeat'
-            }),
-            patternSourceCanvas
-        };
     }
 
     /**
@@ -433,16 +361,16 @@ export default class Shape extends Component {
 
                 resizeHelper.adjustOriginToCenter(currentObj);
                 resizeHelper.setOrigins(currentObj);
-                self._rePositionFillFilter();
+                self._rePositionFillFilter(this);
             },
             modifiedInGroup(activeSelection) {
-                self._fillFilterRePositionInGroup(shapeObj, activeSelection);
+                self._fillFilterRePositionInGroupSelection(shapeObj, activeSelection);
             },
             moving() {
-                self._rePositionFillFilter();
+                self._rePositionFillFilter(this);
             },
             rotating() {
-                self._rePositionFillFilter();
+                self._rePositionFillFilter(this);
             },
             scaling(fEvent) {
                 const pointer = canvas.getPointer(fEvent.e);
@@ -451,7 +379,7 @@ export default class Shape extends Component {
                 canvas.setCursor('crosshair');
                 resizeHelper.resize(currentObj, pointer, true);
 
-                self._rePositionFillFilter();
+                self._rePositionFillFilter(this);
             }
         });
     }
@@ -508,107 +436,9 @@ export default class Shape extends Component {
 
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
+
+            this._rePositionFillFilter(shape);
         }
-        this._rePositionFillFilter();
-    }
-
-    /**
-     * Reset filter area position within group selection.
-     * @param {fabric.Object} shapeObj - Shape object
-     * @param {fabric.ActiveSelection} activeSelection - Shape object
-     * @private
-     */
-    _fillFilterRePositionInGroup(shapeObj, activeSelection) {
-        if (activeSelection.scaleX !== 1 || activeSelection.scaleY !== 1) {
-            // The only way to reset the object transformation scale state to neutral.
-            // {@link https://github.com/fabricjs/fabric.js/issues/5372}
-            // This is necessary because the group's scale transition state affects the relative size of the fill area.
-            activeSelection.addWithUpdate();
-        }
-
-        const {angle, left, top} = shapeObj;
-
-        activeSelection.realizeTransform(shapeObj);
-        this._rePositionFillFilter(shapeObj);
-
-        shapeObj.set({
-            angle,
-            left,
-            top
-        });
-    }
-
-    _rePositionFillFilter(instance = this._shapeObj) {
-        const {patternSourceCanvas} = instance;
-        const [fillImage] = patternSourceCanvas.getObjects();
-        if (this.graphics.canvasImage.angle !== fillImage.lastAngle) {
-            this._reMakePatternImageSource(instance);
-        }
-
-        const originalOrigin = {
-            originX: instance.originX,
-            originY: instance.originY
-        };
-        this._adjustOriginPosition(instance);
-
-        instance.width *= instance.scaleX;
-        instance.height *= instance.scaleY;
-        instance.rx *= instance.scaleX;
-        instance.ry *= instance.scaleY;
-        instance.scaleX = 1;
-        instance.scaleY = 1;
-
-        this._rePositionFilterTypeFillImage(instance);
-        this._restoreOrigionPosition(instance, originalOrigin);
-    }
-
-    _rePositionFilterTypeFillImage(instance) {
-        const {patternSourceCanvas} = instance;
-        const [fillImage] = patternSourceCanvas.getObjects();
-        const {
-            width: rotatedWidth,
-            height: rotatedHeight
-        } = resizeHelper.getRotatedDimension(instance);
-        const diffLeft = (rotatedWidth - instance.width) / 2;
-        const diffTop = (rotatedHeight - instance.height) / 2;
-        const cropX = instance.left - (instance.width / 2) - diffLeft;
-        const cropY = instance.top - (instance.height / 2) - diffTop;
-
-        fillImage.set({
-            angle: instance.angle * -1,
-            left: (rotatedWidth / 2) - diffLeft,
-            top: (rotatedHeight / 2) - diffTop,
-            width: rotatedWidth,
-            height: rotatedHeight,
-            cropX,
-            cropY
-        });
-    }
-
-    _restoreOrigionPosition(instance, originPosition) {
-        const {originX, originY} = originPosition;
-        const {x: left, y: top} = instance.getPointByOrigin(originX, originY);
-
-        instance.set({
-            left,
-            top,
-            originX,
-            originY
-        });
-
-        instance.setCoords();
-    }
-
-    _adjustOriginPosition(instance) {
-        const [originX, originY] = ['center', 'center'];
-        const {x: left, y: top} = instance.getPointByOrigin(originX, originY);
-        instance.set({
-            left,
-            top,
-            originX,
-            originY
-        });
-        instance.setCoords();
     }
 
     /**
@@ -669,5 +499,162 @@ export default class Shape extends Component {
                 this._shapeObj.isRegular = false;
             }
         }
+    }
+
+    /**
+     * Reset shape position and internal proportions in the filter type fill area.
+     * @param {fabric.Object} shapeObj - Shape object
+     * @private
+     */
+    _rePositionFillFilter(shapeObj) {
+        if (this.getFillTypeFromObject(shapeObj) !== 'filter') {
+            return;
+        }
+
+        const {patternSourceCanvas} = shapeObj.fill;
+        const [fillImage] = patternSourceCanvas.getObjects();
+        if (this.graphics.canvasImage.angle !== fillImage.lastAngle) {
+            this._reMakePatternImageSource(shapeObj);
+        }
+        const {originX, originY} = shapeObj;
+
+        resizeHelper.adjustOriginToCenter(shapeObj);
+
+        shapeObj.width *= shapeObj.scaleX;
+        shapeObj.height *= shapeObj.scaleY;
+        shapeObj.rx *= shapeObj.scaleX;
+        shapeObj.ry *= shapeObj.scaleY;
+        shapeObj.scaleX = 1;
+        shapeObj.scaleY = 1;
+
+        this._rePositionFilterTypeFillImage(shapeObj);
+
+        changeOriginOfObject(shapeObj, {
+            originX,
+            originY
+        });
+    }
+
+    /**
+     * Reset the image position in the filter type fill area.
+     * @param {fabric.Object} shapeObj - Shape object
+     * @private
+     */
+    _rePositionFilterTypeFillImage(shapeObj) {
+        const {patternSourceCanvas} = shapeObj.fill;
+        const [fillImage] = patternSourceCanvas.getObjects();
+        const {
+            width: rotatedWidth,
+            height: rotatedHeight
+        } = resizeHelper.getRotatedDimension(shapeObj);
+        const diffLeft = (rotatedWidth - shapeObj.width) / 2;
+        const diffTop = (rotatedHeight - shapeObj.height) / 2;
+        const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
+        const cropY = shapeObj.top - (shapeObj.height / 2) - diffTop;
+
+        fillImage.set({
+            angle: shapeObj.angle * -1,
+            left: (rotatedWidth / 2) - diffLeft,
+            top: (rotatedHeight / 2) - diffTop,
+            width: rotatedWidth,
+            height: rotatedHeight,
+            cropX,
+            cropY
+        });
+    }
+
+    /**
+     * Reset filter area position within group selection.
+     * @param {fabric.Object} shapeObj - Shape object
+     * @param {fabric.ActiveSelection} activeSelection - Shape object
+     * @private
+     */
+    _fillFilterRePositionInGroupSelection(shapeObj, activeSelection) {
+        if (activeSelection.scaleX !== 1 || activeSelection.scaleY !== 1) {
+            // The only way to reset the object transformation scale state to neutral.
+            // {@link https://github.com/fabricjs/fabric.js/issues/5372}
+            // This is necessary because the group's scale transition state affects the relative size of the fill area.
+            activeSelection.addWithUpdate();
+        }
+
+        const {angle, left, top} = shapeObj;
+
+        activeSelection.realizeTransform(shapeObj);
+        this._rePositionFillFilter(shapeObj);
+
+        shapeObj.set({
+            angle,
+            left,
+            top
+        });
+    }
+
+    /**
+     * Remake filter pattern image source
+     * @param {fabric.Object} shapeObj - Shape object
+     * @private
+     */
+    _reMakePatternImageSource(shapeObj) {
+        const {patternSourceCanvas} = shapeObj.fill;
+        const [fillImage] = patternSourceCanvas.getObjects();
+        patternSourceCanvas.remove(fillImage);
+
+        const copiedCanvasElement = this.graphics.canvasImage.toCanvasElement();
+        const newFillImage = this._makeFillImage(copiedCanvasElement);
+        patternSourceCanvas.add(newFillImage);
+    }
+
+    /**
+     * Make fill property of dynamic pattern type
+     * @returns {Object}
+     * @private
+     */
+    _makeFillPatternForFilter() {
+        const copiedCanvasElement = this.graphics.canvasImage.toCanvasElement();
+        const patternSourceCanvas = new fabric.StaticCanvas();
+        const fillImage = this._makeFillImage(copiedCanvasElement);
+
+        patternSourceCanvas.add(fillImage);
+        patternSourceCanvas.renderAll();
+
+        return {
+            fill: new fabric.Pattern({
+                source: () => {
+                    patternSourceCanvas.setDimensions({
+                        width: copiedCanvasElement.width,
+                        height: copiedCanvasElement.height
+                    });
+                    patternSourceCanvas.renderAll();
+
+                    return patternSourceCanvas.getElement();
+                },
+                patternSourceCanvas,
+                repeat: 'no-repeat'
+            })
+        };
+    }
+
+    /**
+     * Make fill image
+     * @param {HTMLImageElement} copiedCanvasElement - html image element
+     * @returns {fabric.Image}
+     * @private
+     */
+    _makeFillImage(copiedCanvasElement) {
+        const fillImage = new fabric.Image(copiedCanvasElement, {lastAngle: this.graphics.canvasImage.angle});
+        const filter = new fabric.Image.filters.Pixelate({
+            blocksize: 10
+        });
+        const filter2 = new fabric.Image.filters.Blur({
+            blur: 0.3
+        });
+
+        resizeHelper.adjustOriginToCenter(fillImage);
+
+        fillImage.filters.push(filter);
+        fillImage.filters.push(filter2);
+        fillImage.applyFilters();
+
+        return fillImage;
     }
 }

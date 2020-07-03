@@ -227,3 +227,24 @@ export function cls(str = '', prefix = '') {
 
     return `${CSS_PREFIX}${prefix}${str}`;
 }
+
+/**
+ * Change object origin
+ * @param {fabric.Object} fObject - fabric object
+ * @param {Object} origin - origin of fabric object
+ *   @param {string} originX - horizontal basis.
+ *   @param {string} originY - vertical basis.
+ */
+export function changeOriginOfObject(fObject, origin) {
+    const {originX, originY} = origin;
+    const {x: left, y: top} = fObject.getPointByOrigin(originX, originY);
+
+    fObject.set({
+        left,
+        top,
+        originX,
+        originY
+    });
+
+    fObject.setCoords();
+}

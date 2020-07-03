@@ -464,18 +464,6 @@ class Graphics {
     }
 
     /**
-     * set static canvas image
-     * @param {string} name - Name of image
-     * @param {?fabric.Image} canvasImage - Fabric image instance
-     */
-    setStaticCanvasImage() {
-        this.canvasImageStaticInfo = {
-            lastAngle: this.canvasImage.angle,
-            copiedCanvasElement: this.canvasImage.toCanvasElement()
-        };
-    }
-
-    /**
      * Set css max dimension
      * @param {{width: number, height: number}} maxDimension - Max width & Max height
      */
@@ -1030,6 +1018,11 @@ class Graphics {
         this._lazyFire(events.OBJECT_SCALED, object => this.createObjectProperties(object), fEvent.target);
     }
 
+    /**
+     * "object:modified" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
     _onObjectModified(fEvent) {
         const {target} = fEvent;
         if (target.type === 'activeSelection') {
