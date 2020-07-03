@@ -265,7 +265,7 @@ export function setCustomProperty(fObject, props) {
 }
 
 /**
- * Get custom properties
+ * Get custom property
  * @param {fabric.Object} fObject - fabric object
  * @param {string} propName - prop name
  * @returns {object | number | string}

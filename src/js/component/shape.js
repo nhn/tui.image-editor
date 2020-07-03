@@ -194,6 +194,8 @@ export default class Shape extends Component {
 
             canvas.add(shapeObj).setActiveObject(shapeObj);
 
+            this._rePositionFillFilter(shapeObj);
+
             const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
             resolve(objectProperties);
@@ -369,7 +371,6 @@ export default class Shape extends Component {
 
                 resizeHelper.adjustOriginToCenter(currentObj);
                 resizeHelper.setOrigins(currentObj);
-                self._rePositionFillFilter(this);
             },
             modifiedInGroup(activeSelection) {
                 self._fillFilterRePositionInGroupSelection(shapeObj, activeSelection);
@@ -519,8 +520,7 @@ export default class Shape extends Component {
             return;
         }
 
-        const {patternSourceCanvas} = shapeObj.fill;
-        const [fillImage] = patternSourceCanvas.getObjects();
+        const fillImage = this._getfillImageFromShape(shapeObj);
 
         if (this.graphics.canvasImage.angle !== getCustomProperty(fillImage, 'originalAngle')) {
             this._reMakePatternImageSource(shapeObj);
@@ -550,8 +550,7 @@ export default class Shape extends Component {
      * @private
      */
     _rePositionFilterTypeFillImage(shapeObj) {
-        const {patternSourceCanvas} = shapeObj.fill;
-        const [fillImage] = patternSourceCanvas.getObjects();
+        const fillImage = this._getfillImageFromShape(shapeObj);
         const {
             width: rotatedWidth,
             height: rotatedHeight
@@ -580,9 +579,9 @@ export default class Shape extends Component {
      */
     _fillFilterRePositionInGroupSelection(shapeObj, activeSelection) {
         if (activeSelection.scaleX !== 1 || activeSelection.scaleY !== 1) {
+            // This is necessary because the group's scale transition state affects the relative size of the fill area.
             // The only way to reset the object transformation scale state to neutral.
             // {@link https://github.com/fabricjs/fabric.js/issues/5372}
-            // This is necessary because the group's scale transition state affects the relative size of the fill area.
             activeSelection.addWithUpdate();
         }
 
@@ -674,6 +673,19 @@ export default class Shape extends Component {
         fillImage.filters.push(filter);
         fillImage.filters.push(filter2);
         fillImage.applyFilters();
+
+        return fillImage;
+    }
+
+    /**
+     * Get background image of fill
+     * @param {fabric.Object} shapeObj - Shape object
+     * @returns {fabric.Image}
+     * @private
+     */
+    _getfillImageFromShape(shapeObj) {
+        const {patternSourceCanvas} = shapeObj.fill;
+        const [fillImage] = patternSourceCanvas.getObjects();
 
         return fillImage;
     }

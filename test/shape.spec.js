@@ -222,6 +222,83 @@ describe('Shape', () => {
         expect(shapeObj.height).toBe(20);
     });
 
+    describe('Fill - filter type', () => {
+        beforeEach(done => {
+            const imageURL = 'base/test/fixtures/sampleImage.jpg';
+
+            fabric.Image.fromURL(imageURL, sampleImage => {
+                graphics.setCanvasImage('', sampleImage);
+                shape.add('rect', {
+                    strokeWidth: 0,
+                    left: 20,
+                    top: 30,
+                    width: 100,
+                    height: 80,
+                    fill: 'filter'
+                });
+                [shapeObj] = canvas.getObjects();
+
+                done();
+            });
+        });
+
+        it('"_rePositionFillFilter" should be executed when a movement, rotation, and scaling event of a filter type fill is applied.', () => {
+            spyOn(canvas, 'getPointer').and.returnValue({
+                x: 10,
+                y: 10
+            });
+            spyOn(shape, '_rePositionFillFilter');
+            shapeObj.fire('moving');
+            shapeObj.fire('rotating');
+            shapeObj.fire('scaling');
+
+            expect(shape._rePositionFillFilter.calls.count()).toBe(3);
+        });
+
+        it('cropX and cropY values of the image filled with the shape background must be changed to match the canvas background exactly.', () => {
+            shape._rePositionFillFilter(shapeObj);
+            const {cropX, cropY} = shape._getfillImageFromShape(shapeObj);
+
+            expect(cropX).toBe(-30);
+            expect(cropY).toBe(-10);
+        });
+
+        it('The fill image should be the same size as the shape.', () => {
+            shape._rePositionFillFilter(shapeObj);
+            const {width, height} = shape._getfillImageFromShape(shapeObj);
+
+            expect(width).toBe(100);
+            expect(height).toBe(80);
+        });
+
+        it('The rotated object fill image must be the same size as the rectangle that draws the rotated object border.', () => {
+            shapeObj.set({
+                angle: 40
+            });
+            shape._rePositionFillFilter(shapeObj);
+            const {width, height} = shape._getfillImageFromShape(shapeObj);
+
+            expect(Math.round(width)).toBe(128);
+            expect(Math.round(height)).toBe(126);
+        });
+
+        it('If repositioning is performed while the angle is changed, the angle value of the fill image must have the shape reverse rotation value.', () => {
+            shapeObj.set({
+                angle: 40
+            });
+            shape._rePositionFillFilter(shapeObj);
+            const {angle} = shape._getfillImageFromShape(shapeObj);
+
+            expect(angle).toBe(-40);
+        });
+
+        it('Background image of the shape to which the filter fill is applied must have the filter applied.', () => {
+            const fillImage = shape._getfillImageFromShape(shapeObj);
+
+            expect(fillImage.filters.length).toBeGreaterThan(0);
+        });
+    });
+
     describe('_onFabricMouseMove()', () => {
         beforeEach(() => {
             shape.add('rect', {
