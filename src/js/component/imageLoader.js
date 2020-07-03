@@ -34,6 +34,7 @@ class ImageLoader extends Component {
 
         if (!imageName && !img) { // Back to the initial state, not error.
             const canvas = this.getCanvas();
+
             canvas.backgroundImage = null;
             canvas.renderAll();
 

@@ -13,7 +13,7 @@ import {
     SHAPE_DEFAULT_OPTIONS
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
-import {Promise, changeOriginOfObject} from '../util';
+import {Promise, changeOriginOfObject, setCustomProperty, getCustomProperty} from '../util';
 import {extend, inArray} from 'tui-code-snippet';
 
 const SHAPE_INIT_OPTIONS = extend({
@@ -521,7 +521,8 @@ export default class Shape extends Component {
 
         const {patternSourceCanvas} = shapeObj.fill;
         const [fillImage] = patternSourceCanvas.getObjects();
-        if (this.graphics.canvasImage.angle !== fillImage.lastAngle) {
+
+        if (this.graphics.canvasImage.angle !== getCustomProperty(fillImage, 'originalAngle')) {
             this._reMakePatternImageSource(shapeObj);
         }
         const {originX, originY} = shapeObj;
@@ -657,13 +658,16 @@ export default class Shape extends Component {
      * @private
      */
     _makeFillImage(copiedCanvasElement) {
-        const fillImage = new fabric.Image(copiedCanvasElement, {lastAngle: this.graphics.canvasImage.angle});
+        const currentCanvasImageAngle = this.graphics.canvasImage.angle;
+        const fillImage = new fabric.Image(copiedCanvasElement);
         const filter = new fabric.Image.filters.Pixelate({
             blocksize: 10
         });
         const filter2 = new fabric.Image.filters.Blur({
             blur: 0.3
         });
+
+        setCustomProperty(fillImage, {originalAngle: currentCanvasImageAngle});
 
         resizeHelper.adjustOriginToCenter(fillImage);
 

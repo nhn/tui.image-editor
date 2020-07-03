@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Util
  */
-import {forEach, sendHostname} from 'tui-code-snippet';
+import {forEach, sendHostname, extend} from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
@@ -247,4 +247,29 @@ export function changeOriginOfObject(fObject, origin) {
     });
 
     fObject.setCoords();
+}
+
+/**
+ * Set custom properties
+ * @param {fabric.Object} fObject - fabric object
+ * @param {Object} props - custom props object
+ */
+export function setCustomProperty(fObject, props) {
+    if (!fObject.customProps) {
+        extend(fObject, {
+            customProps: props
+        });
+    } else {
+        extend(fObject.customProps, props);
+    }
+}
+
+/**
+ * Get custom properties
+ * @param {fabric.Object} fObject - fabric object
+ * @param {string} propName - prop name
+ * @returns {object | number | string}
+ */
+export function getCustomProperty(fObject, propName) {
+    return fObject.customProps[propName];
 }
