@@ -86,6 +86,13 @@ export default class Shape extends Component {
         this._withShiftKey = false;
 
         /**
+         * Cached canvas image element for fill image
+         * @type {boolean}
+         * @private
+         */
+        this._cachedCanvasImageElement = null;
+
+        /**
          * Event handler list
          * @type {Object}
          * @private
@@ -235,11 +242,14 @@ export default class Shape extends Component {
      * @returns {string} 'transparent' or 'color' or 'filter'
      */
     getFillTypeFromOption(fillOption) {
-        if (fillOption.type === 'filter' || fillOption === 'filter') {
-            return 'filter';
+        let fillType = 'color';
+        if (!fillOption || fillOption === 'transparent') {
+            fillType = 'transparent';
+        } else if (fillOption.type === 'filter' || fillOption === 'filter') {
+            fillType = 'filter';
         }
 
-        return fillOption === 'transparent' ? fillOption : 'color';
+        return fillType;
     }
 
     /**
@@ -305,8 +315,6 @@ export default class Shape extends Component {
             default:
                 instance = {};
         }
-
-        console.log('INSTANCE - ', instance);
 
         return instance;
     }
@@ -599,9 +607,17 @@ export default class Shape extends Component {
         const [fillImage] = patternSourceCanvas.getObjects();
         patternSourceCanvas.remove(fillImage);
 
-        const copiedCanvasElement = this.graphics.canvasImage.toCanvasElement();
+        const copiedCanvasElement = this._getCachedCanvasImageElement(true);
         const newFillImage = this._makeFillImage(copiedCanvasElement);
         patternSourceCanvas.add(newFillImage);
+    }
+
+    _getCachedCanvasImageElement(reset = false) {
+        if (!this._cachedCanvasImageElement || reset) {
+            this._cachedCanvasImageElement = this.graphics.canvasImage.toCanvasElement();
+        }
+
+        return this._cachedCanvasImageElement;
     }
 
     /**
@@ -610,7 +626,7 @@ export default class Shape extends Component {
      * @private
      */
     _makeFillPatternForFilter() {
-        const copiedCanvasElement = this.graphics.canvasImage.toCanvasElement();
+        const copiedCanvasElement = this._getCachedCanvasImageElement();
         const patternSourceCanvas = new fabric.StaticCanvas();
         const fillImage = this._makeFillImage(copiedCanvasElement);
 
