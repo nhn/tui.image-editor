@@ -544,6 +544,62 @@ export default class Shape extends Component {
         });
     }
 
+    _outOfTolerance(type, shapeObj, outDistance, left, top) {
+        const lefttop = shapeObj.getPointByOrigin('left', 'top');
+        const righttop = shapeObj.getPointByOrigin('right', 'top');
+        const leftbottom = shapeObj.getPointByOrigin('left', 'bottom');
+        const rightbottom = shapeObj.getPointByOrigin('right', 'bottom');
+        const arr = [lefttop, righttop, leftbottom, rightbottom];
+        const arrmap = [[1, 2], [0, 3], [0, 3], [1, 2]];
+
+        const [jj] = arr.reduce((r, pt, j) => {
+            if (pt[type] < 0 && pt[type] < r[1]) {
+                r[0] = j;
+                r[1] = pt[type];
+            }
+
+            return r;
+        }, [null, 1000]);
+
+        const helpAngle = type === 'x' ? 90 : 180;
+
+        const [kk, ll] = arrmap[jj];
+        let angle1 = (Math.atan2(arr[jj].y - arr[kk].y, arr[jj].x - arr[kk].x) * 180 / Math.PI) - helpAngle;
+        let angle2 = (Math.atan2(arr[jj].y - arr[ll].y, arr[jj].x - arr[ll].x) * 180 / Math.PI) - helpAngle;
+
+        if (angle1 < 0) {
+            angle1 = 360 + angle1;
+        }
+        if (angle2 < 0) {
+            angle2 = 360 + angle2;
+        }
+
+        const hidangle = 90 - angle1;
+        const hidangle2 = angle2 - 90;
+
+        const c = outDistance * Math.cos(hidangle * Math.PI / 180);
+        const d = outDistance * Math.cos(hidangle2 * Math.PI / 180);
+
+        if (jj === 0) {
+            top = top - d;
+            left = left - c;
+        }
+        if (jj === 2) {
+            top = top + c;
+            left = left - d;
+        }
+        if (jj === 1) {
+            top = top - d;
+            left = left + c;
+        }
+        if (jj === 3) {
+            top = top + c;
+            left = left + d;
+        }
+
+        return [left, top];
+    }
+
     /**
      * Reset the image position in the filter type fill area.
      * @param {fabric.Object} shapeObj - Shape object
@@ -559,11 +615,20 @@ export default class Shape extends Component {
         const diffTop = (rotatedHeight - shapeObj.height) / 2;
         const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
         const cropY = shapeObj.top - (shapeObj.height / 2) - diffTop;
+        let left = (rotatedWidth / 2) - diffLeft;
+        let top = (rotatedHeight / 2) - diffTop;
+
+        if (cropX < 0) {
+            [left, top] = this._outOfTolerance('x', shapeObj, cropX, left, top);
+        }
+        if (cropY < 0) {
+            [left, top] = this._outOfTolerance('y', shapeObj, cropY, left, top);
+        }
 
         fillImage.set({
             angle: shapeObj.angle * -1,
-            left: (rotatedWidth / 2) - diffLeft,
-            top: (rotatedHeight / 2) - diffTop,
+            left,
+            top,
             width: rotatedWidth,
             height: rotatedHeight,
             cropX,
@@ -660,18 +725,20 @@ export default class Shape extends Component {
         const currentCanvasImageAngle = this.graphics.canvasImage.angle;
         const fillImage = new fabric.Image(copiedCanvasElement);
         const filter = new fabric.Image.filters.Pixelate({
-            blocksize: 10
+            blocksize: 20
         });
+        /*
         const filter2 = new fabric.Image.filters.Blur({
             blur: 0.3
         });
+        */
 
         setCustomProperty(fillImage, {originalAngle: currentCanvasImageAngle});
 
         resizeHelper.adjustOriginToCenter(fillImage);
 
         fillImage.filters.push(filter);
-        fillImage.filters.push(filter2);
+        // fillImage.filters.push(filter2);
         fillImage.applyFilters();
 
         return fillImage;
