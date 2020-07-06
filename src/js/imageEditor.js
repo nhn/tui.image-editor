@@ -1163,14 +1163,6 @@ class ImageEditor {
 
     _onObjectAdded(objectProps) {
         /**
-         * The event when object added (deprecated)
-         * @event ImageEditor#addObjectAfter
-         * @param {ObjectProps} props - object properties
-         * @deprecated
-         */
-        this.fire(ADD_OBJECT_AFTER, objectProps);
-
-        /**
          * The event when object added
          * @event ImageEditor#objectAdded
          * @param {ObjectProps} props - object properties
@@ -1180,6 +1172,14 @@ class ImageEditor {
          * });
          */
         this.fire(OBJECT_ADDED, objectProps);
+
+        /**
+         * The event when object added (deprecated)
+         * @event ImageEditor#addObjectAfter
+         * @param {ObjectProps} props - object properties
+         * @deprecated
+         */
+        this.fire(ADD_OBJECT_AFTER, objectProps);
     }
 
     /**
