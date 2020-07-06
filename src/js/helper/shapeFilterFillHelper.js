@@ -7,57 +7,136 @@ import {setCustomProperty} from '../util';
 import resizeHelper from '../helper/shapeResizeHelper';
 
 /**
- * Rotated shape dimension
- * @param {fabric.Object} shapeObj - Shape object
- * @returns {Object} Rotated shape dimension
+ * Cached canvas image element for fill image
+ * @type {boolean}
+ * @private
  */
-export function getRotatedDimension(shapeObj) {
-    const [
-        {x: ax, y: ay},
-        {x: bx, y: by},
-        {x: cx, y: cy},
-        {x: dx, y: dy}
-    ] = getShapeEdgePoint(shapeObj);
+let cachedCanvasImageElement = null;
 
-    const left = Math.min(ax, bx, cx, dx);
-    const top = Math.min(ay, by, cy, dy);
-    const right = Math.max(ax, bx, cx, dx);
-    const bottom = Math.max(ay, by, cy, dy);
+/**
+ * Get background image of fill
+ * @param {fabric.Object} shapeObj - Shape object
+ * @returns {fabric.Image}
+ * @private
+ */
+export function getfillImageFromShape(shapeObj) {
+    const {patternSourceCanvas} = shapeObj.fill;
+    const [fillImage] = patternSourceCanvas.getObjects();
 
-    return {
+    return fillImage;
+}
+
+/**
+ * Reset the image position in the filter type fill area.
+ * @param {fabric.Object} shapeObj - Shape object
+ * @private
+ */
+export function rePositionFilterTypeFillImage(shapeObj) {
+    const fillImage = getfillImageFromShape(shapeObj);
+    const {
+        width: rotatedWidth,
+        height: rotatedHeight
+    } = getRotatedDimension(shapeObj);
+    const diffLeft = (rotatedWidth - shapeObj.width) / 2;
+    const diffTop = (rotatedHeight - shapeObj.height) / 2;
+    const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
+    const cropY = shapeObj.top - (shapeObj.height / 2) - diffTop;
+    let left = (rotatedWidth / 2) - diffLeft;
+    let top = (rotatedHeight / 2) - diffTop;
+
+    if (cropX < 0) {
+        [left, top] = calculatePositionOutOfCanvas(shapeObj, 'x', cropX, left, top);
+    }
+    if (cropY < 0) {
+        [left, top] = calculatePositionOutOfCanvas(shapeObj, 'y', cropY, left, top);
+    }
+
+    fillImage.set({
+        angle: shapeObj.angle * -1,
         left,
         top,
-        width: right - left,
-        height: bottom - top
+        width: rotatedWidth,
+        height: rotatedHeight,
+        cropX,
+        cropY
+    });
+}
+
+/**
+ * Make fill property of dynamic pattern type
+ * @param {fabric.Image} canvasImage - canvas background image
+ * @returns {Object}
+ * @private
+ */
+export function makeFillPatternForFilter(canvasImage) {
+    const copiedCanvasElement = getCachedCanvasImageElement(canvasImage);
+    const patternSourceCanvas = new fabric.StaticCanvas();
+    const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle);
+
+    patternSourceCanvas.add(fillImage);
+    patternSourceCanvas.renderAll();
+
+    return {
+        fill: new fabric.Pattern({
+            source: () => {
+                patternSourceCanvas.setDimensions({
+                    width: copiedCanvasElement.width,
+                    height: copiedCanvasElement.height
+                });
+                patternSourceCanvas.renderAll();
+
+                return patternSourceCanvas.getElement();
+            },
+            patternSourceCanvas,
+            repeat: 'no-repeat'
+        })
     };
 }
 
 /**
- * Make fill image
- * @param {HTMLImageElement} copiedCanvasElement - html image element
- * @param {number} currentCanvasImageAngle - current canvas angle
- * @returns {fabric.Image}
+ * Remake filter pattern image source
+ * @param {fabric.Object} shapeObj - Shape object
+ * @param {fabric.Image} canvasImage - canvas background image
  * @private
  */
-export function makeFillImage(copiedCanvasElement, currentCanvasImageAngle) {
-    const fillImage = new fabric.Image(copiedCanvasElement);
-    const filter = new fabric.Image.filters.Pixelate({
-        blocksize: 20
+export function reMakePatternImageSource(shapeObj, canvasImage) {
+    const {patternSourceCanvas} = shapeObj.fill;
+    const [fillImage] = patternSourceCanvas.getObjects();
+    patternSourceCanvas.remove(fillImage);
+
+    const copiedCanvasElement = getCachedCanvasImageElement(canvasImage, true);
+    const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle);
+    patternSourceCanvas.add(newFillImage);
+}
+
+/**
+ * Calculate a point line outside the canvas. 
+ * @param {string} type - 'x' or 'y'
+ * @param {Array} shapePointNavigation - shape edge positions
+ *   @param {Object} shapePointNavigation.lefttop - left top position
+ *   @param {Object} shapePointNavigation.righttop - right top position
+ *   @param {Object} shapePointNavigation.leftbottom - lefttop position
+ *   @param {Object} shapePointNavigation.rightbottom - rightbottom position
+ * @param {Array} shapeNeighborPointNavigation - Array to find adjacent edges.
+ * @returns {Object}
+ */
+function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation) {
+    let minimumPoint = 0;
+    let minimumPointIndex = 0;
+    forEach(shapePointNavigation, (point, index) => {
+        if (point[type] < minimumPoint) {
+            minimumPoint = point[type];
+            minimumPointIndex = index;
+        }
     });
-    /*
-    const filter2 = new fabric.Image.filters.Blur({
-        blur: 0.3
-    });
-    */
 
-    setCustomProperty(fillImage, {originalAngle: currentCanvasImageAngle});
-    resizeHelper.adjustOriginToCenter(fillImage);
+    const [endPointIndex1, endPointIndex2] = shapeNeighborPointNavigation[minimumPointIndex];
 
-    fillImage.filters.push(filter);
-    // fillImage.filters.push(filter2);
-    fillImage.applyFilters();
-
-    return fillImage;
+    return {
+        startPointIndex: minimumPointIndex,
+        endPointIndex1,
+        endPointIndex2
+    };
 }
 
 /**
@@ -69,7 +148,7 @@ export function makeFillImage(copiedCanvasElement, currentCanvasImageAngle) {
  * @param {number} top - original top position
  * @returns {Array}
  */
-export function calculatePositionOutOfCanvas(shapeObj, type, outDistance, left, top) {
+function calculatePositionOutOfCanvas(shapeObj, type, outDistance, left, top) {
     const shapePointNavigation = getShapeEdgePoint(shapeObj);
     const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
 
@@ -102,36 +181,6 @@ export function calculatePositionOutOfCanvas(shapeObj, type, outDistance, left, 
     }
 
     return [left, top];
-}
-
-/**
- * Calculate a point line outside the canvas. 
- * @param {string} type - 'x' or 'y'
- * @param {Array} shapePointNavigation - shape edge positions
- *   @param {Object} shapePointNavigation.lefttop - left top position
- *   @param {Object} shapePointNavigation.righttop - right top position
- *   @param {Object} shapePointNavigation.leftbottom - lefttop position
- *   @param {Object} shapePointNavigation.rightbottom - rightbottom position
- * @param {Array} shapeNeighborPointNavigation - Array to find adjacent edges.
- * @returns {Object}
- */
-function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation) {
-    let minimumPoint = 0;
-    let minimumPointIndex = 0;
-    forEach(shapePointNavigation, (point, index) => {
-        if (point[type] < minimumPoint) {
-            minimumPoint = point[type];
-            minimumPointIndex = index;
-        }
-    });
-
-    const [endPointIndex1, endPointIndex2] = shapeNeighborPointNavigation[minimumPointIndex];
-
-    return {
-        startPointIndex: minimumPointIndex,
-        endPointIndex1,
-        endPointIndex2
-    };
 }
 
 /**
@@ -176,3 +225,70 @@ function getShapeEdgePoint(shapeObj) {
     ];
 }
 
+/**
+ * Rotated shape dimension
+ * @param {fabric.Object} shapeObj - Shape object
+ * @returns {Object} Rotated shape dimension
+ */
+function getRotatedDimension(shapeObj) {
+    const [
+        {x: ax, y: ay},
+        {x: bx, y: by},
+        {x: cx, y: cy},
+        {x: dx, y: dy}
+    ] = getShapeEdgePoint(shapeObj);
+
+    const left = Math.min(ax, bx, cx, dx);
+    const top = Math.min(ay, by, cy, dy);
+    const right = Math.max(ax, bx, cx, dx);
+    const bottom = Math.max(ay, by, cy, dy);
+
+    return {
+        left,
+        top,
+        width: right - left,
+        height: bottom - top
+    };
+}
+
+/**
+ * Calculate a point line outside the canvas. 
+ * @param {fabric.Image} canvasImage - canvas background image
+ * @param {boolean} reset - default is false
+ * @returns {HTMLImageElement}
+ */
+function getCachedCanvasImageElement(canvasImage, reset = false) {
+    if (!cachedCanvasImageElement || reset) {
+        cachedCanvasImageElement = canvasImage.toCanvasElement();
+    }
+
+    return cachedCanvasImageElement;
+}
+
+/**
+ * Make fill image
+ * @param {HTMLImageElement} copiedCanvasElement - html image element
+ * @param {number} currentCanvasImageAngle - current canvas angle
+ * @returns {fabric.Image}
+ * @private
+ */
+function makeFillImage(copiedCanvasElement, currentCanvasImageAngle) {
+    const fillImage = new fabric.Image(copiedCanvasElement);
+    const filter = new fabric.Image.filters.Pixelate({
+        blocksize: 20
+    });
+    /*
+    const filter2 = new fabric.Image.filters.Blur({
+        blur: 0.3
+    });
+    */
+
+    setCustomProperty(fillImage, {originalAngle: currentCanvasImageAngle});
+    resizeHelper.adjustOriginToCenter(fillImage);
+
+    fillImage.filters.push(filter);
+    // fillImage.filters.push(filter2);
+    fillImage.applyFilters();
+
+    return fillImage;
+}

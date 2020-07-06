@@ -13,7 +13,7 @@ import {
     SHAPE_DEFAULT_OPTIONS
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
-import {calculatePositionOutOfCanvas, getRotatedDimension, makeFillImage} from '../helper/shapeFilterFillHelper';
+import {getfillImageFromShape, rePositionFilterTypeFillImage, reMakePatternImageSource, makeFillPatternForFilter} from '../helper/shapeFilterFillHelper';
 import {Promise, changeOriginOfObject, getCustomProperty} from '../util';
 import {extend, inArray} from 'tui-code-snippet';
 
@@ -85,13 +85,6 @@ export default class Shape extends Component {
          * @private
          */
         this._withShiftKey = false;
-
-        /**
-         * Cached canvas image element for fill image
-         * @type {boolean}
-         * @private
-         */
-        this._cachedCanvasImageElement = null;
 
         /**
          * Event handler list
@@ -276,7 +269,7 @@ export default class Shape extends Component {
     processForCopiedObject(shapeObj) {
         this._bindEventOnShape(shapeObj);
         if (this.getFillTypeFromObject(shapeObj) === 'filter') {
-            shapeObj.set(this._makeFillPatternForFilter());
+            shapeObj.set(makeFillPatternForFilter(this.graphics.canvasImage));
             this._rePositionFillFilter(shapeObj);
         }
     }
@@ -290,7 +283,7 @@ export default class Shape extends Component {
     _makeShapeOption(options) {
         const fillType = this.getFillTypeFromOption(options.fill);
 
-        return extend({}, options, fillType === 'filter' ? this._makeFillPatternForFilter() : {});
+        return extend({}, options, fillType === 'filter' ? makeFillPatternForFilter(this.graphics.canvasImage) : {});
     }
 
     /**
@@ -521,10 +514,10 @@ export default class Shape extends Component {
             return;
         }
 
-        const fillImage = this._getfillImageFromShape(shapeObj);
+        const fillImage = getfillImageFromShape(shapeObj);
 
         if (this.graphics.canvasImage.angle !== getCustomProperty(fillImage, 'originalAngle')) {
-            this._reMakePatternImageSource(shapeObj);
+            reMakePatternImageSource(shapeObj, this.graphics.canvasImage);
         }
         const {originX, originY} = shapeObj;
 
@@ -537,47 +530,11 @@ export default class Shape extends Component {
         shapeObj.scaleX = 1;
         shapeObj.scaleY = 1;
 
-        this._rePositionFilterTypeFillImage(shapeObj);
+        rePositionFilterTypeFillImage(shapeObj);
 
         changeOriginOfObject(shapeObj, {
             originX,
             originY
-        });
-    }
-
-    /**
-     * Reset the image position in the filter type fill area.
-     * @param {fabric.Object} shapeObj - Shape object
-     * @private
-     */
-    _rePositionFilterTypeFillImage(shapeObj) {
-        const fillImage = this._getfillImageFromShape(shapeObj);
-        const {
-            width: rotatedWidth,
-            height: rotatedHeight
-        } = getRotatedDimension(shapeObj);
-        const diffLeft = (rotatedWidth - shapeObj.width) / 2;
-        const diffTop = (rotatedHeight - shapeObj.height) / 2;
-        const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
-        const cropY = shapeObj.top - (shapeObj.height / 2) - diffTop;
-        let left = (rotatedWidth / 2) - diffLeft;
-        let top = (rotatedHeight / 2) - diffTop;
-
-        if (cropX < 0) {
-            [left, top] = calculatePositionOutOfCanvas(shapeObj, 'x', cropX, left, top);
-        }
-        if (cropY < 0) {
-            [left, top] = calculatePositionOutOfCanvas(shapeObj, 'y', cropY, left, top);
-        }
-
-        fillImage.set({
-            angle: shapeObj.angle * -1,
-            left,
-            top,
-            width: rotatedWidth,
-            height: rotatedHeight,
-            cropX,
-            cropY
         });
     }
 
@@ -605,71 +562,5 @@ export default class Shape extends Component {
             left,
             top
         });
-    }
-
-    /**
-     * Remake filter pattern image source
-     * @param {fabric.Object} shapeObj - Shape object
-     * @private
-     */
-    _reMakePatternImageSource(shapeObj) {
-        const {patternSourceCanvas} = shapeObj.fill;
-        const [fillImage] = patternSourceCanvas.getObjects();
-        patternSourceCanvas.remove(fillImage);
-
-        const copiedCanvasElement = this._getCachedCanvasImageElement(true);
-        const newFillImage = makeFillImage(copiedCanvasElement, this.graphics.canvasImage.angle);
-        patternSourceCanvas.add(newFillImage);
-    }
-
-    _getCachedCanvasImageElement(reset = false) {
-        if (!this._cachedCanvasImageElement || reset) {
-            this._cachedCanvasImageElement = this.graphics.canvasImage.toCanvasElement();
-        }
-
-        return this._cachedCanvasImageElement;
-    }
-
-    /**
-     * Make fill property of dynamic pattern type
-     * @returns {Object}
-     * @private
-     */
-    _makeFillPatternForFilter() {
-        const copiedCanvasElement = this._getCachedCanvasImageElement();
-        const patternSourceCanvas = new fabric.StaticCanvas();
-        const fillImage = makeFillImage(copiedCanvasElement, this.graphics.canvasImage.angle);
-
-        patternSourceCanvas.add(fillImage);
-        patternSourceCanvas.renderAll();
-
-        return {
-            fill: new fabric.Pattern({
-                source: () => {
-                    patternSourceCanvas.setDimensions({
-                        width: copiedCanvasElement.width,
-                        height: copiedCanvasElement.height
-                    });
-                    patternSourceCanvas.renderAll();
-
-                    return patternSourceCanvas.getElement();
-                },
-                patternSourceCanvas,
-                repeat: 'no-repeat'
-            })
-        };
-    }
-
-    /**
-     * Get background image of fill
-     * @param {fabric.Object} shapeObj - Shape object
-     * @returns {fabric.Image}
-     * @private
-     */
-    _getfillImageFromShape(shapeObj) {
-        const {patternSourceCanvas} = shapeObj.fill;
-        const [fillImage] = patternSourceCanvas.getObjects();
-
-        return fillImage;
     }
 }

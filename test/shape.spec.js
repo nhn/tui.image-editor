@@ -7,6 +7,7 @@ import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Shape from '../src/js/component/shape';
 import {resize} from '../src/js/helper/shapeResizeHelper';
+import {getfillImageFromShape} from '../src/js/helper/shapeFilterFillHelper';
 
 describe('Shape', () => {
     let canvas, graphics, mockImage, fEvent, shape, shapeObj;
@@ -257,7 +258,7 @@ describe('Shape', () => {
 
         it('cropX and cropY values of the image filled with the shape background must be changed to match the canvas background exactly.', () => {
             shape._rePositionFillFilter(shapeObj);
-            const {cropX, cropY} = shape._getfillImageFromShape(shapeObj);
+            const {cropX, cropY} = getfillImageFromShape(shapeObj);
 
             expect(cropX).toBe(-30);
             expect(cropY).toBe(-10);
@@ -265,7 +266,7 @@ describe('Shape', () => {
 
         it('The fill image should be the same size as the shape.', () => {
             shape._rePositionFillFilter(shapeObj);
-            const {width, height} = shape._getfillImageFromShape(shapeObj);
+            const {width, height} = getfillImageFromShape(shapeObj);
 
             expect(width).toBe(100);
             expect(height).toBe(80);
@@ -276,7 +277,7 @@ describe('Shape', () => {
                 angle: 40
             });
             shape._rePositionFillFilter(shapeObj);
-            const {width, height} = shape._getfillImageFromShape(shapeObj);
+            const {width, height} = getfillImageFromShape(shapeObj);
 
             expect(Math.round(width)).toBe(128);
             expect(Math.round(height)).toBe(126);
@@ -287,13 +288,13 @@ describe('Shape', () => {
                 angle: 40
             });
             shape._rePositionFillFilter(shapeObj);
-            const {angle} = shape._getfillImageFromShape(shapeObj);
+            const {angle} = getfillImageFromShape(shapeObj);
 
             expect(angle).toBe(-40);
         });
 
         it('Background image of the shape to which the filter fill is applied must have the filter applied.', () => {
-            const fillImage = shape._getfillImageFromShape(shapeObj);
+            const fillImage = getfillImageFromShape(shapeObj);
 
             expect(fillImage.filters.length).toBeGreaterThan(0);
         });
