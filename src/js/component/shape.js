@@ -242,7 +242,7 @@ export default class Shape extends Component {
      * @param {Object | string} fillOption - shape fill option
      * @returns {string} 'transparent' or 'color' or 'filter'
      */
-    getFillTypeFromOption(fillOption) {
+    getFillTypeFromOption(fillOption = {}) {
         const {type = 'color'} = fillOption;
         let fillType = type;
 

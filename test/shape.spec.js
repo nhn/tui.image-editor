@@ -235,7 +235,10 @@ describe('Shape', () => {
                     top: 30,
                     width: 100,
                     height: 80,
-                    fill: 'filter'
+                    fill: {
+                        type: 'filter',
+                        filter: [{pixelate: 20}]
+                    }
                 });
                 [shapeObj] = canvas.getObjects();
 

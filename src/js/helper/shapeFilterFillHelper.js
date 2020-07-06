@@ -37,11 +37,9 @@ export function getfillImageFromShape(shapeObj) {
  * @private
  */
 export function rePositionFilterTypeFillImage(shapeObj) {
+    const {angle, flipX, flipY} = shapeObj;
     const fillImage = getfillImageFromShape(shapeObj);
-    const {
-        width: rotatedWidth,
-        height: rotatedHeight
-    } = getRotatedDimension(shapeObj);
+    const {width: rotatedWidth, height: rotatedHeight} = getRotatedDimension(shapeObj);
     const diffLeft = (rotatedWidth - shapeObj.width) / 2;
     const diffTop = (rotatedHeight - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
@@ -49,15 +47,25 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     let left = (rotatedWidth / 2) - diffLeft;
     let top = (rotatedHeight / 2) - diffTop;
 
-    if (cropX < 0) {
-        [left, top] = calculatePositionOutOfCanvas(shapeObj, 'x', cropX, left, top);
-    }
-    if (cropY < 0) {
-        [left, top] = calculatePositionOutOfCanvas(shapeObj, 'y', cropY, left, top);
-    }
+    forEach(['x', 'y'], type => {
+        const outDistance = type === 'x' ? cropX : cropY;
+        if (outDistance < 0) {
+            [left, top] = calculateFillImagePositionOutOfCanvas({
+                type,
+                shapeObj,
+                outDistance,
+                left,
+                top,
+                flipX,
+                flipY
+            });
+        }
+    });
 
     fillImage.set({
-        angle: shapeObj.angle * -1,
+        angle: flipX === flipY ? -angle : angle,
+        flipX,
+        flipY,
         left,
         top,
         width: rotatedWidth,
@@ -86,8 +94,8 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
         fill: new fabric.Pattern({
             source: () => {
                 patternSourceCanvas.setDimensions({
-                    width: copiedCanvasElement.width,
-                    height: copiedCanvasElement.height
+                    width: Math.max(copiedCanvasElement.width, copiedCanvasElement.height),
+                    height: Math.max(copiedCanvasElement.width, copiedCanvasElement.height)
                 });
                 patternSourceCanvas.renderAll();
 
@@ -96,7 +104,6 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
             repeat: 'no-repeat'
         })
     };
-
     setCustomProperty(fabricProperty, {
         patternSourceCanvas,
         filterOption
@@ -119,6 +126,61 @@ export function reMakePatternImageSource(shapeObj, canvasImage) {
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage, true);
     const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
     patternSourceCanvas.add(newFillImage);
+}
+
+/**
+ * Calculate fill image position for out of Canvas
+ * @param {string} type - 'x' or 'y'
+ * @param {fabric.Object} shapeObj - shape object
+ * @param {number} outDistance - distance away
+ * @param {number} left - original left position
+ * @param {number} top - original top position
+ * @returns {Array}
+ */
+function calculateFillImagePositionOutOfCanvas({type, shapeObj, outDistance, left, top, flipX, flipY}) {
+    const shapePointNavigation = getShapeEdgePoint(shapeObj);
+    const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
+    const linePointsOutsideCanvas =
+        calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation);
+    const reatAngles =
+        calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOutsideCanvas);
+    const {startPointIndex} = linePointsOutsideCanvas;
+    const diffPosition = isReversePositionForFlip({
+        outDistance,
+        startPointIndex,
+        flipX,
+        flipY,
+        reatAngles
+    });
+
+    return [left + diffPosition.left, top + diffPosition.top];
+}
+
+/**
+ * Calculate fill image position for out of Canvas
+ * @param {number} outDistance - distance away
+ * @param {boolean} flipX - flip x statux
+ * @param {boolean} flipY - flip y statux
+ * @param {Array} reatAngles - Line angle of the rectangle vertex.
+ * @returns {Object} diffPosition
+ */
+function isReversePositionForFlip({outDistance, startPointIndex, flipX, flipY, reatAngles}) {
+    const rotationChangePoint1 = outDistance * Math.cos(reatAngles[0] * Math.PI / 180);
+    const rotationChangePoint2 = outDistance * Math.cos(reatAngles[1] * Math.PI / 180);
+    const isForward = startPointIndex === 2 || startPointIndex === 3;
+    const diffPosition = {
+        top: isForward ? rotationChangePoint1 : rotationChangePoint2,
+        left: isForward ? rotationChangePoint2 : rotationChangePoint1
+    };
+
+    if (isReverseLeftPositionForFlip(startPointIndex, flipX, flipY)) {
+        diffPosition.left = diffPosition.left * -1;
+    }
+    if (isReverseTopPositionForFlip(startPointIndex, flipX, flipY)) {
+        diffPosition.top = diffPosition.top * -1;
+    }
+
+    return diffPosition;
 }
 
 /**
@@ -152,47 +214,6 @@ function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeigh
 }
 
 /**
- * Calculate position for out of Canvas
- * @param {fabric.Object} shapeObj - shape object
- * @param {string} type - 'x' or 'y'
- * @param {number} outDistance - distance away
- * @param {number} left - original left position
- * @param {number} top - original top position
- * @returns {Array}
- */
-function calculatePositionOutOfCanvas(shapeObj, type, outDistance, left, top) {
-    const shapePointNavigation = getShapeEdgePoint(shapeObj);
-    const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
-
-    const {startPointIndex, endPointIndex1, endPointIndex2} =
-        calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation);
-    const [angle1, angle2] = calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, {
-        startPointIndex,
-        endPointIndex1,
-        endPointIndex2
-    });
-
-    const rotationChangePoint1 = outDistance * Math.cos(angle1 * Math.PI / 180);
-    const rotationChangePoint2 = outDistance * Math.cos(angle2 * Math.PI / 180);
-
-    if (startPointIndex === 0) {
-        top = top - rotationChangePoint2;
-        left = left - rotationChangePoint1;
-    } else if (startPointIndex === 1) {
-        top = top - rotationChangePoint2;
-        left = left + rotationChangePoint1;
-    } else if (startPointIndex === 2) {
-        top = top + rotationChangePoint1;
-        left = left - rotationChangePoint2;
-    } else if (startPointIndex === 3) {
-        top = top + rotationChangePoint1;
-        left = left + rotationChangePoint2;
-    }
-
-    return [left, top];
-}
-
-/**
  * Calculate a point line outside the canvas. 
  * @param {string} type - 'x' or 'y'
  * @param {Array} shapePointNavigation - shape edge positions
@@ -219,6 +240,41 @@ function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, LinePoint
         return (Math.atan2(diffY, diffX) * 180 / Math.PI) - horizontalVerticalAngle;
     });
 }
+
+/* eslint-disable complexity */
+/**
+ * Calculate a point line outside the canvas. 
+ * @param {number} startPointIndex - start point index
+ * @param {boolean} flipX - flip x statux
+ * @param {boolean} flipY - flip y statux
+ * @returns {boolean} flipY - flip y statux
+ */
+function isReverseLeftPositionForFlip(startPointIndex, flipX, flipY) {
+    /* eslint-disable complexity */
+    return (
+        (((!flipX && flipY) || (!flipX && !flipY)) && startPointIndex === 0) ||
+        (((flipX && flipY) || (flipX && !flipY)) && startPointIndex === 1) ||
+        (((!flipX && !flipY) || (!flipX && flipY)) && startPointIndex === 2) ||
+        (((flipX && !flipY) || (flipX && flipY)) && startPointIndex === 3)
+    );
+}
+
+/**
+ * Calculate a point line outside the canvas. 
+ * @param {number} startPointIndex - start point index
+ * @param {boolean} flipX - flip x statux
+ * @param {boolean} flipY - flip y statux
+ * @returns {boolean} flipY - flip y statux
+ */
+function isReverseTopPositionForFlip(startPointIndex, flipX, flipY) {
+    return (
+        (((flipX && !flipY) || (!flipX && !flipY)) && startPointIndex === 0) ||
+        (((!flipX && !flipY) || (flipX && !flipY)) && startPointIndex === 1) ||
+        (((flipX && flipY) || (!flipX && flipY)) && startPointIndex === 2) ||
+        (((!flipX && flipY) || (flipX && flipY)) && startPointIndex === 3)
+    );
+}
+/* eslint-enable complexity */
 
 /**
  * Shape edge points
