@@ -19,6 +19,7 @@ const {
     OBJECT_SCALED,
     OBJECT_ACTIVATED,
     OBJECT_ROTATED,
+    OBJECT_ADDED,
     ADD_TEXT,
     ADD_OBJECT,
     TEXT_EDITING,
@@ -191,10 +192,10 @@ class ImageEditor {
             objectMoved: this._onObjectMoved.bind(this),
             objectScaled: this._onObjectScaled.bind(this),
             objectRotated: this._onObjectRotated.bind(this),
+            objectAdded: this._onObjectAdded.bind(this),
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
-            addObjectAfter: this._onAddObjectAfter.bind(this),
             textEditing: this._onTextEditing.bind(this),
             textChanged: this._onTextChanged.bind(this),
             iconCreateResize: this._onIconCreateResize.bind(this),
@@ -291,6 +292,7 @@ class ImageEditor {
             [OBJECT_SCALED]: this._handlers.objectScaled,
             [OBJECT_ROTATED]: this._handlers.objectRotated,
             [OBJECT_ACTIVATED]: this._handlers.objectActivated,
+            [OBJECT_ADDED]: this._handlers.objectAdded,
             [ADD_TEXT]: this._handlers.addText,
             [ADD_OBJECT]: this._handlers.addObject,
             [TEXT_EDITING]: this._handlers.textEditing,
@@ -298,8 +300,7 @@ class ImageEditor {
             [ICON_CREATE_RESIZE]: this._handlers.iconCreateResize,
             [ICON_CREATE_END]: this._handlers.iconCreateEnd,
             [SELECTION_CLEARED]: this._handlers.selectionCleared,
-            [SELECTION_CREATED]: this._handlers.selectionCreated,
-            [ADD_OBJECT_AFTER]: this._handlers.addObjectAfter
+            [SELECTION_CREATED]: this._handlers.selectionCreated
         });
     }
 
@@ -1156,12 +1157,30 @@ class ImageEditor {
     }
 
     /**
-     * 'addObjectAfter' event handler
+     * 'objectAdded' event handler
      * @param {Object} objectProps added object properties
      * @private
      */
-    _onAddObjectAfter(objectProps) {
-        this.fire(events.ADD_OBJECT_AFTER, objectProps);
+
+    _onObjectAdded(objectProps) {
+        /**
+         * The event when object added
+         * @event ImageEditor#objectAdded
+         * @param {ObjectProps} props - object properties
+         * @example
+         * imageEditor.on('objectAdded', function(props) {
+         *     console.log(props);
+         * });
+         */
+        this.fire(OBJECT_ADDED, objectProps);
+
+        /**
+         * The event when object added (deprecated)
+         * @event ImageEditor#addObjectAfter
+         * @param {ObjectProps} props - object properties
+         * @deprecated
+         */
+        this.fire(ADD_OBJECT_AFTER, objectProps);
     }
 
     /**
@@ -1169,7 +1188,7 @@ class ImageEditor {
      * @private
      */
     _selectionCleared() {
-        this.fire(events.SELECTION_CLEARED);
+        this.fire(SELECTION_CLEARED);
     }
 
     /**
@@ -1178,7 +1197,7 @@ class ImageEditor {
      * @private
      */
     _selectionCreated(eventTarget) {
-        this.fire(events.SELECTION_CREATED, eventTarget);
+        this.fire(SELECTION_CREATED, eventTarget);
     }
 
     /**
