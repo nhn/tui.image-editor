@@ -251,25 +251,33 @@ export function changeOriginOfObject(fObject, origin) {
 
 /**
  * Set custom properties
- * @param {fabric.Object} fObject - fabric object
+ * @param {Object} targetObject - target object
  * @param {Object} props - custom props object
  */
-export function setCustomProperty(fObject, props) {
-    if (!fObject.customProps) {
-        extend(fObject, {
+export function setCustomProperty(targetObject, props) {
+    if (!targetObject.customProps) {
+        extend(targetObject, {
             customProps: props
         });
     } else {
-        extend(fObject.customProps, props);
+        extend(targetObject.customProps, props);
     }
 }
 
 /**
  * Get custom property
  * @param {fabric.Object} fObject - fabric object
- * @param {string} propName - prop name
+ * @param {Array|string} propNames - prop name array
  * @returns {object | number | string}
  */
-export function getCustomProperty(fObject, propName) {
-    return fObject.customProps[propName];
+export function getCustomProperty(fObject, propNames) {
+    const resultObject = {};
+    if (typeof propNames === 'string') {
+        propNames = [propNames];
+    }
+    forEach(propNames, propName => {
+        resultObject[propName] = fObject.customProps[propName];
+    });
+
+    return resultObject;
 }

@@ -13,7 +13,12 @@ import {
     SHAPE_DEFAULT_OPTIONS
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
-import {getfillImageFromShape, rePositionFilterTypeFillImage, reMakePatternImageSource, makeFillPatternForFilter} from '../helper/shapeFilterFillHelper';
+import {
+    getfillImageFromShape,
+    rePositionFilterTypeFillImage,
+    reMakePatternImageSource,
+    makeFillPatternForFilter
+} from '../helper/shapeFilterFillHelper';
 import {Promise, changeOriginOfObject, getCustomProperty} from '../util';
 import {extend, inArray} from 'tui-code-snippet';
 
@@ -238,14 +243,25 @@ export default class Shape extends Component {
      * @returns {string} 'transparent' or 'color' or 'filter'
      */
     getFillTypeFromOption(fillOption) {
-        let fillType = 'color';
+        const {type = 'color'} = fillOption;
+        let fillType = type;
+
         if (!fillOption || fillOption === 'transparent') {
             fillType = 'transparent';
-        } else if (fillOption.type === 'filter' || fillOption === 'filter') {
+        } else if (type === 'filter') {
             fillType = 'filter';
         }
 
         return fillType;
+    }
+
+    /**
+     * Get fill option
+     * @param {Object | string} fillOption - shape fill option
+     * @returns {string} 'transparent' or 'color' or 'filter'
+     */
+    getFilterOption(fillOption) {
+        return fillOption.filter;
     }
 
     /**
@@ -268,8 +284,11 @@ export default class Shape extends Component {
      */
     processForCopiedObject(shapeObj) {
         this._bindEventOnShape(shapeObj);
+
         if (this.getFillTypeFromObject(shapeObj) === 'filter') {
-            shapeObj.set(makeFillPatternForFilter(this.graphics.canvasImage));
+            const {filterOption} = getCustomProperty(shapeObj, 'filterOption');
+
+            shapeObj.set(makeFillPatternForFilter(this.graphics.canvasImage, filterOption));
             this._rePositionFillFilter(shapeObj);
         }
     }
@@ -282,8 +301,13 @@ export default class Shape extends Component {
      */
     _makeShapeOption(options) {
         const fillType = this.getFillTypeFromOption(options.fill);
+        let extOption = {};
 
-        return extend({}, options, fillType === 'filter' ? makeFillPatternForFilter(this.graphics.canvasImage) : {});
+        if (fillType === 'filter') {
+            extOption = makeFillPatternForFilter(this.graphics.canvasImage, this.getFilterOption(options.fill));
+        }
+
+        return extend({}, options, extOption);
     }
 
     /**
@@ -515,8 +539,9 @@ export default class Shape extends Component {
         }
 
         const fillImage = getfillImageFromShape(shapeObj);
+        const {originalAngle} = getCustomProperty(fillImage, 'originalAngle');
 
-        if (this.graphics.canvasImage.angle !== getCustomProperty(fillImage, 'originalAngle')) {
+        if (this.graphics.canvasImage.angle !== originalAngle) {
             reMakePatternImageSource(shapeObj, this.graphics.canvasImage);
         }
         const {originX, originY} = shapeObj;

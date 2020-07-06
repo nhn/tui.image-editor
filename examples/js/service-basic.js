@@ -537,7 +537,13 @@ $btnDrawShape.on('click', function() {
     shapeOptions.stroke = '#000000';
     // shapeOptions.fill = '#ffffff';
     // shapeOptions.fill = 'transparent';
-    shapeOptions.fill = 'filter';
+    shapeOptions.fill = {
+        type: 'filter',
+        filter: [
+            {blur: 0.3},
+            {pixelate: 20}
+        ]
+    };
 
     shapeOptions.strokeWidth = Number($inputStrokeWidthRange.val());
 
@@ -575,8 +581,6 @@ $inputCheckTransparent.on('change', function() {
         });
     }
 
-    console.log(' - SHAPEOPTIONS2 - ', shapeOptions);
-
     imageEditor.setDrawingShape(shapeType, shapeOptions);
 });
 
@@ -601,10 +605,7 @@ $inputCheckFilter.on('change', function() {
         });
     }
 
-    console.log(' - SHAPEOPTIONS2 - ', shapeOptions);
-
     imageEditor.setDrawingShape(shapeType, shapeOptions);
-
 });
 
 shapeColorpicker.on('selectColor', function(event) {

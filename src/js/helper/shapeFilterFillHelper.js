@@ -2,9 +2,14 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Shape resize helper
  */
-import {forEach, map} from 'tui-code-snippet';
-import {setCustomProperty} from '../util';
+import {forEach, map, extend} from 'tui-code-snippet';
+import {setCustomProperty, getCustomProperty} from '../util';
 import resizeHelper from '../helper/shapeResizeHelper';
+
+const FILTER_OPTION_MAP = {
+    'pixelate': 'blocksize',
+    'blur': 'blur'
+};
 
 /**
  * Cached canvas image element for fill image
@@ -20,7 +25,7 @@ let cachedCanvasImageElement = null;
  * @private
  */
 export function getfillImageFromShape(shapeObj) {
-    const {patternSourceCanvas} = shapeObj.fill;
+    const {patternSourceCanvas} = getCustomProperty(shapeObj, 'patternSourceCanvas');
     const [fillImage] = patternSourceCanvas.getObjects();
 
     return fillImage;
@@ -65,18 +70,19 @@ export function rePositionFilterTypeFillImage(shapeObj) {
 /**
  * Make fill property of dynamic pattern type
  * @param {fabric.Image} canvasImage - canvas background image
+ * @param {Array} filterOption - filter option
  * @returns {Object}
  * @private
  */
-export function makeFillPatternForFilter(canvasImage) {
+export function makeFillPatternForFilter(canvasImage, filterOption) {
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage);
     const patternSourceCanvas = new fabric.StaticCanvas();
-    const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle);
+    const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
 
     patternSourceCanvas.add(fillImage);
     patternSourceCanvas.renderAll();
 
-    return {
+    const fabricProperty = {
         fill: new fabric.Pattern({
             source: () => {
                 patternSourceCanvas.setDimensions({
@@ -87,10 +93,16 @@ export function makeFillPatternForFilter(canvasImage) {
 
                 return patternSourceCanvas.getElement();
             },
-            patternSourceCanvas,
             repeat: 'no-repeat'
         })
     };
+
+    setCustomProperty(fabricProperty, {
+        patternSourceCanvas,
+        filterOption
+    });
+
+    return fabricProperty;
 }
 
 /**
@@ -100,12 +112,12 @@ export function makeFillPatternForFilter(canvasImage) {
  * @private
  */
 export function reMakePatternImageSource(shapeObj, canvasImage) {
-    const {patternSourceCanvas} = shapeObj.fill;
+    const {patternSourceCanvas, filterOption} = getCustomProperty(shapeObj, ['patternSourceCanvas', 'filterOption']);
     const [fillImage] = patternSourceCanvas.getObjects();
     patternSourceCanvas.remove(fillImage);
 
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage, true);
-    const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle);
+    const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
     patternSourceCanvas.add(newFillImage);
 }
 
@@ -166,16 +178,13 @@ function calculatePositionOutOfCanvas(shapeObj, type, outDistance, left, top) {
     if (startPointIndex === 0) {
         top = top - rotationChangePoint2;
         left = left - rotationChangePoint1;
-    }
-    if (startPointIndex === 1) {
+    } else if (startPointIndex === 1) {
         top = top - rotationChangePoint2;
         left = left + rotationChangePoint1;
-    }
-    if (startPointIndex === 2) {
+    } else if (startPointIndex === 2) {
         top = top + rotationChangePoint1;
         left = left - rotationChangePoint2;
-    }
-    if (startPointIndex === 3) {
+    } else if (startPointIndex === 3) {
         top = top + rotationChangePoint1;
         left = left + rotationChangePoint2;
     }
@@ -269,26 +278,24 @@ function getCachedCanvasImageElement(canvasImage, reset = false) {
  * Make fill image
  * @param {HTMLImageElement} copiedCanvasElement - html image element
  * @param {number} currentCanvasImageAngle - current canvas angle
+ * @param {Array} filterOption - filter option
  * @returns {fabric.Image}
  * @private
  */
-function makeFillImage(copiedCanvasElement, currentCanvasImageAngle) {
+function makeFillImage(copiedCanvasElement, currentCanvasImageAngle, filterOption) {
     const fillImage = new fabric.Image(copiedCanvasElement);
-    const filter = new fabric.Image.filters.Pixelate({
-        blocksize: 20
+
+    forEach(extend({}, ...filterOption), (value, key) => {
+        const fabricFiterClassName = key.charAt(0).toUpperCase() + key.slice(1);
+        const filter = new fabric.Image.filters[fabricFiterClassName]({
+            [FILTER_OPTION_MAP[key]]: value
+        });
+        fillImage.filters.push(filter);
     });
-    /*
-    const filter2 = new fabric.Image.filters.Blur({
-        blur: 0.3
-    });
-    */
+    fillImage.applyFilters();
 
     setCustomProperty(fillImage, {originalAngle: currentCanvasImageAngle});
     resizeHelper.adjustOriginToCenter(fillImage);
-
-    fillImage.filters.push(filter);
-    // fillImage.filters.push(filter2);
-    fillImage.applyFilters();
 
     return fillImage;
 }

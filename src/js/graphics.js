@@ -1314,7 +1314,7 @@ class Graphics {
                 }
 
                 resolve(cloned);
-            });
+            }, ['customProps']);
         });
     }
 }
