@@ -11,6 +11,11 @@ const FILTER_OPTION_MAP = {
     'blur': 'blur'
 };
 
+const POSITION_DIMENSION_MAP = {
+    x: 'width',
+    y: 'height'
+};
+
 /**
  * Cached canvas image element for fill image
  * @type {boolean}
@@ -39,40 +44,79 @@ export function getfillImageFromShape(shapeObj) {
 export function rePositionFilterTypeFillImage(shapeObj) {
     const {angle, flipX, flipY} = shapeObj;
     const fillImage = getfillImageFromShape(shapeObj);
-    const {width: rotatedWidth, height: rotatedHeight} = getRotatedDimension(shapeObj);
-    const diffLeft = (rotatedWidth - shapeObj.width) / 2;
-    const diffTop = (rotatedHeight - shapeObj.height) / 2;
+    let {width, height} = getRotatedDimension(shapeObj);
+    const diffLeft = (width - shapeObj.width) / 2;
+    const diffTop = (height - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
     const cropY = shapeObj.top - (shapeObj.height / 2) - diffTop;
-    let left = (rotatedWidth / 2) - diffLeft;
-    let top = (rotatedHeight / 2) - diffTop;
+    let left = (width / 2) - diffLeft;
+    let top = (height / 2) - diffTop;
+
+    const commonProps = () => ({
+        left,
+        top,
+        width,
+        height,
+        cropX,
+        cropY,
+        flipX,
+        flipY
+    });
+
+    ([left, top, width, height] = calculateFillImageDimensionOutOfCanvas(extend({
+        shapeObj
+    }, commonProps())));
+
+    fillImage.set(extend({
+        angle: flipX === flipY ? -angle : angle
+    }, commonProps()));
+}
+
+/**
+ * Calculate fill image position and size for out of Canvas
+ * @param {Object} options - options for position dimension calculate
+ *   @param {fabric.Object} shapeObj - shape object
+ *   @param {number} left - original left position
+ *   @param {number} top - original top position
+ *   @param {number} width - image width
+ *   @param {number} height - image height
+ *   @param {number} cropX - image cropX
+ *   @param {number} cropY - image cropY
+ *   @param {boolean} flipX - shape flipX
+ *   @param {boolean} flipY - shape flipY
+ * @returns {Object}
+ */
+function calculateFillImageDimensionOutOfCanvas({shapeObj, left, top, width, height, cropX, cropY, flipX, flipY}) {
+    const positionFixer = (type, outDistance) => calculateFillImagePositionOutOfCanvas({
+        type,
+        outDistance,
+        shapeObj,
+        left,
+        top,
+        flipX,
+        flipY
+    });
+    const dimension = {
+        width,
+        height
+    };
 
     forEach(['x', 'y'], type => {
-        const outDistance = type === 'x' ? cropX : cropY;
-        if (outDistance < 0) {
-            [left, top] = calculateFillImagePositionOutOfCanvas({
-                type,
-                shapeObj,
-                outDistance,
-                left,
-                top,
-                flipX,
-                flipY
-            });
+        const compareSize = dimension[POSITION_DIMENSION_MAP[type]];
+        const cropDistance = type === 'x' ? cropX : cropY;
+        const standardSize = cachedCanvasImageElement[POSITION_DIMENSION_MAP[type]];
+        if (compareSize > standardSize) {
+            const outDistance = (compareSize - standardSize) / 2;
+
+            dimension[POSITION_DIMENSION_MAP[type]] = standardSize;
+            [left, top] = positionFixer(type, outDistance);
+        }
+        if (cropDistance < 0) {
+            [left, top] = positionFixer(type, cropDistance);
         }
     });
 
-    fillImage.set({
-        angle: flipX === flipY ? -angle : angle,
-        flipX,
-        flipY,
-        left,
-        top,
-        width: rotatedWidth,
-        height: rotatedHeight,
-        cropX,
-        cropY
-    });
+    return [left, top, dimension.width, dimension.height];
 }
 
 /**
@@ -94,8 +138,8 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
         fill: new fabric.Pattern({
             source: () => {
                 patternSourceCanvas.setDimensions({
-                    width: Math.max(copiedCanvasElement.width, copiedCanvasElement.height),
-                    height: Math.max(copiedCanvasElement.width, copiedCanvasElement.height)
+                    width: copiedCanvasElement.width,
+                    height: copiedCanvasElement.height
                 });
                 patternSourceCanvas.renderAll();
 
@@ -119,6 +163,7 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
  * @private
  */
 export function reMakePatternImageSource(shapeObj, canvasImage) {
+    console.log('remake');
     const {patternSourceCanvas, filterOption} = getCustomProperty(shapeObj, ['patternSourceCanvas', 'filterOption']);
     const [fillImage] = patternSourceCanvas.getObjects();
     patternSourceCanvas.remove(fillImage);
