@@ -222,7 +222,12 @@ export default class Shape extends Component {
                 reject(rejectMessages.unsupportedType);
             }
 
-            shapeObj.set(this._makeShapeOption(options));
+            if (this.getFillTypeFromOption(options) === 'filter') {
+                options = this._generalizeFillOption(options);
+            }
+
+            shapeObj.set(options);
+
             this.getCanvas().renderAll();
             resolve();
         });
@@ -244,24 +249,8 @@ export default class Shape extends Component {
      */
     getFillTypeFromOption(fillOption = {}) {
         const {type = 'color'} = fillOption;
-        let fillType = type;
 
-        if (!fillOption || fillOption === 'transparent') {
-            fillType = 'transparent';
-        } else if (type === 'filter') {
-            fillType = 'filter';
-        }
-
-        return fillType;
-    }
-
-    /**
-     * Get fill option
-     * @param {Object | string} fillOption - shape fill option
-     * @returns {string} 'transparent' or 'color' or 'filter'
-     */
-    getFilterOption(fillOption) {
-        return fillOption.filter;
+        return type;
     }
 
     /**
@@ -294,17 +283,25 @@ export default class Shape extends Component {
     }
 
     /**
-     * Make shape option
-     * @param {Object} options - Options to creat the shape
+     * generalize fill option
+     * @param {Object} options - Options to create the shape
      * @returns {Object} - shape option
      * @private
      */
-    _makeShapeOption(options) {
+    _generalizeFillOption(options) {
+        const fillOption = options.fill;
         const fillType = this.getFillTypeFromOption(options.fill);
-        let extOption = {};
+        let fill = fillOption;
 
+        if (fillOption.color) {
+            fill = fillOption.color;
+        }
+
+        let extOption = null;
         if (fillType === 'filter') {
-            extOption = makeFillPatternForFilter(this.graphics.canvasImage, this.getFilterOption(options.fill));
+            extOption = makeFillPatternForFilter(this.graphics.canvasImage, fillOption);
+        } else {
+            extOption = {fill};
         }
 
         return extend({}, options, extOption);
@@ -318,19 +315,19 @@ export default class Shape extends Component {
      * @private
      */
     _createInstance(type, options) {
-        const shapeOptions = this._makeShapeOption(options);
         let instance;
 
         switch (type) {
             case 'rect':
-                instance = new fabric.Rect(shapeOptions);
+                instance = new fabric.Rect(options);
                 break;
             case 'circle':
-                shapeOptions.type = 'circle';
-                instance = new fabric.Ellipse(shapeOptions);
+                instance = new fabric.Ellipse(extend({
+                    type: 'circle'
+                }, options));
                 break;
             case 'triangle':
-                instance = new fabric.Triangle(shapeOptions);
+                instance = new fabric.Triangle(options);
                 break;
             default:
                 instance = {};
@@ -349,12 +346,13 @@ export default class Shape extends Component {
         const selectionStyles = fObjectOptions.SELECTION_STYLE;
 
         options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
+        options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
 
         if (options.isRegular) {
             options.lockUniScaling = true;
         }
 
-        return options;
+        return this._generalizeFillOption(options);
     }
 
     /**

@@ -107,6 +107,32 @@ var imageEditor = new tui.ImageEditor('.tui-image-editor', {
     }
 });
 
+/*
+imageEditor.addShape('rect', {
+    fill: '#ab4642',
+    stroke: 'blue',
+    strokeWidth: 3,
+    width: 100,
+    height: 200,
+    left: 200,
+    top: 200,
+    isRegular: true
+});
+
+imageEditor.addShape('rect', {
+    fill: {
+      type: 'filter',
+      filter: [{pixelate: 20}]
+    },
+    stroke: 'blue',
+    strokeWidth: 3,
+    width: 300,
+    height: 300,
+    left: 200,
+    top: 200,
+});
+*/
+
 // Color picker for free drawing
 var brushColorpicker = tui.colorPicker.create({
     container: $('#tui-brush-color-picker')[0],

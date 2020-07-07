@@ -129,7 +129,7 @@ function calculateFillImageDimensionOutOfCanvas({shapeObj, left, top, width, hei
 export function makeFillPatternForFilter(canvasImage, filterOption) {
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage);
     const patternSourceCanvas = new fabric.StaticCanvas();
-    const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
+    const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption.filter);
 
     patternSourceCanvas.add(fillImage);
     patternSourceCanvas.renderAll();
@@ -163,13 +163,12 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
  * @private
  */
 export function reMakePatternImageSource(shapeObj, canvasImage) {
-    console.log('remake');
     const {patternSourceCanvas, filterOption} = getCustomProperty(shapeObj, ['patternSourceCanvas', 'filterOption']);
     const [fillImage] = patternSourceCanvas.getObjects();
     patternSourceCanvas.remove(fillImage);
 
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage, true);
-    const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
+    const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption.filter);
     patternSourceCanvas.add(newFillImage);
 }
 
