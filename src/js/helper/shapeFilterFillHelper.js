@@ -47,13 +47,13 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     const {angle, flipX, flipY} = shapeObj;
     const fillImage = getfillImageFromShape(shapeObj);
     let {width, height} = getRotatedDimension(shapeObj);
-    const [maxWidth, maxHeight] = [width, height];
     const diffLeft = (width - shapeObj.width) / 2;
     const diffTop = (height - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
     const cropY = shapeObj.top - (shapeObj.height / 2) - diffTop;
     let left = (width / 2) - diffLeft;
     let top = (height / 2) - diffTop;
+    const fillImageMaxSize = Math.max(width, height);
 
     const commonProps = () => ({
         left,
@@ -74,10 +74,7 @@ export function rePositionFilterTypeFillImage(shapeObj) {
         angle: flipX === flipY ? -angle : angle
     }, commonProps()));
 
-    setCustomProperty(fillImage, {
-        maxWidth,
-        maxHeight
-    });
+    setCustomProperty(fillImage, {fillImageMaxSize});
 }
 
 /**
@@ -153,18 +150,17 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage);
     const patternSourceCanvas = new fabric.StaticCanvas();
     const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
-
     patternSourceCanvas.add(fillImage);
-    patternSourceCanvas.renderAll();
 
     const fabricProperty = {
         fill: new fabric.Pattern({
             source: () => {
-                const {maxWidth, maxHeight} = getCustomProperty(fillImage, ['maxWidth', 'maxHeight']);
+                const [innerImage] = patternSourceCanvas.getObjects();
+                const {fillImageMaxSize} = getCustomProperty(innerImage, 'fillImageMaxSize');
 
                 patternSourceCanvas.setDimensions({
-                    width: maxWidth,
-                    height: maxHeight
+                    width: fillImageMaxSize,
+                    height: fillImageMaxSize
                 });
                 patternSourceCanvas.renderAll();
 
@@ -422,8 +418,7 @@ function makeFillImage(copiedCanvasElement, currentCanvasImageAngle, filterOptio
 
     setCustomProperty(fillImage, {
         originalAngle: currentCanvasImageAngle,
-        maxWidth: fillImage.width,
-        maxHeight: fillImage.height
+        fillImageMaxSize: Math.max(fillImage.width, fillImage.height)
     });
     resizeHelper.adjustOriginToCenter(fillImage);
 
