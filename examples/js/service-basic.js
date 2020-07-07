@@ -873,7 +873,7 @@ $inputCheckMultiply.on('change', function() {
     });
 });
 
-multiplyColorpicker.on('selectColor', function() {
+multiplyColorpicker.on('selectColor', function(e) {
     applyOrRemoveFilter($inputCheckMultiply.is(':checked'), 'multiply', {
         color: e.color
     });
@@ -915,15 +915,14 @@ $inputRangeColorFilterValue.on('change', function() {
 
 // Load sample image
 imageEditor.loadImageFromURL('img/sampleImage2.png', 'SampleImage').then(function(sizeValue) {
-// imageEditor.loadImageFromURL('img/bg.jpg', 'SampleImage').then(function(sizeValue) {
     imageEditor.clearUndoStack();
     imageEditor.addShape('rect', {
         fill: {
             type: 'filter',
-            filter: [{pixelate: 20}]
+            filter: [{pixelate: 3}]
         },
         stroke: 'blue',
-        strokeWidth: 3,
+        strokeWidth: 0,
         width: 300,
         height: 300,
         left: 400,

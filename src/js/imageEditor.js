@@ -83,6 +83,22 @@ const {
  */
 
 /**
+ * Shape filter option
+ * @typedef {object.<string, number>} ShapeFillFilterOption
+ */
+
+/**
+ * Shape filter option
+ * @typedef {object} ShapeFillOption - fill option of shape
+ * @property {string} type - fill type ('color' or 'filter')
+ * @property {Array.<ShapeFillFilterOption>} [filter] - {@link ShapeFilterOption} List.
+ *  only applies to filter types 
+ *  (ex: [\{pixelate: 20\}, \{blur: 0.3\}]) 
+ *  pixelate (min: 2, max: 20), blur (min: 0.1, max: 1)
+ * @property {string} [color] - Shape foreground color (ex: '#fff', 'transparent')
+ */
+
+/**
  * Image editor
  * @class
  * @param {string|HTMLElement} wrapper - Wrapper's element or selector
@@ -901,7 +917,7 @@ class ImageEditor {
      * Add shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or Shape foreground color (ex: '#fff', 'transparent') or ShapeFillOption object
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)

@@ -151,7 +151,7 @@ export default class Shape extends Component {
      * @ignore
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {Object} [options] - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {string | Object} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -172,7 +172,7 @@ export default class Shape extends Component {
      * @ignore
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - ShapeFillOption or Shape foreground color (ex: '#fff', 'transparent') or ShapeFillOption object
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -185,17 +185,15 @@ export default class Shape extends Component {
     add(type, options) {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
-            options = this._extendOptions(options);
-
-            const shapeObj = this._createInstance(type, options);
+            const extendOption = this._extendOptions(options);
+            const shapeObj = this._createInstance(type, extendOption);
+            const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
             this._bindEventOnShape(shapeObj);
 
             canvas.add(shapeObj).setActiveObject(shapeObj);
 
             this._rePositionFillFilter(shapeObj);
-
-            const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
             resolve(objectProperties);
         });
@@ -346,7 +344,6 @@ export default class Shape extends Component {
     _extendOptions(options) {
         const selectionStyles = fObjectOptions.SELECTION_STYLE;
 
-        options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
         options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
 
         if (options.isRegular) {
