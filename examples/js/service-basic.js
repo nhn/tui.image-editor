@@ -107,32 +107,6 @@ var imageEditor = new tui.ImageEditor('.tui-image-editor', {
     }
 });
 
-/*
-imageEditor.addShape('rect', {
-    fill: '#ab4642',
-    stroke: 'blue',
-    strokeWidth: 3,
-    width: 100,
-    height: 200,
-    left: 200,
-    top: 200,
-    isRegular: true
-});
-
-imageEditor.addShape('rect', {
-    fill: {
-      type: 'filter',
-      filter: [{pixelate: 20}]
-    },
-    stroke: 'blue',
-    strokeWidth: 3,
-    width: 300,
-    height: 300,
-    left: 200,
-    top: 200,
-});
-*/
-
 // Color picker for free drawing
 var brushColorpicker = tui.colorPicker.create({
     container: $('#tui-brush-color-picker')[0],
@@ -561,15 +535,7 @@ $btnDrawShape.on('click', function() {
     shapeType = $('[name="select-shape-type"]:checked').val();
 
     shapeOptions.stroke = '#000000';
-    // shapeOptions.fill = '#ffffff';
-    // shapeOptions.fill = 'transparent';
-    shapeOptions.fill = {
-        type: 'filter',
-        filter: [
-            {blur: 0.3},
-            {pixelate: 20}
-        ]
-    };
+    shapeOptions.fill = '#ffffff';
 
     shapeOptions.strokeWidth = Number($inputStrokeWidthRange.val());
 
@@ -585,76 +551,54 @@ $selectShapeType.on('change', function() {
 
     imageEditor.setDrawingShape(shapeType);
 });
-
-$inputCheckTransparent.on('change', function() {
-    var colorType = $selectColorType.val();
-    var isTransparent = $(this).prop('checked');
-    var color;
-
-    if (!isTransparent) {
-        color = shapeColorpicker.getColor();
-    } else {
-        color = 'transparent';
-    }
-
+$selectColorType.on('change', function() {
+    var colorType = $(this).val();
     if (colorType === 'stroke') {
-        imageEditor.changeShape(activeObjectId, {
-            stroke: color
-        });
-    } else if (colorType === 'fill') {
-        imageEditor.changeShape(activeObjectId, {
-            fill: color
-        });
+        $inputCheckFilter.prop('disabled', true);
+        $inputCheckFilter.prop('checked', false);
+    } else {
+        $inputCheckTransparent.prop('disabled', false);
+        $inputCheckFilter.prop('disabled', false);
     }
-
-    imageEditor.setDrawingShape(shapeType, shapeOptions);
 });
 
-$inputCheckFilter.on('change', function() {
-    var colorType = $selectColorType.val();
-    var isFilter = $(this).prop('checked');
-    var color;
-
-    if (!isFilter) {
-        color = shapeColorpicker.getColor();
-    } else {
-        color = 'filter';
-    }
-
-    if (colorType === 'stroke') {
-        imageEditor.changeShape(activeObjectId, {
-            stroke: color
-        });
-    } else if (colorType === 'fill') {
-        imageEditor.changeShape(activeObjectId, {
-            fill: color
-        });
-    }
-
-    imageEditor.setDrawingShape(shapeType, shapeOptions);
-});
-
+$inputCheckTransparent.on('change', changeShapeFillHandler);
+$inputCheckFilter.on('change', changeShapeFillHandler);
 shapeColorpicker.on('selectColor', function(event) {
+    $inputCheckTransparent.prop('checked', false);
+    $inputCheckFilter.prop('checked', false);
+    changeShapeFillHandler(event);
+});
+
+function changeShapeFillHandler(event) {
     var colorType = $selectColorType.val();
     var isTransparent = $inputCheckTransparent.prop('checked');
-    var color = event.color;
+    var isFilter = $inputCheckFilter.prop('checked');
+    var shapeOption;
 
-    if (isTransparent) {
-        return;
+    if (event.color) {
+        shapeOption = event.color;
+    } else if (isTransparent) {
+        shapeOption = 'transparent';
+    } else if (isFilter) {
+        shapeOption = {
+            type: 'filter',
+            filter: [{pixelate: 20}]
+        };
     }
 
     if (colorType === 'stroke') {
         imageEditor.changeShape(activeObjectId, {
-            stroke: color
+            stroke: shapeOption
         });
     } else if (colorType === 'fill') {
         imageEditor.changeShape(activeObjectId, {
-            fill: color
+            fill: shapeOption
         });
     }
 
     imageEditor.setDrawingShape(shapeType, shapeOptions);
-});
+}
 
 $inputStrokeWidthRange.on('change', function() {
     var strokeWidth = Number($(this).val());
@@ -972,8 +916,19 @@ $inputRangeColorFilterValue.on('change', function() {
 // Load sample image
 imageEditor.loadImageFromURL('img/sampleImage2.png', 'SampleImage').then(function(sizeValue) {
 // imageEditor.loadImageFromURL('img/bg.jpg', 'SampleImage').then(function(sizeValue) {
-    console.log(sizeValue);
     imageEditor.clearUndoStack();
+    imageEditor.addShape('rect', {
+        fill: {
+            type: 'filter',
+            filter: [{pixelate: 20}]
+        },
+        stroke: 'blue',
+        strokeWidth: 3,
+        width: 300,
+        height: 300,
+        left: 400,
+        top: 400
+    });
 });
 
 // IE9 Unselectable

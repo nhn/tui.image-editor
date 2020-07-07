@@ -221,12 +221,13 @@ export default class Shape extends Component {
             if (inArray(shapeObj.get('type'), shapeType) < 0) {
                 reject(rejectMessages.unsupportedType);
             }
+            const changeFillOption = this.getFillTypeFromOption(options.fill) === 'filter';
 
-            if (this.getFillTypeFromOption(options) === 'filter') {
-                options = this._generalizeFillOption(options);
+            shapeObj.set(changeFillOption ? this._generalizeFillOption(options) : options);
+
+            if (changeFillOption) {
+                this._rePositionFillFilter(shapeObj);
             }
-
-            shapeObj.set(options);
 
             this.getCanvas().renderAll();
             resolve();
