@@ -241,12 +241,12 @@ function setShapeToolbar(obj) {
             shapeColorpicker.setColor(strokeColor);
         }
     } else if (colorType === 'fill') {
-        fillType = obj.fillType;
-        fillColor = obj.fill;
+        fillType = obj.fill.type;
         isTransparent = (fillType === 'transparent');
         isFilter = (fillType === 'filter');
 
         if (!isTransparent && !isFilter) {
+            fillColor = obj.fill.color;
             shapeColorpicker.setColor(fillColor);
         }
     }
@@ -919,10 +919,10 @@ imageEditor.loadImageFromURL('img/sampleImage2.png', 'SampleImage').then(functio
     imageEditor.addShape('rect', {
         fill: {
             type: 'filter',
-            filter: [{pixelate: 3}]
+            filter: [{blur: 0.3}]
         },
         stroke: 'blue',
-        strokeWidth: 0,
+        strokeWidth: 12,
         width: 300,
         height: 300,
         left: 400,

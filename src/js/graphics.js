@@ -139,7 +139,6 @@ class Graphics {
             onObjectRemoved: this._onObjectRemoved.bind(this),
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
-            onObjectModified: this._onObjectModified.bind(this),
             onObjectRotated: this._onObjectRotated.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
             onPathCreated: this._onPathCreated.bind(this),
@@ -955,7 +954,6 @@ class Graphics {
             'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
-            'object:modified': handler.onObjectModified,
             'object:rotating': handler.onObjectRotated,
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
@@ -1016,20 +1014,6 @@ class Graphics {
      */
     _onObjectScaled(fEvent) {
         this._lazyFire(events.OBJECT_SCALED, object => this.createObjectProperties(object), fEvent.target);
-    }
-
-    /**
-     * "object:modified" canvas event handler
-     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
-     * @private
-     */
-    _onObjectModified(fEvent) {
-        const {target} = fEvent;
-        if (target.type === 'activeSelection') {
-            const items = target.getObjects();
-
-            items.forEach(item => item.fire('modifiedInGroup', fEvent.target));
-        }
     }
 
     /**
@@ -1157,7 +1141,7 @@ class Graphics {
         } else if (['rect', 'triangle', 'circle'].indexOf(obj.type) > -1) {
             const shapeComp = this.getComponent(components.SHAPE);
             extend(props, {
-                fillType: shapeComp.getFillTypeFromObject(obj)
+                fill: shapeComp.makeFillPropertyForUserEvent(obj)
             });
         }
 

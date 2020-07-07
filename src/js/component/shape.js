@@ -267,6 +267,28 @@ export default class Shape extends Component {
     }
 
     /**
+     * make fill property for user event
+     * @param {fabric.Object} shapeObj - fabric object
+     * @returns {string} 'transparent' or 'color' or 'filter'
+     */
+    makeFillPropertyForUserEvent(shapeObj) {
+        const fillType = this.getFillTypeFromObject(shapeObj);
+        const result = {};
+
+        if (fillType === 'filter') {
+            const {filterOption} = getCustomProperty(shapeObj, 'filterOption');
+
+            result.type = fillType;
+            result.filter = filterOption;
+        } else {
+            result.type = 'color';
+            result.color = shapeObj.fill;
+        }
+
+        return result;
+    }
+
+    /**
      * Copy object handling.
      * @param {fabric.Object} shapeObj - Shape object
      */
