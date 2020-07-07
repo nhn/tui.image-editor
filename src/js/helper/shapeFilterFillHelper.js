@@ -3,13 +3,15 @@
  * @fileoverview Shape resize helper
  */
 import {forEach, map, extend} from 'tui-code-snippet';
-import {setCustomProperty, getCustomProperty} from '../util';
+import {objectFlip, setCustomProperty, getCustomProperty} from '../util';
 import resizeHelper from '../helper/shapeResizeHelper';
 
 const FILTER_OPTION_MAP = {
     'pixelate': 'blocksize',
     'blur': 'blur'
 };
+
+const FILTER_NAME_VALUE_MAP = objectFlip(FILTER_OPTION_MAP);
 
 const POSITION_DIMENSION_MAP = {
     x: 'width',
@@ -45,6 +47,7 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     const {angle, flipX, flipY} = shapeObj;
     const fillImage = getfillImageFromShape(shapeObj);
     let {width, height} = getRotatedDimension(shapeObj);
+    const [maxWidth, maxHeight] = [width, height];
     const diffLeft = (width - shapeObj.width) / 2;
     const diffTop = (height - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
@@ -70,6 +73,26 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     fillImage.set(extend({
         angle: flipX === flipY ? -angle : angle
     }, commonProps()));
+
+    setCustomProperty(fillImage, {
+        maxWidth,
+        maxHeight
+    });
+}
+
+/**
+ * Make filter option from fabric image
+ * @param {fabric.Image} imageObject - fabric image object
+ * @returns {object}
+ */
+export function makeFilterOptionFromFabricImage(imageObject) {
+    return map(imageObject.filters, filter => {
+        const [key] = Object.keys(filter);
+
+        return {
+            [FILTER_NAME_VALUE_MAP[key]]: filter[key]
+        };
+    });
 }
 
 /**
@@ -129,7 +152,7 @@ function calculateFillImageDimensionOutOfCanvas({shapeObj, left, top, width, hei
 export function makeFillPatternForFilter(canvasImage, filterOption) {
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage);
     const patternSourceCanvas = new fabric.StaticCanvas();
-    const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption.filter);
+    const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
 
     patternSourceCanvas.add(fillImage);
     patternSourceCanvas.renderAll();
@@ -137,9 +160,11 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
     const fabricProperty = {
         fill: new fabric.Pattern({
             source: () => {
+                const {maxWidth, maxHeight} = getCustomProperty(fillImage, ['maxWidth', 'maxHeight']);
+
                 patternSourceCanvas.setDimensions({
-                    width: copiedCanvasElement.width,
-                    height: copiedCanvasElement.height
+                    width: maxWidth,
+                    height: maxHeight
                 });
                 patternSourceCanvas.renderAll();
 
@@ -148,10 +173,7 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
             repeat: 'no-repeat'
         })
     };
-    setCustomProperty(fabricProperty, {
-        patternSourceCanvas,
-        filterOption
-    });
+    setCustomProperty(fabricProperty, {patternSourceCanvas});
 
     return fabricProperty;
 }
@@ -163,12 +185,15 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
  * @private
  */
 export function reMakePatternImageSource(shapeObj, canvasImage) {
-    const {patternSourceCanvas, filterOption} = getCustomProperty(shapeObj, ['patternSourceCanvas', 'filterOption']);
+    const {patternSourceCanvas} = getCustomProperty(shapeObj, 'patternSourceCanvas');
     const [fillImage] = patternSourceCanvas.getObjects();
+    const filterOption = makeFilterOptionFromFabricImage(fillImage);
+
     patternSourceCanvas.remove(fillImage);
 
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage, true);
-    const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption.filter);
+    const newFillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
+
     patternSourceCanvas.add(newFillImage);
 }
 
@@ -287,14 +312,13 @@ function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, LinePoint
 
 /* eslint-disable complexity */
 /**
- * Calculate a point line outside the canvas. 
+ * Calculate a point line outside the canvas for horizontal.
  * @param {number} startPointIndex - start point index
  * @param {boolean} flipX - flip x statux
  * @param {boolean} flipY - flip y statux
  * @returns {boolean} flipY - flip y statux
  */
 function isReverseLeftPositionForFlip(startPointIndex, flipX, flipY) {
-    /* eslint-disable complexity */
     return (
         (((!flipX && flipY) || (!flipX && !flipY)) && startPointIndex === 0) ||
         (((flipX && flipY) || (flipX && !flipY)) && startPointIndex === 1) ||
@@ -302,9 +326,11 @@ function isReverseLeftPositionForFlip(startPointIndex, flipX, flipY) {
         (((flipX && !flipY) || (flipX && flipY)) && startPointIndex === 3)
     );
 }
+/* eslint-enable complexity */
 
+/* eslint-disable complexity */
 /**
- * Calculate a point line outside the canvas. 
+ * Calculate a point line outside the canvas for vertical. 
  * @param {number} startPointIndex - start point index
  * @param {boolean} flipX - flip x statux
  * @param {boolean} flipY - flip y statux
@@ -394,8 +420,13 @@ function makeFillImage(copiedCanvasElement, currentCanvasImageAngle, filterOptio
     });
     fillImage.applyFilters();
 
-    setCustomProperty(fillImage, {originalAngle: currentCanvasImageAngle});
+    setCustomProperty(fillImage, {
+        originalAngle: currentCanvasImageAngle,
+        maxWidth: fillImage.width,
+        maxHeight: fillImage.height
+    });
     resizeHelper.adjustOriginToCenter(fillImage);
 
     return fillImage;
 }
+

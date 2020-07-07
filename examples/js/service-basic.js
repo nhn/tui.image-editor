@@ -919,7 +919,7 @@ imageEditor.loadImageFromURL('img/sampleImage2.png', 'SampleImage').then(functio
     imageEditor.addShape('rect', {
         fill: {
             type: 'filter',
-            filter: [{blur: 0.3}]
+            filter: [{blur: 0.3}, {pixelate: 20}]
         },
         stroke: 'blue',
         strokeWidth: 12,

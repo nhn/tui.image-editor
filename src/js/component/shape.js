@@ -17,7 +17,8 @@ import {
     getfillImageFromShape,
     rePositionFilterTypeFillImage,
     reMakePatternImageSource,
-    makeFillPatternForFilter
+    makeFillPatternForFilter,
+    makeFilterOptionFromFabricImage
 } from '../helper/shapeFilterFillHelper';
 import {Promise, changeOriginOfObject, getCustomProperty} from '../util';
 import {extend, inArray} from 'tui-code-snippet';
@@ -151,7 +152,8 @@ export default class Shape extends Component {
      * @ignore
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {Object} [options] - Shape options
-     *      @param {string | Object} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -204,7 +206,8 @@ export default class Shape extends Component {
      * @ignore
      * @param {fabric.Object} shapeObj - Selected shape object on canvas
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -269,14 +272,15 @@ export default class Shape extends Component {
     /**
      * make fill property for user event
      * @param {fabric.Object} shapeObj - fabric object
-     * @returns {string} 'transparent' or 'color' or 'filter'
+     * @returns {Object}
      */
     makeFillPropertyForUserEvent(shapeObj) {
         const fillType = this.getFillTypeFromObject(shapeObj);
         const result = {};
 
         if (fillType === 'filter') {
-            const {filterOption} = getCustomProperty(shapeObj, 'filterOption');
+            const fillImage = getfillImageFromShape(shapeObj);
+            const filterOption = makeFilterOptionFromFabricImage(fillImage);
 
             result.type = fillType;
             result.filter = filterOption;
@@ -291,12 +295,14 @@ export default class Shape extends Component {
     /**
      * Copy object handling.
      * @param {fabric.Object} shapeObj - Shape object
+     * @param {fabric.Object} originalShapeObj - Shape object
      */
-    processForCopiedObject(shapeObj) {
+    processForCopiedObject(shapeObj, originalShapeObj) {
         this._bindEventOnShape(shapeObj);
 
         if (this.getFillTypeFromObject(shapeObj) === 'filter') {
-            const {filterOption} = getCustomProperty(shapeObj, 'filterOption');
+            const fillImage = getfillImageFromShape(originalShapeObj);
+            const filterOption = makeFilterOptionFromFabricImage(fillImage);
 
             shapeObj.set(makeFillPatternForFilter(this.graphics.canvasImage, filterOption));
             this._rePositionFillFilter(shapeObj);
@@ -320,7 +326,7 @@ export default class Shape extends Component {
 
         let extOption = null;
         if (fillType === 'filter') {
-            extOption = makeFillPatternForFilter(this.graphics.canvasImage, fillOption);
+            extOption = makeFillPatternForFilter(this.graphics.canvasImage, fillOption.filter);
         } else {
             extOption = {fill};
         }

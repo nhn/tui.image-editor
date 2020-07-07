@@ -139,6 +139,7 @@ class Graphics {
             onObjectRemoved: this._onObjectRemoved.bind(this),
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
+            onObjectModified: this._onObjectModified.bind(this),
             onObjectRotated: this._onObjectRotated.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
             onPathCreated: this._onPathCreated.bind(this),
@@ -640,7 +641,8 @@ class Graphics {
      * Set states of current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} [options] - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -954,6 +956,7 @@ class Graphics {
             'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
+            'object:modified': handler.onObjectModified,
             'object:rotating': handler.onObjectRotated,
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
@@ -1014,6 +1017,20 @@ class Graphics {
      */
     _onObjectScaled(fEvent) {
         this._lazyFire(events.OBJECT_SCALED, object => this.createObjectProperties(object), fEvent.target);
+    }
+
+    /**
+     * "object:modified" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onObjectModified(fEvent) {
+        const {target} = fEvent;
+        if (target.type === 'activeSelection') {
+            const items = target.getObjects();
+
+            items.forEach(item => item.fire('modifiedInGroup', fEvent.target));
+        }
     }
 
     /**
@@ -1294,11 +1311,11 @@ class Graphics {
             targetObject.clone(cloned => {
                 const shapeComp = this.getComponent(components.SHAPE);
                 if (shapeComp.isShape(cloned)) {
-                    shapeComp.processForCopiedObject(cloned);
+                    shapeComp.processForCopiedObject(cloned, targetObject);
                 }
 
                 resolve(cloned);
-            }, ['customProps']);
+            });
         });
     }
 }

@@ -11,6 +11,15 @@ import {keyMirror} from './util';
 export const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
 
 /**
+ * Filter name value map
+ * @type {Object.<string, string>}
+ */
+export const FILTER_NAME_VALUE_MAP = {
+    blur: 'blur',
+    blocksize: 'pixelate'
+};
+
+/**
  * Component names
  * @type {Object.<string, string>}
  */

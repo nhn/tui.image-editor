@@ -250,6 +250,21 @@ export function changeOriginOfObject(fObject, origin) {
 }
 
 /**
+ * Object key value flip
+ * @param {Object} targetObject - The data object of the key value. 
+ * @returns {Object}
+ */
+export function objectFlip(targetObject) {
+    const result = {};
+
+    Object.keys(targetObject).forEach(key => {
+        result[targetObject[key]] = key;
+    });
+
+    return result;
+}
+
+/**
  * Set custom properties
  * @param {Object} targetObject - target object
  * @param {Object} props - custom props object
