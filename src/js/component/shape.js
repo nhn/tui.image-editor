@@ -223,7 +223,7 @@ export default class Shape extends Component {
             }
             const hasFillOption = getFillTypeFromOption(options.fill) === 'filter';
 
-            shapeObj.set(hasFillOption ? this._generalizeFillOption(options) : options);
+            shapeObj.set(hasFillOption ? this._makeFabricFillOption(options) : options);
 
             if (hasFillOption) {
                 this._resetPositionFillFilter(shapeObj);
@@ -276,12 +276,12 @@ export default class Shape extends Component {
     }
 
     /**
-     * generalize fill option
+     * Make fill option
      * @param {Object} options - Options to create the shape
      * @returns {Object} - shape option
      * @private
      */
-    _generalizeFillOption(options) {
+    _makeFabricFillOption(options) {
         const fillOption = options.fill;
         const fillType = getFillTypeFromOption(options.fill);
         let fill = fillOption;
@@ -345,7 +345,7 @@ export default class Shape extends Component {
             options.lockUniScaling = true;
         }
 
-        return this._generalizeFillOption(options);
+        return this._makeFabricFillOption(options);
     }
 
     /**
