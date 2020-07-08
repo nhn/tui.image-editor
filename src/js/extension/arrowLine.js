@@ -16,7 +16,7 @@ const ArrowLine = fabric.util.createClass(fabric.Line, /** @lends Convolute.prot
      * @param {String} type
      * @default
      */
-    type: 'ArrowLine',
+    type: 'line',
 
     /**
      * Constructor
