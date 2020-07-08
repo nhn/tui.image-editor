@@ -4,6 +4,7 @@
  * @fileoverview
  */
 /* eslint-disable vars-on-top,no-var,strict,prefer-template,prefer-arrow-callback,prefer-destructuring,object-shorthand,require-jsdoc,complexity,prefer-const,no-unused-vars */
+var PIXELATE_FILTER_DEFAULT_VALUE = 20;
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
 var shapeOptions = {};
@@ -229,22 +230,17 @@ function setIconToolbar(obj) {
 }
 
 function setShapeToolbar(obj) {
-    var strokeColor, fillColor, isTransparent, isFilter, fillType;
+    var fillColor, isTransparent, isFilter;
     var colorType = $selectColorType.val();
+    var changeValue = colorType === 'stroke' ? obj.stroke : obj.fill.type;
+    isTransparent = (changeValue === 'transparent');
+    isFilter = (changeValue === 'filter');
 
     if (colorType === 'stroke') {
-        strokeColor = obj.stroke;
-        isTransparent = (strokeColor === 'transparent');
-        isFilter = (strokeColor === 'filter');
-
         if (!isTransparent && !isFilter) {
-            shapeColorpicker.setColor(strokeColor);
+            shapeColorpicker.setColor(changeValue);
         }
     } else if (colorType === 'fill') {
-        fillType = obj.fill.type;
-        isTransparent = (fillType === 'transparent');
-        isFilter = (fillType === 'filter');
-
         if (!isTransparent && !isFilter) {
             fillColor = obj.fill.color;
             shapeColorpicker.setColor(fillColor);
@@ -562,15 +558,15 @@ $selectColorType.on('change', function() {
     }
 });
 
-$inputCheckTransparent.on('change', changeShapeFillHandler);
-$inputCheckFilter.on('change', changeShapeFillHandler);
+$inputCheckTransparent.on('change', onChangeShapeFill);
+$inputCheckFilter.on('change', onChangeShapeFill);
 shapeColorpicker.on('selectColor', function(event) {
     $inputCheckTransparent.prop('checked', false);
     $inputCheckFilter.prop('checked', false);
-    changeShapeFillHandler(event);
+    onChangeShapeFill(event);
 });
 
-function changeShapeFillHandler(event) {
+function onChangeShapeFill(event) {
     var colorType = $selectColorType.val();
     var isTransparent = $inputCheckTransparent.prop('checked');
     var isFilter = $inputCheckFilter.prop('checked');
@@ -583,7 +579,7 @@ function changeShapeFillHandler(event) {
     } else if (isFilter) {
         shapeOption = {
             type: 'filter',
-            filter: [{pixelate: 20}]
+            filter: [{pixelate: PIXELATE_FILTER_DEFAULT_VALUE}]
         };
     }
 
@@ -915,19 +911,8 @@ $inputRangeColorFilterValue.on('change', function() {
 
 // Load sample image
 imageEditor.loadImageFromURL('img/sampleImage2.png', 'SampleImage').then(function(sizeValue) {
+    console.log(sizeValue);
     imageEditor.clearUndoStack();
-    imageEditor.addShape('rect', {
-        fill: {
-            type: 'filter',
-            filter: [{blur: 0.3}, {pixelate: 20}]
-        },
-        stroke: 'blue',
-        strokeWidth: 12,
-        width: 300,
-        height: 300,
-        left: 400,
-        top: 400
-    });
 });
 
 // IE9 Unselectable

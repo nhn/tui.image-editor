@@ -7,7 +7,7 @@ import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Shape from '../src/js/component/shape';
 import {resize} from '../src/js/helper/shapeResizeHelper';
-import {getfillImageFromShape} from '../src/js/helper/shapeFilterFillHelper';
+import {getFillImageFromShape} from '../src/js/helper/shapeFilterFillHelper';
 
 describe('Shape', () => {
     let canvas, graphics, mockImage, fEvent, shape, shapeObj;
@@ -246,30 +246,30 @@ describe('Shape', () => {
             });
         });
 
-        it('"_rePositionFillFilter" should be executed when a movement, rotation, and scaling event of a filter type fill is applied.', () => {
+        it('"_resetPositionFillFilter" should be executed when a movement, rotation, and scaling event of a filter type fill is applied.', () => {
             spyOn(canvas, 'getPointer').and.returnValue({
                 x: 10,
                 y: 10
             });
-            spyOn(shape, '_rePositionFillFilter');
+            spyOn(shape, '_resetPositionFillFilter');
             shapeObj.fire('moving');
             shapeObj.fire('rotating');
             shapeObj.fire('scaling');
 
-            expect(shape._rePositionFillFilter.calls.count()).toBe(3);
+            expect(shape._resetPositionFillFilter.calls.count()).toBe(3);
         });
 
         it('cropX and cropY values of the image filled with the shape background must be changed to match the canvas background exactly.', () => {
-            shape._rePositionFillFilter(shapeObj);
-            const {cropX, cropY} = getfillImageFromShape(shapeObj);
+            shape._resetPositionFillFilter(shapeObj);
+            const {cropX, cropY} = getFillImageFromShape(shapeObj);
 
             expect(cropX).toBe(-30);
             expect(cropY).toBe(-10);
         });
 
         it('The fill image should be the same size as the shape.', () => {
-            shape._rePositionFillFilter(shapeObj);
-            const {width, height} = getfillImageFromShape(shapeObj);
+            shape._resetPositionFillFilter(shapeObj);
+            const {width, height} = getFillImageFromShape(shapeObj);
 
             expect(width).toBe(100);
             expect(height).toBe(80);
@@ -279,8 +279,8 @@ describe('Shape', () => {
             shapeObj.set({
                 angle: 40
             });
-            shape._rePositionFillFilter(shapeObj);
-            const {width, height} = getfillImageFromShape(shapeObj);
+            shape._resetPositionFillFilter(shapeObj);
+            const {width, height} = getFillImageFromShape(shapeObj);
 
             expect(Math.round(width)).toBe(128);
             expect(Math.round(height)).toBe(126);
@@ -290,14 +290,14 @@ describe('Shape', () => {
             shapeObj.set({
                 angle: 40
             });
-            shape._rePositionFillFilter(shapeObj);
-            const {angle} = getfillImageFromShape(shapeObj);
+            shape._resetPositionFillFilter(shapeObj);
+            const {angle} = getFillImageFromShape(shapeObj);
 
             expect(angle).toBe(-40);
         });
 
         it('Background image of the shape to which the filter fill is applied must have the filter applied.', () => {
-            const fillImage = getfillImageFromShape(shapeObj);
+            const fillImage = getFillImageFromShape(shapeObj);
 
             expect(fillImage.filters.length).toBeGreaterThan(0);
         });

@@ -19,7 +19,7 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
-import {getProperties, Promise} from './util';
+import {getProperties, includes, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
@@ -805,6 +805,14 @@ class Graphics {
     }
 
     /**
+     * Create fabric static canvas
+     * @returns {Object} {{width: number, height: number}} image size
+     */
+    createStaticCanvas() {
+        return new fabric.StaticCanvas();
+    }
+
+    /**
      * Get a DrawingMode instance
      * @param {string} modeName - DrawingMode Class Name
      * @returns {DrawingMode} DrawingMode instance
@@ -1029,7 +1037,7 @@ class Graphics {
         if (target.type === 'activeSelection') {
             const items = target.getObjects();
 
-            items.forEach(item => item.fire('modifiedInGroup', fEvent.target));
+            items.forEach(item => item.fire('modifiedInGroup', target));
         }
     }
 
@@ -1153,9 +1161,9 @@ class Graphics {
 
         extend(props, getProperties(obj, predefinedKeys));
 
-        if (['i-text', 'text'].indexOf(obj.type) > -1) {
+        if (includes(['i-text', 'text'], obj.type)) {
             extend(props, this._createTextProperties(obj, props));
-        } else if (['rect', 'triangle', 'circle'].indexOf(obj.type) > -1) {
+        } else if (includes(['rect', 'triangle', 'circle'], obj.type)) {
             const shapeComp = this.getComponent(components.SHAPE);
             extend(props, {
                 fill: shapeComp.makeFillPropertyForUserEvent(obj)

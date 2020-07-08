@@ -20,6 +20,15 @@ export const FILTER_NAME_VALUE_MAP = {
 };
 
 /**
+ * Fill type for shape
+ * @type {Object.<string, string>}
+ */
+export const SHAPE_FILL_TYPE = {
+    FILTER: 'filter',
+    COLOR: 'color'
+};
+
+/**
  * Component names
  * @type {Object.<string, string>}
  */

@@ -10,18 +10,19 @@ import {
     keyCodes as KEY_CODES,
     componentNames,
     fObjectOptions,
-    SHAPE_DEFAULT_OPTIONS
+    SHAPE_DEFAULT_OPTIONS,
+    SHAPE_FILL_TYPE
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
 import {
-    getfillImageFromShape,
+    getFillImageFromShape,
     rePositionFilterTypeFillImage,
     reMakePatternImageSource,
     makeFillPatternForFilter,
     makeFilterOptionFromFabricImage
 } from '../helper/shapeFilterFillHelper';
-import {Promise, changeOriginOfObject, getCustomProperty} from '../util';
-import {extend, inArray} from 'tui-code-snippet';
+import {Promise, changeOrigin, getCustomProperty} from '../util';
+import {extend, inArray, pick} from 'tui-code-snippet';
 
 const SHAPE_INIT_OPTIONS = extend({
     strokeWidth: 1,
@@ -195,7 +196,7 @@ export default class Shape extends Component {
 
             canvas.add(shapeObj).setActiveObject(shapeObj);
 
-            this._rePositionFillFilter(shapeObj);
+            this._resetPositionFillFilter(shapeObj);
 
             resolve(objectProperties);
         });
@@ -219,15 +220,15 @@ export default class Shape extends Component {
      */
     change(shapeObj, options) {
         return new Promise((resolve, reject) => {
-            if (inArray(shapeObj.get('type'), shapeType) < 0) {
+            if (!this.isShape(shapeObj)) {
                 reject(rejectMessages.unsupportedType);
             }
-            const changeFillOption = this.getFillTypeFromOption(options.fill) === 'filter';
+            const hasFillOption = this.getFillTypeFromOption(options.fill) === 'filter';
 
-            shapeObj.set(changeFillOption ? this._generalizeFillOption(options) : options);
+            shapeObj.set(hasFillOption ? this._generalizeFillOption(options) : options);
 
-            if (changeFillOption) {
-                this._rePositionFillFilter(shapeObj);
+            if (hasFillOption) {
+                this._resetPositionFillFilter(shapeObj);
             }
 
             this.getCanvas().renderAll();
@@ -250,9 +251,7 @@ export default class Shape extends Component {
      * @returns {string} 'color' or 'filter'
      */
     getFillTypeFromOption(fillOption = {}) {
-        const {type = 'color'} = fillOption;
-
-        return type;
+        return pick(fillOption, 'type') || SHAPE_FILL_TYPE.COLOR;
     }
 
     /**
@@ -261,12 +260,12 @@ export default class Shape extends Component {
      * @returns {string} 'transparent' or 'color' or 'filter'
      */
     getFillTypeFromObject(shapeObj) {
-        const {fill} = shapeObj;
+        const {fill = {}} = shapeObj;
         if (fill.source) {
-            return 'filter';
+            return SHAPE_FILL_TYPE.FILTER;
         }
 
-        return 'color';
+        return SHAPE_FILL_TYPE.COLOR;
     }
 
     /**
@@ -276,20 +275,20 @@ export default class Shape extends Component {
      */
     makeFillPropertyForUserEvent(shapeObj) {
         const fillType = this.getFillTypeFromObject(shapeObj);
-        const result = {};
+        const fillProp = {};
 
-        if (fillType === 'filter') {
-            const fillImage = getfillImageFromShape(shapeObj);
+        if (fillType === SHAPE_FILL_TYPE.FILTER) {
+            const fillImage = getFillImageFromShape(shapeObj);
             const filterOption = makeFilterOptionFromFabricImage(fillImage);
 
-            result.type = fillType;
-            result.filter = filterOption;
+            fillProp.type = fillType;
+            fillProp.filter = filterOption;
         } else {
-            result.type = 'color';
-            result.color = shapeObj.fill;
+            fillProp.type = SHAPE_FILL_TYPE.COLOR;
+            fillProp.color = shapeObj.fill || 'transparent';
         }
 
-        return result;
+        return fillProp;
     }
 
     /**
@@ -301,11 +300,12 @@ export default class Shape extends Component {
         this._bindEventOnShape(shapeObj);
 
         if (this.getFillTypeFromObject(shapeObj) === 'filter') {
-            const fillImage = getfillImageFromShape(originalShapeObj);
+            const fillImage = getFillImageFromShape(originalShapeObj);
             const filterOption = makeFilterOptionFromFabricImage(fillImage);
+            const newStaticCanvas = this.graphics.createStaticCanvas();
 
-            shapeObj.set(makeFillPatternForFilter(this.graphics.canvasImage, filterOption));
-            this._rePositionFillFilter(shapeObj);
+            shapeObj.set(makeFillPatternForFilter(this.graphics.canvasImage, filterOption, newStaticCanvas));
+            this._resetPositionFillFilter(shapeObj);
         }
     }
 
@@ -326,7 +326,8 @@ export default class Shape extends Component {
 
         let extOption = null;
         if (fillType === 'filter') {
-            extOption = makeFillPatternForFilter(this.graphics.canvasImage, fillOption.filter);
+            const newStaticCanvas = this.graphics.createStaticCanvas();
+            extOption = makeFillPatternForFilter(this.graphics.canvasImage, fillOption.filter, newStaticCanvas);
         } else {
             extOption = {fill};
         }
@@ -418,10 +419,10 @@ export default class Shape extends Component {
                 self._fillFilterRePositionInGroupSelection(shapeObj, activeSelection);
             },
             moving() {
-                self._rePositionFillFilter(this);
+                self._resetPositionFillFilter(this);
             },
             rotating() {
-                self._rePositionFillFilter(this);
+                self._resetPositionFillFilter(this);
             },
             scaling(fEvent) {
                 const pointer = canvas.getPointer(fEvent.e);
@@ -430,7 +431,7 @@ export default class Shape extends Component {
                 canvas.setCursor('crosshair');
                 resizeHelper.resize(currentObj, pointer, true);
 
-                self._rePositionFillFilter(this);
+                self._resetPositionFillFilter(this);
             }
         });
     }
@@ -488,7 +489,7 @@ export default class Shape extends Component {
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
 
-            this._rePositionFillFilter(shape);
+            this._resetPositionFillFilter(shape);
         }
     }
 
@@ -557,12 +558,12 @@ export default class Shape extends Component {
      * @param {fabric.Object} shapeObj - Shape object
      * @private
      */
-    _rePositionFillFilter(shapeObj) {
+    _resetPositionFillFilter(shapeObj) {
         if (this.getFillTypeFromObject(shapeObj) !== 'filter') {
             return;
         }
 
-        const fillImage = getfillImageFromShape(shapeObj);
+        const fillImage = getFillImageFromShape(shapeObj);
         const {originalAngle} = getCustomProperty(fillImage, 'originalAngle');
 
         if (this.graphics.canvasImage.angle !== originalAngle) {
@@ -581,7 +582,7 @@ export default class Shape extends Component {
 
         rePositionFilterTypeFillImage(shapeObj);
 
-        changeOriginOfObject(shapeObj, {
+        changeOrigin(shapeObj, {
             originX,
             originY
         });
@@ -604,7 +605,7 @@ export default class Shape extends Component {
         const {angle, left, top} = shapeObj;
 
         activeSelection.realizeTransform(shapeObj);
-        this._rePositionFillFilter(shapeObj);
+        this._resetPositionFillFilter(shapeObj);
 
         shapeObj.set({
             angle,

@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Util
  */
-import {forEach, sendHostname, extend} from 'tui-code-snippet';
+import {forEach, sendHostname, extend, isString} from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
@@ -235,7 +235,7 @@ export function cls(str = '', prefix = '') {
  *   @param {string} originX - horizontal basis.
  *   @param {string} originY - vertical basis.
  */
-export function changeOriginOfObject(fObject, origin) {
+export function changeOrigin(fObject, origin) {
     const {originX, originY} = origin;
     const {x: left, y: top} = fObject.getPointByOrigin(originX, originY);
 
@@ -254,7 +254,7 @@ export function changeOriginOfObject(fObject, origin) {
  * @param {Object} targetObject - The data object of the key value. 
  * @returns {Object}
  */
-export function objectFlip(targetObject) {
+export function flipObject(targetObject) {
     const result = {};
 
     Object.keys(targetObject).forEach(key => {
@@ -270,13 +270,8 @@ export function objectFlip(targetObject) {
  * @param {Object} props - custom props object
  */
 export function setCustomProperty(targetObject, props) {
-    if (!targetObject.customProps) {
-        extend(targetObject, {
-            customProps: props
-        });
-    } else {
-        extend(targetObject.customProps, props);
-    }
+    targetObject.customProps = targetObject.customProps || {};
+    extend(targetObject.customProps, props);
 }
 
 /**
@@ -287,7 +282,7 @@ export function setCustomProperty(targetObject, props) {
  */
 export function getCustomProperty(fObject, propNames) {
     const resultObject = {};
-    if (typeof propNames === 'string') {
+    if (isString(propNames)) {
         propNames = [propNames];
     }
     forEach(propNames, propName => {
@@ -295,4 +290,23 @@ export function getCustomProperty(fObject, propNames) {
     });
 
     return resultObject;
+}
+
+/**
+ * Capitalize string
+ * @param {string} targetString - target string
+ * @returns {string}
+ */
+export function capitalizeString(targetString) {
+    return targetString.charAt(0).toUpperCase() + targetString.slice(1);
+}
+
+/**
+ * Array includes check
+ * @param {Array} targetArray - target array
+ * @param {string|number} compareValue - compare value
+ * @returns {boolean}
+ */
+export function includes(targetArray, compareValue) {
+    return targetArray.indexOf(compareValue) >= 0;
 }

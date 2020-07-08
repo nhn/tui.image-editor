@@ -3,7 +3,7 @@
  * @fileoverview Shape resize helper
  */
 import {forEach, map, extend} from 'tui-code-snippet';
-import {objectFlip, setCustomProperty, getCustomProperty} from '../util';
+import {capitalizeString, flipObject, setCustomProperty, getCustomProperty} from '../util';
 import resizeHelper from '../helper/shapeResizeHelper';
 
 const FILTER_OPTION_MAP = {
@@ -11,7 +11,7 @@ const FILTER_OPTION_MAP = {
     'blur': 'blur'
 };
 
-const FILTER_NAME_VALUE_MAP = objectFlip(FILTER_OPTION_MAP);
+const FILTER_NAME_VALUE_MAP = flipObject(FILTER_OPTION_MAP);
 
 const POSITION_DIMENSION_MAP = {
     x: 'width',
@@ -31,7 +31,7 @@ let cachedCanvasImageElement = null;
  * @returns {fabric.Image}
  * @private
  */
-export function getfillImageFromShape(shapeObj) {
+export function getFillImageFromShape(shapeObj) {
     const {patternSourceCanvas} = getCustomProperty(shapeObj, 'patternSourceCanvas');
     const [fillImage] = patternSourceCanvas.getObjects();
 
@@ -45,7 +45,7 @@ export function getfillImageFromShape(shapeObj) {
  */
 export function rePositionFilterTypeFillImage(shapeObj) {
     const {angle, flipX, flipY} = shapeObj;
-    const fillImage = getfillImageFromShape(shapeObj);
+    const fillImage = getFillImageFromShape(shapeObj);
     let {width, height} = getRotatedDimension(shapeObj);
     const diffLeft = (width - shapeObj.width) / 2;
     const diffTop = (height - shapeObj.height) / 2;
@@ -54,8 +54,7 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     let left = (width / 2) - diffLeft;
     let top = (height / 2) - diffTop;
     const fillImageMaxSize = Math.max(width, height);
-
-    const commonProps = () => ({
+    const commonProps = {
         left,
         top,
         width,
@@ -64,15 +63,20 @@ export function rePositionFilterTypeFillImage(shapeObj) {
         cropY,
         flipX,
         flipY
-    });
+    };
 
-    ([left, top, width, height] = calculateFillImageDimensionOutOfCanvas(extend({
+    ([left, top, width, height] = calculateFillImageDimensionOutsideCanvas(extend({
         shapeObj
-    }, commonProps())));
+    }, commonProps)));
 
     fillImage.set(extend({
         angle: flipX === flipY ? -angle : angle
-    }, commonProps()));
+    }, commonProps, {
+        left,
+        top,
+        width,
+        height
+    }));
 
     setCustomProperty(fillImage, {fillImageMaxSize});
 }
@@ -106,8 +110,8 @@ export function makeFilterOptionFromFabricImage(imageObject) {
  *   @param {boolean} flipY - shape flipY
  * @returns {Object}
  */
-function calculateFillImageDimensionOutOfCanvas({shapeObj, left, top, width, height, cropX, cropY, flipX, flipY}) {
-    const positionFixer = (type, outDistance) => calculateFillImagePositionOutOfCanvas({
+function calculateFillImageDimensionOutsideCanvas({shapeObj, left, top, width, height, cropX, cropY, flipX, flipY}) {
+    const positionFixer = (type, outDistance) => calculateFillImagePositionOutsideCanvas({
         type,
         outDistance,
         shapeObj,
@@ -143,12 +147,12 @@ function calculateFillImageDimensionOutOfCanvas({shapeObj, left, top, width, hei
  * Make fill property of dynamic pattern type
  * @param {fabric.Image} canvasImage - canvas background image
  * @param {Array} filterOption - filter option
+ * @param {fabric.StaticCanvas} patternSourceCanvas - fabric static canvas
  * @returns {Object}
  * @private
  */
-export function makeFillPatternForFilter(canvasImage, filterOption) {
+export function makeFillPatternForFilter(canvasImage, filterOption, patternSourceCanvas) {
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage);
-    const patternSourceCanvas = new fabric.StaticCanvas();
     const fillImage = makeFillImage(copiedCanvasElement, canvasImage.angle, filterOption);
     patternSourceCanvas.add(fillImage);
 
@@ -204,7 +208,7 @@ export function reMakePatternImageSource(shapeObj, canvasImage) {
  * @param {number} top - original top position
  * @returns {Array}
  */
-function calculateFillImagePositionOutOfCanvas({type, shapeObj, outDistance, left, top, flipX, flipY}) {
+function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, left, top, flipX, flipY}) {
     const shapePointNavigation = getShapeEdgePoint(shapeObj);
     const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
     const linePointsOutsideCanvas =
@@ -212,7 +216,7 @@ function calculateFillImagePositionOutOfCanvas({type, shapeObj, outDistance, lef
     const reatAngles =
         calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOutsideCanvas);
     const {startPointIndex} = linePointsOutsideCanvas;
-    const diffPosition = isReversePositionForFlip({
+    const diffPosition = getReversePositionForFlip({
         outDistance,
         startPointIndex,
         flipX,
@@ -231,7 +235,7 @@ function calculateFillImagePositionOutOfCanvas({type, shapeObj, outDistance, lef
  * @param {Array} reatAngles - Line angle of the rectangle vertex.
  * @returns {Object} diffPosition
  */
-function isReversePositionForFlip({outDistance, startPointIndex, flipX, flipY, reatAngles}) {
+function getReversePositionForFlip({outDistance, startPointIndex, flipX, flipY, reatAngles}) {
     const rotationChangePoint1 = outDistance * Math.cos(reatAngles[0] * Math.PI / 180);
     const rotationChangePoint2 = outDistance * Math.cos(reatAngles[1] * Math.PI / 180);
     const isForward = startPointIndex === 2 || startPointIndex === 3;
@@ -288,14 +292,14 @@ function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeigh
  *   @param {object} shapePointNavigation.righttop - right top position
  *   @param {object} shapePointNavigation.leftbottom - lefttop position
  *   @param {object} shapePointNavigation.rightbottom - rightbottom position
- * @param {Object} LinePointsOfOneVertexIndex - Line point of one vertex
- *   @param {Object} LinePointsOfOneVertexIndex.startPoint - start point index
- *   @param {Object} LinePointsOfOneVertexIndex.endPointIndex1 - end point index
- *   @param {Object} LinePointsOfOneVertexIndex.endPointIndex2 - end point index
+ * @param {Object} linePointsOfOneVertexIndex - Line point of one vertex
+ *   @param {Object} linePointsOfOneVertexIndex.startPoint - start point index
+ *   @param {Object} linePointsOfOneVertexIndex.endPointIndex1 - end point index
+ *   @param {Object} linePointsOfOneVertexIndex.endPointIndex2 - end point index
  * @returns {Object}
  */
-function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, LinePointsOfOneVertexIndex) {
-    const {startPointIndex, endPointIndex1, endPointIndex2} = LinePointsOfOneVertexIndex;
+function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOfOneVertexIndex) {
+    const {startPointIndex, endPointIndex1, endPointIndex2} = linePointsOfOneVertexIndex;
     const horizontalVerticalAngle = type === 'x' ? 180 : 270;
 
     return map([endPointIndex1, endPointIndex2], pointIndex => {
@@ -410,7 +414,7 @@ function makeFillImage(copiedCanvasElement, currentCanvasImageAngle, filterOptio
     const fillImage = new fabric.Image(copiedCanvasElement);
 
     forEach(extend({}, ...filterOption), (value, key) => {
-        const fabricFiterClassName = key.charAt(0).toUpperCase() + key.slice(1);
+        const fabricFiterClassName = capitalizeString(key);
         const filter = new fabric.Image.filters[fabricFiterClassName]({
             [FILTER_OPTION_MAP[key]]: value
         });
