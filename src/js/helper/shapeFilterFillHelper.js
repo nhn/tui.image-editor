@@ -156,7 +156,8 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
         fill: new fabric.Pattern({
             source: () => {
                 const [innerImage] = patternSourceCanvas.getObjects();
-                const {fillImageMaxSize} = getCustomProperty(innerImage, 'fillImageMaxSize');
+                let {fillImageMaxSize} = getCustomProperty(innerImage, 'fillImageMaxSize');
+                fillImageMaxSize = Math.max(1, fillImageMaxSize);
 
                 patternSourceCanvas.setDimensions({
                     width: fillImageMaxSize,
@@ -169,6 +170,7 @@ export function makeFillPatternForFilter(canvasImage, filterOption) {
             repeat: 'no-repeat'
         })
     };
+
     setCustomProperty(fabricProperty, {patternSourceCanvas});
 
     return fabricProperty;
