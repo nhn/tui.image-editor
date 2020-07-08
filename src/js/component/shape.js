@@ -39,6 +39,34 @@ const DEFAULT_WIDTH = 20;
 const DEFAULT_HEIGHT = 20;
 
 /**
+ * Make fill option
+ * @param {Object} options - Options to create the shape
+ * @param {Object.Image} canvasImage - canvas background image
+ * @param {Function} createStaticCanvas - static canvas creater
+ * @returns {Object} - shape option
+ * @private
+ */
+function makeFabricFillOption(options, canvasImage, createStaticCanvas) {
+    const fillOption = options.fill;
+    const fillType = getFillTypeFromOption(options.fill);
+    let fill = fillOption;
+
+    if (fillOption.color) {
+        fill = fillOption.color;
+    }
+
+    let extOption = null;
+    if (fillType === 'filter') {
+        const newStaticCanvas = createStaticCanvas();
+        extOption = makeFillPatternForFilter(canvasImage, fillOption.filter, newStaticCanvas);
+    } else {
+        extOption = {fill};
+    }
+
+    return extend({}, options, extOption);
+}
+
+/**
  * Shape
  * @class Shape
  * @param {Graphics} graphics - Graphics instance
@@ -222,8 +250,9 @@ export default class Shape extends Component {
                 reject(rejectMessages.unsupportedType);
             }
             const hasFillOption = getFillTypeFromOption(options.fill) === 'filter';
+            const {canvasImage, createStaticCanvas} = this.graphics;
 
-            shapeObj.set(hasFillOption ? this._makeFabricFillOption(options) : options);
+            shapeObj.set(hasFillOption ? makeFabricFillOption(options, canvasImage, createStaticCanvas) : options);
 
             if (hasFillOption) {
                 this._resetPositionFillFilter(shapeObj);
@@ -276,32 +305,6 @@ export default class Shape extends Component {
     }
 
     /**
-     * Make fill option
-     * @param {Object} options - Options to create the shape
-     * @returns {Object} - shape option
-     * @private
-     */
-    _makeFabricFillOption(options) {
-        const fillOption = options.fill;
-        const fillType = getFillTypeFromOption(options.fill);
-        let fill = fillOption;
-
-        if (fillOption.color) {
-            fill = fillOption.color;
-        }
-
-        let extOption = null;
-        if (fillType === 'filter') {
-            const newStaticCanvas = this.graphics.createStaticCanvas();
-            extOption = makeFillPatternForFilter(this.graphics.canvasImage, fillOption.filter, newStaticCanvas);
-        } else {
-            extOption = {fill};
-        }
-
-        return extend({}, options, extOption);
-    }
-
-    /**
      * Create the instance of shape
      * @param {string} type - Shape type
      * @param {Object} options - Options to creat the shape
@@ -338,6 +341,7 @@ export default class Shape extends Component {
      */
     _extendOptions(options) {
         const selectionStyles = fObjectOptions.SELECTION_STYLE;
+        const {canvasImage, createStaticCanvas} = this.graphics;
 
         options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
 
@@ -345,7 +349,7 @@ export default class Shape extends Component {
             options.lockUniScaling = true;
         }
 
-        return this._makeFabricFillOption(options);
+        return makeFabricFillOption(options, canvasImage, createStaticCanvas);
     }
 
     /**
