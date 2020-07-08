@@ -29,6 +29,12 @@ export const SHAPE_FILL_TYPE = {
 };
 
 /**
+ * Shape type list
+ * @type {Array.<string>}
+ */
+export const SHAPE_TYPE = ['rect', 'circle', 'triangle'];
+
+/**
  * Component names
  * @type {Object.<string, string>}
  */

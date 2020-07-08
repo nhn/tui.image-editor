@@ -21,8 +21,8 @@ import {
     makeFillPatternForFilter,
     makeFilterOptionFromFabricImage
 } from '../helper/shapeFilterFillHelper';
-import {Promise, changeOrigin, getCustomProperty} from '../util';
-import {extend, inArray, pick} from 'tui-code-snippet';
+import {Promise, changeOrigin, getCustomProperty, getFillTypeFromOption, getFillTypeFromObject, isShape} from '../util';
+import {extend} from 'tui-code-snippet';
 
 const SHAPE_INIT_OPTIONS = extend({
     strokeWidth: 1,
@@ -37,8 +37,6 @@ const SHAPE_INIT_OPTIONS = extend({
 const DEFAULT_TYPE = 'rect';
 const DEFAULT_WIDTH = 20;
 const DEFAULT_HEIGHT = 20;
-
-const shapeType = ['rect', 'circle', 'triangle'];
 
 /**
  * Shape
@@ -220,10 +218,10 @@ export default class Shape extends Component {
      */
     change(shapeObj, options) {
         return new Promise((resolve, reject) => {
-            if (!this.isShape(shapeObj)) {
+            if (!isShape(shapeObj)) {
                 reject(rejectMessages.unsupportedType);
             }
-            const hasFillOption = this.getFillTypeFromOption(options.fill) === 'filter';
+            const hasFillOption = getFillTypeFromOption(options.fill) === 'filter';
 
             shapeObj.set(hasFillOption ? this._generalizeFillOption(options) : options);
 
@@ -237,44 +235,12 @@ export default class Shape extends Component {
     }
 
     /**
-     * Check if the object is a shape object.
-     * @param {fabric.Object} obj - fabric object
-     * @returns {boolean}
-     */
-    isShape(obj) {
-        return inArray(obj.get('type'), shapeType) >= 0;
-    }
-
-    /**
-     * Get fill type
-     * @param {Object | string} fillOption - shape fill option
-     * @returns {string} 'color' or 'filter'
-     */
-    getFillTypeFromOption(fillOption = {}) {
-        return pick(fillOption, 'type') || SHAPE_FILL_TYPE.COLOR;
-    }
-
-    /**
-     * Get fill type of shape type object
-     * @param {fabric.Object} shapeObj - fabric object
-     * @returns {string} 'transparent' or 'color' or 'filter'
-     */
-    getFillTypeFromObject(shapeObj) {
-        const {fill = {}} = shapeObj;
-        if (fill.source) {
-            return SHAPE_FILL_TYPE.FILTER;
-        }
-
-        return SHAPE_FILL_TYPE.COLOR;
-    }
-
-    /**
      * make fill property for user event
      * @param {fabric.Object} shapeObj - fabric object
      * @returns {Object}
      */
     makeFillPropertyForUserEvent(shapeObj) {
-        const fillType = this.getFillTypeFromObject(shapeObj);
+        const fillType = getFillTypeFromObject(shapeObj);
         const fillProp = {};
 
         if (fillType === SHAPE_FILL_TYPE.FILTER) {
@@ -299,7 +265,7 @@ export default class Shape extends Component {
     processForCopiedObject(shapeObj, originalShapeObj) {
         this._bindEventOnShape(shapeObj);
 
-        if (this.getFillTypeFromObject(shapeObj) === 'filter') {
+        if (getFillTypeFromObject(shapeObj) === 'filter') {
             const fillImage = getFillImageFromShape(originalShapeObj);
             const filterOption = makeFilterOptionFromFabricImage(fillImage);
             const newStaticCanvas = this.graphics.createStaticCanvas();
@@ -317,7 +283,7 @@ export default class Shape extends Component {
      */
     _generalizeFillOption(options) {
         const fillOption = options.fill;
-        const fillType = this.getFillTypeFromOption(options.fill);
+        const fillType = getFillTypeFromOption(options.fill);
         let fill = fillOption;
 
         if (fillOption.color) {
@@ -559,7 +525,7 @@ export default class Shape extends Component {
      * @private
      */
     _resetPositionFillFilter(shapeObj) {
-        if (this.getFillTypeFromObject(shapeObj) !== 'filter') {
+        if (getFillTypeFromObject(shapeObj) !== 'filter') {
             return;
         }
 

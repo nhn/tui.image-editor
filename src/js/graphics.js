@@ -19,7 +19,7 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
-import {getProperties, includes, Promise} from './util';
+import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
@@ -1318,7 +1318,7 @@ class Graphics {
         return new Promise(resolve => {
             targetObject.clone(cloned => {
                 const shapeComp = this.getComponent(components.SHAPE);
-                if (shapeComp.isShape(cloned)) {
+                if (isShape(cloned)) {
                     shapeComp.processForCopiedObject(cloned, targetObject);
                 }
 

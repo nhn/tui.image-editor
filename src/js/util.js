@@ -2,8 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Util
  */
-import {forEach, sendHostname, extend, isString} from 'tui-code-snippet';
+import {forEach, sendHostname, extend, isString, pick, inArray} from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
+import {SHAPE_FILL_TYPE, SHAPE_TYPE} from './consts';
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
 const {min, max} = Math;
@@ -309,4 +310,36 @@ export function capitalizeString(targetString) {
  */
 export function includes(targetArray, compareValue) {
     return targetArray.indexOf(compareValue) >= 0;
+}
+
+/**
+ * Get fill type
+ * @param {Object | string} fillOption - shape fill option
+ * @returns {string} 'color' or 'filter'
+ */
+export function getFillTypeFromOption(fillOption = {}) {
+    return pick(fillOption, 'type') || SHAPE_FILL_TYPE.COLOR;
+}
+
+/**
+ * Get fill type of shape type object
+ * @param {fabric.Object} shapeObj - fabric object
+ * @returns {string} 'transparent' or 'color' or 'filter'
+ */
+export function getFillTypeFromObject(shapeObj) {
+    const {fill = {}} = shapeObj;
+    if (fill.source) {
+        return SHAPE_FILL_TYPE.FILTER;
+    }
+
+    return SHAPE_FILL_TYPE.COLOR;
+}
+
+/**
+ * Check if the object is a shape object.
+ * @param {fabric.Object} obj - fabric object
+ * @returns {boolean}
+ */
+export function isShape(obj) {
+    return inArray(obj.get('type'), SHAPE_TYPE) >= 0;
 }
