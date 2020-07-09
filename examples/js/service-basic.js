@@ -910,9 +910,22 @@ $inputRangeColorFilterValue.on('change', function() {
 // Etc..
 
 // Load sample image
-imageEditor.loadImageFromURL('img/sampleImage.jpg', 'SampleImage').then(function(sizeValue) {
-    console.log(sizeValue);
+imageEditor.loadImageFromURL('img/sampleImage2.png', 'SampleImage').then(function(sizeValue) {
+// imageEditor.loadImageFromURL('img/bg.jpg', 'SampleImage').then(function(sizeValue) {
     imageEditor.clearUndoStack();
+    imageEditor.addShape('rect', {
+        fill: {
+            type: 'filter',
+            filter: [{pixelate: 20}]
+        },
+        // angle: 70,
+        stroke: 'blue',
+        strokeWidth: 3,
+        width: 200,
+        height: 200,
+        left: 150,
+        top: 150
+    });
 });
 
 // IE9 Unselectable

@@ -19,7 +19,8 @@ import {
     rePositionFilterTypeFillImage,
     reMakePatternImageSource,
     makeFillPatternForFilter,
-    makeFilterOptionFromFabricImage
+    makeFilterOptionFromFabricImage,
+    getRotatedDimension
 } from '../helper/shapeFilterFillHelper';
 import {Promise, changeOrigin, getCustomProperty, getFillTypeFromOption, getFillTypeFromObject, isShape} from '../util';
 import {extend} from 'tui-code-snippet';
@@ -542,11 +543,18 @@ export default class Shape extends Component {
         const {originX, originY} = shapeObj;
 
         resizeHelper.adjustOriginToCenter(shapeObj);
+        const {width: maxWidth, height: maxHeight} = this.graphics.canvasImage;
 
-        shapeObj.width *= shapeObj.scaleX;
-        shapeObj.height *= shapeObj.scaleY;
-        shapeObj.rx *= shapeObj.scaleX;
-        shapeObj.ry *= shapeObj.scaleY;
+        const {width: objWidth, height: objHeight} = shapeObj;
+        const maxScaleX = (maxWidth * 0.5) / (shapeObj.width * shapeObj.scaleX);
+        const maxScaleY = (maxHeight * 0.5) / (shapeObj.height * shapeObj.scaleY);
+        const scaleX = maxScaleX < shapeObj.scaleX ? maxScaleX : shapeObj.scaleX;
+        const scaleY = maxScaleY < shapeObj.scaleY ? maxScaleY : shapeObj.scaleY;
+
+        shapeObj.width *= scaleX;
+        shapeObj.height *= scaleY;
+        shapeObj.rx *= scaleX;
+        shapeObj.ry *= scaleY;
         shapeObj.scaleX = 1;
         shapeObj.scaleY = 1;
 

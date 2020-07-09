@@ -10,13 +10,12 @@ const FILTER_OPTION_MAP = {
     'pixelate': 'blocksize',
     'blur': 'blur'
 };
-
-const FILTER_NAME_VALUE_MAP = flipObject(FILTER_OPTION_MAP);
-
 const POSITION_DIMENSION_MAP = {
     x: 'width',
     y: 'height'
 };
+
+const FILTER_NAME_VALUE_MAP = flipObject(FILTER_OPTION_MAP);
 
 /**
  * Cached canvas image element for fill image
@@ -46,7 +45,7 @@ export function getFillImageFromShape(shapeObj) {
 export function rePositionFilterTypeFillImage(shapeObj) {
     const {angle, flipX, flipY} = shapeObj;
     const fillImage = getFillImageFromShape(shapeObj);
-    let {width, height} = getRotatedDimension(shapeObj);
+    let {width, height, right, bottom} = getRotatedDimension(shapeObj);
     const diffLeft = (width - shapeObj.width) / 2;
     const diffTop = (height - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
@@ -62,20 +61,28 @@ export function rePositionFilterTypeFillImage(shapeObj) {
         cropX,
         cropY,
         flipX,
-        flipY
+        flipY,
+        right,
+        bottom
     };
+    let originX, originY;
 
-    ([left, top, width, height] = calculateFillImageDimensionOutsideCanvas(extend({
+    fillImage.set({
+        angle: flipX === flipY ? -angle : angle
+    });
+
+    ([left, top, width, height, originX, originY] = calculateFillImageDimensionOutsideCanvas(extend({
         shapeObj
     }, commonProps)));
 
     fillImage.set(extend({
-        angle: flipX === flipY ? -angle : angle
     }, commonProps, {
         left,
         top,
         width,
-        height
+        height,
+        originX,
+        originY
     }));
 
     setCustomProperty(fillImage, {fillImageMaxSize});
@@ -110,7 +117,8 @@ export function makeFilterOptionFromFabricImage(imageObject) {
  *   @param {boolean} flipY - shape flipY
  * @returns {Object}
  */
-function calculateFillImageDimensionOutsideCanvas({shapeObj, left, top, width, height, cropX, cropY, flipX, flipY}) {
+function calculateFillImageDimensionOutsideCanvas({
+    shapeObj, left, top, width, height, cropX, cropY, flipX, flipY, right, bottom}) {
     const positionFixer = (type, outDistance) => calculateFillImagePositionOutsideCanvas({
         type,
         outDistance,
@@ -120,15 +128,22 @@ function calculateFillImageDimensionOutsideCanvas({shapeObj, left, top, width, h
         flipX,
         flipY
     });
+    let originX = 'center';
+    let originY = 'center';
     const dimension = {
         width,
         height
     };
 
+    const canvasWidth = cachedCanvasImageElement.width;
+    const canvasHeight = cachedCanvasImageElement.height;
+
+    /* eslint-disable complexity */
     forEach(['x', 'y'], type => {
-        const compareSize = dimension[POSITION_DIMENSION_MAP[type]];
         const cropDistance = type === 'x' ? cropX : cropY;
+        const compareSize = dimension[POSITION_DIMENSION_MAP[type]];
         const standardSize = cachedCanvasImageElement[POSITION_DIMENSION_MAP[type]];
+
         if (compareSize > standardSize) {
             const outDistance = (compareSize - standardSize) / 2;
 
@@ -138,9 +153,32 @@ function calculateFillImageDimensionOutsideCanvas({shapeObj, left, top, width, h
         if (cropDistance < 0) {
             [left, top] = positionFixer(type, cropDistance);
         }
+        [width, height] = [dimension.width, dimension.height];
     });
 
-    return [left, top, dimension.width, dimension.height];
+    const [origWidth, origHeight] = [width, height];
+    const [origLeft, origTop] = [left, top];
+
+    if (right > canvasWidth && cropX > 0) {
+        width = width - (right - canvasWidth);
+    }
+    if (bottom > canvasHeight && cropY > 0) {
+        height = height - (bottom - canvasHeight);
+    }
+
+    const leftDiff = (origWidth - width) / 2;
+    const topDiff = (origHeight - height) / 2;
+
+    forEach(['x', 'y'], type => {
+        const cropDistance2 = type === 'x' ? leftDiff : topDiff;
+        if (cropDistance2 > 0) {
+            [left, top] = positionFixer(type, cropDistance2);
+        }
+    });
+
+    /* eslint-enable complexity */
+
+    return [left, top, width, height, originX, originY];
 }
 
 /**
@@ -383,6 +421,8 @@ function getRotatedDimension(shapeObj) {
     return {
         left,
         top,
+        right,
+        bottom,
         width: right - left,
         height: bottom - top
     };
