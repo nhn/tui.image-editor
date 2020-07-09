@@ -76,7 +76,6 @@
   "scripts": {
     "test": "karma start --no-single-run",
     "test:ne": "KARMA_SERVER=ne karma start",
-    "test:ex": "node exampleTest.js",
     "test:types": "tsc --project test/types",
     "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
     "bundle:svg": "node makesvg.js",
