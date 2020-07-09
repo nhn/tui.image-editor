@@ -550,12 +550,13 @@ export default class Shape extends Component {
         shapeObj.scaleX = 1;
         shapeObj.scaleY = 1;
 
-        rePositionFilterTypeFillImage(shapeObj);
+        rePositionFilterTypeFillImage(shapeObj, this.graphics.getCanvas());
 
         changeOrigin(shapeObj, {
             originX,
             originY
         });
+        // this.graphics.getCanvas().requestRenderAll();
     }
 
     /**

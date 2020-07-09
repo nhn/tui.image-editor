@@ -3,7 +3,7 @@
  * @fileoverview Shape resize helper
  */
 import {forEach, map, extend} from 'tui-code-snippet';
-import {capitalizeString, flipObject, setCustomProperty, getCustomProperty} from '../util';
+import {capitalizeString, flipObject, setCustomProperty, getCustomProperty, changeOrigin} from '../util';
 import resizeHelper from '../helper/shapeResizeHelper';
 
 const FILTER_OPTION_MAP = {
@@ -43,10 +43,11 @@ export function getFillImageFromShape(shapeObj) {
  * @param {fabric.Object} shapeObj - Shape object
  * @private
  */
-export function rePositionFilterTypeFillImage(shapeObj) {
+export function rePositionFilterTypeFillImage(shapeObj, canvas) {
+    const {width: canvasWidth, height: canvasHeight} = canvas;
     const {angle, flipX, flipY} = shapeObj;
     const fillImage = getFillImageFromShape(shapeObj);
-    let {width, height} = getRotatedDimension(shapeObj);
+    let {width, height, right, bottom} = getRotatedDimension(shapeObj);
     const diffLeft = (width - shapeObj.width) / 2;
     const diffTop = (height - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
@@ -55,8 +56,12 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     let top = (height / 2) - diffTop;
     const fillImageMaxSize = Math.max(width, height);
     const commonProps = {
+        canvasWidth,
+        canvasHeight,
         left,
         top,
+        right,
+        bottom,
         width,
         height,
         cropX,
@@ -64,6 +69,19 @@ export function rePositionFilterTypeFillImage(shapeObj) {
         flipX,
         flipY
     };
+
+    /*
+    fillImage.set({
+        left,
+        top,
+        width,
+        height,
+        cropX,
+        cropY
+    });
+    */
+
+    // changeOrigin(fillImage, {originX: 'left', originY: 'top'});
 
     ([left, top, width, height] = calculateFillImageDimensionOutsideCanvas(extend({
         shapeObj
@@ -74,9 +92,16 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     }, commonProps, {
         left,
         top,
+        // left: left - (shapeObj.width / 2),
+        // top: top - (shapeObj.height / 2),
         width,
-        height
+        height,
+        originX: 'center',
+        originY: 'center'
     }));
+
+    changeOrigin(fillImage, {originX: 'center', originY: 'center'});
+
 
     setCustomProperty(fillImage, {fillImageMaxSize});
 }
@@ -110,37 +135,50 @@ export function makeFilterOptionFromFabricImage(imageObject) {
  *   @param {boolean} flipY - shape flipY
  * @returns {Object}
  */
-function calculateFillImageDimensionOutsideCanvas({shapeObj, left, top, width, height, cropX, cropY, flipX, flipY}) {
-    const positionFixer = (type, outDistance) => calculateFillImagePositionOutsideCanvas({
+function calculateFillImageDimensionOutsideCanvas({canvasWidth, canvasHeight, right, bottom, shapeObj, left, top, width, height, cropX, cropY, flipX, flipY}) {
+    const positionFixer = (type, outDistance, isRightBottom) => calculateFillImagePositionOutsideCanvas({
         type,
         outDistance,
         shapeObj,
         left,
         top,
         flipX,
-        flipY
+        flipY,
+        isRightBottom
     });
-    const dimension = {
-        width,
-        height
-    };
 
     forEach(['x', 'y'], type => {
-        const compareSize = dimension[POSITION_DIMENSION_MAP[type]];
-        const cropDistance = type === 'x' ? cropX : cropY;
-        const standardSize = cachedCanvasImageElement[POSITION_DIMENSION_MAP[type]];
-        if (compareSize > standardSize) {
-            const outDistance = (compareSize - standardSize) / 2;
+        const cropDistance1 = type === 'x' ? cropX : cropY;
+        const cropDistance2 = type === 'x' ? canvasWidth - right : canvasHeight - bottom;
+        if (cropDistance1 < 0) {
+            [diffLeft, diffTop] = positionFixer(type, cropDistance1, false);
+            [left, top] = [left + diffLeft, top + diffTop];
 
-            dimension[POSITION_DIMENSION_MAP[type]] = standardSize;
-            [left, top] = positionFixer(type, outDistance);
         }
-        if (cropDistance < 0) {
-            [left, top] = positionFixer(type, cropDistance);
-        }
+        // if (cropDistance2 < 0) {
+        //     const [origLeft, origTop] = [left, top];
+        //     const [diffX, diffY] = positionFixer(type, cropDistance2, true);
+        //     // console.log('DIFFXDIFFY - ', diffX, diffY);
+
+
+        //     width = width - diffX - 100;
+        //     left = left - (diffX / 2) - 100;
+
+        //     console.log('DIFFX - ', width);
+
+        //     // [left, top] = positionFixer(type, cropDistance2 * -1, true);
+        //     // [left, top] = [0, 0];
+
+        //     /*
+        //     const diffLeft = origLeft - left;
+        //     const diffTop = origTop - top;
+        //     [width, height] = [width - diffLeft, height - diffTop];
+        //     [left, top] = [origLeft - (diffLeft / 2), origTop - (diffTop / 2)];
+        //     */
+        // }
     });
 
-    return [left, top, dimension.width, dimension.height];
+    return [left, top, width, height];
 }
 
 /**
@@ -208,13 +246,14 @@ export function reMakePatternImageSource(shapeObj, canvasImage) {
  * @param {number} top - original top position
  * @returns {Array}
  */
-function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, left, top, flipX, flipY}) {
+function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, left, top, flipX, flipY, isRightBottom}) {
     const shapePointNavigation = getShapeEdgePoint(shapeObj);
     const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
     const linePointsOutsideCanvas =
-        calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation);
+        calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation, isRightBottom);
     const reatAngles =
-        calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOutsideCanvas);
+        calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOutsideCanvas, isRightBottom);
+    console.log('REATANGLES - ', reatAngles);
     const {startPointIndex} = linePointsOutsideCanvas;
     const diffPosition = getReversePositionForFlip({
         outDistance,
@@ -224,7 +263,7 @@ function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, l
         reatAngles
     });
 
-    return [left + diffPosition.left, top + diffPosition.top];
+    return [diffPosition.left, diffPosition.top];
 }
 
 /**
@@ -238,6 +277,7 @@ function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, l
 function getReversePositionForFlip({outDistance, startPointIndex, flipX, flipY, reatAngles}) {
     const rotationChangePoint1 = outDistance * Math.cos(reatAngles[0] * Math.PI / 180);
     const rotationChangePoint2 = outDistance * Math.cos(reatAngles[1] * Math.PI / 180);
+
     const isForward = startPointIndex === 2 || startPointIndex === 3;
     const diffPosition = {
         top: isForward ? rotationChangePoint1 : rotationChangePoint2,
@@ -250,8 +290,34 @@ function getReversePositionForFlip({outDistance, startPointIndex, flipX, flipY, 
     if (isReverseTopPositionForFlip(startPointIndex, flipX, flipY)) {
         diffPosition.top = diffPosition.top * -1;
     }
+    console.log('STARTPOINTINDEX - ', startPointIndex);
 
     return diffPosition;
+        /*
+    let top, left;
+    if (startPointIndex === 1) {
+        console.log('SSSSS');
+        top = rotationChangePoint2;
+        left = rotationChangePoint1;
+    }
+    if (startPointIndex === 0) {
+        top = rotationChangePoint1 * -1;
+        left = rotationChangePoint1;
+    }
+    if (startPointIndex === 2) {
+        top = rotationChangePoint1 * -1;
+        left = rotationChangePoint1;
+    }
+    if (startPointIndex === 3) {
+        top = rotationChangePoint1 * -1;
+        left = rotationChangePoint1;
+    }
+
+    return {
+        top,
+        left
+    };
+    */
 }
 
 /**
@@ -265,23 +331,49 @@ function getReversePositionForFlip({outDistance, startPointIndex, flipX, flipY, 
  * @param {Array} shapeNeighborPointNavigation - Array to find adjacent edges.
  * @returns {Object}
  */
-function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation) {
-    let minimumPoint = 0;
-    let minimumPointIndex = 0;
-    forEach(shapePointNavigation, (point, index) => {
-        if (point[type] < minimumPoint) {
-            minimumPoint = point[type];
-            minimumPointIndex = index;
-        }
-    });
+function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation, isRightBottom) {
+    if (isRightBottom) {
+        console.log('MMM');
+        let maximumPoint = 0;
+        let minimumPointIndex = 0;
+        forEach(shapePointNavigation, (point, index) => {
+            if (point[type] > maximumPoint) {
+                maximumPoint = point[type];
+                minimumPointIndex = index;
+            }
+        });
 
-    const [endPointIndex1, endPointIndex2] = shapeNeighborPointNavigation[minimumPointIndex];
+        const [endPointIndex1, endPointIndex2] = shapeNeighborPointNavigation[minimumPointIndex];
 
-    return {
-        startPointIndex: minimumPointIndex,
-        endPointIndex1,
-        endPointIndex2
-    };
+        console.log({
+            startPointIndex: minimumPointIndex,
+            endPointIndex1,
+            endPointIndex2
+        });
+
+        return {
+            startPointIndex: minimumPointIndex,
+            endPointIndex1,
+            endPointIndex2
+        };
+    } else {
+        let minimumPoint = 0;
+        let minimumPointIndex = 0;
+        forEach(shapePointNavigation, (point, index) => {
+            if (point[type] < minimumPoint) {
+                minimumPoint = point[type];
+                minimumPointIndex = index;
+            }
+        });
+
+        const [endPointIndex1, endPointIndex2] = shapeNeighborPointNavigation[minimumPointIndex];
+
+        return {
+            startPointIndex: minimumPointIndex,
+            endPointIndex1,
+            endPointIndex2
+        };
+    }
 }
 
 /**
@@ -298,18 +390,26 @@ function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeigh
  *   @param {Object} linePointsOfOneVertexIndex.endPointIndex2 - end point index
  * @returns {Object}
  */
-function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOfOneVertexIndex) {
+function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOfOneVertexIndex, isRightBottom) {
     const {startPointIndex, endPointIndex1, endPointIndex2} = linePointsOfOneVertexIndex;
-    const horizontalVerticalAngle = type === 'x' ? 180 : 270;
+    let horizontalVerticalAngle = type === 'x' ? 180 : 270;
+    if (isRightBottom) {
+        horizontalVerticalAngle = type === 'x' ? 180 : 270;
+    }
 
-    return map([endPointIndex1, endPointIndex2], pointIndex => {
+    const jj = map([endPointIndex1, endPointIndex2], pointIndex => {
         const startPoint = shapePointNavigation[startPointIndex];
         const endPoint = shapePointNavigation[pointIndex];
         const diffY = startPoint.y - endPoint.y;
         const diffX = startPoint.x - endPoint.x;
 
-        return (Math.atan2(diffY, diffX) * 180 / Math.PI) - horizontalVerticalAngle;
+        // let angle = (Math.atan2(diffY, diffX) * 180 / Math.PI) - horizontalVerticalAngle;
+        let angle = (Math.atan2(diffY, diffX) * 180 / Math.PI) - horizontalVerticalAngle;
+
+        return angle;
     });
+
+    return jj;
 }
 
 /* eslint-disable complexity */
@@ -383,6 +483,8 @@ function getRotatedDimension(shapeObj) {
     return {
         left,
         top,
+        right,
+        bottom,
         width: right - left,
         height: bottom - top
     };

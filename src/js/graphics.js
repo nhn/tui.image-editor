@@ -809,7 +809,12 @@ class Graphics {
      * @returns {Object} {{width: number, height: number}} image size
      */
     createStaticCanvas() {
-        return new fabric.StaticCanvas();
+        const staticCanvas = new fabric.StaticCanvas();
+        staticCanvas.set({
+            enableRetinaScaling: false
+        });
+
+        return staticCanvas;
     }
 
     /**

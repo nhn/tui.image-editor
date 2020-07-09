@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>example - filter area</title>
+        <style>
+            .tui-image-editor {
+                width: 1000px;
+                height: 1000px;
+            }
+        </style>
+    </head>
+    <body>
+
+        <div class="tui-image-editor"></div>
+        <button id="toggle-drawing-mode">SHAPE DRAWING MODE - enabled</button>
+        <button id="add-filter-shape">ADD SHAPE</button>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/3.6.0/fabric.js"></script>
+        <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
+        <script type="text/javascript" src="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.js"></script>
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+        <!--script type="text/javascript" src="https://uicdn.toast.com/tui-image-editor/v3.10.0-alpha.0/tui-image-editor.min.js"></script-->
+
+        <script type="text/javascript" src="../dist/tui-image-editor.js"></script>
+        <script>
+
+        /*
+        setDrawingShape 나 addShape의 fill 옵션을 아래처럼 세팅하면 됩니다.
+        필터 적용시 blur 는 0.1 ~ 1, pixelate 는 2 ~ 20 정도로 필터를 조정할수 있어요.
+        
+        imageEditor.setDrawingShape('rect', {
+            stroke: '#000000',
+            strokeWidth: 0,
+            fill: {
+                type: 'filter', 
+                filter: [{blur: 0.4}] // or [{pixelate: 10}]
+            }
+        });
+        */
+
+        let enableDrawingMode = true;
+        const toggleDrawingButton = document.getElementById('toggle-drawing-mode');
+        const addShapeButton = document.getElementById('add-filter-shape');
+
+        const imageUrl = 'https://memo.superlucky.co.kr/images/20160826/upload_e44793d0c82787561fa7213e5d5c2008.png';
+        const imageEditor = new tui.ImageEditor('.tui-image-editor', {
+            cssMaxWidth: 1000,
+            cssMaxHeight: 1000,
+            selectionStyle: {
+                cornerSize: 20,
+                rotatingPointOffset: 70
+            }
+        });
+
+        imageEditor.loadImageFromURL(imageUrl, 'SampleImage').then(() => {
+            startDrawing();
+            toggleDrawingButton.addEventListener('click', toggleDrawing);
+            addShapeButton.addEventListener('click', addShape);
+
+        });
+
+        function toggleDrawing() {
+            enableDrawingMode = !enableDrawingMode;
+            if (enableDrawingMode) {
+                startDrawing();
+                this.innerHTML = 'SHAPE DRAWING MODE - enabled';
+            } else {
+                stopDrawing();
+                this.innerHTML = 'SHAPE DRAWING MODE - disabled';
+            }
+        }
+
+        function startDrawing() {
+            imageEditor.setDrawingShape('rect', {
+                stroke: '#000000',
+                strokeWidth: 0,
+                fill: {type: 'filter', filter: [{blur: 0.4}]}
+            });
+            imageEditor.startDrawingMode('SHAPE');
+        }
+
+        function stopDrawing() {
+            imageEditor.stopDrawingMode();
+        }
+
+        let addShapePosition = [100, 100];
+        function addShape() {
+            imageEditor.addShape('rect', {
+                fill: {
+                    type: 'filter',
+                    filter: [{pixelate: 10}]
+                },
+                strokeWidth: 10,
+                width: 200,
+                height: 200,
+                left: addShapePosition[0],
+                top: addShapePosition[1]
+            }).then(() => {
+                addShapePosition = [addShapePosition[0] + 100, addShapePosition[1] + 100];
+            });
+        }
+        </script>
+    </body>
+</html>
