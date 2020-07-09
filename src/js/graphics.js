@@ -19,7 +19,7 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
-import {getProperties, Promise} from './util';
+import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
@@ -139,6 +139,7 @@ class Graphics {
             onObjectRemoved: this._onObjectRemoved.bind(this),
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
+            onObjectModified: this._onObjectModified.bind(this),
             onObjectRotated: this._onObjectRotated.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
             onPathCreated: this._onPathCreated.bind(this),
@@ -640,7 +641,8 @@ class Graphics {
      * Set states of current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} [options] - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -803,6 +805,14 @@ class Graphics {
     }
 
     /**
+     * Create fabric static canvas
+     * @returns {Object} {{width: number, height: number}} image size
+     */
+    createStaticCanvas() {
+        return new fabric.StaticCanvas();
+    }
+
+    /**
      * Get a DrawingMode instance
      * @param {string} modeName - DrawingMode Class Name
      * @returns {DrawingMode} DrawingMode instance
@@ -954,6 +964,7 @@ class Graphics {
             'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
+            'object:modified': handler.onObjectModified,
             'object:rotating': handler.onObjectRotated,
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
@@ -1014,6 +1025,20 @@ class Graphics {
      */
     _onObjectScaled(fEvent) {
         this._lazyFire(events.OBJECT_SCALED, object => this.createObjectProperties(object), fEvent.target);
+    }
+
+    /**
+     * "object:modified" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onObjectModified(fEvent) {
+        const {target} = fEvent;
+        if (target.type === 'activeSelection') {
+            const items = target.getObjects();
+
+            items.forEach(item => item.fire('modifiedInGroup', target));
+        }
     }
 
     /**
@@ -1136,8 +1161,13 @@ class Graphics {
 
         extend(props, getProperties(obj, predefinedKeys));
 
-        if (['i-text', 'text'].indexOf(obj.type) > -1) {
+        if (includes(['i-text', 'text'], obj.type)) {
             extend(props, this._createTextProperties(obj, props));
+        } else if (includes(['rect', 'triangle', 'circle'], obj.type)) {
+            const shapeComp = this.getComponent(components.SHAPE);
+            extend(props, {
+                fill: shapeComp.makeFillPropertyForUserEvent(obj)
+            });
         }
 
         return props;
@@ -1287,6 +1317,11 @@ class Graphics {
     _copyFabricObject(targetObject) {
         return new Promise(resolve => {
             targetObject.clone(cloned => {
+                const shapeComp = this.getComponent(components.SHAPE);
+                if (isShape(cloned)) {
+                    shapeComp.processForCopiedObject(cloned, targetObject);
+                }
+
                 resolve(cloned);
             });
         });

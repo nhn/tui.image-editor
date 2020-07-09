@@ -10,11 +10,19 @@ import {
     keyCodes as KEY_CODES,
     componentNames,
     fObjectOptions,
-    SHAPE_DEFAULT_OPTIONS
+    SHAPE_DEFAULT_OPTIONS,
+    SHAPE_FILL_TYPE
 } from '../consts';
 import resizeHelper from '../helper/shapeResizeHelper';
-import {Promise} from '../util';
-import {extend, inArray} from 'tui-code-snippet';
+import {
+    getFillImageFromShape,
+    rePositionFilterTypeFillImage,
+    reMakePatternImageSource,
+    makeFillPatternForFilter,
+    makeFilterOptionFromFabricImage
+} from '../helper/shapeFilterFillHelper';
+import {Promise, changeOrigin, getCustomProperty, getFillTypeFromOption, getFillTypeFromObject, isShape} from '../util';
+import {extend} from 'tui-code-snippet';
 
 const SHAPE_INIT_OPTIONS = extend({
     strokeWidth: 1,
@@ -30,7 +38,33 @@ const DEFAULT_TYPE = 'rect';
 const DEFAULT_WIDTH = 20;
 const DEFAULT_HEIGHT = 20;
 
-const shapeType = ['rect', 'circle', 'triangle'];
+/**
+ * Make fill option
+ * @param {Object} options - Options to create the shape
+ * @param {Object.Image} canvasImage - canvas background image
+ * @param {Function} createStaticCanvas - static canvas creater
+ * @returns {Object} - shape option
+ * @private
+ */
+function makeFabricFillOption(options, canvasImage, createStaticCanvas) {
+    const fillOption = options.fill;
+    const fillType = getFillTypeFromOption(options.fill);
+    let fill = fillOption;
+
+    if (fillOption.color) {
+        fill = fillOption.color;
+    }
+
+    let extOption = null;
+    if (fillType === 'filter') {
+        const newStaticCanvas = createStaticCanvas();
+        extOption = makeFillPatternForFilter(canvasImage, fillOption.filter, newStaticCanvas);
+    } else {
+        extOption = {fill};
+    }
+
+    return extend({}, options, extOption);
+}
 
 /**
  * Shape
@@ -145,7 +179,8 @@ export default class Shape extends Component {
      * @ignore
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {Object} [options] - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -166,7 +201,7 @@ export default class Shape extends Component {
      * @ignore
      * @param {string} type - Shape type (ex: 'rect', 'circle')
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - ShapeFillOption or Shape foreground color (ex: '#fff', 'transparent') or ShapeFillOption object
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -179,15 +214,15 @@ export default class Shape extends Component {
     add(type, options) {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
-            options = this._extendOptions(options);
-
-            const shapeObj = this._createInstance(type, options);
+            const extendOption = this._extendOptions(options);
+            const shapeObj = this._createInstance(type, extendOption);
+            const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
             this._bindEventOnShape(shapeObj);
 
             canvas.add(shapeObj).setActiveObject(shapeObj);
 
-            const objectProperties = this.graphics.createObjectProperties(shapeObj);
+            this._resetPositionFillFilter(shapeObj);
 
             resolve(objectProperties);
         });
@@ -198,7 +233,8 @@ export default class Shape extends Component {
      * @ignore
      * @param {fabric.Object} shapeObj - Selected shape object on canvas
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -210,14 +246,62 @@ export default class Shape extends Component {
      */
     change(shapeObj, options) {
         return new Promise((resolve, reject) => {
-            if (inArray(shapeObj.get('type'), shapeType) < 0) {
+            if (!isShape(shapeObj)) {
                 reject(rejectMessages.unsupportedType);
             }
+            const hasFillOption = getFillTypeFromOption(options.fill) === 'filter';
+            const {canvasImage, createStaticCanvas} = this.graphics;
 
-            shapeObj.set(options);
+            shapeObj.set(hasFillOption ? makeFabricFillOption(options, canvasImage, createStaticCanvas) : options);
+
+            if (hasFillOption) {
+                this._resetPositionFillFilter(shapeObj);
+            }
+
             this.getCanvas().renderAll();
             resolve();
         });
+    }
+
+    /**
+     * make fill property for user event
+     * @param {fabric.Object} shapeObj - fabric object
+     * @returns {Object}
+     */
+    makeFillPropertyForUserEvent(shapeObj) {
+        const fillType = getFillTypeFromObject(shapeObj);
+        const fillProp = {};
+
+        if (fillType === SHAPE_FILL_TYPE.FILTER) {
+            const fillImage = getFillImageFromShape(shapeObj);
+            const filterOption = makeFilterOptionFromFabricImage(fillImage);
+
+            fillProp.type = fillType;
+            fillProp.filter = filterOption;
+        } else {
+            fillProp.type = SHAPE_FILL_TYPE.COLOR;
+            fillProp.color = shapeObj.fill || 'transparent';
+        }
+
+        return fillProp;
+    }
+
+    /**
+     * Copy object handling.
+     * @param {fabric.Object} shapeObj - Shape object
+     * @param {fabric.Object} originalShapeObj - Shape object
+     */
+    processForCopiedObject(shapeObj, originalShapeObj) {
+        this._bindEventOnShape(shapeObj);
+
+        if (getFillTypeFromObject(shapeObj) === 'filter') {
+            const fillImage = getFillImageFromShape(originalShapeObj);
+            const filterOption = makeFilterOptionFromFabricImage(fillImage);
+            const newStaticCanvas = this.graphics.createStaticCanvas();
+
+            shapeObj.set(makeFillPatternForFilter(this.graphics.canvasImage, filterOption, newStaticCanvas));
+            this._resetPositionFillFilter(shapeObj);
+        }
     }
 
     /**
@@ -257,6 +341,7 @@ export default class Shape extends Component {
      */
     _extendOptions(options) {
         const selectionStyles = fObjectOptions.SELECTION_STYLE;
+        const {canvasImage, createStaticCanvas} = this.graphics;
 
         options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
 
@@ -264,7 +349,7 @@ export default class Shape extends Component {
             options.lockUniScaling = true;
         }
 
-        return options;
+        return makeFabricFillOption(options, canvasImage, createStaticCanvas);
     }
 
     /**
@@ -300,12 +385,23 @@ export default class Shape extends Component {
                 resizeHelper.adjustOriginToCenter(currentObj);
                 resizeHelper.setOrigins(currentObj);
             },
+            modifiedInGroup(activeSelection) {
+                self._fillFilterRePositionInGroupSelection(shapeObj, activeSelection);
+            },
+            moving() {
+                self._resetPositionFillFilter(this);
+            },
+            rotating() {
+                self._resetPositionFillFilter(this);
+            },
             scaling(fEvent) {
                 const pointer = canvas.getPointer(fEvent.e);
                 const currentObj = self._shapeObj;
 
                 canvas.setCursor('crosshair');
                 resizeHelper.resize(currentObj, pointer, true);
+
+                self._resetPositionFillFilter(this);
             }
         });
     }
@@ -362,6 +458,8 @@ export default class Shape extends Component {
 
             resizeHelper.resize(shape, pointer);
             canvas.renderAll();
+
+            this._resetPositionFillFilter(shape);
         }
     }
 
@@ -423,5 +521,66 @@ export default class Shape extends Component {
                 this._shapeObj.isRegular = false;
             }
         }
+    }
+
+    /**
+     * Reset shape position and internal proportions in the filter type fill area.
+     * @param {fabric.Object} shapeObj - Shape object
+     * @private
+     */
+    _resetPositionFillFilter(shapeObj) {
+        if (getFillTypeFromObject(shapeObj) !== 'filter') {
+            return;
+        }
+
+        const fillImage = getFillImageFromShape(shapeObj);
+        const {originalAngle} = getCustomProperty(fillImage, 'originalAngle');
+
+        if (this.graphics.canvasImage.angle !== originalAngle) {
+            reMakePatternImageSource(shapeObj, this.graphics.canvasImage);
+        }
+        const {originX, originY} = shapeObj;
+
+        resizeHelper.adjustOriginToCenter(shapeObj);
+
+        shapeObj.width *= shapeObj.scaleX;
+        shapeObj.height *= shapeObj.scaleY;
+        shapeObj.rx *= shapeObj.scaleX;
+        shapeObj.ry *= shapeObj.scaleY;
+        shapeObj.scaleX = 1;
+        shapeObj.scaleY = 1;
+
+        rePositionFilterTypeFillImage(shapeObj);
+
+        changeOrigin(shapeObj, {
+            originX,
+            originY
+        });
+    }
+
+    /**
+     * Reset filter area position within group selection.
+     * @param {fabric.Object} shapeObj - Shape object
+     * @param {fabric.ActiveSelection} activeSelection - Shape object
+     * @private
+     */
+    _fillFilterRePositionInGroupSelection(shapeObj, activeSelection) {
+        if (activeSelection.scaleX !== 1 || activeSelection.scaleY !== 1) {
+            // This is necessary because the group's scale transition state affects the relative size of the fill area.
+            // The only way to reset the object transformation scale state to neutral.
+            // {@link https://github.com/fabricjs/fabric.js/issues/5372}
+            activeSelection.addWithUpdate();
+        }
+
+        const {angle, left, top} = shapeObj;
+
+        activeSelection.realizeTransform(shapeObj);
+        this._resetPositionFillFilter(shapeObj);
+
+        shapeObj.set({
+            angle,
+            left,
+            top
+        });
     }
 }

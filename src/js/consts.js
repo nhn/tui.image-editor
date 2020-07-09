@@ -11,6 +11,30 @@ import {keyMirror} from './util';
 export const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
 
 /**
+ * Filter name value map
+ * @type {Object.<string, string>}
+ */
+export const FILTER_NAME_VALUE_MAP = {
+    blur: 'blur',
+    blocksize: 'pixelate'
+};
+
+/**
+ * Fill type for shape
+ * @type {Object.<string, string>}
+ */
+export const SHAPE_FILL_TYPE = {
+    FILTER: 'filter',
+    COLOR: 'color'
+};
+
+/**
+ * Shape type list
+ * @type {Array.<string>}
+ */
+export const SHAPE_TYPE = ['rect', 'circle', 'triangle'];
+
+/**
  * Component names
  * @type {Object.<string, string>}
  */

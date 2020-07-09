@@ -2,8 +2,9 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Util
  */
-import {forEach, sendHostname} from 'tui-code-snippet';
+import {forEach, sendHostname, extend, isString, pick, inArray} from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
+import {SHAPE_FILL_TYPE, SHAPE_TYPE} from './consts';
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
 const {min, max} = Math;
@@ -226,4 +227,119 @@ export function cls(str = '', prefix = '') {
     }
 
     return `${CSS_PREFIX}${prefix}${str}`;
+}
+
+/**
+ * Change object origin
+ * @param {fabric.Object} fObject - fabric object
+ * @param {Object} origin - origin of fabric object
+ *   @param {string} originX - horizontal basis.
+ *   @param {string} originY - vertical basis.
+ */
+export function changeOrigin(fObject, origin) {
+    const {originX, originY} = origin;
+    const {x: left, y: top} = fObject.getPointByOrigin(originX, originY);
+
+    fObject.set({
+        left,
+        top,
+        originX,
+        originY
+    });
+
+    fObject.setCoords();
+}
+
+/**
+ * Object key value flip
+ * @param {Object} targetObject - The data object of the key value. 
+ * @returns {Object}
+ */
+export function flipObject(targetObject) {
+    const result = {};
+
+    Object.keys(targetObject).forEach(key => {
+        result[targetObject[key]] = key;
+    });
+
+    return result;
+}
+
+/**
+ * Set custom properties
+ * @param {Object} targetObject - target object
+ * @param {Object} props - custom props object
+ */
+export function setCustomProperty(targetObject, props) {
+    targetObject.customProps = targetObject.customProps || {};
+    extend(targetObject.customProps, props);
+}
+
+/**
+ * Get custom property
+ * @param {fabric.Object} fObject - fabric object
+ * @param {Array|string} propNames - prop name array
+ * @returns {object | number | string}
+ */
+export function getCustomProperty(fObject, propNames) {
+    const resultObject = {};
+    if (isString(propNames)) {
+        propNames = [propNames];
+    }
+    forEach(propNames, propName => {
+        resultObject[propName] = fObject.customProps[propName];
+    });
+
+    return resultObject;
+}
+
+/**
+ * Capitalize string
+ * @param {string} targetString - target string
+ * @returns {string}
+ */
+export function capitalizeString(targetString) {
+    return targetString.charAt(0).toUpperCase() + targetString.slice(1);
+}
+
+/**
+ * Array includes check
+ * @param {Array} targetArray - target array
+ * @param {string|number} compareValue - compare value
+ * @returns {boolean}
+ */
+export function includes(targetArray, compareValue) {
+    return targetArray.indexOf(compareValue) >= 0;
+}
+
+/**
+ * Get fill type
+ * @param {Object | string} fillOption - shape fill option
+ * @returns {string} 'color' or 'filter'
+ */
+export function getFillTypeFromOption(fillOption = {}) {
+    return pick(fillOption, 'type') || SHAPE_FILL_TYPE.COLOR;
+}
+
+/**
+ * Get fill type of shape type object
+ * @param {fabric.Object} shapeObj - fabric object
+ * @returns {string} 'transparent' or 'color' or 'filter'
+ */
+export function getFillTypeFromObject(shapeObj) {
+    const {fill = {}} = shapeObj;
+    if (fill.source) {
+        return SHAPE_FILL_TYPE.FILTER;
+    }
+
+    return SHAPE_FILL_TYPE.COLOR;
+}
+
+/**
+ * Check if the object is a shape object.
+ * @param {fabric.Object} obj - fabric object
+ * @returns {boolean}
+ */
+export function isShape(obj) {
+    return inArray(obj.get('type'), SHAPE_TYPE) >= 0;
 }

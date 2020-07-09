@@ -84,6 +84,21 @@ const {
  */
 
 /**
+ * Shape filter option
+ * @typedef {object.<string, number>} ShapeFillFilterOption
+ */
+
+/**
+ * Shape filter option
+ * @typedef {object} ShapeFillOption - fill option of shape
+ * @property {string} type - fill type ('color' or 'filter')
+ * @property {Array.<ShapeFillFilterOption>} [filter] - {@link ShapeFilterOption} List.
+ *  only applies to filter types 
+ *  (ex: [\{pixelate: 20\}, \{blur: 0.3\}]) 
+ * @property {string} [color] - Shape foreground color (ex: '#fff', 'transparent')
+ */
+
+/**
  * Image editor
  * @class
  * @param {string|HTMLElement} wrapper - Wrapper's element or selector
@@ -859,7 +874,8 @@ class ImageEditor {
      * Set states of current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} [options] - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -902,7 +918,8 @@ class ImageEditor {
      * Add shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -935,6 +952,20 @@ class ImageEditor {
      * }).then(objectProps => {
      *     console.log(objectProps.id);
      * });
+     * @example
+     * imageEditor.addShape('rect', {
+     *     fill: {
+     *         type: 'filter',
+     *         filter: [{blur: 0.3}, {pixelate: 20}]
+     *     },
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100,
+     *     isRegular: false
+     * }).then(objectProps => {
+     *     console.log(objectProps.id);
+     * });
      */
     addShape(type, options) {
         options = options || {};
@@ -948,7 +979,8 @@ class ImageEditor {
      * Change shape
      * @param {number} id - object id
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
