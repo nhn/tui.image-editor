@@ -4,9 +4,8 @@
  */
 import snippet from 'tui-code-snippet';
 import commandFactory from '../factory/command';
-import consts from '../consts';
+import {componentNames, rejectMessages, commandNames} from '../consts';
 
-const {componentNames, rejectMessages, commandNames} = consts;
 const {FILTER} = componentNames;
 
 /**
@@ -96,4 +95,4 @@ const command = {
 
 commandFactory.register(command);
 
-module.exports = command;
+export default command;

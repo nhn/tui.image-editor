@@ -3,18 +3,14 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
 import Invoker from './invoker';
 import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import consts from './consts';
-import {sendHostName} from './util';
+import {sendHostName, Promise} from './util';
+import {eventNames as events, commandNames as commands, keyCodes, rejectMessages} from './consts';
 
-const events = consts.eventNames;
-const commands = consts.commandNames;
-const {keyCodes, rejectMessages} = consts;
 const {isUndefined, forEach, CustomEvents} = snippet;
 
 const {
@@ -23,6 +19,7 @@ const {
     OBJECT_SCALED,
     OBJECT_ACTIVATED,
     OBJECT_ROTATED,
+    OBJECT_ADDED,
     ADD_TEXT,
     ADD_OBJECT,
     TEXT_EDITING,
@@ -84,6 +81,21 @@ const {
  * @property {string} fontWeight - Type of thicker or thinner looking (normal / bold)
  * @property {string} textAlign - Type of text align (left / center / right)
  * @property {string} textDecoration - Type of line (underline / line-through / overline)
+ */
+
+/**
+ * Shape filter option
+ * @typedef {object.<string, number>} ShapeFillFilterOption
+ */
+
+/**
+ * Shape filter option
+ * @typedef {object} ShapeFillOption - fill option of shape
+ * @property {string} type - fill type ('color' or 'filter')
+ * @property {Array.<ShapeFillFilterOption>} [filter] - {@link ShapeFilterOption} List.
+ *  only applies to filter types 
+ *  (ex: [\{pixelate: 20\}, \{blur: 0.3\}]) 
+ * @property {string} [color] - Shape foreground color (ex: '#fff', 'transparent')
  */
 
 /**
@@ -179,7 +191,6 @@ class ImageEditor {
             this.ui ? this.ui.getEditorArea() : wrapper, {
                 cssMaxWidth: options.cssMaxWidth,
                 cssMaxHeight: options.cssMaxHeight,
-                useItext: !!this.ui,
                 useDragAddIcon: !!this.ui
             }
         );
@@ -196,10 +207,10 @@ class ImageEditor {
             objectMoved: this._onObjectMoved.bind(this),
             objectScaled: this._onObjectScaled.bind(this),
             objectRotated: this._onObjectRotated.bind(this),
+            objectAdded: this._onObjectAdded.bind(this),
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
-            addObjectAfter: this._onAddObjectAfter.bind(this),
             textEditing: this._onTextEditing.bind(this),
             textChanged: this._onTextChanged.bind(this),
             iconCreateResize: this._onIconCreateResize.bind(this),
@@ -296,6 +307,7 @@ class ImageEditor {
             [OBJECT_SCALED]: this._handlers.objectScaled,
             [OBJECT_ROTATED]: this._handlers.objectRotated,
             [OBJECT_ACTIVATED]: this._handlers.objectActivated,
+            [OBJECT_ADDED]: this._handlers.objectAdded,
             [ADD_TEXT]: this._handlers.addText,
             [ADD_OBJECT]: this._handlers.addObject,
             [TEXT_EDITING]: this._handlers.textEditing,
@@ -303,8 +315,7 @@ class ImageEditor {
             [ICON_CREATE_RESIZE]: this._handlers.iconCreateResize,
             [ICON_CREATE_END]: this._handlers.iconCreateEnd,
             [SELECTION_CLEARED]: this._handlers.selectionCleared,
-            [SELECTION_CREATED]: this._handlers.selectionCreated,
-            [ADD_OBJECT_AFTER]: this._handlers.addObjectAfter
+            [SELECTION_CREATED]: this._handlers.selectionCreated
         });
     }
 
@@ -863,7 +874,8 @@ class ImageEditor {
      * Set states of current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} [options] - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -906,7 +918,8 @@ class ImageEditor {
      * Add shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -939,6 +952,20 @@ class ImageEditor {
      * }).then(objectProps => {
      *     console.log(objectProps.id);
      * });
+     * @example
+     * imageEditor.addShape('rect', {
+     *     fill: {
+     *         type: 'filter',
+     *         filter: [{blur: 0.3}, {pixelate: 20}]
+     *     },
+     *     stroke: 'blue',
+     *     strokeWidth: 3,
+     *     rx: 10,
+     *     ry: 100,
+     *     isRegular: false
+     * }).then(objectProps => {
+     *     console.log(objectProps.id);
+     * });
      */
     addShape(type, options) {
         options = options || {};
@@ -952,7 +979,8 @@ class ImageEditor {
      * Change shape
      * @param {number} id - object id
      * @param {Object} options - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -1000,6 +1028,7 @@ class ImageEditor {
      *         @param {string} [options.styles.textAlign] Type of text align (left / center / right)
      *         @param {string} [options.styles.textDecoration] Type of line (underline / line-through / overline)
      *     @param {{x: number, y: number}} [options.position] - Initial position
+     *     @param {boolean} [options.autofocus] - text autofocus, default is true
      * @returns {Promise}
      * @example
      * imageEditor.addText('init text');
@@ -1160,12 +1189,30 @@ class ImageEditor {
     }
 
     /**
-     * 'addObjectAfter' event handler
+     * 'objectAdded' event handler
      * @param {Object} objectProps added object properties
      * @private
      */
-    _onAddObjectAfter(objectProps) {
-        this.fire(events.ADD_OBJECT_AFTER, objectProps);
+
+    _onObjectAdded(objectProps) {
+        /**
+         * The event when object added
+         * @event ImageEditor#objectAdded
+         * @param {ObjectProps} props - object properties
+         * @example
+         * imageEditor.on('objectAdded', function(props) {
+         *     console.log(props);
+         * });
+         */
+        this.fire(OBJECT_ADDED, objectProps);
+
+        /**
+         * The event when object added (deprecated)
+         * @event ImageEditor#addObjectAfter
+         * @param {ObjectProps} props - object properties
+         * @deprecated
+         */
+        this.fire(ADD_OBJECT_AFTER, objectProps);
     }
 
     /**
@@ -1173,7 +1220,7 @@ class ImageEditor {
      * @private
      */
     _selectionCleared() {
-        this.fire(events.SELECTION_CLEARED);
+        this.fire(SELECTION_CLEARED);
     }
 
     /**
@@ -1182,7 +1229,7 @@ class ImageEditor {
      * @private
      */
     _selectionCreated(eventTarget) {
-        this.fire(events.SELECTION_CREATED, eventTarget);
+        this.fire(SELECTION_CREATED, eventTarget);
     }
 
     /**
@@ -1565,4 +1612,4 @@ class ImageEditor {
 action.mixin(ImageEditor);
 CustomEvents.mixin(ImageEditor);
 
-module.exports = ImageEditor;
+export default ImageEditor;

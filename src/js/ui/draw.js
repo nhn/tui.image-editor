@@ -1,4 +1,4 @@
-import util from '../util';
+import {assignmentForDestroy, getRgb} from '../util';
 import Colorpicker from './tools/colorpicker';
 import Range from './tools/range';
 import Submenu from './submenuBase';
@@ -46,7 +46,7 @@ class Draw extends Submenu {
         this._els.drawColorPicker.destroy();
         this._els.drawRange.destroy();
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
@@ -79,7 +79,7 @@ class Draw extends Submenu {
     setDrawMode() {
         this.actions.setDrawMode(this.type, {
             width: this.width,
-            color: util.getRgb(this.color, DRAW_OPACITY)
+            color: getRgb(this.color, DRAW_OPACITY)
         });
     }
 

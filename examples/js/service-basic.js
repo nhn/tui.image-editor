@@ -4,6 +4,7 @@
  * @fileoverview
  */
 /* eslint-disable vars-on-top,no-var,strict,prefer-template,prefer-arrow-callback,prefer-destructuring,object-shorthand,require-jsdoc,complexity,prefer-const,no-unused-vars */
+var PIXELATE_FILTER_DEFAULT_VALUE = 20;
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
 var rImageType = /data:(image\/.+);base64,/;
 var shapeOptions = {};
@@ -48,6 +49,7 @@ var $inputBrushWidthRange = $('#input-brush-width-range');
 var $inputFontSizeRange = $('#input-font-size-range');
 var $inputStrokeWidthRange = $('#input-stroke-width-range');
 var $inputCheckTransparent = $('#input-check-transparent');
+var $inputCheckFilter = $('#input-check-filter');
 var $inputCheckGrayscale = $('#input-check-grayscale');
 var $inputCheckInvert = $('#input-check-invert');
 var $inputCheckSepia = $('#input-check-sepia');
@@ -228,26 +230,25 @@ function setIconToolbar(obj) {
 }
 
 function setShapeToolbar(obj) {
-    var strokeColor, fillColor, isTransparent;
+    var fillColor, isTransparent, isFilter;
     var colorType = $selectColorType.val();
+    var changeValue = colorType === 'stroke' ? obj.stroke : obj.fill.type;
+    isTransparent = (changeValue === 'transparent');
+    isFilter = (changeValue === 'filter');
 
     if (colorType === 'stroke') {
-        strokeColor = obj.stroke;
-        isTransparent = (strokeColor === 'transparent');
-
-        if (!isTransparent) {
-            shapeColorpicker.setColor(strokeColor);
+        if (!isTransparent && !isFilter) {
+            shapeColorpicker.setColor(changeValue);
         }
     } else if (colorType === 'fill') {
-        fillColor = obj.fill;
-        isTransparent = (fillColor === 'transparent');
-
-        if (!isTransparent) {
+        if (!isTransparent && !isFilter) {
+            fillColor = obj.fill.color;
             shapeColorpicker.setColor(fillColor);
         }
     }
 
     $inputCheckTransparent.prop('checked', isTransparent);
+    $inputCheckFilter.prop('checked', isFilter);
     $inputStrokeWidthRange.val(obj.strokeWidth);
 }
 
@@ -546,52 +547,54 @@ $selectShapeType.on('change', function() {
 
     imageEditor.setDrawingShape(shapeType);
 });
-
-$inputCheckTransparent.on('change', function() {
-    var colorType = $selectColorType.val();
-    var isTransparent = $(this).prop('checked');
-    var color;
-
-    if (!isTransparent) {
-        color = shapeColorpicker.getColor();
-    } else {
-        color = 'transparent';
-    }
-
+$selectColorType.on('change', function() {
+    var colorType = $(this).val();
     if (colorType === 'stroke') {
-        imageEditor.changeShape(activeObjectId, {
-            stroke: color
-        });
-    } else if (colorType === 'fill') {
-        imageEditor.changeShape(activeObjectId, {
-            fill: color
-        });
+        $inputCheckFilter.prop('disabled', true);
+        $inputCheckFilter.prop('checked', false);
+    } else {
+        $inputCheckTransparent.prop('disabled', false);
+        $inputCheckFilter.prop('disabled', false);
     }
-
-    imageEditor.setDrawingShape(shapeType, shapeOptions);
 });
 
+$inputCheckTransparent.on('change', onChangeShapeFill);
+$inputCheckFilter.on('change', onChangeShapeFill);
 shapeColorpicker.on('selectColor', function(event) {
+    $inputCheckTransparent.prop('checked', false);
+    $inputCheckFilter.prop('checked', false);
+    onChangeShapeFill(event);
+});
+
+function onChangeShapeFill(event) {
     var colorType = $selectColorType.val();
     var isTransparent = $inputCheckTransparent.prop('checked');
-    var color = event.color;
+    var isFilter = $inputCheckFilter.prop('checked');
+    var shapeOption;
 
-    if (isTransparent) {
-        return;
+    if (event.color) {
+        shapeOption = event.color;
+    } else if (isTransparent) {
+        shapeOption = 'transparent';
+    } else if (isFilter) {
+        shapeOption = {
+            type: 'filter',
+            filter: [{pixelate: PIXELATE_FILTER_DEFAULT_VALUE}]
+        };
     }
 
     if (colorType === 'stroke') {
         imageEditor.changeShape(activeObjectId, {
-            stroke: color
+            stroke: shapeOption
         });
     } else if (colorType === 'fill') {
         imageEditor.changeShape(activeObjectId, {
-            fill: color
+            fill: shapeOption
         });
     }
 
     imageEditor.setDrawingShape(shapeType, shapeOptions);
-});
+}
 
 $inputStrokeWidthRange.on('change', function() {
     var strokeWidth = Number($(this).val());
@@ -866,7 +869,7 @@ $inputCheckMultiply.on('change', function() {
     });
 });
 
-multiplyColorpicker.on('selectColor', function() {
+multiplyColorpicker.on('selectColor', function(e) {
     applyOrRemoveFilter($inputCheckMultiply.is(':checked'), 'multiply', {
         color: e.color
     });

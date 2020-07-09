@@ -54,6 +54,40 @@ describe('Text', () => {
             expect(activeObj.left).toEqual(mockImagePos.x);
             expect(activeObj.top).toEqual(mockImagePos.y);
         });
+
+        it('Default option for autofocus should be true when adding text.', done => {
+            text.add('default', {}).then(info => {
+                const newText = graphics.getObject(info.id);
+
+                expect(newText.selectionStart).toBe(0);
+                expect(newText.selectionEnd).toBe(7);
+                expect(newText.isEditing).toBe(true);
+
+                done();
+            });
+        });
+    });
+
+    it('Rotated text elements must also maintain consistent left and top positions after entering and exiting drawing mode.', () => {
+        const left = 10;
+        const top = 20;
+        const newText = new fabric.IText('testString', {
+            left,
+            top,
+            width: 30,
+            height: 50,
+            angle: 40,
+            originX: 'center',
+            originY: 'center'
+        });
+        text.useItext = true;
+        canvas.add(newText);
+
+        text.start();
+        text.end();
+
+        expect(newText.left).toEqual(left);
+        expect(newText.top).toEqual(top);
     });
 
     it('change() should change contents in the text object as input.', () => {
@@ -100,59 +134,6 @@ describe('Text', () => {
         });
     });
 
-    describe('_createTextarea()', () => {
-        let $textarea;
-
-        beforeEach(() => {
-            text._createTextarea();
-
-            $textarea = $(text.getCanvasElement().parentNode).find('textarea');
-        });
-
-        afterEach(() => {
-            text._removeTextarea();
-        });
-
-        it('should attach the created "textarea" element on canvas container.', () => {
-            expect($textarea.length).toEqual(1);
-        });
-
-        it('should have class name.', () => {
-            const expected = 'tui-image-eidtor-textarea';
-
-            expect($textarea.attr('class')).toEqual(expected);
-        });
-
-        it('should add inline style on "textarea" element.', () => {
-            expect($textarea.attr('style')).not.toEqual(null);
-        });
-    });
-
-    it('_removeTextarea() should remove "textarea" element on canvas container.', () => {
-        text._createTextarea();
-        text._removeTextarea();
-
-        const $textarea = $(text.getCanvasElement().parentNode).find('textarea');
-
-        expect($textarea.length).toEqual(0);
-    });
-
-    it('_onBlur() should hide the "textarea" element.', () => {
-        const obj = new fabric.Text('test');
-
-        text._createTextarea();
-
-        const $textarea = $(text.getCanvasElement().parentNode).find('textarea');
-
-        text._editingObj = obj;
-
-        canvas.add(obj);
-
-        text._onBlur();
-
-        expect($textarea.css('display')).toEqual('none');
-    });
-
     it('_onFabricScaling() should change size of selected text object.', () => {
         const obj = new fabric.Text('test');
         const mock = {
@@ -169,49 +150,5 @@ describe('Text', () => {
         canvas.fire('object:scaling', mock);
 
         expect(obj.fontSize).toEqual(originSize * scale);
-    });
-
-    describe('_changeToEditingMode()', () => {
-        let textarea;
-        const ratio = 10;
-        const expected = {
-            fontSize: 12,
-            fontFamily: 'Comic Sans',
-            fontStyle: 'italic',
-            fontWeight: '700',
-            textAlign: 'right',
-            lineHeight: '3'
-        };
-        const obj = new fabric.Text('test', expected);
-
-        beforeEach(() => {
-            text._createTextarea();
-
-            textarea = text._textarea;
-
-            canvas.add(obj);
-
-            spyOn(text, 'getCanvasRatio').and.returnValue(ratio);
-
-            text._changeToEditingMode(obj);
-        });
-
-        afterEach(() => {
-            text._removeTextarea();
-        });
-
-        it('should change selected text object into textarea.', () => {
-            expect(textarea.style.display).not.toEqual('none');
-        });
-
-        it('should set style of textarea by selected text object.', () => {
-            const textareaStyles = textarea.style;
-
-            expect(textareaStyles['font-size']).toEqual(`${expected.fontSize / ratio}px`);
-            expect(textareaStyles['font-family'].replace(/'|"|\\/g, '')).toEqual(expected.fontFamily);
-            expect(textareaStyles['font-weight']).toEqual(expected.fontWeight);
-            expect(textareaStyles['font-align']).toEqual(expected.fontAlign);
-            expect(textareaStyles['line-height']).toEqual(obj.lineHeight + 0.1);
-        });
     });
 });

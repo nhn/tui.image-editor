@@ -3,11 +3,9 @@
  * @fileoverview Image rotation module
  */
 import fabric from 'fabric';
-import Promise from 'core-js/library/es6/promise';
+import {Promise} from '../util';
 import Component from '../interface/component';
-import consts from '../consts';
-
-const {componentNames} = consts;
+import {componentNames} from '../consts';
 
 /**
  * Image Rotation component
@@ -95,4 +93,4 @@ class Rotation extends Component {
     }
 }
 
-module.exports = Rotation;
+export default Rotation;

@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
 import {HELP_MENUS} from './consts';
-import util from './util';
+import {getSelector, assignmentForDestroy, cls} from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
 
@@ -77,7 +77,7 @@ class Ui {
         this._destroyAllMenu();
         this._selectedElement.innerHTML = '';
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**
@@ -247,7 +247,7 @@ class Ui {
         } else {
             selectedElement = document.querySelector(element);
         }
-        const selector = util.getSelector(selectedElement);
+        const selector = getSelector(selectedElement);
 
         selectedElement.classList.add('tui-image-editor-container');
         selectedElement.innerHTML = controls({
@@ -321,8 +321,8 @@ class Ui {
     _makeMenuPartitionElement() {
         const partitionElement = document.createElement('li');
         const partitionInnerElement = document.createElement('div');
-        partitionElement.className = util.cls('item');
-        partitionInnerElement.className = util.cls('icpartition');
+        partitionElement.className = cls('item');
+        partitionInnerElement.className = cls('icpartition');
         partitionElement.appendChild(partitionInnerElement);
 
         this._menuElement.appendChild(partitionElement);
@@ -340,7 +340,7 @@ class Ui {
         const menuItemHtml = this.theme.makeMenSvgIconSet(useIconTypes, menuName);
 
         this._addTooltipAttribute(btnElement, menuName);
-        btnElement.className = `tie-btn-${menuName} ${util.cls('item')} ${menuType}`;
+        btnElement.className = `tie-btn-${menuName} ${cls('item')} ${menuType}`;
         btnElement.innerHTML = menuItemHtml;
 
         this._menuElement.appendChild(btnElement);
@@ -518,7 +518,7 @@ class Ui {
 
         const gridVisual = document.createElement('div');
 
-        gridVisual.className = util.cls('grid-visual');
+        gridVisual.className = cls('grid-visual');
         const grid = `<table>
            <tr><td class="dot left-top"></td><td></td><td class="dot right-top"></td></tr>
            <tr><td></td><td></td><td></td></tr>

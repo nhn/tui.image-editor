@@ -31,7 +31,8 @@
             "example01-includeUi": "1. Include UI",
             "example02-useApiDirect": "2. Use API direct (basic)",
             "example03-mobile": "3. Mobile"
-        }
+        },
+        "globalErrorLogVariable": "errorLogs"
     },
     "pathPrefix": "tui.image-editor"
 }

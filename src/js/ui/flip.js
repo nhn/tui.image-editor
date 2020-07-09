@@ -1,5 +1,5 @@
 import snippet from 'tui-code-snippet';
-import util from '../util';
+import {assignmentForDestroy} from '../util';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/flip';
 
@@ -31,7 +31,7 @@ class Flip extends Submenu {
     destroy() {
         this._removeEvent();
 
-        util.assignmentForDestroy(this);
+        assignmentForDestroy(this);
     }
 
     /**

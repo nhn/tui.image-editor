@@ -3,20 +3,17 @@
  * @fileoverview Add filter module
  */
 import {isUndefined, extend, forEach, filter} from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
+import {Promise} from '../util';
 import fabric from 'fabric';
 import Component from '../interface/component';
 import Mask from '../extension/mask';
-import consts from '../consts';
-import Blur from '../extension/blur';
+import {rejectMessages, componentNames} from '../consts';
 import Sharpen from '../extension/sharpen';
 import Emboss from '../extension/emboss';
 import ColorFilter from '../extension/colorFilter';
 
-const {rejectMessages} = consts;
 const {filters} = fabric.Image;
 filters.Mask = Mask;
-filters.Blur = Blur;
 filters.Sharpen = Sharpen;
 filters.Emboss = Emboss;
 filters.ColorFilter = ColorFilter;
@@ -30,7 +27,7 @@ filters.ColorFilter = ColorFilter;
  */
 class Filter extends Component {
     constructor(graphics) {
-        super(consts.componentNames.FILTER, graphics);
+        super(componentNames.FILTER, graphics);
     }
 
     /**
@@ -231,4 +228,4 @@ class Filter extends Component {
     }
 }
 
-module.exports = Filter;
+export default Filter;

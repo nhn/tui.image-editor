@@ -3,14 +3,12 @@
  * @fileoverview Tests command with command-factory
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
+import {Promise} from '../src/js/util';
 import fabric from 'fabric';
 import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import Graphics from '../src/js/graphics';
-import consts from '../src/js/consts';
-
-const commands = consts.commandNames;
+import {commandNames as commands} from '../src/js/consts';
 
 describe('commandFactory', () => {
     let invoker, mockImage, canvas, graphics;
@@ -406,8 +404,14 @@ describe('commandFactory', () => {
         let object, object2, group;
 
         beforeEach(() => {
-            object = new fabric.Rect();
-            object2 = new fabric.Rect();
+            object = new fabric.Rect({
+                left: 10,
+                top: 10
+            });
+            object2 = new fabric.Rect({
+                left: 5,
+                top: 20
+            });
             group = new fabric.Group();
 
             graphics.add(object);
@@ -449,6 +453,21 @@ describe('commandFactory', () => {
             )).then(() => {
                 expect(canvas.contains(object)).toBe(true);
                 expect(canvas.contains(object2)).toBe(true);
+                done();
+            });
+        });
+
+        it('"undo ()" should restore the position of the removed object (group). ', done => {
+            const activeSelection = graphics.getActiveSelectionFromObjects(canvas.getObjects());
+            graphics.setActiveObject(activeSelection);
+
+            invoker.execute(commands.REMOVE_OBJECT, graphics, graphics.getActiveObjectIdForRemove()).then(() => (
+                invoker.undo()
+            )).then(() => {
+                expect(object.left).toBe(10);
+                expect(object.top).toBe(10);
+                expect(object2.left).toBe(5);
+                expect(object2.top).toBe(20);
                 done();
             });
         });

@@ -3,7 +3,6 @@
  * @fileoverview Graphics module
  */
 import snippet from 'tui-code-snippet';
-import Promise from 'core-js/library/es6/promise';
 import fabric from 'fabric';
 import ImageLoader from './component/imageLoader';
 import Cropper from './component/cropper';
@@ -20,14 +19,10 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
-import consts from './consts';
-import util from './util';
+import {getProperties, includes, isShape, Promise} from './util';
+import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
-const {componentNames: components, eventNames: events} = consts;
-
-const {drawingModes, fObjectOptions} = consts;
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
-
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
 const EXTRA_PX_FOR_PASTE = 10;
@@ -46,7 +41,6 @@ const backstoreOnly = {
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
- *  @param {boolean} option.useItext - Use IText in text mode
  *  @param {boolean} option.useDragAddIcon - Use dragable add in icon mode
  * @ignore
  */
@@ -54,7 +48,6 @@ class Graphics {
     constructor(element, {
         cssMaxWidth,
         cssMaxHeight,
-        useItext = false,
         useDragAddIcon = false
     } = {}) {
         /**
@@ -74,12 +67,6 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
-
-        /**
-         * Use Itext mode for text component
-         * @type {boolean}
-         */
-        this.useItext = useItext;
 
         /**
          * Use add drag icon mode for icon component
@@ -152,6 +139,7 @@ class Graphics {
             onObjectRemoved: this._onObjectRemoved.bind(this),
             onObjectMoved: this._onObjectMoved.bind(this),
             onObjectScaled: this._onObjectScaled.bind(this),
+            onObjectModified: this._onObjectModified.bind(this),
             onObjectRotated: this._onObjectRotated.bind(this),
             onObjectSelected: this._onObjectSelected.bind(this),
             onPathCreated: this._onPathCreated.bind(this),
@@ -320,11 +308,14 @@ class Graphics {
      */
     getActiveObjectIdForRemove() {
         const activeObject = this.getActiveObject();
-        const isSelection = activeObject.type === 'activeSelection';
+        const {type, left, top} = activeObject;
+        const isSelection = type === 'activeSelection';
 
         if (isSelection) {
-            const group = new fabric.Group();
-            group.add(...activeObject.getObjects());
+            const group = new fabric.Group([...activeObject.getObjects()], {
+                left,
+                top
+            });
 
             return this._addFabricObject(group);
         }
@@ -650,7 +641,8 @@ class Graphics {
      * Set states of current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} [options] - Shape options
-     *      @param {string} [options.fill] - Shape foreground color (ex: '#fff', 'transparent')
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
      *      @param {number} [options.width] - Width value (When type option is 'rect', this options can use)
@@ -813,6 +805,14 @@ class Graphics {
     }
 
     /**
+     * Create fabric static canvas
+     * @returns {Object} {{width: number, height: number}} image size
+     */
+    createStaticCanvas() {
+        return new fabric.StaticCanvas();
+    }
+
+    /**
      * Get a DrawingMode instance
      * @param {string} modeName - DrawingMode Class Name
      * @returns {DrawingMode} DrawingMode instance
@@ -942,7 +942,7 @@ class Graphics {
     _callbackAfterLoadingImageObject(obj) {
         const centerPos = this.getCanvasImage().getCenterPoint();
 
-        obj.set(consts.fObjectOptions.SELECTION_STYLE);
+        obj.set(fObjectOptions.SELECTION_STYLE);
         obj.set({
             left: centerPos.x,
             top: centerPos.y,
@@ -964,6 +964,7 @@ class Graphics {
             'object:removed': handler.onObjectRemoved,
             'object:moving': handler.onObjectMoved,
             'object:scaling': handler.onObjectScaled,
+            'object:modified': handler.onObjectModified,
             'object:rotating': handler.onObjectRotated,
             'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
@@ -1027,6 +1028,20 @@ class Graphics {
     }
 
     /**
+     * "object:modified" canvas event handler
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+     * @private
+     */
+    _onObjectModified(fEvent) {
+        const {target} = fEvent;
+        if (target.type === 'activeSelection') {
+            const items = target.getObjects();
+
+            items.forEach(item => item.fire('modifiedInGroup', target));
+        }
+    }
+
+    /**
      * "object:rotating" canvas event handler
      * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
      * @private
@@ -1079,7 +1094,7 @@ class Graphics {
         obj.path.set(extend({
             left,
             top
-        }, consts.fObjectOptions.SELECTION_STYLE));
+        }, fObjectOptions.SELECTION_STYLE));
 
         const params = this.createObjectProperties(obj.path);
 
@@ -1144,10 +1159,15 @@ class Graphics {
             type: obj.type
         };
 
-        extend(props, util.getProperties(obj, predefinedKeys));
+        extend(props, getProperties(obj, predefinedKeys));
 
-        if (['i-text', 'text'].indexOf(obj.type) > -1) {
+        if (includes(['i-text', 'text'], obj.type)) {
             extend(props, this._createTextProperties(obj, props));
+        } else if (includes(['rect', 'triangle', 'circle'], obj.type)) {
+            const shapeComp = this.getComponent(components.SHAPE);
+            extend(props, {
+                fill: shapeComp.makeFillPropertyForUserEvent(obj)
+            });
         }
 
         return props;
@@ -1170,7 +1190,7 @@ class Graphics {
             'fontWeight'
         ];
         const props = {};
-        extend(props, util.getProperties(obj, predefinedKeys));
+        extend(props, getProperties(obj, predefinedKeys));
 
         return props;
     }
@@ -1282,7 +1302,7 @@ class Graphics {
             clonedObject.set(snippet.extend({
                 left: addExtraPx(left, rightEdge + EXTRA_PX_FOR_PASTE > canvasWidth),
                 top: addExtraPx(top, bottomEdge + EXTRA_PX_FOR_PASTE > canvasHeight)
-            }, consts.fObjectOptions.SELECTION_STYLE));
+            }, fObjectOptions.SELECTION_STYLE));
 
             return clonedObject;
         });
@@ -1297,6 +1317,11 @@ class Graphics {
     _copyFabricObject(targetObject) {
         return new Promise(resolve => {
             targetObject.clone(cloned => {
+                const shapeComp = this.getComponent(components.SHAPE);
+                if (isShape(cloned)) {
+                    shapeComp.processForCopiedObject(cloned, targetObject);
+                }
+
                 resolve(cloned);
             });
         });
@@ -1304,4 +1329,5 @@ class Graphics {
 }
 
 CustomEvents.mixin(Graphics);
-module.exports = Graphics;
+
+export default Graphics;

@@ -6,6 +6,7 @@ import fabric from 'fabric';
 import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Line from '../src/js/component/line';
+import {eventNames} from '../src/js/consts';
 
 describe('Line', () => {
     let canvas, graphics, mockImage, line, fEvent;
@@ -68,5 +69,12 @@ describe('Line', () => {
         line.end();
 
         expect(canvas.getObjects()[0].get('evented')).toEqual(true);
+    });
+
+    it('"objectAdded" event should fire after the line is drawn.', () => {
+        spyOn(line, 'fire').and.callThrough();
+        line._onFabricMouseUp(fEvent);
+
+        expect(line.fire.calls.mostRecent().args[0]).toBe(eventNames.OBJECT_ADDED);
     });
 });

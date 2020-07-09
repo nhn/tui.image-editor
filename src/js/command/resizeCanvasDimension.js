@@ -3,10 +3,8 @@
  * @fileoverview Resize a canvas
  */
 import commandFactory from '../factory/command';
-import Promise from 'core-js/library/es6/promise';
-import consts from '../consts';
-
-const {commandNames} = consts;
+import {Promise} from '../util';
+import {commandNames} from '../consts';
 
 const command = {
     name: commandNames.RESIZE_CANVAS_DIMENSION,
@@ -43,4 +41,4 @@ const command = {
 
 commandFactory.register(command);
 
-module.exports = command;
+export default command;
