@@ -291,6 +291,20 @@ export function reMakePatternImageSource(shapeObj, canvasImage) {
 }
 
 /**
+ * Calculate a point line outside the canvas. 
+ * @param {fabric.Image} canvasImage - canvas background image
+ * @param {boolean} reset - default is false
+ * @returns {HTMLImageElement}
+ */
+export function getCachedCanvasImageElement(canvasImage, reset = false) {
+    if (!cachedCanvasImageElement || reset) {
+        cachedCanvasImageElement = canvasImage.toCanvasElement();
+    }
+
+    return cachedCanvasImageElement;
+}
+
+/**
  * Calculate fill image position for out of Canvas
  * @param {string} type - 'x' or 'y'
  * @param {fabric.Object} shapeObj - shape object
@@ -479,20 +493,6 @@ function getRotatedDimension(shapeObj) {
         width: right - left,
         height: bottom - top
     };
-}
-
-/**
- * Calculate a point line outside the canvas. 
- * @param {fabric.Image} canvasImage - canvas background image
- * @param {boolean} reset - default is false
- * @returns {HTMLImageElement}
- */
-function getCachedCanvasImageElement(canvasImage, reset = false) {
-    if (!cachedCanvasImageElement || reset) {
-        cachedCanvasImageElement = canvasImage.toCanvasElement();
-    }
-
-    return cachedCanvasImageElement;
 }
 
 /**
