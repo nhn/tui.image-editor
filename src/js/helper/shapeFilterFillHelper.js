@@ -45,9 +45,9 @@ export function getFillImageFromShape(shapeObj) {
 export function rePositionFilterTypeFillImage(shapeObj) {
     const {angle, flipX, flipY} = shapeObj;
     const fillImage = getFillImageFromShape(shapeObj);
-    let {width, height, right, bottom} = getRotatedDimension(shapeObj);
-
-    console.log('OORIGNAL-HEIGHT', height);
+    const rotatedShapeCornerDimension = getRotatedDimension(shapeObj);
+    const {right, bottom} = rotatedShapeCornerDimension;
+    let {width, height} = rotatedShapeCornerDimension;
     const diffLeft = (width - shapeObj.width) / 2;
     const diffTop = (height - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
@@ -55,7 +55,9 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     let left = (width / 2) - diffLeft;
     let top = (height / 2) - diffTop;
     const fillImageMaxSize = Math.max(width, height);
-    const commonProps = {
+
+    ([left, top, width, height] = calculateFillImageDimensionOutsideCanvas({
+        shapeObj,
         left,
         top,
         width,
@@ -66,26 +68,19 @@ export function rePositionFilterTypeFillImage(shapeObj) {
         flipY,
         right,
         bottom
-    };
-    let originX, originY;
+    }));
 
     fillImage.set({
-        angle: flipX === flipY ? -angle : angle
-    });
-
-    ([left, top, width, height, originX, originY] = calculateFillImageDimensionOutsideCanvas(extend({
-        shapeObj
-    }, commonProps)));
-
-    fillImage.set(extend({
-    }, commonProps, {
+        angle: flipX === flipY ? -angle : angle,
         left,
         top,
         width,
         height,
-        originX,
-        originY
-    }));
+        cropX,
+        cropY,
+        flipX,
+        flipY
+    });
 
     setCustomProperty(fillImage, {fillImageMaxSize});
 }
@@ -121,29 +116,105 @@ export function makeFilterOptionFromFabricImage(imageObject) {
  */
 function calculateFillImageDimensionOutsideCanvas({
     shapeObj, left, top, width, height, cropX, cropY, flipX, flipY, right, bottom}) {
-    const positionFixer = (type, outDistance, onlyDiff) => calculateFillImagePositionOutsideCanvas({
+    const positionFixer = (type, outDistance, imageLeft, imageTop) => calculateDistanceProtrudingPart({
         type,
         outDistance,
         shapeObj,
+        flipX,
+        flipY,
+        left: imageLeft,
+        top: imageTop
+    });
+    const [originalWidth, originalHeight] = [width, height];
+
+    ([left, top, width, height] = calculateDimensionLeftTopEdge(positionFixer, {
         left,
         top,
-        flipX,
-        flipY
-    }, onlyDiff);
+        width,
+        height,
+        cropX,
+        cropY
+    }));
 
-    let originX = 'center';
-    let originY = 'center';
+    ([left, top, width, height] = calculateDimensionRightBottomEdge(positionFixer, {
+        left,
+        top,
+        width,
+        height,
+        right,
+        bottom,
+        cropX,
+        cropY,
+        originalWidth,
+        originalHeight
+    }));
+
+    return [left, top, width, height];
+}
+
+/**
+ * Calculate fill image position and size for for right bottom edge
+ * @param {Function} positionFixer - position fixer
+ * @param {Object} options - options for position dimension calculate
+ *   @param {fabric.Object} shapeObj - shape object
+ *   @param {number} left - original left position
+ *   @param {number} top - original top position
+ *   @param {number} width - image width
+ *   @param {number} height - image height
+ *   @param {number} right - image right
+ *   @param {number} bottom - image bottom
+ *   @param {number} cropX - image cropX
+ *   @param {number} cropY - image cropY
+ *   @param {boolean} originalWidth - image original width
+ *   @param {boolean} originalHeight - image original height
+ * @returns {Object}
+ */
+function calculateDimensionRightBottomEdge(
+    positionFixer, {left, top, width, height, right, bottom, cropX, cropY, originalWidth, originalHeight}) {
+    const [origWidth, origHeight] = [width, height];
+    const {width: canvasWidth, height: canvasHeight} = cachedCanvasImageElement;
+
+    if (right > canvasWidth && cropX > 0) {
+        width = originalWidth - Math.abs(right - canvasWidth);
+    }
+    if (bottom > canvasHeight && cropY > 0) {
+        height = originalHeight - Math.abs(bottom - canvasHeight);
+    }
+
+    const diff = {
+        x: (origWidth - width) / 2,
+        y: (origHeight - height) / 2
+    };
+
+    forEach(['x', 'y'], type => {
+        const cropDistance2 = diff[type];
+        if (cropDistance2 > 0) {
+            [left, top] = positionFixer(type, cropDistance2, left, top);
+        }
+    });
+
+    return [left, top, width, height];
+}
+
+/**
+ * Calculate fill image position and size for for left top
+ * @param {Function} positionFixer - position fixer
+ * @param {Object} options - options for position dimension calculate
+ *   @param {fabric.Object} shapeObj - shape object
+ *   @param {number} left - original left position
+ *   @param {number} top - original top position
+ *   @param {number} width - image width
+ *   @param {number} height - image height
+ *   @param {number} cropX - image cropX
+ *   @param {number} cropY - image cropY
+ * @returns {Object}
+ */
+function calculateDimensionLeftTopEdge(positionFixer, {left, top, width, height, cropX, cropY}) {
     const dimension = {
         width,
         height
     };
-    const ooriginalHeight = height;
-    const ooriginalWidth = width;
 
-    const canvasWidth = cachedCanvasImageElement.width;
-    const canvasHeight = cachedCanvasImageElement.height;
-
-    /* eslint-disable complexity */
     forEach(['x', 'y'], type => {
         const cropDistance = type === 'x' ? cropX : cropY;
         const compareSize = dimension[POSITION_DIMENSION_MAP[type]];
@@ -153,47 +224,14 @@ function calculateFillImageDimensionOutsideCanvas({
             const outDistance = (compareSize - standardSize) / 2;
 
             dimension[POSITION_DIMENSION_MAP[type]] = standardSize;
-            [left, top] = positionFixer(type, outDistance);
+            [left, top] = positionFixer(type, outDistance, left, top);
         }
         if (cropDistance < 0) {
-            [left, top] = positionFixer(type, cropDistance);
-        }
-        [width, height] = [dimension.width, dimension.height];
-    });
-
-    const [origWidth, origHeight] = [width, height];
-    const [origLeft, origTop] = [left, top];
-
-    if (right > canvasWidth && cropX > 0) {
-        // width = width - (right - canvasWidth);
-        width = ooriginalWidth - Math.abs(right - canvasWidth);
-        // diffWidth = right - canvasWidth;
-    }
-    if (bottom > canvasHeight && cropY > 0) {
-
-        console.log('canvasHeight', canvasHeight);
-        console.log('bottom', bottom);
-        console.log('height', height);
-
-        // height = height - (bottom - canvasHeight);
-        height = ooriginalHeight - Math.abs(bottom - canvasHeight);
-        // diffHeight = bottom - canvasHeight;
-
-    }
-
-    const leftDiff = (origWidth - width) / 2;
-    const topDiff = (origHeight - height) / 2;
-
-    forEach(['x', 'y'], type => {
-        const cropDistance2 = type === 'x' ? leftDiff : topDiff;
-        if (cropDistance2 > 0) {
-            [left, top] = positionFixer(type, cropDistance2);
+            [left, top] = positionFixer(type, cropDistance, left, top);
         }
     });
 
-    /* eslint-enable complexity */
-
-    return [left, top, width, height, originX, originY];
+    return [left, top, dimension.width, dimension.height];
 }
 
 /**
@@ -261,7 +299,7 @@ export function reMakePatternImageSource(shapeObj, canvasImage) {
  * @param {number} top - original top position
  * @returns {Array}
  */
-function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, left, top, flipX, flipY}, onlyDiff = false) {
+function calculateDistanceProtrudingPart({type, shapeObj, outDistance, left, top, flipX, flipY}) {
     const shapePointNavigation = getShapeEdgePoint(shapeObj);
     const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
     const linePointsOutsideCanvas =
@@ -276,9 +314,6 @@ function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, l
         flipY,
         reatAngles
     });
-    if (onlyDiff) {
-        return [diffPosition.left, diffPosition.top];
-    }
 
     return [left + diffPosition.left, top + diffPosition.top];
 }
@@ -488,4 +523,3 @@ function makeFillImage(copiedCanvasElement, currentCanvasImageAngle, filterOptio
 
     return fillImage;
 }
-
