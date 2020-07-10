@@ -46,6 +46,8 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     const {angle, flipX, flipY} = shapeObj;
     const fillImage = getFillImageFromShape(shapeObj);
     let {width, height, right, bottom} = getRotatedDimension(shapeObj);
+
+    console.log('OORIGNAL-HEIGHT', height);
     const diffLeft = (width - shapeObj.width) / 2;
     const diffTop = (height - shapeObj.height) / 2;
     const cropX = shapeObj.left - (shapeObj.width / 2) - diffLeft;
@@ -119,7 +121,7 @@ export function makeFilterOptionFromFabricImage(imageObject) {
  */
 function calculateFillImageDimensionOutsideCanvas({
     shapeObj, left, top, width, height, cropX, cropY, flipX, flipY, right, bottom}) {
-    const positionFixer = (type, outDistance) => calculateFillImagePositionOutsideCanvas({
+    const positionFixer = (type, outDistance, onlyDiff) => calculateFillImagePositionOutsideCanvas({
         type,
         outDistance,
         shapeObj,
@@ -127,13 +129,16 @@ function calculateFillImageDimensionOutsideCanvas({
         top,
         flipX,
         flipY
-    });
+    }, onlyDiff);
+
     let originX = 'center';
     let originY = 'center';
     const dimension = {
         width,
         height
     };
+    const ooriginalHeight = height;
+    const ooriginalWidth = width;
 
     const canvasWidth = cachedCanvasImageElement.width;
     const canvasHeight = cachedCanvasImageElement.height;
@@ -160,10 +165,20 @@ function calculateFillImageDimensionOutsideCanvas({
     const [origLeft, origTop] = [left, top];
 
     if (right > canvasWidth && cropX > 0) {
-        width = width - (right - canvasWidth);
+        // width = width - (right - canvasWidth);
+        width = ooriginalWidth - Math.abs(right - canvasWidth);
+        // diffWidth = right - canvasWidth;
     }
     if (bottom > canvasHeight && cropY > 0) {
-        height = height - (bottom - canvasHeight);
+
+        console.log('canvasHeight', canvasHeight);
+        console.log('bottom', bottom);
+        console.log('height', height);
+
+        // height = height - (bottom - canvasHeight);
+        height = ooriginalHeight - Math.abs(bottom - canvasHeight);
+        // diffHeight = bottom - canvasHeight;
+
     }
 
     const leftDiff = (origWidth - width) / 2;
@@ -246,7 +261,7 @@ export function reMakePatternImageSource(shapeObj, canvasImage) {
  * @param {number} top - original top position
  * @returns {Array}
  */
-function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, left, top, flipX, flipY}) {
+function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, left, top, flipX, flipY}, onlyDiff = false) {
     const shapePointNavigation = getShapeEdgePoint(shapeObj);
     const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
     const linePointsOutsideCanvas =
@@ -261,6 +276,9 @@ function calculateFillImagePositionOutsideCanvas({type, shapeObj, outDistance, l
         flipY,
         reatAngles
     });
+    if (onlyDiff) {
+        return [diffPosition.left, diffPosition.top];
+    }
 
     return [left + diffPosition.left, top + diffPosition.top];
 }
