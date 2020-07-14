@@ -54,7 +54,7 @@ export function rePositionFilterTypeFillImage(shapeObj) {
     const cropY = shapeObj.top - (shapeObj.height / 2) - diffTop;
     let left = (width / 2) - diffLeft;
     let top = (height / 2) - diffTop;
-    const fillImageMaxSize = Math.max(width, height);
+    const fillImageMaxSize = Math.max(width, height) + Math.max(diffLeft, diffTop);
 
     ([left, top, width, height] = calculateFillImageDimensionOutsideCanvas({
         shapeObj,
