@@ -115,8 +115,9 @@ export function makeFilterOptionFromFabricImage(imageObject) {
  * @returns {Object}
  */
 function calculateFillImageDimensionOutsideCanvas({
-    shapeObj, left, top, width, height, cropX, cropY, flipX, flipY, right, bottom}) {
-    const positionFixer = (type, outDistance, imageLeft, imageTop) => calculateDistanceProtrudingPart({
+    shapeObj, left, top, width, height, cropX, cropY, flipX, flipY, right, bottom
+}) {
+    const overflowAreaPositionFixer = (type, outDistance, imageLeft, imageTop) => calculateDistanceOverflowPart({
         type,
         outDistance,
         shapeObj,
@@ -127,7 +128,7 @@ function calculateFillImageDimensionOutsideCanvas({
     });
     const [originalWidth, originalHeight] = [width, height];
 
-    ([left, top, width, height] = calculateDimensionLeftTopEdge(positionFixer, {
+    ([left, top, width, height] = calculateDimensionLeftTopEdge(overflowAreaPositionFixer, {
         left,
         top,
         width,
@@ -136,11 +137,11 @@ function calculateFillImageDimensionOutsideCanvas({
         cropY
     }));
 
-    ([left, top, width, height] = calculateDimensionRightBottomEdge(positionFixer, {
+    ([left, top, width, height] = calculateDimensionRightBottomEdge(overflowAreaPositionFixer, {
         left,
         top,
-        width,
-        height,
+        insideCanvasRealImageWidth: width,
+        insideCanvasRealImageHeight: height,
         right,
         bottom,
         cropX,
@@ -154,7 +155,7 @@ function calculateFillImageDimensionOutsideCanvas({
 
 /**
  * Calculate fill image position and size for for right bottom edge
- * @param {Function} positionFixer - position fixer
+ * @param {Function} overflowAreaPositionFixer - position fixer
  * @param {Object} options - options for position dimension calculate
  *   @param {fabric.Object} shapeObj - shape object
  *   @param {number} left - original left position
@@ -170,8 +171,20 @@ function calculateFillImageDimensionOutsideCanvas({
  * @returns {Object}
  */
 function calculateDimensionRightBottomEdge(
-    positionFixer, {left, top, width, height, right, bottom, cropX, cropY, originalWidth, originalHeight}) {
-    const [origWidth, origHeight] = [width, height];
+    overflowAreaPositionFixer, {
+        left,
+        top,
+        insideCanvasRealImageWidth,
+        insideCanvasRealImageHeight,
+        right,
+        bottom,
+        cropX,
+        cropY,
+        originalWidth,
+        originalHeight
+    }
+) {
+    let [width, height] = [insideCanvasRealImageWidth, insideCanvasRealImageHeight];
     const {width: canvasWidth, height: canvasHeight} = cachedCanvasImageElement;
 
     if (right > canvasWidth && cropX > 0) {
@@ -182,14 +195,14 @@ function calculateDimensionRightBottomEdge(
     }
 
     const diff = {
-        x: (origWidth - width) / 2,
-        y: (origHeight - height) / 2
+        x: (insideCanvasRealImageWidth - width) / 2,
+        y: (insideCanvasRealImageHeight - height) / 2
     };
 
     forEach(['x', 'y'], type => {
         const cropDistance2 = diff[type];
         if (cropDistance2 > 0) {
-            [left, top] = positionFixer(type, cropDistance2, left, top);
+            [left, top] = overflowAreaPositionFixer(type, cropDistance2, left, top);
         }
     });
 
@@ -198,7 +211,7 @@ function calculateDimensionRightBottomEdge(
 
 /**
  * Calculate fill image position and size for for left top
- * @param {Function} positionFixer - position fixer
+ * @param {Function} overflowAreaPositionFixer - position fixer
  * @param {Object} options - options for position dimension calculate
  *   @param {fabric.Object} shapeObj - shape object
  *   @param {number} left - original left position
@@ -209,7 +222,7 @@ function calculateDimensionRightBottomEdge(
  *   @param {number} cropY - image cropY
  * @returns {Object}
  */
-function calculateDimensionLeftTopEdge(positionFixer, {left, top, width, height, cropX, cropY}) {
+function calculateDimensionLeftTopEdge(overflowAreaPositionFixer, {left, top, width, height, cropX, cropY}) {
     const dimension = {
         width,
         height
@@ -224,10 +237,10 @@ function calculateDimensionLeftTopEdge(positionFixer, {left, top, width, height,
             const outDistance = (compareSize - standardSize) / 2;
 
             dimension[POSITION_DIMENSION_MAP[type]] = standardSize;
-            [left, top] = positionFixer(type, outDistance, left, top);
+            [left, top] = overflowAreaPositionFixer(type, outDistance, left, top);
         }
         if (cropDistance < 0) {
-            [left, top] = positionFixer(type, cropDistance, left, top);
+            [left, top] = overflowAreaPositionFixer(type, cropDistance, left, top);
         }
     });
 
@@ -313,7 +326,7 @@ export function getCachedCanvasImageElement(canvasImage, reset = false) {
  * @param {number} top - original top position
  * @returns {Array}
  */
-function calculateDistanceProtrudingPart({type, shapeObj, outDistance, left, top, flipX, flipY}) {
+function calculateDistanceOverflowPart({type, shapeObj, outDistance, left, top, flipX, flipY}) {
     const shapePointNavigation = getShapeEdgePoint(shapeObj);
     const shapeNeighborPointNavigation = [[1, 2], [0, 3], [0, 3], [1, 2]];
     const linePointsOutsideCanvas =
