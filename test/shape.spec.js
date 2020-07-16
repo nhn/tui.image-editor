@@ -7,7 +7,7 @@ import $ from 'jquery';
 import Graphics from '../src/js/graphics';
 import Shape from '../src/js/component/shape';
 import {resize} from '../src/js/helper/shapeResizeHelper';
-import {getFillImageFromShape} from '../src/js/helper/shapeFilterFillHelper';
+import {getFillImageFromShape, getCachedCanvasImageElement} from '../src/js/helper/shapeFilterFillHelper';
 
 describe('Shape', () => {
     let canvas, graphics, mockImage, fEvent, shape, shapeObj;
@@ -227,6 +227,8 @@ describe('Shape', () => {
         beforeEach(done => {
             const imageURL = 'base/test/fixtures/sampleImage.jpg';
 
+            getCachedCanvasImageElement(canvas, true);
+
             fabric.Image.fromURL(imageURL, sampleImage => {
                 graphics.setCanvasImage('', sampleImage);
                 shape.add('rect', {
@@ -294,6 +296,54 @@ describe('Shape', () => {
             const {angle} = getFillImageFromShape(shapeObj);
 
             expect(angle).toBe(-40);
+        });
+
+        it('For shapes that go outside the bottom right area of the canvas, the size and position of the image position should give the expected result.', done => {
+            shape.add('rect', {
+                strokeWidth: 0,
+                left: 250,
+                top: 100,
+                width: 200,
+                height: 200,
+                fill: {
+                    type: 'filter',
+                    filter: [{pixelate: 20}]
+                }
+            }).then(props => {
+                shapeObj = graphics.getObject(props.id);
+                const fillImage = getFillImageFromShape(shapeObj);
+                const {top, height, left, width} = fillImage;
+                expect(top).toBe(75);
+                expect(left).toBe(75);
+                expect(height).toBe(150);
+                expect(width).toBe(150);
+
+                done();
+            });
+        });
+
+        it('For shapes that go outside the top left area of the canvas, the size and position of the image position should give the expected result.', done => {
+            shape.add('rect', {
+                strokeWidth: 0,
+                left: 50,
+                top: 30,
+                width: 200,
+                height: 70,
+                fill: {
+                    type: 'filter',
+                    filter: [{pixelate: 20}]
+                }
+            }).then(props => {
+                shapeObj = graphics.getObject(props.id);
+                const fillImage = getFillImageFromShape(shapeObj);
+                const {top, height, left, width} = fillImage;
+                expect(Math.round(top)).toBe(40);
+                expect(left).toBe(150);
+                expect(height).toBe(70);
+                expect(width).toBe(200);
+
+                done();
+            });
         });
 
         it('Background image of the shape to which the filter fill is applied must have the filter applied.', () => {
