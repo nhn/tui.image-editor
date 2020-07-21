@@ -85,7 +85,7 @@ const {
 
 /**
  * Shape filter option
- * @typedef {object.<string, number>} ShapeFillFilterOption
+ * @typedef {object.<string, number>} ShapeFilterOption
  */
 
 /**
@@ -94,7 +94,7 @@ const {
  * @property {string} type - fill type ('color' or 'filter')
  * @property {Array.<ShapeFillFilterOption>} [filter] - {@link ShapeFilterOption} List.
  *  only applies to filter types 
- *  (ex: [\{pixelate: 20\}, \{blur: 0.3\}]) 
+ *  (ex: \[\{pixelate: 20\}, \{blur: 0.3\}\]) 
  * @property {string} [color] - Shape foreground color (ex: '#fff', 'transparent')
  */
 
@@ -675,12 +675,23 @@ class ImageEditor {
      * @param {Object} [option] parameters of drawing mode, it's available with 'FREE_DRAWING', 'LINE_DRAWING'
      *  @param {Number} [option.width] brush width
      *  @param {String} [option.color] brush color
+     *  @param {Object} [option.arrowType] arrow decorate
+     *    @param {string} [option.arrowType.tail] arrow decorate for tail. 'chevron' or 'triangle'
+     *    @param {string} [option.arrowType.head] arrow decorate for head. 'chevron' or 'triangle'
      * @returns {boolean} true if success or false
      * @example
      * imageEditor.startDrawingMode('FREE_DRAWING', {
      *      width: 10,
      *      color: 'rgba(255,0,0,0.5)'
      * });
+     * imageEditor.startDrawingMode('LINE_DRAWING', {
+     *      width: 10,
+     *      color: 'rgba(255,0,0,0.5)',
+     *      arrowType: {
+     *          tail: 'chevron' // triangle
+     *      }
+     * });
+     *
      */
     startDrawingMode(mode, option) {
         return this._graphics.startDrawingMode(mode, option);
@@ -886,6 +897,15 @@ class ImageEditor {
      * @example
      * imageEditor.setDrawingShape('rect', {
      *     fill: 'red',
+     *     width: 100,
+     *     height: 200
+     * });
+     * @example
+     * imageEditor.setDrawingShape('rect', {
+     *     fill: {
+     *         type: 'filter',
+     *         filter: [{blur: 0.3}, {pixelate: 20}]
+     *     },
      *     width: 100,
      *     height: 200
      * });
