@@ -222,13 +222,16 @@ class Ui {
             // menu btn element
             this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
 
+            // options per menu item
+            const options = this.options[menuName] || {};
+
             // submenu ui instance
             this[menuName] = new SubComponentClass(this._subMenuElement, {
                 locale: this._locale,
                 makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
                 menuBarPosition: this.options.menuBarPosition,
                 usageStatistics: this.options.usageStatistics
-            });
+            }, options);
         });
     }
 

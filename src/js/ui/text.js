@@ -4,6 +4,7 @@ import Colorpicker from './tools/colorpicker';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/text';
 import {defaultTextRangeValus} from '../consts';
+import snippet from 'tui-code-snippet';
 
 /**
  * Crop ui class
@@ -11,7 +12,7 @@ import {defaultTextRangeValus} from '../consts';
  * @ignore
  */
 export default class Text extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}, options) {
         super(subMenuElement, {
             locale,
             name: 'text',
@@ -30,12 +31,12 @@ export default class Text extends Submenu {
             textEffectButton: this.selector('.tie-text-effect-button'),
             textAlignButton: this.selector('.tie-text-align-button'),
             textColorpicker: new Colorpicker(
-                this.selector('.tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-text-color'), options.color || '#ffbb3b', this.toggleDirection, this.usageStatistics
             ),
             textRange: new Range({
                 slider: this.selector('.tie-text-range'),
                 input: this.selector('.tie-text-range-value')
-            }, defaultTextRangeValus)
+            }, snippet.extend(defaultTextRangeValus, options.range))
         };
     }
 

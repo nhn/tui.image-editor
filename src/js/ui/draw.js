@@ -4,6 +4,7 @@ import Range from './tools/range';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/draw';
 import {defaultDrawRangeValus} from '../consts';
+import snippet from 'tui-code-snippet';
 const DRAW_OPACITY = 0.7;
 
 /**
@@ -12,7 +13,7 @@ const DRAW_OPACITY = 0.7;
  * @ignore
  */
 class Draw extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}, options) {
         super(subMenuElement, {
             locale,
             name: 'draw',
@@ -25,17 +26,18 @@ class Draw extends Submenu {
         this._els = {
             lineSelectButton: this.selector('.tie-draw-line-select-button'),
             drawColorPicker: new Colorpicker(
-                this.selector('.tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-draw-color'), options.color || '#00a9ff', this.toggleDirection, this.usageStatistics
             ),
             drawRange: new Range({
                 slider: this.selector('.tie-draw-range'),
                 input: this.selector('.tie-draw-range-value')
-            }, defaultDrawRangeValus)
+            }, snippet.extend(defaultDrawRangeValus, options.range))
         };
 
         this.type = null;
         this.color = this._els.drawColorPicker.color;
         this.width = this._els.drawRange.value;
+        this.opacity = options.opacity || DRAW_OPACITY;
     }
 
     /**
@@ -79,7 +81,7 @@ class Draw extends Submenu {
     setDrawMode() {
         this.actions.setDrawMode(this.type, {
             width: this.width,
-            color: getRgb(this.color, DRAW_OPACITY)
+            color: getRgb(this.color, this.opacity)
         });
     }
 

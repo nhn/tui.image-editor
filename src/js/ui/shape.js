@@ -4,6 +4,7 @@ import Submenu from './submenuBase';
 import templateHtml from './template/submenu/shape';
 import {toInteger, assignmentForDestroy} from '../util';
 import {defaultShapeStrokeValus} from '../consts';
+import snippet from 'tui-code-snippet';
 
 const SHAPE_DEFAULT_OPTION = {
     stroke: '#ffbb3b',
@@ -17,7 +18,7 @@ const SHAPE_DEFAULT_OPTION = {
  * @ignore
  */
 class Shape extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}, options) {
         super(subMenuElement, {
             locale,
             name: 'shape',
@@ -27,7 +28,7 @@ class Shape extends Submenu {
             usageStatistics
         });
         this.type = null;
-        this.options = SHAPE_DEFAULT_OPTION;
+        this.options = snippet.extend(SHAPE_DEFAULT_OPTION, options);
 
         this._els = {
             shapeSelectButton: this.selector('.tie-shape-button'),
@@ -40,7 +41,7 @@ class Shape extends Submenu {
                 this.selector('.tie-color-fill'), '', this.toggleDirection, this.usageStatistics
             ),
             strokeColorpicker: new Colorpicker(
-                this.selector('.tie-color-stroke'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-color-stroke'), options.stroke || '#ffbb3b', this.toggleDirection, this.usageStatistics
             )
         };
 
