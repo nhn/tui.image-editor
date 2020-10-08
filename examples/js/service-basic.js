@@ -503,6 +503,7 @@ $btnDrawLine.on('click', function() {
     $displayingSubMenu.hide();
     $displayingSubMenu = $drawLineSubMenu.show();
     $selectLine.eq(0).change();
+	$("#line-type-form").trigger("reset");
 });
 
 $selectLine.on('change', function() {
