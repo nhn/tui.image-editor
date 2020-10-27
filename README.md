@@ -356,9 +356,9 @@ $ npm run serve
 * **API** : [http://nhn.github.io/tui.image-editor/latest](http://nhn.github.io/tui.image-editor/latest/index)
 
 ## 💬 Contributing
-* [Code of Conduct](CODE_OF_CONDUCT.md)
-* [Contributing guideline](CONTRIBUTING.md)
-* [Issue guideline](ISSUE_TEMPLATE.md)
+* [Code of Conduct](https://github.com/nhn/tui.image-editor/blob/master/CODE_OF_CONDUCT.md)
+* [Contributing guideline](https://github.com/nhn/tui.image-editor/blob/master/CONTRIBUTING.md)
+* [Issue guideline](https://github.com/nhn/tui.image-editor/blob/master/ISSUE_TEMPLATE.md)
 * [Commit convention](https://github.com/nhn/tui.image-editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🔩 Dependency
