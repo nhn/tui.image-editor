@@ -159,6 +159,7 @@ declare namespace tuiImageEditor {
             path: string;
             name: string;
         };
+        locale:any;
         theme?: IThemeConfig;
         menu?: string[];
         initMenu?: string;
