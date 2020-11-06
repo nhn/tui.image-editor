@@ -11,7 +11,7 @@ import {defaultTextRangeValus} from '../consts';
  * @ignore
  */
 export default class Text extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics, colorPalette}) {
         super(subMenuElement, {
             locale,
             name: 'text',
@@ -30,7 +30,7 @@ export default class Text extends Submenu {
             textEffectButton: this.selector('.tie-text-effect-button'),
             textAlignButton: this.selector('.tie-text-align-button'),
             textColorpicker: new Colorpicker(
-                this.selector('.tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-text-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics, colorPalette
             ),
             textRange: new Range({
                 slider: this.selector('.tie-text-range'),

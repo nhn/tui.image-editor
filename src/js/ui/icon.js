@@ -11,7 +11,7 @@ import {defaultIconPath} from '../consts';
  * @ignore
  */
 class Icon extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics, colorPalette}) {
         super(subMenuElement, {
             locale,
             name: 'icon',
@@ -28,7 +28,7 @@ class Icon extends Submenu {
             registrIconButton: this.selector('.tie-icon-image-file'),
             addIconButton: this.selector('.tie-icon-add-button'),
             iconColorpicker: new Colorpicker(
-                this.selector('.tie-icon-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-icon-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics, colorPalette
             )
         };
     }

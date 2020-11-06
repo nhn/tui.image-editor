@@ -56,3 +56,5 @@ test.html
 
 # Compiled files
 dist
+
+.vscode

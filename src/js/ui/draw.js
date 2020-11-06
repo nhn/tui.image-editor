@@ -12,7 +12,7 @@ const DRAW_OPACITY = 0.7;
  * @ignore
  */
 class Draw extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics, colorPalette}) {
         super(subMenuElement, {
             locale,
             name: 'draw',
@@ -25,7 +25,7 @@ class Draw extends Submenu {
         this._els = {
             lineSelectButton: this.selector('.tie-draw-line-select-button'),
             drawColorPicker: new Colorpicker(
-                this.selector('.tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-draw-color'), '#00a9ff', this.toggleDirection, this.usageStatistics, colorPalette
             ),
             drawRange: new Range({
                 slider: this.selector('.tie-draw-range'),

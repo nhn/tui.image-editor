@@ -199,7 +199,7 @@ class Ui {
      * Set ui container size
      * @param {Object} uiSize - ui dimension
      *   @param {string} uiSize.width - css width property
-     *   @param {string} uiSize.height - css height property 
+     *   @param {string} uiSize.height - css height property
      * @private
      */
     _setUiSize(uiSize = this.options.uiSize) {
@@ -227,7 +227,8 @@ class Ui {
                 locale: this._locale,
                 makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
                 menuBarPosition: this.options.menuBarPosition,
-                usageStatistics: this.options.usageStatistics
+                usageStatistics: this.options.usageStatistics,
+                colorPalette: this.options.colorPalette
             });
         });
     }

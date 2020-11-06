@@ -17,7 +17,7 @@ const SHAPE_DEFAULT_OPTION = {
  * @ignore
  */
 class Shape extends Submenu {
-    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics}) {
+    constructor(subMenuElement, {locale, makeSvgIcon, menuBarPosition, usageStatistics, colorPalette}) {
         super(subMenuElement, {
             locale,
             name: 'shape',
@@ -37,10 +37,10 @@ class Shape extends Submenu {
                 input: this.selector('.tie-stroke-range-value')
             }, defaultShapeStrokeValus),
             fillColorpicker: new Colorpicker(
-                this.selector('.tie-color-fill'), '', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-color-fill'), '', this.toggleDirection, this.usageStatistics, colorPalette
             ),
             strokeColorpicker: new Colorpicker(
-                this.selector('.tie-color-stroke'), '#ffbb3b', this.toggleDirection, this.usageStatistics
+                this.selector('.tie-color-stroke'), '#ffbb3b', this.toggleDirection, this.usageStatistics, colorPalette
             )
         };
 

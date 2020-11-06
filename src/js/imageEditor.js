@@ -93,8 +93,8 @@ const {
  * @typedef {object} ShapeFillOption - fill option of shape
  * @property {string} type - fill type ('color' or 'filter')
  * @property {Array.<ShapeFillFilterOption>} [filter] - {@link ShapeFilterOption} List.
- *  only applies to filter types 
- *  (ex: \[\{pixelate: 20\}, \{blur: 0.3\}\]) 
+ *  only applies to filter types
+ *  (ex: \[\{pixelate: 20\}, \{blur: 0.3\}\])
  * @property {string} [color] - Shape foreground color (ex: '#fff', 'transparent')
  */
 
@@ -114,6 +114,7 @@ const {
  *      @param {string} options.includeUI.uiSize.width - width of ui
  *      @param {string} options.includeUI.uiSize.height - height of ui
  *    @param {string} [options.includeUI.menuBarPosition=bottom] - Menu bar position('top', 'bottom', 'left', 'right')
+ *    @param {string[]} [options.colorPalette=PICKER_COLOR] - Customize the default colour palette used by ImageEditor. Must be array of hexcodes
  *  @param {number} options.cssMaxWidth - Canvas css-max-width
  *  @param {number} options.cssMaxHeight - Canvas css-max-height
  *  @param {Object} [options.selectionStyle] - selection style
@@ -885,7 +886,7 @@ class ImageEditor {
      * Set states of current drawing shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} [options] - Shape options
-     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or
      *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stoke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -938,7 +939,7 @@ class ImageEditor {
      * Add shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
      * @param {Object} options - Shape options
-     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or
      *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
@@ -999,7 +1000,7 @@ class ImageEditor {
      * Change shape
      * @param {number} id - object id
      * @param {Object} options - Shape options
-     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or 
+     *      @param {(ShapeFillOption | string)} [options.fill] - {@link ShapeFillOption} or
      *        Shape foreground color (ex: '#fff', 'transparent')
      *      @param {string} [options.stroke] - Shape outline color
      *      @param {number} [options.strokeWidth] - Shape outline width
