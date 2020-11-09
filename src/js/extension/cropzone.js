@@ -116,17 +116,17 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
 
         if (this.options.lineWidth) {
             this._fillInnerRect(ctx);
-            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+            this._strokeBorder(ctx, this.options.borderColor ? this.options.borderColor : 'rgb(255, 255, 255)', {
                 lineWidth: this.options.lineWidth
             });
         } else {
             // Black dash line
-            this._strokeBorder(ctx, 'rgb(0, 0, 0)', {
+            this._strokeBorder(ctx, this.options.borderColor ? this.options.borderColor :'rgb(0, 0, 0)', {
                 lineDashWidth: cropzoneDashLineWidth
             });
 
             // White dash line
-            this._strokeBorder(ctx, 'rgb(255, 255, 255)', {
+            this._strokeBorder(ctx, this.options.borderColor ? this.options.borderColor :'rgb(255, 255, 255)', {
                 lineDashWidth: cropzoneDashLineWidth,
                 lineDashOffset: cropzoneDashLineOffset
             });
@@ -211,7 +211,7 @@ const Cropzone = fabric.util.createClass(fabric.Rect, /** @lends Cropzone.protot
         const y = this._caculateInnerPosition(outerY, (outerY[2] - outerY[1]) / 3);
 
         ctx.save();
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.strokeStyle = this.options.borderColor ? this.options.borderColor :'rgba(255, 255, 255, 0.7)';
         ctx.lineWidth = this.options.lineWidth;
         ctx.beginPath();
 
