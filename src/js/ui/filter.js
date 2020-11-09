@@ -292,6 +292,9 @@ class Filter extends Submenu {
                 option.color = this._els.filterTintColor.color;
                 option.alpha = this._els.tintOpacity.value;
                 break;
+            case 'blur':
+                option.blur = this._els.blurRange.value;
+                break;
             default:
                 break;
         }
@@ -333,7 +336,8 @@ class Filter extends Submenu {
             ),
             filterBlendColor: new Colorpicker(
                 this.selector('.tie-filter-blend-color'), '#ffbb3b', this.toggleDirection, this.usageStatistics
-            )
+            ),
+            blurRange: FILTER_RANGE.blurFilterRange
         };
 
         this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
