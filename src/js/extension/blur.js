@@ -23,12 +23,11 @@ const Blur = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends 
      * @override
      */
     initialize() {
-        const matrix = [
+        this.matrix = [
             1 / 9, 1 / 9, 1 / 9,
             1 / 9, 1 / 9, 1 / 9,
             1 / 9, 1 / 9, 1 / 9
         ];
-        this.matrix = matrix;
     }
 });
 
