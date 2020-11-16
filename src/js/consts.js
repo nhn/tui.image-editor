@@ -278,5 +278,8 @@ export const defaultFilterRangeValus = {
         max: 1,
         value: 0.2,
         useDecimal: true
+    },
+    blurFilterRange: {
+        value: 0.1
     }
 };
