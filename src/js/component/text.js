@@ -343,7 +343,7 @@ class Text extends Component {
     _getTextDecorationAdaptObject(textDecoration) {
         return {
             underline: textDecoration === 'underline',
-            linetrought: textDecoration === 'line-through',
+            linethrough: textDecoration === 'line-through',
             overline: textDecoration === 'overline'
         };
     }
