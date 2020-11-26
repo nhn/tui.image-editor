@@ -972,7 +972,6 @@ class Graphics {
             'object:scaling': handler.onObjectScaled,
             'object:modified': handler.onObjectModified,
             'object:rotating': handler.onObjectRotated,
-            'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
             'selection:cleared': handler.onSelectionCleared,
             'selection:created': handler.onSelectionCreated,
@@ -1121,6 +1120,10 @@ class Graphics {
      * @private
      */
     _onSelectionCreated(fEvent) {
+        const {target} = fEvent;
+        const params = this.createObjectProperties(target);
+
+        this.fire(events.OBJECT_ACTIVATED, params);
         this.fire(events.SELECTION_CREATED, fEvent.target);
     }
 

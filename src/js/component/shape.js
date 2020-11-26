@@ -19,7 +19,8 @@ import {
     rePositionFilterTypeFillImage,
     reMakePatternImageSource,
     makeFillPatternForFilter,
-    makeFilterOptionFromFabricImage
+    makeFilterOptionFromFabricImage,
+    rerenderFillPatternCanvas
 } from '../helper/shapeFilterFillHelper';
 import {Promise, changeOrigin, getCustomProperty, getFillTypeFromOption, getFillTypeFromObject, isShape} from '../util';
 import {extend} from 'tui-code-snippet';
@@ -215,6 +216,8 @@ export default class Shape extends Component {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
             const extendOption = this._extendOptions(options);
+
+            console.log('EXTENDOPTION - ', extendOption);
             const shapeObj = this._createInstance(type, extendOption);
             const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
@@ -533,6 +536,8 @@ export default class Shape extends Component {
             return;
         }
 
+        const {patternSourceCanvas} = getCustomProperty(shapeObj, 'patternSourceCanvas');
+
         const fillImage = getFillImageFromShape(shapeObj);
         const {originalAngle} = getCustomProperty(fillImage, 'originalAngle');
 
@@ -556,6 +561,8 @@ export default class Shape extends Component {
             originX,
             originY
         });
+
+        rerenderFillPatternCanvas(patternSourceCanvas);
     }
 
     /**
