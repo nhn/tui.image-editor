@@ -86,7 +86,7 @@
   },
   "dependencies": {
     "core-js-pure": "^3.6.4",
-    "fabric": "3.6.0",
+    "fabric": "4.2.0",
     "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.6"
   }

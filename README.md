@@ -362,7 +362,7 @@ $ npm run serve
 * [Commit convention](https://github.com/nhn/tui.image-editor/blob/production/docs/COMMIT_MESSAGE_CONVENTION.md)
 
 ## 🔩 Dependency
-* [fabric.js](https://github.com/fabricjs/fabric.js/releases) =3.6.0
+* [fabric.js](https://github.com/fabricjs/fabric.js/releases) =4.2.0
 * [tui.code-snippet](https://github.com/nhn/tui.code-snippet/releases/tag/v1.5.0) >=1.5.0
 * [tui.color-picker](https://github.com/nhn/tui.color-picker/releases/tag/v2.2.6) >=2.2.6
 
