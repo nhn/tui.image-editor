@@ -20,7 +20,7 @@ import {
     reMakePatternImageSource,
     makeFillPatternForFilter,
     makeFilterOptionFromFabricImage,
-    rerenderFillPatternCanvas
+    resetFillPatternCanvas
 } from '../helper/shapeFilterFillHelper';
 import {Promise, changeOrigin, getCustomProperty, getFillTypeFromOption, getFillTypeFromObject, isShape} from '../util';
 import {extend} from 'tui-code-snippet';
@@ -557,7 +557,7 @@ export default class Shape extends Component {
             originY
         });
 
-        rerenderFillPatternCanvas(patternSourceCanvas);
+        resetFillPatternCanvas(patternSourceCanvas);
     }
 
     /**
