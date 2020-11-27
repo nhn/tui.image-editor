@@ -404,7 +404,6 @@ export default {
      * Image Editor Event Observer
      */
     setReAction() {
-        console.log('SETREACTION', this);
         this.on({
             undoStackChanged: length => {
                 if (length) {
@@ -430,8 +429,6 @@ export default {
 
                 this.ui.changeHelpButtonEnabled('delete', true);
                 this.ui.changeHelpButtonEnabled('deleteAll', true);
-
-                console.log('------------------------');
 
                 if (obj.type === 'cropzone') {
                     this.ui.crop.changeApplyButtonStatus(true);

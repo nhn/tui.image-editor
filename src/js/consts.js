@@ -58,7 +58,6 @@ export const componentNames = keyMirror(
 export const SHAPE_DEFAULT_OPTIONS = {
     lockSkewingX: true,
     lockSkewingY: true,
-    lockUniScaling: false,
     bringForward: true,
     isRegular: false
 };
