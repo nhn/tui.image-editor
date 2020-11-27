@@ -145,22 +145,6 @@ export default {
         let iconHeight;
         let objId;
 
-        this.on({
-            'iconCreateResize': ({moveOriginPointer}) => {
-                const scaleX = (moveOriginPointer.x - startX) / iconWidth;
-                const scaleY = (moveOriginPointer.y - startY) / iconHeight;
-
-                this.setObjectPropertiesQuietly(objId, {
-                    scaleX: Math.abs(scaleX * 2),
-                    scaleY: Math.abs(scaleY * 2)
-                });
-            },
-            'iconCreateEnd': () => {
-                this.ui.icon.clearIconType();
-                this.changeSelectableAll(true);
-            }
-        });
-
         const mouseDown = (e, originPointer) => {
             startX = originPointer.x;
             startY = originPointer.y;
@@ -173,6 +157,26 @@ export default {
                 objId = obj.id;
                 iconWidth = obj.width;
                 iconHeight = obj.height;
+
+                this.on({
+                    'iconCreateResize': ({moveOriginPointer}) => {
+                        const scaleX = (moveOriginPointer.x - startX) / iconWidth;
+                        const scaleY = (moveOriginPointer.y - startY) / iconHeight;
+
+                        this.setObjectPropertiesQuietly(objId, {
+                            scaleX: Math.abs(scaleX * 2),
+                            scaleY: Math.abs(scaleY * 2)
+                        });
+                    },
+                    'iconCreateEnd': () => {
+                        this.ui.icon.clearIconType();
+                        this.changeSelectableAll(true);
+
+                        objId = null;
+                        this.off('iconCreateResize');
+                        this.off('iconCreateEnd');
+                    }
+                });
             });
         };
 
