@@ -414,7 +414,13 @@ class ImageEditor {
          * });
          */
         if (props) {
-            this._invoker.cacheUndoDataForChangeDimension = extend({}, props);
+            this._invoker.cacheUndoDataForChangeDimension = extend({}, {
+                left: props.left,
+                top: props.top,
+                width: props.width,
+                height: props.height,
+                angle: props.angle
+            });
         }
 
         this.fire(events.MOUSE_DOWN, event, originPointer);
@@ -436,8 +442,14 @@ class ImageEditor {
      * @param {Object} props - props
      * @private
      */
-    _pushModifyObjectCommand(id, props) {
-        const command = commandFactory.create(commands.SET_OBJECT_PROPERTIES, this._graphics, id, props);
+    _pushModifyObjectCommand(objectId, obj) {
+        const command = commandFactory.create(commands.SET_OBJECT_PROPERTIES, this._graphics, objectId, {
+            width: obj.width,
+            height: obj.height,
+            top: obj.top,
+            left: obj.left,
+            angle: obj.angle
+        });
         command.undoData.props = Object.assign({}, this._invoker.cacheUndoDataForChangeDimension);
 
         this._invoker.pushUndoStack(command);
@@ -1259,10 +1271,8 @@ class ImageEditor {
      * @param {Object} objectProps added object properties
      * @private
      */
-    _onObjectModified(objectProps) {
-        // const obj = this._graphics.getObject(objectProps.id);
-        console.log('modified', objectProps);
-        this._pushModifyObjectCommand(objectProps.id, objectProps);
+    _onObjectModified(obj, objectId) {
+        this._pushModifyObjectCommand(objectId, obj);
     }
 
     /**

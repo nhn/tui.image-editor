@@ -1050,7 +1050,7 @@ class Graphics {
             items.forEach(item => item.fire('modifiedInGroup', target));
         }
 
-        this.fire(events.OBJECT_MODIFIED, this.createObjectProperties(target));
+        this.fire(events.OBJECT_MODIFIED, target, this.createObjectProperties(target).id);
     }
 
     /**

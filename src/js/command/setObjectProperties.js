@@ -31,6 +31,8 @@ const command = {
             return Promise.reject(rejectMessages.noObject);
         }
 
+        console.log('PROPS - ', props);
+
         this.undoData.props = {};
         snippet.forEachOwnProperties(props, (value, key) => {
             this.undoData.props[key] = targetObj[key];
