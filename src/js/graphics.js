@@ -709,6 +709,8 @@ class Graphics {
         const object = this.getObject(id);
         const clone = extend({}, props);
 
+        console.log('setobjectProperties', id, props);
+
         object.set(clone);
 
         object.setCoords();
@@ -1045,6 +1047,8 @@ class Graphics {
 
             items.forEach(item => item.fire('modifiedInGroup', target));
         }
+
+        this.fire(events.OBJECT_MODIFIED, this.createObjectProperties(target));
     }
 
     /**

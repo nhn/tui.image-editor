@@ -113,6 +113,7 @@ export const eventNames = {
     OBJECT_CREATED: 'objectCreated',
     OBJECT_ROTATED: 'objectRotated',
     OBJECT_ADDED: 'objectAdded',
+    OBJECT_MODIFIED: 'objectModified',
     TEXT_EDITING: 'textEditing',
     TEXT_CHANGED: 'textChanged',
     ICON_CREATE_RESIZE: 'iconCreateResize',

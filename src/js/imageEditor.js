@@ -20,6 +20,7 @@ const {
     OBJECT_ACTIVATED,
     OBJECT_ROTATED,
     OBJECT_ADDED,
+    OBJECT_MODIFIED,
     ADD_TEXT,
     ADD_OBJECT,
     TEXT_EDITING,
@@ -208,6 +209,7 @@ class ImageEditor {
             objectScaled: this._onObjectScaled.bind(this),
             objectRotated: this._onObjectRotated.bind(this),
             objectAdded: this._onObjectAdded.bind(this),
+            objectModified: this._onObjectModified.bind(this),
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
@@ -308,6 +310,7 @@ class ImageEditor {
             [OBJECT_ROTATED]: this._handlers.objectRotated,
             [OBJECT_ACTIVATED]: this._handlers.objectActivated,
             [OBJECT_ADDED]: this._handlers.objectAdded,
+            [OBJECT_MODIFIED]: this._handlers.objectModified,
             [ADD_TEXT]: this._handlers.addText,
             [ADD_OBJECT]: this._handlers.addObject,
             [TEXT_EDITING]: this._handlers.textEditing,
@@ -420,6 +423,17 @@ class ImageEditor {
      */
     _pushAddObjectCommand(obj) {
         const command = commandFactory.create(commands.ADD_OBJECT, this._graphics, obj);
+        this._invoker.pushUndoStack(command);
+    }
+
+    /**
+     * Add a 'setObjectProperties' command
+     * @param {Number} id - Fabric object id
+     * @param {Object} props - props
+     * @private
+     */
+    _pushModifyObjectCommand(id, props) {
+        const command = commandFactory.create(commands.SET_OBJECT_PROPERTIES, this._graphics, id, props);
         this._invoker.pushUndoStack(command);
     }
 
@@ -1213,7 +1227,6 @@ class ImageEditor {
      * @param {Object} objectProps added object properties
      * @private
      */
-
     _onObjectAdded(objectProps) {
         /**
          * The event when object added
@@ -1233,6 +1246,17 @@ class ImageEditor {
          * @deprecated
          */
         this.fire(ADD_OBJECT_AFTER, objectProps);
+    }
+
+    /**
+     * 'objectModified' event handler
+     * @param {Object} objectProps added object properties
+     * @private
+     */
+    _onObjectModified(objectProps) {
+        // const obj = this._graphics.getObject(objectProps.id);
+        console.log('modified', objectProps);
+        this._pushModifyObjectCommand(objectProps.id, objectProps);
     }
 
     /**
