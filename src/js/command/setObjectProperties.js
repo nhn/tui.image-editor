@@ -48,12 +48,11 @@ const command = {
      * @returns {Promise}
      */
     undo(graphics, id) {
-        console.log('aaaaaaaaaaa');
         const {props} = this.undoData;
-        console.log('bbbbbbbbbbb', id, props);
+
+        console.log('Undo', props);
 
         graphics.setObjectProperties(id, props);
-        console.log('ccccccccccc');
 
         return Promise.resolve();
     }

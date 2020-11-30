@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image-editor application class
  */
-import snippet from 'tui-code-snippet';
+import snippet, {extend} from 'tui-code-snippet';
 import Invoker from './invoker';
 import UI from './ui';
 import action from './action';
@@ -414,13 +414,7 @@ class ImageEditor {
          * });
          */
         if (props) {
-            this._invoker.cacheUndoDataForChangeDimension = {
-                width: props.width,
-                height: props.height,
-                top: props.top,
-                left: props.left,
-                angle: props.angle
-            };
+            this._invoker.cacheUndoDataForChangeDimension = extend({}, props);
         }
 
         this.fire(events.MOUSE_DOWN, event, originPointer);
