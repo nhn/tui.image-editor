@@ -989,7 +989,9 @@ class Graphics {
      */
     _onMouseDown(fEvent) {
         const originPointer = this._canvas.getPointer(fEvent.e);
-        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
+        const props = fEvent.target ? this.createObjectProperties(fEvent.target) : null;
+
+        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer, props);
     }
 
     /**

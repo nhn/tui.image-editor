@@ -36,6 +36,8 @@ const command = {
             this.undoData.props[key] = targetObj[key];
         });
 
+        console.log('REDO', props);
+
         graphics.setObjectProperties(id, props);
 
         return Promise.resolve();
@@ -46,9 +48,12 @@ const command = {
      * @returns {Promise}
      */
     undo(graphics, id) {
+        console.log('aaaaaaaaaaa');
         const {props} = this.undoData;
+        console.log('bbbbbbbbbbb', id, props);
 
         graphics.setObjectProperties(id, props);
+        console.log('ccccccccccc');
 
         return Promise.resolve();
     }

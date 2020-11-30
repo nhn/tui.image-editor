@@ -393,7 +393,7 @@ class ImageEditor {
      *  @param {Number} originPointer.y y position
      * @private
      */
-    _onMouseDown(event, originPointer) {
+    _onMouseDown(event, originPointer, props) {
         /**
          * The mouse down event with position x, y on canvas
          * @event ImageEditor#mousedown
@@ -413,6 +413,16 @@ class ImageEditor {
          *     }
          * });
          */
+        if (props) {
+            this._invoker.cacheUndoDataForChangeDimension = {
+                width: props.width,
+                height: props.height,
+                top: props.top,
+                left: props.left,
+                angle: props.angle
+            };
+        }
+
         this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
@@ -434,6 +444,8 @@ class ImageEditor {
      */
     _pushModifyObjectCommand(id, props) {
         const command = commandFactory.create(commands.SET_OBJECT_PROPERTIES, this._graphics, id, props);
+        command.undoData.props = Object.assign({}, this._invoker.cacheUndoDataForChangeDimension);
+
         this._invoker.pushUndoStack(command);
     }
 
