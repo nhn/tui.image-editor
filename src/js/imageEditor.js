@@ -393,7 +393,7 @@ class ImageEditor {
      *  @param {Number} originPointer.y y position
      * @private
      */
-    _onMouseDown(event, originPointer, props) {
+    _onMouseDown(event, originPointer, obj) {
         /**
          * The mouse down event with position x, y on canvas
          * @event ImageEditor#mousedown
@@ -413,13 +413,14 @@ class ImageEditor {
          *     }
          * });
          */
-        if (props) {
+
+        if (obj) {
             this._invoker.cacheUndoDataForChangeDimension = extend({}, {
-                left: props.left,
-                top: props.top,
-                width: props.width,
-                height: props.height,
-                angle: props.angle
+                left: obj.left,
+                top: obj.top,
+                width: obj.width,
+                height: obj.height,
+                angle: obj.angle
             });
         }
 
