@@ -415,13 +415,41 @@ class ImageEditor {
          */
 
         if (obj) {
-            this._invoker.cacheUndoDataForChangeDimension = extend({}, {
-                left: obj.left,
-                top: obj.top,
-                width: obj.width,
-                height: obj.height,
-                angle: obj.angle
-            });
+            if (obj.type === 'activeSelection') {
+                const items = obj.getObjects();
+                this._invoker.cacheUndoDataForChangeDimension = items.map(item => {
+                    console.log('ITEM - ', item);
+                    const {angle, left, top} = item;
+                    obj.realizeTransform(item);
+                    const result = {
+                        id: this._graphics.getObjectId(item),
+                        width: item.width,
+                        height: item.height,
+                        top: item.top,
+                        left: item.left,
+                        scaleX: item.scaleX,
+                        scaleY: item.scaleY,
+                        angle: item.angle
+                    };
+
+                    item.set({
+                        angle,
+                        left,
+                        top
+                    });
+
+                    return result;
+                });
+            } else {
+                this._invoker.cacheUndoDataForChangeDimension = [extend({}, {
+                    id: this._graphics.getObjectId(obj),
+                    left: obj.left,
+                    top: obj.top,
+                    width: obj.width,
+                    height: obj.height,
+                    angle: obj.angle
+                })];
+            }
         }
 
         this.fire(events.MOUSE_DOWN, event, originPointer);
@@ -438,20 +466,51 @@ class ImageEditor {
     }
 
     /**
-     * Add a 'setObjectProperties' command
+     * Add a 'setObjeuctProperties' command
      * @param {Number} id - Fabric object id
      * @param {Object} props - props
      * @private
      */
     _pushModifyObjectCommand(objectId, obj) {
-        const command = commandFactory.create(commands.SET_OBJECT_PROPERTIES, this._graphics, objectId, {
-            width: obj.width,
-            height: obj.height,
-            top: obj.top,
-            left: obj.left,
-            angle: obj.angle
-        });
-        command.undoData.props = Object.assign({}, this._invoker.cacheUndoDataForChangeDimension);
+        let prop;
+        if (obj.type === 'activeSelection') {
+            const items = obj.getObjects();
+            prop = items.map(item => {
+                const {angle, left, top} = item;
+                obj.realizeTransform(item);
+                const result = {
+                    id: this._graphics.getObjectId(item),
+                    width: item.width,
+                    height: item.height,
+                    top: item.top,
+                    left: item.left,
+                    scaleX: item.scaleX,
+                    scaleY: item.scaleY,
+                    angle: item.angle
+                };
+
+                item.set({
+                    angle,
+                    left,
+                    top
+                });
+
+                return result;
+            });
+        } else {
+            prop = [{
+                id: objectId,
+                width: obj.width,
+                height: obj.height,
+                top: obj.top,
+                left: obj.left,
+                angle: obj.angle
+            }];
+        }
+
+        const command = commandFactory.create('moveResizeFromSelection', this._graphics, prop);
+        const undoData = this._invoker.cacheUndoDataForChangeDimension;
+        command.undoData = undoData;
 
         this._invoker.pushUndoStack(command);
     }

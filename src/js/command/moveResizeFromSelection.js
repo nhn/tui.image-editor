@@ -9,10 +9,16 @@ import commandFactory from '../factory/command';
 const command = {
     name: 'moveResizeFromSelection',
 
-    execute(graphics, id, props) {
-        /*
-        const targetObj = graphics.getObject(id);
+    execute(graphics, propsArr) {
+        // const targetObj = graphics.getObject(props.id);
 
+        console.log('PROPSARR - ', propsArr);
+
+        propsArr.forEach(prop => {
+            graphics.setObjectProperties(prop.id, prop);
+        });
+
+        /*
         this.undoData.props = {};
         snippet.forEachOwnProperties(props, (value, key) => {
             this.undoData.props[key] = targetObj[key];
@@ -20,18 +26,19 @@ const command = {
 
         graphics.setObjectProperties(id, props);
 
-        return Promise.resolve();
         */
-    },
-    undo(graphics, id) {
-        /*
-        const {props} = this.undoData;
-
-        console.log('Undo', props);
-
-        graphics.setObjectProperties(id, props);
 
         return Promise.resolve();
+    },
+    undo(graphics) {
+        console.log('undoDatundoDat', this.undoData);
+        this.undoData.forEach(data => {
+            graphics.setObjectProperties(data.id, data);
+        });
+
+        return Promise.resolve();
+        /*
+        graphics.setObjectProperties(id, props);
         */
     }
 };
