@@ -13,7 +13,7 @@ import {eventNames as events, commandNames as commands, keyCodes, rejectMessages
 import {
     getCachedUndoDataForChangeDimension,
     makeUndoData,
-    setCachedUndoDataForChangeDimension
+    makeUndoDatum
 } from './helper/selectionModifyHelper';
 
 const {isUndefined, forEach, CustomEvents} = snippet;
@@ -399,7 +399,7 @@ class ImageEditor {
      * @param {fabric.Object} obj - fabric object
      * @private
      */
-    _onMouseDown(event, originPointer, obj) {
+    _onMouseDown(event, originPointer) {
         /**
          * The mouse down event with position x, y on canvas
          * @event ImageEditor#mousedown
@@ -420,8 +420,6 @@ class ImageEditor {
          * });
          */
 
-        setCachedUndoDataForChangeDimension(this._graphics, obj);
-
         this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
@@ -441,7 +439,12 @@ class ImageEditor {
      * @private
      */
     _pushModifyObjectCommand(obj) {
-        const command = commandFactory.create('moveResizeFromSelection', this._graphics, makeUndoData(this._graphics, obj));
+        const command = commandFactory.create('moveResizeFromSelection', this._graphics, makeUndoData(obj, item => {
+            const id = this._graphics.getObjectId(item);
+
+            return makeUndoDatum(id, item);
+        }));
+
         command.undoData = getCachedUndoDataForChangeDimension();
 
         this._invoker.pushUndoStack(command);

@@ -21,6 +21,11 @@ import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
 import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
+import {
+    makeUndoData,
+    makeUndoDatum,
+    setCachedUndoDataForChangeDimension
+} from './helper/selectionModifyHelper';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
 const DEFAULT_CSS_MAX_WIDTH = 1000;
@@ -987,8 +992,19 @@ class Graphics {
      */
     _onMouseDown(fEvent) {
         const originPointer = this._canvas.getPointer(fEvent.e);
+        const targetObject = fEvent.target;
 
-        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer, fEvent.target);
+        if (targetObject) {
+            const undoData = makeUndoData(targetObject, item => {
+                const id = this.getObjectId(item);
+
+                return makeUndoDatum(id, item);
+            });
+
+            setCachedUndoDataForChangeDimension(undoData);
+        }
+
+        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
     }
 
     /**

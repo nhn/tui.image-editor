@@ -12,14 +12,18 @@ let cachedUndoDataForChangeDimension = null;
 
 /**
  * Set cached undo data
- * @param {Object} graphics - graphic object
  * @param {fabric.Object} obj - selection object
  * @private
  */
-export function setCachedUndoDataForChangeDimension(graphics, obj) {
+/*
+export function setCachedUndoDataForChangeDimension(obj) {
     if (obj) {
-        cachedUndoDataForChangeDimension = makeUndoData(graphics, obj);
+        cachedUndoDataForChangeDimension = makeUndoData(obj);
     }
+}
+*/
+export function setCachedUndoDataForChangeDimension(undoData) {
+    cachedUndoDataForChangeDimension = undoData;
 }
 
 /**
@@ -33,12 +37,11 @@ export function getCachedUndoDataForChangeDimension() {
 
 /**
  * Make undo data
- * @param {Object} graphics - graphic object
  * @param {fabric.Object} obj - selection object
  * @returns {Array} undoData
  * @private
  */
-export function makeUndoData(graphics, obj) {
+export function makeUndoData(obj, makeUndoDataDatum) {
     let undoData;
 
     if (obj.type === 'activeSelection') {
@@ -46,7 +49,7 @@ export function makeUndoData(graphics, obj) {
             const {angle, left, top} = item;
 
             obj.realizeTransform(item);
-            const result = makeUndoDatum(graphics, item);
+            const result = makeUndoDataDatum(item);
 
             item.set({
                 angle,
@@ -57,7 +60,7 @@ export function makeUndoData(graphics, obj) {
             return result;
         });
     } else {
-        undoData = [makeUndoDatum(graphics, obj)];
+        undoData = [makeUndoDataDatum(obj)];
     }
 
     return undoData;
@@ -65,14 +68,13 @@ export function makeUndoData(graphics, obj) {
 
 /**
  * Make undo datum
- * @param {Object} graphics - graphic object
  * @param {fabric.Object} obj - selection object
  * @returns {Object} undo datum
  * @private
  */
-export function makeUndoDatum(graphics, obj) {
+export function makeUndoDatum(id, obj) {
     return {
-        id: graphics.getObjectId(obj),
+        id,
         width: obj.width,
         height: obj.height,
         top: obj.top,
