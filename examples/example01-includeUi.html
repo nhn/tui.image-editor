@@ -32,7 +32,7 @@
                      name: 'SampleImage'
                  },
                  theme: blackTheme, // or whiteTheme
-                 initMenu: 'shape',
+                 initMenu: 'filter',
                  menuBarPosition: 'bottom'
              },
              cssMaxWidth: 700,
@@ -42,9 +42,6 @@
          window.onresize = function() {
              imageEditor.ui.resizeEditor();
          }
-         imageEditor.on('objectModified', () => {
-             console.log('modified');
-         })
         </script>
     </body>
 </html>

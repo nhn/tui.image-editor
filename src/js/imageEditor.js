@@ -9,11 +9,11 @@ import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import {sendHostName, Promise} from './util';
-import {eventNames as events, commandNames as commands, keyCodes, rejectMessages} from './consts';
+import {eventNames as events, commandNames as commands, keyCodes, rejectMessages, commandNames} from './consts';
 import {
-    getCachedUndoDataForChangeDimension,
-    makeUndoData,
-    makeUndoDatum
+    getCachedUndoDataForDimension,
+    makeSelectionUndoData,
+    makeSelectionUndoDatum
 } from './helper/selectionModifyHelper';
 
 const {isUndefined, forEach, CustomEvents} = snippet;
@@ -439,13 +439,9 @@ class ImageEditor {
      * @private
      */
     _pushModifyObjectCommand(obj) {
-        const command = commandFactory.create('moveResizeFromSelection', this._graphics, makeUndoData(obj, item => {
-            const id = this._graphics.getObjectId(item);
-
-            return makeUndoDatum(id, item);
-        }));
-
-        command.undoData = getCachedUndoDataForChangeDimension();
+        const command = commandFactory.create(commandNames.CHANGE_SELECTION, this._graphics,
+            makeSelectionUndoData(obj, item => makeSelectionUndoDatum(this._graphics.getObjectId(item), item)));
+        command.undoData = getCachedUndoDataForDimension();
 
         this._invoker.pushUndoStack(command);
     }

@@ -22,9 +22,9 @@ import TextDrawingMode from './drawingMode/text';
 import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 import {
-    makeUndoData,
-    makeUndoDatum,
-    setCachedUndoDataForChangeDimension
+    makeSelectionUndoData,
+    makeSelectionUndoDatum,
+    setCachedUndoDataForDimension
 } from './helper/selectionModifyHelper';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
@@ -995,13 +995,10 @@ class Graphics {
         const targetObject = fEvent.target;
 
         if (targetObject) {
-            const undoData = makeUndoData(targetObject, item => {
-                const id = this.getObjectId(item);
+            const undoData = makeSelectionUndoData(targetObject,
+                item => makeSelectionUndoDatum(this.getObjectId(item), item));
 
-                return makeUndoDatum(id, item);
-            });
-
-            setCachedUndoDataForChangeDimension(undoData);
+            setCachedUndoDataForDimension(undoData);
         }
 
         this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);

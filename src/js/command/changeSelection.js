@@ -4,10 +4,10 @@
  */
 import commandFactory from '../factory/command';
 import {Promise} from '../util';
-// import {commandNames, rejectMessages} from '../consts';
+import {commandNames} from '../consts';
 
 const command = {
-    name: 'moveResizeFromSelection',
+    name: commandNames.CHANGE_SELECTION,
 
     execute(graphics, props) {
         props.forEach(prop => {

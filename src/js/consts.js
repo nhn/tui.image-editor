@@ -99,7 +99,8 @@ export const commandNames = {
     'ADD_IMAGE_OBJECT': 'addImageObject',
     'RESIZE_CANVAS_DIMENSION': 'resizeCanvasDimension',
     'SET_OBJECT_PROPERTIES': 'setObjectProperties',
-    'SET_OBJECT_POSITION': 'setObjectPosition'
+    'SET_OBJECT_POSITION': 'setObjectPosition',
+    'CHANGE_SELECTION': 'changeSelection'
 };
 
 /**

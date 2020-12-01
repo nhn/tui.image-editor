@@ -12,17 +12,10 @@ let cachedUndoDataForChangeDimension = null;
 
 /**
  * Set cached undo data
- * @param {fabric.Object} obj - selection object
+ * @param {Array} undoData - selection object
  * @private
  */
-/*
-export function setCachedUndoDataForChangeDimension(obj) {
-    if (obj) {
-        cachedUndoDataForChangeDimension = makeUndoData(obj);
-    }
-}
-*/
-export function setCachedUndoDataForChangeDimension(undoData) {
+export function setCachedUndoDataForDimension(undoData) {
     cachedUndoDataForChangeDimension = undoData;
 }
 
@@ -31,17 +24,18 @@ export function setCachedUndoDataForChangeDimension(undoData) {
  * @returns {Object} cached undo data
  * @private
  */
-export function getCachedUndoDataForChangeDimension() {
+export function getCachedUndoDataForDimension() {
     return cachedUndoDataForChangeDimension;
 }
 
 /**
  * Make undo data
  * @param {fabric.Object} obj - selection object
+ * @param {Function} undoDatumMaker - make undo datum
  * @returns {Array} undoData
  * @private
  */
-export function makeUndoData(obj, makeUndoDataDatum) {
+export function makeSelectionUndoData(obj, undoDatumMaker) {
     let undoData;
 
     if (obj.type === 'activeSelection') {
@@ -49,7 +43,7 @@ export function makeUndoData(obj, makeUndoDataDatum) {
             const {angle, left, top} = item;
 
             obj.realizeTransform(item);
-            const result = makeUndoDataDatum(item);
+            const result = undoDatumMaker(item);
 
             item.set({
                 angle,
@@ -60,7 +54,7 @@ export function makeUndoData(obj, makeUndoDataDatum) {
             return result;
         });
     } else {
-        undoData = [makeUndoDataDatum(obj)];
+        undoData = [undoDatumMaker(obj)];
     }
 
     return undoData;
@@ -68,11 +62,12 @@ export function makeUndoData(obj, makeUndoDataDatum) {
 
 /**
  * Make undo datum
+ * @param {number} id - object id
  * @param {fabric.Object} obj - selection object
  * @returns {Object} undo datum
  * @private
  */
-export function makeUndoDatum(id, obj) {
+export function makeSelectionUndoDatum(id, obj) {
     return {
         id,
         width: obj.width,

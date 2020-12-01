@@ -22,6 +22,6 @@ import './js/command/resizeCanvasDimension';
 import './js/command/rotate';
 import './js/command/setObjectProperties';
 import './js/command/setObjectPosition';
-import './js/command/moveResizeFromSelection';
+import './js/command/changeSelection';
 
 module.exports = ImageEditor;
