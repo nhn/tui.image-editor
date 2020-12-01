@@ -2,7 +2,7 @@
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image-editor application class
  */
-import snippet, {extend} from 'tui-code-snippet';
+import snippet from 'tui-code-snippet';
 import Invoker from './invoker';
 import UI from './ui';
 import action from './action';
@@ -10,6 +10,11 @@ import commandFactory from './factory/command';
 import Graphics from './graphics';
 import {sendHostName, Promise} from './util';
 import {eventNames as events, commandNames as commands, keyCodes, rejectMessages} from './consts';
+import {
+    getCachedUndoDataForChangeDimension,
+    makeUndoData,
+    setCachedUndoDataForChangeDimension
+} from './helper/selectionModifyHelper';
 
 const {isUndefined, forEach, CustomEvents} = snippet;
 
@@ -387,10 +392,11 @@ class ImageEditor {
 
     /**
      * mouse down event handler
-     * @param {Event} event mouse down event
-     * @param {Object} originPointer origin pointer
+     * @param {Event} event - mouse down event
+     * @param {Object} originPointer - origin pointer
      *  @param {Number} originPointer.x x position
      *  @param {Number} originPointer.y y position
+     * @param {fabric.Object} obj - fabric object
      * @private
      */
     _onMouseDown(event, originPointer, obj) {
@@ -414,43 +420,7 @@ class ImageEditor {
          * });
          */
 
-        if (obj) {
-            if (obj.type === 'activeSelection') {
-                const items = obj.getObjects();
-                this._invoker.cacheUndoDataForChangeDimension = items.map(item => {
-                    console.log('ITEM - ', item);
-                    const {angle, left, top} = item;
-                    obj.realizeTransform(item);
-                    const result = {
-                        id: this._graphics.getObjectId(item),
-                        width: item.width,
-                        height: item.height,
-                        top: item.top,
-                        left: item.left,
-                        scaleX: item.scaleX,
-                        scaleY: item.scaleY,
-                        angle: item.angle
-                    };
-
-                    item.set({
-                        angle,
-                        left,
-                        top
-                    });
-
-                    return result;
-                });
-            } else {
-                this._invoker.cacheUndoDataForChangeDimension = [extend({}, {
-                    id: this._graphics.getObjectId(obj),
-                    left: obj.left,
-                    top: obj.top,
-                    width: obj.width,
-                    height: obj.height,
-                    angle: obj.angle
-                })];
-            }
-        }
+        setCachedUndoDataForChangeDimension(this._graphics, obj);
 
         this.fire(events.MOUSE_DOWN, event, originPointer);
     }
@@ -467,50 +437,12 @@ class ImageEditor {
 
     /**
      * Add a 'setObjeuctProperties' command
-     * @param {Number} id - Fabric object id
-     * @param {Object} props - props
+     * @param {Object} obj - props
      * @private
      */
-    _pushModifyObjectCommand(objectId, obj) {
-        let prop;
-        if (obj.type === 'activeSelection') {
-            const items = obj.getObjects();
-            prop = items.map(item => {
-                const {angle, left, top} = item;
-                obj.realizeTransform(item);
-                const result = {
-                    id: this._graphics.getObjectId(item),
-                    width: item.width,
-                    height: item.height,
-                    top: item.top,
-                    left: item.left,
-                    scaleX: item.scaleX,
-                    scaleY: item.scaleY,
-                    angle: item.angle
-                };
-
-                item.set({
-                    angle,
-                    left,
-                    top
-                });
-
-                return result;
-            });
-        } else {
-            prop = [{
-                id: objectId,
-                width: obj.width,
-                height: obj.height,
-                top: obj.top,
-                left: obj.left,
-                angle: obj.angle
-            }];
-        }
-
-        const command = commandFactory.create('moveResizeFromSelection', this._graphics, prop);
-        const undoData = this._invoker.cacheUndoDataForChangeDimension;
-        command.undoData = undoData;
+    _pushModifyObjectCommand(obj) {
+        const command = commandFactory.create('moveResizeFromSelection', this._graphics, makeUndoData(this._graphics, obj));
+        command.undoData = getCachedUndoDataForChangeDimension();
 
         this._invoker.pushUndoStack(command);
     }
@@ -1328,11 +1260,11 @@ class ImageEditor {
 
     /**
      * 'objectModified' event handler
-     * @param {Object} objectProps added object properties
+     * @param {Object} obj added object properties
      * @private
      */
-    _onObjectModified(obj, objectId) {
-        this._pushModifyObjectCommand(objectId, obj);
+    _onObjectModified(obj) {
+        this._pushModifyObjectCommand(obj);
     }
 
     /**

@@ -31,14 +31,10 @@ const command = {
             return Promise.reject(rejectMessages.noObject);
         }
 
-        console.log('PROPS - ', props);
-
         this.undoData.props = {};
         snippet.forEachOwnProperties(props, (value, key) => {
             this.undoData.props[key] = targetObj[key];
         });
-
-        console.log('REDO', props);
 
         graphics.setObjectProperties(id, props);
 
@@ -51,8 +47,6 @@ const command = {
      */
     undo(graphics, id) {
         const {props} = this.undoData;
-
-        console.log('Undo', props);
 
         graphics.setObjectProperties(id, props);
 

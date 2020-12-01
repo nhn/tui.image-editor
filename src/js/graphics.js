@@ -709,8 +709,6 @@ class Graphics {
         const object = this.getObject(id);
         const clone = extend({}, props);
 
-        console.log('setObjectProperties', id, props);
-
         object.set(clone);
 
         object.setCoords();
