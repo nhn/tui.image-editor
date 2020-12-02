@@ -9,7 +9,7 @@ import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import Graphics from '../src/js/graphics';
 import {commandNames as commands} from '../src/js/consts';
-import { getCachedUndoDataForDimension } from '../src/js/helper/selectionModifyHelper';
+import {getCachedUndoDataForDimension} from '../src/js/helper/selectionModifyHelper';
 
 describe('commandFactory', () => {
     let invoker, mockImage, canvas, graphics;
@@ -125,6 +125,7 @@ describe('commandFactory', () => {
     });
     describe('changeSelectionCommand', () => {
         let obj;
+
         beforeEach(() => {
             spyOn(canvas, 'getPointer');
             obj = new fabric.Rect({
@@ -153,24 +154,28 @@ describe('commandFactory', () => {
             invoker.pushUndoStack(makeCommand);
         });
 
-        it('언두가 잘 되는지', done => {
+        it('should work undo command correctly', done => {
             invoker.undo().then(() => {
                 expect(obj.width).toBe(10);
                 expect(obj.height).toBe(10);
                 expect(obj.left).toBe(10);
                 expect(obj.top).toBe(10);
+                expect(obj.scaleX).toBe(1);
+                expect(obj.scaleY).toBe(1);
                 expect(obj.angle).toBe(0);
                 done();
             });
         });
 
-        it('리두가 잘 되는지', done => {
+        it('should work redo command correctly', done => {
             invoker.undo().then(() => {
                 invoker.redo().then(() => {
                     expect(obj.width).toBe(30);
                     expect(obj.height).toBe(30);
                     expect(obj.left).toBe(30);
                     expect(obj.top).toBe(30);
+                    expect(obj.scaleX).toBe(0.5);
+                    expect(obj.scaleY).toBe(0.5);
                     expect(obj.angle).toBe(10);
                     done();
                 });

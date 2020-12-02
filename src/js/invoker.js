@@ -30,8 +30,6 @@ class Invoker {
          */
         this._redoStack = [];
 
-        this.cacheUndoDataForChangeDimension = [];
-
         /**
          * Lock-flag for executing command
          * @type {boolean}
