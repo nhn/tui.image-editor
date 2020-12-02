@@ -19,6 +19,7 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
+import IconDrawingMode from './drawingMode/icon';
 import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 
@@ -655,6 +656,10 @@ class Graphics {
         this.getComponent(components.SHAPE).setStates(type, options);
     }
 
+    setDrawingIcon(type, iconColor) {
+        this.getComponent(components.ICON).setStates(type, iconColor);
+    }
+
     /**
      * Register icon paths
      * @param {Object} pathInfos - Path infos
@@ -873,6 +878,7 @@ class Graphics {
         this._register(this._drawingModeMap, new LineDrawingMode());
         this._register(this._drawingModeMap, new ShapeDrawingMode());
         this._register(this._drawingModeMap, new TextDrawingMode());
+        this._register(this._drawingModeMap, new IconDrawingMode());
     }
 
     /**

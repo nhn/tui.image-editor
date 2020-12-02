@@ -137,44 +137,13 @@ export default {
      * @private
      */
     _iconAction() {
-        let cacheIconType;
-        let cacheIconColor;
-        let startX;
-        let startY;
-        let iconWidth;
-        let iconHeight;
-        let objId;
-
         this.on({
-            'iconCreateResize': ({moveOriginPointer}) => {
-                const scaleX = (moveOriginPointer.x - startX) / iconWidth;
-                const scaleY = (moveOriginPointer.y - startY) / iconHeight;
-
-                this.setObjectPropertiesQuietly(objId, {
-                    scaleX: Math.abs(scaleX * 2),
-                    scaleY: Math.abs(scaleY * 2)
-                });
-            },
             'iconCreateEnd': () => {
+                this.stopDrawingMode();
                 this.ui.icon.clearIconType();
                 this.changeSelectableAll(true);
             }
         });
-
-        const mouseDown = (e, originPointer) => {
-            startX = originPointer.x;
-            startY = originPointer.y;
-
-            this.addIcon(cacheIconType, {
-                left: originPointer.x,
-                top: originPointer.y,
-                fill: cacheIconColor
-            }).then(obj => {
-                objId = obj.id;
-                iconWidth = obj.width;
-                iconHeight = obj.height;
-            });
-        };
 
         return extend({
             changeColor: color => {
@@ -183,12 +152,12 @@ export default {
                 }
             },
             addIcon: (iconType, iconColor) => {
-                cacheIconType = iconType;
-                cacheIconColor = iconColor;
                 // this.readyAddIcon();
                 this.changeCursor('crosshair');
-                this.off('mousedown');
-                this.once('mousedown', mouseDown.bind(this));
+                this.startDrawingMode('ICON');
+                this.setDrawingIcon(iconType, iconColor);
+                // this.off('mousedown');
+                // this.once('mousedown', mouseDown.bind(this));
             },
             cancelAddIcon: () => {
                 this.off('mousedown');

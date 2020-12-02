@@ -934,6 +934,10 @@ class ImageEditor {
         this._graphics.setDrawingShape(type, options);
     }
 
+    setDrawingIcon(type, iconColor) {
+        this._graphics.setDrawingIcon(type, iconColor);
+    }
+
     /**
      * Add shape
      * @param {string} type - Shape type (ex: 'rect', 'circle', 'triangle')
@@ -1282,6 +1286,7 @@ class ImageEditor {
      *      @param {string} [options.fill] - Icon foreground color
      *      @param {number} [options.left] - Icon x position
      *      @param {number} [options.top] - Icon y position
+     * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise<ObjectProps, ErrorMsg>}
      * @example
      * imageEditor.addIcon('arrow'); // The position is center on canvas
@@ -1293,12 +1298,12 @@ class ImageEditor {
      *     console.log(objectProps.id);
      * });
      */
-    addIcon(type, options) {
+    addIcon(type, options, isSilent) {
         options = options || {};
 
         this._setPositions(options);
 
-        return this.execute(commands.ADD_ICON, type, options);
+        return this.execute(commands.ADD_ICON, type, options, isSilent);
     }
 
     /**

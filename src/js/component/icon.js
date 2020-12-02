@@ -42,6 +42,26 @@ class Icon extends Component {
          * @type {boolean}
          */
         this.useDragAddIcon = graphics.useDragAddIcon;
+
+        this._handlers = {
+            mousedown: this._onFabricMouseDown.bind(this),
+            mousemove: this._onFabricMouseMove.bind(this),
+            mouseup: this._onFabricMouseUp.bind(this)
+        };
+    }
+
+    setStates(type, iconColor) {
+        this._type = type;
+        this._iconColor = iconColor;
+    }
+
+    start() {
+        const canvas = this.getCanvas();
+
+        canvas.on('mouse:down', this._handlers.mousedown);
+    }
+
+    end() {
     }
 
     /**
@@ -61,6 +81,7 @@ class Icon extends Component {
             const registerdIcon = Object.keys(defaultIconPath).indexOf(type) >= 0;
             const useDragAddIcon = this.useDragAddIcon && registerdIcon;
             const icon = path ? this._createIcon(path) : null;
+            this._icon = icon;
 
             if (!icon) {
                 reject(rejectMessages.invalidParameters);
@@ -74,7 +95,7 @@ class Icon extends Component {
             canvas.add(icon).setActiveObject(icon);
 
             if (useDragAddIcon) {
-                this._addWithDragEvent(canvas);
+                // this._addWithDragEvent(canvas);
             }
 
             resolve(this.graphics.createObjectProperties(icon));
@@ -148,6 +169,60 @@ class Icon extends Component {
      */
     _createIcon(path) {
         return new fabric.Path(path);
+    }
+
+    _onFabricMouseDown(fEvent) {
+        const canvas = this.getCanvas();
+
+        this._startPoint = canvas.getPointer(fEvent.e);
+        const startX = this._startPoint.x;
+        const startY = this._startPoint.y;
+
+        this.add(this._type, {
+            left: startX,
+            top: startY,
+            fill: this._iconColor
+        }).then(() => {
+            canvas.on('mouse:move', this._handlers.mousemove);
+            canvas.on('mouse:up', this._handlers.mouseup);
+        });
+    }
+
+    _onFabricMouseMove(fEvent) {
+        const canvas = this.getCanvas();
+
+        if (!this._icon) {
+            return;
+        }
+        canvas.selection = false;
+        const moveOriginPointer = canvas.getPointer(fEvent.e);
+
+        const scaleX = (moveOriginPointer.x - this._startPoint.x) / this._icon.width;
+        const scaleY = (moveOriginPointer.y - this._startPoint.y) / this._icon.height;
+
+        this._icon.set({
+            scaleX: Math.abs(scaleX * 2),
+            scaleY: Math.abs(scaleY * 2)
+        });
+
+        this._icon.setCoords();
+        canvas.renderAll();
+    }
+
+    _onFabricMouseUp(fEvent) {
+        const canvas = this.getCanvas();
+
+        this.fire(events.ICON_CREATE_END, {
+            moveOriginPointer: canvas.getPointer(fEvent.e)
+        });
+
+        this.fire(events.ADD_OBJECT, this.graphics.createObjectProperties(this._icon));
+
+        this._icon = null;
+
+        canvas.off('mouse:down', this._handlers.mousedown);
+        canvas.off('mouse:move', this._handlers.mousemove);
+        canvas.off('mouse:up', this._handlers.mouseup);
     }
 }
 
