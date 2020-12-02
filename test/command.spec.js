@@ -9,6 +9,7 @@ import Invoker from '../src/js/invoker';
 import commandFactory from '../src/js/factory/command';
 import Graphics from '../src/js/graphics';
 import {commandNames as commands} from '../src/js/consts';
+import { getCachedUndoDataForDimension } from '../src/js/helper/selectionModifyHelper';
 
 describe('commandFactory', () => {
     let invoker, mockImage, canvas, graphics;
@@ -119,6 +120,60 @@ describe('commandFactory', () => {
             invoker.execute(commands.ADD_OBJECT, graphics, obj).then(() => invoker.undo()).then(() => {
                 expect(canvas.contains(obj)).toBe(false);
                 done();
+            });
+        });
+    });
+    describe('changeSelectionCommand', () => {
+        let obj;
+        beforeEach(() => {
+            spyOn(canvas, 'getPointer');
+            obj = new fabric.Rect({
+                width: 10,
+                height: 10,
+                top: 10,
+                left: 10,
+                scaleX: 1,
+                scaleY: 1,
+                angle: 0
+            });
+            graphics._addFabricObject(obj);
+            graphics._onMouseDown({target: obj});
+
+            const makeCommand = commandFactory.create(commands.CHANGE_SELECTION, graphics, [{
+                id: graphics.getObjectId(obj),
+                width: 30,
+                height: 30,
+                top: 30,
+                left: 30,
+                scaleX: 0.5,
+                scaleY: 0.5,
+                angle: 10
+            }]);
+            makeCommand.undoData = getCachedUndoDataForDimension();
+            invoker.pushUndoStack(makeCommand);
+        });
+
+        it('언두가 잘 되는지', done => {
+            invoker.undo().then(() => {
+                expect(obj.width).toBe(10);
+                expect(obj.height).toBe(10);
+                expect(obj.left).toBe(10);
+                expect(obj.top).toBe(10);
+                expect(obj.angle).toBe(0);
+                done();
+            });
+        });
+
+        it('리두가 잘 되는지', done => {
+            invoker.undo().then(() => {
+                invoker.redo().then(() => {
+                    expect(obj.width).toBe(30);
+                    expect(obj.height).toBe(30);
+                    expect(obj.left).toBe(30);
+                    expect(obj.top).toBe(30);
+                    expect(obj.angle).toBe(10);
+                    done();
+                });
             });
         });
     });
