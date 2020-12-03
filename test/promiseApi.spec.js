@@ -25,10 +25,7 @@ describe('Promise API', () => {
     });
 
     beforeEach(done => {
-        imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => done()
-        )['catch'](() =>
-            done()
-        );
+        imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => done());
     });
 
     it('addIcon() supports Promise', done => {
@@ -48,9 +45,7 @@ describe('Promise API', () => {
         imageEditor.addIcon('arrow', {
             left: 10,
             top: 10
-        }).then(() =>
-            imageEditor.clearObjects()
-        ).then(() => {
+        }).then(() => imageEditor.clearObjects()).then(() => {
             expect(canvas.getObjects().length).toBe(0);
             done();
         })['catch'](message => {

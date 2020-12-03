@@ -144,7 +144,6 @@ export default {
                 }
             },
             addIcon: (iconType, iconColor) => {
-                this.changeCursor('crosshair');
                 this.startDrawingMode('ICON');
                 this.setDrawingIcon(iconType, iconColor);
             },

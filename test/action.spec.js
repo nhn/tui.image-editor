@@ -6,6 +6,7 @@ import snippet from 'tui-code-snippet';
 import {Promise} from '../src/js/util';
 import ImageEditor from '../src/js/imageEditor';
 import action from '../src/js/action';
+import {eventNames} from '../src/js/consts';
 
 describe('Ui', () => {
     let actions;
@@ -276,28 +277,19 @@ describe('Ui', () => {
     });
 
     describe('iconAction', () => {
-        let iconAction, expected;
+        let iconAction;
         beforeEach(() => {
             iconAction = actions.icon;
         });
 
-        it('add once event mousedown should be executed When the addIcon action occurs', () => {
-            const promise = new Promise(resolve => {
-                resolve(300);
-            });
+        it('when the add icon occurs, the drawing mode should be run.', () => {
+            spyOn(imageEditorMock, 'startDrawingMode');
+            spyOn(imageEditorMock, 'setDrawingIcon');
 
-            spyOn(imageEditorMock, 'changeCursor');
-            spyOn(imageEditorMock, 'addIcon').and.returnValue(promise);
+            iconAction.addIcon('iconTypeA', '#fff');
 
-            iconAction.addIcon('iconTypeA');
-            expect(imageEditorMock.changeCursor).toHaveBeenCalled();
-
-            imageEditorMock.fire('mousedown', null, {
-                x: 10,
-                y: 10
-            });
-            expected = imageEditorMock.addIcon.calls.mostRecent().args[0];
-            expect(expected).toBe('iconTypeA');
+            expect(imageEditorMock.startDrawingMode).toHaveBeenCalled();
+            expect(imageEditorMock.setDrawingIcon).toHaveBeenCalled();
         });
     });
 

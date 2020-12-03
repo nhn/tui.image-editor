@@ -27,6 +27,53 @@ describe('Icon', () => {
         });
     });
 
+    describe('_onFabricMouseMove()', () => {
+        let iconObj, fEvent;
+        beforeEach(done => {
+            fEvent = {e: {}};
+            icon._startPoint = {
+                x: 300,
+                y: 300
+            };
+            icon.add('arrow', {
+                left: icon._startPoint.x,
+                top: icon._startPoint.y,
+                color: '#000'
+            }).then(() => {
+                [iconObj] = canvas.getObjects();
+                iconObj.set({
+                    width: 10,
+                    height: 10
+                });
+                done();
+            });
+        });
+
+        it('When dragging to the right-down from the starting point, the icon scale value should increase.', () => {
+            spyOn(canvas, 'getPointer').and.returnValue({
+                x: 500,
+                y: 500
+            });
+
+            icon._onFabricMouseMove(fEvent);
+
+            expect(iconObj.scaleX).toBe(40);
+            expect(iconObj.scaleY).toBe(40);
+        });
+
+        it('When dragging to the left-up from the starting point, the icon scale value should increase.', () => {
+            spyOn(canvas, 'getPointer').and.returnValue({
+                x: 100,
+                y: 100
+            });
+
+            icon._onFabricMouseMove(fEvent);
+
+            expect(iconObj.scaleX).toBe(40);
+            expect(iconObj.scaleY).toBe(40);
+        });
+    });
+
     it('add() should insert the activated icon object on canvas.', () => {
         icon.add('arrow');
 
@@ -65,31 +112,6 @@ describe('Icon', () => {
         icon.add('cancel');
 
         expect(icon._createIcon).toHaveBeenCalledWith(path);
-    });
-
-    it('`_addWithDragEvent()` should be executed when `useDragAddIcon` is true.', () => {
-        const defaultIconKey = 'icon-arrow';
-        icon._pathMap[defaultIconKey] = true;
-
-        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
-        spyOn(icon, '_addWithDragEvent');
-        spyOn(icon, 'useDragAddIcon').and.returnValue(true);
-
-        icon.add(defaultIconKey);
-
-        expect(icon._addWithDragEvent).toHaveBeenCalled();
-    });
-
-    it('`_addWithDragEvent()` should be not executed when target icon is not default icon.', () => {
-        const nonDefaultIconKey = 'non-default-icon';
-
-        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
-        spyOn(icon, '_addWithDragEvent');
-        spyOn(icon, 'useDragAddIcon').and.returnValue(true);
-
-        icon.add(nonDefaultIconKey);
-
-        expect(icon._addWithDragEvent).not.toHaveBeenCalled();
     });
 
     it('setColor() should change color of next inserted icon.', () => {

@@ -6,7 +6,7 @@ import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
 import {Promise} from '../util';
 import Component from '../interface/component';
-import {eventNames as events, rejectMessages, componentNames, fObjectOptions, defaultIconPath} from '../consts';
+import {eventNames as events, rejectMessages, componentNames, fObjectOptions} from '../consts';
 
 const pathMap = {
     arrow: 'M 0 90 H 105 V 120 L 160 60 L 105 0 V 30 H 0 Z',
@@ -37,28 +37,57 @@ class Icon extends Component {
          */
         this._pathMap = pathMap;
 
+        /**
+         * Type of the drawing icon
+         * @type {string}
+         * @private
+         */
+        this._type = null;
+
+        /**
+         * Color of the drawing icon
+         * @type {string}
+         * @private
+         */
+        this._iconColor = null;
+
+        /**
+         * Event handler list
+         * @type {Object}
+         * @private
+         */
         this._handlers = {
             mousedown: this._onFabricMouseDown.bind(this),
             mousemove: this._onFabricMouseMove.bind(this),
             mouseup: this._onFabricMouseUp.bind(this)
         };
-
-        this._type = null;
-
-        this._iconColor = null;
     }
 
+    /**
+     * Set states of the current drawing shape
+     * @ignore
+     * @param {string} type - Icon type ('arrow', 'cancel', custom icon name)
+     * @param {string} iconColor - Icon foreground color
+     */
     setStates(type, iconColor) {
         this._type = type;
         this._iconColor = iconColor;
     }
 
+    /**
+     * Start to draw the icon on canvas
+     * @ignore
+     */
     start() {
         const canvas = this.getCanvas();
         canvas.selection = false;
         canvas.on('mouse:down', this._handlers.mousedown);
     }
 
+    /**
+     * End to draw the icon on canvas
+     * @ignore
+     */
     end() {
         const canvas = this.getCanvas();
 
@@ -82,11 +111,10 @@ class Icon extends Component {
             const canvas = this.getCanvas();
             const path = this._pathMap[type];
             const selectionStyle = fObjectOptions.SELECTION_STYLE;
-            const registerdIcon = Object.keys(defaultIconPath).indexOf(type) >= 0;
             const icon = path ? this._createIcon(path) : null;
             this._icon = icon;
 
-            if (!icon || !registerdIcon) {
+            if (!icon) {
                 reject(rejectMessages.invalidParameters);
             }
 
@@ -143,6 +171,11 @@ class Icon extends Component {
         return new fabric.Path(path);
     }
 
+    /**
+     * MouseDown event handler on canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+     * @private
+     */
     _onFabricMouseDown(fEvent) {
         const canvas = this.getCanvas();
 
@@ -161,6 +194,11 @@ class Icon extends Component {
         });
     }
 
+    /**
+     * MouseMove event handler on canvas
+     * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
+     * @private
+     */
     _onFabricMouseMove(fEvent) {
         const canvas = this.getCanvas();
 
@@ -181,6 +219,10 @@ class Icon extends Component {
         canvas.renderAll();
     }
 
+    /**
+     * MouseUp event handler on canvas
+     * @private
+     */
     _onFabricMouseUp() {
         const canvas = this.getCanvas();
 
