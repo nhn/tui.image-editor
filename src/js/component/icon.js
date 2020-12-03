@@ -37,11 +37,35 @@ class Icon extends Component {
          */
         this._pathMap = pathMap;
 
-        /**
-         * Option to add icon to drag.
-         * @type {boolean}
-         */
-        this.useDragAddIcon = graphics.useDragAddIcon;
+        this._handlers = {
+            mousedown: this._onFabricMouseDown.bind(this),
+            mousemove: this._onFabricMouseMove.bind(this),
+            mouseup: this._onFabricMouseUp.bind(this)
+        };
+
+        this._type = null;
+
+        this._iconColor = null;
+    }
+
+    setStates(type, iconColor) {
+        this._type = type;
+        this._iconColor = iconColor;
+    }
+
+    start() {
+        const canvas = this.getCanvas();
+        canvas.selection = false;
+        canvas.on('mouse:down', this._handlers.mousedown);
+    }
+
+    end() {
+        const canvas = this.getCanvas();
+
+        canvas.selection = true;
+        canvas.off({
+            'mouse:down': this._handlers.mousedown
+        });
     }
 
     /**
@@ -59,10 +83,10 @@ class Icon extends Component {
             const path = this._pathMap[type];
             const selectionStyle = fObjectOptions.SELECTION_STYLE;
             const registerdIcon = Object.keys(defaultIconPath).indexOf(type) >= 0;
-            const useDragAddIcon = this.useDragAddIcon && registerdIcon;
             const icon = path ? this._createIcon(path) : null;
+            this._icon = icon;
 
-            if (!icon) {
+            if (!icon || !registerdIcon) {
                 reject(rejectMessages.invalidParameters);
             }
 
@@ -73,38 +97,7 @@ class Icon extends Component {
 
             canvas.add(icon).setActiveObject(icon);
 
-            if (useDragAddIcon) {
-                this._addWithDragEvent(canvas);
-            }
-
             resolve(this.graphics.createObjectProperties(icon));
-        });
-    }
-
-    /**
-     * Added icon drag event
-     * @param {fabric.Canvas} canvas - Canvas instance
-     * @private
-     */
-    _addWithDragEvent(canvas) {
-        canvas.on({
-            'mouse:move': fEvent => {
-                canvas.selection = false;
-
-                this.fire(events.ICON_CREATE_RESIZE, {
-                    moveOriginPointer: canvas.getPointer(fEvent.e)
-                });
-            },
-            'mouse:up': fEvent => {
-                this.fire(events.ICON_CREATE_END, {
-                    moveOriginPointer: canvas.getPointer(fEvent.e)
-                });
-
-                canvas.defaultCursor = 'default';
-                canvas.off('mouse:up');
-                canvas.off('mouse:move');
-                canvas.selection = true;
-            }
         });
     }
 
@@ -148,6 +141,56 @@ class Icon extends Component {
      */
     _createIcon(path) {
         return new fabric.Path(path);
+    }
+
+    _onFabricMouseDown(fEvent) {
+        const canvas = this.getCanvas();
+
+        this._startPoint = canvas.getPointer(fEvent.e);
+        const startX = this._startPoint.x;
+        const startY = this._startPoint.y;
+
+        this.add(this._type, {
+            left: startX,
+            top: startY,
+            fill: this._iconColor
+        }).then(() => {
+            this.fire(events.ADD_OBJECT, this.graphics.createObjectProperties(this._icon));
+            canvas.on('mouse:move', this._handlers.mousemove);
+            canvas.on('mouse:up', this._handlers.mouseup);
+        });
+    }
+
+    _onFabricMouseMove(fEvent) {
+        const canvas = this.getCanvas();
+
+        if (!this._icon) {
+            return;
+        }
+        const moveOriginPointer = canvas.getPointer(fEvent.e);
+
+        const scaleX = (moveOriginPointer.x - this._startPoint.x) / this._icon.width;
+        const scaleY = (moveOriginPointer.y - this._startPoint.y) / this._icon.height;
+
+        this._icon.set({
+            scaleX: Math.abs(scaleX * 2),
+            scaleY: Math.abs(scaleY * 2)
+        });
+
+        this._icon.setCoords();
+        canvas.renderAll();
+    }
+
+    _onFabricMouseUp() {
+        const canvas = this.getCanvas();
+
+        this.fire(events.OBJECT_ADDED, this.graphics.createObjectProperties(this._icon));
+
+        this._icon = null;
+
+        canvas.off('mouse:down', this._handlers.mousedown);
+        canvas.off('mouse:move', this._handlers.mousemove);
+        canvas.off('mouse:up', this._handlers.mouseup);
     }
 }
 
