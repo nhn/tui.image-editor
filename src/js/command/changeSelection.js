@@ -1,6 +1,6 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Set object properties
+ * @fileoverview change selection
  */
 import commandFactory from '../factory/command';
 import {Promise} from '../util';

@@ -396,7 +396,6 @@ class ImageEditor {
      * @param {Object} originPointer - origin pointer
      *  @param {Number} originPointer.x x position
      *  @param {Number} originPointer.y y position
-     * @param {fabric.Object} obj - fabric object
      * @private
      */
     _onMouseDown(event, originPointer) {
@@ -434,8 +433,8 @@ class ImageEditor {
     }
 
     /**
-     * Add a 'setObjeuctProperties' command
-     * @param {Object} obj - props
+     * Add a 'changeSelection' command
+     * @param {fabric.Object} obj - selection object
      * @private
      */
     _pushModifyObjectCommand(obj) {
@@ -1259,7 +1258,7 @@ class ImageEditor {
 
     /**
      * 'objectModified' event handler
-     * @param {Object} obj added object properties
+     * @param {fabric.Object} obj - selection object
      * @private
      */
     _onObjectModified(obj) {
