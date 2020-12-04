@@ -29,6 +29,7 @@ describe('Icon', () => {
 
     describe('_onFabricMouseMove()', () => {
         let iconObj, fEvent;
+
         beforeEach(done => {
             fEvent = {e: {}};
             icon._startPoint = {

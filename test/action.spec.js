@@ -278,6 +278,7 @@ describe('Ui', () => {
 
     describe('iconAction', () => {
         let iconAction;
+
         beforeEach(() => {
             iconAction = actions.icon;
         });
