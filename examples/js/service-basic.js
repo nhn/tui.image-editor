@@ -317,7 +317,6 @@ imageEditor.on({
         });
     },
     objectActivated: function(obj) {
-        console.log('OBJECTACTIVATED');
         activeObjectId = obj.id;
         if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'triangle') {
             showSubMenu('shape');
