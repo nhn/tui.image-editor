@@ -9,9 +9,8 @@ import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
 import {sendHostName, Promise} from './util';
-import {eventNames as events, commandNames as commands, keyCodes, rejectMessages, commandNames} from './consts';
+import {eventNames as events, commandNames as commands, keyCodes, rejectMessages} from './consts';
 import {
-    getCachedUndoDataForDimension,
     makeSelectionUndoData,
     makeSelectionUndoDatum
 } from './helper/selectionModifyHelper';
@@ -438,9 +437,10 @@ class ImageEditor {
      * @private
      */
     _pushModifyObjectCommand(obj) {
-        const command = commandFactory.create(commandNames.CHANGE_SELECTION, this._graphics,
-            makeSelectionUndoData(obj, item => makeSelectionUndoDatum(this._graphics.getObjectId(item), item)));
-        command.undoData = getCachedUndoDataForDimension();
+        const {type} = obj;
+        const props = makeSelectionUndoData(obj, item => makeSelectionUndoDatum(this._graphics.getObjectId(item), item, type === 'activeSelection'));
+        const command = commandFactory.create(commands.CHANGE_SELECTION, this._graphics, props);
+        command.execute(this._graphics, props);
 
         this._invoker.pushUndoStack(command);
     }

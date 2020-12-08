@@ -46,7 +46,7 @@ describe('selectionModifyHelper', () => {
 
     describe('makeSelectionUndoDatum', () => {
         it('should return undo datum', () => {
-            const result = makeSelectionUndoDatum(1, obj1);
+            const result = makeSelectionUndoDatum(1, obj1, true);
 
             expect(result).toEqual({
                 id: 1,

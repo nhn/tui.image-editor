@@ -140,7 +140,7 @@ describe('commandFactory', () => {
             graphics._addFabricObject(obj);
             graphics._onMouseDown({target: obj});
 
-            const makeCommand = commandFactory.create(commands.CHANGE_SELECTION, graphics, [{
+            const props = [{
                 id: graphics.getObjectId(obj),
                 width: 30,
                 height: 30,
@@ -149,8 +149,9 @@ describe('commandFactory', () => {
                 scaleX: 0.5,
                 scaleY: 0.5,
                 angle: 10
-            }]);
-            makeCommand.undoData = getCachedUndoDataForDimension();
+            }];
+            const makeCommand = commandFactory.create(commands.CHANGE_SELECTION, graphics, props);
+            makeCommand.execute(graphics, props);
             invoker.pushUndoStack(makeCommand);
         });
 

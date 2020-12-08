@@ -1,7 +1,9 @@
 /**
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Selection modify helper
+ * @fileoverview Selection modification helper
  */
+
+import {extend} from 'tui-code-snippet/src/js/object';
 
 /**
  * Cached selection's info
@@ -64,11 +66,12 @@ export function makeSelectionUndoData(obj, undoDatumMaker) {
  * Make undo datum
  * @param {number} id - object id
  * @param {fabric.Object} obj - selection object
+ * @param {boolean} isSelection - whether or not object is selection
  * @returns {Object} undo datum
  * @private
  */
-export function makeSelectionUndoDatum(id, obj) {
-    return {
+export function makeSelectionUndoDatum(id, obj, isSelection) {
+    return isSelection ? {
         id,
         width: obj.width,
         height: obj.height,
@@ -77,5 +80,5 @@ export function makeSelectionUndoDatum(id, obj) {
         angle: obj.angle,
         scaleX: obj.scaleX,
         scaleY: obj.scaleY
-    };
+    } : extend({id}, obj);
 }

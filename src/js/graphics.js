@@ -991,17 +991,18 @@ class Graphics {
      * @private
      */
     _onMouseDown(fEvent) {
-        const originPointer = this._canvas.getPointer(fEvent.e);
-        const targetObject = fEvent.target;
+        const {e: event, target} = fEvent;
+        const originPointer = this._canvas.getPointer(event);
 
-        if (targetObject) {
-            const undoData = makeSelectionUndoData(targetObject,
-                item => makeSelectionUndoDatum(this.getObjectId(item), item));
+        if (target) {
+            const {type} = target;
+            const undoData = makeSelectionUndoData(target,
+                item => makeSelectionUndoDatum(this.getObjectId(item), item, type === 'activeSelection'));
 
             setCachedUndoDataForDimension(undoData);
         }
 
-        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
+        this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
     /**
@@ -1060,7 +1061,7 @@ class Graphics {
             items.forEach(item => item.fire('modifiedInGroup', target));
         }
 
-        this.fire(events.OBJECT_MODIFIED, target, this.createObjectProperties(target).id);
+        this.fire(events.OBJECT_MODIFIED, target, this.getObjectId(target));
     }
 
     /**

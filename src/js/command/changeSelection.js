@@ -1,18 +1,23 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview change selection
  */
 import commandFactory from '../factory/command';
 import {Promise} from '../util';
 import {commandNames} from '../consts';
+import {getCachedUndoDataForDimension} from '../helper/selectionModifyHelper';
 
 const command = {
     name: commandNames.CHANGE_SELECTION,
 
     execute(graphics, props) {
-        props.forEach(prop => {
-            graphics.setObjectProperties(prop.id, prop);
-        });
+        if (this.isRedo) {
+            props.forEach(prop => {
+                graphics.setObjectProperties(prop.id, prop);
+            });
+        } else {
+            this.undoData = getCachedUndoDataForDimension();
+        }
 
         return Promise.resolve();
     },
