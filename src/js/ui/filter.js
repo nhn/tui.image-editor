@@ -183,8 +183,8 @@ class Filter extends Submenu {
    * @param {Object} options - filter options
    * @private
    */
+  // eslint-disable-next-line complexity
   _setFilterState(filterName, options) {
-    // eslint-disable-line
     if (filterName === 'colorFilter') {
       this._els.colorfilterThresholeRange.value = options.distance;
     } else if (filterName === 'removeWhite') {
@@ -255,8 +255,8 @@ class Filter extends Submenu {
    * @returns {Object} filter option object
    * @private
    */
+  // eslint-disable-next-line complexity
   _getFilterOption(type) {
-    // eslint-disable-line
     const option = {};
     switch (type) {
       case 'removeWhite':

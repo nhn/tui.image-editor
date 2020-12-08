@@ -636,8 +636,8 @@ class Ui {
    * @param {string} menuBarPosition - top or right or bottom or left
    * @private
    */
+  // eslint-disable-next-line complexity
   _setEditorPosition(menuBarPosition) {
-    // eslint-disable-line complexity
     const { width, height } = this._getCanvasMaxDimension();
     const editorElementStyle = this._editorElement.style;
     let top = 0;

@@ -23,8 +23,8 @@ class Theme {
    * @param {string} type - style type
    * @returns {string|object} - cssText or StyleObject
    */
+  // eslint-disable-next-line complexity
   getStyle(type) {
-    // eslint-disable-line
     let result = null;
     const firstProperty = type.replace(/\..+$/, '');
     const option = this.styles[type];
