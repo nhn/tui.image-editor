@@ -10,7 +10,9 @@ import fabric from 'fabric';
  * @extends {fabric.Image.filters.Convolute}
  * @ignore
  */
-const Sharpen = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
+const Sharpen = fabric.util.createClass(
+  fabric.Image.filters.Convolute,
+  /** @lends Convolute.prototype */ {
     /**
      * Filter type
      * @param {String} type
@@ -23,13 +25,10 @@ const Sharpen = fabric.util.createClass(fabric.Image.filters.Convolute, /** @len
      * @override
      */
     initialize() {
-        const matrix = [
-            0, -1, 0,
-            -1, 5, -1,
-            0, -1, 0
-        ];
-        this.matrix = matrix;
-    }
-});
+      const matrix = [0, -1, 0, -1, 5, -1, 0, -1, 0];
+      this.matrix = matrix;
+    },
+  }
+);
 
 export default Sharpen;

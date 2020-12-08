@@ -3,48 +3,48 @@
  * @fileoverview Change icon color
  */
 import commandFactory from '../factory/command';
-import {Promise} from '../util';
-import {componentNames, rejectMessages, commandNames} from '../consts';
+import { Promise } from '../util';
+import { componentNames, rejectMessages, commandNames } from '../consts';
 
-const {ICON} = componentNames;
+const { ICON } = componentNames;
 
 const command = {
-    name: commandNames.CHANGE_ICON_COLOR,
+  name: commandNames.CHANGE_ICON_COLOR,
 
-    /**
-     * Change icon color
-     * @param {Graphics} graphics - Graphics instance
-     * @param {number} id - object id
-     * @param {string} color - Color for icon
-     * @returns {Promise}
-     */
-    execute(graphics, id, color) {
-        return new Promise((resolve, reject) => {
-            const iconComp = graphics.getComponent(ICON);
-            const targetObj = graphics.getObject(id);
+  /**
+   * Change icon color
+   * @param {Graphics} graphics - Graphics instance
+   * @param {number} id - object id
+   * @param {string} color - Color for icon
+   * @returns {Promise}
+   */
+  execute(graphics, id, color) {
+    return new Promise((resolve, reject) => {
+      const iconComp = graphics.getComponent(ICON);
+      const targetObj = graphics.getObject(id);
 
-            if (!targetObj) {
-                reject(rejectMessages.noObject);
-            }
+      if (!targetObj) {
+        reject(rejectMessages.noObject);
+      }
 
-            this.undoData.object = targetObj;
-            this.undoData.color = iconComp.getColor(targetObj);
-            iconComp.setColor(color, targetObj);
-            resolve();
-        });
-    },
-    /**
-     * @param {Graphics} graphics - Graphics instance
-     * @returns {Promise}
-     */
-    undo(graphics) {
-        const iconComp = graphics.getComponent(ICON);
-        const {object: icon, color} = this.undoData;
+      this.undoData.object = targetObj;
+      this.undoData.color = iconComp.getColor(targetObj);
+      iconComp.setColor(color, targetObj);
+      resolve();
+    });
+  },
+  /**
+   * @param {Graphics} graphics - Graphics instance
+   * @returns {Promise}
+   */
+  undo(graphics) {
+    const iconComp = graphics.getComponent(ICON);
+    const { object: icon, color } = this.undoData;
 
-        iconComp.setColor(color, icon);
+    iconComp.setColor(color, icon);
 
-        return Promise.resolve();
-    }
+    return Promise.resolve();
+  },
 };
 
 commandFactory.register(command);

@@ -3,7 +3,7 @@
  * @fileoverview ShapeDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
-import {drawingModes, componentNames as components} from '../consts';
+import { drawingModes, componentNames as components } from '../consts';
 
 /**
  * ShapeDrawingMode class
@@ -11,29 +11,29 @@ import {drawingModes, componentNames as components} from '../consts';
  * @ignore
  */
 class ShapeDrawingMode extends DrawingMode {
-    constructor() {
-        super(drawingModes.SHAPE);
-    }
+  constructor() {
+    super(drawingModes.SHAPE);
+  }
 
-    /**
-    * start this drawing mode
-    * @param {Graphics} graphics - Graphics instance
-    * @override
-    */
-    start(graphics) {
-        const shape = graphics.getComponent(components.SHAPE);
-        shape.start();
-    }
+  /**
+   * start this drawing mode
+   * @param {Graphics} graphics - Graphics instance
+   * @override
+   */
+  start(graphics) {
+    const shape = graphics.getComponent(components.SHAPE);
+    shape.start();
+  }
 
-    /**
-     * stop this drawing mode
-     * @param {Graphics} graphics - Graphics instance
-     * @override
-     */
-    end(graphics) {
-        const shape = graphics.getComponent(components.SHAPE);
-        shape.end();
-    }
+  /**
+   * stop this drawing mode
+   * @param {Graphics} graphics - Graphics instance
+   * @override
+   */
+  end(graphics) {
+    const shape = graphics.getComponent(components.SHAPE);
+    shape.end();
+  }
 }
 
 export default ShapeDrawingMode;
