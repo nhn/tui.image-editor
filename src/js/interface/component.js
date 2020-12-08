@@ -11,118 +11,118 @@
  * @ignore
  */
 class Component {
-    constructor(name, graphics) {
-        /**
-         * Component name
-         * @type {string}
-         */
-        this.name = name;
-
-        /**
-         * Graphics instance
-         * @type {Graphics}
-         */
-        this.graphics = graphics;
-    }
+  constructor(name, graphics) {
+    /**
+     * Component name
+     * @type {string}
+     */
+    this.name = name;
 
     /**
-     * Fire Graphics event
-     * @returns {Object} return value
+     * Graphics instance
+     * @type {Graphics}
      */
-    fire(...args) {
-        const context = this.graphics;
+    this.graphics = graphics;
+  }
 
-        return this.graphics.fire.apply(context, args);
-    }
+  /**
+   * Fire Graphics event
+   * @returns {Object} return value
+   */
+  fire(...args) {
+    const context = this.graphics;
 
-    /**
-     * Save image(background) of canvas
-     * @param {string} name - Name of image
-     * @param {fabric.Image} oImage - Fabric image instance
-     */
-    setCanvasImage(name, oImage) {
-        this.graphics.setCanvasImage(name, oImage);
-    }
+    return this.graphics.fire.apply(context, args);
+  }
 
-    /**
-     * Returns canvas element of fabric.Canvas[[lower-canvas]]
-     * @returns {HTMLCanvasElement}
-     */
-    getCanvasElement() {
-        return this.graphics.getCanvasElement();
-    }
+  /**
+   * Save image(background) of canvas
+   * @param {string} name - Name of image
+   * @param {fabric.Image} oImage - Fabric image instance
+   */
+  setCanvasImage(name, oImage) {
+    this.graphics.setCanvasImage(name, oImage);
+  }
 
-    /**
-     * Get fabric.Canvas instance
-     * @returns {fabric.Canvas}
-     */
-    getCanvas() {
-        return this.graphics.getCanvas();
-    }
+  /**
+   * Returns canvas element of fabric.Canvas[[lower-canvas]]
+   * @returns {HTMLCanvasElement}
+   */
+  getCanvasElement() {
+    return this.graphics.getCanvasElement();
+  }
 
-    /**
-     * Get canvasImage (fabric.Image instance)
-     * @returns {fabric.Image}
-     */
-    getCanvasImage() {
-        return this.graphics.getCanvasImage();
-    }
+  /**
+   * Get fabric.Canvas instance
+   * @returns {fabric.Canvas}
+   */
+  getCanvas() {
+    return this.graphics.getCanvas();
+  }
 
-    /**
-     * Get image name
-     * @returns {string}
-     */
-    getImageName() {
-        return this.graphics.getImageName();
-    }
+  /**
+   * Get canvasImage (fabric.Image instance)
+   * @returns {fabric.Image}
+   */
+  getCanvasImage() {
+    return this.graphics.getCanvasImage();
+  }
 
-    /**
-     * Get image editor
-     * @returns {ImageEditor}
-     */
-    getEditor() {
-        return this.graphics.getEditor();
-    }
+  /**
+   * Get image name
+   * @returns {string}
+   */
+  getImageName() {
+    return this.graphics.getImageName();
+  }
 
-    /**
-     * Return component name
-     * @returns {string}
-     */
-    getName() {
-        return this.name;
-    }
+  /**
+   * Get image editor
+   * @returns {ImageEditor}
+   */
+  getEditor() {
+    return this.graphics.getEditor();
+  }
 
-    /**
-     * Set image properties
-     * @param {Object} setting - Image properties
-     * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
-     */
-    setImageProperties(setting, withRendering) {
-        this.graphics.setImageProperties(setting, withRendering);
-    }
+  /**
+   * Return component name
+   * @returns {string}
+   */
+  getName() {
+    return this.name;
+  }
 
-    /**
-     * Set canvas dimension - css only
-     * @param {Object} dimension - Canvas css dimension
-     */
-    setCanvasCssDimension(dimension) {
-        this.graphics.setCanvasCssDimension(dimension);
-    }
+  /**
+   * Set image properties
+   * @param {Object} setting - Image properties
+   * @param {boolean} [withRendering] - If true, The changed image will be reflected in the canvas
+   */
+  setImageProperties(setting, withRendering) {
+    this.graphics.setImageProperties(setting, withRendering);
+  }
 
-    /**
-     * Set canvas dimension - css only
-     * @param {Object} dimension - Canvas backstore dimension
-     */
-    setCanvasBackstoreDimension(dimension) {
-        this.graphics.setCanvasBackstoreDimension(dimension);
-    }
+  /**
+   * Set canvas dimension - css only
+   * @param {Object} dimension - Canvas css dimension
+   */
+  setCanvasCssDimension(dimension) {
+    this.graphics.setCanvasCssDimension(dimension);
+  }
 
-    /**
-     * Adjust canvas dimension with scaling image
-     */
-    adjustCanvasDimension() {
-        this.graphics.adjustCanvasDimension();
-    }
+  /**
+   * Set canvas dimension - css only
+   * @param {Object} dimension - Canvas backstore dimension
+   */
+  setCanvasBackstoreDimension(dimension) {
+    this.graphics.setCanvasBackstoreDimension(dimension);
+  }
+
+  /**
+   * Adjust canvas dimension with scaling image
+   */
+  adjustCanvasDimension() {
+    this.graphics.adjustCanvasDimension();
+  }
 }
 
 export default Component;

@@ -3,7 +3,7 @@
  * @fileoverview IconDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
-import {drawingModes, componentNames as components} from '../consts';
+import { drawingModes, componentNames as components } from '../consts';
 
 /**
  * IconDrawingMode class
@@ -11,29 +11,29 @@ import {drawingModes, componentNames as components} from '../consts';
  * @ignore
  */
 class IconDrawingMode extends DrawingMode {
-    constructor() {
-        super(drawingModes.ICON);
-    }
+  constructor() {
+    super(drawingModes.ICON);
+  }
 
-    /**
-    * start this drawing mode
-    * @param {Graphics} graphics - Graphics instance
-    * @override
-    */
-    start(graphics) {
-        const icon = graphics.getComponent(components.ICON);
-        icon.start();
-    }
+  /**
+   * start this drawing mode
+   * @param {Graphics} graphics - Graphics instance
+   * @override
+   */
+  start(graphics) {
+    const icon = graphics.getComponent(components.ICON);
+    icon.start();
+  }
 
-    /**
-     * stop this drawing mode
-     * @param {Graphics} graphics - Graphics instance
-     * @override
-     */
-    end(graphics) {
-        const icon = graphics.getComponent(components.ICON);
-        icon.end();
-    }
+  /**
+   * stop this drawing mode
+   * @param {Graphics} graphics - Graphics instance
+   * @override
+   */
+  end(graphics) {
+    const icon = graphics.getComponent(components.ICON);
+    icon.end();
+  }
 }
 
 export default IconDrawingMode;

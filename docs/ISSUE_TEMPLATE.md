@@ -8,12 +8,15 @@ To use the template is mandatory for submit new issue and we won't reply the iss
 <!-- TEMPLATE -->
 
 ## Version
+
 <!-- Write the version of the grid you are currently using. -->
 
 ## Development Environment
+
 <!-- Write the browser type, OS and so on -->
 
 ## Current Behavior
+
 <!-- Write a description of the current operation. You can add sample code, 'CodePen' or 'jsfiddle' links. -->
 
 ```js
@@ -21,4 +24,5 @@ To use the template is mandatory for submit new issue and we won't reply the iss
 ```
 
 ## Expected Behavior
+
 <!-- Write a description of the future action. -->

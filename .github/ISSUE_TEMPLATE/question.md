@@ -4,7 +4,6 @@ about: Create a question about imageEditor
 title: ''
 labels: Question
 assignees: ''
-
 ---
 
 <!--
