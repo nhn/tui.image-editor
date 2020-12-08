@@ -19,8 +19,14 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
+import IconDrawingMode from './drawingMode/icon';
 import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
+import {
+    makeSelectionUndoData,
+    makeSelectionUndoDatum,
+    setCachedUndoDataForDimension
+} from './helper/selectionModifyHelper';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
 const DEFAULT_CSS_MAX_WIDTH = 1000;
@@ -41,14 +47,12 @@ const backstoreOnly = {
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
- *  @param {boolean} option.useDragAddIcon - Use dragable add in icon mode
  * @ignore
  */
 class Graphics {
     constructor(element, {
         cssMaxWidth,
-        cssMaxHeight,
-        useDragAddIcon = false
+        cssMaxHeight
     } = {}) {
         /**
          * Fabric image instance
@@ -67,12 +71,6 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
-
-        /**
-         * Use add drag icon mode for icon component
-         * @type {boolean}
-         */
-        this.useDragAddIcon = useDragAddIcon;
 
         /**
          * cropper Selection Style
@@ -630,8 +628,8 @@ class Graphics {
         const drawingMode = this._drawingMode;
         let compName = components.FREE_DRAWING;
 
-        if (drawingMode === drawingModes.LINE) {
-            compName = drawingModes.LINE;
+        if (drawingMode === drawingModes.LINE_DRAWING) {
+            compName = components.LINE;
         }
 
         this.getComponent(compName).setBrush(option);
@@ -653,6 +651,15 @@ class Graphics {
      */
     setDrawingShape(type, options) {
         this.getComponent(components.SHAPE).setStates(type, options);
+    }
+
+    /**
+     * Set style of current drawing icon
+     * @param {string} type - icon type (ex: 'icon-arrow', 'icon-star')
+     * @param {Object} [iconColor] - Icon color
+     */
+    setIconStyle(type, iconColor) {
+        this.getComponent(components.ICON).setStates(type, iconColor);
     }
 
     /**
@@ -873,6 +880,7 @@ class Graphics {
         this._register(this._drawingModeMap, new LineDrawingMode());
         this._register(this._drawingModeMap, new ShapeDrawingMode());
         this._register(this._drawingModeMap, new TextDrawingMode());
+        this._register(this._drawingModeMap, new IconDrawingMode());
     }
 
     /**
@@ -972,7 +980,6 @@ class Graphics {
             'object:scaling': handler.onObjectScaled,
             'object:modified': handler.onObjectModified,
             'object:rotating': handler.onObjectRotated,
-            'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
             'selection:cleared': handler.onSelectionCleared,
             'selection:created': handler.onSelectionCreated,
@@ -986,8 +993,18 @@ class Graphics {
      * @private
      */
     _onMouseDown(fEvent) {
-        const originPointer = this._canvas.getPointer(fEvent.e);
-        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
+        const {e: event, target} = fEvent;
+        const originPointer = this._canvas.getPointer(event);
+
+        if (target) {
+            const {type} = target;
+            const undoData = makeSelectionUndoData(target,
+                item => makeSelectionUndoDatum(this.getObjectId(item), item, type === 'activeSelection'));
+
+            setCachedUndoDataForDimension(undoData);
+        }
+
+        this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
     /**
@@ -1045,6 +1062,8 @@ class Graphics {
 
             items.forEach(item => item.fire('modifiedInGroup', target));
         }
+
+        this.fire(events.OBJECT_MODIFIED, target, this.getObjectId(target));
     }
 
     /**
@@ -1121,6 +1140,10 @@ class Graphics {
      * @private
      */
     _onSelectionCreated(fEvent) {
+        const {target} = fEvent;
+        const params = this.createObjectProperties(target);
+
+        this.fire(events.OBJECT_ACTIVATED, params);
         this.fire(events.SELECTION_CREATED, fEvent.target);
     }
 

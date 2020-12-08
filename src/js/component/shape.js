@@ -19,7 +19,8 @@ import {
     rePositionFilterTypeFillImage,
     reMakePatternImageSource,
     makeFillPatternForFilter,
-    makeFilterOptionFromFabricImage
+    makeFilterOptionFromFabricImage,
+    resetFillPatternCanvas
 } from '../helper/shapeFilterFillHelper';
 import {Promise, changeOrigin, getCustomProperty, getFillTypeFromOption, getFillTypeFromObject, isShape} from '../util';
 import {extend} from 'tui-code-snippet';
@@ -144,7 +145,7 @@ export default class Shape extends Component {
 
         canvas.defaultCursor = 'crosshair';
         canvas.selection = false;
-        canvas.uniScaleTransform = true;
+        canvas.uniformScaling = true;
         canvas.on({
             'mouse:down': this._handlers.mousedown
         });
@@ -165,7 +166,7 @@ export default class Shape extends Component {
         canvas.defaultCursor = 'default';
 
         canvas.selection = true;
-        canvas.uniScaleTransform = false;
+        canvas.uniformScaling = false;
         canvas.off({
             'mouse:down': this._handlers.mousedown
         });
@@ -215,6 +216,7 @@ export default class Shape extends Component {
         return new Promise(resolve => {
             const canvas = this.getCanvas();
             const extendOption = this._extendOptions(options);
+
             const shapeObj = this._createInstance(type, extendOption);
             const objectProperties = this.graphics.createObjectProperties(shapeObj);
 
@@ -345,10 +347,6 @@ export default class Shape extends Component {
 
         options = extend({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
 
-        if (options.isRegular) {
-            options.lockUniScaling = true;
-        }
-
         return makeFabricFillOption(options, canvasImage, createStaticCanvas);
     }
 
@@ -369,7 +367,7 @@ export default class Shape extends Component {
             selected() {
                 self._isSelected = true;
                 self._shapeObj = this;
-                canvas.uniScaleTransform = true;
+                canvas.uniformScaling = true;
                 canvas.defaultCursor = 'default';
                 resizeHelper.setOrigins(self._shapeObj);
             },
@@ -377,7 +375,7 @@ export default class Shape extends Component {
                 self._isSelected = false;
                 self._shapeObj = null;
                 canvas.defaultCursor = 'crosshair';
-                canvas.uniScaleTransform = false;
+                canvas.uniformScaling = false;
             },
             modified() {
                 const currentObj = self._shapeObj;
@@ -533,6 +531,8 @@ export default class Shape extends Component {
             return;
         }
 
+        const {patternSourceCanvas} = getCustomProperty(shapeObj, 'patternSourceCanvas');
+
         const fillImage = getFillImageFromShape(shapeObj);
         const {originalAngle} = getCustomProperty(fillImage, 'originalAngle');
 
@@ -556,6 +556,8 @@ export default class Shape extends Component {
             originX,
             originY
         });
+
+        resetFillPatternCanvas(patternSourceCanvas);
     }
 
     /**
