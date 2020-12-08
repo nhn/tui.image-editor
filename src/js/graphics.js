@@ -628,8 +628,8 @@ class Graphics {
         const drawingMode = this._drawingMode;
         let compName = components.FREE_DRAWING;
 
-        if (drawingMode === drawingModes.LINE) {
-            compName = drawingModes.LINE;
+        if (drawingMode === drawingModes.LINE_DRAWING) {
+            compName = components.LINE;
         }
 
         this.getComponent(compName).setBrush(option);
