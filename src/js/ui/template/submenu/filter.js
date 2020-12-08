@@ -2,7 +2,7 @@
  * @param {Locale} locale - Translate text
  * @returns {string}
  */
-export default ({locale}) => (`
+export default ({ locale }) => `
     <ul class="tui-image-editor-submenu-item">
         <li class="tui-image-editor-submenu-align">
             <div class="tui-image-editor-checkbox-wrap fixed-width">
@@ -154,4 +154,4 @@ export default ({locale}) => (`
             </div>
         </li>
     </ul>
-`);
+`;

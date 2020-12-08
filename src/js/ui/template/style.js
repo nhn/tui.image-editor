@@ -1,25 +1,25 @@
 export default ({
-    subMenuLabelActive,
-    subMenuLabelNormal,
-    subMenuRangeTitle,
-    submenuPartitionVertical,
-    submenuPartitionHorizontal,
-    submenuCheckbox,
-    submenuRangePointer,
-    submenuRangeValue,
-    submenuColorpickerTitle,
-    submenuColorpickerButton,
-    submenuRangeBar,
-    submenuRangeSubbar,
-    submenuDisabledRangePointer,
-    submenuDisabledRangeBar,
-    submenuDisabledRangeSubbar,
-    submenuIconSize,
-    menuIconSize,
-    biSize,
-    menuIconStyle,
-    submenuIconStyle
-}) => (`
+  subMenuLabelActive,
+  subMenuLabelNormal,
+  subMenuRangeTitle,
+  submenuPartitionVertical,
+  submenuPartitionHorizontal,
+  submenuCheckbox,
+  submenuRangePointer,
+  submenuRangeValue,
+  submenuColorpickerTitle,
+  submenuColorpickerButton,
+  submenuRangeBar,
+  submenuRangeSubbar,
+  submenuDisabledRangePointer,
+  submenuDisabledRangeBar,
+  submenuDisabledRangeSubbar,
+  submenuIconSize,
+  menuIconSize,
+  biSize,
+  menuIconStyle,
+  submenuIconStyle,
+}) => `
     .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype="icon-bubble"] label,
     .tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype="icon-heart"] label,
     .tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype="icon-location"] label,
@@ -137,4 +137,4 @@ export default ({
         fill: ${submenuIconStyle.active.color};
         stroke: ${submenuIconStyle.active.color};
     }
-`);
+`;

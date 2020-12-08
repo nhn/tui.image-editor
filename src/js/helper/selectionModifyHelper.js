@@ -3,7 +3,7 @@
  * @fileoverview Selection modification helper
  */
 
-import {extend} from 'tui-code-snippet/src/js/object';
+import { extend } from 'tui-code-snippet/src/js/object';
 
 /**
  * Cached selection's info
@@ -18,7 +18,7 @@ let cachedUndoDataForChangeDimension = null;
  * @private
  */
 export function setCachedUndoDataForDimension(undoData) {
-    cachedUndoDataForChangeDimension = undoData;
+  cachedUndoDataForChangeDimension = undoData;
 }
 
 /**
@@ -27,7 +27,7 @@ export function setCachedUndoDataForDimension(undoData) {
  * @private
  */
 export function getCachedUndoDataForDimension() {
-    return cachedUndoDataForChangeDimension;
+  return cachedUndoDataForChangeDimension;
 }
 
 /**
@@ -38,32 +38,32 @@ export function getCachedUndoDataForDimension() {
  * @private
  */
 export function makeSelectionUndoData(obj, undoDatumMaker) {
-    let undoData;
+  let undoData;
 
-    if (obj.type === 'activeSelection') {
-        undoData = obj.getObjects().map(item => {
-            const {angle, left, top, scaleX, scaleY, width, height} = item;
+  if (obj.type === 'activeSelection') {
+    undoData = obj.getObjects().map((item) => {
+      const { angle, left, top, scaleX, scaleY, width, height } = item;
 
-            obj.realizeTransform(item);
-            const result = undoDatumMaker(item);
+      obj.realizeTransform(item);
+      const result = undoDatumMaker(item);
 
-            item.set({
-                angle,
-                left,
-                top,
-                width,
-                height,
-                scaleX,
-                scaleY
-            });
+      item.set({
+        angle,
+        left,
+        top,
+        width,
+        height,
+        scaleX,
+        scaleY,
+      });
 
-            return result;
-        });
-    } else {
-        undoData = [undoDatumMaker(obj)];
-    }
+      return result;
+    });
+  } else {
+    undoData = [undoDatumMaker(obj)];
+  }
 
-    return undoData;
+  return undoData;
 }
 
 /**
@@ -75,7 +75,8 @@ export function makeSelectionUndoData(obj, undoDatumMaker) {
  * @private
  */
 export function makeSelectionUndoDatum(id, obj, isSelection) {
-    return isSelection ? {
+  return isSelection
+    ? {
         id,
         width: obj.width,
         height: obj.height,
@@ -83,6 +84,7 @@ export function makeSelectionUndoDatum(id, obj, isSelection) {
         left: obj.left,
         angle: obj.angle,
         scaleX: obj.scaleX,
-        scaleY: obj.scaleY
-    } : extend({id}, obj);
+        scaleY: obj.scaleY,
+      }
+    : extend({ id }, obj);
 }

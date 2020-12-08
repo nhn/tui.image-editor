@@ -10,7 +10,9 @@ import fabric from 'fabric';
  * @extends {fabric.Image.filters.Convolute}
  * @ignore
  */
-const Emboss = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
+const Emboss = fabric.util.createClass(
+  fabric.Image.filters.Convolute,
+  /** @lends Convolute.prototype */ {
     /**
      * Filter type
      * @param {String} type
@@ -23,13 +25,10 @@ const Emboss = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lend
      * @override
      */
     initialize() {
-        const matrix = [
-            1, 1, 1,
-            1, 0.7, -1,
-            -1, -1, -1
-        ];
-        this.matrix = matrix;
-    }
-});
+      const matrix = [1, 1, 1, 1, 0.7, -1, -1, -1, -1];
+      this.matrix = matrix;
+    },
+  }
+);
 
 export default Emboss;

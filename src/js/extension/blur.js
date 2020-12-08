@@ -10,7 +10,9 @@ import fabric from 'fabric';
  * @extends {fabric.Image.filters.Convolute}
  * @ignore
  */
-const Blur = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends Convolute.prototype */{
+const Blur = fabric.util.createClass(
+  fabric.Image.filters.Convolute,
+  /** @lends Convolute.prototype */ {
     /**
      * Filter type
      * @param {String} type
@@ -23,12 +25,9 @@ const Blur = fabric.util.createClass(fabric.Image.filters.Convolute, /** @lends 
      * @override
      */
     initialize() {
-        this.matrix = [
-            1 / 9, 1 / 9, 1 / 9,
-            1 / 9, 1 / 9, 1 / 9,
-            1 / 9, 1 / 9, 1 / 9
-        ];
-    }
-});
+      this.matrix = [1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9, 1 / 9];
+    },
+  }
+);
 
 export default Blur;
