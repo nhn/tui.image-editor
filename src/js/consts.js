@@ -141,7 +141,8 @@ export const drawingModes = keyMirror(
     'FREE_DRAWING',
     'LINE_DRAWING',
     'TEXT',
-    'SHAPE'
+    'SHAPE',
+    'ICON'
 );
 
 /**

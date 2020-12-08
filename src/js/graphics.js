@@ -19,6 +19,7 @@ import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
+import IconDrawingMode from './drawingMode/icon';
 import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
 import {
@@ -46,14 +47,12 @@ const backstoreOnly = {
  * @param {Object} [option] - Canvas max width & height of css
  *  @param {number} option.cssMaxWidth - Canvas css-max-width
  *  @param {number} option.cssMaxHeight - Canvas css-max-height
- *  @param {boolean} option.useDragAddIcon - Use dragable add in icon mode
  * @ignore
  */
 class Graphics {
     constructor(element, {
         cssMaxWidth,
-        cssMaxHeight,
-        useDragAddIcon = false
+        cssMaxHeight
     } = {}) {
         /**
          * Fabric image instance
@@ -72,12 +71,6 @@ class Graphics {
          * @type {number}
          */
         this.cssMaxHeight = cssMaxHeight || DEFAULT_CSS_MAX_HEIGHT;
-
-        /**
-         * Use add drag icon mode for icon component
-         * @type {boolean}
-         */
-        this.useDragAddIcon = useDragAddIcon;
 
         /**
          * cropper Selection Style
@@ -661,6 +654,15 @@ class Graphics {
     }
 
     /**
+     * Set style of current drawing icon
+     * @param {string} type - icon type (ex: 'icon-arrow', 'icon-star')
+     * @param {Object} [iconColor] - Icon color
+     */
+    setIconStyle(type, iconColor) {
+        this.getComponent(components.ICON).setStates(type, iconColor);
+    }
+
+    /**
      * Register icon paths
      * @param {Object} pathInfos - Path infos
      *  @param {string} pathInfos.key - key
@@ -878,6 +880,7 @@ class Graphics {
         this._register(this._drawingModeMap, new LineDrawingMode());
         this._register(this._drawingModeMap, new ShapeDrawingMode());
         this._register(this._drawingModeMap, new TextDrawingMode());
+        this._register(this._drawingModeMap, new IconDrawingMode());
     }
 
     /**

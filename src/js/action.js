@@ -137,49 +137,6 @@ export default {
      * @private
      */
     _iconAction() {
-        let cacheIconType;
-        let cacheIconColor;
-        let startX;
-        let startY;
-        let iconWidth;
-        let iconHeight;
-        let objId;
-
-        const mouseDown = (e, originPointer) => {
-            startX = originPointer.x;
-            startY = originPointer.y;
-
-            this.addIcon(cacheIconType, {
-                left: originPointer.x,
-                top: originPointer.y,
-                fill: cacheIconColor
-            }).then(obj => {
-                objId = obj.id;
-                iconWidth = obj.width;
-                iconHeight = obj.height;
-
-                this.on({
-                    'iconCreateResize': ({moveOriginPointer}) => {
-                        const scaleX = (moveOriginPointer.x - startX) / iconWidth;
-                        const scaleY = (moveOriginPointer.y - startY) / iconHeight;
-
-                        this.setObjectPropertiesQuietly(objId, {
-                            scaleX: Math.abs(scaleX * 2),
-                            scaleY: Math.abs(scaleY * 2)
-                        });
-                    },
-                    'iconCreateEnd': () => {
-                        this.ui.icon.clearIconType();
-                        this.changeSelectableAll(true);
-
-                        objId = null;
-                        this.off('iconCreateResize');
-                        this.off('iconCreateEnd');
-                    }
-                });
-            });
-        };
-
         return extend({
             changeColor: color => {
                 if (this.activeObjectId) {
@@ -187,18 +144,14 @@ export default {
                 }
             },
             addIcon: (iconType, iconColor) => {
-                cacheIconType = iconType;
-                cacheIconColor = iconColor;
-                // this.readyAddIcon();
-                this.changeCursor('crosshair');
-                this.off('mousedown');
-                this.once('mousedown', mouseDown.bind(this));
+                this.startDrawingMode('ICON');
+                this.setDrawingIcon(iconType, iconColor);
             },
             cancelAddIcon: () => {
-                this.off('mousedown');
                 this.ui.icon.clearIconType();
                 this.changeSelectableAll(true);
                 this.changeCursor('default');
+                this.stopDrawingMode();
             },
             registDefalutIcons: (type, path) => {
                 const iconObj = {};
@@ -486,7 +439,9 @@ export default {
                 });
             },
             addObjectAfter: obj => {
-                if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
+                if (obj.type === 'icon') {
+                    this.ui.icon.changeStandbyMode();
+                } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
                     this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
                     this.ui.shape.changeStandbyMode();
                 }

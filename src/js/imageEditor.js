@@ -195,8 +195,7 @@ class ImageEditor {
         this._graphics = new Graphics(
             this.ui ? this.ui.getEditorArea() : wrapper, {
                 cssMaxWidth: options.cssMaxWidth,
-                cssMaxHeight: options.cssMaxHeight,
-                useDragAddIcon: !!this.ui
+                cssMaxHeight: options.cssMaxHeight
             }
         );
 
@@ -954,6 +953,10 @@ class ImageEditor {
      */
     setDrawingShape(type, options) {
         this._graphics.setDrawingShape(type, options);
+    }
+
+    setDrawingIcon(type, iconColor) {
+        this._graphics.setIconStyle(type, iconColor);
     }
 
     /**
