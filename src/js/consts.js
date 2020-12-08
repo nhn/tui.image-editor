@@ -99,7 +99,8 @@ export const commandNames = {
     'ADD_IMAGE_OBJECT': 'addImageObject',
     'RESIZE_CANVAS_DIMENSION': 'resizeCanvasDimension',
     'SET_OBJECT_PROPERTIES': 'setObjectProperties',
-    'SET_OBJECT_POSITION': 'setObjectPosition'
+    'SET_OBJECT_POSITION': 'setObjectPosition',
+    'CHANGE_SELECTION': 'changeSelection'
 };
 
 /**
@@ -113,6 +114,7 @@ export const eventNames = {
     OBJECT_CREATED: 'objectCreated',
     OBJECT_ROTATED: 'objectRotated',
     OBJECT_ADDED: 'objectAdded',
+    OBJECT_MODIFIED: 'objectModified',
     TEXT_EDITING: 'textEditing',
     TEXT_CHANGED: 'textChanged',
     ICON_CREATE_RESIZE: 'iconCreateResize',

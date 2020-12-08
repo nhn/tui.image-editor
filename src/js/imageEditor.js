@@ -10,6 +10,10 @@ import commandFactory from './factory/command';
 import Graphics from './graphics';
 import {sendHostName, Promise} from './util';
 import {eventNames as events, commandNames as commands, keyCodes, rejectMessages} from './consts';
+import {
+    makeSelectionUndoData,
+    makeSelectionUndoDatum
+} from './helper/selectionModifyHelper';
 
 const {isUndefined, forEach, CustomEvents} = snippet;
 
@@ -20,6 +24,7 @@ const {
     OBJECT_ACTIVATED,
     OBJECT_ROTATED,
     OBJECT_ADDED,
+    OBJECT_MODIFIED,
     ADD_TEXT,
     ADD_OBJECT,
     TEXT_EDITING,
@@ -208,6 +213,7 @@ class ImageEditor {
             objectScaled: this._onObjectScaled.bind(this),
             objectRotated: this._onObjectRotated.bind(this),
             objectAdded: this._onObjectAdded.bind(this),
+            objectModified: this._onObjectModified.bind(this),
             createdPath: this._onCreatedPath,
             addText: this._onAddText.bind(this),
             addObject: this._onAddObject.bind(this),
@@ -308,6 +314,7 @@ class ImageEditor {
             [OBJECT_ROTATED]: this._handlers.objectRotated,
             [OBJECT_ACTIVATED]: this._handlers.objectActivated,
             [OBJECT_ADDED]: this._handlers.objectAdded,
+            [OBJECT_MODIFIED]: this._handlers.objectModified,
             [ADD_TEXT]: this._handlers.addText,
             [ADD_OBJECT]: this._handlers.addObject,
             [TEXT_EDITING]: this._handlers.textEditing,
@@ -384,8 +391,8 @@ class ImageEditor {
 
     /**
      * mouse down event handler
-     * @param {Event} event mouse down event
-     * @param {Object} originPointer origin pointer
+     * @param {Event} event - mouse down event
+     * @param {Object} originPointer - origin pointer
      *  @param {Number} originPointer.x x position
      *  @param {Number} originPointer.y y position
      * @private
@@ -410,6 +417,7 @@ class ImageEditor {
          *     }
          * });
          */
+
         this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
@@ -420,6 +428,20 @@ class ImageEditor {
      */
     _pushAddObjectCommand(obj) {
         const command = commandFactory.create(commands.ADD_OBJECT, this._graphics, obj);
+        this._invoker.pushUndoStack(command);
+    }
+
+    /**
+     * Add a 'changeSelection' command
+     * @param {fabric.Object} obj - selection object
+     * @private
+     */
+    _pushModifyObjectCommand(obj) {
+        const {type} = obj;
+        const props = makeSelectionUndoData(obj, item => makeSelectionUndoDatum(this._graphics.getObjectId(item), item, type === 'activeSelection'));
+        const command = commandFactory.create(commands.CHANGE_SELECTION, this._graphics, props);
+        command.execute(this._graphics, props);
+
         this._invoker.pushUndoStack(command);
     }
 
@@ -1213,7 +1235,6 @@ class ImageEditor {
      * @param {Object} objectProps added object properties
      * @private
      */
-
     _onObjectAdded(objectProps) {
         /**
          * The event when object added
@@ -1233,6 +1254,15 @@ class ImageEditor {
          * @deprecated
          */
         this.fire(ADD_OBJECT_AFTER, objectProps);
+    }
+
+    /**
+     * 'objectModified' event handler
+     * @param {fabric.Object} obj - selection object
+     * @private
+     */
+    _onObjectModified(obj) {
+        this._pushModifyObjectCommand(obj);
     }
 
     /**
