@@ -110,7 +110,8 @@ class Text extends Component {
         canvas.defaultCursor = 'text';
         canvas.on({
             'mouse:down': this._listeners.mousedown,
-            'object:selected': this._listeners.select,
+            'selection:created': this._listeners.select,
+            'selection:updated': this._listeners.select,
             'before:selection:cleared': this._listeners.selectClear,
             'object:scaling': this._listeners.scaling,
             'text:editing': this._listeners.modify

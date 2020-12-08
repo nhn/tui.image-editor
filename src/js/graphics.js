@@ -22,6 +22,11 @@ import TextDrawingMode from './drawingMode/text';
 import IconDrawingMode from './drawingMode/icon';
 import {getProperties, includes, isShape, Promise} from './util';
 import {componentNames as components, eventNames as events, drawingModes, fObjectOptions} from './consts';
+import {
+    makeSelectionUndoData,
+    makeSelectionUndoDatum,
+    setCachedUndoDataForDimension
+} from './helper/selectionModifyHelper';
 
 const {extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents} = snippet;
 const DEFAULT_CSS_MAX_WIDTH = 1000;
@@ -975,7 +980,6 @@ class Graphics {
             'object:scaling': handler.onObjectScaled,
             'object:modified': handler.onObjectModified,
             'object:rotating': handler.onObjectRotated,
-            'object:selected': handler.onObjectSelected,
             'path:created': handler.onPathCreated,
             'selection:cleared': handler.onSelectionCleared,
             'selection:created': handler.onSelectionCreated,
@@ -989,8 +993,18 @@ class Graphics {
      * @private
      */
     _onMouseDown(fEvent) {
-        const originPointer = this._canvas.getPointer(fEvent.e);
-        this.fire(events.MOUSE_DOWN, fEvent.e, originPointer);
+        const {e: event, target} = fEvent;
+        const originPointer = this._canvas.getPointer(event);
+
+        if (target) {
+            const {type} = target;
+            const undoData = makeSelectionUndoData(target,
+                item => makeSelectionUndoDatum(this.getObjectId(item), item, type === 'activeSelection'));
+
+            setCachedUndoDataForDimension(undoData);
+        }
+
+        this.fire(events.MOUSE_DOWN, event, originPointer);
     }
 
     /**
@@ -1048,6 +1062,8 @@ class Graphics {
 
             items.forEach(item => item.fire('modifiedInGroup', target));
         }
+
+        this.fire(events.OBJECT_MODIFIED, target, this.getObjectId(target));
     }
 
     /**
@@ -1124,6 +1140,10 @@ class Graphics {
      * @private
      */
     _onSelectionCreated(fEvent) {
+        const {target} = fEvent;
+        const params = this.createObjectProperties(target);
+
+        this.fire(events.OBJECT_ACTIVATED, params);
         this.fire(events.SELECTION_CREATED, fEvent.target);
     }
 
