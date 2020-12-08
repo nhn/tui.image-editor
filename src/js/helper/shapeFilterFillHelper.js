@@ -253,7 +253,6 @@ function calculateDimensionLeftTopEdge(overflowAreaPositionFixer, {left, top, wi
  * @param {Array} filterOption - filter option
  * @param {fabric.StaticCanvas} patternSourceCanvas - fabric static canvas
  * @returns {Object}
- * @private
  */
 export function makeFillPatternForFilter(canvasImage, filterOption, patternSourceCanvas) {
     const copiedCanvasElement = getCachedCanvasImageElement(canvasImage);
@@ -262,19 +261,7 @@ export function makeFillPatternForFilter(canvasImage, filterOption, patternSourc
 
     const fabricProperty = {
         fill: new fabric.Pattern({
-            source: () => {
-                const [innerImage] = patternSourceCanvas.getObjects();
-                let {fillImageMaxSize} = getCustomProperty(innerImage, 'fillImageMaxSize');
-                fillImageMaxSize = Math.max(1, fillImageMaxSize);
-
-                patternSourceCanvas.setDimensions({
-                    width: fillImageMaxSize,
-                    height: fillImageMaxSize
-                });
-                patternSourceCanvas.renderAll();
-
-                return patternSourceCanvas.getElement();
-            },
+            source: patternSourceCanvas.getElement(),
             repeat: 'no-repeat'
         })
     };
@@ -285,10 +272,25 @@ export function makeFillPatternForFilter(canvasImage, filterOption, patternSourc
 }
 
 /**
+ * Reset fill pattern canvas
+ * @param {fabric.StaticCanvas} patternSourceCanvas - fabric static canvas
+ */
+export function resetFillPatternCanvas(patternSourceCanvas) {
+    const [innerImage] = patternSourceCanvas.getObjects();
+    let {fillImageMaxSize} = getCustomProperty(innerImage, 'fillImageMaxSize');
+    fillImageMaxSize = Math.max(1, fillImageMaxSize);
+
+    patternSourceCanvas.setDimensions({
+        width: fillImageMaxSize,
+        height: fillImageMaxSize
+    });
+    patternSourceCanvas.renderAll();
+}
+
+/**
  * Remake filter pattern image source
  * @param {fabric.Object} shapeObj - Shape object
  * @param {fabric.Image} canvasImage - canvas background image
- * @private
  */
 export function reMakePatternImageSource(shapeObj, canvasImage) {
     const {patternSourceCanvas} = getCustomProperty(shapeObj, 'patternSourceCanvas');

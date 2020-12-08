@@ -177,7 +177,6 @@ describe('Graphics', () => {
             ry: 100,
             lockSkewingX: true,
             lockSkewingY: true,
-            lockUniScaling: false,
             bringForward: true,
             isRegular: false
         });
