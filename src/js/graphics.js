@@ -648,7 +648,12 @@ class Graphics {
         this.getComponent(components.SHAPE).setStates(type, options);
     }
 
-    setDrawingIcon(type, iconColor) {
+    /**
+     * Set style of current drawing icon
+     * @param {string} type - icon type (ex: 'icon-arrow', 'icon-star')
+     * @param {Object} [iconColor] - Icon color
+     */
+    setIconStyle(type, iconColor) {
         this.getComponent(components.ICON).setStates(type, iconColor);
     }
 

@@ -25,7 +25,7 @@ describe('Promise API', () => {
     });
 
     beforeEach(done => {
-        imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => done());
+        imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => done())['catch'](() => done());
     });
 
     it('addIcon() supports Promise', done => {

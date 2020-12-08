@@ -934,7 +934,7 @@ class ImageEditor {
     }
 
     setDrawingIcon(type, iconColor) {
-        this._graphics.setDrawingIcon(type, iconColor);
+        this._graphics.setIconStyle(type, iconColor);
     }
 
     /**

@@ -180,12 +180,11 @@ class Icon extends Component {
         const canvas = this.getCanvas();
 
         this._startPoint = canvas.getPointer(fEvent.e);
-        const startX = this._startPoint.x;
-        const startY = this._startPoint.y;
+        const {x: left, y: top} = this._startPoint;
 
         this.add(this._type, {
-            left: startX,
-            top: startY,
+            left,
+            top,
             fill: this._iconColor
         }).then(() => {
             this.fire(events.ADD_OBJECT, this.graphics.createObjectProperties(this._icon));
