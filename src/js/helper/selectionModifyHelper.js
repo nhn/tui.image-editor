@@ -42,7 +42,7 @@ export function makeSelectionUndoData(obj, undoDatumMaker) {
 
     if (obj.type === 'activeSelection') {
         undoData = obj.getObjects().map(item => {
-            const {angle, left, top} = item;
+            const {angle, left, top, scaleX, scaleY, width, height} = item;
 
             obj.realizeTransform(item);
             const result = undoDatumMaker(item);
@@ -50,7 +50,11 @@ export function makeSelectionUndoData(obj, undoDatumMaker) {
             item.set({
                 angle,
                 left,
-                top
+                top,
+                width,
+                height,
+                scaleX,
+                scaleY
             });
 
             return result;
