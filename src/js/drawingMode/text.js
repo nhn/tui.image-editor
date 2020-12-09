@@ -3,7 +3,7 @@
  * @fileoverview TextDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
-import {drawingModes, componentNames as components} from '../consts';
+import { drawingModes, componentNames as components } from '../consts';
 
 /**
  * TextDrawingMode class
@@ -11,29 +11,29 @@ import {drawingModes, componentNames as components} from '../consts';
  * @ignore
  */
 class TextDrawingMode extends DrawingMode {
-    constructor() {
-        super(drawingModes.TEXT);
-    }
+  constructor() {
+    super(drawingModes.TEXT);
+  }
 
-    /**
-    * start this drawing mode
-    * @param {Graphics} graphics - Graphics instance
-    * @override
-    */
-    start(graphics) {
-        const text = graphics.getComponent(components.TEXT);
-        text.start();
-    }
+  /**
+   * start this drawing mode
+   * @param {Graphics} graphics - Graphics instance
+   * @override
+   */
+  start(graphics) {
+    const text = graphics.getComponent(components.TEXT);
+    text.start();
+  }
 
-    /**
-     * stop this drawing mode
-     * @param {Graphics} graphics - Graphics instance
-     * @override
-     */
-    end(graphics) {
-        const text = graphics.getComponent(components.TEXT);
-        text.end();
-    }
+  /**
+   * stop this drawing mode
+   * @param {Graphics} graphics - Graphics instance
+   * @override
+   */
+  end(graphics) {
+    const text = graphics.getComponent(components.TEXT);
+    text.end();
+  }
 }
 
 export default TextDrawingMode;

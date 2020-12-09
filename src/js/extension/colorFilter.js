@@ -10,7 +10,9 @@ import fabric from 'fabric';
  * @extends {fabric.Image.filters.BaseFilter}
  * @ignore
  */
-const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /** @lends BaseFilter.prototype */{
+const ColorFilter = fabric.util.createClass(
+  fabric.Image.filters.BaseFilter,
+  /** @lends BaseFilter.prototype */ {
     /**
      * Filter type
      * @param {String} type
@@ -27,41 +29,44 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
      * @override
      */
     initialize(options) {
-        if (!options) {
-            options = {};
-        }
-        this.color = options.color || '#FFFFFF';
-        this.threshold = options.threshold || 45;
-        this.x = options.x || null;
-        this.y = options.y || null;
+      if (!options) {
+        options = {};
+      }
+      this.color = options.color || '#FFFFFF';
+      this.threshold = options.threshold || 45;
+      this.x = options.x || null;
+      this.y = options.y || null;
     },
 
     /**
      * Applies filter to canvas element
      * @param {Object} canvas Canvas object passed by fabric
      */
-    applyTo(canvas) { // eslint-disable-line
-        const {canvasEl} = canvas;
-        const context = canvasEl.getContext('2d');
-        const imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
-        const {data} = imageData;
-        const {threshold} = this;
-        let filterColor = fabric.Color.sourceFromHex(this.color);
-        let i, len;
+    // eslint-disable-next-line complexity
+    applyTo(canvas) {
+      const { canvasEl } = canvas;
+      const context = canvasEl.getContext('2d');
+      const imageData = context.getImageData(0, 0, canvasEl.width, canvasEl.height);
+      const { data } = imageData;
+      const { threshold } = this;
+      let filterColor = fabric.Color.sourceFromHex(this.color);
+      let i, len;
 
-        if (this.x && this.y) {
-            filterColor = this._getColor(imageData, this.x, this.y);
-        }
+      if (this.x && this.y) {
+        filterColor = this._getColor(imageData, this.x, this.y);
+      }
 
-        for (i = 0, len = data.length; i < len; i += 4) {
-            if (this._isOutsideThreshold(data[i], filterColor[0], threshold)
-              || this._isOutsideThreshold(data[i + 1], filterColor[1], threshold)
-              || this._isOutsideThreshold(data[i + 2], filterColor[2], threshold)) {
-                continue;
-            }
-            data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 0;
+      for (i = 0, len = data.length; i < len; i += 4) {
+        if (
+          this._isOutsideThreshold(data[i], filterColor[0], threshold) ||
+          this._isOutsideThreshold(data[i + 1], filterColor[1], threshold) ||
+          this._isOutsideThreshold(data[i + 2], filterColor[2], threshold)
+        ) {
+          continue;
         }
-        context.putImageData(imageData, 0, 0);
+        data[i] = data[i + 1] = data[i + 2] = data[i + 3] = 0;
+      }
+      context.putImageData(imageData, 0, 0);
     },
 
     /**
@@ -72,9 +77,9 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
      * @returns {boolean} true if within threshold or false
      */
     _isOutsideThreshold(color1, color2, threshold) {
-        const diff = color1 - color2;
+      const diff = color1 - color2;
 
-        return Math.abs(diff) > threshold;
+      return Math.abs(diff) > threshold;
     },
 
     /**
@@ -85,18 +90,19 @@ const ColorFilter = fabric.util.createClass(fabric.Image.filters.BaseFilter, /**
      * @returns {Array} color array
      */
     _getColor(imageData, x, y) {
-        const color = [0, 0, 0, 0];
-        const {data, width} = imageData;
-        const bytes = 4;
-        const position = ((width * y) + x) * bytes;
+      const color = [0, 0, 0, 0];
+      const { data, width } = imageData;
+      const bytes = 4;
+      const position = (width * y + x) * bytes;
 
-        color[0] = data[position];
-        color[1] = data[position + 1];
-        color[2] = data[position + 2];
-        color[3] = data[position + 3];
+      color[0] = data[position];
+      color[1] = data[position + 1];
+      color[2] = data[position + 2];
+      color[3] = data[position + 3];
 
-        return color;
-    }
-});
+      return color;
+    },
+  }
+);
 
 export default ColorFilter;

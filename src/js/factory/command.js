@@ -14,12 +14,12 @@ const commands = {};
  * @ignore
  */
 function create(name, ...args) {
-    const actions = commands[name];
-    if (actions) {
-        return new Command(actions, args);
-    }
+  const actions = commands[name];
+  if (actions) {
+    return new Command(actions, args);
+  }
 
-    return null;
+  return null;
 }
 
 /**
@@ -31,10 +31,10 @@ function create(name, ...args) {
  * @ignore
  */
 function register(command) {
-    commands[command.name] = command;
+  commands[command.name] = command;
 }
 
 export default {
-    create,
-    register
+  create,
+  register,
 };

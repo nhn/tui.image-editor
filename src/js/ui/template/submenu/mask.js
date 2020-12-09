@@ -4,7 +4,7 @@
  *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, makeSvgIcon}) => (`
+export default ({ locale, makeSvgIcon }) => `
     <ul class="tui-image-editor-submenu-item">
         <li>
             <div class="tui-image-editor-button">
@@ -27,4 +27,4 @@ export default ({locale, makeSvgIcon}) => (`
             </div>
         </li>
     </ul>
-`);
+`;

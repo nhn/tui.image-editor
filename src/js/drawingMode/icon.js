@@ -1,29 +1,28 @@
 /**
  * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview FreeDrawingMode class
+ * @fileoverview IconDrawingMode class
  */
 import DrawingMode from '../interface/drawingMode';
 import { drawingModes, componentNames as components } from '../consts';
 
 /**
- * FreeDrawingMode class
+ * IconDrawingMode class
  * @class
  * @ignore
  */
-class FreeDrawingMode extends DrawingMode {
+class IconDrawingMode extends DrawingMode {
   constructor() {
-    super(drawingModes.FREE_DRAWING);
+    super(drawingModes.ICON);
   }
 
   /**
    * start this drawing mode
    * @param {Graphics} graphics - Graphics instance
-   * @param {{width: ?number, color: ?string}} [options] - Brush width & color
    * @override
    */
-  start(graphics, options) {
-    const freeDrawing = graphics.getComponent(components.FREE_DRAWING);
-    freeDrawing.start(options);
+  start(graphics) {
+    const icon = graphics.getComponent(components.ICON);
+    icon.start();
   }
 
   /**
@@ -32,9 +31,9 @@ class FreeDrawingMode extends DrawingMode {
    * @override
    */
   end(graphics) {
-    const freeDrawing = graphics.getComponent(components.FREE_DRAWING);
-    freeDrawing.end();
+    const icon = graphics.getComponent(components.ICON);
+    icon.end();
   }
 }
 
-export default FreeDrawingMode;
+export default IconDrawingMode;

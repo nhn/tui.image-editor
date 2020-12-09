@@ -4,7 +4,7 @@
  *   @param {Function} makeSvgIcon - svg icon generator
  * @returns {string}
  */
-export default ({locale, makeSvgIcon}) => (`
+export default ({ locale, makeSvgIcon }) => `
     <ul class="tui-image-editor-submenu-item">
         <li class="tie-text-effect-button">
             <div class="tui-image-editor-button bold">
@@ -64,4 +64,4 @@ export default ({locale, makeSvgIcon}) => (`
             <input class="tie-text-range-value tui-image-editor-range-value" value="0" />
         </li>
     </ul>
-`);
+`;

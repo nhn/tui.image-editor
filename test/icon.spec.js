@@ -8,102 +8,127 @@ import Graphics from '../src/js/graphics';
 import Icon from '../src/js/component/icon';
 
 describe('Icon', () => {
-    let canvas, graphics, mockImage, icon;
+  let canvas, graphics, mockImage, icon;
 
-    beforeAll(() => {
-        graphics = new Graphics($('<canvas>')[0]);
-        canvas = graphics.getCanvas();
-        icon = new Icon(graphics);
+  beforeAll(() => {
+    graphics = new Graphics($('<canvas>')[0]);
+    canvas = graphics.getCanvas();
+    icon = new Icon(graphics);
+  });
+
+  beforeEach(() => {
+    mockImage = new fabric.Image();
+    graphics.setCanvasImage('mockImage', mockImage);
+  });
+
+  afterEach(() => {
+    canvas.forEachObject((obj) => {
+      canvas.remove(obj);
     });
+  });
 
-    beforeEach(() => {
-        mockImage = new fabric.Image();
-        graphics.setCanvasImage('mockImage', mockImage);
-    });
+  describe('_onFabricMouseMove()', () => {
+    let iconObj, fEvent;
 
-    afterEach(() => {
-        canvas.forEachObject(obj => {
-            canvas.remove(obj);
+    beforeEach((done) => {
+      fEvent = { e: {} };
+      icon._startPoint = {
+        x: 300,
+        y: 300,
+      };
+      icon
+        .add('arrow', {
+          left: icon._startPoint.x,
+          top: icon._startPoint.y,
+          color: '#000',
+        })
+        .then(() => {
+          [iconObj] = canvas.getObjects();
+          iconObj.set({
+            width: 10,
+            height: 10,
+          });
+          done();
         });
     });
 
-    it('add() should insert the activated icon object on canvas.', () => {
-        icon.add('arrow');
+    it('When dragging to the right-down from the starting point, the icon scale value should increase.', () => {
+      spyOn(canvas, 'getPointer').and.returnValue({
+        x: 500,
+        y: 500,
+      });
 
-        const activeObj = canvas.getActiveObject();
+      icon._onFabricMouseMove(fEvent);
 
-        expect(activeObj).not.toEqual(null);
+      expect(iconObj.scaleX).toBe(40);
+      expect(iconObj.scaleY).toBe(40);
     });
 
-    it('add() should insert the icon object on center of canvas image.', () => {
-        const centerPos = icon.getCanvasImage().getCenterPoint();
+    it('When dragging to the left-up from the starting point, the icon scale value should increase.', () => {
+      spyOn(canvas, 'getPointer').and.returnValue({
+        x: 100,
+        y: 100,
+      });
 
-        icon.add('arrow');
+      icon._onFabricMouseMove(fEvent);
 
-        const activeObj = canvas.getActiveObject();
-        const halfStrokeWidth = activeObj.strokeWidth / 2;
-
-        expect(activeObj.left + halfStrokeWidth).toEqual(centerPos.x);
-        expect(activeObj.top + halfStrokeWidth).toEqual(centerPos.y);
+      expect(iconObj.scaleX).toBe(40);
+      expect(iconObj.scaleY).toBe(40);
     });
+  });
 
-    it('add() should create the arrow icon when parameter value is "arrow".', () => {
-        const path = icon._pathMap.arrow;
+  it('add() should insert the activated icon object on canvas.', () => {
+    icon.add('arrow');
 
-        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
+    const activeObj = canvas.getActiveObject();
 
-        icon.add('arrow');
+    expect(activeObj).not.toEqual(null);
+  });
 
-        expect(icon._createIcon).toHaveBeenCalledWith(path);
-    });
+  it('add() should insert the icon object on center of canvas image.', () => {
+    const centerPos = icon.getCanvasImage().getCenterPoint();
 
-    it('add() should create the cancel icon when parameter value is "cancel".', () => {
-        const path = icon._pathMap.cancel;
+    icon.add('arrow');
 
-        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
+    const activeObj = canvas.getActiveObject();
+    const halfStrokeWidth = activeObj.strokeWidth / 2;
 
-        icon.add('cancel');
+    expect(activeObj.left + halfStrokeWidth).toEqual(centerPos.x);
+    expect(activeObj.top + halfStrokeWidth).toEqual(centerPos.y);
+  });
 
-        expect(icon._createIcon).toHaveBeenCalledWith(path);
-    });
+  it('add() should create the arrow icon when parameter value is "arrow".', () => {
+    const path = icon._pathMap.arrow;
 
-    it('`_addWithDragEvent()` should be executed when `useDragAddIcon` is true.', () => {
-        const defaultIconKey = 'icon-arrow';
-        icon._pathMap[defaultIconKey] = true;
+    spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
 
-        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
-        spyOn(icon, '_addWithDragEvent');
-        spyOn(icon, 'useDragAddIcon').and.returnValue(true);
+    icon.add('arrow');
 
-        icon.add(defaultIconKey);
+    expect(icon._createIcon).toHaveBeenCalledWith(path);
+  });
 
-        expect(icon._addWithDragEvent).toHaveBeenCalled();
-    });
+  it('add() should create the cancel icon when parameter value is "cancel".', () => {
+    const path = icon._pathMap.cancel;
 
-    it('`_addWithDragEvent()` should be not executed when target icon is not default icon.', () => {
-        const nonDefaultIconKey = 'non-default-icon';
+    spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
 
-        spyOn(icon, '_createIcon').and.returnValue(new fabric.Object({}));
-        spyOn(icon, '_addWithDragEvent');
-        spyOn(icon, 'useDragAddIcon').and.returnValue(true);
+    icon.add('cancel');
 
-        icon.add(nonDefaultIconKey);
+    expect(icon._createIcon).toHaveBeenCalledWith(path);
+  });
 
-        expect(icon._addWithDragEvent).not.toHaveBeenCalled();
-    });
+  it('setColor() should change color of next inserted icon.', () => {
+    let activeObj;
+    const color = '#ffffff';
 
-    it('setColor() should change color of next inserted icon.', () => {
-        let activeObj;
-        const color = '#ffffff';
+    icon.add('arrow');
+    activeObj = canvas.getActiveObject();
+    expect(activeObj.fill).not.toEqual(color);
 
-        icon.add('arrow');
-        activeObj = canvas.getActiveObject();
-        expect(activeObj.fill).not.toEqual(color);
+    icon.setColor(color);
 
-        icon.setColor(color);
-
-        icon.add('cancel');
-        activeObj = canvas.getActiveObject();
-        expect(activeObj.fill).toEqual(color);
-    });
+    icon.add('cancel');
+    activeObj = canvas.getActiveObject();
+    expect(activeObj.fill).toEqual(color);
+  });
 });

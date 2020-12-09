@@ -15,12 +15,12 @@ jobs:
             - name: set global error variable
               run: |
                   errorVariable=`cat ./errorVariable.txt`
-                  echo ::set-env name=ERROR_VARIABLE::$errorVariable
+                  echo "ERROR_VARIABLE=$errorVariable" >> $GITHUB_ENV
             - name: set url
               shell: bash
               run: |
                   url=`cat ./url.txt`
-                  echo ::set-env name=URLS::$url
+                  echo "URLS=$url" >> $GITHUB_ENV
             - name: detect runtime error
               uses: nhn/toast-ui.detect-runtime-error-actions@v1.0.1
               with:
