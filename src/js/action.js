@@ -1,5 +1,5 @@
 import { extend } from 'tui-code-snippet';
-import { isSupportFileApi, base64ToBlob, toInteger } from './util';
+import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone } from './util';
 import Imagetracer from './helper/imagetracer';
 
 export default {
@@ -304,7 +304,7 @@ export default {
       {
         crop: () => {
           const cropRect = this.getCropzoneRect();
-          if (cropRect) {
+          if (cropRect && !isEmptyCropzone(cropRect)) {
             this.crop(cropRect)
               .then(() => {
                 this.stopDrawingMode();
