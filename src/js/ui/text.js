@@ -192,16 +192,18 @@ export default class Text extends Submenu {
    */
   _setTextEffectHandler(event) {
     const button = event.target.closest('.tui-image-editor-button');
-    const [styleType] = button.className.match(/(bold|italic|underline)/);
-    const styleObj = {
-      bold: { fontWeight: 'bold' },
-      italic: { fontStyle: 'italic' },
-      underline: { textDecoration: 'underline' },
-    }[styleType];
+    if (button) {
+      const [styleType] = button.className.match(/(bold|italic|underline)/);
+      const styleObj = {
+        bold: { fontWeight: 'bold' },
+        italic: { fontStyle: 'italic' },
+        underline: { textDecoration: 'underline' },
+      }[styleType];
 
-    this.effect[styleType] = !this.effect[styleType];
-    button.classList.toggle('active');
-    this.actions.changeTextStyle(styleObj);
+      this.effect[styleType] = !this.effect[styleType];
+      button.classList.toggle('active');
+      this.actions.changeTextStyle(styleObj);
+    }
   }
 
   /**
