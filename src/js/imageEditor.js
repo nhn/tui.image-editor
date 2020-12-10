@@ -1146,11 +1146,11 @@ class ImageEditor {
 
   /**
    * 'textChanged' event handler
-   * @param {Object} objectProps changed object properties
+   * @param {Object} target - changed text object
    * @private
    */
-  _onTextChanged(objectProps) {
-    this.changeText(objectProps.id, objectProps.text);
+  _onTextChanged(target) {
+    this.fire(events.TEXT_CHANGED, target);
   }
 
   /**

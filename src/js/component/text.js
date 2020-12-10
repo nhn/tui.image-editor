@@ -67,6 +67,7 @@ class Text extends Component {
       select: this._onFabricSelect.bind(this),
       selectClear: this._onFabricSelectClear.bind(this),
       scaling: this._onFabricScaling.bind(this),
+      textChanged: this._onFabricTextChanged.bind(this),
     };
 
     /**
@@ -114,7 +115,7 @@ class Text extends Component {
       'selection:updated': this._listeners.select,
       'before:selection:cleared': this._listeners.selectClear,
       'object:scaling': this._listeners.scaling,
-      'text:editing': this._listeners.modify,
+      'text:changed': this._listeners.textChanged,
     });
 
     canvas.forEachObject((obj) => {
@@ -147,10 +148,12 @@ class Text extends Component {
 
     canvas.off({
       'mouse:down': this._listeners.mousedown,
-      'object:selected': this._listeners.select,
+      'selection:created': this._listeners.select,
+      'selection:updated': this._listeners.select,
       'before:selection:cleared': this._listeners.selectClear,
+      'object:selected': this._listeners.select,
       'object:scaling': this._listeners.scaling,
-      'text:editing': this._listeners.modify,
+      'text:changed': this._listeners.textChanged,
     });
   }
 
@@ -453,6 +456,15 @@ class Text extends Component {
     obj.fontSize = scalingSize;
     obj.scaleX = 1;
     obj.scaleY = 1;
+  }
+
+  /**
+   * textChanged event handler
+   * @param {{target: fabric.Object}} props - changed text object
+   * @private
+   */
+  _onFabricTextChanged(props) {
+    this.fire(events.TEXT_CHANGED, props.target);
   }
 
   /**
