@@ -7,10 +7,9 @@ const path = require('path');
 const webpack = require('webpack');
 const SafeUmdPlugin = require('safe-umd-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const OptimizaeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-const isProduction = process.argv.indexOf('-p') > -1;
+const isProduction = process.argv[process.argv.indexOf('--mode') + 1] === 'production';
 
 const FILENAME = pkg.name + (isProduction ? '.min' : '');
 const BANNER = [
@@ -21,7 +20,6 @@ const BANNER = [
 ].join('\n');
 
 module.exports = {
-  mode: isProduction ? 'production' : 'development',
   entry: './src/index.js',
   output: {
     library: ['tui', 'ImageEditor'],
@@ -67,9 +65,10 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader?cacheDirectory',
+        loader: 'babel-loader',
         options: {
           babelrc: true,
+          cacheDirectory: true
         },
       },
       {
@@ -105,11 +104,6 @@ module.exports = {
   ],
   optimization: {
     minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true,
-      }),
       new OptimizaeCSSAssetsPlugin({
         cssProcessorOptions: {
           map: {
