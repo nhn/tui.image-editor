@@ -62,6 +62,7 @@ class Ui {
     this._editorElement = null;
     this._menuElement = null;
     this._subMenuElement = null;
+    this._historyMenuList = null;
     this._makeUiElement(element);
     this._setUiSize();
     this._initMenuEvent = false;
@@ -323,6 +324,46 @@ class Ui {
         }
       }
     });
+
+    this._addHistoryMenu();
+  }
+
+  /**
+   * Add history menu
+   * @private
+   */
+  _addHistoryMenu() {
+    const historyElement = document.createElement('div');
+    const historyTitle = document.createElement('div');
+    const historyList = document.createElement('ol');
+
+    historyElement.style.backgroundColor = '#171719'; // temp
+    historyElement.style.color = '#fff'; // temp
+    historyElement.style.position = 'absolute'; // temp
+    historyElement.style.border = '1px solid #fff'; // temp
+    historyElement.style.width = '240px'; // temp
+    historyElement.style.height = '271px'; // temp
+    historyElement.style.overflowX = 'hidden'; // temp
+    historyElement.style.overflowY = 'scroll'; // temp
+    historyElement.style.right = '0'; // temp
+    historyElement.style.bottom = '300px'; // temp
+    historyElement.className = `tie-btn-history`; // temp
+
+    historyTitle.innerText = 'History';
+    historyTitle.style.width = '240px'; // temp
+    historyTitle.style.height = '30px'; // temp
+    historyTitle.style.borderBottom = '1px solid #fff'; // temp
+    historyTitle.style.textAlign = 'center'; // temp
+    historyTitle.style.lineHeight = '30px'; // temp
+
+    historyList.style.width = '240px'; // temp
+    historyList.style.height = '240px'; // temp
+    historyList.style.padding = '0'; // temp
+
+    historyElement.appendChild(historyTitle);
+    historyElement.appendChild(historyList);
+    this._menuElement.appendChild(historyElement);
+    this._historyMenuList = historyList;
   }
 
   /**
