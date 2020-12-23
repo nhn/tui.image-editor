@@ -15,6 +15,7 @@ import Icon from './ui/icon';
 import Draw from './ui/draw';
 import Filter from './ui/filter';
 import Locale from './ui/locale/locale';
+import History from './ui/history';
 
 const SUB_UI_COMPONENT = {
   Shape,
@@ -62,9 +63,6 @@ class Ui {
     this._editorElement = null;
     this._menuElement = null;
     this._subMenuElement = null;
-    this._historyListElement = null;
-    this._historyIndex = 0;
-    this._historyList = [];
     this._makeUiElement(element);
     this._setUiSize();
     this._initMenuEvent = false;
@@ -294,6 +292,12 @@ class Ui {
     };
 
     this._addHelpMenus();
+
+    this._historyMenu = new History(this._menuElement, {
+      locale: this._locale,
+      makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
+      usageStatistics: this.options.usageStatistics,
+    });
   }
 
   /**
@@ -326,154 +330,6 @@ class Ui {
         }
       }
     });
-
-    this._addHistoryMenu();
-  }
-
-  /**
-   * Make list item element
-   * @param {string} type - type of list item element
-   * @param {string} title - title of list item element
-   * @param {number} index - index of list item element
-   * @returns {HTMLElement} list item element
-   * @private
-   */
-  _makeListItemElement(type, title, index) {
-    const listItem = document.createElement('li');
-
-    listItem.style.height = '30px'; // temp
-    listItem.style.lineHeight = '30px'; // temp
-    listItem.style.paddingLeft = '10px'; // temp
-    listItem.style.textAlign = 'left'; // temp
-
-    listItem.innerHTML = `<span>${title}</span>`; // @TODO : change to makeSvg function
-    listItem.className = `${type}-item ${type}-${title}`; // @TODO : change to makeSvg function
-    listItem.setAttribute('data-index', index);
-
-    return listItem;
-  }
-
-  /**
-   * Make list element
-   * @param {string} title - list element title
-   * @returns {HTMLElement} list element
-   * @private
-   */
-  _makeListElement(title) {
-    const list = document.createElement('ol');
-
-    list.style.width = '240px'; // temp
-    list.style.height = '240px'; // temp
-    list.style.padding = '0'; // temp
-    list.style.overflowX = 'hidden'; // temp
-    list.style.overflowY = 'scroll'; // temp
-    list.style.listStyle = 'none'; // temp
-
-    list.className = `${title}`; // @TODO: className
-
-    return list;
-  }
-
-  /**
-   * Make panel element
-   * @param {string} title - list element title
-   * @returns {HTMLElement} list element
-   * @private
-   */
-  _makePanelElement(title) {
-    const panel = document.createElement('div');
-    const panelTitle = document.createElement('div');
-
-    panel.style.backgroundColor = '#171719'; // temp
-    panel.style.color = '#fff'; // temp
-    panel.style.position = 'absolute'; // temp
-    panel.style.border = '1px solid #fff'; // temp
-    panel.style.width = '240px'; // temp
-    panel.style.height = '270px'; // temp
-    panel.style.right = '0'; // temp
-    panel.style.bottom = '300px'; // temp
-    panel.className = `tie-btn-${title}`; // @TODO: className
-
-    panelTitle.innerText = 'History';
-    panelTitle.style.width = '240px'; // temp
-    panelTitle.style.height = '30px'; // temp
-    panelTitle.style.borderBottom = '1px solid #fff'; // temp
-    panelTitle.style.textAlign = 'center'; // temp
-    panelTitle.style.lineHeight = '30px'; // temp
-
-    panel.appendChild(panelTitle);
-
-    return panel;
-  }
-
-  /**
-   * Add history
-   * @param {string} title - title of history
-   * @returns {HTMLElement} history list item element
-   * @private
-   */
-  _makeHistory(title) {
-    return this._makeListItemElement('history', title, this._historyIndex);
-  }
-
-  /**
-   * Add history menu
-   * @private
-   */
-  _addHistoryMenu() {
-    const historyElement = this._makePanelElement('history');
-    const historyList = this._makeListElement('history');
-    const defaultHistory = this._makeHistory('default');
-
-    historyList.appendChild(defaultHistory);
-    historyElement.appendChild(historyList);
-    this._menuElement.appendChild(historyElement);
-
-    this._historyListElement = historyList;
-  }
-
-  /**
-   * Add history menu event
-   * @private
-   */
-  _addHistoryEventListener() {
-    this.eventHandler.history = (event) => this._clickHistoryItem(event);
-    this._historyListElement.addEventListener('click', this.eventHandler.history);
-  }
-
-  /**
-   * Remove history menu event
-   * @private
-   */
-  _removeHistoryEventListener() {
-    this._historyListElement.removeEventListener('click', this.eventHandler.history);
-  }
-
-  /**
-   * onClick history menu event listener
-   * @param {object} event - event object
-   * @private
-   */
-  _clickHistoryItem(event) {
-    const { target } = event;
-    const item = target.closest('.history-item');
-
-    if (item) {
-      const index = Number.parseInt(item.getAttribute('data-index'), 10);
-
-      if (index < this._historyIndex) {
-        // 기존 선택되어 있는 인덱스보다 이전일 경우 (클릭한 아이템 인덱스 +1 ~ 현재 선택되어있던 인덱스) 작업들 undo 처리
-        // 선택되어 있는 인덱스 변경처리
-        // 클릭한 아이템 이후 인덱스 아이템들 딤드 처리
-      } else if (index > this._historyIndex) {
-        // 기존 선택되어 있는 인덱스보다 이후일 경우 (현재 선택되어있던 인덱스 +1 ~ 클릭한 아이템 인덱스) 작업들 redo 처리
-        // 선택되어 있는 인덱스 변경처리
-        // 클릭한 아이템 이후 인덱스 아이템들 딤드 처리
-      }
-      // 동일한 경우엔 아무처리 x
-    }
-
-    // 각 history element 배열 추가(this) (추후 제거할때 removeChild로 제거)
   }
 
   /**
@@ -643,8 +499,13 @@ class Ui {
     this._addDownloadEvent();
     this._addMenuEvent();
     this._initMenu();
-    this._addHistoryEventListener();
+    this._historyMenu.addEvent();
     this._initMenuEvent = true;
+
+    this._historyMenu.addHistory('test1');
+    this._historyMenu.addHistory('test2');
+    this._historyMenu.addHistory('test3');
+    this._historyMenu.addHistory('test4');
   }
 
   /**
@@ -655,8 +516,8 @@ class Ui {
     this._removeHelpActionEvent();
     this._removeDownloadEvent();
     this._removeLoadEvent();
-    this._removeHistoryEventListener();
     this._removeMainMenuEvent();
+    this._historyMenu.removeEvent();
   }
 
   /**
@@ -667,6 +528,8 @@ class Ui {
     snippet.forEach(this.options.menu, (menuName) => {
       this[menuName].destroy();
     });
+
+    this._historyMenu.destroy();
   }
 
   /**
