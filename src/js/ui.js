@@ -499,13 +499,8 @@ class Ui {
     this._addDownloadEvent();
     this._addMenuEvent();
     this._initMenu();
-    this._historyMenu.addEvent();
+    this._historyMenu.addEvent(this._actions);
     this._initMenuEvent = true;
-
-    this._historyMenu.addHistory('test1');
-    this._historyMenu.addHistory('test2');
-    this._historyMenu.addHistory('test3');
-    this._historyMenu.addHistory('test4');
   }
 
   /**

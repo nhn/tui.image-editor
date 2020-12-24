@@ -14,16 +14,12 @@ describe('history', () => {
     history = new History(document.createElement('div'), options);
   });
 
-  it('should create a default history', () => {
-    expect(history.getListLength()).toBe(1);
-  });
-
   it('should add a history item', () => {
     spyOn(history, '_selectItem');
 
     history.addHistory('title');
 
-    expect(history.getListLength()).toBe(2);
+    expect(history.getListLength()).toBe(1);
     expect(history._selectItem).toHaveBeenCalled();
   });
 
@@ -51,6 +47,7 @@ describe('history', () => {
       target.className = 'history-item';
       target.setAttribute('data-index', 1);
 
+      history.addHistory('index0');
       history.addHistory('index1');
     });
 
@@ -89,8 +86,8 @@ describe('history', () => {
     let listLength;
 
     beforeEach(() => {
+      history.addHistory('index0');
       history.addHistory('index1');
-      history.addHistory('index2');
       index = 1;
       listLength = history.getListLength();
     });

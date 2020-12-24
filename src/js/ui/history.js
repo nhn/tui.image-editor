@@ -20,7 +20,6 @@ class History extends Panel {
 
     this._eventHandler = {};
     this._historyIndex = this.getListLength();
-    this.addHistory('default');
   }
 
   /**
@@ -29,6 +28,7 @@ class History extends Panel {
    */
   addHistory(title) {
     const item = this.makeListItemElement(title);
+
     this.pushListItemElement(item);
     this._historyIndex = this.getListLength() - 1;
     this._selectItem(this._historyIndex);
@@ -63,12 +63,17 @@ class History extends Panel {
     if (item) {
       const index = Number.parseInt(item.getAttribute('data-index'), 10);
 
-      this._selectItem(index);
-
       if (index !== this._historyIndex) {
-        // 기존 선택되어 있는 인덱스보다 이전일 경우 (클릭한 아이템 인덱스 +1 ~ 현재 선택되어있던 인덱스) 작업들 undo 처리
-        // 기존 선택되어 있는 인덱스보다 이후일 경우 (현재 선택되어있던 인덱스 +1 ~ 클릭한 아이템 인덱스) 작업들 redo 처리
+        this._selectItem(index);
         this._toggleItems(index, this._historyIndex);
+
+        if (index < this._historyIndex) {
+          // this._actions.main.undo();
+          // 기존 선택되어 있는 인덱스보다 이전일 경우 (index+1 ~ this._historyIndex) 작업들 undo 처리
+        } else {
+          // 기존 선택되어 있는 인덱스보다 이후일 경우 (this._historyIndex+1 ~ index) 작업들 redo 처리
+        }
+
         this._historyIndex = index;
       }
     }
@@ -112,11 +117,11 @@ class History extends Panel {
   /**
    * Add event for history
    * @param {Object} actions - actions for crop
-   *   @param {Function} actions.crop - crop action
-   *   @param {Function} actions.cancel - cancel action
-   *   @param {Function} actions.preset - draw rectzone at a predefined ratio
+   *   @param {Function} actions.undo - undo action
+   *   @param {Function} actions.redo - redo action
    */
   addEvent(actions) {
+    this._actions = actions;
     this._addHistoryEventListener();
   }
 
