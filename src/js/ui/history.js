@@ -1,7 +1,10 @@
-import snippet from 'tui-code-snippet';
 import Panel from './panelMenu';
 import { assignmentForDestroy } from '../util';
 import templateHtml from './template/submenu/crop';
+
+const historyClassName = 'history-item';
+const selectedClassName = 'selected-item';
+const disabledClassName = 'disabled-item';
 
 /**
  * History ui class
@@ -58,7 +61,7 @@ class History extends Panel {
    */
   _clickHistoryItem(event) {
     const { target } = event;
-    const item = target.closest('.history-item');
+    const item = target.closest(`.${historyClassName}`);
 
     if (item) {
       const index = Number.parseInt(item.getAttribute('data-index'), 10);
@@ -85,9 +88,9 @@ class History extends Panel {
    */
   _selectItem(index) {
     for (let i = 0; i < this.getListLength(); i += 1) {
-      this.removeClass(i, 'selected-item');
+      this.removeClass(i, selectedClassName);
     }
-    this.addClass(index, 'selected-item');
+    this.addClass(index, selectedClassName);
   }
 
   /**
@@ -101,7 +104,7 @@ class History extends Panel {
     }
 
     for (let i = start + 1; i <= end; i += 1) {
-      this.toggleClass(i, 'disabled-item');
+      this.toggleClass(i, disabledClassName);
     }
   }
 
