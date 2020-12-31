@@ -8,7 +8,7 @@ import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import { sendHostName, Promise } from './util';
+import { sendHostName, Promise, getObjectType } from './util';
 import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from './consts';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from './helper/selectionModifyHelper';
 
@@ -577,6 +577,52 @@ class ImageEditor {
   }
 
   /**
+   * Add history
+   * @param {string} history - history of command
+   */
+  _addHistory(history) {
+    if (this.ui) {
+      this.ui._historyMenu.addHistory(history);
+    }
+  }
+
+  /**
+   * Init history
+   */
+  _initHistory() {
+    if (this.ui) {
+      this.ui._historyMenu.initHistory();
+    }
+  }
+
+  /**
+   * Clear history
+   */
+  _clearHistory() {
+    if (this.ui) {
+      this.ui._historyMenu.clearHistory();
+    }
+  }
+
+  /**
+   * Select previous history of current selected history
+   */
+  _selectPrevHistory() {
+    if (this.ui) {
+      this.ui._historyMenu.selectPrevHistory();
+    }
+  }
+
+  /**
+   * Select next history of current selected history
+   */
+  _selectNextHistory() {
+    if (this.ui) {
+      this.ui._historyMenu.selectNextHistory();
+    }
+  }
+
+  /**
    * Invoke command
    * @param {String} commandName - Command name
    * @param {...*} args - Arguments for creating command
@@ -611,6 +657,8 @@ class ImageEditor {
    * imageEditor.undo();
    */
   undo() {
+    this._selectPrevHistory();
+
     return this._invoker.undo();
   }
 
@@ -621,6 +669,8 @@ class ImageEditor {
    * imageEditor.redo();
    */
   redo() {
+    this._selectNextHistory();
+
     return this._invoker.redo();
   }
 
@@ -767,6 +817,8 @@ class ImageEditor {
    * @private
    */
   _flip(type) {
+    this._addHistory('flip');
+
     return this.execute(commands.FLIP_IMAGE, type);
   }
 
@@ -827,9 +879,11 @@ class ImageEditor {
    */
   _rotate(type, angle, isSilent) {
     let result = null;
+
     if (isSilent) {
       result = this.executeSilent(commands.ROTATE_IMAGE, type, angle);
     } else {
+      this._addHistory('rotate');
       result = this.execute(commands.ROTATE_IMAGE, type, angle);
     }
 
@@ -1012,6 +1066,7 @@ class ImageEditor {
     options = options || {};
 
     this._setPositions(options);
+    this._addHistory('shape');
 
     return this.execute(commands.ADD_SHAPE, type, options);
   }
@@ -1052,6 +1107,10 @@ class ImageEditor {
    */
   changeShape(id, options, isSilent) {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+    if (!isSilent) {
+      this._addHistory('shape');
+    }
 
     return this[executeMethodName](commands.CHANGE_SHAPE, id, options);
   }
@@ -1130,6 +1189,10 @@ class ImageEditor {
   changeTextStyle(id, styleObj, isSilent) {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
+    if (!isSilent) {
+      this._addHistory('text');
+    }
+
     return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
   }
 
@@ -1188,6 +1251,7 @@ class ImageEditor {
      *     console.log('text editing');
      * });
      */
+
     this.fire(events.TEXT_EDITING);
   }
 
@@ -1213,6 +1277,8 @@ class ImageEditor {
      *     console.log('text position on brwoser: ' + pos.clientPosition);
      * });
      */
+    this._addHistory('text');
+
     this.fire(events.ADD_TEXT, {
       originPosition: event.originPosition,
       clientPosition: event.clientPosition,
@@ -1226,6 +1292,7 @@ class ImageEditor {
    */
   _onAddObject(objectProps) {
     const obj = this._graphics.getObject(objectProps.id);
+    this._addHistory(getObjectType(obj.type));
     this._pushAddObjectCommand(obj);
   }
 
@@ -1261,6 +1328,7 @@ class ImageEditor {
    * @private
    */
   _onObjectModified(obj) {
+    this._addHistory(getObjectType(obj.type));
     this._pushModifyObjectCommand(obj);
   }
 
@@ -1339,6 +1407,8 @@ class ImageEditor {
    * imageEditor.changeIconColor(id, '#000000');
    */
   changeIconColor(id, color) {
+    this._addHistory('icon');
+
     return this.execute(commands.CHANGE_ICON_COLOR, id, color);
   }
 
@@ -1350,6 +1420,9 @@ class ImageEditor {
    * imageEditor.removeObject(id);
    */
   removeObject(id) {
+    const { type } = this._graphics.getObject(id);
+    this._addHistory(getObjectType(type));
+
     return this.execute(commands.REMOVE_OBJECT, id);
   }
 
@@ -1375,6 +1448,8 @@ class ImageEditor {
    * });
    */
   removeFilter(type) {
+    this._addHistory('filter');
+
     return this.execute(commands.REMOVE_FILTER, type);
   }
 
@@ -1397,6 +1472,11 @@ class ImageEditor {
    */
   applyFilter(type, options, isSilent) {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
+
+    console.log('filter', type);
+    if (!isSilent) {
+      this._addHistory(type !== 'mask' ? 'filter' : 'mask');
+    }
 
     return this[executeMethodName](commands.APPLY_FILTER, type, options);
   }

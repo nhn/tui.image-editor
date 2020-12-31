@@ -54,13 +54,16 @@ export default {
 
     return extend(
       {
-        initLoadImage: (imagePath, imageName) =>
-          this.loadImageFromURL(imagePath, imageName).then((sizeValue) => {
+        initLoadImage: (imagePath, imageName) => {
+          this._addHistory('load');
+
+          return this.loadImageFromURL(imagePath, imageName).then((sizeValue) => {
             exitCropOnAction();
             this.ui.initializeImgUrl = imagePath;
             this.ui.resizeEditor({ imageSize: sizeValue });
             this.clearUndoStack();
-          }),
+          });
+        },
         undo: () => {
           if (!this.isEmptyUndoStack()) {
             exitCropOnAction();
@@ -76,6 +79,7 @@ export default {
           }
         },
         reset: () => {
+          this._initHistory();
           exitCropOnAction();
           this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then((sizeValue) => {
             exitCropOnAction();
@@ -96,6 +100,9 @@ export default {
           this.ui.changeHelpButtonEnabled('deleteAll', false);
         },
         load: (file) => {
+          this._clearHistory();
+          this._addHistory('load');
+
           if (!isSupportFileApi()) {
             alert('This browser does not support file-api');
           }
@@ -216,12 +223,15 @@ export default {
   _maskAction() {
     return extend(
       {
-        loadImageFromURL: (imgUrl, file) =>
-          this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+        loadImageFromURL: (imgUrl, file) => {
+          this._addHistory('load');
+
+          return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
             this.addImageObject(imgUrl).then(() => {
               URL.revokeObjectURL(file);
             });
-          }),
+          });
+        },
         applyFilter: () => {
           this.applyFilter('mask', {
             maskObjId: this.activeObjectId,
@@ -305,6 +315,7 @@ export default {
         crop: () => {
           const cropRect = this.getCropzoneRect();
           if (cropRect) {
+            this._addHistory('crop');
             this.crop(cropRect)
               .then(() => {
                 this.stopDrawingMode();

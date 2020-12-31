@@ -343,3 +343,25 @@ export function getFillTypeFromObject(shapeObj) {
 export function isShape(obj) {
   return inArray(obj.get('type'), SHAPE_TYPE) >= 0;
 }
+
+/**
+ * Get object type
+ * @param {string} type - fabric object type
+ * @returns {string} type of object (ex: shape, icon, ...)
+ */
+// eslint-disable-next-line complexity
+export function getObjectType(type) {
+  switch (type) {
+    case 'rect':
+    case 'circle':
+    case 'triangle':
+      return 'shape';
+    case 'i-text':
+      return 'text';
+    case 'path':
+    case 'line':
+      return 'drawing';
+    default:
+      return type;
+  }
+}
