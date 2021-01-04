@@ -675,6 +675,48 @@ class ImageEditor {
   }
 
   /**
+   * multi Undo
+   * @param {number} count - count of undo
+   * @returns {Promise}
+   * @example
+   * imageEditor.multiUndo();
+   */
+  multiUndo(count) {
+    if (count <= 0) {
+      return Promise.reject(rejectMessages.invalidParameters);
+    }
+
+    let pending = Promise.resolve();
+
+    for (let i = 0; i < count; i += 1) {
+      pending = pending.then(() => this._invoker.undo());
+    }
+
+    return pending;
+  }
+
+  /**
+   * multi Redo
+   * @param {number} count - count of undo
+   * @returns {Promise}
+   * @example
+   * imageEditor.multiRedo();
+   */
+  multiRedo(count) {
+    if (count <= 0) {
+      return Promise.reject(rejectMessages.invalidParameters);
+    }
+
+    let pending = Promise.resolve();
+
+    for (let i = 0; i < count; i += 1) {
+      pending = pending.then(() => this._invoker.redo());
+    }
+
+    return pending;
+  }
+
+  /**
    * Load image from file
    * @param {File} imgFile - Image file
    * @param {string} [imageName] - imageName

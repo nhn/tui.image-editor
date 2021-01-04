@@ -26,15 +26,59 @@ class History extends Panel {
   }
 
   /**
-   * add history
+   * Add history
    * @param {string} title - title of history
    */
   addHistory(title) {
+    if (this._hasDisabledItem()) {
+      this.deleteListItemElement(this._historyIndex + 1, this.getListLength());
+    }
+
     const item = this.makeListItemElement(title);
 
     this.pushListItemElement(item);
     this._historyIndex = this.getListLength() - 1;
     this._selectItem(this._historyIndex);
+  }
+
+  /**
+   * Init history
+   */
+  initHistory() {
+    this.deleteListItemElement(1, this.getListLength());
+    this._historyIndex = 0;
+  }
+
+  /**
+   * Clear history
+   */
+  clearHistory() {
+    this.deleteListItemElement(0, this.getListLength());
+    this._historyIndex = -1;
+  }
+
+  /**
+   * Select previous history of current selected history
+   */
+  selectPrevHistory() {
+    this._historyIndex -= 1;
+    this._selectItem(this._historyIndex);
+  }
+
+  /**
+   * Select next history of current selected history
+   */
+  selectNextHistory() {
+    this._historyIndex += 1;
+    this._selectItem(this._historyIndex);
+  }
+
+  /**
+   * Whether history menu has disabled item
+   * @returns {boolean}
+   */
+  _hasDisabledItem() {
+    return this.getListLength() - 1 > this._historyIndex;
   }
 
   /**
@@ -70,10 +114,14 @@ class History extends Panel {
         this._selectItem(index);
         this._toggleItems(index, this._historyIndex);
 
+        const count = Math.abs(index - this._historyIndex);
+
         if (index < this._historyIndex) {
+          this._actions.multiUndo(count);
           // this._actions.main.undo();
           // 기존 선택되어 있는 인덱스보다 이전일 경우 (index+1 ~ this._historyIndex) 작업들 undo 처리
         } else {
+          this._actions.multiRedo(count);
           // 기존 선택되어 있는 인덱스보다 이후일 경우 (this._historyIndex+1 ~ index) 작업들 redo 처리
         }
 

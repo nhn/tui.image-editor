@@ -20,6 +20,7 @@ export default {
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
+      history: this._historyAction(),
     };
   },
 
@@ -502,6 +503,18 @@ export default {
         }
       },
     });
+  },
+
+  /**
+   * History Action
+   * @returns {Object} history actions for ui
+   * @private
+   */
+  _historyAction() {
+    return {
+      multiUndo: (count) => this.multiUndo(count),
+      multiRedo: (count) => this.multiRedo(count),
+    };
   },
 
   /**

@@ -499,7 +499,7 @@ class Ui {
     this._addDownloadEvent();
     this._addMenuEvent();
     this._initMenu();
-    this._historyMenu.addEvent(this._actions);
+    this._historyMenu.addEvent(this._actions.history);
     this._initMenuEvent = true;
   }
 
