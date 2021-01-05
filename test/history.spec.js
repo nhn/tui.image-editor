@@ -12,12 +12,13 @@ describe('history', () => {
   beforeEach(() => {
     options = {};
     history = new History(document.createElement('div'), options);
+    history._actions = { undo() {}, redo() {} };
   });
 
   it('should add a history item', () => {
     spyOn(history, '_selectItem');
 
-    history.addHistory('title');
+    history.add('title');
 
     expect(history.getListLength()).toBe(1);
     expect(history._selectItem).toHaveBeenCalled();
@@ -47,8 +48,8 @@ describe('history', () => {
       target.className = 'history-item';
       target.setAttribute('data-index', 1);
 
-      history.addHistory('index0');
-      history.addHistory('index1');
+      history.add('index0');
+      history.add('index1');
     });
 
     it('should nothing when index is the same as historyIndex', () => {
@@ -62,22 +63,24 @@ describe('history', () => {
     });
 
     it('should undo action when is index less than historyIndex', () => {
-      history.addHistory('index2');
+      spyOn(history._actions, 'undo');
+      history.add('index2');
       history._clickHistoryItem({ target });
 
       expect(history._historyIndex).toBe(1);
-      // undo가 실행되었는지 테스트 추가 예정
+      expect(history._actions.undo).toHaveBeenCalledTimes(1);
     });
 
     it('should redo action when is index greater than historyIndex', () => {
-      history.addHistory('index2');
+      spyOn(history._actions, 'redo');
+      history.add('index2');
       history._historyIndex = 1;
 
       target.setAttribute('data-index', 2);
       history._clickHistoryItem({ target });
 
       expect(history._historyIndex).toBe(2);
-      // redo가 실행되었는지 테스트 추가 예정
+      expect(history._actions.redo).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -86,8 +89,8 @@ describe('history', () => {
     let listLength;
 
     beforeEach(() => {
-      history.addHistory('index0');
-      history.addHistory('index1');
+      history.add('index0');
+      history.add('index1');
       index = 1;
       listLength = history.getListLength();
     });
@@ -110,7 +113,7 @@ describe('history', () => {
 
     beforeEach(() => {
       for (let i = 0; i < 10; i += 1) {
-        history.addHistory(`${i}`);
+        history.add(`${i}`);
       }
       start = 3;
       end = 7;

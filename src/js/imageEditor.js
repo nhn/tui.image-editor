@@ -582,7 +582,7 @@ class ImageEditor {
    */
   _addHistory(history) {
     if (this.ui) {
-      this.ui._historyMenu.addHistory(history);
+      this.ui.addHistory(history);
     }
   }
 
@@ -591,7 +591,7 @@ class ImageEditor {
    */
   _initHistory() {
     if (this.ui) {
-      this.ui._historyMenu.initHistory();
+      this.ui.initHistory();
     }
   }
 
@@ -600,7 +600,7 @@ class ImageEditor {
    */
   _clearHistory() {
     if (this.ui) {
-      this.ui._historyMenu.clearHistory();
+      this.ui.clearHistory();
     }
   }
 
@@ -609,7 +609,7 @@ class ImageEditor {
    */
   _selectPrevHistory() {
     if (this.ui) {
-      this.ui._historyMenu.selectPrevHistory();
+      this.ui.selectPrevHistory();
     }
   }
 
@@ -618,7 +618,7 @@ class ImageEditor {
    */
   _selectNextHistory() {
     if (this.ui) {
-      this.ui._historyMenu.selectNextHistory();
+      this.ui.selectNextHistory();
     }
   }
 
@@ -652,68 +652,38 @@ class ImageEditor {
 
   /**
    * Undo
+   * @param {number} [count=1] - count of undo
    * @returns {Promise}
    * @example
    * imageEditor.undo();
    */
-  undo() {
-    this._selectPrevHistory();
+  undo(count = 1) {
+    let promise = Promise.resolve();
 
-    return this._invoker.undo();
+    for (let i = 0; i < count; i += 1) {
+      this._selectPrevHistory();
+      promise = promise.then(() => this._invoker.undo());
+    }
+
+    return promise;
   }
 
   /**
    * Redo
+   * @param {number} [count=1] - count of undo
    * @returns {Promise}
    * @example
    * imageEditor.redo();
    */
-  redo() {
-    this._selectNextHistory();
-
-    return this._invoker.redo();
-  }
-
-  /**
-   * multi Undo
-   * @param {number} count - count of undo
-   * @returns {Promise}
-   * @example
-   * imageEditor.multiUndo();
-   */
-  multiUndo(count) {
-    if (count <= 0) {
-      return Promise.reject(rejectMessages.invalidParameters);
-    }
-
-    let pending = Promise.resolve();
+  redo(count = 1) {
+    let promise = Promise.resolve();
 
     for (let i = 0; i < count; i += 1) {
-      pending = pending.then(() => this._invoker.undo());
+      this._selectNextHistory();
+      promise = promise.then(() => this._invoker.redo());
     }
 
-    return pending;
-  }
-
-  /**
-   * multi Redo
-   * @param {number} count - count of undo
-   * @returns {Promise}
-   * @example
-   * imageEditor.multiRedo();
-   */
-  multiRedo(count) {
-    if (count <= 0) {
-      return Promise.reject(rejectMessages.invalidParameters);
-    }
-
-    let pending = Promise.resolve();
-
-    for (let i = 0; i < count; i += 1) {
-      pending = pending.then(() => this._invoker.redo());
-    }
-
-    return pending;
+    return promise;
   }
 
   /**

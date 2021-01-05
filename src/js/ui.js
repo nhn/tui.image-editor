@@ -386,6 +386,42 @@ class Ui {
   }
 
   /**
+   * Add history
+   * @param {string} title - history title
+   */
+  addHistory(title) {
+    this._historyMenu.add(title);
+  }
+
+  /**
+   * Init history
+   */
+  initHistory() {
+    this._historyMenu.init();
+  }
+
+  /**
+   * Clear history
+   */
+  clearHistory() {
+    this._historyMenu.clear();
+  }
+
+  /**
+   * Select prev history
+   */
+  selectPrevHistory() {
+    this._historyMenu.prev();
+  }
+
+  /**
+   * Select next history
+   */
+  selectNextHistory() {
+    this._historyMenu.next();
+  }
+
+  /**
    * Add attribute for menu tooltip
    * @param {HTMLElement} element - menu element
    * @param {string} tooltipName - tooltipName

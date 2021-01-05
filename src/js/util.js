@@ -349,7 +349,6 @@ export function isShape(obj) {
  * @param {string} type - fabric object type
  * @returns {string} type of object (ex: shape, icon, ...)
  */
-// eslint-disable-next-line complexity
 export function getObjectType(type) {
   switch (type) {
     case 'rect':

@@ -512,8 +512,8 @@ export default {
    */
   _historyAction() {
     return {
-      multiUndo: (count) => this.multiUndo(count),
-      multiRedo: (count) => this.multiRedo(count),
+      undo: (count) => this.undo(count),
+      redo: (count) => this.redo(count),
     };
   },
 

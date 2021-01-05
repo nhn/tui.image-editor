@@ -29,7 +29,7 @@ class History extends Panel {
    * Add history
    * @param {string} title - title of history
    */
-  addHistory(title) {
+  add(title) {
     if (this._hasDisabledItem()) {
       this.deleteListItemElement(this._historyIndex + 1, this.getListLength());
     }
@@ -44,7 +44,7 @@ class History extends Panel {
   /**
    * Init history
    */
-  initHistory() {
+  init() {
     this.deleteListItemElement(1, this.getListLength());
     this._historyIndex = 0;
   }
@@ -52,7 +52,7 @@ class History extends Panel {
   /**
    * Clear history
    */
-  clearHistory() {
+  clear() {
     this.deleteListItemElement(0, this.getListLength());
     this._historyIndex = -1;
   }
@@ -60,7 +60,7 @@ class History extends Panel {
   /**
    * Select previous history of current selected history
    */
-  selectPrevHistory() {
+  prev() {
     this._historyIndex -= 1;
     this._selectItem(this._historyIndex);
   }
@@ -68,7 +68,7 @@ class History extends Panel {
   /**
    * Select next history of current selected history
    */
-  selectNextHistory() {
+  next() {
     this._historyIndex += 1;
     this._selectItem(this._historyIndex);
   }
@@ -111,18 +111,14 @@ class History extends Panel {
       const index = Number.parseInt(item.getAttribute('data-index'), 10);
 
       if (index !== this._historyIndex) {
-        this._selectItem(index);
         this._toggleItems(index, this._historyIndex);
 
         const count = Math.abs(index - this._historyIndex);
 
         if (index < this._historyIndex) {
-          this._actions.multiUndo(count);
-          // this._actions.main.undo();
-          // 기존 선택되어 있는 인덱스보다 이전일 경우 (index+1 ~ this._historyIndex) 작업들 undo 처리
+          this._actions.undo(count);
         } else {
-          this._actions.multiRedo(count);
-          // 기존 선택되어 있는 인덱스보다 이후일 경우 (this._historyIndex+1 ~ index) 작업들 redo 처리
+          this._actions.redo(count);
         }
 
         this._historyIndex = index;
