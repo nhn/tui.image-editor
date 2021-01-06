@@ -233,6 +233,9 @@ class Invoker {
    * @param {boolean} [isSilent] - Fire event or not
    */
   pushUndoStack(command, isSilent) {
+    console.log('push');
+    this.fire('test', command, isSilent);
+
     this._undoStack.push(command);
     if (!isSilent) {
       this._fireUndoStackChanged();

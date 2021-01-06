@@ -8,7 +8,7 @@ import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import { sendHostName, Promise, getObjectType } from './util';
+import { sendHostName, Promise, getObjectType, getFilterType } from './util';
 import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from './consts';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from './helper/selectionModifyHelper';
 
@@ -636,6 +636,12 @@ class ImageEditor {
     return this._invoker.execute(commandName, ...theArgs);
   }
 
+  test() {
+    this._invoker.on('test', (a, b) => {
+      console.log('test', a, b);
+    });
+  }
+
   /**
    * Invoke command
    * @param {String} commandName - Command name
@@ -829,8 +835,6 @@ class ImageEditor {
    * @private
    */
   _flip(type) {
-    this._addHistory('flip');
-
     return this.execute(commands.FLIP_IMAGE, type);
   }
 
@@ -847,6 +851,8 @@ class ImageEditor {
    * });
    */
   flipX() {
+    this._addHistory('flip X');
+
     return this._flip('flipX');
   }
 
@@ -863,6 +869,8 @@ class ImageEditor {
    * });
    */
   flipY() {
+    this._addHistory('flip Y');
+
     return this._flip('flipY');
   }
 
@@ -879,6 +887,8 @@ class ImageEditor {
    * });;
    */
   resetFlip() {
+    this._addHistory('flip reset');
+
     return this._flip('reset');
   }
 
@@ -895,7 +905,7 @@ class ImageEditor {
     if (isSilent) {
       result = this.executeSilent(commands.ROTATE_IMAGE, type, angle);
     } else {
-      this._addHistory('rotate');
+      this._addHistory(`rotate ${angle}`);
       result = this.execute(commands.ROTATE_IMAGE, type, angle);
     }
 
@@ -1078,7 +1088,7 @@ class ImageEditor {
     options = options || {};
 
     this._setPositions(options);
-    this._addHistory('shape');
+    this._addHistory('add shape');
 
     return this.execute(commands.ADD_SHAPE, type, options);
   }
@@ -1121,7 +1131,7 @@ class ImageEditor {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
     if (!isSilent) {
-      this._addHistory('shape');
+      this._addHistory('change shape');
     }
 
     return this[executeMethodName](commands.CHANGE_SHAPE, id, options);
@@ -1202,7 +1212,7 @@ class ImageEditor {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
     if (!isSilent) {
-      this._addHistory('text');
+      this._addHistory('change text');
     }
 
     return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
@@ -1289,7 +1299,7 @@ class ImageEditor {
      *     console.log('text position on brwoser: ' + pos.clientPosition);
      * });
      */
-    this._addHistory('text');
+    this._addHistory('add text');
 
     this.fire(events.ADD_TEXT, {
       originPosition: event.originPosition,
@@ -1304,7 +1314,7 @@ class ImageEditor {
    */
   _onAddObject(objectProps) {
     const obj = this._graphics.getObject(objectProps.id);
-    this._addHistory(getObjectType(obj.type));
+    this._addHistory(`add ${getObjectType(obj.type)}`);
     this._pushAddObjectCommand(obj);
   }
 
@@ -1340,7 +1350,7 @@ class ImageEditor {
    * @private
    */
   _onObjectModified(obj) {
-    this._addHistory(getObjectType(obj.type));
+    this._addHistory(`change ${getObjectType(obj.type)}`);
     this._pushModifyObjectCommand(obj);
   }
 
@@ -1419,7 +1429,7 @@ class ImageEditor {
    * imageEditor.changeIconColor(id, '#000000');
    */
   changeIconColor(id, color) {
-    this._addHistory('icon');
+    this._addHistory('change icon');
 
     return this.execute(commands.CHANGE_ICON_COLOR, id, color);
   }
@@ -1433,7 +1443,7 @@ class ImageEditor {
    */
   removeObject(id) {
     const { type } = this._graphics.getObject(id);
-    this._addHistory(getObjectType(type));
+    this._addHistory(`remove ${getObjectType(type)}`);
 
     return this.execute(commands.REMOVE_OBJECT, id);
   }
@@ -1460,7 +1470,7 @@ class ImageEditor {
    * });
    */
   removeFilter(type) {
-    this._addHistory('filter');
+    this._addHistory('remove filter');
 
     return this.execute(commands.REMOVE_FILTER, type);
   }
@@ -1468,8 +1478,7 @@ class ImageEditor {
   /**
    * Apply filter on canvas image
    * @param {string} type - Filter type
-   * @param {Object} options - Options to apply filter
-   *  @param {number} options.maskObjId - masking image object id
+   * @param {object} options - Options to apply filter
    * @param {boolean} isSilent - is silent execution or not
    * @returns {Promise<FilterResult, ErrorMsg>}
    * @example
@@ -1485,9 +1494,8 @@ class ImageEditor {
   applyFilter(type, options, isSilent) {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
 
-    console.log('filter', type);
     if (!isSilent) {
-      this._addHistory(type !== 'mask' ? 'filter' : 'mask');
+      this._addHistory(`apply ${getFilterType(type, options)}`);
     }
 
     return this[executeMethodName](commands.APPLY_FILTER, type, options);

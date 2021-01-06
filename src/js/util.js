@@ -364,3 +364,24 @@ export function getObjectType(type) {
       return type;
   }
 }
+
+/**
+ * Get filter type
+ * @param {string} type - fabric filter type
+ * @param {object} [options] - filter type options
+ *   @param {boolean} [options.useAlpha] - usage of alpha(false is 'remove white', undefined is 'color filter')
+ *   @param {string} [options.mode] - mode of blendColor
+ * @returns {string} type of filter (ex: sepia, blur, ...)
+ */
+export function getFilterType(type, { useAlpha, mode }) {
+  switch (type) {
+    case 'vintage':
+      return 'sepia2';
+    case 'removeColor':
+      return useAlpha === false ? 'removeWhite' : 'colorFilter';
+    case 'blendColor':
+      return mode === 'add' ? 'blend' : mode;
+    default:
+      return type;
+  }
+}
