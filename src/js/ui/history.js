@@ -47,6 +47,7 @@ class History extends Panel {
   init() {
     this.deleteListItemElement(1, this.getListLength());
     this._historyIndex = 0;
+    this._selectItem(this._historyIndex);
   }
 
   /**
