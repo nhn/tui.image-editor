@@ -225,7 +225,7 @@ export default {
     return extend(
       {
         loadImageFromURL: (imgUrl, file) => {
-          this._addHistory('load');
+          this._addHistory('load mask image');
 
           return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
             this.addImageObject(imgUrl).then(() => {

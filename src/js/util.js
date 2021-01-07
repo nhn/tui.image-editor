@@ -428,7 +428,7 @@ export function getCommandName(command) {
     case 'addText':
       return `add ${args[1]}`;
     case 'applyFilter':
-      return `apply ${getFilterType(args[1], args[2])} filter`;
+      return `apply ${getFilterType(args[1], args[2])}`;
     case 'removeFilter':
       return 'remove filter';
     case 'changeShape':
@@ -439,6 +439,8 @@ export function getCommandName(command) {
       return 'change text';
     case 'clearObjects':
       return 'delete all';
+    case 'addImageObject':
+      return 'add mask image';
 
     default:
       return 'default';
