@@ -141,7 +141,9 @@ class Panel {
    * @param {string} className - class name to add
    */
   addClass(index, className) {
-    this.items[index].classList.add(className);
+    if (this.items[index]) {
+      this.items[index].classList.add(className);
+    }
   }
 
   /**
@@ -150,7 +152,9 @@ class Panel {
    * @param {string} className - class name to remove
    */
   removeClass(index, className) {
-    this.items[index].classList.remove(className);
+    if (this.items[index]) {
+      this.items[index].classList.remove(className);
+    }
   }
 
   /**
@@ -159,7 +163,9 @@ class Panel {
    * @param {string} className - class name to remove
    */
   toggleClass(index, className) {
-    this.items[index].classList.toggle(className);
+    if (this.items[index]) {
+      this.items[index].classList.toggle(className);
+    }
   }
 
   /**

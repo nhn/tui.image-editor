@@ -43,10 +43,11 @@ class Invoker {
   /**
    * Invoke command execution
    * @param {Command} command - Command
+   * @param {boolean} [isRedo=false] - check if command is redo
    * @returns {Promise}
    * @private
    */
-  _invokeExecution(command) {
+  _invokeExecution(command, isRedo = false) {
     this.lock();
 
     let { args } = command;
@@ -59,6 +60,10 @@ class Invoker {
       .then((value) => {
         if (!this._isSilent) {
           this.pushUndoStack(command);
+
+          if (!isRedo) {
+            this.fire(eventNames.EXECUTE_COMMAND, command);
+          }
         }
         this.unlock();
         if (isFunction(command.executeCallback)) {
@@ -215,7 +220,7 @@ class Invoker {
       if (this.isEmptyRedoStack()) {
         this._fireRedoStackChanged();
       }
-      promise = this._invokeExecution(command);
+      promise = this._invokeExecution(command, true);
     } else {
       message = rejectMessages.redo;
       if (this._isLocked) {
@@ -233,9 +238,6 @@ class Invoker {
    * @param {boolean} [isSilent] - Fire event or not
    */
   pushUndoStack(command, isSilent) {
-    console.log('push');
-    this.fire('test', command, isSilent);
-
     this._undoStack.push(command);
     if (!isSilent) {
       this._fireUndoStackChanged();

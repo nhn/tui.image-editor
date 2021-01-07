@@ -369,19 +369,78 @@ export function getObjectType(type) {
  * Get filter type
  * @param {string} type - fabric filter type
  * @param {object} [options] - filter type options
- *   @param {boolean} [options.useAlpha] - usage of alpha(false is 'remove white', undefined is 'color filter')
+ *   @param {boolean} [options.useAlpha=true] - usage of alpha(true is 'color filter', false is 'remove white')
  *   @param {string} [options.mode] - mode of blendColor
  * @returns {string} type of filter (ex: sepia, blur, ...)
  */
-export function getFilterType(type, { useAlpha, mode }) {
+function getFilterType(type, { useAlpha = true, mode }) {
   switch (type) {
     case 'vintage':
       return 'sepia2';
     case 'removeColor':
-      return useAlpha === false ? 'removeWhite' : 'colorFilter';
+      return useAlpha ? 'colorFilter' : 'removeWhite';
     case 'blendColor':
       return mode === 'add' ? 'blend' : mode;
     default:
       return type;
+  }
+}
+
+/**
+ * Check if command is silent command
+ * @param {Command|string} command - command or command name
+ * @returns {boolean}
+ */
+export function isSilentCommand(command) {
+  if (typeof command === 'string') {
+    return command === 'loadImage' || command === 'changeSelection';
+  }
+
+  const { name } = command;
+
+  switch (name) {
+    case 'loadImage':
+    case 'changeSelection':
+    case 'removeObject':
+      return true;
+    default:
+      return false;
+  }
+}
+
+/**
+ * Get command name
+ * @param {Command|string} command - command or command name
+ * @returns {string}
+ */
+export function getCommandName(command) {
+  if (typeof command === 'string') {
+    return command;
+  }
+
+  const { name, args } = command;
+
+  switch (name) {
+    case 'flip':
+      return `${name} ${args[1]}`;
+    case 'rotate':
+      return `${name} ${args[2]}`;
+    case 'addText':
+      return `add ${args[1]}`;
+    case 'applyFilter':
+      return `apply ${getFilterType(args[1], args[2])} filter`;
+    case 'removeFilter':
+      return 'remove filter';
+    case 'changeShape':
+      return 'change shape';
+    case 'changeIconColor':
+      return 'change icon';
+    case 'changeTextStyle':
+      return 'change text';
+    case 'clearObjects':
+      return 'delete all';
+
+    default:
+      return 'default';
   }
 }

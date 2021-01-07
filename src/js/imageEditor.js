@@ -8,7 +8,7 @@ import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import { sendHostName, Promise, getObjectType, getFilterType } from './util';
+import { sendHostName, Promise, getObjectType, isSilentCommand, getCommandName } from './util';
 import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from './consts';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from './helper/selectionModifyHelper';
 
@@ -273,7 +273,7 @@ class ImageEditor {
    * @private
    */
   _attachInvokerEvents() {
-    const { UNDO_STACK_CHANGED, REDO_STACK_CHANGED } = events;
+    const { UNDO_STACK_CHANGED, REDO_STACK_CHANGED, EXECUTE_COMMAND } = events;
 
     /**
      * Undo stack changed event
@@ -295,6 +295,8 @@ class ImageEditor {
      * });
      */
     this._invoker.on(REDO_STACK_CHANGED, this.fire.bind(this, REDO_STACK_CHANGED));
+
+    this._invoker.on(EXECUTE_COMMAND, this._addHistory.bind(this));
   }
 
   /**
@@ -578,11 +580,11 @@ class ImageEditor {
 
   /**
    * Add history
-   * @param {string} history - history of command
+   * @param {Command|string} command - command or command name
    */
-  _addHistory(history) {
-    if (this.ui) {
-      this.ui.addHistory(history);
+  _addHistory(command) {
+    if (this.ui && !isSilentCommand(command)) {
+      this.ui.addHistory(getCommandName(command));
     }
   }
 
@@ -634,12 +636,6 @@ class ImageEditor {
     const theArgs = [this._graphics].concat(args);
 
     return this._invoker.execute(commandName, ...theArgs);
-  }
-
-  test() {
-    this._invoker.on('test', (a, b) => {
-      console.log('test', a, b);
-    });
   }
 
   /**
@@ -851,8 +847,6 @@ class ImageEditor {
    * });
    */
   flipX() {
-    this._addHistory('flip X');
-
     return this._flip('flipX');
   }
 
@@ -869,8 +863,6 @@ class ImageEditor {
    * });
    */
   flipY() {
-    this._addHistory('flip Y');
-
     return this._flip('flipY');
   }
 
@@ -887,8 +879,6 @@ class ImageEditor {
    * });;
    */
   resetFlip() {
-    this._addHistory('flip reset');
-
     return this._flip('reset');
   }
 
@@ -905,7 +895,6 @@ class ImageEditor {
     if (isSilent) {
       result = this.executeSilent(commands.ROTATE_IMAGE, type, angle);
     } else {
-      this._addHistory(`rotate ${angle}`);
       result = this.execute(commands.ROTATE_IMAGE, type, angle);
     }
 
@@ -1088,7 +1077,6 @@ class ImageEditor {
     options = options || {};
 
     this._setPositions(options);
-    this._addHistory('add shape');
 
     return this.execute(commands.ADD_SHAPE, type, options);
   }
@@ -1129,10 +1117,6 @@ class ImageEditor {
    */
   changeShape(id, options, isSilent) {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
-
-    if (!isSilent) {
-      this._addHistory('change shape');
-    }
 
     return this[executeMethodName](commands.CHANGE_SHAPE, id, options);
   }
@@ -1210,10 +1194,6 @@ class ImageEditor {
    */
   changeTextStyle(id, styleObj, isSilent) {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
-
-    if (!isSilent) {
-      this._addHistory('change text');
-    }
 
     return this[executeMethodName](commands.CHANGE_TEXT_STYLE, id, styleObj);
   }
@@ -1299,7 +1279,6 @@ class ImageEditor {
      *     console.log('text position on brwoser: ' + pos.clientPosition);
      * });
      */
-    this._addHistory('add text');
 
     this.fire(events.ADD_TEXT, {
       originPosition: event.originPosition,
@@ -1429,8 +1408,6 @@ class ImageEditor {
    * imageEditor.changeIconColor(id, '#000000');
    */
   changeIconColor(id, color) {
-    this._addHistory('change icon');
-
     return this.execute(commands.CHANGE_ICON_COLOR, id, color);
   }
 
@@ -1470,8 +1447,6 @@ class ImageEditor {
    * });
    */
   removeFilter(type) {
-    this._addHistory('remove filter');
-
     return this.execute(commands.REMOVE_FILTER, type);
   }
 
@@ -1493,10 +1468,6 @@ class ImageEditor {
    */
   applyFilter(type, options, isSilent) {
     const executeMethodName = isSilent ? 'executeSilent' : 'execute';
-
-    if (!isSilent) {
-      this._addHistory(`apply ${getFilterType(type, options)}`);
-    }
 
     return this[executeMethodName](commands.APPLY_FILTER, type, options);
   }

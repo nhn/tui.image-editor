@@ -129,6 +129,7 @@ export const eventNames = {
   UNDO_STACK_CHANGED: 'undoStackChanged',
   SELECTION_CLEARED: 'selectionCleared',
   SELECTION_CREATED: 'selectionCreated',
+  EXECUTE_COMMAND: 'executeCommand',
 };
 
 /**

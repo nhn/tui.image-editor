@@ -56,7 +56,7 @@ export default {
     return extend(
       {
         initLoadImage: (imagePath, imageName) => {
-          this._addHistory('load');
+          this._addHistory('load image');
 
           return this.loadImageFromURL(imagePath, imageName).then((sizeValue) => {
             exitCropOnAction();
