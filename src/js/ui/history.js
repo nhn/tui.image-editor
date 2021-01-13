@@ -1,6 +1,5 @@
 import Panel from './panelMenu';
 import { assignmentForDestroy } from '../util';
-import templateHtml from './template/submenu/crop';
 
 const historyClassName = 'history-item';
 const selectedClassName = 'selected-item';
@@ -12,14 +11,8 @@ const disabledClassName = 'disabled-item';
  * @ignore
  */
 class History extends Panel {
-  constructor(menuElement, { locale, makeSvgIcon, usageStatistics }) {
-    super(menuElement, {
-      name: 'history',
-      locale,
-      makeSvgIcon,
-      templateHtml,
-      usageStatistics,
-    });
+  constructor(menuElement) {
+    super(menuElement, { name: 'history' });
 
     this._eventHandler = {};
     this._historyIndex = this.getListLength();
@@ -108,21 +101,19 @@ class History extends Panel {
     const { target } = event;
     const item = target.closest(`.${historyClassName}`);
 
-    if (item) {
-      const index = Number.parseInt(item.getAttribute('data-index'), 10);
+    if (!item) {
+      return;
+    }
 
-      if (index !== this._historyIndex) {
-        this._toggleItems(index, this._historyIndex);
+    const index = Number.parseInt(item.getAttribute('data-index'), 10);
 
-        const count = Math.abs(index - this._historyIndex);
+    if (index !== this._historyIndex) {
+      const count = Math.abs(index - this._historyIndex);
 
-        if (index < this._historyIndex) {
-          this._actions.undo(count);
-        } else {
-          this._actions.redo(count);
-        }
-
-        this._historyIndex = index;
+      if (index < this._historyIndex) {
+        this._actions.undo(count);
+      } else {
+        this._actions.redo(count);
       }
     }
   }
@@ -134,23 +125,12 @@ class History extends Panel {
   _selectItem(index) {
     for (let i = 0; i < this.getListLength(); i += 1) {
       this.removeClass(i, selectedClassName);
+      this.removeClass(i, disabledClassName);
+      if (i > index) {
+        this.addClass(i, disabledClassName);
+      }
     }
     this.addClass(index, selectedClassName);
-  }
-
-  /**
-   * Toggle item's state to unselected state
-   * @param {number} start - start index to toggle class name
-   * @param {number} end - end index to toggle class name
-   */
-  _toggleItems(start, end) {
-    if (start > end) {
-      [start, end] = [end, start];
-    }
-
-    for (let i = start + 1; i <= end; i += 1) {
-      this.toggleClass(i, disabledClassName);
-    }
   }
 
   /**

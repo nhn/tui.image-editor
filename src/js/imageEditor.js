@@ -8,8 +8,14 @@ import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import { sendHostName, Promise, getObjectType, isSilentCommand, getCommandName } from './util';
-import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from './consts';
+import { sendHostName, Promise, getObjectType } from './util';
+import {
+  eventNames as events,
+  commandNames as commands,
+  keyCodes,
+  rejectMessages,
+  eventNames,
+} from './consts';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from './helper/selectionModifyHelper';
 
 const { isUndefined, forEach, CustomEvents } = snippet;
@@ -273,7 +279,13 @@ class ImageEditor {
    * @private
    */
   _attachInvokerEvents() {
-    const { UNDO_STACK_CHANGED, REDO_STACK_CHANGED, EXECUTE_COMMAND } = events;
+    const {
+      UNDO_STACK_CHANGED,
+      REDO_STACK_CHANGED,
+      EXECUTE_COMMAND,
+      AFTER_UNDO,
+      AFTER_REDO,
+    } = events;
 
     /**
      * Undo stack changed event
@@ -296,7 +308,11 @@ class ImageEditor {
      */
     this._invoker.on(REDO_STACK_CHANGED, this.fire.bind(this, REDO_STACK_CHANGED));
 
-    this._invoker.on(EXECUTE_COMMAND, this._addHistory.bind(this));
+    if (this.ui) {
+      this._invoker.on(EXECUTE_COMMAND, (command) => this.ui.fire(EXECUTE_COMMAND, command));
+      this._invoker.on(AFTER_UNDO, (command) => this.ui.fire(AFTER_UNDO, command));
+      this._invoker.on(AFTER_REDO, (command) => this.ui.fire(AFTER_REDO, command));
+    }
   }
 
   /**
@@ -579,16 +595,6 @@ class ImageEditor {
   }
 
   /**
-   * Add history
-   * @param {Command|string} command - command or command name
-   */
-  _addHistory(command) {
-    if (this.ui && !isSilentCommand(command)) {
-      this.ui.addHistory(getCommandName(command));
-    }
-  }
-
-  /**
    * Init history
    */
   _initHistory() {
@@ -603,24 +609,6 @@ class ImageEditor {
   _clearHistory() {
     if (this.ui) {
       this.ui.clearHistory();
-    }
-  }
-
-  /**
-   * Select previous history of current selected history
-   */
-  _selectPrevHistory() {
-    if (this.ui) {
-      this.ui.selectPrevHistory();
-    }
-  }
-
-  /**
-   * Select next history of current selected history
-   */
-  _selectNextHistory() {
-    if (this.ui) {
-      this.ui.selectNextHistory();
     }
   }
 
@@ -654,16 +642,15 @@ class ImageEditor {
 
   /**
    * Undo
-   * @param {number} [count=1] - count of undo
+   * @param {number} [iterationCount=1] - Iteration count of undo
    * @returns {Promise}
    * @example
    * imageEditor.undo();
    */
-  undo(count = 1) {
+  undo(iterationCount = 1) {
     let promise = Promise.resolve();
 
-    for (let i = 0; i < count; i += 1) {
-      this._selectPrevHistory();
+    for (let i = 0; i < iterationCount; i += 1) {
       promise = promise.then(() => this._invoker.undo());
     }
 
@@ -672,16 +659,15 @@ class ImageEditor {
 
   /**
    * Redo
-   * @param {number} [count=1] - count of undo
+   * @param {number} [iterationCount=1] - Iteration count of redo
    * @returns {Promise}
    * @example
    * imageEditor.redo();
    */
-  redo(count = 1) {
+  redo(iterationCount = 1) {
     let promise = Promise.resolve();
 
-    for (let i = 0; i < count; i += 1) {
-      this._selectNextHistory();
+    for (let i = 0; i < iterationCount; i += 1) {
       promise = promise.then(() => this._invoker.redo());
     }
 
@@ -1293,7 +1279,7 @@ class ImageEditor {
    */
   _onAddObject(objectProps) {
     const obj = this._graphics.getObject(objectProps.id);
-    this._addHistory(`add ${getObjectType(obj.type)}`);
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, `add ${getObjectType(obj.type)}`);
     this._pushAddObjectCommand(obj);
   }
 
@@ -1329,7 +1315,7 @@ class ImageEditor {
    * @private
    */
   _onObjectModified(obj) {
-    this._addHistory(`change ${getObjectType(obj.type)}`);
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, `change ${getObjectType(obj.type)}`);
     this._pushModifyObjectCommand(obj);
   }
 
@@ -1420,7 +1406,7 @@ class ImageEditor {
    */
   removeObject(id) {
     const { type } = this._graphics.getObject(id);
-    this._addHistory(`remove ${getObjectType(type)}`);
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, `remove ${getObjectType(type)}`);
 
     return this.execute(commands.REMOVE_OBJECT, id);
   }

@@ -61,9 +61,7 @@ class Invoker {
         if (!this._isSilent) {
           this.pushUndoStack(command);
 
-          if (!isRedo) {
-            this.fire(eventNames.EXECUTE_COMMAND, command);
-          }
+          this.fire(isRedo ? eventNames.AFTER_REDO : eventNames.EXECUTE_COMMAND, command);
         }
         this.unlock();
         if (isFunction(command.executeCallback)) {
@@ -97,6 +95,7 @@ class Invoker {
       .undo(...args)
       .then((value) => {
         this.pushRedoStack(command);
+        this.fire(eventNames.AFTER_UNDO, command);
         this.unlock();
         if (isFunction(command.undoCallback)) {
           command.undoCallback(value);

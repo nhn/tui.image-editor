@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
-import { HELP_MENUS } from './consts';
-import { getSelector, assignmentForDestroy, cls } from './util';
+import { HELP_MENUS, eventNames } from './consts';
+import { getSelector, assignmentForDestroy, cls, getHistoryTitle, isSilentCommand } from './util';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
 
@@ -28,6 +28,8 @@ const SUB_UI_COMPONENT = {
   Draw,
   Filter,
 };
+
+const { CustomEvents } = snippet;
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 
@@ -68,6 +70,8 @@ class Ui {
     this._initMenuEvent = false;
 
     this._makeSubMenu();
+
+    this._attachHistoryEvent();
   }
 
   /**
@@ -244,6 +248,16 @@ class Ui {
   }
 
   /**
+   * Attach history event
+   * @private
+   */
+  _attachHistoryEvent() {
+    this.on(eventNames.EXECUTE_COMMAND, this._addHistory.bind(this));
+    this.on(eventNames.AFTER_UNDO, this._selectPrevHistory.bind(this));
+    this.on(eventNames.AFTER_REDO, this._selectNextHistory.bind(this));
+  }
+
+  /**
    * Make primary ui dom element
    * @param {string|HTMLElement} element - Wrapper's element or selector
    * @private
@@ -293,11 +307,7 @@ class Ui {
 
     this._addHelpMenus();
 
-    this._historyMenu = new History(this._menuElement, {
-      locale: this._locale,
-      makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
-      usageStatistics: this.options.usageStatistics,
-    });
+    this._historyMenu = new History(this._menuElement);
   }
 
   /**
@@ -387,10 +397,14 @@ class Ui {
 
   /**
    * Add history
-   * @param {string} title - history title
+   * @param {Command|string} command - command or command name
    */
-  addHistory(title) {
-    this._historyMenu.add(title);
+  _addHistory(command) {
+    if (!isSilentCommand(command)) {
+      const historyTitle = typeof command === 'string' ? command : getHistoryTitle(command);
+
+      this._historyMenu.add(historyTitle);
+    }
   }
 
   /**
@@ -410,14 +424,14 @@ class Ui {
   /**
    * Select prev history
    */
-  selectPrevHistory() {
+  _selectPrevHistory() {
     this._historyMenu.prev();
   }
 
   /**
    * Select next history
    */
-  selectNextHistory() {
+  _selectNextHistory() {
     this._historyMenu.next();
   }
 
@@ -721,5 +735,7 @@ class Ui {
     editorElementStyle.left = `${left}px`;
   }
 }
+
+CustomEvents.mixin(Ui);
 
 export default Ui;

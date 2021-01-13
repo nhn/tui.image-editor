@@ -11,24 +11,13 @@ class Panel {
    * @param {HTMLElement} menuElement - menu dom element
    * @param {Object} options - menu options
    *   @param {string} options.name - name of panel menu
-   *   @param {Locale} options.locale - translate text
-   *   @param {Function} options.makeSvgIcon - svg icon generator
-   *   @param {*} options.templateHtml - template for MenuPanelElement
-   *   @param {boolean} [options.usageStatistics=false] - Use statistics or not
    */
-  constructor(menuElement, { name, locale, makeSvgIcon, templateHtml, usageStatistics = false }) {
+  constructor(menuElement, { name }) {
     this.name = name;
     this.items = [];
 
     this.panelElement = this._makePanelElement();
     this.listElement = this._makeListElement();
-    this.usageStatistics = usageStatistics;
-    // this._makeMenuElement({
-    //   locale,
-    //   name,
-    //   makeSvgIcon,
-    //   templateHtml,
-    // });
 
     this.panelElement.appendChild(this.listElement);
     menuElement.appendChild(this.panelElement);
@@ -42,22 +31,26 @@ class Panel {
     const panel = document.createElement('div');
     const panelTitle = document.createElement('div');
 
-    panel.style.backgroundColor = '#171719'; // temp
-    panel.style.color = '#fff'; // temp
-    panel.style.position = 'absolute'; // temp
-    panel.style.border = '1px solid #fff'; // temp
-    panel.style.width = '240px'; // temp
-    panel.style.height = '270px'; // temp
-    panel.style.right = '0'; // temp
-    panel.style.bottom = '300px'; // temp
     panel.className = `tie-panel-${this.name}`; // @TODO: className
+    panel.style.cssText = `
+      background-color: #171719;
+      color: #fff;
+      position: absolute;
+      border: 1px solid #fff;
+      width: 240px;
+      height: 270px;
+      right: 0;
+      bottom: 300px;
+    `;
 
-    panelTitle.innerText = toCamelCase(this.name);
-    panelTitle.style.width = '240px'; // temp
-    panelTitle.style.height = '30px'; // temp
-    panelTitle.style.borderBottom = '1px solid #fff'; // temp
-    panelTitle.style.textAlign = 'center'; // temp
-    panelTitle.style.lineHeight = '30px'; // temp
+    panelTitle.style.cssText = `
+      width: 240px;
+      height: 30px;
+      border-bottom: 1px solid #fff;
+      text-align: center;
+      line-height: 30px;
+    `;
+    panelTitle.innerText = toCamelCase(this.name.replace(' ', ''));
 
     panel.appendChild(panelTitle);
 
@@ -72,13 +65,14 @@ class Panel {
   _makeListElement() {
     const list = document.createElement('ol');
 
-    list.style.width = '240px'; // temp
-    list.style.height = '240px'; // temp
-    list.style.padding = '0'; // temp
-    list.style.overflowX = 'hidden'; // temp
-    list.style.overflowY = 'scroll'; // temp
-    list.style.listStyle = 'none'; // temp
-
+    list.style.cssText = `
+      width: 240px;
+      height: 240px;
+      padding: 0;
+      overflow-x: hidden;
+      overflow-y: scroll;
+      list-style: none;
+    `;
     list.className = `${this.name}`; // @TODO: className
 
     return list;
@@ -92,11 +86,12 @@ class Panel {
   makeListItemElement(title) {
     const listItem = document.createElement('li');
 
-    listItem.style.height = '30px'; // temp
-    listItem.style.lineHeight = '30px'; // temp
-    listItem.style.paddingLeft = '10px'; // temp
-    listItem.style.textAlign = 'left'; // temp
-
+    listItem.style.cssText = `
+      height: 30px;
+      line-height: 30px;
+      padding-left: 10px;
+      text-align: left;
+    `;
     listItem.innerHTML = `<span>${title}</span>`; // @TODO : change to makeSvg function
     listItem.className = `${this.name}-item ${this.name}-${title}`; // @TODO : change to makeSvg function
     listItem.setAttribute('data-index', this.items.length);
@@ -166,27 +161,6 @@ class Panel {
     if (this.items[index]) {
       this.items[index].classList.toggle(className);
     }
-  }
-
-  /**
-   * Make menu dom element
-   * @param {Object} options - menu element options
-   *   @param {Locale} options.locale - translate text
-   *   @param {Object} options.iconStyle -  icon style
-   *   @param {Function} options.makeSvgIcon - svg icon generator
-   *   @param {*} options.templateHtml - template for SubMenuElement
-   * @private
-   */
-  _makeMenuElement({ locale, iconStyle, makeSvgIcon, templateHtml }) {
-    const iconSubMenu = document.createElement('div');
-    iconSubMenu.className = `tui-image-editor-menu-${this.name}`;
-    iconSubMenu.innerHTML = templateHtml({
-      locale,
-      iconStyle,
-      makeSvgIcon,
-    });
-
-    this.panelElement.appendChild(iconSubMenu);
   }
 }
 

@@ -4,7 +4,7 @@
  */
 import { forEach, sendHostname, extend, isString, pick, inArray } from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
-import { SHAPE_FILL_TYPE, SHAPE_TYPE } from './consts';
+import { commandNames, filterType, historyNames, SHAPE_FILL_TYPE, SHAPE_TYPE } from './consts';
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
 const { min, max } = Math;
@@ -350,11 +350,11 @@ export function isShape(obj) {
  * @returns {string} type of object (ex: shape, icon, ...)
  */
 export function getObjectType(type) {
+  if (includes(SHAPE_TYPE, type)) {
+    return 'shape';
+  }
+
   switch (type) {
-    case 'rect':
-    case 'circle':
-    case 'triangle':
-      return 'shape';
     case 'i-text':
       return 'text';
     case 'path':
@@ -374,13 +374,23 @@ export function getObjectType(type) {
  * @returns {string} type of filter (ex: sepia, blur, ...)
  */
 function getFilterType(type, { useAlpha = true, mode }) {
+  const {
+    VINTAGE,
+    REMOVE_COLOR,
+    BLEND_COLOR,
+    SEPIA2,
+    COLOR_FILTER,
+    REMOVE_WHITE,
+    BLEND,
+  } = filterType;
+
   switch (type) {
-    case 'vintage':
-      return 'sepia2';
-    case 'removeColor':
-      return useAlpha ? 'colorFilter' : 'removeWhite';
-    case 'blendColor':
-      return mode === 'add' ? 'blend' : mode;
+    case VINTAGE:
+      return SEPIA2;
+    case REMOVE_COLOR:
+      return useAlpha ? COLOR_FILTER : REMOVE_WHITE;
+    case BLEND_COLOR:
+      return mode === 'add' ? BLEND : mode;
     default:
       return type;
   }
@@ -392,20 +402,15 @@ function getFilterType(type, { useAlpha = true, mode }) {
  * @returns {boolean}
  */
 export function isSilentCommand(command) {
+  const { LOAD_IMAGE, CHANGE_SELECTION, REMOVE_OBJECT } = commandNames;
+
   if (typeof command === 'string') {
-    return command === 'loadImage' || command === 'changeSelection';
+    return includes([LOAD_IMAGE, CHANGE_SELECTION], command);
   }
 
   const { name } = command;
 
-  switch (name) {
-    case 'loadImage':
-    case 'changeSelection':
-    case 'removeObject':
-      return true;
-    default:
-      return false;
-  }
+  return includes([LOAD_IMAGE, CHANGE_SELECTION, REMOVE_OBJECT], name);
 }
 
 /**
@@ -413,36 +418,45 @@ export function isSilentCommand(command) {
  * @param {Command|string} command - command or command name
  * @returns {string}
  */
-export function getCommandName(command) {
-  if (typeof command === 'string') {
-    return command;
-  }
-
+// eslint-disable-next-line complexity, require-jsdoc
+export function getHistoryTitle(command) {
+  const {
+    FLIP_IMAGE,
+    ROTATE_IMAGE,
+    ADD_TEXT,
+    APPLY_FILTER,
+    REMOVE_FILTER,
+    CHANGE_SHAPE,
+    CHANGE_ICON_COLOR,
+    CHANGE_TEXT_STYLE,
+    CLEAR_OBJECTS,
+    ADD_IMAGE_OBJECT,
+  } = commandNames;
   const { name, args } = command;
 
   switch (name) {
-    case 'flip':
+    case FLIP_IMAGE:
       return `${name} ${args[1]}`;
-    case 'rotate':
+    case ROTATE_IMAGE:
       return `${name} ${args[2]}`;
-    case 'addText':
+    case ADD_TEXT:
       return `add ${args[1]}`;
-    case 'applyFilter':
+    case APPLY_FILTER:
       return `apply ${getFilterType(args[1], args[2])}`;
-    case 'removeFilter':
-      return 'remove filter';
-    case 'changeShape':
-      return 'change shape';
-    case 'changeIconColor':
-      return 'change icon';
-    case 'changeTextStyle':
-      return 'change text';
-    case 'clearObjects':
-      return 'delete all';
-    case 'addImageObject':
-      return 'add mask image';
+    case REMOVE_FILTER:
+      return historyNames.REMOVE_FILTER;
+    case CHANGE_SHAPE:
+      return historyNames.CHANGE_SHAPE;
+    case CHANGE_ICON_COLOR:
+      return historyNames.CHANGE_ICON;
+    case CHANGE_TEXT_STYLE:
+      return historyNames.CHANGE_TEXT;
+    case CLEAR_OBJECTS:
+      return historyNames.DELETE_ALL;
+    case ADD_IMAGE_OBJECT:
+      return historyNames.ADD_MASK_IMAGE;
 
     default:
-      return 'default';
+      return name;
   }
 }

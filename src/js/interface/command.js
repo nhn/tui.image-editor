@@ -84,7 +84,7 @@ class Command {
    * @returns {boolean} isRedo
    */
   get isRedo() {
-    return !!Object.keys(this.undoData).length;
+    return Object.keys(this.undoData).length > 0;
   }
 
   /**

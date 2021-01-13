@@ -11,15 +11,6 @@ import { keyMirror } from './util';
 export const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
 
 /**
- * Filter name value map
- * @type {Object.<string, string>}
- */
-export const FILTER_NAME_VALUE_MAP = {
-  blur: 'blur',
-  blocksize: 'pixelate',
-};
-
-/**
  * Fill type for shape
  * @type {Object.<string, string>}
  */
@@ -33,6 +24,20 @@ export const SHAPE_FILL_TYPE = {
  * @type {Array.<string>}
  */
 export const SHAPE_TYPE = ['rect', 'circle', 'triangle'];
+
+/**
+ * Filter type map
+ * @type {Object.<string, string>}
+ */
+export const filterType = {
+  VINTAGE: 'vintage',
+  SEPIA2: 'sepia2',
+  REMOVE_COLOR: 'removeColor',
+  COLOR_FILTER: 'colorFilter',
+  REMOVE_WHITE: 'removeWhite',
+  BLEND_COLOR: 'blendColor',
+  BLEND: 'blend',
+};
 
 /**
  * Component names
@@ -130,6 +135,24 @@ export const eventNames = {
   SELECTION_CLEARED: 'selectionCleared',
   SELECTION_CREATED: 'selectionCreated',
   EXECUTE_COMMAND: 'executeCommand',
+  AFTER_UNDO: 'afterUndo',
+  AFTER_REDO: 'afterRedo',
+};
+
+/**
+ * History names
+ * @type {Object.<string, string>}
+ */
+export const historyNames = {
+  LOAD_IMAGE: 'load image',
+  LOAD_MASK_IMAGE: 'load mask image',
+  CROP: 'crop',
+  REMOVE_FILTER: 'remove filter',
+  CHANGE_SHAPE: 'change shape',
+  CHANGE_ICON: 'change icon',
+  CHANGE_TEXT: 'change text',
+  DELETE_ALL: 'delete all',
+  ADD_MASK_IMAGE: 'add mask image',
 };
 
 /**

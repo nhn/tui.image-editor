@@ -54,12 +54,10 @@ describe('history', () => {
 
     it('should nothing when index is the same as historyIndex', () => {
       spyOn(history, '_selectItem');
-      spyOn(history, '_toggleItems');
 
       history._clickHistoryItem({ target });
 
       expect(history._selectItem).not.toHaveBeenCalled();
-      expect(history._toggleItems).not.toHaveBeenCalled();
     });
 
     it('should undo action when is index less than historyIndex', () => {
@@ -67,7 +65,6 @@ describe('history', () => {
       history.add('index2');
       history._clickHistoryItem({ target });
 
-      expect(history._historyIndex).toBe(1);
       expect(history._actions.undo).toHaveBeenCalledTimes(1);
     });
 
@@ -79,7 +76,6 @@ describe('history', () => {
       target.setAttribute('data-index', 2);
       history._clickHistoryItem({ target });
 
-      expect(history._historyIndex).toBe(2);
       expect(history._actions.redo).toHaveBeenCalledTimes(1);
     });
   });
@@ -103,36 +99,7 @@ describe('history', () => {
 
       expect(history.addClass).toHaveBeenCalledTimes(1);
       expect(history.addClass).toHaveBeenCalledWith(index, 'selected-item');
-      expect(history.removeClass).toHaveBeenCalledTimes(listLength);
-    });
-  });
-
-  describe('_toggleItems', () => {
-    let start;
-    let end;
-
-    beforeEach(() => {
-      for (let i = 0; i < 10; i += 1) {
-        history.add(`${i}`);
-      }
-      start = 3;
-      end = 7;
-    });
-
-    it('should toggle items when start is less than end', () => {
-      spyOn(history, 'toggleClass');
-
-      history._toggleItems(start, end);
-
-      expect(history.toggleClass).toHaveBeenCalledTimes(end - start);
-    });
-
-    it('should toggle items when start is greater than end', () => {
-      spyOn(history, 'toggleClass');
-
-      history._toggleItems(end, start);
-
-      expect(history.toggleClass).toHaveBeenCalledTimes(end - start);
+      expect(history.removeClass).toHaveBeenCalledTimes(listLength * 2);
     });
   });
 
