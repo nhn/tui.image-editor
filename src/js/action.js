@@ -20,6 +20,7 @@ export default {
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
+      zoom: this._zoomAction(),
     };
   },
 
@@ -295,6 +296,42 @@ export default {
   },
 
   /**
+   * Zoom Action
+   * @returns {Object} actions for ui zoom
+   * @private
+   */
+  _zoomAction() {
+    return extend(
+      {
+        zoom: () => {
+          this.stopDrawingMode();
+
+          const graphics = this._graphics;
+
+          graphics.startZoom();
+        },
+        zoomOut: () => {
+          this.stopDrawingMode();
+
+          const graphics = this._graphics;
+
+          graphics.stopZoom();
+          graphics.zoomOut();
+        },
+        hand: () => {
+          this.stopDrawingMode();
+
+          const graphics = this._graphics;
+
+          graphics.stopZoom();
+          graphics.startHandMode();
+        },
+      },
+      this._commonAction()
+    );
+  },
+
+  /**
    * Crop Action
    * @returns {Object} actions for ui crop
    * @private
@@ -511,6 +548,9 @@ export default {
           case 'shape':
             this._changeActivateMode('SHAPE');
             this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+            break;
+          case 'zoom':
+            this.startDrawingMode('ZOOM');
             break;
           default:
             break;

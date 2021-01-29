@@ -24,11 +24,8 @@ export { Promise };
  * @returns {number} clamped value
  */
 export function clamp(value, minValue, maxValue) {
-  let temp;
   if (minValue > maxValue) {
-    temp = minValue;
-    minValue = maxValue;
-    maxValue = temp;
+    [minValue, maxValue] = [maxValue, minValue];
   }
 
   return max(minValue, min(value, maxValue));

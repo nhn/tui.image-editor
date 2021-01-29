@@ -14,6 +14,7 @@ import Text from './component/text';
 import Icon from './component/icon';
 import Filter from './component/filter';
 import Shape from './component/shape';
+import Zoom from './component/zoom';
 import CropperDrawingMode from './drawingMode/cropper';
 import FreeDrawingMode from './drawingMode/freeDrawing';
 import LineDrawingMode from './drawingMode/lineDrawing';
@@ -437,6 +438,53 @@ class Graphics {
   }
 
   /**
+   * Zoom the canvas
+   * @param {{x: number, y: number}} center - center of zoom
+   * @param {number} zoomLevel - zoom level
+   */
+  zoom({ x, y }, zoomLevel) {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.zoom({ x, y }, zoomLevel);
+  }
+
+  /**
+   * Start zoom
+   */
+  startZoom() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.start();
+  }
+
+  /**
+   * Stop zoom
+   */
+  stopZoom() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.end();
+  }
+
+  /**
+   * Zoom out one step
+   */
+  zoomOut() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.zoomOut();
+  }
+
+  /**
+   * Start hand
+   */
+  startHandMode() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.startHandMode();
+  }
+
+  /**
    * To data url from canvas
    * @param {Object} options - options for toDataURL
    *   @param {String} [options.format=png] The format of the output image. Either "jpeg" or "png"
@@ -550,7 +598,6 @@ class Graphics {
   /**
    * Get fabric.Canvas instance
    * @returns {fabric.Canvas}
-   * @private
    */
   getCanvas() {
     return this._canvas;
@@ -911,6 +958,7 @@ class Graphics {
     this._register(this._componentMap, new Icon(this));
     this._register(this._componentMap, new Filter(this));
     this._register(this._componentMap, new Shape(this));
+    this._register(this._componentMap, new Zoom(this));
   }
 
   /**

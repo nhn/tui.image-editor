@@ -48,7 +48,8 @@ export const componentNames = keyMirror(
   'TEXT',
   'ICON',
   'FILTER',
-  'SHAPE'
+  'SHAPE',
+  'ZOOM'
 );
 
 /**
@@ -142,7 +143,8 @@ export const drawingModes = keyMirror(
   'LINE_DRAWING',
   'TEXT',
   'SHAPE',
-  'ICON'
+  'ICON',
+  'ZOOM'
 );
 
 /**
