@@ -53,7 +53,7 @@ class Submenu {
   }
 
   /**
-   * Get butten type
+   * Get button type
    * @param {HTMLElement} button - event target element
    * @param {array} buttonNames - Array of button names
    * @returns {string} - button type
