@@ -26,6 +26,20 @@ class Zoom extends Submenu {
   }
 
   /**
+   * Executed when the menu starts.
+   */
+  changeStartMode() {
+    this._actions.modeChange('zoom');
+  }
+
+  /**
+   * Returns the menu to its default state.
+   */
+  changeStandbyMode() {
+    this._actions.stopDrawingMode();
+  }
+
+  /**
    * Destroys the instance.
    */
   destroy() {
@@ -52,14 +66,7 @@ class Zoom extends Submenu {
    * @private
    */
   _removeEvent() {
-    // this._els.flipButton.removeEventListener('click', this.eventHandler.changeFlip);
-  }
-
-  /**
-   * Executed when the menu starts.
-   */
-  changeStartMode() {
-    this._actions.modeChange('zoom');
+    this._els.zoomButton.removeEventListener('click', this.eventHandler.changeZoom);
   }
 
   /**
@@ -75,7 +82,6 @@ class Zoom extends Submenu {
     }
 
     const zoomType = this.getButtonType(button, ['zoomIn', 'zoomOut', 'hand']);
-    console.log(zoomType);
 
     if (zoomType === 'zoomIn') {
       this._actions.zoom();

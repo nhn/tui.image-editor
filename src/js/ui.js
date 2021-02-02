@@ -574,7 +574,7 @@ class Ui {
   /**
    * change menu
    * @param {string} menuName - menu name
-   * @param {boolean} toggle - whether toogle or not
+   * @param {boolean} toggle - whether toggle or not
    * @param {boolean} discardSelection - discard selection
    * @private
    */

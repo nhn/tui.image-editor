@@ -21,6 +21,7 @@ import LineDrawingMode from './drawingMode/lineDrawing';
 import ShapeDrawingMode from './drawingMode/shape';
 import TextDrawingMode from './drawingMode/text';
 import IconDrawingMode from './drawingMode/icon';
+import ZoomDrawingMode from './drawingMode/zoom';
 import { getProperties, includes, isShape, Promise } from './util';
 import {
   componentNames as components,
@@ -449,18 +450,18 @@ class Graphics {
   }
 
   /**
-   * Start zoom
+   * Start zoom-in mode
    */
-  startZoom() {
+  startZoomInMode() {
     const zoom = this.getComponent(components.ZOOM);
 
-    zoom.start();
+    zoom.startZoomInMode();
   }
 
   /**
-   * Stop zoom
+   * Stop zoom-in mode
    */
-  stopZoom() {
+  endZoomInMode() {
     const zoom = this.getComponent(components.ZOOM);
 
     zoom.end();
@@ -482,6 +483,15 @@ class Graphics {
     const zoom = this.getComponent(components.ZOOM);
 
     zoom.startHandMode();
+  }
+
+  /**
+   * Stop hand
+   */
+  endHandMode() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.endHandMode();
   }
 
   /**
@@ -941,6 +951,7 @@ class Graphics {
     this._register(this._drawingModeMap, new ShapeDrawingMode());
     this._register(this._drawingModeMap, new TextDrawingMode());
     this._register(this._drawingModeMap, new IconDrawingMode());
+    this._register(this._drawingModeMap, new ZoomDrawingMode());
   }
 
   /**

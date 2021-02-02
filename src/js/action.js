@@ -304,26 +304,22 @@ export default {
     return extend(
       {
         zoom: () => {
-          this.stopDrawingMode();
-
           const graphics = this._graphics;
 
-          graphics.startZoom();
+          graphics.endHandMode();
+          graphics.startZoomInMode();
         },
         zoomOut: () => {
-          this.stopDrawingMode();
-
           const graphics = this._graphics;
 
-          graphics.stopZoom();
+          graphics.endZoomInMode();
+          graphics.endHandMode();
           graphics.zoomOut();
         },
         hand: () => {
-          this.stopDrawingMode();
-
           const graphics = this._graphics;
 
-          graphics.stopZoom();
+          graphics.endZoomInMode();
           graphics.startHandMode();
         },
       },

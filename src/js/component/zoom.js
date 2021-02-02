@@ -2,20 +2,12 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image zoom module (start zoom, end zoom)
  */
-import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import Component from '../interface/component';
-import { keyCodes, componentNames, CROPZONE_DEFAULT_OPTIONS } from '../consts';
-import { clamp, fixFloatingPoint } from '../util';
+import { componentNames } from '../consts';
+import { clamp } from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
-const DEFAULT_OPTION = {
-  presetRatio: null,
-  top: -10,
-  left: -10,
-  height: 1,
-  width: 1,
-};
 const DEFAULT_SCROLL_OPTION = {
   left: 0,
   top: 0,
@@ -29,8 +21,6 @@ const DEFAULT_SCROLL_OPTION = {
   hoverCursor: 'auto',
 };
 const DEFAULT_SCROLL_SIZE_RATIO = 0.01;
-
-const { extend } = snippet;
 
 /**
  * Zoom components
@@ -84,6 +74,7 @@ class Zoom extends Component {
     };
 
     const canvas = this.getCanvas();
+
     /**
      * Width:Height ratio (ex. width=1.5,height=1 -> aspectRatio=1.5)
      * @private
@@ -100,9 +91,9 @@ class Zoom extends Component {
   }
 
   /**
-   * Start zoom
+   * Start zoom-in mode
    */
-  start() {
+  startZoomInMode() {
     if (this.zoomArea) {
       return;
     }
@@ -132,9 +123,9 @@ class Zoom extends Component {
   }
 
   /**
-   * End zoom
+   * End zoom-in mode
    */
-  end() {
+  _endZoomMode() {
     const canvas = this.getCanvas();
     const { startZoom, moveZoom, stopZoom } = this._listeners;
 
@@ -148,8 +139,16 @@ class Zoom extends Component {
     canvas.forEachObject((obj) => {
       obj.evented = true;
     });
+  }
 
+  start() {
     this.zoomArea = null;
+    this._startPoint = {};
+  }
+
+  end() {
+    this._endZoomMode();
+    this.endHandMode();
   }
 
   /**
@@ -167,6 +166,22 @@ class Zoom extends Component {
     canvas.on('mouse:down', this._listeners.startHand);
     canvas.selection = false;
     canvas.defaultCursor = 'grab';
+  }
+
+  /**
+   * End hand mode
+   */
+  endHandMode() {
+    const canvas = this.getCanvas();
+
+    canvas.forEachObject((obj) => {
+      // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
+      obj.evented = true;
+    });
+
+    canvas.off('mouse:down', this._listeners.startHand);
+    canvas.selection = true;
+    canvas.defaultCursor = 'auto';
   }
 
   /**
@@ -263,8 +278,6 @@ class Zoom extends Component {
       'mouse:move': moveZoom,
       'mouse:up': stopZoom,
     });
-
-    this._startPoint = {};
   }
 
   /**
@@ -438,7 +451,7 @@ class Zoom extends Component {
   }
 
   /**
-   * onChangeZoom handler
+   * onChangeZoom handler in fabric canvas
    * @private
    */
   _changeZoom({ viewport, zoomLevel }) {

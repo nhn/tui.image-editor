@@ -628,36 +628,10 @@ class ImageEditor {
     this._graphics.zoom({ x, y }, zoomLevel);
   }
 
-  testZoomZero() {
+  test() {
     const graphics = this._graphics;
-    const canvas = graphics.getCanvas();
 
-    if (!this.zoomLevel) {
-      this.zoomLevel = 1.0;
-    }
-    this.zoomLevel += 1;
-
-    graphics.zoom({ x: this.zoomLevel, y: this.zoomLevel }, this.zoomLevel);
-    // canvas.zoomToPoint(new fabric.Point(this.zoomLevel, this.zoomLevel), this.zoomLevel);
-  }
-
-  testZoomMiddle() {
-    const graphics = this._graphics;
-    const canvas = graphics.getCanvas();
-    const width = canvas.getWidth();
-    const height = canvas.getHeight();
-
-    if (!this.zoomLevel) {
-      this.zoomLevel = 1.0;
-    }
-    this.zoomLevel += 1;
-
-    // canvas.zoomToPoint(new fabric.Point(4, 4), 3);
-    // canvas.zoomToPoint(new fabric.Point(3, 3), 2);
-    // canvas.zoomToPoint(new fabric.Point(2, 2), 1);
-    // canvas.zoomToPoint(new fabric.Point(width / 2, height / 2), 2);
-    graphics.zoom({ x: 100, y: 100 }, 1);
-    // console.log(this.zoomLevel);
+    graphics.test();
   }
 
   /**
