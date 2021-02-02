@@ -5,7 +5,6 @@
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import Component from '../interface/component';
-import Cropzone from '../extension/cropzone';
 import { keyCodes, componentNames, CROPZONE_DEFAULT_OPTIONS } from '../consts';
 import { clamp, fixFloatingPoint } from '../util';
 
@@ -17,6 +16,21 @@ const DEFAULT_OPTION = {
   height: 1,
   width: 1,
 };
+const DEFAULT_SCROLL_OPTION = {
+  left: 0,
+  top: 0,
+  width: 0,
+  height: 0,
+  stroke: 'grey',
+  strokeWidth: 0,
+  fill: '#DCDADA',
+  evented: false,
+  selectable: false,
+  hoverCursor: 'auto',
+};
+const DEFAULT_SCROLL_SIZE_RATIO = 0.01;
+
+const { extend } = snippet;
 
 /**
  * Zoom components
@@ -66,6 +80,7 @@ class Zoom extends Component {
       startHand: this._startHand.bind(this),
       moveHand: this._moveHand.bind(this),
       stopHand: this._endHand.bind(this),
+      changeZoom: this._changeZoom.bind(this),
     };
 
     const canvas = this.getCanvas();
@@ -74,6 +89,14 @@ class Zoom extends Component {
      * @private
      */
     this.aspectRatio = canvas.width / canvas.height;
+
+    this._verticalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
+
+    this._horizontalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
+
+    canvas.add(this._verticalScroll);
+    canvas.add(this._horizontalScroll);
+    canvas.on('test', this._listeners.changeZoom);
   }
 
   /**
@@ -231,6 +254,8 @@ class Zoom extends Component {
       });
       this.zoomLevel += 1;
       canvas.zoomToPoint({ x, y }, this.zoomLevel);
+
+      canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel: this.zoomLevel });
     }
 
     canvas.remove(zoomArea);
@@ -279,7 +304,7 @@ class Zoom extends Component {
     }
 
     canvas.zoomToPoint({ x, y }, zoomLevel);
-    if (zoomLevel !== 1) {
+    if (zoomLevel !== 1.0) {
       this._centerPoints.push({
         x,
         y,
@@ -288,6 +313,8 @@ class Zoom extends Component {
       });
     }
     this.zoomLevel = zoomLevel;
+
+    canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel });
   }
 
   /**
@@ -304,8 +331,6 @@ class Zoom extends Component {
     const point = centerPoints.pop();
     const { x, y, prevZoomLevel } = point;
 
-    console.log(x, y);
-
     if (prevZoomLevel === 1.0) {
       canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     } else {
@@ -313,6 +338,8 @@ class Zoom extends Component {
     }
 
     this.zoomLevel = prevZoomLevel;
+
+    canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel: this.zoomLevel });
   }
 
   /**
@@ -345,8 +372,9 @@ class Zoom extends Component {
 
     canvas.zoomToPoint({ x: originX, y: originY }, prevZoomLevel);
     canvas.zoomToPoint({ x, y }, this.zoomLevel);
-    console.log(x, y);
     this._centerPoints.push({ x, y, prevZoomLevel, zoomLevel: this.zoomLevel });
+
+    canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel: this.zoomLevel });
   }
 
   /**
@@ -407,6 +435,61 @@ class Zoom extends Component {
     });
 
     this._startHandPoint = {};
+  }
+
+  /**
+   * onChangeZoom handler
+   * @private
+   */
+  _changeZoom({ viewport, zoomLevel }) {
+    const canvas = this.getCanvas();
+
+    canvas.remove(this._verticalScroll);
+    canvas.remove(this._horizontalScroll);
+
+    if (zoomLevel === 1.0) {
+      return;
+    }
+
+    const canvasWidth = canvas.width;
+    const canvasHeight = canvas.height;
+
+    const { tl, tr, bl } = viewport;
+    const viewportWidth = tr.x - tl.x;
+    const viewportHeight = bl.y - tl.y;
+
+    const horizontalScrollWidth = (viewportWidth * viewportWidth) / canvasWidth;
+    const horizontalScrollHeight = viewportHeight * DEFAULT_SCROLL_SIZE_RATIO;
+    const horizontalScrollLeft = clamp(
+      tl.x + (tl.x / canvasWidth) * viewportWidth,
+      tl.x,
+      tr.x - horizontalScrollWidth
+    );
+
+    this._horizontalScroll.set({
+      left: horizontalScrollLeft,
+      top: bl.y - horizontalScrollHeight,
+      width: horizontalScrollWidth,
+      height: horizontalScrollHeight,
+    });
+
+    const verticalScrollWidth = viewportWidth * DEFAULT_SCROLL_SIZE_RATIO;
+    const verticalScrollHeight = (viewportHeight * viewportHeight) / canvasHeight;
+    const verticalScrollTop = clamp(
+      tl.y + (tl.y / canvasHeight) * viewportHeight,
+      tr.y,
+      bl.y - verticalScrollHeight
+    );
+
+    this._verticalScroll.set({
+      left: tr.x - verticalScrollWidth,
+      top: verticalScrollTop,
+      width: verticalScrollWidth,
+      height: verticalScrollHeight,
+    });
+
+    canvas.add(this._horizontalScroll);
+    canvas.add(this._verticalScroll);
   }
 }
 
