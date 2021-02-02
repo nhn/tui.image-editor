@@ -439,7 +439,7 @@ class Graphics {
   }
 
   /**
-   * Zoom the canvas
+   * Change zoom of canvas
    * @param {{x: number, y: number}} center - center of zoom
    * @param {number} zoomLevel - zoom level
    */
@@ -464,7 +464,7 @@ class Graphics {
   endZoomInMode() {
     const zoom = this.getComponent(components.ZOOM);
 
-    zoom.end();
+    zoom.endZoomInMode();
   }
 
   /**
@@ -477,7 +477,7 @@ class Graphics {
   }
 
   /**
-   * Start hand
+   * Start hand mode
    */
   startHandMode() {
     const zoom = this.getComponent(components.ZOOM);
@@ -486,12 +486,21 @@ class Graphics {
   }
 
   /**
-   * Stop hand
+   * Stop hand mode
    */
   endHandMode() {
     const zoom = this.getComponent(components.ZOOM);
 
     zoom.endHandMode();
+  }
+
+  /**
+   * Zoom reset
+   */
+  resetZoom() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.resetZoom();
   }
 
   /**

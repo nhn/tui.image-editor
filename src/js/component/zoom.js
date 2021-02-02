@@ -4,7 +4,7 @@
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
-import { componentNames } from '../consts';
+import { componentNames, eventNames } from '../consts';
 import { clamp } from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
@@ -44,7 +44,7 @@ class Zoom extends Component {
      * Start point of zoom area
      * @type {?{x: number, y: number}}
      */
-    this._startPoint = {};
+    this._startPoint = null;
 
     /**
      * Center point of every zoom
@@ -53,7 +53,7 @@ class Zoom extends Component {
     this._centerPoints = [];
 
     /**
-     * Zoom level (default: 100%(1.0), min: 50%(0.5), max: 400%(4.0)
+     * Zoom level (default: 100%(1.0), max: 400%(4.0)
      * @type {number}
      */
     this.zoomLevel = 1.0;
@@ -76,18 +76,28 @@ class Zoom extends Component {
     const canvas = this.getCanvas();
 
     /**
-     * Width:Height ratio (ex. width=1.5,height=1 -> aspectRatio=1.5)
+     * Width:Height ratio (ex. width=1.5, height=1 -> aspectRatio=1.5)
      * @private
      */
     this.aspectRatio = canvas.width / canvas.height;
 
+    /**
+     * vertical scroll bar
+     * @type {fabric.Rect}
+     * @private
+     */
     this._verticalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
 
+    /**
+     * horizontal scroll bar
+     * @type {fabric.Rect}
+     * @private
+     */
     this._horizontalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
 
     canvas.add(this._verticalScroll);
     canvas.add(this._horizontalScroll);
-    canvas.on('test', this._listeners.changeZoom);
+    canvas.on(eventNames.CHANGE_ZOOM, this._listeners.changeZoom);
   }
 
   /**
@@ -125,7 +135,7 @@ class Zoom extends Component {
   /**
    * End zoom-in mode
    */
-  _endZoomMode() {
+  endZoomInMode() {
     const canvas = this.getCanvas();
     const { startZoom, moveZoom, stopZoom } = this._listeners;
 
@@ -139,15 +149,24 @@ class Zoom extends Component {
     canvas.forEachObject((obj) => {
       obj.evented = true;
     });
+
+    this.zoomArea = null;
   }
 
+  /**
+   * Start zoom drawing mode
+   */
   start() {
     this.zoomArea = null;
-    this._startPoint = {};
+    this._startPoint = null;
+    this._startHandPoint = null;
   }
 
+  /**
+   * Stop zoom drawing mode
+   */
   end() {
-    this._endZoomMode();
+    this.endZoomInMode();
     this.endHandMode();
   }
 
@@ -169,7 +188,7 @@ class Zoom extends Component {
   }
 
   /**
-   * End hand mode
+   * Stop hand mode
    */
   endHandMode() {
     const canvas = this.getCanvas();
@@ -182,6 +201,8 @@ class Zoom extends Component {
     canvas.off('mouse:down', this._listeners.startHand);
     canvas.selection = true;
     canvas.defaultCursor = 'auto';
+
+    this._startHandPoint = null;
   }
 
   /**
@@ -257,10 +278,10 @@ class Zoom extends Component {
     const { zoomArea } = this;
     const { moveZoom, stopZoom } = this._listeners;
     const canvas = this.getCanvas();
-    const center = this.getCenterPoint();
+    const center = this._getCenterPoint();
     const { x, y } = center;
 
-    if (!this.isMaxZoomLevel()) {
+    if (!this._isMaxZoomLevel()) {
       this._centerPoints.push({
         x,
         y,
@@ -270,7 +291,10 @@ class Zoom extends Component {
       this.zoomLevel += 1;
       canvas.zoomToPoint({ x, y }, this.zoomLevel);
 
-      canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel: this.zoomLevel });
+      canvas.fire(eventNames.CHANGE_ZOOM, {
+        viewport: canvas.calcViewportBoundaries(),
+        zoomLevel: this.zoomLevel,
+      });
     }
 
     canvas.remove(zoomArea);
@@ -278,13 +302,16 @@ class Zoom extends Component {
       'mouse:move': moveZoom,
       'mouse:up': stopZoom,
     });
+
+    this._startPoint = null;
   }
 
   /**
    * Get center point
    * @returns {{x: number, y: number}}
+   * @private
    */
-  getCenterPoint() {
+  _getCenterPoint() {
     const { left, top, width, height } = this.zoomArea;
     const { aspectRatio } = this;
 
@@ -327,7 +354,7 @@ class Zoom extends Component {
     }
     this.zoomLevel = zoomLevel;
 
-    canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel });
+    canvas.fire(eventNames.CHANGE_ZOOM, { viewport: canvas.calcViewportBoundaries(), zoomLevel });
   }
 
   /**
@@ -352,14 +379,35 @@ class Zoom extends Component {
 
     this.zoomLevel = prevZoomLevel;
 
-    canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel: this.zoomLevel });
+    canvas.fire(eventNames.CHANGE_ZOOM, {
+      viewport: canvas.calcViewportBoundaries(),
+      zoomLevel: this.zoomLevel,
+    });
+  }
+
+  /**
+   * Zoom reset
+   */
+  resetZoom() {
+    const canvas = this.getCanvas();
+
+    canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+
+    this.zoomLevel = 1.0;
+    this._centerPoints = [];
+
+    canvas.fire(eventNames.CHANGE_ZOOM, {
+      viewport: canvas.calcViewportBoundaries(),
+      zoomLevel: this.zoomLevel,
+    });
   }
 
   /**
    * Whether zoom level is max (5.0)
    * @returns {boolean}
+   * @private
    */
-  isMaxZoomLevel() {
+  _isMaxZoomLevel() {
     return this.zoomLevel >= 5.0;
   }
 
@@ -387,7 +435,10 @@ class Zoom extends Component {
     canvas.zoomToPoint({ x, y }, this.zoomLevel);
     this._centerPoints.push({ x, y, prevZoomLevel, zoomLevel: this.zoomLevel });
 
-    canvas.fire('test', { viewport: canvas.calcViewportBoundaries(), zoomLevel: this.zoomLevel });
+    canvas.fire(eventNames.CHANGE_ZOOM, {
+      viewport: canvas.calcViewportBoundaries(),
+      zoomLevel: this.zoomLevel,
+    });
   }
 
   /**
@@ -402,7 +453,7 @@ class Zoom extends Component {
       return;
     }
 
-    if (this.zoomLevel === 1) {
+    if (this.zoomLevel === 1.0) {
       return;
     }
 
@@ -447,7 +498,7 @@ class Zoom extends Component {
       'mouse:up': stopHand,
     });
 
-    this._startHandPoint = {};
+    this._startHandPoint = null;
   }
 
   /**

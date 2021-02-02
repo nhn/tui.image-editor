@@ -624,14 +624,21 @@ class ImageEditor {
     return this._invoker.redo();
   }
 
+  /**
+   * Zoom
+   * @param {number} x - x axis of center point for zoom
+   * @param {number} y - y axis of center point for zoom
+   * @param {number} zoomLevel - level of zoom(1.0 ~ 5.0)
+   */
   zoom({ x, y, zoomLevel }) {
     this._graphics.zoom({ x, y }, zoomLevel);
   }
 
-  test() {
-    const graphics = this._graphics;
-
-    graphics.test();
+  /**
+   * Reset zoom. Change zoom level to 1.0
+   */
+  resetZoom() {
+    this._graphics.resetZoom();
   }
 
   /**

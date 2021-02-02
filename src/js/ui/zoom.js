@@ -1,7 +1,10 @@
-import snippet from 'tui-code-snippet';
 import { assignmentForDestroy } from '../util';
 import Submenu from './submenuBase';
 import templateHtml from './template/submenu/zoom';
+
+const ZOOM_IN = 'zoomIn';
+const ZOOM_OUT = 'zoomOut';
+const HAND = 'hand';
 
 /**
  * Zoom ui class
@@ -18,7 +21,6 @@ class Zoom extends Submenu {
       templateHtml,
       usageStatistics,
     });
-    // this.flipStatus = false;
 
     this._els = {
       zoomButton: this.selector('.tie-zoom-button'),
@@ -81,34 +83,9 @@ class Zoom extends Submenu {
       return;
     }
 
-    const zoomType = this.getButtonType(button, ['zoomIn', 'zoomOut', 'hand']);
+    const zoomType = this.getButtonType(button, [ZOOM_IN, ZOOM_OUT, HAND]);
 
-    if (zoomType === 'zoomIn') {
-      this._actions.zoom();
-    } else if (zoomType === 'zoomOut') {
-      this._actions.zoomOut();
-    } else {
-      this._actions.hand();
-    }
-
-    //   if (!this.flipStatus && flipType === 'resetFlip') {
-    //     return;
-    //   }
-    //
-    //   this._actions.flip(flipType).then((flipStatus) => {
-    //     const flipClassList = this._els.flipButton.classList;
-    //     this.flipStatus = false;
-    //
-    //     flipClassList.remove('resetFlip');
-    //     snippet.forEach(['flipX', 'flipY'], (type) => {
-    //       flipClassList.remove(type);
-    //       if (flipStatus[type]) {
-    //         flipClassList.add(type);
-    //         flipClassList.add('resetFlip');
-    //         this.flipStatus = true;
-    //       }
-    //     });
-    //   });
+    this._actions[zoomType]();
   }
 }
 

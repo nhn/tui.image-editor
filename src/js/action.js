@@ -303,7 +303,7 @@ export default {
   _zoomAction() {
     return extend(
       {
-        zoom: () => {
+        zoomIn: () => {
           const graphics = this._graphics;
 
           graphics.endHandMode();
