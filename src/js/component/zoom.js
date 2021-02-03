@@ -95,8 +95,6 @@ class Zoom extends Component {
      */
     this._horizontalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
 
-    canvas.add(this._verticalScroll);
-    canvas.add(this._horizontalScroll);
     canvas.on(eventNames.CHANGE_ZOOM, this._listeners.changeZoom);
   }
 
