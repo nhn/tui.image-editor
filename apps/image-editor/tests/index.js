@@ -1,6 +1,6 @@
 /**
  * @fileoverview Test env
- * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 import '../src';
 import fabric from 'fabric';

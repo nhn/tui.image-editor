@@ -4,7 +4,7 @@
  */
 import { forEach, map, extend } from 'tui-code-snippet';
 import { capitalizeString, flipObject, setCustomProperty, getCustomProperty } from '../util';
-import resizeHelper from '../helper/shapeResizeHelper';
+import resizeHelper from './shapeResizeHelper';
 
 const FILTER_OPTION_MAP = {
   pixelate: 'blocksize',
