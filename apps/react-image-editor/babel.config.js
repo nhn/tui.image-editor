@@ -7,14 +7,14 @@ module.exports = (api) => {
         '@babel/preset-env',
         {
           modules: false,
-          useBuiltIns: 'entry'
-        }
+          useBuiltIns: 'entry',
+        },
       ],
-      '@babel/preset-react'
+      '@babel/preset-react',
     ],
     plugins: [
       '@babel/plugin-proposal-class-properties',
-      '@babel/plugin-proposal-object-rest-spread'
-    ]
+      '@babel/plugin-proposal-object-rest-spread',
+    ],
   };
 };

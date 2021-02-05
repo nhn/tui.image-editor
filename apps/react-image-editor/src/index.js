@@ -12,7 +12,7 @@ export default class ImageEditor extends React.Component {
 
   componentDidMount() {
     this.imageEditorInst = new TuiImageEditor(this.rootEl.current, {
-      ...this.props
+      ...this.props,
     });
 
     this.bindEventHandlers(this.props);

@@ -10,20 +10,20 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'toastui-vue-image-editor.js',
     library: 'toastui',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
   resolve: {
     alias: {
-      vue: 'vue/dist/vue.js'
-    }
+      vue: 'vue/dist/vue.js',
+    },
   },
   externals: {
     'tui-image-editor': {
-      'commonjs': 'tui-image-editor',
-      'commonjs2': 'tui-image-editor',
-      'amd': 'tui-image-editor',
-      'root': ['tui', 'ImageEditor']
-    }
+      commonjs: 'tui-image-editor',
+      commonjs2: 'tui-image-editor',
+      amd: 'tui-image-editor',
+      root: ['tui', 'ImageEditor'],
+    },
   },
   module: {
     rules: [
@@ -34,28 +34,28 @@ module.exports = {
         use: {
           loader: 'eslint-loader',
           options: {
-            failOnError: true
-          }
-        }
+            failOnError: true,
+          },
+        },
       },
       {
         test: /\.js$/,
         include: [path.resolve(__dirname, 'src')],
-        loader: 'babel-loader'
+        loader: 'babel-loader',
       },
       {
         test: /\.vue$/,
-        loader: 'vue-loader'
-      }
-    ]
+        loader: 'vue-loader',
+      },
+    ],
   },
   plugins: [
     new CleanWebpackPlugin(['dist']),
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production')
+      'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new SafeUmdPlugin()
+    new SafeUmdPlugin(),
   ],
-  devtool: 'source-map'
+  devtool: 'source-map',
 };

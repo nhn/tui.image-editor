@@ -1,15 +1,17 @@
 <template>
-    <div>
-        <h1>🍞🎨 TOAST UI Image Editor + Vue</h1>
-        <div class="imageEditorApp">
-            <tui-image-editor ref="tuiImageEditor"
-                              :include-ui="useDefaultUI"
-                              :options="options"
-                              @addText="onAddText"
-                              @objectMoved="onObjectMoved">
-            </tui-image-editor>
-        </div>
+  <div>
+    <h1>🍞🎨 TOAST UI Image Editor + Vue</h1>
+    <div class="imageEditorApp">
+      <tui-image-editor
+        ref="tuiImageEditor"
+        :include-ui="useDefaultUI"
+        :options="options"
+        @addText="onAddText"
+        @objectMoved="onObjectMoved"
+      >
+      </tui-image-editor>
     </div>
+  </div>
 </template>
 <script>
 // To use the default UI, the svg files for the icons is required.
@@ -23,11 +25,11 @@ import 'tui-image-editor/dist/tui-image-editor.css';
 import 'tui-color-picker/dist/tui-color-picker.css';
 import sampleImage from './img/sampleImage2.png';
 
-import {ImageEditor} from '../src/index';
+import { ImageEditor } from '../src/index';
 
 export default {
   components: {
-    'tui-image-editor': ImageEditor
+    'tui-image-editor': ImageEditor,
   },
   data() {
     return {
@@ -36,13 +38,13 @@ export default {
         includeUI: {
           loadImage: {
             path: sampleImage,
-            name: 'sampleImage2'
+            name: 'sampleImage2',
           },
-          initMenu: 'filter'
+          initMenu: 'filter',
         },
         cssMaxWidth: 700,
-        cssMaxHeight: 500
-      }
+        cssMaxHeight: 500,
+      },
     };
   },
   methods: {
@@ -61,13 +63,13 @@ export default {
       console.log('Top : ', res.top);
       console.groupEnd();
       /* eslint-enable no-console */
-    }
-  }
+    },
+  },
 };
 </script>
 <style scoped>
 .imageEditorApp {
-    width: 1000px;
-    height: 800px;
+  width: 1000px;
+  height: 800px;
 }
 </style>

@@ -1,5 +1,5 @@
 import React from 'react';
-import {storiesOf} from '@storybook/react';
+import { storiesOf } from '@storybook/react';
 
 import 'tui-image-editor/dist/tui-image-editor.css';
 import 'tui-color-picker/dist/tui-color-picker.css';
@@ -12,16 +12,16 @@ const props = {
   includeUI: {
     loadImage: {
       path: 'img/sampleImage2.png',
-      name: 'sampleImage2'
+      name: 'sampleImage2',
     },
     initMenu: 'shape',
     uiSize: {
       height: '700px',
-      width: '1000px'
-    }
+      width: '1000px',
+    },
   },
   cssMaxWidth: 700,
-  cssMaxHeight: 500
+  cssMaxHeight: 500,
 };
 
 stories.add('Include default UI', () => <ImageEditor {...props} />);
@@ -94,8 +94,8 @@ stories.add('Events', () => {
             console.log(originPointer);
           }}
           onAddText={(pos) => {
-            const {x: ox, y: oy} = pos.originPosition;
-            const {x: cx, y: cy} = pos.clientPosition;
+            const { x: ox, y: oy } = pos.originPosition;
+            const { x: cx, y: cy } = pos.clientPosition;
             console.log(`text position on canvas(x, y): ${ox}px, ${oy}px`);
             console.log(`text position on brwoser(x, y): ${cx}px, ${cy}px`);
           }}

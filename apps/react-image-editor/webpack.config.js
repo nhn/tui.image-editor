@@ -5,17 +5,17 @@ const config = {
   output: {
     filename: 'toastui-react-image-editor.js',
     path: path.resolve(__dirname, 'dist'),
-    libraryTarget: 'commonjs2'
+    libraryTarget: 'commonjs2',
   },
   externals: {
     'tui-image-editor': {
       commonjs: 'tui-image-editor',
-      commonjs2: 'tui-image-editor'
+      commonjs2: 'tui-image-editor',
     },
     react: {
       commonjs: 'react',
-      commonjs2: 'react'
-    }
+      commonjs2: 'react',
+    },
   },
   module: {
     rules: [
@@ -25,12 +25,12 @@ const config = {
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['@babel/preset-env']
-          }
-        }
-      }
-    ]
-  }
+            presets: ['@babel/preset-env'],
+          },
+        },
+      },
+    ],
+  },
 };
 
 module.exports = () => config;

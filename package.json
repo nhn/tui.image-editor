@@ -2,6 +2,13 @@
   "name": "root",
   "private": true,
   "devDependencies": {
-    "lerna": "^3.22.1"
+    "lerna": "^3.22.1",
+    "prettier": "^2.0.5"
+  },
+  "scripts": {
+    "build": "lerna run build",
+    "build:image-editor": "lerna run --scope tui-image-editor bundle",
+    "build:react": "lerna run --scope @toast-ui/react-image-editor build",
+    "build:vue": "lerna run --scope @toast-ui/vue-image-editor build"
   }
 }
