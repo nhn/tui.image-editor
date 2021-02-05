@@ -22,8 +22,9 @@
     "filePath": "README.md"
   },
   "api": {
-    "filePath": "src/js/**",
-    "fileLink": true
+    "filePath": "src/js/*.js",
+    "fileLink": true,
+    "permalink": false
   },
   "examples": {
     "filePath": "examples",

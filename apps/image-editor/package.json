@@ -24,6 +24,17 @@
     "canvas",
     "fabric"
   ],
+  "scripts": {
+    "test": "karma start --no-single-run",
+    "test:ne": "KARMA_SERVER=ne karma start",
+    "test:types": "tsc --project tests/types",
+    "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
+    "bundle:svg": "node makesvg.js",
+    "serve": "webpack-dev-server",
+    "doc:dev": "tuidoc --serv",
+    "doc": "tuidoc",
+    "tslint": "tslint index.d.ts"
+  },
   "devDependencies": {
     "babel-core": "^6.26.3",
     "babel-eslint": "^10.0.3",
@@ -75,17 +86,6 @@
     "webpack": "^4.41.5",
     "webpack-cli": "^3.3.10",
     "webpack-dev-server": "^3.10.1"
-  },
-  "scripts": {
-    "test": "karma start --no-single-run",
-    "test:ne": "KARMA_SERVER=ne karma start",
-    "test:types": "tsc --project tests/types",
-    "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
-    "bundle:svg": "node makesvg.js",
-    "serve": "webpack-dev-server",
-    "doc:dev": "tuidoc --dev",
-    "doc": "tuidoc",
-    "tslint": "tslint index.d.ts"
   },
   "dependencies": {
     "core-js-pure": "^3.6.4",
