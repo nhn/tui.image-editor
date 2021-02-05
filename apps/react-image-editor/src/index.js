@@ -1,6 +1,6 @@
 /**
- * @fileoverview TOAST UI Image-Editor React wrapper component
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
+ * @fileoverview TOAST UI Image-Editor React wrapper component
  */
 import React from 'react';
 import TuiImageEditor from 'tui-image-editor';
