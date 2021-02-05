@@ -252,8 +252,8 @@ declare namespace tuiImageEditor {
   }
 
   class ImageEditor {
-    constructor(wrapper: string | Element, options: IOptions);
     public ui: UI;
+    constructor(wrapper: string | Element, options: IOptions);
 
     public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
     public addImageObject(imgUrl: string): Promise<void>;
