@@ -21,7 +21,7 @@ class Range {
    *  @param {number} options.max - max value
    *  @param {number} options.value - default value
    *  @param {number} [options.useDecimal] - Decimal point processing.
-   *  @param {number} [options.realTimeEvent] - Reflect live events.
+   *  @param {boolean} [options.realTimeEvent] - Reflect live events.
    */
   constructor(rangeElements, options = {}) {
     this._value = options.value || 0;
