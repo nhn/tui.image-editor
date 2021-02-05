@@ -1,18 +1,19 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add filter module
  */
 import { isUndefined, extend, forEach, filter } from 'tui-code-snippet';
-import { Promise } from '../util';
 import fabric from 'fabric';
-import Component from '../interface/component';
-import Mask from '../extension/mask';
-import { rejectMessages, componentNames } from '../consts';
-import Sharpen from '../extension/sharpen';
-import Emboss from '../extension/emboss';
-import ColorFilter from '../extension/colorFilter';
+import Component from '@/interface/component';
+import { Promise } from '@/util';
+import { rejectMessages, componentNames } from '@/consts';
+import Mask from '@/extension/mask';
+import Sharpen from '@/extension/sharpen';
+import Emboss from '@/extension/emboss';
+import ColorFilter from '@/extension/colorFilter';
 
 const { filters } = fabric.Image;
+
 filters.Mask = Mask;
 filters.Sharpen = Sharpen;
 filters.Emboss = Emboss;

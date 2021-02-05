@@ -1,17 +1,17 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Rotate an image
  */
-import commandFactory from '../factory/command';
-import { componentNames, commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { componentNames, commandNames } from '@/consts';
 
 const { ROTATION } = componentNames;
 
 /**
- * Chched data for undo
+ * Cached data for undo
  * @type {Object}
  */
-let chchedUndoDataForSilent = null;
+let cachedUndoDataForSilent = null;
 
 /**
  * Make undo data
@@ -41,11 +41,12 @@ const command = {
     if (!this.isRedo) {
       const undoData = makeUndoData(rotationComp);
 
-      chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
+      cachedUndoDataForSilent = this.setUndoData(undoData, cachedUndoDataForSilent, isSilent);
     }
 
     return rotationComp[type](angle);
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add a shape
  */
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { componentNames, commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { componentNames, commandNames } from '@/consts';
 
 const { SHAPE } = componentNames;
 
@@ -37,6 +37,7 @@ const command = {
       return objectProps;
     });
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

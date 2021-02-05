@@ -1,12 +1,11 @@
 /**
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @fileoverview Test env
- * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
  */
-
 import snippet from 'tui-code-snippet';
-import ImageEditor from '../src/js/imageEditor';
 import fabric from 'fabric';
-import { eventNames, keyCodes } from '../src/js/consts';
+import ImageEditor from '@/imageEditor';
+import { eventNames, keyCodes } from '@/consts';
 
 const { OBJECT_ROTATED } = eventNames;
 

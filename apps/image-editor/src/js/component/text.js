@@ -1,12 +1,12 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Text module
  */
-import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
-import Component from '../interface/component';
-import { eventNames as events, componentNames, fObjectOptions } from '../consts';
-import { Promise } from '../util';
+import fabric from 'fabric';
+import Component from '@/interface/component';
+import { Promise } from '@/util';
+import { componentNames, eventNames as events, fObjectOptions } from '@/consts';
 
 const defaultStyles = {
   fill: '#000000',
@@ -20,7 +20,6 @@ const resetStyles = {
   textAlign: 'left',
   underline: false,
 };
-
 const DBCLICK_TIME = 500;
 
 /**
@@ -327,9 +326,8 @@ class Text extends Component {
     const canvasElement = this.getCanvasElement();
     const cssWidth = parseInt(canvasElement.style.maxWidth, 10);
     const originWidth = canvasElement.width;
-    const ratio = originWidth / cssWidth;
 
-    this._ratio = ratio;
+    this._ratio = originWidth / cssWidth;
   }
 
   /**
@@ -448,9 +446,8 @@ class Text extends Component {
    */
   _onFabricScaling(fEvent) {
     const obj = fEvent.target;
-    const scalingSize = obj.fontSize * obj.scaleY;
 
-    obj.fontSize = scalingSize;
+    obj.fontSize = obj.fontSize * obj.scaleY;
     obj.scaleX = 1;
     obj.scaleY = 1;
   }

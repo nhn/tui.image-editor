@@ -3,8 +3,8 @@
  * @fileoverview Shape resize helper
  */
 import { forEach, map, extend } from 'tui-code-snippet';
-import { capitalizeString, flipObject, setCustomProperty, getCustomProperty } from '../util';
-import resizeHelper from './shapeResizeHelper';
+import resizeHelper from '@/helper/shapeResizeHelper';
+import { capitalizeString, flipObject, setCustomProperty, getCustomProperty } from '@/util';
 
 const FILTER_OPTION_MAP = {
   pixelate: 'blocksize',
@@ -552,8 +552,8 @@ function makeFillImage(copiedCanvasElement, currentCanvasImageAngle, filterOptio
   const fillImage = new fabric.Image(copiedCanvasElement);
 
   forEach(extend({}, ...filterOption), (value, key) => {
-    const fabricFiterClassName = capitalizeString(key);
-    const filter = new fabric.Image.filters[fabricFiterClassName]({
+    const fabricFilterClassName = capitalizeString(key);
+    const filter = new fabric.Image.filters[fabricFilterClassName]({
       [FILTER_OPTION_MAP[key]]: value,
     });
     fillImage.filters.push(filter);

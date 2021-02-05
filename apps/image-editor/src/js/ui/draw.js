@@ -1,9 +1,10 @@
-import { assignmentForDestroy, getRgb } from '../util';
-import Colorpicker from './tools/colorpicker';
-import Range from './tools/range';
-import Submenu from './submenuBase';
-import templateHtml from './template/submenu/draw';
-import { defaultDrawRangeValus } from '../consts';
+import Colorpicker from '@/ui/tools/colorpicker';
+import Range from '@/ui/tools/range';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/draw';
+import { assignmentForDestroy, getRgb } from '@/util';
+import { defaultDrawRangeValues } from '@/consts';
+
 const DRAW_OPACITY = 0.7;
 
 /**
@@ -35,7 +36,7 @@ class Draw extends Submenu {
           slider: this.selector('.tie-draw-range'),
           input: this.selector('.tie-draw-range-value'),
         },
-        defaultDrawRangeValus
+        defaultDrawRangeValues
       ),
     };
 

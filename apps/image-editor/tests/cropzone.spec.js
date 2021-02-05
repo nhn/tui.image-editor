@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/extension/cropzone.js"
  */
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
-import Cropzone from '../src/js/extension/cropzone';
+import Cropzone from '@/extension/cropzone';
 
 describe('Cropzone', () => {
   const options = {

@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image flip module
  */
 import snippet from 'tui-code-snippet';
-import { Promise } from '../util';
-import Component from '../interface/component';
-import { componentNames, rejectMessages } from '../consts';
+import Component from '@/interface/component';
+import { Promise } from '@/util';
+import { componentNames, rejectMessages } from '@/consts';
 
 /**
  * Flip

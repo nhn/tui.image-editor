@@ -1,16 +1,13 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/line.js"
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @fileoverview Test cases of "src/js/component/shape.js"
  */
 import fabric from 'fabric';
 import $ from 'jquery';
-import Graphics from '../src/js/graphics';
-import Shape from '../src/js/component/shape';
-import { resize } from '../src/js/helper/shapeResizeHelper';
-import {
-  getFillImageFromShape,
-  getCachedCanvasImageElement,
-} from '../src/js/helper/shapeFilterFillHelper';
+import Graphics from '@/graphics';
+import Shape from '@/component/shape';
+import { resize } from '@/helper/shapeResizeHelper';
+import { getFillImageFromShape, getCachedCanvasImageElement } from '@/helper/shapeFilterFillHelper';
 
 describe('Shape', () => {
   let canvas, graphics, mockImage, fEvent, shape, shapeObj;
@@ -228,7 +225,7 @@ describe('Shape', () => {
 
   describe('Fill - filter type', () => {
     beforeEach((done) => {
-      const imageURL = 'base/test/fixtures/sampleImage.jpg';
+      const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
       getCachedCanvasImageElement(canvas, true);
 

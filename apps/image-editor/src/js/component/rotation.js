@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image rotation module
  */
 import fabric from 'fabric';
-import { Promise } from '../util';
-import Component from '../interface/component';
-import { componentNames } from '../consts';
+import Component from '@/interface/component';
+import { Promise } from '@/util';
+import { componentNames } from '@/consts';
 
 /**
  * Image Rotation component

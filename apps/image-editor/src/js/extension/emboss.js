@@ -1,5 +1,5 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Emboss extending fabric.Image.filters.Convolute
  */
 import fabric from 'fabric';
@@ -25,8 +25,7 @@ const Emboss = fabric.util.createClass(
      * @override
      */
     initialize() {
-      const matrix = [1, 1, 1, 1, 0.7, -1, -1, -1, -1];
-      this.matrix = matrix;
+      this.matrix = [1, 1, 1, 1, 0.7, -1, -1, -1, -1];
     },
   }
 );

@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/icon.js"
  */
 import fabric from 'fabric';
 import $ from 'jquery';
-import Graphics from '../src/js/graphics';
-import Icon from '../src/js/component/icon';
+import Graphics from '@/graphics';
+import Icon from '@/component/icon';
 
 describe('Icon', () => {
   let canvas, graphics, mockImage, icon;

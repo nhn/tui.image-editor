@@ -6,7 +6,7 @@
  */
 export default ({ locale, makeSvgIcon }) => `
     <ul class="tui-image-editor-submenu-item">
-        <li class="tie-retate-button">
+        <li class="tie-rotate-button">
             <div class="tui-image-editor-button clockwise">
                 <div>
                     ${makeSvgIcon(['normal', 'active'], 'rotate-clockwise', true)}
@@ -26,7 +26,7 @@ export default ({ locale, makeSvgIcon }) => `
         <li class="tui-image-editor-newline tui-image-editor-range-wrap">
             <label class="range">${locale.localize('Range')}</label>
             <div class="tie-rotate-range"></div>
-            <input class="tie-ratate-range-value tui-image-editor-range-value" value="0" />
+            <input class="tie-rotate-range-value tui-image-editor-range-value" value="0" />
         </li>
     </ul>
 `;

@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add an object
  */
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { commandNames, rejectMessages } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { commandNames, rejectMessages } from '@/consts';
 
 const command = {
   name: commandNames.ADD_OBJECT,
@@ -25,6 +25,7 @@ const command = {
       }
     });
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @param {Object} object - Fabric object

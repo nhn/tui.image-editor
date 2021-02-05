@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
-import { toInteger, clamp } from '../../util';
-import { keyCodes } from '../../consts';
+import { toInteger, clamp } from '@/util';
+import { keyCodes } from '@/consts';
 
 const INPUT_FILTER_REGEXP = /(-?)([0-9]*)[^0-9]*([0-9]*)/g;
 
@@ -93,7 +93,6 @@ class Range {
   /**
    * Set range value
    * @param {Number} value range value
-   * @param {Boolean} fire whether fire custom event or not
    */
   set value(value) {
     value = this._useDecimal ? value : toInteger(value);
@@ -115,7 +114,7 @@ class Range {
   }
 
   /**
-   * event tirigger
+   * event trigger
    * @param {string} type - type
    */
   trigger(type) {
@@ -353,4 +352,5 @@ class Range {
 }
 
 snippet.CustomEvents.mixin(Range);
+
 export default Range;

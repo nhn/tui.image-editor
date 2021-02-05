@@ -1,16 +1,16 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
-import Invoker from './invoker';
-import UI from './ui';
-import action from './action';
-import commandFactory from './factory/command';
-import Graphics from './graphics';
-import { sendHostName, Promise } from './util';
-import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from './consts';
-import { makeSelectionUndoData, makeSelectionUndoDatum } from './helper/selectionModifyHelper';
+import Invoker from '@/invoker';
+import UI from '@/ui';
+import action from '@/action';
+import commandFactory from '@/factory/command';
+import Graphics from '@/graphics';
+import { makeSelectionUndoData, makeSelectionUndoDatum } from '@/helper/selectionModifyHelper';
+import { sendHostName, Promise } from '@/util';
+import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from '@/consts';
 
 const { isUndefined, forEach, CustomEvents } = snippet;
 
@@ -568,7 +568,7 @@ class ImageEditor {
 
   /**
    * selectable status change
-   * @param {boolean} selectable - selctable status
+   * @param {boolean} selectable - selectable status
    * @example
    * imageEditor.changeSelectableAll(false); // or true
    */
@@ -845,8 +845,8 @@ class ImageEditor {
    * @example
    * imageEditor.rotate(10); // angle = 10
    * imageEditor.rotate(10); // angle = 20
-   * imageEidtor.rotate(5); // angle = 5
-   * imageEidtor.rotate(-95); // angle = -90
+   * imageEditor.rotate(5); // angle = 5
+   * imageEditor.rotate(-95); // angle = -90
    * imageEditor.rotate(10).then(status => {
    *     console.log('angle: ', status.angle);
    * })).catch(message => {
@@ -865,9 +865,9 @@ class ImageEditor {
    * @example
    * imageEditor.setAngle(10); // angle = 10
    * imageEditor.rotate(10); // angle = 20
-   * imageEidtor.setAngle(5); // angle = 5
-   * imageEidtor.rotate(50); // angle = 55
-   * imageEidtor.setAngle(-40); // angle = -40
+   * imageEditor.setAngle(5); // angle = 5
+   * imageEditor.rotate(50); // angle = 55
+   * imageEditor.setAngle(-40); // angle = -40
    * imageEditor.setAngle(10).then(status => {
    *     console.log('angle: ', status.angle);
    * })).catch(message => {

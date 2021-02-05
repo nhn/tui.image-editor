@@ -1,9 +1,27 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Shape component
  */
+import { extend } from 'tui-code-snippet';
 import fabric from 'fabric';
-import Component from '../interface/component';
+import Component from '@/interface/component';
+import resizeHelper from '@/helper/shapeResizeHelper';
+import {
+  getFillImageFromShape,
+  rePositionFilterTypeFillImage,
+  reMakePatternImageSource,
+  makeFillPatternForFilter,
+  makeFilterOptionFromFabricImage,
+  resetFillPatternCanvas,
+} from '@/helper/shapeFilterFillHelper';
+import {
+  Promise,
+  changeOrigin,
+  getCustomProperty,
+  getFillTypeFromOption,
+  getFillTypeFromObject,
+  isShape,
+} from '@/util';
 import {
   rejectMessages,
   eventNames,
@@ -12,25 +30,7 @@ import {
   fObjectOptions,
   SHAPE_DEFAULT_OPTIONS,
   SHAPE_FILL_TYPE,
-} from '../consts';
-import resizeHelper from '../helper/shapeResizeHelper';
-import {
-  getFillImageFromShape,
-  rePositionFilterTypeFillImage,
-  reMakePatternImageSource,
-  makeFillPatternForFilter,
-  makeFilterOptionFromFabricImage,
-  resetFillPatternCanvas,
-} from '../helper/shapeFilterFillHelper';
-import {
-  Promise,
-  changeOrigin,
-  getCustomProperty,
-  getFillTypeFromOption,
-  getFillTypeFromObject,
-  isShape,
-} from '../util';
-import { extend } from 'tui-code-snippet';
+} from '@/consts';
 
 const SHAPE_INIT_OPTIONS = extend(
   {
@@ -44,7 +44,6 @@ const SHAPE_INIT_OPTIONS = extend(
   },
   SHAPE_DEFAULT_OPTIONS
 );
-
 const DEFAULT_TYPE = 'rect';
 const DEFAULT_WIDTH = 20;
 const DEFAULT_HEIGHT = 20;

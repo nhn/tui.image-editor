@@ -1,8 +1,8 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/extension/allowLine.js"
  */
-import ArrowLine from '../src/js/extension/arrowLine';
+import ArrowLine from '@/extension/arrowLine';
 
 describe('AllowLine', () => {
   let ctx, arrowLine, linePath;

@@ -1,5 +1,8 @@
 /* eslint-disable consts-on-top, no-process-env, require-jsdoc */
 /* eslint-disable no-process-env, require-jsdoc */
+
+const path = require('path');
+
 const webdriverConfig = {
   hostname: 'fe.nhnent.com',
   port: 4444,
@@ -49,7 +52,7 @@ function setConfig(defaultConfig, server) {
       },
     };
     defaultConfig.browsers = [
-      'IE9',
+      // 'IE9',
       'IE10',
       // 'IE11',
       // 'Edge',
@@ -95,28 +98,28 @@ module.exports = function (config) {
       // included jasmine-karma version is 2.0.5 and this version don't support ie8
       'node_modules/jasmine-jquery/lib/jasmine-jquery.js',
       'node_modules/fabric/dist/fabric.js',
-      'test/index.js',
+      'tests/index.js',
       {
-        pattern: 'test/fixtures/*.jpg',
+        pattern: 'tests/fixtures/*.jpg',
         watched: false,
         included: false,
         served: true,
       },
       {
-        pattern: 'test/fixtures/*.png',
+        pattern: 'tests/fixtures/*.png',
         watched: false,
         included: false,
         served: true,
       },
       {
-        pattern: 'test/fixtures/*.svg',
+        pattern: 'tests/fixtures/*.svg',
         watched: false,
         included: false,
         served: true,
       },
     ],
     preprocessors: {
-      'test/index.js': ['webpack', 'sourcemap'],
+      'tests/index.js': ['webpack', 'sourcemap'],
     },
     reporters: ['dots'],
     webpack: {
@@ -124,6 +127,13 @@ module.exports = function (config) {
       devtool: 'inline-source-map',
       externals: {
         fabric: 'fabric',
+      },
+      resolve: {
+        alias: {
+          '@': path.resolve(__dirname, 'src/js/'),
+          '@css': path.resolve(__dirname, 'src/css/'),
+          '@svg': path.resolve(__dirname, 'src/svg/'),
+        },
       },
       module: {
         rules: [
@@ -136,7 +146,7 @@ module.exports = function (config) {
           },
           {
             test: /\.js$/,
-            exclude: /(test|node_modules)/,
+            exclude: /(tests|node_modules)/,
             loader: 'istanbul-instrumenter-loader',
             query: {
               esModules: true,

@@ -1,7 +1,7 @@
 import snippet from 'tui-code-snippet';
-import Submenu from './submenuBase';
-import { assignmentForDestroy } from '../util';
-import templateHtml from './template/submenu/crop';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/crop';
+import { assignmentForDestroy } from '@/util';
 
 /**
  * Crop ui class

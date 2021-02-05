@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/cropper.js"
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @fileoverview Test cases of "src/js/ui/theme/theme.js"
  */
 import snippet from 'tui-code-snippet';
-import Theme from '../src/js/ui/theme/theme';
-import defaultTheme from '../src/js/ui/theme/standard';
+import Theme from '@/ui/theme/theme';
+import defaultTheme from '@/ui/theme/standard';
 
 describe('Theme', () => {
   let theme;
@@ -13,7 +13,7 @@ describe('Theme', () => {
   });
   describe('getStyle()', () => {
     it('When the user sets the icon file location, the path and name information must be included.', () => {
-      const addUserIconPath = 'base/test/fixtures/icon-d.svg';
+      const addUserIconPath = 'base/tests/fixtures/icon-d.svg';
       const addUserIconName = 'icon-d';
       const themeForIconPathSet = new Theme(
         snippet.extend({}, defaultTheme, {
@@ -25,7 +25,7 @@ describe('Theme', () => {
         normal: { path, name },
       } = themeForIconPathSet.getStyle('menu.icon');
 
-      expect(path).toEqual('base/test/fixtures/icon-d.svg');
+      expect(path).toEqual('base/tests/fixtures/icon-d.svg');
       expect(name).toEqual('icon-d');
     });
 
@@ -96,14 +96,14 @@ describe('Theme', () => {
     it('Setting the icon file should create a svg path with the prefix.', () => {
       const themeForIconPathSet = new Theme(
         snippet.extend({}, defaultTheme, {
-          'menu.normalIcon.path': 'base/test/fixtures/icon-d.svg',
+          'menu.normalIcon.path': 'base/tests/fixtures/icon-d.svg',
           'menu.normalIcon.name': 'icon-d',
         })
       );
       const useTagString = themeForIconPathSet._makeSvgItem(['normal'], 'crop');
 
       expect(useTagString).toBe(
-        '<use xlink:href="base/test/fixtures/icon-d.svg#icon-d-ic-crop" class="normal"/>'
+        '<use xlink:href="base/tests/fixtures/icon-d.svg#icon-d-ic-crop" class="normal"/>'
       );
     });
   });

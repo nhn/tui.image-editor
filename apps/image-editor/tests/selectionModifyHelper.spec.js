@@ -1,11 +1,15 @@
+/**
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @fileoverview Test cases of "src/js/helper/selectionModifyHelper.js"
+ */
+import fabric from 'fabric';
+import Graphics from '@/graphics';
 import {
   setCachedUndoDataForDimension,
   getCachedUndoDataForDimension,
   makeSelectionUndoData,
   makeSelectionUndoDatum,
-} from '../src/js/helper/selectionModifyHelper';
-import Graphics from '../src/js/graphics';
-import fabric from 'fabric';
+} from '@/helper/selectionModifyHelper';
 
 describe('selectionModifyHelper', () => {
   let graphics, obj1, obj2;

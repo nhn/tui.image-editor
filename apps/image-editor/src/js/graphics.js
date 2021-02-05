@@ -1,37 +1,37 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Graphics module
  */
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
-import ImageLoader from './component/imageLoader';
-import Cropper from './component/cropper';
-import Flip from './component/flip';
-import Rotation from './component/rotation';
-import FreeDrawing from './component/freeDrawing';
-import Line from './component/line';
-import Text from './component/text';
-import Icon from './component/icon';
-import Filter from './component/filter';
-import Shape from './component/shape';
-import CropperDrawingMode from './drawingMode/cropper';
-import FreeDrawingMode from './drawingMode/freeDrawing';
-import LineDrawingMode from './drawingMode/lineDrawing';
-import ShapeDrawingMode from './drawingMode/shape';
-import TextDrawingMode from './drawingMode/text';
-import IconDrawingMode from './drawingMode/icon';
-import { getProperties, includes, isShape, Promise } from './util';
+import ImageLoader from '@/component/imageLoader';
+import Cropper from '@/component/cropper';
+import Flip from '@/component/flip';
+import Rotation from '@/component/rotation';
+import FreeDrawing from '@/component/freeDrawing';
+import Line from '@/component/line';
+import Text from '@/component/text';
+import Icon from '@/component/icon';
+import Filter from '@/component/filter';
+import Shape from '@/component/shape';
+import CropperDrawingMode from '@/drawingMode/cropper';
+import FreeDrawingMode from '@/drawingMode/freeDrawing';
+import LineDrawingMode from '@/drawingMode/lineDrawing';
+import ShapeDrawingMode from '@/drawingMode/shape';
+import TextDrawingMode from '@/drawingMode/text';
+import IconDrawingMode from '@/drawingMode/icon';
+import {
+  makeSelectionUndoData,
+  makeSelectionUndoDatum,
+  setCachedUndoDataForDimension,
+} from '@/helper/selectionModifyHelper';
+import { getProperties, includes, isShape, Promise } from '@/util';
 import {
   componentNames as components,
   eventNames as events,
   drawingModes,
   fObjectOptions,
-} from './consts';
-import {
-  makeSelectionUndoData,
-  makeSelectionUndoDatum,
-  setCachedUndoDataForDimension,
-} from './helper/selectionModifyHelper';
+} from '@/consts';
 
 const {
   extend,
@@ -1112,7 +1112,7 @@ class Graphics {
     const existEventDelegation = target && target.canvasEventDelegation;
     const delegationState = existEventDelegation ? target.canvasEventDelegation(eventName) : 'none';
 
-    if (delegationState === 'unregisted') {
+    if (delegationState === 'unregistered') {
       target.canvasEventRegister(eventName, (object) => {
         this.fire(eventName, paramsMaker(object));
       });

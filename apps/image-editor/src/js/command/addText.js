@@ -1,10 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add a text object
  */
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { componentNames, commandNames, rejectMessages } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { componentNames, commandNames, rejectMessages } from '@/consts';
+
 const { TEXT } = componentNames;
 
 const command = {
@@ -51,6 +52,7 @@ const command = {
       return objectProps;
     });
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

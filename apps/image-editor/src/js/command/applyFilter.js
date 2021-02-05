@@ -1,18 +1,18 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Apply a filter into an image
  */
 import snippet from 'tui-code-snippet';
-import commandFactory from '../factory/command';
-import { componentNames, rejectMessages, commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { componentNames, rejectMessages, commandNames } from '@/consts';
 
 const { FILTER } = componentNames;
 
 /**
- * Chched data for undo
+ * Cached data for undo
  * @type {Object}
  */
-let chchedUndoDataForSilent = null;
+let cachedUndoDataForSilent = null;
 
 /**
  * Make undoData
@@ -62,11 +62,12 @@ const command = {
       const prevfilterOption = filterComp.getOptions(type);
       const undoData = makeUndoData(type, prevfilterOption, options);
 
-      chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
+      cachedUndoDataForSilent = this.setUndoData(undoData, cachedUndoDataForSilent, isSilent);
     }
 
     return filterComp.add(type, options);
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @param {string} type - Filter type

@@ -1,10 +1,10 @@
 import snippet from 'tui-code-snippet';
-import Colorpicker from './tools/colorpicker';
-import Range from './tools/range';
-import Submenu from './submenuBase';
-import templateHtml from './template/submenu/filter';
-import { toInteger, toCamelCase, assignmentForDestroy } from '../util';
-import { defaultFilterRangeValus as FILTER_RANGE } from '../consts';
+import Colorpicker from '@/ui/tools/colorpicker';
+import Range from '@/ui/tools/range';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/filter';
+import { toInteger, toCamelCase, assignmentForDestroy } from '@/util';
+import { defaultFilterRangeValues as FILTER_RANGE } from '@/consts';
 
 const PICKER_CONTROL_HEIGHT = '130px';
 const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
@@ -25,7 +25,6 @@ const FILTER_OPTIONS = [
   'multiply',
   'blend',
 ];
-
 const filterNameMap = {
   grayscale: 'grayscale',
   invert: 'invert',
@@ -48,10 +47,9 @@ const filterNameMap = {
   hue: 'hue',
   gamma: 'gamma',
 };
-
 const RANGE_INSTANCE_NAMES = [
   'removewhiteDistanceRange',
-  'colorfilterThresholeRange',
+  'colorfilterThresholdRange',
   'pixelateRange',
   'noiseRange',
   'brightnessRange',
@@ -141,7 +139,7 @@ class Filter extends Submenu {
     });
 
     this._els.removewhiteDistanceRange.on('change', changeFilterStateForRange('removeWhite'));
-    this._els.colorfilterThresholeRange.on('change', changeFilterStateForRange('colorFilter'));
+    this._els.colorfilterThresholdRange.on('change', changeFilterStateForRange('colorFilter'));
     this._els.pixelateRange.on('change', changeFilterStateForRange('pixelate'));
     this._els.noiseRange.on('change', changeFilterStateForRange('noise'));
     this._els.brightnessRange.on('change', changeFilterStateForRange('brightness'));
@@ -160,13 +158,13 @@ class Filter extends Submenu {
 
   /**
    * Set filter for undo changed
-   * @param {Object} chagedFilterInfos - changed command infos
+   * @param {Object} changedFilterInfos - changed command infos
    *   @param {string} type - filter type
    *   @param {string} action - add or remove
    *   @param {Object} options - filter options
    */
-  setFilterState(chagedFilterInfos) {
-    const { type, options, action } = chagedFilterInfos;
+  setFilterState(changedFilterInfos) {
+    const { type, options, action } = changedFilterInfos;
     const filterName = this._getFilterNameFromOptions(type, options);
     const isRemove = action === 'remove';
 
@@ -186,7 +184,7 @@ class Filter extends Submenu {
   // eslint-disable-next-line complexity
   _setFilterState(filterName, options) {
     if (filterName === 'colorFilter') {
-      this._els.colorfilterThresholeRange.value = options.distance;
+      this._els.colorfilterThresholdRange.value = options.distance;
     } else if (filterName === 'removeWhite') {
       this._els.removewhiteDistanceRange.value = options.distance;
     } else if (filterName === 'pixelate') {
@@ -266,7 +264,7 @@ class Filter extends Submenu {
         break;
       case 'colorFilter':
         option.color = '#FFFFFF';
-        option.distance = parseFloat(this._els.colorfilterThresholeRange.value);
+        option.distance = parseFloat(this._els.colorfilterThresholdRange.value);
         break;
       case 'pixelate':
         option.blocksize = toInteger(this._els.pixelateRange.value);
@@ -320,9 +318,9 @@ class Filter extends Submenu {
         { slider: this.selector('.tie-pixelate-range') },
         FILTER_RANGE.pixelateRange
       ),
-      colorfilterThresholeRange: new Range(
-        { slider: this.selector('.tie-colorfilter-threshole-range') },
-        FILTER_RANGE.colorfilterThresholeRange
+      colorfilterThresholdRange: new Range(
+        { slider: this.selector('.tie-colorfilter-threshold-range') },
+        FILTER_RANGE.colorfilterThresholdRange
       ),
       filterTintColor: new Colorpicker(
         this.selector('.tie-filter-tint-color'),
@@ -361,12 +359,12 @@ class Filter extends Submenu {
    */
   _pickerWithRange(pickerControl) {
     const rangeWrap = document.createElement('div');
-    const rangelabel = document.createElement('label');
+    const rangeLabel = document.createElement('label');
     const slider = document.createElement('div');
 
     slider.id = 'tie-filter-tint-opacity';
-    rangelabel.innerHTML = 'Opacity';
-    rangeWrap.appendChild(rangelabel);
+    rangeLabel.innerHTML = 'Opacity';
+    rangeWrap.appendChild(rangeLabel);
     rangeWrap.appendChild(slider);
     pickerControl.appendChild(rangeWrap);
     pickerControl.style.height = PICKER_CONTROL_HEIGHT;
@@ -419,7 +417,7 @@ class Filter extends Submenu {
   }
 
   /**
-   * custome selectbox custom event
+   * custom selectbox custom event
    * @param {HTMLElement} selectlist - selectbox element
    * @param {HTMLElement} optionlist - custom option list item element
    * @private

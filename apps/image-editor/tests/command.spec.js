@@ -1,15 +1,14 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Tests command with command-factory
  */
 import snippet from 'tui-code-snippet';
-import { Promise } from '../src/js/util';
 import fabric from 'fabric';
-import Invoker from '../src/js/invoker';
-import commandFactory from '../src/js/factory/command';
-import Graphics from '../src/js/graphics';
-import { commandNames as commands } from '../src/js/consts';
-import { getCachedUndoDataForDimension } from '../src/js/helper/selectionModifyHelper';
+import Graphics from '@/graphics';
+import Invoker from '@/invoker';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { commandNames as commands } from '@/consts';
 
 describe('commandFactory', () => {
   let invoker, mockImage, canvas, graphics;
@@ -195,7 +194,7 @@ describe('commandFactory', () => {
   });
 
   describe('loadImageCommand', () => {
-    const imageURL = 'base/test/fixtures/sampleImage.jpg';
+    const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
     beforeEach(() => {
       graphics.setCanvasImage('', null);
@@ -263,7 +262,7 @@ describe('commandFactory', () => {
     });
 
     it('"undo()" should restore to prev image', (done) => {
-      const newImageURL = 'base/test/fixtures/TOAST%20UI%20Component.png';
+      const newImageURL = 'base/tests/fixtures/TOAST%20UI%20Component.png';
 
       invoker
         .execute(commands.LOAD_IMAGE, graphics, 'image', imageURL)

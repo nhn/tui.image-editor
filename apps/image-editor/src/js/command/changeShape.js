@@ -1,19 +1,19 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview change a shape
  */
 import snippet from 'tui-code-snippet';
-import { Promise } from '../util';
-import commandFactory from '../factory/command';
-import { componentNames, rejectMessages, commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { componentNames, rejectMessages, commandNames } from '@/consts';
 
 const { SHAPE } = componentNames;
 
 /**
- * Chched data for undo
+ * Cached data for undo
  * @type {Object}
  */
-let chchedUndoDataForSilent = null;
+let cachedUndoDataForSilent = null;
 
 /**
  * Make undoData
@@ -66,11 +66,12 @@ const command = {
     if (!this.isRedo) {
       const undoData = makeUndoData(options, targetObj);
 
-      chchedUndoDataForSilent = this.setUndoData(undoData, chchedUndoDataForSilent, isSilent);
+      cachedUndoDataForSilent = this.setUndoData(undoData, cachedUndoDataForSilent, isSilent);
     }
 
     return shapeComp.change(targetObj, options);
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

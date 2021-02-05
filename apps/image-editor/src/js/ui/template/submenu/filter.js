@@ -117,7 +117,7 @@ export default ({ locale }) => `
                 </div>
                 <div class="tui-image-editor-newline tui-image-editor-range-wrap short">
                     <label>${locale.localize('Threshold')}</label>
-                    <div class="tie-colorfilter-threshole-range"></div>
+                    <div class="tie-colorfilter-threshold-range"></div>
                 </div>
             </div>
         </li>

@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Cropzone extending fabric.Rect
  */
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
-import { clamp } from '../util';
-import { eventNames as events } from '../consts';
+import { clamp } from '@/util';
+import { eventNames as events } from '@/consts';
 
 const CORNER_TYPE_TOP_LEFT = 'tl';
 const CORNER_TYPE_TOP_RIGHT = 'tr';
@@ -77,10 +77,10 @@ const Cropzone = fabric.util.createClass(
       this.options = options;
     },
     canvasEventDelegation(eventName) {
-      let delegationState = 'unregisted';
-      const isRegisted = this.canvasEventTrigger[eventName] !== NOOP_FUNCTION;
-      if (isRegisted) {
-        delegationState = 'registed';
+      let delegationState = 'unregistered';
+      const isRegistered = this.canvasEventTrigger[eventName] !== NOOP_FUNCTION;
+      if (isRegistered) {
+        delegationState = 'registered';
       } else if ([events.OBJECT_MOVED, events.OBJECT_SCALED].indexOf(eventName) < 0) {
         delegationState = 'none';
       }

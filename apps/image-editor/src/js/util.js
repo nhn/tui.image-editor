@@ -1,10 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Util
  */
 import { forEach, sendHostname, extend, isString, pick, inArray } from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
-import { SHAPE_FILL_TYPE, SHAPE_TYPE } from './consts';
+import { SHAPE_FILL_TYPE, SHAPE_TYPE } from '@/consts';
+
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
 const { min, max } = Math;

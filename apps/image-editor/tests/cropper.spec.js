@@ -1,13 +1,13 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/cropper.js"
  */
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import $ from 'jquery';
-import Cropper from '../src/js/component/cropper';
-import Graphics from '../src/js/graphics';
-import { eventNames, CROPZONE_DEFAULT_OPTIONS } from '../src/js/consts';
+import Graphics from '@/graphics';
+import Cropper from '@/component/cropper';
+import { eventNames, CROPZONE_DEFAULT_OPTIONS } from '@/consts';
 
 describe('Cropper', () => {
   let cropper, graphics, canvas;

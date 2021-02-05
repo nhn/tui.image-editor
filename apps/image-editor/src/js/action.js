@@ -1,6 +1,6 @@
 import { extend } from 'tui-code-snippet';
-import { isSupportFileApi, base64ToBlob, toInteger } from './util';
-import Imagetracer from './helper/imagetracer';
+import Imagetracer from '@/helper/imagetracer';
+import { isSupportFileApi, base64ToBlob, toInteger } from '@/util';
 
 export default {
   /**
@@ -155,12 +155,12 @@ export default {
           this.changeCursor('default');
           this.stopDrawingMode();
         },
-        registDefalutIcons: (type, path) => {
+        registerDefaultIcons: (type, path) => {
           const iconObj = {};
           iconObj[type] = path;
           this.registerIcons(iconObj);
         },
-        registCustomIcon: (imgUrl, file) => {
+        registerCustomIcon: (imgUrl, file) => {
           const imagetracer = new Imagetracer();
           imagetracer.imageToSVG(
             imgUrl,

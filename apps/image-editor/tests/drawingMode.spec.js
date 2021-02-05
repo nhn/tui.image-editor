@@ -1,12 +1,12 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/imageEditor.js"
  */
-import ImageEditor from '../src/js/imageEditor';
+import ImageEditor from '@/imageEditor';
 
 describe('DrawingMode', () => {
   let imageEditor;
-  const imageURL = 'base/test/fixtures/sampleImage.jpg';
+  const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
   beforeEach((done) => {
     imageEditor = new ImageEditor(document.createElement('div'), {

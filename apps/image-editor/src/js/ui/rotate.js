@@ -1,8 +1,8 @@
-import Range from './tools/range';
-import Submenu from './submenuBase';
-import templateHtml from './template/submenu/rotate';
-import { toInteger, assignmentForDestroy } from '../util';
-import { defaultRotateRangeValus } from '../consts';
+import Range from '@/ui/tools/range';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/rotate';
+import { toInteger, assignmentForDestroy } from '@/util';
+import { defaultRotateRangeValues } from '@/consts';
 
 const CLOCKWISE = 30;
 const COUNTERCLOCKWISE = -30;
@@ -25,13 +25,13 @@ class Rotate extends Submenu {
     this._value = 0;
 
     this._els = {
-      rotateButton: this.selector('.tie-retate-button'),
+      rotateButton: this.selector('.tie-rotate-button'),
       rotateRange: new Range(
         {
           slider: this.selector('.tie-rotate-range'),
-          input: this.selector('.tie-ratate-range-value'),
+          input: this.selector('.tie-rotate-range-value'),
         },
-        defaultRotateRangeValus
+        defaultRotateRangeValues
       ),
     };
   }

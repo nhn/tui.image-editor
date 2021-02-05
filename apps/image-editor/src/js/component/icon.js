@@ -1,12 +1,12 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add icon module
  */
-import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
-import { Promise } from '../util';
-import Component from '../interface/component';
-import { eventNames as events, rejectMessages, componentNames, fObjectOptions } from '../consts';
+import fabric from 'fabric';
+import Component from '@/interface/component';
+import { Promise } from '@/util';
+import { eventNames as events, rejectMessages, componentNames, fObjectOptions } from '@/consts';
 
 const pathMap = {
   arrow: 'M 0 90 H 105 V 120 L 160 60 L 105 0 V 30 H 0 Z',

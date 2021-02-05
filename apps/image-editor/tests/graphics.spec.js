@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Tests command with command-factory
  */
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
-import Graphics from '../src/js/graphics';
-import { drawingModes, componentNames as components } from '../src/js/consts';
+import Graphics from '@/graphics';
+import { drawingModes, componentNames as components } from '@/consts';
 
 describe('Graphics', () => {
   const cssMaxWidth = 900;

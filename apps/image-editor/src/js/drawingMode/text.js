@@ -1,9 +1,9 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview TextDrawingMode class
  */
-import DrawingMode from '../interface/drawingMode';
-import { drawingModes, componentNames as components } from '../consts';
+import DrawingMode from '@/interface/drawingMode';
+import { drawingModes, componentNames as components } from '@/consts';
 
 /**
  * TextDrawingMode class

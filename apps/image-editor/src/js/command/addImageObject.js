@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Add an image object
  */
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { commandNames } from '@/consts';
 
 const command = {
   name: commandNames.ADD_IMAGE_OBJECT,
@@ -22,6 +22,7 @@ const command = {
       return objectProps;
     });
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

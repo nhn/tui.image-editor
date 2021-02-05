@@ -1,5 +1,5 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Constants
  */
 import { keyMirror } from './util';
@@ -219,34 +219,34 @@ export const defaultIconPath = {
     'M44 48L34 58V48H12C5.373 48 0 42.627 0 36V12C0 5.373 5.373 0 12 0h40c6.627 0 12 5.373 12 12v24c0 6.627-5.373 12-12 12h-8z',
 };
 
-export const defaultRotateRangeValus = {
+export const defaultRotateRangeValues = {
   realTimeEvent: true,
   min: -360,
   max: 360,
   value: 0,
 };
 
-export const defaultDrawRangeValus = {
+export const defaultDrawRangeValues = {
   min: 5,
   max: 30,
   value: 12,
 };
 
-export const defaultShapeStrokeValus = {
+export const defaultShapeStrokeValues = {
   realTimeEvent: true,
   min: 2,
   max: 300,
   value: 3,
 };
 
-export const defaultTextRangeValus = {
+export const defaultTextRangeValues = {
   realTimeEvent: true,
   min: 10,
   max: 100,
   value: 50,
 };
 
-export const defaultFilterRangeValus = {
+export const defaultFilterRangeValues = {
   tintOpacityRange: {
     realTimeEvent: true,
     min: 0,
@@ -280,7 +280,7 @@ export const defaultFilterRangeValus = {
     max: 20,
     value: 4,
   },
-  colorfilterThresholeRange: {
+  colorfilterThresholdRange: {
     realTimeEvent: true,
     min: 0,
     max: 1,

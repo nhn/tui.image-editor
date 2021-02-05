@@ -1,9 +1,9 @@
 import snippet from 'tui-code-snippet';
-import Colorpicker from './tools/colorpicker';
-import Submenu from './submenuBase';
-import templateHtml from './template/submenu/icon';
-import { isSupportFileApi, assignmentForDestroy } from '../util';
-import { defaultIconPath } from '../consts';
+import Colorpicker from '@/ui/tools/colorpicker';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/icon';
+import { isSupportFileApi, assignmentForDestroy } from '@/util';
+import { defaultIconPath } from '@/consts';
 
 /**
  * Icon ui class
@@ -25,7 +25,7 @@ class Icon extends Submenu {
     this._iconMap = {};
 
     this._els = {
-      registrIconButton: this.selector('.tie-icon-image-file'),
+      registerIconButton: this.selector('.tie-icon-image-file'),
       addIconButton: this.selector('.tie-icon-add-button'),
       iconColorpicker: new Colorpicker(
         this.selector('.tie-icon-color'),
@@ -49,7 +49,7 @@ class Icon extends Submenu {
   /**
    * Add event for icon
    * @param {Object} actions - actions for icon
-   *   @param {Function} actions.registCustomIcon - register icon
+   *   @param {Function} actions.registerCustomIcon - register icon
    *   @param {Function} actions.addIcon - add icon
    *   @param {Function} actions.changeColor - change icon color
    */
@@ -64,7 +64,7 @@ class Icon extends Submenu {
 
     this.actions = actions;
     this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
-    this._els.registrIconButton.addEventListener('change', registerIcon);
+    this._els.registerIconButton.addEventListener('change', registerIcon);
     this._els.addIconButton.addEventListener('click', addIcon);
   }
 
@@ -74,7 +74,7 @@ class Icon extends Submenu {
    */
   _removeEvent() {
     this._els.iconColorpicker.off();
-    this._els.registrIconButton.removeEventListener('change', this.eventHandler.registerIcon);
+    this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
     this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
   }
 
@@ -89,9 +89,9 @@ class Icon extends Submenu {
   /**
    * Register default icon
    */
-  registDefaultIcon() {
+  registerDefaultIcon() {
     snippet.forEach(defaultIconPath, (path, type) => {
-      this.actions.registDefalutIcons(type, path);
+      this.actions.registerDefaultIcons(type, path);
     });
   }
 
@@ -162,7 +162,7 @@ class Icon extends Submenu {
 
     if (file) {
       imgUrl = URL.createObjectURL(file);
-      this.actions.registCustomIcon(imgUrl, file);
+      this.actions.registerCustomIcon(imgUrl, file);
     }
   }
 }

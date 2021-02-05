@@ -1,14 +1,13 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/action.js"
  */
 import snippet from 'tui-code-snippet';
-import { Promise } from '../src/js/util';
-import ImageEditor from '../src/js/imageEditor';
-import action from '../src/js/action';
-import { eventNames } from '../src/js/consts';
+import ImageEditor from '@/imageEditor';
+import action from '@/action';
+import { Promise } from '@/util';
 
-describe('Ui', () => {
+describe('UI', () => {
   let actions;
   let imageEditorMock;
 

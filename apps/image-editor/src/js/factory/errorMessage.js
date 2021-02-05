@@ -1,9 +1,9 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Error-message factory
  */
 import snippet from 'tui-code-snippet';
-import { keyMirror } from '../util';
+import { keyMirror } from '@/util';
 
 const types = keyMirror('UN_IMPLEMENTATION', 'NO_COMPONENT_NAME');
 const messages = {

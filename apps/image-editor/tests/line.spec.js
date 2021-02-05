@@ -1,12 +1,12 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/line.js"
  */
 import fabric from 'fabric';
 import $ from 'jquery';
-import Graphics from '../src/js/graphics';
-import Line from '../src/js/component/line';
-import { eventNames } from '../src/js/consts';
+import Graphics from '@/graphics';
+import Line from '@/component/line';
+import { eventNames } from '@/consts';
 
 describe('Line', () => {
   let canvas, graphics, mockImage, line, fEvent;

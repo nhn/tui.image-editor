@@ -1,6 +1,6 @@
 /**
  * webpack.config.js created on 2016. 12. 01.
- * @author NHN Ent. FE Development Lab <dl_javascript@nhn.com>
+ * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  */
 const pkg = require('./package.json');
 const path = require('path');
@@ -8,7 +8,7 @@ const webpack = require('webpack');
 const SafeUmdPlugin = require('safe-umd-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizaeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const isProduction = process.argv.indexOf('-p') > -1;
 
@@ -29,6 +29,13 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/dist',
     filename: `${FILENAME}.js`,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src/js/'),
+      '@css': path.resolve(__dirname, 'src/css/'),
+      '@svg': path.resolve(__dirname, 'src/svg/'),
+    },
   },
   externals: [
     {
@@ -110,7 +117,7 @@ module.exports = {
         parallel: true,
         sourceMap: true,
       }),
-      new OptimizaeCSSAssetsPlugin({
+      new OptimizeCSSAssetsPlugin({
         cssProcessorOptions: {
           map: {
             inline: false,

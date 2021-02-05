@@ -1,6 +1,6 @@
-import Submenu from './submenuBase';
-import { assignmentForDestroy, isSupportFileApi } from '../util';
-import templateHtml from './template/submenu/mask';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/mask';
+import { assignmentForDestroy, isSupportFileApi } from '@/util';
 
 /**
  * Mask ui class

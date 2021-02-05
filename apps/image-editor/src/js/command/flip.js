@@ -1,9 +1,9 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Flip an image
  */
-import commandFactory from '../factory/command';
-import { componentNames, commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { componentNames, commandNames } from '@/consts';
 
 const { FLIP } = componentNames;
 
@@ -23,6 +23,7 @@ const command = {
 
     return flipComp[type]();
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

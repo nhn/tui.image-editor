@@ -2,11 +2,11 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Free drawing module, Set brush
  */
-import fabric from 'fabric';
 import snippet from 'tui-code-snippet';
-import Component from '../interface/component';
-import ArrowLine from '../extension/arrowLine';
-import { eventNames, componentNames, fObjectOptions } from '../consts';
+import fabric from 'fabric';
+import Component from '@/interface/component';
+import ArrowLine from '@/extension/arrowLine';
+import { eventNames, componentNames, fObjectOptions } from '@/consts';
 
 /**
  * Line
@@ -169,7 +169,6 @@ class Line extends Component {
 
   /**
    * Mouseup event handler in fabric canvas
-   * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event object
    * @private
    */
   _onFabricMouseUp() {

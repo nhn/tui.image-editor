@@ -1,9 +1,9 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Remove a filter from an image
  */
-import commandFactory from '../factory/command';
-import { componentNames, commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { componentNames, commandNames } from '@/consts';
 
 const { FILTER } = componentNames;
 
@@ -23,6 +23,7 @@ const command = {
 
     return filterComp.remove(type);
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @param {string} type - Filter type

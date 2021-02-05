@@ -3,7 +3,7 @@
  * @fileoverview Selection modification helper
  */
 
-import { extend } from 'tui-code-snippet/src/js/object';
+import { extend } from 'tui-code-snippet';
 
 /**
  * Cached selection's info

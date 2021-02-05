@@ -1,12 +1,12 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/filter.js"
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @fileoverview Test cases of Promise API
  */
-import ImageEditor from '../src/js/imageEditor';
+import ImageEditor from '@/imageEditor';
 
 describe('Promise API', () => {
   let imageEditor, canvas, activeObjectId;
-  const imageURL = 'base/test/fixtures/sampleImage.jpg';
+  const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
   beforeAll(() => {
     imageEditor = new ImageEditor(document.createElement('div'), {
@@ -156,7 +156,7 @@ describe('Promise API', () => {
   });
 
   it('addImageObject() supports Promise', (done) => {
-    const maskImageURL = 'base/test/fixtures/mask.png';
+    const maskImageURL = 'base/tests/fixtures/mask.png';
     imageEditor
       .addImageObject(maskImageURL)
       .then((objectProps) => {
@@ -300,7 +300,7 @@ describe('Promise API', () => {
   });
 
   describe('Watermark', () => {
-    const maskImageURL = 'base/test/fixtures/mask.png';
+    const maskImageURL = 'base/tests/fixtures/mask.png';
     const properties = {
       fill: 'rgba(255, 255, 0, 0.5)',
       left: 150,

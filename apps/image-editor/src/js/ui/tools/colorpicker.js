@@ -1,5 +1,6 @@
 import snippet from 'tui-code-snippet';
 import tuiColorPicker from 'tui-color-picker';
+
 const PICKER_COLOR = [
   '#000000',
   '#2a2a2a',

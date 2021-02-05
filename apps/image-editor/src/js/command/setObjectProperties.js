@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Set object properties
  */
 import snippet from 'tui-code-snippet';
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { commandNames, rejectMessages } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { commandNames, rejectMessages } from '@/consts';
 
 const command = {
   name: commandNames.SET_OBJECT_PROPERTIES,
@@ -40,6 +40,7 @@ const command = {
 
     return Promise.resolve();
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @param {number} id - object id

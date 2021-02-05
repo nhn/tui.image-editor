@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Set object properties
  */
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { commandNames, rejectMessages } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { commandNames, rejectMessages } from '@/consts';
 
 const command = {
   name: commandNames.SET_OBJECT_POSITION,
@@ -35,6 +35,7 @@ const command = {
 
     return Promise.resolve();
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

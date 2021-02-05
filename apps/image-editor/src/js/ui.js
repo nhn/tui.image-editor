@@ -1,20 +1,20 @@
 import snippet from 'tui-code-snippet';
-import { HELP_MENUS } from './consts';
-import { getSelector, assignmentForDestroy, cls } from './util';
-import mainContainer from './ui/template/mainContainer';
-import controls from './ui/template/controls';
+import { getSelector, assignmentForDestroy, cls } from '@/util';
+import { HELP_MENUS } from '@/consts';
+import mainContainer from '@/ui/template/mainContainer';
+import controls from '@/ui/template/controls';
 
-import Theme from './ui/theme/theme';
-import Shape from './ui/shape';
-import Crop from './ui/crop';
-import Flip from './ui/flip';
-import Rotate from './ui/rotate';
-import Text from './ui/text';
-import Mask from './ui/mask';
-import Icon from './ui/icon';
-import Draw from './ui/draw';
-import Filter from './ui/filter';
-import Locale from './ui/locale/locale';
+import Theme from '@/ui/theme/theme';
+import Shape from '@/ui/shape';
+import Crop from '@/ui/crop';
+import Flip from '@/ui/flip';
+import Rotate from '@/ui/rotate';
+import Text from '@/ui/text';
+import Mask from '@/ui/mask';
+import Icon from '@/ui/icon';
+import Draw from '@/ui/draw';
+import Filter from '@/ui/filter';
+import Locale from '@/ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
   Shape,
@@ -421,7 +421,7 @@ class Ui {
   }
 
   /**
-   * Remmove load event
+   * Remove load event
    * @private
    */
   _removeLoadEvent() {
@@ -572,7 +572,7 @@ class Ui {
   /**
    * change menu
    * @param {string} menuName - menu name
-   * @param {boolean} toggle - whether toogle or not
+   * @param {boolean} toggle - whether toggle or not
    * @param {boolean} discardSelection - discard selection
    * @private
    */
@@ -611,7 +611,7 @@ class Ui {
     }
 
     if (this.icon) {
-      this.icon.registDefaultIcon();
+      this.icon.registerDefaultIcon();
     }
   }
 

@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/flip.js"
  */
 import fabric from 'fabric';
 import $ from 'jquery';
-import Graphics from '../src/js/graphics';
-import Flip from '../src/js/component/flip';
+import Graphics from '@/graphics';
+import Flip from '@/component/flip';
 
 describe('Flip', () => {
   let graphics, flipModule, mockImage;

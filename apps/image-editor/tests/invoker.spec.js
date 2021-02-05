@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/invoker.js"
  */
-import { Promise } from '../src/js/util';
-import Invoker from '../src/js/invoker';
-import Command from '../src/js/interface/command';
+import Invoker from '@/invoker';
+import Command from '@/interface/command';
+import { Promise } from '@/util';
 
 describe('Invoker', () => {
   let invoker, cmd;

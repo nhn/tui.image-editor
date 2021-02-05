@@ -2,10 +2,10 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview change selection
  */
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { commandNames } from '../consts';
-import { getCachedUndoDataForDimension } from '../helper/selectionModifyHelper';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { commandNames } from '@/consts';
+import { getCachedUndoDataForDimension } from '@/helper/selectionModifyHelper';
 
 const command = {
   name: commandNames.CHANGE_SELECTION,
@@ -21,6 +21,7 @@ const command = {
 
     return Promise.resolve();
   },
+
   undo(graphics) {
     this.undoData.forEach((datum) => {
       graphics.setObjectProperties(datum.id, datum);

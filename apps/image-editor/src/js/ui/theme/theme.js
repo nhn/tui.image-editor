@@ -1,8 +1,8 @@
 import { extend, forEach, map } from 'tui-code-snippet';
-import { styleLoad } from '../../util';
-import style from '../template/style';
-import standardTheme from './standard';
-import icon from '../../../svg/default.svg';
+import style from '@/ui/template/style';
+import standardTheme from '@/ui/theme/standard';
+import icon from '@svg/default.svg';
+import { styleLoad } from '@/util';
 
 /**
  * Theme manager
@@ -167,7 +167,7 @@ class Theme {
   }
 
   /**
-   * Load defulat svg icon
+   * Load default svg icon
    * @private
    */
   _loadDefaultSvgIcon() {

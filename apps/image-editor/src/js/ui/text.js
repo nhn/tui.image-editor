@@ -1,9 +1,9 @@
-import { assignmentForDestroy } from '../util';
-import Range from './tools/range';
-import Colorpicker from './tools/colorpicker';
-import Submenu from './submenuBase';
-import templateHtml from './template/submenu/text';
-import { defaultTextRangeValus } from '../consts';
+import Range from '@/ui/tools/range';
+import Colorpicker from '@/ui/tools/colorpicker';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/text';
+import { assignmentForDestroy } from '@/util';
+import { defaultTextRangeValues } from '@/consts';
 
 /**
  * Crop ui class
@@ -40,7 +40,7 @@ export default class Text extends Submenu {
           slider: this.selector('.tie-text-range'),
           input: this.selector('.tie-text-range-value'),
         },
-        defaultTextRangeValus
+        defaultTextRangeValues
       ),
     };
   }
@@ -161,21 +161,21 @@ export default class Text extends Submenu {
 
     this.textColor = fill;
     this.fontSize = fontSize;
-    this.setEffactState('italic', fontStyle);
-    this.setEffactState('bold', fontWeight);
-    this.setEffactState('underline', textDecoration);
+    this.setEffectState('italic', fontStyle);
+    this.setEffectState('bold', fontWeight);
+    this.setEffectState('underline', textDecoration);
     this.setAlignState(textAlign);
   }
 
-  setEffactState(effactName, value) {
-    const effactValue = value === 'italic' || value === 'bold' || value === 'underline';
+  setEffectState(effectName, value) {
+    const effectValue = value === 'italic' || value === 'bold' || value === 'underline';
     const button = this._els.textEffectButton.querySelector(
-      `.tui-image-editor-button.${effactName}`
+      `.tui-image-editor-button.${effectName}`
     );
 
-    this.effect[effactName] = effactValue;
+    this.effect[effectName] = effectValue;
 
-    button.classList[effactValue ? 'add' : 'remove']('active');
+    button.classList[effectValue ? 'add' : 'remove']('active');
   }
 
   setAlignState(value) {

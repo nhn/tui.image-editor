@@ -1,5 +1,9 @@
-import Range from '../src/js/ui/tools/range';
-import { defaultRotateRangeValus } from '../src/js/consts';
+/**
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @fileoverview Test cases of "src/js/ui/tools/range.js"
+ */
+import Range from '@/ui/tools/range';
+import { defaultRotateRangeValues } from '@/consts';
 
 describe('Range', () => {
   let range, input, slider;
@@ -11,7 +15,7 @@ describe('Range', () => {
         slider,
         input,
       },
-      defaultRotateRangeValus
+      defaultRotateRangeValues
     );
   });
 

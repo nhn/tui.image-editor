@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/text.js"
  */
 import fabric from 'fabric';
 import $ from 'jquery';
-import Graphics from '../src/js/graphics';
-import Text from '../src/js/component/text';
+import Graphics from '@/graphics';
+import Text from '@/component/text';
 
 describe('Text', () => {
   let canvas, graphics, mockImage, text;

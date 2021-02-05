@@ -1,6 +1,6 @@
 /**
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview The standard theme
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
  */
 
 /**

@@ -1,11 +1,11 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/ui.js"
  */
 import snippet from 'tui-code-snippet';
-import { Promise } from '../src/js/util';
-import UI from '../src/js/ui';
-import { HELP_MENUS } from '../src/js/consts';
+import UI from '@/ui';
+import { Promise } from '@/util';
+import { HELP_MENUS } from '@/consts';
 
 describe('UI', () => {
   let ui;

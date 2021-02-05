@@ -1,13 +1,13 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Image crop module (start cropping, end cropping)
  */
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
-import Component from '../interface/component';
-import Cropzone from '../extension/cropzone';
-import { keyCodes, componentNames, CROPZONE_DEFAULT_OPTIONS } from '../consts';
-import { clamp, fixFloatingPoint } from '../util';
+import Component from '@/interface/component';
+import Cropzone from '@/extension/cropzone';
+import { keyCodes, componentNames, CROPZONE_DEFAULT_OPTIONS } from '@/consts';
+import { clamp, fixFloatingPoint } from '@/util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
 const DEFAULT_OPTION = {

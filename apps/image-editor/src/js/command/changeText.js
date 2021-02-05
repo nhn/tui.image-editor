@@ -1,10 +1,10 @@
 /**
- * @author NHN Ent. FE Development Team <dl_javascript@nhn.com>
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Change a text
  */
-import commandFactory from '../factory/command';
-import { Promise } from '../util';
-import { componentNames, rejectMessages, commandNames } from '../consts';
+import commandFactory from '@/factory/command';
+import { Promise } from '@/util';
+import { componentNames, rejectMessages, commandNames } from '@/consts';
 
 const { TEXT } = componentNames;
 
@@ -31,6 +31,7 @@ const command = {
 
     return textComp.change(targetObj, text);
   },
+
   /**
    * @param {Graphics} graphics - Graphics instance
    * @returns {Promise}

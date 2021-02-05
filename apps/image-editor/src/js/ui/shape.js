@@ -1,9 +1,9 @@
-import Colorpicker from './tools/colorpicker';
-import Range from './tools/range';
-import Submenu from './submenuBase';
-import templateHtml from './template/submenu/shape';
-import { toInteger, assignmentForDestroy } from '../util';
-import { defaultShapeStrokeValus } from '../consts';
+import Colorpicker from '@/ui/tools/colorpicker';
+import Range from '@/ui/tools/range';
+import Submenu from '@/ui/submenuBase';
+import templateHtml from '@/ui/template/submenu/shape';
+import { toInteger, assignmentForDestroy } from '@/util';
+import { defaultShapeStrokeValues } from '@/consts';
 
 const SHAPE_DEFAULT_OPTION = {
   stroke: '#ffbb3b',
@@ -37,7 +37,7 @@ class Shape extends Submenu {
           slider: this.selector('.tie-stroke-range'),
           input: this.selector('.tie-stroke-range-value'),
         },
-        defaultShapeStrokeValus
+        defaultShapeStrokeValues
       ),
       fillColorpicker: new Colorpicker(
         this.selector('.tie-color-fill'),
@@ -73,7 +73,7 @@ class Shape extends Submenu {
    * Add event for shape
    * @param {Object} actions - actions for shape
    *   @param {Function} actions.changeShape - change shape mode
-   *   @param {Function} actions.setDrawingShape - set dreawing shape
+   *   @param {Function} actions.setDrawingShape - set drawing shape
    */
   addEvent(actions) {
     this.eventHandler.shapeTypeSelected = this._changeShapeHandler.bind(this);
@@ -141,7 +141,7 @@ class Shape extends Submenu {
   setMaxStrokeValue(maxValue) {
     let strokeMaxValue = maxValue;
     if (strokeMaxValue <= 0) {
-      strokeMaxValue = defaultShapeStrokeValus.max;
+      strokeMaxValue = defaultShapeStrokeValues.max;
     }
     this._els.strokeRange.max = strokeMaxValue;
   }
