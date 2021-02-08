@@ -218,6 +218,7 @@ class Zoom extends Component {
     canvas.selection = false;
 
     this._startPoint = canvas.getPointer(fEvent.e);
+    this.zoomArea.set({ width: 0, height: 0 });
 
     const { moveZoom, stopZoom } = this._listeners;
     canvas.on({
@@ -311,7 +312,12 @@ class Zoom extends Component {
    */
   _getCenterPoint() {
     const { left, top, width, height } = this.zoomArea;
+    const { x, y } = this._startPoint;
     const { aspectRatio } = this;
+
+    if (width < MOUSE_MOVE_THRESHOLD && height < MOUSE_MOVE_THRESHOLD) {
+      return { x, y };
+    }
 
     return width > height
       ? { x: left + (aspectRatio * height) / 2, y: top + height / 2 }
