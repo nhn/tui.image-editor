@@ -130,7 +130,7 @@ export const eventNames = {
   UNDO_STACK_CHANGED: 'undoStackChanged',
   SELECTION_CLEARED: 'selectionCleared',
   SELECTION_CREATED: 'selectionCreated',
-  CHANGE_ZOOM: 'changeZoom',
+  ZOOM_CHANGED: 'zoomChanged',
 };
 
 /**
@@ -147,6 +147,17 @@ export const drawingModes = keyMirror(
   'ICON',
   'ZOOM'
 );
+
+/**
+ * Menu names with drawing mode
+ * @type {Object.<string, string>}
+ */
+export const drawingMenuNames = {
+  TEXT: 'text',
+  CROP: 'crop',
+  SHAPE: 'shape',
+  ZOOM: 'zoom',
+};
 
 /**
  * Shortcut key values

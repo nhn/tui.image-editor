@@ -1,6 +1,7 @@
 import { extend } from 'tui-code-snippet';
 import { isSupportFileApi, base64ToBlob, toInteger } from './util';
 import Imagetracer from './helper/imagetracer';
+import { drawingModes, drawingMenuNames } from './consts';
 
 export default {
   /**
@@ -532,21 +533,23 @@ export default {
    * @private
    */
   _commonAction() {
+    const { TEXT, CROPPER, SHAPE, ZOOM } = drawingModes;
+
     return {
       modeChange: (menu) => {
         switch (menu) {
-          case 'text':
-            this._changeActivateMode('TEXT');
+          case drawingMenuNames.TEXT:
+            this._changeActivateMode(TEXT);
             break;
-          case 'crop':
-            this.startDrawingMode('CROPPER');
+          case drawingMenuNames.CROP:
+            this.startDrawingMode(CROPPER);
             break;
-          case 'shape':
-            this._changeActivateMode('SHAPE');
+          case drawingMenuNames.SHAPE:
+            this._changeActivateMode(SHAPE);
             this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
             break;
-          case 'zoom':
-            this.startDrawingMode('ZOOM');
+          case drawingMenuNames.ZOOM:
+            this.startDrawingMode(ZOOM);
             break;
           default:
             break;

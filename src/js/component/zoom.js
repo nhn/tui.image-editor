@@ -21,6 +21,7 @@ const DEFAULT_SCROLL_OPTION = {
   hoverCursor: 'auto',
 };
 const DEFAULT_SCROLL_SIZE_RATIO = 0.01;
+const DEFAULT_ZOOM_LEVEL = 1.0;
 
 /**
  * Zoom components
@@ -53,10 +54,10 @@ class Zoom extends Component {
     this._centerPoints = [];
 
     /**
-     * Zoom level (default: 100%(1.0), max: 400%(4.0)
+     * Zoom level (default: 100%(1.0), max: 400%(4.0))
      * @type {number}
      */
-    this.zoomLevel = 1.0;
+    this.zoomLevel = DEFAULT_ZOOM_LEVEL;
 
     /**
      * Listeners
@@ -64,13 +65,13 @@ class Zoom extends Component {
      * @private
      */
     this._listeners = {
-      startZoom: this._startZoomArea.bind(this),
-      moveZoom: this._moveZoomArea.bind(this),
-      stopZoom: this._endZoomArea.bind(this),
-      startHand: this._startHand.bind(this),
-      moveHand: this._moveHand.bind(this),
-      stopHand: this._endHand.bind(this),
-      changeZoom: this._changeZoom.bind(this),
+      startZoom: this._onMouseDownWithZoomMode.bind(this),
+      moveZoom: this._onMouseMoveWithZoomMode.bind(this),
+      stopZoom: this._onMouseUpWithZoomMode.bind(this),
+      startHand: this._onMouseDownWithHandMode.bind(this),
+      moveHand: this._onMouseMoveWithHandMode.bind(this),
+      stopHand: this._onMouseUpWithHandMode.bind(this),
+      zoomChanged: this._changeScrollState.bind(this),
     };
 
     const canvas = this.getCanvas();
@@ -95,7 +96,7 @@ class Zoom extends Component {
      */
     this._horizontalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
 
-    canvas.on(eventNames.CHANGE_ZOOM, this._listeners.changeZoom);
+    canvas.on(eventNames.ZOOM_CHANGED, this._listeners.zoomChanged);
   }
 
   /**
@@ -107,10 +108,8 @@ class Zoom extends Component {
     }
     const canvas = this.getCanvas();
 
-    canvas.forEachObject((obj) => {
-      // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
-      obj.evented = false;
-    });
+    this._changeObjectsEventedState(false);
+    this._prevCanvasDefaultCursor = canvas.defaultCursor;
 
     this.zoomArea = new fabric.Rect({
       left: 0,
@@ -138,24 +137,22 @@ class Zoom extends Component {
     const { startZoom, moveZoom, stopZoom } = this._listeners;
 
     canvas.selection = true;
-    canvas.defaultCursor = 'default';
+    canvas.defaultCursor = this._prevCanvasDefaultCursor;
     canvas.off({
       'mouse:down': startZoom,
       'mouse:move': moveZoom,
       'mouse:up': stopZoom,
     });
-    canvas.forEachObject((obj) => {
-      obj.evented = true;
-    });
 
-    this.zoomArea = null;
+    this._changeObjectsEventedState(true);
+    this._clearZoomArea();
   }
 
   /**
    * Start zoom drawing mode
    */
   start() {
-    this.zoomArea = null;
+    this._clearZoomArea();
     this._startPoint = null;
     this._startHandPoint = null;
   }
@@ -174,10 +171,8 @@ class Zoom extends Component {
   startHandMode() {
     const canvas = this.getCanvas();
 
-    canvas.forEachObject((obj) => {
-      // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
-      obj.evented = false;
-    });
+    this._changeObjectsEventedState(false);
+    this._prevCanvasDefaultCursor = canvas.defaultCursor;
 
     canvas.discardActiveObject();
     canvas.on('mouse:down', this._listeners.startHand);
@@ -191,33 +186,30 @@ class Zoom extends Component {
   endHandMode() {
     const canvas = this.getCanvas();
 
-    canvas.forEachObject((obj) => {
-      // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
-      obj.evented = true;
-    });
+    this._changeObjectsEventedState(true);
 
     canvas.off('mouse:down', this._listeners.startHand);
     canvas.selection = true;
-    canvas.defaultCursor = 'auto';
+    canvas.defaultCursor = this._prevCanvasDefaultCursor;
 
     this._startHandPoint = null;
   }
 
   /**
    * onMousedown handler in fabric canvas
-   * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+   * @param {{target: fabric.Object, event: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _startZoomArea(fEvent) {
-    const canvas = this.getCanvas();
-
-    if (fEvent.target) {
+  _onMouseDownWithZoomMode({ target, event }) {
+    if (target) {
       return;
     }
 
+    const canvas = this.getCanvas();
+
     canvas.selection = false;
 
-    this._startPoint = canvas.getPointer(fEvent.e);
+    this._startPoint = canvas.getPointer(event);
     this.zoomArea.set({ width: 0, height: 0 });
 
     const { moveZoom, stopZoom } = this._listeners;
@@ -232,7 +224,7 @@ class Zoom extends Component {
    * @param {{event: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _moveZoomArea({ event }) {
+  _onMouseMoveWithZoomMode({ event }) {
     const canvas = this.getCanvas();
     const pointer = canvas.getPointer(event);
     const { x, y } = pointer;
@@ -241,9 +233,7 @@ class Zoom extends Component {
     const deltaY = Math.abs(y - _startPoint.y);
 
     if (deltaX + deltaY > MOUSE_MOVE_THRESHOLD) {
-      canvas.remove(zoomArea);
       zoomArea.set(this._calcRectDimensionFromPoint(x, y));
-      canvas.add(zoomArea);
     }
   }
 
@@ -273,7 +263,8 @@ class Zoom extends Component {
    * onMouseup handler in fabric canvas
    * @private
    */
-  _endZoomArea() {
+  _onMouseUpWithZoomMode() {
+    let { zoomLevel } = this;
     const { zoomArea } = this;
     const { moveZoom, stopZoom } = this._listeners;
     const canvas = this.getCanvas();
@@ -284,16 +275,15 @@ class Zoom extends Component {
       this._centerPoints.push({
         x,
         y,
-        prevZoomLevel: this.zoomLevel,
-        zoomLevel: this.zoomLevel + 1,
+        prevZoomLevel: zoomLevel,
+        zoomLevel: zoomLevel + 1,
       });
-      this.zoomLevel += 1;
-      canvas.zoomToPoint({ x, y }, this.zoomLevel);
+      zoomLevel += 1;
+      canvas.zoomToPoint({ x, y }, zoomLevel);
 
-      canvas.fire(eventNames.CHANGE_ZOOM, {
-        viewport: canvas.calcViewportBoundaries(),
-        zoomLevel: this.zoomLevel,
-      });
+      this._fireZoomChanged(canvas, zoomLevel);
+
+      this.zoomLevel = zoomLevel;
     }
 
     canvas.remove(zoomArea);
@@ -333,22 +323,19 @@ class Zoom extends Component {
     const canvas = this.getCanvas();
     const centerPoints = this._centerPoints;
 
-    let point;
-    // eslint-disable-next-line no-cond-assign
-    while ((point = centerPoints.pop())) {
-      if (point.zoomLevel < zoomLevel) {
-        centerPoints.push(point);
+    for (let i = centerPoints.length - 1; i >= 0; i -= 1) {
+      if (centerPoints[i].zoomLevel < zoomLevel) {
         break;
       }
 
-      const { x: prevX, y: prevY, prevZoomLevel } = point;
+      const { x: prevX, y: prevY, prevZoomLevel } = centerPoints.pop();
 
       canvas.zoomToPoint({ x: prevX, y: prevY }, prevZoomLevel);
       this.zoomLevel = prevZoomLevel;
     }
 
     canvas.zoomToPoint({ x, y }, zoomLevel);
-    if (zoomLevel !== 1.0) {
+    if (!this._isDefaultZoomLevel(zoomLevel)) {
       this._centerPoints.push({
         x,
         y,
@@ -358,7 +345,7 @@ class Zoom extends Component {
     }
     this.zoomLevel = zoomLevel;
 
-    canvas.fire(eventNames.CHANGE_ZOOM, { viewport: canvas.calcViewportBoundaries(), zoomLevel });
+    this._fireZoomChanged(canvas, zoomLevel);
   }
 
   /**
@@ -375,7 +362,7 @@ class Zoom extends Component {
     const point = centerPoints.pop();
     const { x, y, prevZoomLevel } = point;
 
-    if (prevZoomLevel === 1.0) {
+    if (this._isDefaultZoomLevel(prevZoomLevel)) {
       canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
     } else {
       canvas.zoomToPoint({ x, y }, prevZoomLevel);
@@ -383,10 +370,7 @@ class Zoom extends Component {
 
     this.zoomLevel = prevZoomLevel;
 
-    canvas.fire(eventNames.CHANGE_ZOOM, {
-      viewport: canvas.calcViewportBoundaries(),
-      zoomLevel: this.zoomLevel,
-    });
+    this._fireZoomChanged(canvas, this.zoomLevel);
   }
 
   /**
@@ -397,13 +381,10 @@ class Zoom extends Component {
 
     canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
 
-    this.zoomLevel = 1.0;
+    this.zoomLevel = DEFAULT_ZOOM_LEVEL;
     this._centerPoints = [];
 
-    canvas.fire(eventNames.CHANGE_ZOOM, {
-      viewport: canvas.calcViewportBoundaries(),
-      zoomLevel: this.zoomLevel,
-    });
+    this._fireZoomChanged(canvas, this.zoomLevel);
   }
 
   /**
@@ -428,21 +409,18 @@ class Zoom extends Component {
     }
 
     const canvas = this.getCanvas();
-    centerPoints.pop();
+    const { zoomLevel } = this;
 
-    const point = this._originalLastZoomPoint;
+    const point = centerPoints.pop();
     const { x: originX, y: originY, prevZoomLevel } = point;
     const x = originX - deltaX;
     const y = originY - deltaY;
 
     canvas.zoomToPoint({ x: originX, y: originY }, prevZoomLevel);
-    canvas.zoomToPoint({ x, y }, this.zoomLevel);
-    this._centerPoints.push({ x, y, prevZoomLevel, zoomLevel: this.zoomLevel });
+    canvas.zoomToPoint({ x, y }, zoomLevel);
+    centerPoints.push({ x, y, prevZoomLevel, zoomLevel });
 
-    canvas.fire(eventNames.CHANGE_ZOOM, {
-      viewport: canvas.calcViewportBoundaries(),
-      zoomLevel: this.zoomLevel,
-    });
+    this._fireZoomChanged(canvas, zoomLevel);
   }
 
   /**
@@ -450,22 +428,19 @@ class Zoom extends Component {
    * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _startHand(fEvent) {
+  _onMouseDownWithHandMode(fEvent) {
     const canvas = this.getCanvas();
 
     if (fEvent.target) {
       return;
     }
 
-    if (this.zoomLevel === 1.0) {
+    if (this.zoomLevel <= DEFAULT_ZOOM_LEVEL) {
       return;
     }
 
     canvas.selection = false;
 
-    const point = this._centerPoints.pop();
-    this._originalLastZoomPoint = point;
-    this._centerPoints.push(point);
     this._startHandPoint = canvas.getPointer(fEvent.e);
 
     const { moveHand, stopHand } = this._listeners;
@@ -480,7 +455,7 @@ class Zoom extends Component {
    * @param {{event: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _moveHand({ event }) {
+  _onMouseMoveWithHandMode({ event }) {
     const canvas = this.getCanvas();
     const { x, y } = canvas.getPointer(event);
     const deltaX = x - this._startHandPoint.x;
@@ -493,7 +468,7 @@ class Zoom extends Component {
    * onMouseUp handler in fabric canvas
    * @private
    */
-  _endHand() {
+  _onMouseUpWithHandMode() {
     const canvas = this.getCanvas();
     const { moveHand, stopHand } = this._listeners;
 
@@ -509,13 +484,13 @@ class Zoom extends Component {
    * onChangeZoom handler in fabric canvas
    * @private
    */
-  _changeZoom({ viewport, zoomLevel }) {
+  _changeScrollState({ viewport, zoomLevel }) {
     const canvas = this.getCanvas();
 
     canvas.remove(this._verticalScroll);
     canvas.remove(this._horizontalScroll);
 
-    if (zoomLevel === 1.0) {
+    if (this._isDefaultZoomLevel(zoomLevel)) {
       return;
     }
 
@@ -558,6 +533,44 @@ class Zoom extends Component {
 
     canvas.add(this._horizontalScroll);
     canvas.add(this._verticalScroll);
+  }
+
+  /**
+   * Change objects 'evented' state
+   * @param {boolean} [evented=true] - objects 'evented' state
+   */
+  _changeObjectsEventedState(evented = true) {
+    const canvas = this.getCanvas();
+
+    canvas.forEachObject((obj) => {
+      // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
+      obj.evented = evented;
+    });
+  }
+
+  /**
+   * Clear zoom area
+   */
+  _clearZoomArea() {
+    this.zoomArea = null;
+  }
+
+  /**
+   * Check zoom level is default zoom level (1.0)
+   * @param {number} zoomLevel - zoom level
+   * @returns {boolean} - whether zoom level is 1.0
+   */
+  _isDefaultZoomLevel(zoomLevel) {
+    return zoomLevel === DEFAULT_ZOOM_LEVEL;
+  }
+
+  /**
+   * Fire 'zoomChanged' event
+   * @param {fabric.Canvas} canvas - fabric canvas
+   * @param {number} zoomLevel - 'zoomChanged' event params
+   */
+  _fireZoomChanged(canvas, zoomLevel) {
+    canvas.fire(eventNames.ZOOM_CHANGED, { viewport: canvas.calcViewportBoundaries(), zoomLevel });
   }
 }
 

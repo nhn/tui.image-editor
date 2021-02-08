@@ -25,6 +25,8 @@ class Zoom extends Submenu {
     this._els = {
       zoomButton: this.selector('.tie-zoom-button'),
     };
+
+    this.eventHandler.changeZoom = this._changeZoom.bind(this);
   }
 
   /**
@@ -58,7 +60,6 @@ class Zoom extends Submenu {
    *   @param {Function} actions.hand - hand action
    */
   addEvent(actions) {
-    this.eventHandler.changeZoom = this._changeZoom.bind(this);
     this._actions = actions;
     this._els.zoomButton.addEventListener('click', this.eventHandler.changeZoom);
   }

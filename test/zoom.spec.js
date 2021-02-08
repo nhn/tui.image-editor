@@ -14,7 +14,6 @@ describe('Zoom', () => {
       cssMaxHeight: 500,
     });
     imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => {
-      imageEditor.clearUndoStack();
       done();
     });
 
