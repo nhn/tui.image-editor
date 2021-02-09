@@ -5,7 +5,7 @@
 import snippet from 'tui-code-snippet';
 import fabric from 'fabric';
 import { clamp } from '@/util';
-import { eventNames as events } from '@/consts';
+import { eventNames as events, keyCodes } from '@/consts';
 
 const CORNER_TYPE_TOP_LEFT = 'tl';
 const CORNER_TYPE_TOP_RIGHT = 'tr';
@@ -99,6 +99,8 @@ const Cropzone = fabric.util.createClass(
         moving: this._onMoving.bind(this),
         scaling: this._onScaling.bind(this),
       });
+      fabric.util.addListener(document, 'keydown', this._onKeyDown.bind(this));
+      fabric.util.addListener(document, 'keyup', this._onKeyUp.bind(this));
     },
     _renderCropzone(ctx) {
       const cropzoneDashLineWidth = 7;
@@ -382,6 +384,15 @@ const Cropzone = fabric.util.createClass(
       height = maxHeight ? clamp(height, 1, maxHeight) : height;
 
       if (!this.presetRatio) {
+        if (this._withShiftKey) {
+          // make fixed ratio cropzone
+          if (width > height) {
+            height = width;
+          } else if (height > width) {
+            width = height;
+          }
+        }
+
         return {
           width,
           height,
@@ -538,6 +549,28 @@ const Cropzone = fabric.util.createClass(
      */
     isValid() {
       return this.left >= 0 && this.top >= 0 && this.width > 0 && this.height > 0;
+    },
+
+    /**
+     * Keydown event handler
+     * @param {{number}} keyCode - Event keyCode
+     * @private
+     */
+    _onKeyDown({ keyCode }) {
+      if (keyCode === keyCodes.SHIFT) {
+        this._withShiftKey = true;
+      }
+    },
+
+    /**
+     * Keyup event handler
+     * @param {{number}} keyCode - Event keyCode
+     * @private
+     */
+    _onKeyUp({ keyCode }) {
+      if (keyCode === keyCodes.SHIFT) {
+        this._withShiftKey = false;
+      }
     },
   }
 );
