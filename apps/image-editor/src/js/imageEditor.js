@@ -1309,8 +1309,10 @@ class ImageEditor {
    * @private
    */
   _onObjectModified(obj) {
-    this._invoker.fire(events.EXECUTE_COMMAND, getObjectType(obj.type));
-    this._pushModifyObjectCommand(obj);
+    if (obj.type !== 'cropzone') {
+      this._invoker.fire(events.EXECUTE_COMMAND, getObjectType(obj.type));
+      this._pushModifyObjectCommand(obj);
+    }
   }
 
   /**
