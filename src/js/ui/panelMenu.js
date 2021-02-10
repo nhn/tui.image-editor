@@ -105,6 +105,7 @@ class Panel {
    */
   pushListItemElement(item) {
     this.listElement.appendChild(item);
+    this.listElement.scrollTop += item.offsetHeight;
     this.items.push(item);
   }
 
