@@ -1,4 +1,5 @@
 export default ({ locale, biImage, loadButtonStyle, downloadButtonStyle }) => `
+    <ul class="tui-image-editor-help-menu"></ul>
     <div class="tui-image-editor-controls">
         <div class="tui-image-editor-controls-logo">
             <img src="${biImage}" />

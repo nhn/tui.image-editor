@@ -63,7 +63,7 @@ class Ui {
     this._mainElement = null;
     this._editorElementWrap = null;
     this._editorElement = null;
-    this._menuElement = null;
+    this._menuBarElement = null;
     this._subMenuElement = null;
     this._makeUiElement(element);
     this._setUiSize();
@@ -72,6 +72,12 @@ class Ui {
     this._makeSubMenu();
 
     this._attachHistoryEvent();
+
+    this._makeHelpMenu();
+  }
+
+  _makeHelpMenu() {
+    console.log(this._helpMenuBarElement);
   }
 
   /**
@@ -235,7 +241,7 @@ class Ui {
       this._makeMenuElement(menuName);
 
       // menu btn element
-      this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
+      this._buttonElements[menuName] = this._menuBarElement.querySelector(`.tie-btn-${menuName}`);
 
       // submenu ui instance
       this[menuName] = new SubComponentClass(this._subMenuElement, {
@@ -298,7 +304,8 @@ class Ui {
     this._mainElement = selector('.tui-image-editor-main');
     this._editorElementWrap = selector('.tui-image-editor-wrap');
     this._editorElement = selector('.tui-image-editor');
-    this._menuElement = selector('.tui-image-editor-menu');
+    this._helpMenuBarElement = selector('.tui-image-editor-help-menu');
+    this._menuBarElement = selector('.tui-image-editor-menu');
     this._subMenuElement = selector('.tui-image-editor-submenu');
     this._buttonElements = {
       download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
@@ -307,7 +314,7 @@ class Ui {
 
     this._addHelpMenus();
 
-    this._historyMenu = new History(this._menuElement);
+    this._historyMenu = new History(this._menuBarElement);
   }
 
   /**
@@ -316,7 +323,7 @@ class Ui {
    * @private
    */
   _makeHelpMenuWithPartition() {
-    const helpMenuWithPartition = [...HELP_MENUS, ''];
+    const helpMenuWithPartition = [...HELP_MENUS];
     helpMenuWithPartition.splice(3, 0, '');
 
     return helpMenuWithPartition;
@@ -335,9 +342,9 @@ class Ui {
       } else {
         this._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
 
-        if (menuName) {
-          this._buttonElements[menuName] = this._menuElement.querySelector(`.tie-btn-${menuName}`);
-        }
+        this._buttonElements[menuName] = this._helpMenuBarElement.querySelector(
+          `.tie-btn-${menuName}`
+        );
       }
     });
   }
@@ -353,7 +360,7 @@ class Ui {
     partitionInnerElement.className = cls('icpartition');
     partitionElement.appendChild(partitionInnerElement);
 
-    this._menuElement.appendChild(partitionElement);
+    this._helpMenuBarElement.appendChild(partitionElement);
   }
 
   /**
@@ -371,7 +378,11 @@ class Ui {
     btnElement.className = `tie-btn-${menuName} ${cls('item')} ${menuType}`;
     btnElement.innerHTML = menuItemHtml;
 
-    this._menuElement.appendChild(btnElement);
+    if (menuType === 'normal') {
+      this._menuBarElement.appendChild(btnElement);
+    } else {
+      this._helpMenuBarElement.appendChild(btnElement);
+    }
   }
 
   /**
