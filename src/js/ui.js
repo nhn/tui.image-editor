@@ -1,6 +1,6 @@
 import snippet from 'tui-code-snippet';
-import { HELP_MENUS, eventNames } from './consts';
 import { getSelector, assignmentForDestroy, cls, getHistoryTitle, isSilentCommand } from './util';
+import { COMMAND_HELP_MENUS, DELETE_HELP_MENUS, eventNames, HELP_MENUS } from './consts';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
 
@@ -323,10 +323,7 @@ class Ui {
    * @private
    */
   _makeHelpMenuWithPartition() {
-    const helpMenuWithPartition = [...HELP_MENUS];
-    helpMenuWithPartition.splice(3, 0, '');
-
-    return helpMenuWithPartition;
+    return [...COMMAND_HELP_MENUS, '', ...DELETE_HELP_MENUS];
   }
 
   /**

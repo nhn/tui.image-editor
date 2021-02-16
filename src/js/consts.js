@@ -5,10 +5,22 @@
 import { keyMirror } from './util';
 
 /**
+ * Help features for command
+ * @type {Array.<string>}
+ */
+export const COMMAND_HELP_MENUS = ['undo', 'redo', 'reset'];
+
+/**
+ * Help features for delete
+ * @type {Array.<string>}
+ */
+export const DELETE_HELP_MENUS = ['delete', 'deleteAll'];
+
+/**
  * Editor help features
  * @type {Array.<string>}
  */
-export const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
+export const HELP_MENUS = [...COMMAND_HELP_MENUS, ...DELETE_HELP_MENUS];
 
 /**
  * Fill type for shape
