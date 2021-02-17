@@ -133,6 +133,9 @@ export default {
             w.document.body.innerHTML = `<img src='${dataURL}'>`;
           }
         },
+        history: () => {
+          this.ui.toggleHistoryMenu();
+        },
       },
       this._commonAction()
     );

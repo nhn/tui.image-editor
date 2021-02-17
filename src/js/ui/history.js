@@ -13,6 +13,7 @@ const disabledClassName = 'disabled-item';
 class History extends Panel {
   constructor(menuElement) {
     super(menuElement, { name: 'history' });
+    menuElement.classList.add('enabled');
 
     this._eventHandler = {};
     this._historyIndex = this.getListLength();

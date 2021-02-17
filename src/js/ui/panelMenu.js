@@ -1,5 +1,3 @@
-import { toCamelCase } from '../util';
-
 /**
  * Menu Panel Class
  * @class
@@ -29,30 +27,8 @@ class Panel {
    */
   _makePanelElement() {
     const panel = document.createElement('div');
-    const panelTitle = document.createElement('div');
 
-    panel.className = `tie-panel-${this.name}`; // @TODO: className
-    panel.style.cssText = `
-      background-color: #171719;
-      color: #fff;
-      position: absolute;
-      border: 1px solid #fff;
-      width: 240px;
-      height: 270px;
-      right: 0;
-      bottom: 300px;
-    `;
-
-    panelTitle.style.cssText = `
-      width: 240px;
-      height: 30px;
-      border-bottom: 1px solid #fff;
-      text-align: center;
-      line-height: 30px;
-    `;
-    panelTitle.innerText = toCamelCase(this.name.replace(' ', ''));
-
-    panel.appendChild(panelTitle);
+    panel.className = `tie-panel-${this.name}`;
 
     return panel;
   }

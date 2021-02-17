@@ -88,3 +88,33 @@
       .{prefix}-submenu
         display: table;
 
+/* Help menu bar */
+.{prefix}-container
+    .{prefix}-help-menu
+        width: 340px;
+        height: 40px;
+        list-style: none;
+        padding: 0;
+        margin: 0 auto;
+        text-align: center;
+        vertical-align: middle;
+        white-space: nowrap;
+        border-radius: 20px;
+        background-color: rgba(255, 255, 255, 0.06);
+        z-index: 2;
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        transform: translateX(-50%);
+        .tie-panel-history
+            display: none;
+            background-color: #171719;
+            color: #fff;
+            position: absolute;
+            border: 1px solid #fff;
+            width: 240px;
+            height: 270px;
+            top: 45px; /* position으로 옮기기 */
+            transform: translateX(calc(-50% + 20px)); /* position으로 옮기기 */
+        .opened .tie-panel-history
+            display: block;

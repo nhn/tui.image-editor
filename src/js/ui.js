@@ -33,6 +33,8 @@ const { CustomEvents } = snippet;
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 
+const HISTORY_MENU = 'history';
+
 /**
  * Ui class
  * @class
@@ -314,7 +316,7 @@ class Ui {
 
     this._addHelpMenus();
 
-    this._historyMenu = new History(this._menuBarElement);
+    this._historyMenu = new History(this._buttonElements[HISTORY_MENU]);
   }
 
   /**
@@ -441,6 +443,18 @@ class Ui {
    */
   _selectNextHistory() {
     this._historyMenu.next();
+  }
+
+  /**
+   * Toggle history menu
+   */
+  toggleHistoryMenu() {
+    // console.log(this._historyButtonElement);
+    // console.log(this._buttonElements[HISTORY_MENU]);
+
+    const historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
+
+    historyButtonClassList.toggle('opened');
   }
 
   /**
