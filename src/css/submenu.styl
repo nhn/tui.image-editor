@@ -108,13 +108,40 @@
         transform: translateX(-50%);
         .tie-panel-history
             display: none;
-            background-color: #171719;
-            color: #fff;
+            background-color: #fff;
+            color: #444;
             position: absolute;
-            border: 1px solid #fff;
-            width: 240px;
-            height: 270px;
+            width: 196px;
+            height: 276px;
+            padding: 4px 2px;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
             top: 45px; /* position으로 옮기기 */
-            transform: translateX(calc(-50% + 20px)); /* position으로 옮기기 */
+            transform: translateX(calc(-50% + 12px)); /* position으로 옮기기 */
+            .history-list
+                height: 268px;
+                padding: 0;
+                overflow: hidden scroll;
+                list-style: none;
+                .history-item
+                    height: 24px;
+                    font-size: 11px;
+                    line-height: 24px;
+                    &.selected-item
+                        background-color: #777;
+                    &.disabled-item
+                        color: #333;
+                        opacity: 0.3;
         .opened .tie-panel-history
             display: block;
+            &:before
+                content: '';
+                position: absolute;
+                display: inline-block;
+                margin: 0 auto;
+                width: 0;
+                height: 0;
+                border-right: 8px solid transparent; /* position으로 옮기기 */
+                border-left: 8px solid transparent; /* position으로 옮기기 */
+                border-bottom: 8px solid #fff; /* position으로 옮기기 */
+                left: 90px; /* position으로 옮기기 */
+                top: -8px; /* position으로 옮기기 */

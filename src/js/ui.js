@@ -449,9 +449,6 @@ class Ui {
    * Toggle history menu
    */
   toggleHistoryMenu() {
-    // console.log(this._historyButtonElement);
-    // console.log(this._buttonElements[HISTORY_MENU]);
-
     const historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
 
     historyButtonClassList.toggle('opened');

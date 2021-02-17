@@ -41,15 +41,7 @@ class Panel {
   _makeListElement() {
     const list = document.createElement('ol');
 
-    list.style.cssText = `
-      width: 240px;
-      height: 240px;
-      padding: 0;
-      overflow-x: hidden;
-      overflow-y: scroll;
-      list-style: none;
-    `;
-    list.className = `${this.name}`; // @TODO: className
+    list.className = `${this.name}-list`;
 
     return list;
   }
@@ -62,12 +54,6 @@ class Panel {
   makeListItemElement(title) {
     const listItem = document.createElement('li');
 
-    listItem.style.cssText = `
-      height: 30px;
-      line-height: 30px;
-      padding-left: 10px;
-      text-align: left;
-    `;
     listItem.innerHTML = `<span>${title}</span>`; // @TODO : change to makeSvg function
     listItem.className = `${this.name}-item ${this.name}-${title}`; // @TODO : change to makeSvg function
     listItem.setAttribute('data-index', this.items.length);
