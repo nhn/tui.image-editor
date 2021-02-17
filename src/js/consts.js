@@ -8,7 +8,7 @@ import { keyMirror } from './util';
  * Help features for command
  * @type {Array.<string>}
  */
-export const COMMAND_HELP_MENUS = ['undo', 'redo', 'reset'];
+export const COMMAND_HELP_MENUS = ['history', 'undo', 'redo', 'reset'];
 
 /**
  * Help features for delete
