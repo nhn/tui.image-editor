@@ -487,6 +487,25 @@ export function getHistoryTitle(command) {
 }
 
 /**
+ * Get help menubar position(opposite of menubar)
+ * @param {string} position - position of menubar
+ * @returns {string} position of help menubar
+ */
+export function getHelpMenuBarPosition(position) {
+  if (position === 'top') {
+    return 'bottom';
+  }
+  if (position === 'left') {
+    return 'right';
+  }
+  if (position === 'right') {
+    return 'left';
+  }
+
+  return 'top';
+}
+
+/**
  * Change to capital start letter
  * @param {string} str - string to change
  * @returns {string}

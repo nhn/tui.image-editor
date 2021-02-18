@@ -157,3 +157,153 @@
         top: 0;
         bottom: inherit;
 
+/* HELP MENUBAR POSITION TOP */
+.{prefix}-container
+    .{prefix}-help-menu
+        &.top
+            white-space: nowrap;
+            width: 340px;
+            height: 40px;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            .tie-panel-history
+                top: 45px;
+            .opened .tie-panel-history:before
+                border-right: 8px solid transparent;
+                border-left: 8px solid transparent;
+                border-bottom: 8px solid #fff;
+                left: 90px;
+                top: -8px;
+            > .{prefix}-item[tooltip-content]
+                &:before
+                    left: 13px;
+                    top: 35px;
+                    border: none;
+                    border-bottom: 7px solid #2f2f2f;
+                    border-left: 7px solid transparent;
+                    border-right: 7px solid transparent;
+                &:after
+                    top: 41px;
+                    left: -4px;
+                    white-space: nowrap;
+            > .{prefix}-item[tooltip-content].opened
+                &:before,
+                &:after
+                    content: none;
+
+/* HELP MENUBAR POSITION BOTTOM */
+.{prefix}-container
+    .{prefix}-help-menu
+        &.bottom
+            white-space: nowrap;
+            width: 340px;
+            height: 40px;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            .tie-panel-history
+                bottom: 45px;
+            .opened .tie-panel-history:before
+                border-right: 8px solid transparent;
+                border-left: 8px solid transparent;
+                border-top: 8px solid #fff;
+                left: 90px;
+                bottom: -8px;
+            > .{prefix}-item[tooltip-content]
+                &:before
+                    left: 13px;
+                    top: auto;
+                    bottom: 36px;
+                    border: none;
+                    border-top: 7px solid #2f2f2f;
+                    border-left: 7px solid transparent;
+                    border-right: 7px solid transparent;
+                &:after
+                    top: auto;
+                    left: -4px;
+                    bottom: 41px;
+                    white-space: nowrap;
+            > .{prefix}-item[tooltip-content].opened
+                &:before,
+                &:after
+                    content: none;
+
+/* HELP MENUBAR POSITION LEFT */
+.{prefix}-container
+    .{prefix}-help-menu
+        &.left
+            white-space: inherit;
+            width: 40px;
+            height: 340px;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            .tie-panel-history
+                left: 140px;
+                top: -4px;
+            .opened .tie-panel-history:before
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-right: 8px solid #fff;
+                left: -8px;
+                top: 14px;
+            .{prefix}-item
+                margin: 4px auto;
+                padding: 6px 8px;
+            > .{prefix}-item[tooltip-content]
+                &:before
+                    left: 27px;
+                    top: 11px;
+                    border: none;
+                    border-right: 7px solid #2f2f2f;
+                    border-top: 7px solid transparent;
+                    border-bottom: 7px solid transparent;
+                &:after
+                    top: 7px;
+                    left: 40px;
+                    white-space: nowrap;
+            > .{prefix}-item[tooltip-content].opened
+                &:before,
+                &:after
+                    content: none;
+
+/* HELP MENUBAR POSITION RIGHT */
+.{prefix}-container
+    .{prefix}-help-menu
+        &.right
+            white-space: inherit;
+            width: 40px;
+            height: 340px;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            .tie-panel-history
+                right: -30px;
+                top: -4px;
+            .opened .tie-panel-history:before
+                border-top: 8px solid transparent;
+                border-bottom: 8px solid transparent;
+                border-left: 8px solid #fff;
+                right: -8px;
+                top: 14px;
+            .{prefix}-item
+                margin: 4px auto;
+                padding: 6px 8px;
+            > .{prefix}-item[tooltip-content]
+                &:before
+                    left: -6px;
+                    top: 11px;
+                    border: none;
+                    border-left: 7px solid #2f2f2f;
+                    border-top: 7px solid transparent;
+                    border-bottom: 7px solid transparent;
+                &:after
+                    top: 7px;
+                    left: auto;
+                    right: 39px;
+                    white-space: nowrap;
+            > .{prefix}-item[tooltip-content].opened
+                &:before,
+                &:after
+                    content: none;
