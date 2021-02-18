@@ -373,7 +373,7 @@ export function getObjectType(type) {
  *   @param {string} [options.mode] - mode of blendColor
  * @returns {string} type of filter (ex: sepia, blur, ...)
  */
-function getFilterType(type, { useAlpha = true, mode }) {
+function getFilterType(type, { useAlpha = true, mode } = {}) {
   const {
     VINTAGE,
     REMOVE_COLOR,
@@ -416,7 +416,7 @@ export function isSilentCommand(command) {
 /**
  * Get command name
  * @param {Command|string} command - command or command name
- * @returns {string}
+ * @returns {{name: string, ?detail: string}}
  */
 // eslint-disable-next-line complexity, require-jsdoc
 export function getHistoryTitle(command) {
@@ -433,30 +433,47 @@ export function getHistoryTitle(command) {
     ADD_IMAGE_OBJECT,
   } = commandNames;
   const { name, args } = command;
+  let historyInfo;
 
   switch (name) {
     case FLIP_IMAGE:
-      return `${name} ${args[1]}`;
+      historyInfo = { name, detail: args[1] === 'reset' ? args[1] : args[1].slice(4) };
+      break;
     case ROTATE_IMAGE:
-      return `${name} ${args[2]}`;
-    case ADD_TEXT:
-      return `add ${args[1]}`;
+      historyInfo = { name, detail: args[2] };
+      break;
     case APPLY_FILTER:
-      return `apply ${getFilterType(args[1], args[2])}`;
     case REMOVE_FILTER:
-      return historyNames.REMOVE_FILTER;
-    case CHANGE_SHAPE:
-      return historyNames.CHANGE_SHAPE;
+      historyInfo = { name: 'Filter', detail: getFilterType(args[1], args[2]) };
+      break;
+    // case CHANGE_SHAPE:
+    //   console.log(args);
+    //   console.log('?');
+    //   historyInfo = { name };
+    //   break;
+    // return historyNames.CHANGE_SHAPE;
     case CHANGE_ICON_COLOR:
-      return historyNames.CHANGE_ICON;
+      historyInfo = { name: 'Icon' };
+      break;
     case CHANGE_TEXT_STYLE:
-      return historyNames.CHANGE_TEXT;
+      historyInfo = { name: 'Text' };
+      break;
     case CLEAR_OBJECTS:
-      return historyNames.DELETE_ALL;
+      historyInfo = { name: 'Delete All' };
+      break;
     case ADD_IMAGE_OBJECT:
-      return historyNames.ADD_MASK_IMAGE;
+      historyInfo = { name: 'Mask', detail: 'Add' };
+      break;
 
+    case ADD_TEXT:
     default:
-      return name;
+      historyInfo = { name };
+      break;
   }
+
+  if (args[1] === 'mask') {
+    historyInfo = { name: 'Mask', detail: 'Apply' };
+  }
+
+  return historyInfo;
 }

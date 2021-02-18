@@ -411,7 +411,8 @@ class Ui {
    */
   _addHistory(command) {
     if (!isSilentCommand(command)) {
-      const historyTitle = typeof command === 'string' ? command : getHistoryTitle(command);
+      const historyTitle =
+        typeof command === 'string' ? { name: command } : getHistoryTitle(command);
 
       this._historyMenu.add(historyTitle);
     }

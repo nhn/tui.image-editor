@@ -21,14 +21,15 @@ class History extends Panel {
 
   /**
    * Add history
-   * @param {string} title - title of history
+   * @param {string} name - name of history
+   * @param {?string} detail - detail information of history
    */
-  add(title) {
+  add({ name, detail }) {
     if (this._hasDisabledItem()) {
       this.deleteListItemElement(this._historyIndex + 1, this.getListLength());
     }
 
-    const item = this.makeListItemElement(title);
+    const item = this.makeListItemElement(`${name} (${detail})`);
 
     this.pushListItemElement(item);
     this._historyIndex = this.getListLength() - 1;
