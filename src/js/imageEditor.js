@@ -1315,7 +1315,7 @@ class ImageEditor {
    * @private
    */
   _onObjectModified(obj) {
-    this._invoker.fire(eventNames.EXECUTE_COMMAND, `change ${getObjectType(obj.type)}`);
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, getObjectType(obj.type));
     this._pushModifyObjectCommand(obj);
   }
 
@@ -1406,7 +1406,7 @@ class ImageEditor {
    */
   removeObject(id) {
     const { type } = this._graphics.getObject(id);
-    this._invoker.fire(eventNames.EXECUTE_COMMAND, `remove ${getObjectType(type)}`);
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, getObjectType(type));
 
     return this.execute(commands.REMOVE_OBJECT, id);
   }

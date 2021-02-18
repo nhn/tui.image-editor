@@ -156,15 +156,15 @@ export const eventNames = {
  * @type {Object.<string, string>}
  */
 export const historyNames = {
-  LOAD_IMAGE: 'load image',
-  LOAD_MASK_IMAGE: 'load mask image',
-  CROP: 'crop',
-  REMOVE_FILTER: 'remove filter',
-  CHANGE_SHAPE: 'change shape',
-  CHANGE_ICON: 'change icon',
-  CHANGE_TEXT: 'change text',
-  DELETE_ALL: 'delete all',
-  ADD_MASK_IMAGE: 'add mask image',
+  LOAD_IMAGE: 'Load image',
+  LOAD_MASK_IMAGE: 'Mask',
+  CROP: 'Crop',
+  REMOVE_FILTER: 'Filter',
+  CHANGE_SHAPE: 'Shape',
+  CHANGE_ICON: 'Icon',
+  CHANGE_TEXT: 'Text',
+  DELETE_ALL: 'Delete',
+  ADD_MASK_IMAGE: 'Mask',
 };
 
 /**

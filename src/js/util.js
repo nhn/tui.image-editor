@@ -351,17 +351,17 @@ export function isShape(obj) {
  */
 export function getObjectType(type) {
   if (includes(SHAPE_TYPE, type)) {
-    return 'shape';
+    return 'Shape';
   }
 
   switch (type) {
     case 'i-text':
-      return 'text';
+      return 'Text';
     case 'path':
     case 'line':
-      return 'draw';
+      return 'Draw';
     default:
-      return type;
+      return toStartOfCapital(type);
   }
 }
 
@@ -384,16 +384,23 @@ function getFilterType(type, { useAlpha = true, mode } = {}) {
     BLEND,
   } = filterType;
 
+  let filterName;
+
   switch (type) {
     case VINTAGE:
-      return SEPIA2;
+      filterName = SEPIA2;
+      break;
     case REMOVE_COLOR:
-      return useAlpha ? COLOR_FILTER : REMOVE_WHITE;
+      filterName = useAlpha ? COLOR_FILTER : REMOVE_WHITE;
+      break;
     case BLEND_COLOR:
-      return mode === 'add' ? BLEND : mode;
+      filterName = mode === 'add' ? BLEND : mode;
+      break;
     default:
-      return type;
+      filterName = type;
   }
+
+  return toStartOfCapital(filterName);
 }
 
 /**
@@ -443,20 +450,19 @@ export function getHistoryTitle(command) {
       historyInfo = { name, detail: args[2] };
       break;
     case APPLY_FILTER:
-    case REMOVE_FILTER:
       historyInfo = { name: 'Filter', detail: getFilterType(args[1], args[2]) };
       break;
-    // case CHANGE_SHAPE:
-    //   console.log(args);
-    //   console.log('?');
-    //   historyInfo = { name };
-    //   break;
-    // return historyNames.CHANGE_SHAPE;
+    case REMOVE_FILTER:
+      historyInfo = { name: 'Filter', detail: 'Remove' };
+      break;
+    case CHANGE_SHAPE:
+      historyInfo = { name: 'Shape', detail: 'Change' };
+      break;
     case CHANGE_ICON_COLOR:
-      historyInfo = { name: 'Icon' };
+      historyInfo = { name: 'Icon', detail: 'Change' };
       break;
     case CHANGE_TEXT_STYLE:
-      historyInfo = { name: 'Text' };
+      historyInfo = { name: 'Text', detail: 'Change' };
       break;
     case CLEAR_OBJECTS:
       historyInfo = { name: 'Delete All' };
@@ -478,4 +484,13 @@ export function getHistoryTitle(command) {
   }
 
   return historyInfo;
+}
+
+/**
+ * Change to capital start letter
+ * @param {string} str - string to change
+ * @returns {string}
+ */
+function toStartOfCapital(str) {
+  return str.replace(/[a-z]/, (first) => first.toUpperCase());
 }
