@@ -1,5 +1,6 @@
 import Panel from './panelMenu';
 import { assignmentForDestroy } from '../util';
+import templateHtml from './template/submenu/history';
 
 const historyClassName = 'history-item';
 const selectedClassName = 'selected-item';
@@ -11,10 +12,12 @@ const disabledClassName = 'disabled-item';
  * @ignore
  */
 class History extends Panel {
-  constructor(menuElement) {
+  constructor(menuElement, { locale, makeSvgIcon }) {
     super(menuElement, { name: 'history' });
     menuElement.classList.add('enabled');
 
+    this.locale = locale;
+    this.makeSvgIcon = makeSvgIcon;
     this._eventHandler = {};
     this._historyIndex = this.getListLength();
   }
@@ -29,7 +32,8 @@ class History extends Panel {
       this.deleteListItemElement(this._historyIndex + 1, this.getListLength());
     }
 
-    const item = this.makeListItemElement(`${name} (${detail})`);
+    const html = templateHtml({ locale: this.locale, makeSvgIcon: this.makeSvgIcon, name, detail });
+    const item = this.makeListItemElement(html);
 
     this.pushListItemElement(item);
     this._historyIndex = this.getListLength() - 1;

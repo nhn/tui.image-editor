@@ -48,14 +48,14 @@ class Panel {
 
   /**
    * Make list item element
-   * @param {string} title - title of list item element
+   * @param {string} html - history list item html
    * @returns {HTMLElement} list item element
    */
-  makeListItemElement(title) {
+  makeListItemElement(html) {
     const listItem = document.createElement('li');
 
-    listItem.innerHTML = `<span>${title}</span>`; // @TODO : change to makeSvg function
-    listItem.className = `${this.name}-item ${this.name}-${title}`; // @TODO : change to makeSvg function
+    listItem.innerHTML = html;
+    listItem.className = `${this.name}-item`;
     listItem.setAttribute('data-index', this.items.length);
 
     return listItem;

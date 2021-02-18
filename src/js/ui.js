@@ -316,7 +316,10 @@ class Ui {
 
     this._addHelpMenus();
 
-    this._historyMenu = new History(this._buttonElements[HISTORY_MENU]);
+    this._historyMenu = new History(this._buttonElements[HISTORY_MENU], {
+      locale: this._locale,
+      makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
+    });
   }
 
   /**

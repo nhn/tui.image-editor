@@ -359,7 +359,7 @@ export function getObjectType(type) {
       return 'text';
     case 'path':
     case 'line':
-      return 'drawing';
+      return 'draw';
     default:
       return type;
   }
@@ -464,8 +464,10 @@ export function getHistoryTitle(command) {
     case ADD_IMAGE_OBJECT:
       historyInfo = { name: 'Mask', detail: 'Add' };
       break;
-
     case ADD_TEXT:
+      historyInfo = { name: 'Text' };
+      break;
+
     default:
       historyInfo = { name };
       break;
