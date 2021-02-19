@@ -13,14 +13,8 @@
   - [Load](#load)
   - [Implement](#implement)
   - [Props](#props)
-  - [Event](#event)
+  - [Events](#events)
   - [Method](#method)
-- [Pull Request Steps](#-pull-request-steps)
-  - [Setup](#setup)
-  - [Develop](#develop)
-  - [Pull Request Steps](#pull-request)
-- [Contributing](#-contributing)
-- [License](#-license)
 
 ## Collect statistics on the use of open source
 
@@ -142,7 +136,7 @@ You can use `includeUi` and `options` props. Example of each props is in the [Ge
 
   You can configurate your image editor using `options` prop. For more information which properties can be set in `options`, see [options of tui.image-editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor).
 
-### Event
+### Events
 
 - addText: The event when 'TEXT' drawing mode is enabled and click non-object area.
 - mousedown: The mouse down event with position x, y on canvas
@@ -204,41 +198,3 @@ After then you can use methods through `this.$refs`. We provide `getRootElement`
     color: 'rgba(255, 0, 0, 0.5)',
   });
   ```
-
-## 🔧 Pull Request Steps
-
-TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
-Run npm scripts and develop yourself with the following process.
-
-### Setup
-
-Fork `develop` branch into your personal repository.
-Clone it to local computer. Install node modules.
-Before starting development, you should check to haveany errors.
-
-```sh
-$ git clone https://github.com/{your-personal-repo}/[[repo name]].git
-$ cd [[repo name]]
-$ npm install
-```
-
-### Develop
-
-Let's start development!
-
-### Pull Request
-
-Before PR, check to test lastly and then check any errors.
-If it has no error, commit and then push it!
-
-For more information on PR's step, please see links of Contributing section.
-
-## 💬 Contributing
-
-- [Code of Conduct](https://github.com/nhn/tui.image-editor/blob/master/CODE_OF_CONDUCT.md)
-- [Contributing guideline](https://github.com/nhn/tui.image-editor/blob/master/CONTRIBUTING.md)
-- [Commit convention](https://github.com/nhn/tui.image-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
-
-## 📜 License
-
-This software is licensed under the [MIT](https://github.com/nhn/tui.image-editor/blob/master/LICENSE) © [NHN.](https://github.com/nhn)

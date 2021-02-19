@@ -19,54 +19,22 @@
 
 ## 🚩 Table of Contents
 
-- [Collect statistics on the use of open source](#Collect-statistics-on-the-use-of-open-source)
 - [Browser Support](#-browser-support)
 - [Has full features that stick to the basic.](#-has-full-features-that-stick-to-the-basic)
   - [Photo manipulation](#photo-manipulation)
   - [Integration function](#integration-function)
   - [Powerful filter function](#powerful-filter-function)
-  - [Select only the desired function](#select-only-the-desired-function)
 - [Easy to apply the size and design you want](#-easy-to-apply-the-size-and-design-you-want)
   - [Can be used everywhere](#can-be-used-everywhere)
   - [Nice default & Fully customizable Themes](#nice-default--fully-customizable-themes)
 - [Features](#-features)
-- [Install](#-install)
-  - [Via Package Manager](#via-package-manager)
-  - [Via Contents Delivery Network (CDN)](#via-contents-delivery-network-cdn)
-  - [Download Source Files](#download-source-files)
-- [Usage](#-usage)
-  - [HTML](#html)
-  - [JavaScript](#javascript)
-  - [Menu svg icon setting](#menu-svg-icon-setting)
-  - [TypeScript](#typescript)
-- [Development](#-development)
-  - [Setup](#setup)
-  - [Run webpack-dev-server](#run-webpack-dev-server)
+- [Pull Request Steps](#-pull-request-steps)
 - [Documents](#-documents)
 - [Contributing](#-contributing)
 - [Dependency](#-dependency)
 - [TOAST UI Family](#-toast-ui-family)
 - [Used By](#-used-by)
 - [License](#-license)
-
-## Collect statistics on the use of open source
-
-TOAST UI ImageEditor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI ImageEditor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` option when creating the instance.
-
-```js
-var options = {
-  //...
-  usageStatistics: false,
-};
-
-var imageEditor = new tui.ImageEditor('#tui-image-editor-container', options);
-```
-
-Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
-
-```js
-tui.usageStatistics = false;
-```
 
 ## 🌏 Browser Support
 
@@ -133,17 +101,6 @@ tui.usageStatistics = false;
 | ----------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
 | ![multifly](https://user-images.githubusercontent.com/35218826/41753467-92baae28-7608-11e8-80d2-187a310213f5.png) | ![tint](https://user-images.githubusercontent.com/35218826/41753468-92e6391c-7608-11e8-8977-651366ebe693.png) | ![brightness](https://user-images.githubusercontent.com/35218826/41753457-8fb3d3c6-7608-11e8-9e1d-10c6e4aeba68.png) | ![remove-white](https://user-images.githubusercontent.com/35218826/41753463-917feeb0-7608-11e8-862d-eb3af84e120a.png) | ![sharpen](https://user-images.githubusercontent.com/35218826/41753639-91b8470a-7609-11e8-8d13-48ac3232365b.png) |
 
-### Select only the desired function
-
-```javascripot
-var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
-     includeUI: {
-         menu: ['shape', 'crop']
-         ...
-     },
- ...
-```
-
 ## 🙆 Easy to apply the size and design you want
 
 ### Can be used everywhere.
@@ -178,193 +135,36 @@ var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
 - Mask Filter
 - Image Filter
 
-## 💾 Install
+## 🔧 Pull Request Steps
 
-The TOAST UI products can be installed by using the package manager or downloading the source directly.
-However, we highly recommend using the package manager.
-
-### Via Package Manager
-
-You can find TOAST UI producs via [npm](https://www.npmjs.com/) and [bower](https://bower.io/) package managers.
-Install by using the commands provided by each package manager.
-When using npm, be sure [Node.js](https://nodejs.org) is installed in the environment.
-
-#### npm
-
-#### 1. ImageEditor installation
-
-```sh
-$ npm install --save tui-image-editor # Latest version
-$ npm install --save tui-image-editor@<version> # Specific version
-```
-
-##### 2. If the installation of the `fabric.js` dependency module does not go smoothly
-
-To solve the problem, you need to refer to [Some Steps](https://github.com/fabricjs/fabric.js#install-with-npm) to solve the problem.
-
-#### bower
-
-```sh
-$ bower install tui-image-editor # Latest version
-$ bower install tui-image-editor#<tag> # Specific version
-```
-
-### Via Contents Delivery Network (CDN)
-
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
-
-You can use the CDN as below.
-
-```html
-<link
-  rel="stylesheet"
-  href="https://uicdn.toast.com/tui-image-editor/latest/tui-image-editor.css"
-/>
-<script src="https://uicdn.toast.com/tui-image-editor/latest/tui-image-editor.js"></script>
-```
-
-If you want to use a specific version, use the tag name instead of `latest` in the URL.
-
-The CDN directory has the following structure.
-
-```
-tui-image-editor/
-├─ latest/
-│  ├─ tui-image-editor.js
-│  ├─ tui-image-editor.min.js
-│  └─ tui-image-editor.css
-├─ v3.1.0/
-│  ├─ ...
-```
-
-### Download Source Files
-
-- [Download bundle files from `dist` folder](https://github.com/nhn/tui.image-editor/tree/production/dist)
-- [Download all sources for each version](https://github.com/nhn/tui.image-editor/releases)
-
-## 🔨 Usage
-
-### HTML
-
-Add the container element where TOAST UI ImageEditor will be created.
-
-```html
-<body>
-  ...
-  <div id="tui-image-editor"></div>
-  ...
-</body>
-```
-
-### javascript
-
-Add dependencies & initialize ImageEditor class with given element to make an image editor.
-
-```javascript
-var ImageEditor = require('tui-image-editor');
-var FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
-var blackTheme = require('./js/theme/black-theme.js');
-var locale_ru_RU = {
-  // override default English locale to your custom
-  Crop: 'Обзрезать',
-  'Delete-all': 'Удалить всё',
-  // etc...
-};
-var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
-  includeUI: {
-    loadImage: {
-      path: 'img/sampleImage.jpg',
-      name: 'SampleImage',
-    },
-    locale: locale_ru_RU,
-    theme: blackTheme, // or whiteTheme
-    initMenu: 'filter',
-    menuBarPosition: 'bottom',
-  },
-  cssMaxWidth: 700,
-  cssMaxHeight: 500,
-  selectionStyle: {
-    cornerSize: 20,
-    rotatingPointOffset: 70,
-  },
-});
-```
-
-Or ~ UI
-
-```javascript
-var ImageEditor = require('tui-image-editor');
-var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
-  cssMaxWidth: 700,
-  cssMaxHeight: 500,
-  selectionStyle: {
-    cornerSize: 20,
-    rotatingPointOffset: 70,
-  },
-});
-```
-
-### Menu svg icon setting
-
-#### There are two ways to set icons.
-
-1. **Use default svg built** into imageEditor without setting svg file path (Features added since version v3.9.0).
-2. There is a way to use the **actual physical svg file** and **set the file location manually**.
-
-Can find more details in [this document](https://github.com/nhn/tui.image-editor/blob/master/docs/Basic-Tutorial.md#4-menu-submenu-svg-icon-setting).
-
-### TypeScript
-
-If you using TypeScript, You must `import module = require('module')` on importing.
-[`export =` and `import = require()`](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require)
-
-```typescript
-import ImageEditor = require('tui-image-editor');
-var FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
-
-const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
-  cssMaxWidth: 700,
-  cssMaxHeight: 500,
-  selectionStyle: {
-    cornerSize: 20,
-    rotatingPointOffset: 70,
-  },
-});
-```
-
-See [details](https://nhn.github.io/tui.image-editor/latest) for additional informations.
-
-## 🔧 Development
-
-The TOAST UI products are open-source.
-After fixing issues, create a pull request(PR).
-Run npm scripts and develop with the following process.
+TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
+Run npm scripts and develop yourself with the following process.
 
 ### Setup
 
-Fork `master` branch into your personal repository.
-Clone to local computer.
-Install node modules.
-Before starting development, check for any errors.
+Fork `develop` branch into your personal repository.
+Clone it to local computer. Install node modules.
+Before starting development, you should check to haveany errors.
 
 ```sh
-$ git clone https://github.com/{username}/tui.image-editor.git
-$ cd tui.image-editor
+$ git clone https://github.com/{your-personal-repo}/[[repo name]].git
+$ cd [[repo name]]
 $ npm install
-$ npm run test
 ```
 
-### Run webpack-dev-server
+### Pull Request
 
-```sh
-$ npm run serve
-```
+Before PR, check to test lastly and then check any errors.
+If it has no error, commit and then push it!
+
+For more information on PR's step, please see links of Contributing section.
 
 ## 📙 Documents
 
-- **Tutorial** : [https://github.com/nhn/tui.image-editor/tree/master/docs](https://github.com/nhn/tui.image-editor/tree/master/docs)
-- **Example** : [http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi](http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi)
-- **API** : [http://nhn.github.io/tui.image-editor/latest](http://nhn.github.io/tui.image-editor/latest/index)
+- [Getting Started](https://github.com/nhn/tui.image-editor/tree/master/docs/Basic-Tutorial.md)
+- [Tutorial](https://github.com/nhn/tui.image-editor/tree/master/docs)
+- [Example](http://nhn.github.io/tui.image-editor/latest/tutorial-example01-includeUi)
+- [API](http://nhn.github.io/tui.image-editor/latest)
 
 ## 💬 Contributing
 

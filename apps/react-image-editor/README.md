@@ -14,11 +14,7 @@
   - [Props](#props)
   - [Instance Methods](#Instance-Methods)
   - [Getting the root element](#Getting-the-root-element)
-  - [Event](#event)
-- [Pull Request Steps](#-pull-request-steps)
-- [Documents](#-documents)
-- [Contributing](#-contributing)
-- [License](#-license)
+  - [Events](#events)
 
 ## Collect statistics on the use of open source
 
@@ -154,7 +150,7 @@ class MyComponent extends React.Component {
 }
 ```
 
-### Event
+### Events
 
 [All the events of TOAST UI Image Editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor#event:addText) are supported in the form of `on[EventName]` props. The first letter of each event name should be capitalized. For example, for using `mousedown` event you can use `onMousedown` prop like the example below.
 
@@ -169,41 +165,3 @@ class MyComponent extends React.Component {
   }
 }
 ```
-
-## 🔧 Pull Request Steps
-
-TOAST UI products are open source, so you can create a pull request(PR) after you fix issues.
-Run npm scripts and develop yourself with the following process.
-
-### Setup
-
-Fork `develop` branch into your personal repository.
-Clone it to local computer. Install node modules.
-Before starting development, you should check to haveany errors.
-
-```sh
-$ git clone https://github.com/{your-personal-repo}/[[repo name]].git
-$ cd [[repo name]]
-$ npm install
-```
-
-### Develop
-
-Let's start development!
-
-### Pull Request
-
-Before PR, check to test lastly and then check any errors.
-If it has no error, commit and then push it!
-
-For more information on PR's step, please see links of Contributing section.
-
-## 💬 Contributing
-
-- [Code of Conduct](https://github.com/nhn/tui.image-editor/blob/master/CODE_OF_CONDUCT.md)
-- [Contributing guideline](https://github.com/nhn/tui.image-editor/blob/master/CONTRIBUTING.md)
-- [Commit convention](https://github.com/nhn/tui.image-editor/blob/master/docs/COMMIT_MESSAGE_CONVENTION.md)
-
-## 📜 License
-
-This software is licensed under the [MIT](https://github.com/nhn/tui.image-editor/blob/master/LICENSE) © [NHN.](https://github.com/nhn)
