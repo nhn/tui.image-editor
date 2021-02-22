@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-image-editor",
-  "version": "3.12.0",
+  "version": "3.11.0",
   "description": "TOAST UI Image-Editor for Vue",
   "main": "dist/toastui-vue-image-editor.js",
   "files": [
