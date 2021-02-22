@@ -782,11 +782,11 @@ $inputCheckSepia.on('change', function () {
 });
 
 $inputCheckSepia2.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'Sepia2', null);
+  applyOrRemoveFilter(this.checked, 'vintage', null);
 });
 
 $inputCheckBlur.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'Blur', null);
+  applyOrRemoveFilter(this.checked, 'Blur', { blur: 0.1 });
 });
 
 $inputCheckSharpen.on('change', function () {
@@ -798,33 +798,28 @@ $inputCheckEmboss.on('change', function () {
 });
 
 $inputCheckRemoveWhite.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'removeWhite', {
-    threshold: parseInt($inputRangeRemoveWhiteThreshold.val(), 10),
-    distance: parseInt($inputRangeRemoveWhiteDistance.val(), 10),
-  });
-});
-
-$inputRangeRemoveWhiteThreshold.on('change', function () {
-  applyOrRemoveFilter($inputCheckRemoveWhite.is(':checked'), 'removeWhite', {
-    threshold: parseInt(this.value, 10),
+  applyOrRemoveFilter(this.checked, 'removeColor', {
+    color: '#FFFFFF',
+    useAlpha: false,
+    distance: parseInt($inputRangeRemoveWhiteDistance.val(), 10) / 255,
   });
 });
 
 $inputRangeRemoveWhiteDistance.on('change', function () {
-  applyOrRemoveFilter($inputCheckRemoveWhite.is(':checked'), 'removeWhite', {
-    distance: parseInt(this.value, 10),
+  applyOrRemoveFilter($inputCheckRemoveWhite.is(':checked'), 'removeColor', {
+    distance: parseInt(this.value, 10) / 255,
   });
 });
 
 $inputCheckBrightness.on('change', function () {
   applyOrRemoveFilter(this.checked, 'brightness', {
-    brightness: parseInt($inputRangeBrightnessValue.val(), 10),
+    brightness: parseInt($inputRangeBrightnessValue.val(), 10) / 255,
   });
 });
 
 $inputRangeBrightnessValue.on('change', function () {
   applyOrRemoveFilter($inputCheckBrightness.is(':checked'), 'brightness', {
-    brightness: parseInt(this.value, 10),
+    brightness: parseInt(this.value, 10) / 255,
   });
 });
 
@@ -853,65 +848,66 @@ $inputRangePixelateValue.on('change', function () {
 });
 
 $inputCheckTint.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'tint', {
+  applyOrRemoveFilter(this.checked, 'blendColor', {
+    mode: 'tint',
     color: tintColorpicker.getColor(),
-    opacity: parseFloat($inputRangeTintOpacityValue.val()),
+    alpha: parseFloat($inputRangeTintOpacityValue.val()),
   });
 });
 
 tintColorpicker.on('selectColor', function (e) {
-  applyOrRemoveFilter($inputCheckTint.is(':checked'), 'tint', {
+  applyOrRemoveFilter($inputCheckTint.is(':checked'), 'blendColor', {
     color: e.color,
   });
 });
 
 $inputRangeTintOpacityValue.on('change', function () {
-  applyOrRemoveFilter($inputCheckTint.is(':checked'), 'tint', {
-    opacity: parseFloat($inputRangeTintOpacityValue.val()),
+  applyOrRemoveFilter($inputCheckTint.is(':checked'), 'blendColor', {
+    alpha: parseFloat($inputRangeTintOpacityValue.val()),
   });
 });
 
 $inputCheckMultiply.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'multiply', {
+  applyOrRemoveFilter(this.checked, 'blendColor', {
     color: multiplyColorpicker.getColor(),
   });
 });
 
 multiplyColorpicker.on('selectColor', function (e) {
-  applyOrRemoveFilter($inputCheckMultiply.is(':checked'), 'multiply', {
+  applyOrRemoveFilter($inputCheckMultiply.is(':checked'), 'blendColor', {
     color: e.color,
   });
 });
 
 $inputCheckBlend.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'blend', {
-    color: blendColorpicker.getColor(),
+  applyOrRemoveFilter(this.checked, 'blendColor', {
     mode: $selectBlendType.val(),
+    color: blendColorpicker.getColor(),
   });
 });
 
 blendColorpicker.on('selectColor', function (e) {
-  applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blend', {
+  applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blendColor', {
     color: e.color,
   });
 });
 
 $selectBlendType.on('change', function () {
-  applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blend', {
+  applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blendColor', {
     mode: this.value,
   });
 });
 
 $inputCheckColorFilter.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'colorFilter', {
+  applyOrRemoveFilter(this.checked, 'removeColor', {
     color: '#FFFFFF',
-    threshold: $inputRangeColorFilterValue.val(),
+    distance: $inputRangeColorFilterValue.val() / 255,
   });
 });
 
 $inputRangeColorFilterValue.on('change', function () {
-  applyOrRemoveFilter($inputCheckColorFilter.is(':checked'), 'colorFilter', {
-    threshold: this.value,
+  applyOrRemoveFilter($inputCheckColorFilter.is(':checked'), 'removeColor', {
+    distance: this.value / 255,
   });
 });
 
