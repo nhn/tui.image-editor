@@ -10,7 +10,13 @@ import commandFactory from '@/factory/command';
 import Graphics from '@/graphics';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from '@/helper/selectionModifyHelper';
 import { sendHostName, Promise, getObjectType } from '@/util';
-import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from '@/consts';
+import {
+  eventNames as events,
+  commandNames as commands,
+  keyCodes,
+  rejectMessages,
+  OBJ_TYPE,
+} from '@/consts';
 
 const { isUndefined, forEach, CustomEvents } = snippet;
 
@@ -1309,7 +1315,7 @@ class ImageEditor {
    * @private
    */
   _onObjectModified(obj) {
-    if (obj.type !== 'cropzone') {
+    if (obj.type !== OBJ_TYPE.CROPZONE) {
       this._invoker.fire(events.EXECUTE_COMMAND, getObjectType(obj.type));
       this._pushModifyObjectCommand(obj);
     }
