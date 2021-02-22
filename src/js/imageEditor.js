@@ -8,8 +8,14 @@ import UI from './ui';
 import action from './action';
 import commandFactory from './factory/command';
 import Graphics from './graphics';
-import { sendHostName, Promise } from './util';
-import { eventNames as events, commandNames as commands, keyCodes, rejectMessages } from './consts';
+import { sendHostName, Promise, getObjectType } from './util';
+import {
+  eventNames as events,
+  commandNames as commands,
+  keyCodes,
+  rejectMessages,
+  eventNames,
+} from './consts';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from './helper/selectionModifyHelper';
 
 const { isUndefined, forEach, CustomEvents } = snippet;
@@ -273,7 +279,13 @@ class ImageEditor {
    * @private
    */
   _attachInvokerEvents() {
-    const { UNDO_STACK_CHANGED, REDO_STACK_CHANGED } = events;
+    const {
+      UNDO_STACK_CHANGED,
+      REDO_STACK_CHANGED,
+      EXECUTE_COMMAND,
+      AFTER_UNDO,
+      AFTER_REDO,
+    } = events;
 
     /**
      * Undo stack changed event
@@ -295,6 +307,12 @@ class ImageEditor {
      * });
      */
     this._invoker.on(REDO_STACK_CHANGED, this.fire.bind(this, REDO_STACK_CHANGED));
+
+    if (this.ui) {
+      this._invoker.on(EXECUTE_COMMAND, (command) => this.ui.fire(EXECUTE_COMMAND, command));
+      this._invoker.on(AFTER_UNDO, (command) => this.ui.fire(AFTER_UNDO, command));
+      this._invoker.on(AFTER_REDO, (command) => this.ui.fire(AFTER_REDO, command));
+    }
   }
 
   /**
@@ -577,6 +595,24 @@ class ImageEditor {
   }
 
   /**
+   * Init history
+   */
+  _initHistory() {
+    if (this.ui) {
+      this.ui.initHistory();
+    }
+  }
+
+  /**
+   * Clear history
+   */
+  _clearHistory() {
+    if (this.ui) {
+      this.ui.clearHistory();
+    }
+  }
+
+  /**
    * Invoke command
    * @param {String} commandName - Command name
    * @param {...*} args - Arguments for creating command
@@ -606,22 +642,36 @@ class ImageEditor {
 
   /**
    * Undo
+   * @param {number} [iterationCount=1] - Iteration count of undo
    * @returns {Promise}
    * @example
    * imageEditor.undo();
    */
-  undo() {
-    return this._invoker.undo();
+  undo(iterationCount = 1) {
+    let promise = Promise.resolve();
+
+    for (let i = 0; i < iterationCount; i += 1) {
+      promise = promise.then(() => this._invoker.undo());
+    }
+
+    return promise;
   }
 
   /**
    * Redo
+   * @param {number} [iterationCount=1] - Iteration count of redo
    * @returns {Promise}
    * @example
    * imageEditor.redo();
    */
-  redo() {
-    return this._invoker.redo();
+  redo(iterationCount = 1) {
+    let promise = Promise.resolve();
+
+    for (let i = 0; i < iterationCount; i += 1) {
+      promise = promise.then(() => this._invoker.redo());
+    }
+
+    return promise;
   }
 
   /**
@@ -844,6 +894,7 @@ class ImageEditor {
    */
   _rotate(type, angle, isSilent) {
     let result = null;
+
     if (isSilent) {
       result = this.executeSilent(commands.ROTATE_IMAGE, type, angle);
     } else {
@@ -1205,6 +1256,7 @@ class ImageEditor {
      *     console.log('text editing');
      * });
      */
+
     this.fire(events.TEXT_EDITING);
   }
 
@@ -1230,6 +1282,7 @@ class ImageEditor {
      *     console.log('text position on brwoser: ' + pos.clientPosition);
      * });
      */
+
     this.fire(events.ADD_TEXT, {
       originPosition: event.originPosition,
       clientPosition: event.clientPosition,
@@ -1243,6 +1296,7 @@ class ImageEditor {
    */
   _onAddObject(objectProps) {
     const obj = this._graphics.getObject(objectProps.id);
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, getObjectType(obj.type));
     this._pushAddObjectCommand(obj);
   }
 
@@ -1278,6 +1332,7 @@ class ImageEditor {
    * @private
    */
   _onObjectModified(obj) {
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, getObjectType(obj.type));
     this._pushModifyObjectCommand(obj);
   }
 
@@ -1367,6 +1422,9 @@ class ImageEditor {
    * imageEditor.removeObject(id);
    */
   removeObject(id) {
+    const { type } = this._graphics.getObject(id);
+    this._invoker.fire(eventNames.EXECUTE_COMMAND, getObjectType(type));
+
     return this.execute(commands.REMOVE_OBJECT, id);
   }
 
@@ -1398,8 +1456,7 @@ class ImageEditor {
   /**
    * Apply filter on canvas image
    * @param {string} type - Filter type
-   * @param {Object} options - Options to apply filter
-   *  @param {number} options.maskObjId - masking image object id
+   * @param {object} options - Options to apply filter
    * @param {boolean} isSilent - is silent execution or not
    * @returns {Promise<FilterResult, ErrorMsg>}
    * @example

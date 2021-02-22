@@ -5,19 +5,22 @@
 import { keyMirror } from './util';
 
 /**
+ * Help features for command
+ * @type {Array.<string>}
+ */
+export const COMMAND_HELP_MENUS = ['history', 'undo', 'redo', 'reset'];
+
+/**
+ * Help features for delete
+ * @type {Array.<string>}
+ */
+export const DELETE_HELP_MENUS = ['delete', 'deleteAll'];
+
+/**
  * Editor help features
  * @type {Array.<string>}
  */
-export const HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
-
-/**
- * Filter name value map
- * @type {Object.<string, string>}
- */
-export const FILTER_NAME_VALUE_MAP = {
-  blur: 'blur',
-  blocksize: 'pixelate',
-};
+export const HELP_MENUS = [...COMMAND_HELP_MENUS, ...DELETE_HELP_MENUS];
 
 /**
  * Fill type for shape
@@ -33,6 +36,20 @@ export const SHAPE_FILL_TYPE = {
  * @type {Array.<string>}
  */
 export const SHAPE_TYPE = ['rect', 'circle', 'triangle'];
+
+/**
+ * Filter type map
+ * @type {Object.<string, string>}
+ */
+export const filterType = {
+  VINTAGE: 'vintage',
+  SEPIA2: 'sepia2',
+  REMOVE_COLOR: 'removeColor',
+  COLOR_FILTER: 'colorFilter',
+  REMOVE_WHITE: 'removeWhite',
+  BLEND_COLOR: 'blendColor',
+  BLEND: 'blend',
+};
 
 /**
  * Component names
@@ -130,7 +147,26 @@ export const eventNames = {
   UNDO_STACK_CHANGED: 'undoStackChanged',
   SELECTION_CLEARED: 'selectionCleared',
   SELECTION_CREATED: 'selectionCreated',
+  EXECUTE_COMMAND: 'executeCommand',
+  AFTER_UNDO: 'afterUndo',
+  AFTER_REDO: 'afterRedo',
   ZOOM_CHANGED: 'zoomChanged',
+};
+
+/**
+ * History names
+ * @type {Object.<string, string>}
+ */
+export const historyNames = {
+  LOAD_IMAGE: 'Load image',
+  LOAD_MASK_IMAGE: 'Mask',
+  CROP: 'Crop',
+  REMOVE_FILTER: 'Filter',
+  CHANGE_SHAPE: 'Shape',
+  CHANGE_ICON: 'Icon',
+  CHANGE_TEXT: 'Text',
+  DELETE_ALL: 'Delete',
+  ADD_MASK_IMAGE: 'Mask',
 };
 
 /**

@@ -44,9 +44,8 @@ const command = {
 
     return textComp.add(text, options).then((objectProps) => {
       const { id } = objectProps;
-      const textObject = graphics.getObject(id);
 
-      this.undoData.object = textObject;
+      this.undoData.object = graphics.getObject(id);
 
       return objectProps;
     });

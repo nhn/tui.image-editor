@@ -55,6 +55,89 @@
     <path d="M0 0h24v24H0z" fill="none" stroke="none" />
     <path fill="inherit" stroke="none" d="M11 0h1v24h-1zM19 21v-1h2v-2h1v2a1 1 0 0 1-1 1h-2zm-2 0h-3v-1h3v1zm5-5h-1v-3h1v3zm0-5h-1V8h1v3zm0-5h-1V4h-2V3h2a1 1 0 0 1 1 1v2zm-5-3v1h-3V3h3zM9 3v1H2v16h7v1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7z"/>
 </symbol>
+<symbol id="ic-history" viewBox="0 0 24 24">
+    <path fill="none" stroke="none" d="M0 0H24V24H0z" transform="translate(-740 -16) translate(547 8) translate(193 8)"/>
+    <path fill="inherit" stroke="none" d="M12.5 1C18.299 1 23 5.701 23 11.5S18.299 22 12.5 22c-5.29 0-9.665-3.911-10.394-8.999h1.012C3.838 17.534 7.764 21 12.5 21c5.247 0 9.5-4.253 9.5-9.5S17.747 2 12.5 2C8.49 2 5.06 4.485 3.666 8H3h4v1H2V4h1v3.022C4.68 3.462 8.303 1 12.5 1zm.5 5l-.001 5.291 2.537 2.537-.708.708L12.292 12H12V6h1z" transform="translate(-740 -16) translate(547 8) translate(193 8)"/>
+</symbol>
+<symbol id="ic-history-check" viewBox="0 0 24 24">
+    <g fill="none" fill-rule="evenodd" >
+        <path stroke="#555555" d="M4.5 -1L1.5 2 6.5 7" transform="translate(-60 -804) translate(60 804) translate(2 3) rotate(-90 4 3)" />
+    </g>
+</symbol>
+<symbol id="ic-history-crop" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <path d="M0 0H12V12H0z" transform="translate(-84 -804) translate(84 804)"/>
+        <path fill="#434343" d="M2 0h1v10c-.552 0-1-.448-1-1V0zM10 9v3H9V9h1zM9 2h1v6H9V2z" transform="translate(-84 -804) translate(84 804)"/>
+        <path fill="#434343" d="M2 9H12V10H2zM9 2c.513 0 .936.386.993.883L10 3H3V2h6zM2 3H0V2h2v1z" transform="translate(-84 -804) translate(84 804)"/>
+    </g>
+</symbol>
+<symbol id="ic-history-draw" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <path d="M0 1H12V13H0z" transform="translate(-156 -804) translate(156 803)"/>
+        <path stroke="#434343" d="M9.622 1.584l1.835 1.658-8.31 8.407L.5 12.5V11l9.122-9.416z" transform="translate(-156 -804) translate(156 803)"/>
+        <path fill="#434343" d="M7.628 3.753L10.378 3.753 10.378 4.253 7.628 4.253z" transform="translate(-156 -804) translate(156 803) rotate(45 9.003 4.003)"/>
+    </g>
+</symbol>
+<symbol id="ic-history-filter" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <path d="M0 0H12V12H0z" transform="translate(-276 -804) translate(276 804)"/>
+        <path fill="#434343" d="M12 3v1H9V3h3zM7 4H0V3h7v1z" transform="translate(-276 -804) translate(276 804)"/>
+        <path fill="#434343" d="M12 8v1H9V8h3zM7 9H0V8h7v1z" transform="translate(-276 -804) translate(276 804) matrix(-1 0 0 1 12 0)"/>
+        <path fill="#434343" d="M8 1c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1zM4 7c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z" transform="translate(-276 -804) translate(276 804)"/>
+    </g>
+</symbol>
+<symbol id="ic-history-flip" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <path d="M0 0H12V12H0z" transform="translate(-108 -804) translate(108 804)"/>
+        <path fill="#434343" d="M6 0L7 0 7 12 6 12zM11 10V9h1v1.5c0 .276-.224.5-.5.5H10v-1h1zM5 1v1H1v8h4v1H.5c-.276 0-.5-.224-.5-.5v-9c0-.276.224-.5.5-.5H5zm7 5v2h-1V6h1zm0-3v2h-1V3h1zM9 1v1H7V1h2zm2.5 0c.276 0 .5.224.5.5V2h-2V1h1.5zM9 11H7v-1h2v1z" transform="translate(-108 -804) translate(108 804)"/>
+    </g>
+</symbol>
+<symbol id="ic-history-icon" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <path d="M0 0H12V12H0z" transform="translate(-204 -804) translate(204 804)"/>
+        <path stroke="#434343" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.1" d="M6 9.568L2.601 11 2.975 7.467 0.5 4.82 4.13 4.068 6 1 7.87 4.068 11.5 4.82 9.025 7.467 9.399 11z" transform="translate(-204 -804) translate(204 804)"/>
+    </g>
+</symbol>
+<symbol id="ic-history-mask" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <g transform="translate(-252 -804) translate(252 804)">
+            <path d="M0 0H12V12H0z"/>
+            <circle cx="6" cy="6" r="2.5" stroke="#444"/>
+            <path fill="#434343" d="M11.5 0c.276 0 .5.224.5.5v11c0 .276-.224.5-.5.5H.5c-.276 0-.5-.224-.5-.5V.5C0 .224.224 0 .5 0h11zM11 1H1v10h10V1z"/>
+        </g>
+    </g>
+</symbol>
+<symbol id="ic-history-rotate" viewBox="0 0 24 24">
+    <defs>
+        <path id="rfn4rylffa" d="M7 12c-.335 0-.663-.025-.983-.074C3.171 11.492 1 9.205 1 6.444c0-1.363.534-2.613 1.415-3.58"/>
+        <mask id="6f9gn2dysb" width="6" height="9.136" x="0" y="0" maskUnits="objectBoundingBox">
+            <use xlink:href="#rfn4rylffa" stroke="434343"/>
+        </mask>
+    </defs>
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <g transform="translate(-132 -804) translate(132 804)">
+            <path d="M0 0.5H12V12.5H0z"/>
+            <path fill="#434343" d="M6.5 1C9.538 1 12 3.462 12 6.5c0 2.37-1.5 4.39-3.6 5.163l-.407-.916C9.744 10.13 11 8.462 11 6.5 11 4.015 8.985 2 6.5 2c-.777 0-1.509.197-2.147.544L4 1.75l-.205-.04C4.594 1.258 5.517 1 6.5 1z"/>
+            <use stroke="#434343" stroke-dasharray="2 1.25" stroke-width="1" mask="url(#6f9gn2dysb)" xlink:href="#rfn4rylffa"/>
+            <path fill="#434343" d="M4.279 0L6 1.75 4.25 3.571 3.543 2.864 4.586 1.75 3.572 0.707z" transform="matrix(-1 0 0 1 9.543 0)"/>
+        </g>
+    </g>
+</symbol>
+<symbol id="ic-history-shape" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <path d="M0 0H12V12H0z" transform="translate(-180 -804) translate(180 804)"/>
+        <path fill="#434343" d="M11.5 4c.276 0 .5.224.5.5v7c0 .276-.224.5-.5.5h-7c-.276 0-.5-.224-.5-.5V8.8h1V11h6V5H8.341l-.568-1H11.5z" transform="translate(-180 -804) translate(180 804)"/>
+        <path stroke="#434343" stroke-linecap="round" stroke-linejoin="round" d="M4.5 0.5L8.5 7.611 0.5 7.611z" transform="translate(-180 -804) translate(180 804)"/>
+    </g>
+</symbol>
+<symbol id="ic-history-text" viewBox="0 0 24 24">
+    <g fill="none" stroke="none" fill-rule="evenodd" >
+        <path d="M0 0H12V12H0z" transform="translate(-228 -804) translate(228 804)"/>
+        <path fill="#434343" d="M2 1h8c.552 0 1 .448 1 1H1c0-.552.448-1 1-1z" transform="translate(-228 -804) translate(228 804)"/>
+        <path fill="#434343" d="M1 1H2V3H1zM10 1H11V3H10zM5.5 1L6.5 1 6.5 11 5.5 11z" transform="translate(-228 -804) translate(228 804)"/>
+        <path fill="#434343" d="M4 10H8V11H4z" transform="translate(-228 -804) translate(228 804)"/>
+    </g>
+</symbol>
 <symbol id="ic-icon-arrow-2" viewBox="0 0 32 32">
     <path fill="none" stroke="inherit" stroke-linecap="round" stroke-linejoin="round" d="M21.793 18.5H2.5v-5h18.935l-7.6-8h5.872l10.5 10.5-10.5 10.5h-5.914l8-8z"/>
 </symbol>

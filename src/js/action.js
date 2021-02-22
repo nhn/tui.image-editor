@@ -1,7 +1,7 @@
 import { extend } from 'tui-code-snippet';
 import { isSupportFileApi, base64ToBlob, toInteger } from './util';
 import Imagetracer from './helper/imagetracer';
-import { drawingModes, drawingMenuNames } from './consts';
+import { eventNames, historyNames, drawingModes, drawingMenuNames } from './consts';
 
 export default {
   /**
@@ -21,6 +21,7 @@ export default {
       draw: this._drawAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
+      history: this._historyAction(),
       zoom: this._zoomAction(),
     };
   },
@@ -62,6 +63,7 @@ export default {
             this.ui.initializeImgUrl = imagePath;
             this.ui.resizeEditor({ imageSize: sizeValue });
             this.clearUndoStack();
+            this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
           }),
         undo: () => {
           if (!this.isEmptyUndoStack()) {
@@ -83,6 +85,7 @@ export default {
             exitCropOnAction();
             this.ui.resizeEditor({ imageSize: sizeValue });
             this.clearUndoStack();
+            this._initHistory();
           });
         },
         delete: () => {
@@ -109,6 +112,8 @@ export default {
               this.clearUndoStack();
               this.ui.activeMenuEvent();
               this.ui.resizeEditor({ imageSize: sizeValue });
+              this._clearHistory();
+              this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
             })
             ['catch']((message) => Promise.reject(message));
         },
@@ -128,6 +133,9 @@ export default {
             w = window.open();
             w.document.body.innerHTML = `<img src='${dataURL}'>`;
           }
+        },
+        history: () => {
+          this.ui.toggleHistoryMenu();
         },
       },
       this._commonAction()
@@ -218,12 +226,14 @@ export default {
   _maskAction() {
     return extend(
       {
-        loadImageFromURL: (imgUrl, file) =>
-          this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
+        loadImageFromURL: (imgUrl, file) => {
+          return this.loadImageFromURL(this.toDataURL(), 'FilterImage').then(() => {
             this.addImageObject(imgUrl).then(() => {
               URL.revokeObjectURL(file);
             });
-          }),
+            this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
+          });
+        },
         applyFilter: () => {
           this.applyFilter('mask', {
             maskObjId: this.activeObjectId,
@@ -344,6 +354,7 @@ export default {
                 this.stopDrawingMode();
                 this.ui.resizeEditor();
                 this.ui.changeMenu('crop');
+                this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
               })
               ['catch']((message) => Promise.reject(message));
           }
@@ -525,6 +536,18 @@ export default {
         }
       },
     });
+  },
+
+  /**
+   * History Action
+   * @returns {Object} history actions for ui
+   * @private
+   */
+  _historyAction() {
+    return {
+      undo: (count) => this.undo(count),
+      redo: (count) => this.redo(count),
+    };
   },
 
   /**
