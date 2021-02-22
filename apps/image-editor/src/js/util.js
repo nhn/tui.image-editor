@@ -4,7 +4,7 @@
  */
 import { forEach, sendHostname, extend, isString, pick, inArray } from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
-import { SHAPE_FILL_TYPE, SHAPE_TYPE } from '@/consts';
+import { SHAPE_FILL_TYPE, SHAPE_TYPE, emptyCropRectValues } from '@/consts';
 
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
@@ -343,4 +343,20 @@ export function getFillTypeFromObject(shapeObj) {
  */
 export function isShape(obj) {
   return inArray(obj.get('type'), SHAPE_TYPE) >= 0;
+}
+
+/**
+ * Check if cropRect is Empty.
+ * @param {Object} cropRect - cropRect object
+ *  @param {Number} cropRect.left - cropRect left position value
+ *  @param {Number} cropRect.top - cropRect top position value
+ *  @param {Number} cropRect.width - cropRect width value
+ *  @param {Number} cropRect.height - cropRect height value
+ * @returns {boolean}
+ */
+export function isEmptyCropzone(cropRect) {
+  const { left, top, width, height } = cropRect;
+  const { LEFT, TOP, WIDTH, HEIGHT } = emptyCropRectValues;
+
+  return left === LEFT && top === TOP && width === WIDTH && height === HEIGHT;
 }

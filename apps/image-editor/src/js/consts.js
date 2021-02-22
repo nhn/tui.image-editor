@@ -291,3 +291,10 @@ export const defaultFilterRangeValues = {
     value: 0.1,
   },
 };
+
+export const emptyCropRectValues = {
+  LEFT: 0,
+  TOP: 0,
+  WIDTH: 0.5,
+  HEIGHT: 0.5,
+};
