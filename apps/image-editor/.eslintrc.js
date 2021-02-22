@@ -25,6 +25,5 @@ module.exports = {
         AssignmentExpression: { array: false, object: false },
       },
     ],
-    'prettier/prettier': 'error',
   },
 };
