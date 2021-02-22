@@ -46,7 +46,7 @@ npm install --save @toast-ui/vue-image-editor
 > **If you install other packages**, you may lose dependency on fabric. You need to **reinstall the fabric**.
 
     ```
-    npm install --no-save --no-optional fabric@~1.6.7
+    npm install --no-save --no-optional fabric@~4.2.0
     ```
 
 ## 🔡 Usage
@@ -134,7 +134,7 @@ You can use `includeUi` and `options` props. Example of each props is in the [Ge
   | ------ | -------- | --------------------------------------- |
   | Object | X        | { cssMaxWidth: 700, cssMaxHeight: 500 } |
 
-  You can configurate your image editor using `options` prop. For more information which properties can be set in `options`, see [options of tui.image-editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor).
+  You can configure your image editor using `options` prop. For more information which properties can be set in `options`, see [options of tui.image-editor](https://nhn.github.io/tui.image-editor/latest/ImageEditor).
 
 ### Events
 
@@ -174,7 +174,7 @@ For use method, first you need to assign `ref` attribute of element like this:
 <tui-image-editor ref="tuiImageEditor" :options="options"></tui-image-editor>
 ```
 
-After then you can use methods through `this.$refs`. We provide `getRootElement` and `invoke` methods.
+After then, you can use methods through `this.$refs`. We provide `getRootElement` and `invoke` methods.
 
 - `getRootElement`
 

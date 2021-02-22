@@ -1,8 +1,6 @@
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const webpack = require('webpack');
-const SafeUmdPlugin = require('safe-umd-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
@@ -40,8 +38,10 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        include: [path.resolve(__dirname, 'src')],
-        loader: 'babel-loader',
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+        },
       },
       {
         test: /\.vue$/,
@@ -50,12 +50,10 @@ module.exports = {
     ],
   },
   plugins: [
-    new CleanWebpackPlugin(['dist']),
     new VueLoaderPlugin(),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify('production'),
     }),
-    new SafeUmdPlugin(),
   ],
   devtool: 'source-map',
 };

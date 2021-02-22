@@ -22,12 +22,12 @@
 TOAST UI ImageEditor applies Google Analytics (GA) to collect statistics on the use of open source, in order to identify how widely TOAST UI ImageEditor is used throughout the world. It also serves as important index to determine the future course of projects. location.hostname (e.g. > “ui.toast.com") is to be collected and the sole purpose is nothing but to measure statistics on the usage. To disable GA, use the following `usageStatistics` option when creating the instance.
 
 ```js
-var options = {
+const options = {
   //...
   usageStatistics: false,
 };
 
-var imageEditor = new tui.ImageEditor('#tui-image-editor-container', options);
+const imageEditor = new tui.ImageEditor('#tui-image-editor-container', options);
 ```
 
 Or, include [`tui-code-snippet`](https://github.com/nhn/tui.code-snippet)(**v1.4.0** or **later**) and then immediately write the options as follows:
@@ -119,16 +119,16 @@ Add the container element where TOAST UI ImageEditor will be created.
 Add dependencies & initialize ImageEditor class with given element to make an image editor.
 
 ```javascript
-var ImageEditor = require('tui-image-editor');
-var FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
-var blackTheme = require('./js/theme/black-theme.js');
-var locale_ru_RU = {
+const ImageEditor = require('tui-image-editor');
+const FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
+const blackTheme = require('./js/theme/black-theme.js');
+const locale_ru_RU = {
   // override default English locale to your custom
   Crop: 'Обзрезать',
   'Delete-all': 'Удалить всё',
   // etc...
 };
-var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
   includeUI: {
     loadImage: {
       path: 'img/sampleImage.jpg',
@@ -148,11 +148,11 @@ var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
 });
 ```
 
-Or ~ UI
+Or
 
 ```javascript
-var ImageEditor = require('tui-image-editor');
-var instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
+const ImageEditor = require('tui-image-editor');
+const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
   cssMaxWidth: 700,
   cssMaxHeight: 500,
   selectionStyle: {
@@ -178,7 +178,7 @@ If you use TypeScript, You must `import module = require('module')` on importing
 
 ```typescript
 import ImageEditor = require('tui-image-editor');
-var FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
+const FileSaver = require('file-saver'); //to download edited image to local. Use after npm install file-saver
 
 const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
   cssMaxWidth: 700,
@@ -190,4 +190,4 @@ const instance = new ImageEditor(document.querySelector('#tui-image-editor'), {
 });
 ```
 
-See [details](https://nhn.github.io/tui.image-editor/latest) for additional informations.
+See [details](https://nhn.github.io/tui.image-editor/latest) for additional information.

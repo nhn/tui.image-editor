@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.11.0
+// Type definitions for TOAST UI Image Editor v3.12.0
 // TypeScript Version: 3.2.2
 
 declare namespace tuiImageEditor {
@@ -252,8 +252,8 @@ declare namespace tuiImageEditor {
   }
 
   class ImageEditor {
-    public ui: UI;
     constructor(wrapper: string | Element, options: IOptions);
+    public ui: UI;
 
     public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
     public addImageObject(imgUrl: string): Promise<void>;

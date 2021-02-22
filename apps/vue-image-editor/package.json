@@ -10,7 +10,7 @@
   "scripts": {
     "build:dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "serve": "vue serve ./example/App.vue"
+    "storybook": "start-storybook -s .storybook -p 6006"
   },
   "homepage": "https://github.com/nhn/tui.image-editor",
   "bugs": "https://github.com/nhn/tui.image-editor/issues",
@@ -20,9 +20,12 @@
   "devDependencies": {
     "@babel/core": "^7.1.2",
     "@babel/preset-env": "^7.1.0",
+    "@storybook/vue": "^5.3.13",
+    "@vue/babel-preset-app": "^3.12.1",
     "@vue/cli": "^3.2.1",
     "@vue/cli-service-global": "^3.1.2",
     "babel-loader": "^8.0.4",
+    "babel-preset-vue": "^2.0.2",
     "clean-webpack-plugin": "^0.1.19",
     "eslint": "^5.7.0",
     "eslint-config-prettier": "^7.2.0",
@@ -30,7 +33,6 @@
     "eslint-loader": "^2.1.1",
     "eslint-plugin-prettier": "^3.3.1",
     "eslint-plugin-vue": "^4.7.1",
-    "safe-umd-webpack-plugin": "^4.0.0",
     "vue-loader": "^15.4.2",
     "vue-template-compiler": "^2.5.17",
     "webpack": "^4.22.0",
@@ -40,7 +42,7 @@
     "vue": "^2.5.17"
   },
   "dependencies": {
-    "fabric": "4.2.0",
-    "tui-image-editor": "^3.11.0"
+    "fabric": "^4.2.0",
+    "tui-image-editor": "^3.12.0"
   }
 }

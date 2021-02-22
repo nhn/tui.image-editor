@@ -52,7 +52,7 @@
     "webpack-dev-server": "^3.1.14"
   },
   "dependencies": {
-    "fabric": "4.2.0",
-    "tui-image-editor": "^3.11.0"
+    "fabric": "^4.2.0",
+    "tui-image-editor": "^3.12.0"
   }
 }

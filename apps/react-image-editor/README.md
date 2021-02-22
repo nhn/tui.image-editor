@@ -55,7 +55,7 @@ import ImageEditor from '@toast-ui/react-image-editor';
 
 ```js
 require('tui-image-editor/dist/tui-image-editor.css');
-var ImageEditor = require('@toast-ui/react-image-editor');
+const ImageEditor = require('@toast-ui/react-image-editor');
 ```
 
 ### Props
@@ -96,7 +96,7 @@ const MyComponent = () => (
 
 #### Theme
 
-Importing `black/white-theme.js` file is not working directly import yet. You want to use white theme, please write own theme object by copy and paste.
+Importing `black/white-theme.js` file is not working directly import yet. You want to use a white theme, please write own theme object by copy and paste.
 
 ### Instance Methods
 
