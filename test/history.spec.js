@@ -8,17 +8,24 @@ import History from '../src/js/ui/history';
 describe('history', () => {
   let history;
   let options;
+  let name;
+  let detail;
 
   beforeEach(() => {
     options = {};
     history = new History(document.createElement('div'), options);
     history._actions = { undo() {}, redo() {} };
+    history.makeSvgIcon = () => {};
+    history.locale = { localize: (historyName) => historyName };
+
+    name = 'history-name';
+    detail = 'history-detail';
   });
 
   it('should add a history item', () => {
     spyOn(history, '_selectItem');
 
-    history.add('title');
+    history.add({ name, detail });
 
     expect(history.getListLength()).toBe(1);
     expect(history._selectItem).toHaveBeenCalled();
@@ -44,12 +51,15 @@ describe('history', () => {
     let target;
 
     beforeEach(() => {
+      name = 'history-name';
+      detail = 'history-detail';
+
       target = document.createElement('li');
       target.className = 'history-item';
       target.setAttribute('data-index', 1);
 
-      history.add('index0');
-      history.add('index1');
+      history.add({ name, detail });
+      history.add({ name, detail });
     });
 
     it('should nothing when index is the same as historyIndex', () => {
@@ -62,7 +72,7 @@ describe('history', () => {
 
     it('should undo action when is index less than historyIndex', () => {
       spyOn(history._actions, 'undo');
-      history.add('index2');
+      history.add({ name, detail });
       history._clickHistoryItem({ target });
 
       expect(history._actions.undo).toHaveBeenCalledTimes(1);
@@ -70,7 +80,7 @@ describe('history', () => {
 
     it('should redo action when is index greater than historyIndex', () => {
       spyOn(history._actions, 'redo');
-      history.add('index2');
+      history.add({ name, detail });
       history._historyIndex = 1;
 
       target.setAttribute('data-index', 2);
@@ -85,8 +95,8 @@ describe('history', () => {
     let listLength;
 
     beforeEach(() => {
-      history.add('index0');
-      history.add('index1');
+      history.add({ name, detail });
+      history.add({ name, detail });
       index = 1;
       listLength = history.getListLength();
     });

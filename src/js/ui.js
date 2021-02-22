@@ -74,12 +74,6 @@ class Ui {
     this._makeSubMenu();
 
     this._attachHistoryEvent();
-
-    this._makeHelpMenu();
-  }
-
-  _makeHelpMenu() {
-    console.log(this._helpMenuBarElement);
   }
 
   /**
