@@ -137,6 +137,17 @@ export default {
         history: () => {
           this.ui.toggleHistoryMenu();
         },
+        zoomIn: () => {
+          this.ui.toggleZoomButtonStatus('zoomIn');
+          this._graphics.toggleZoomInMode();
+        },
+        zoomOut: () => {
+          this._graphics.zoomOut();
+        },
+        hand: () => {
+          this.ui.toggleZoomButtonStatus('hand');
+          this._graphics.toggleHandMode();
+        },
       },
       this._commonAction()
     );

@@ -4,7 +4,7 @@
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
-import { componentNames, eventNames } from '../consts';
+import { componentNames, eventNames, zoomModes } from '../consts';
 import { clamp } from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
@@ -60,6 +60,12 @@ class Zoom extends Component {
     this.zoomLevel = DEFAULT_ZOOM_LEVEL;
 
     /**
+     * Zoom mode ('normal', 'zoom', 'hand')
+     * @type {string}
+     */
+    this.zoomMode = zoomModes.DEFAULT;
+
+    /**
      * Listeners
      * @type {Object.<string, Function>}
      * @private
@@ -106,10 +112,12 @@ class Zoom extends Component {
     if (this.zoomArea) {
       return;
     }
+    this.zoomMode = zoomModes.ZOOM;
+    this.endHandMode();
+
     const canvas = this.getCanvas();
 
     this._changeObjectsEventedState(false);
-    this._prevCanvasDefaultCursor = canvas.defaultCursor;
 
     this.zoomArea = new fabric.Rect({
       left: 0,
@@ -133,11 +141,13 @@ class Zoom extends Component {
    * End zoom-in mode
    */
   endZoomInMode() {
+    this.zoomMode = zoomModes.DEFAULT;
+
     const canvas = this.getCanvas();
     const { startZoom, moveZoom, stopZoom } = this._listeners;
 
     canvas.selection = true;
-    canvas.defaultCursor = this._prevCanvasDefaultCursor;
+    canvas.defaultCursor = 'auto';
     canvas.off({
       'mouse:down': startZoom,
       'mouse:move': moveZoom,
@@ -145,14 +155,16 @@ class Zoom extends Component {
     });
 
     this._changeObjectsEventedState(true);
-    this._clearZoomArea();
+
+    canvas.remove(this.zoomArea);
+    this.zoomArea = null;
   }
 
   /**
    * Start zoom drawing mode
    */
   start() {
-    this._clearZoomArea();
+    this.zoomArea = null;
     this._startPoint = null;
     this._startHandPoint = null;
   }
@@ -169,10 +181,12 @@ class Zoom extends Component {
    * Start hand mode
    */
   startHandMode() {
+    this.endZoomInMode();
+    this.zoomMode = zoomModes.HAND;
+
     const canvas = this.getCanvas();
 
     this._changeObjectsEventedState(false);
-    this._prevCanvasDefaultCursor = canvas.defaultCursor;
 
     canvas.discardActiveObject();
     canvas.on('mouse:down', this._listeners.startHand);
@@ -184,13 +198,14 @@ class Zoom extends Component {
    * Stop hand mode
    */
   endHandMode() {
+    this.zoomMode = zoomModes.DEFAULT;
     const canvas = this.getCanvas();
 
     this._changeObjectsEventedState(true);
 
     canvas.off('mouse:down', this._listeners.startHand);
     canvas.selection = true;
-    canvas.defaultCursor = this._prevCanvasDefaultCursor;
+    canvas.defaultCursor = 'auto';
 
     this._startHandPoint = null;
   }
@@ -233,7 +248,9 @@ class Zoom extends Component {
     const deltaY = Math.abs(y - _startPoint.y);
 
     if (deltaX + deltaY > MOUSE_MOVE_THRESHOLD) {
+      canvas.remove(zoomArea);
       zoomArea.set(this._calcRectDimensionFromPoint(x, y));
+      canvas.add(zoomArea);
     }
   }
 
@@ -286,12 +303,12 @@ class Zoom extends Component {
       this.zoomLevel = zoomLevel;
     }
 
-    canvas.remove(zoomArea);
     canvas.off({
       'mouse:move': moveZoom,
       'mouse:up': stopZoom,
     });
 
+    canvas.remove(zoomArea);
     this._startPoint = null;
   }
 
@@ -552,6 +569,9 @@ class Zoom extends Component {
    * Clear zoom area
    */
   _clearZoomArea() {
+    const canvas = this.getCanvas();
+
+    canvas.remove(this.zoomArea);
     this.zoomArea = null;
   }
 
@@ -571,6 +591,13 @@ class Zoom extends Component {
    */
   _fireZoomChanged(canvas, zoomLevel) {
     canvas.fire(eventNames.ZOOM_CHANGED, { viewport: canvas.calcViewportBoundaries(), zoomLevel });
+  }
+
+  /**
+   * Get zoom mode
+   */
+  get mode() {
+    return this.zoomMode;
   }
 }
 

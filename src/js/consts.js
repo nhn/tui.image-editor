@@ -202,6 +202,16 @@ export const drawingMenuNames = {
 };
 
 /**
+ * Zoom modes
+ * @type {Object.<string, string>}
+ */
+export const zoomModes = {
+  DEFAULT: 'normal',
+  ZOOM: 'zoom',
+  HAND: 'hand',
+};
+
+/**
  * Shortcut key values
  * @type {Object.<string, number>}
  */

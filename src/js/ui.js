@@ -21,7 +21,6 @@ import Icon from './ui/icon';
 import Draw from './ui/draw';
 import Filter from './ui/filter';
 import History from './ui/history';
-// import Zoom from './ui/zoom';
 import Locale from './ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
@@ -34,7 +33,6 @@ const SUB_UI_COMPONENT = {
   Icon,
   Draw,
   Filter,
-  // Zoom,
 };
 
 const { CustomEvents } = snippet;
@@ -42,6 +40,11 @@ const { CustomEvents } = snippet;
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 
 const HISTORY_MENU = 'history';
+
+const ZOOM_BUTTON_TYPE = {
+  ZOOM_IN: 'zoomIn',
+  HAND: 'hand',
+};
 
 /**
  * Ui class
@@ -172,6 +175,23 @@ class Ui {
       selectElementClassList.add('tui-image-editor-top-optimization');
     } else {
       selectElementClassList.remove('tui-image-editor-top-optimization');
+    }
+  }
+
+  /**
+   * Toggle zoom button status
+   * @param {string} type - type of zoom button
+   */
+  toggleZoomButtonStatus(type) {
+    const classNameOn = 'on';
+    const targetClassList = this._buttonElements[type].classList;
+
+    targetClassList.toggle(classNameOn);
+
+    if (type === ZOOM_BUTTON_TYPE.ZOOM_IN) {
+      this._buttonElements[ZOOM_BUTTON_TYPE.HAND].classList.remove(classNameOn);
+    } else {
+      this._buttonElements[ZOOM_BUTTON_TYPE.ZOOM_IN].classList.remove(classNameOn);
     }
   }
 
@@ -323,6 +343,18 @@ class Ui {
       locale: this._locale,
       makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
     });
+
+    this._activateZoomMenus();
+  }
+
+  /**
+   * Activate help menus for zoom.
+   * @private
+   */
+  _activateZoomMenus() {
+    snippet.forEach(ZOOM_HELP_MENUS, (menu) => {
+      this.changeHelpButtonEnabled(menu, true);
+    });
   }
 
   /**
@@ -396,7 +428,6 @@ class Ui {
    */
   _addHelpActionEvent() {
     snippet.forEach(HELP_MENUS, (helpName) => {
-      console.log(helpName);
       this.eventHandler[helpName] = () => this._actions.main[helpName]();
       this._buttonElements[helpName].addEventListener('click', this.eventHandler[helpName]);
     });
