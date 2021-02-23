@@ -548,8 +548,7 @@ class Zoom extends Component {
       height: verticalScrollHeight,
     });
 
-    canvas.add(this._horizontalScroll);
-    canvas.add(this._verticalScroll);
+    this._addScrollBar();
   }
 
   /**
@@ -566,13 +565,22 @@ class Zoom extends Component {
   }
 
   /**
-   * Clear zoom area
+   * Add scroll bar and set remove timer
    */
-  _clearZoomArea() {
+  _addScrollBar() {
     const canvas = this.getCanvas();
 
-    canvas.remove(this.zoomArea);
-    this.zoomArea = null;
+    canvas.add(this._horizontalScroll);
+    canvas.add(this._verticalScroll);
+
+    if (this.scrollBarTid) {
+      clearTimeout(this.scrollBarTid);
+    }
+
+    this.scrollBarTid = setTimeout(() => {
+      canvas.remove(this._horizontalScroll);
+      canvas.remove(this._verticalScroll);
+    }, 3000);
   }
 
   /**
