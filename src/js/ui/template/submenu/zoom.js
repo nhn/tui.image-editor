@@ -7,17 +7,17 @@
 export default ({ locale, makeSvgIcon }) => `
     <ul class="tie-zoom-button tui-image-editor-submenu-item">
         <li>
-            <div class="tui-image-editor-button flipX zoomIn">
+            <div class="tui-image-editor-button zoomIn">
                 <div>
-                    ${makeSvgIcon(['normal', 'active'], 'flip-x', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'zoom-in', true)}
                 </div>
                 <label>
                     ${locale.localize('Zoom In')}
                 </label>
             </div>
-            <div class="tui-image-editor-button flipY zoomOut">
+            <div class="tui-image-editor-button zoomOut">
                 <div>
-                    ${makeSvgIcon(['normal', 'active'], 'flip-y', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'zoom-out', true)}
                 </div>
                 <label>
                     ${locale.localize('Zoom Out')}
@@ -28,9 +28,9 @@ export default ({ locale, makeSvgIcon }) => `
             <div></div>
         </li>
         <li>
-            <div class="tui-image-editor-button resetFlip hand">
+            <div class="tui-image-editor-button hand">
                 <div>
-                    ${makeSvgIcon(['normal', 'active'], 'flip-reset', true)}
+                    ${makeSvgIcon(['normal', 'active'], 'zoom-hand', true)}
                 </div>
                 <label>
                     ${locale.localize('Hand')}

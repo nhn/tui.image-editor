@@ -1,6 +1,12 @@
 import snippet from 'tui-code-snippet';
 import { getSelector, assignmentForDestroy, cls, getHistoryTitle, isSilentCommand } from './util';
-import { COMMAND_HELP_MENUS, DELETE_HELP_MENUS, eventNames, HELP_MENUS } from './consts';
+import {
+  ZOOM_HELP_MENUS,
+  COMMAND_HELP_MENUS,
+  DELETE_HELP_MENUS,
+  eventNames,
+  HELP_MENUS,
+} from './consts';
 import mainContainer from './ui/template/mainContainer';
 import controls from './ui/template/controls';
 
@@ -15,7 +21,7 @@ import Icon from './ui/icon';
 import Draw from './ui/draw';
 import Filter from './ui/filter';
 import History from './ui/history';
-import Zoom from './ui/zoom';
+// import Zoom from './ui/zoom';
 import Locale from './ui/locale/locale';
 
 const SUB_UI_COMPONENT = {
@@ -28,7 +34,7 @@ const SUB_UI_COMPONENT = {
   Icon,
   Draw,
   Filter,
-  Zoom,
+  // Zoom,
 };
 
 const { CustomEvents } = snippet;
@@ -201,7 +207,7 @@ class Ui {
         },
         locale: {},
         menuIconPath: '',
-        menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter', 'zoom'],
+        menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
         initMenu: '',
         uiSize: {
           width: '100%',
@@ -325,7 +331,7 @@ class Ui {
    * @private
    */
   _makeHelpMenuWithPartition() {
-    return [...COMMAND_HELP_MENUS, '', ...DELETE_HELP_MENUS];
+    return [...ZOOM_HELP_MENUS, '', ...COMMAND_HELP_MENUS, '', ...DELETE_HELP_MENUS];
   }
 
   /**
@@ -390,6 +396,7 @@ class Ui {
    */
   _addHelpActionEvent() {
     snippet.forEach(HELP_MENUS, (helpName) => {
+      console.log(helpName);
       this.eventHandler[helpName] = () => this._actions.main[helpName]();
       this._buttonElements[helpName].addEventListener('click', this.eventHandler[helpName]);
     });

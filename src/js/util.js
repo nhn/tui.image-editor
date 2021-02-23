@@ -4,7 +4,7 @@
  */
 import { forEach, sendHostname, extend, isString, pick, inArray } from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
-import { commandNames, filterType, historyNames, SHAPE_FILL_TYPE, SHAPE_TYPE } from './consts';
+import { commandNames, filterType, SHAPE_FILL_TYPE, SHAPE_TYPE } from './consts';
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
 const { min, max } = Math;

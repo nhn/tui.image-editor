@@ -5,6 +5,12 @@
 import { keyMirror } from './util';
 
 /**
+ * Help features for zoom
+ * @type {Array.<string>}
+ */
+export const ZOOM_HELP_MENUS = ['zoomIn', 'zoomOut', 'hand'];
+
+/**
  * Help features for command
  * @type {Array.<string>}
  */
@@ -20,7 +26,7 @@ export const DELETE_HELP_MENUS = ['delete', 'deleteAll'];
  * Editor help features
  * @type {Array.<string>}
  */
-export const HELP_MENUS = [...COMMAND_HELP_MENUS, ...DELETE_HELP_MENUS];
+export const HELP_MENUS = [...ZOOM_HELP_MENUS, ...COMMAND_HELP_MENUS, ...DELETE_HELP_MENUS];
 
 /**
  * Fill type for shape
