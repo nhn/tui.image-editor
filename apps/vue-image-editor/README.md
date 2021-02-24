@@ -118,7 +118,7 @@ export default {
 
 ### Props
 
-You can use `includeUi` and `options` props. Example of each props is in the [Getting Started](./docs/Basic-Tutorial.md).
+You can use `includeUi` and `options` props. Example of each props is in the [Getting Started](../../docs/Basic-Tutorial.md).
 
 - `includeUi`
 
