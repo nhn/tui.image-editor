@@ -13,14 +13,24 @@ const DEFAULT_SCROLL_OPTION = {
   top: 0,
   width: 0,
   height: 0,
-  stroke: 'grey',
+  stroke: '#000000',
   strokeWidth: 0,
-  fill: '#DCDADA',
+  fill: '#000000',
+  opacity: 0.4,
   evented: false,
   selectable: false,
   hoverCursor: 'auto',
 };
-const DEFAULT_SCROLL_SIZE_RATIO = 0.01;
+const DEFAULT_VERTICAL_SCROLL_RATIO = {
+  SIZE: 0.0045,
+  MARGIN: 0.003,
+  BORDER_RADIUS: 0.003,
+};
+const DEFAULT_HORIZONTAL_SCROLL_RATIO = {
+  SIZE: 0.0066,
+  MARGIN: 0.0044,
+  BORDER_RADIUS: 0.003,
+};
 const DEFAULT_ZOOM_LEVEL = 1.0;
 
 /**
@@ -112,8 +122,8 @@ class Zoom extends Component {
     if (this.zoomArea) {
       return;
     }
-    this.zoomMode = zoomModes.ZOOM;
     this.endHandMode();
+    this.zoomMode = zoomModes.ZOOM;
 
     const canvas = this.getCanvas();
 
@@ -519,33 +529,42 @@ class Zoom extends Component {
     const viewportHeight = bl.y - tl.y;
 
     const horizontalScrollWidth = (viewportWidth * viewportWidth) / canvasWidth;
-    const horizontalScrollHeight = viewportHeight * DEFAULT_SCROLL_SIZE_RATIO;
+    const horizontalScrollHeight = viewportHeight * DEFAULT_HORIZONTAL_SCROLL_RATIO.SIZE;
     const horizontalScrollLeft = clamp(
       tl.x + (tl.x / canvasWidth) * viewportWidth,
       tl.x,
       tr.x - horizontalScrollWidth
     );
+    const horizontalScrollMargin = viewportHeight * DEFAULT_HORIZONTAL_SCROLL_RATIO.MARGIN;
+    const horizontalScrollBorderRadius =
+      viewportHeight * DEFAULT_HORIZONTAL_SCROLL_RATIO.BORDER_RADIUS;
 
     this._horizontalScroll.set({
       left: horizontalScrollLeft,
-      top: bl.y - horizontalScrollHeight,
+      top: bl.y - horizontalScrollHeight - horizontalScrollMargin,
       width: horizontalScrollWidth,
       height: horizontalScrollHeight,
+      rx: horizontalScrollBorderRadius,
+      ry: horizontalScrollBorderRadius,
     });
 
-    const verticalScrollWidth = viewportWidth * DEFAULT_SCROLL_SIZE_RATIO;
+    const verticalScrollWidth = viewportWidth * DEFAULT_VERTICAL_SCROLL_RATIO.SIZE;
     const verticalScrollHeight = (viewportHeight * viewportHeight) / canvasHeight;
     const verticalScrollTop = clamp(
       tl.y + (tl.y / canvasHeight) * viewportHeight,
       tr.y,
       bl.y - verticalScrollHeight
     );
+    const verticalScrollMargin = viewportWidth * DEFAULT_VERTICAL_SCROLL_RATIO.MARGIN;
+    const verticalScrollBorderRadius = viewportWidth * DEFAULT_VERTICAL_SCROLL_RATIO.BORDER_RADIUS;
 
     this._verticalScroll.set({
-      left: tr.x - verticalScrollWidth,
+      left: tr.x - verticalScrollWidth - verticalScrollMargin,
       top: verticalScrollTop,
       width: verticalScrollWidth,
       height: verticalScrollHeight,
+      rx: verticalScrollBorderRadius,
+      ry: verticalScrollBorderRadius,
     });
 
     this._addScrollBar();
