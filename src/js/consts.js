@@ -225,6 +225,7 @@ export const keyCodes = {
   DEL: 46,
   ARROW_DOWN: 40,
   ARROW_UP: 38,
+  SPACE: 32,
 };
 
 /**

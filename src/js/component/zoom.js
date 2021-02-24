@@ -4,7 +4,7 @@
  */
 import fabric from 'fabric';
 import Component from '../interface/component';
-import { componentNames, eventNames, zoomModes } from '../consts';
+import { componentNames, eventNames, keyCodes, zoomModes } from '../consts';
 import { clamp } from '../util';
 
 const MOUSE_MOVE_THRESHOLD = 10;
@@ -88,6 +88,8 @@ class Zoom extends Component {
       moveHand: this._onMouseMoveWithHandMode.bind(this),
       stopHand: this._onMouseUpWithHandMode.bind(this),
       zoomChanged: this._changeScrollState.bind(this),
+      keydown: this._onKeyDown.bind(this),
+      keyup: this._onKeyUp.bind(this),
     };
 
     const canvas = this.getCanvas();
@@ -113,6 +115,33 @@ class Zoom extends Component {
     this._horizontalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
 
     canvas.on(eventNames.ZOOM_CHANGED, this._listeners.zoomChanged);
+
+    fabric.util.addListener(document, 'keydown', this._listeners.keydown);
+    fabric.util.addListener(document, 'keyup', this._listeners.keyup);
+  }
+
+  /**
+   * Keydown event handler
+   * @param {KeyboardEvent} e - Event object
+   * @private
+   */
+  _onKeyDown(e) {
+    if (e.keyCode === keyCodes.SPACE) {
+      e.preventDefault();
+      this.startHandMode();
+    }
+  }
+
+  /**
+   * Keyup event handler
+   * @param {KeyboardEvent} e - Event object
+   * @private
+   */
+  _onKeyUp(e) {
+    if (e.keyCode === keyCodes.SPACE) {
+      e.preventDefault();
+      this.endHandMode();
+    }
   }
 
   /**
@@ -199,6 +228,7 @@ class Zoom extends Component {
     this._changeObjectsEventedState(false);
 
     canvas.discardActiveObject();
+    canvas.off('mouse:down', this._listeners.startHand);
     canvas.on('mouse:down', this._listeners.startHand);
     canvas.selection = false;
     canvas.defaultCursor = 'grab';
@@ -222,10 +252,10 @@ class Zoom extends Component {
 
   /**
    * onMousedown handler in fabric canvas
-   * @param {{target: fabric.Object, event: MouseEvent}} fEvent - Fabric event
+   * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _onMouseDownWithZoomMode({ target, event }) {
+  _onMouseDownWithZoomMode({ target, e }) {
     if (target) {
       return;
     }
@@ -234,7 +264,7 @@ class Zoom extends Component {
 
     canvas.selection = false;
 
-    this._startPoint = canvas.getPointer(event);
+    this._startPoint = canvas.getPointer(e);
     this.zoomArea.set({ width: 0, height: 0 });
 
     const { moveZoom, stopZoom } = this._listeners;
@@ -246,12 +276,12 @@ class Zoom extends Component {
 
   /**
    * onMousemove handler in fabric canvas
-   * @param {{event: MouseEvent}} fEvent - Fabric event
+   * @param {{e: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _onMouseMoveWithZoomMode({ event }) {
+  _onMouseMoveWithZoomMode({ e }) {
     const canvas = this.getCanvas();
-    const pointer = canvas.getPointer(event);
+    const pointer = canvas.getPointer(e);
     const { x, y } = pointer;
     const { zoomArea, _startPoint } = this;
     const deltaX = Math.abs(x - _startPoint.x);
@@ -455,12 +485,12 @@ class Zoom extends Component {
    * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _onMouseDownWithHandMode(fEvent) {
-    const canvas = this.getCanvas();
-
-    if (fEvent.target) {
+  _onMouseDownWithHandMode({ target, e }) {
+    if (target) {
       return;
     }
+
+    const canvas = this.getCanvas();
 
     if (this.zoomLevel <= DEFAULT_ZOOM_LEVEL) {
       return;
@@ -468,7 +498,7 @@ class Zoom extends Component {
 
     canvas.selection = false;
 
-    this._startHandPoint = canvas.getPointer(fEvent.e);
+    this._startHandPoint = canvas.getPointer(e);
 
     const { moveHand, stopHand } = this._listeners;
     canvas.on({
@@ -479,12 +509,12 @@ class Zoom extends Component {
 
   /**
    * onMouseMove handler in fabric canvas
-   * @param {{event: MouseEvent}} fEvent - Fabric event
+   * @param {{e: MouseEvent}} fEvent - Fabric event
    * @private
    */
-  _onMouseMoveWithHandMode({ event }) {
+  _onMouseMoveWithHandMode({ e }) {
     const canvas = this.getCanvas();
-    const { x, y } = canvas.getPointer(event);
+    const { x, y } = canvas.getPointer(e);
     const deltaX = x - this._startHandPoint.x;
     const deltaY = y - this._startHandPoint.y;
 
