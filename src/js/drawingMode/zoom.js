@@ -18,13 +18,12 @@ class ZoomDrawingMode extends DrawingMode {
   /**
    * start this drawing mode
    * @param {Graphics} graphics - Graphics instance
-   * @param {Object} option - drawing mode option
    * @override
    */
-  start(graphics, option) {
+  start(graphics) {
     const zoom = graphics.getComponent(components.ZOOM);
 
-    zoom.start(option);
+    zoom.start();
   }
 
   /**

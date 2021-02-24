@@ -28,7 +28,6 @@ import {
   eventNames as events,
   drawingModes,
   fObjectOptions,
-  zoomModes,
 } from './consts';
 import {
   makeSelectionUndoData,
@@ -451,16 +450,13 @@ class Graphics {
   }
 
   /**
-   * Toggle zoom-in mode
+   * Get zoom mode
+   * @returns {string}
    */
-  toggleZoomInMode() {
+  getZoomMode() {
     const zoom = this.getComponent(components.ZOOM);
 
-    if (zoom.mode === zoomModes.ZOOM) {
-      zoom.endZoomInMode();
-    } else {
-      zoom.startZoomInMode();
-    }
+    return zoom.mode;
   }
 
   /**
@@ -488,19 +484,6 @@ class Graphics {
     const zoom = this.getComponent(components.ZOOM);
 
     zoom.zoomOut();
-  }
-
-  /**
-   * Toggle hand mode
-   */
-  toggleHandMode() {
-    const zoom = this.getComponent(components.ZOOM);
-
-    if (zoom.mode === zoomModes.HAND) {
-      zoom.endHandMode();
-    } else {
-      zoom.startHandMode();
-    }
   }
 
   /**

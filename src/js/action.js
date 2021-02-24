@@ -1,7 +1,7 @@
 import { extend } from 'tui-code-snippet';
 import { isSupportFileApi, base64ToBlob, toInteger } from './util';
 import Imagetracer from './helper/imagetracer';
-import { eventNames, historyNames, drawingModes, drawingMenuNames } from './consts';
+import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from './consts';
 
 export default {
   /**
@@ -53,12 +53,26 @@ export default {
 
       return result;
     };
-    const toggleZoomMode = (mode) => {
-      const drawingMode = this.getDrawingMode();
+    const toggleZoomMode = () => {
+      const zoomMode = this._graphics.getZoomMode();
 
       this.stopDrawingMode();
-      if (drawingMode !== drawingModes.ZOOM) {
-        this.startDrawingMode(drawingModes.ZOOM, { mode });
+      if (zoomMode !== zoomModes.ZOOM) {
+        this.startDrawingMode(drawingModes.ZOOM);
+        this._graphics.startZoomInMode();
+      } else {
+        this._graphics.endZoomInMode();
+      }
+    };
+    const toggleHandMode = () => {
+      const zoomMode = this._graphics.getZoomMode();
+
+      this.stopDrawingMode();
+      if (zoomMode !== zoomModes.HAND) {
+        this.startDrawingMode(drawingModes.ZOOM);
+        this._graphics.startHandMode();
+      } else {
+        this._graphics.endHandMode();
       }
     };
 
@@ -147,7 +161,7 @@ export default {
         zoomIn: () => {
           this.ui.toggleZoomButtonStatus('zoomIn');
           this.deactivateAll();
-          toggleZoomMode(drawingModes.ZOOM);
+          toggleZoomMode();
         },
         zoomOut: () => {
           this._graphics.zoomOut();
@@ -155,7 +169,7 @@ export default {
         hand: () => {
           this.ui.toggleZoomButtonStatus('hand');
           this.deactivateAll();
-          toggleZoomMode(drawingModes.HAND);
+          toggleHandMode();
         },
       },
       this._commonAction()

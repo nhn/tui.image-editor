@@ -187,8 +187,7 @@ export const drawingModes = keyMirror(
   'TEXT',
   'SHAPE',
   'ICON',
-  'ZOOM',
-  'HAND'
+  'ZOOM'
 );
 
 /**
