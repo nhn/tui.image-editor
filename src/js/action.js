@@ -22,7 +22,6 @@ export default {
       icon: this._iconAction(),
       filter: this._filterAction(),
       history: this._historyAction(),
-      zoom: this._zoomAction(),
     };
   },
 
@@ -53,6 +52,14 @@ export default {
       setFilterStateRangeBarOnAction(result);
 
       return result;
+    };
+    const toggleZoomMode = (mode) => {
+      const drawingMode = this.getDrawingMode();
+
+      this.stopDrawingMode();
+      if (drawingMode !== drawingModes.ZOOM) {
+        this.startDrawingMode(drawingModes.ZOOM, { mode });
+      }
     };
 
     return extend(
@@ -139,14 +146,16 @@ export default {
         },
         zoomIn: () => {
           this.ui.toggleZoomButtonStatus('zoomIn');
-          this._graphics.toggleZoomInMode();
+          this.deactivateAll();
+          toggleZoomMode(drawingModes.ZOOM);
         },
         zoomOut: () => {
           this._graphics.zoomOut();
         },
         hand: () => {
           this.ui.toggleZoomButtonStatus('hand');
-          this._graphics.toggleHandMode();
+          this.deactivateAll();
+          toggleZoomMode(drawingModes.HAND);
         },
       },
       this._commonAction()
@@ -311,38 +320,6 @@ export default {
         },
         setDrawingShape: (shapeType) => {
           this.setDrawingShape(shapeType);
-        },
-      },
-      this._commonAction()
-    );
-  },
-
-  /**
-   * Zoom Action
-   * @returns {Object} actions for ui zoom
-   * @private
-   */
-  _zoomAction() {
-    return extend(
-      {
-        zoomIn: () => {
-          const graphics = this._graphics;
-
-          graphics.endHandMode();
-          graphics.startZoomInMode();
-        },
-        zoomOut: () => {
-          const graphics = this._graphics;
-
-          graphics.endZoomInMode();
-          graphics.endHandMode();
-          graphics.zoomOut();
-        },
-        hand: () => {
-          const graphics = this._graphics;
-
-          graphics.endZoomInMode();
-          graphics.startHandMode();
         },
       },
       this._commonAction()
