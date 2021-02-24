@@ -97,6 +97,8 @@ First insert `<tui-image-editor>` in the template or html. `includeUi` and `opti
 Load ImageEditor component and then add it to the `components` in your component or Vue instance.
 
 ```js
+import 'tui-color-picker/dist/tui-color-picker.css';
+import 'tui-image-editor/dist/tui-image-editor.css';
 import { ImageEditor } from '@toast-ui/vue-image-editor';
 
 export default {
