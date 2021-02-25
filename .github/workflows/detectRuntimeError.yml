@@ -27,11 +27,10 @@ jobs:
           url=`cat ./url.txt`
           echo "URLS=$url" >> $GITHUB_ENV
       - name: detect runtime error
-        working-directory: ${{ env.WORKING_DIRECTORY }}
         uses: nhn/toast-ui.detect-runtime-error-actions@v1.0.1
         with:
           global-error-log-variable: ${{ env.ERROR_VARIABLE }}
           urls: ${{ env.URLS }}
         env:
-          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
-          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          BROWSERSTACK_USERNAME: ${{secrets.BROWSERSTACK_USERNAME}}
+          BROWSERSTACK_ACCESS_KEY: ${{secrets.BROWSERSTACK_ACCESS_KEY}}
