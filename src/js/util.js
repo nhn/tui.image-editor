@@ -360,6 +360,8 @@ export function getObjectType(type) {
     case 'path':
     case 'line':
       return 'Draw';
+    case 'activeSelection':
+      return 'Group';
     default:
       return toStartOfCapital(type);
   }
@@ -409,15 +411,9 @@ function getFilterType(type, { useAlpha = true, mode } = {}) {
  * @returns {boolean}
  */
 export function isSilentCommand(command) {
-  const { LOAD_IMAGE, CHANGE_SELECTION, REMOVE_OBJECT } = commandNames;
+  const { LOAD_IMAGE } = commandNames;
 
-  if (typeof command === 'string') {
-    return includes([LOAD_IMAGE, CHANGE_SELECTION], command);
-  }
-
-  const { name } = command;
-
-  return includes([LOAD_IMAGE, CHANGE_SELECTION, REMOVE_OBJECT], name);
+  return typeof command === 'string' ? LOAD_IMAGE === command : LOAD_IMAGE === command.name;
 }
 
 /**
@@ -438,6 +434,7 @@ export function getHistoryTitle(command) {
     CHANGE_TEXT_STYLE,
     CLEAR_OBJECTS,
     ADD_IMAGE_OBJECT,
+    REMOVE_OBJECT,
   } = commandNames;
   const { name, args } = command;
   let historyInfo;
@@ -450,28 +447,31 @@ export function getHistoryTitle(command) {
       historyInfo = { name, detail: args[2] };
       break;
     case APPLY_FILTER:
-      historyInfo = { name: 'Filter', detail: getFilterType(args[1], args[2]) };
+      historyInfo = { name: historyNames.APPLY_FILTER, detail: getFilterType(args[1], args[2]) };
       break;
     case REMOVE_FILTER:
-      historyInfo = { name: 'Filter', detail: 'Remove' };
+      historyInfo = { name: historyNames.REMOVE_FILTER, detail: 'Remove' };
       break;
     case CHANGE_SHAPE:
-      historyInfo = { name: 'Shape', detail: 'Change' };
+      historyInfo = { name: historyNames.CHANGE_SHAPE, detail: 'Change' };
       break;
     case CHANGE_ICON_COLOR:
-      historyInfo = { name: 'Icon', detail: 'Change' };
+      historyInfo = { name: historyNames.CHANGE_ICON_COLOR, detail: 'Change' };
       break;
     case CHANGE_TEXT_STYLE:
-      historyInfo = { name: 'Text', detail: 'Change' };
+      historyInfo = { name: historyNames.CHANGE_TEXT_STYLE, detail: 'Change' };
+      break;
+    case REMOVE_OBJECT:
+      historyInfo = { name: historyNames.REMOVE_OBJECT, detail: args[2] };
       break;
     case CLEAR_OBJECTS:
-      historyInfo = { name: 'Delete All' };
+      historyInfo = { name: historyNames.CLEAR_OBJECTS, detail: 'All' };
       break;
     case ADD_IMAGE_OBJECT:
-      historyInfo = { name: 'Mask', detail: 'Add' };
+      historyInfo = { name: historyNames.ADD_IMAGE_OBJECT, detail: 'Add' };
       break;
     case ADD_TEXT:
-      historyInfo = { name: 'Text' };
+      historyInfo = { name: historyNames.ADD_TEXT };
       break;
 
     default:
@@ -480,7 +480,7 @@ export function getHistoryTitle(command) {
   }
 
   if (args[1] === 'mask') {
-    historyInfo = { name: 'Mask', detail: 'Apply' };
+    historyInfo = { name: historyNames.LOAD_MASK_IMAGE, detail: 'Apply' };
   }
 
   return historyInfo;

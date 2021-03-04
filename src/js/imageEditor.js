@@ -1406,9 +1406,8 @@ class ImageEditor {
    */
   removeObject(id) {
     const { type } = this._graphics.getObject(id);
-    this._invoker.fire(eventNames.EXECUTE_COMMAND, getObjectType(type));
 
-    return this.execute(commands.REMOVE_OBJECT, id);
+    return this.execute(commands.REMOVE_OBJECT, id, getObjectType(type));
   }
 
   /**
