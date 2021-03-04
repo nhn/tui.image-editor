@@ -30,10 +30,9 @@ const SUB_UI_COMPONENT = {
 };
 
 const { CustomEvents } = snippet;
-
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
-
 const HISTORY_MENU = 'history';
+const HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
 
 /**
  * Ui class
@@ -388,7 +387,7 @@ class Ui {
    */
   _addHelpActionEvent() {
     snippet.forEach(HELP_MENUS, (helpName) => {
-      this.eventHandler[helpName] = () => this._actions.main[helpName]();
+      this.eventHandler[helpName] = (event) => this._actions.main[helpName](event);
       this._buttonElements[helpName].addEventListener('click', this.eventHandler[helpName]);
     });
   }
@@ -446,8 +445,16 @@ class Ui {
 
   /**
    * Toggle history menu
+   * @param {object} event - event object
    */
-  toggleHistoryMenu() {
+  toggleHistoryMenu(event) {
+    const { target } = event;
+    const item = target.closest(`.${HISTORY_PANEL_CLASS_NAME}`);
+
+    if (item) {
+      return;
+    }
+
     const historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
 
     historyButtonClassList.toggle('opened');
