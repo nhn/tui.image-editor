@@ -1,6 +1,6 @@
-import Panel from './panelMenu';
-import { assignmentForDestroy } from '../util';
-import templateHtml from './template/submenu/history';
+import Panel from '@/ui/panelMenu';
+import templateHtml from '@/ui/template/submenu/history';
+import { assignmentForDestroy } from '@/util';
 
 const historyClassName = 'history-item';
 const selectedClassName = 'selected-item';

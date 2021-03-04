@@ -2,7 +2,7 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Constants
  */
-import { keyMirror } from './util';
+import { keyMirror } from '@/util';
 
 /**
  * Help features for command

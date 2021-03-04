@@ -1,4 +1,4 @@
-import { getHelpMenuBarPosition } from '../../util';
+import { getHelpMenuBarPosition } from '@/util';
 
 export default ({ locale, biImage, loadButtonStyle, downloadButtonStyle, menuBarPosition }) => `
     <ul class="tui-image-editor-help-menu ${getHelpMenuBarPosition(menuBarPosition)}"></ul>
