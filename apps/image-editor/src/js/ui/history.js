@@ -111,7 +111,7 @@ class History extends Panel {
       return;
     }
 
-    const index = Number.parseInt(item.getAttribute('data-index'), 10);
+    const index = parseInt(item.getAttribute('data-index'), 10);
 
     if (index !== this._historyIndex) {
       const count = Math.abs(index - this._historyIndex);
