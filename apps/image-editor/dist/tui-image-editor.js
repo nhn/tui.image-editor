@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.12.0
+ * @version 3.13.0
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3422,6 +3422,8 @@ var _imagetracer2 = _interopRequireDefault(_imagetracer);
 
 var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
 
+var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = {
@@ -3441,7 +3443,8 @@ exports.default = {
       mask: this._maskAction(),
       draw: this._drawAction(),
       icon: this._iconAction(),
-      filter: this._filterAction()
+      filter: this._filterAction(),
+      history: this._historyAction()
     };
   },
 
@@ -3484,6 +3487,7 @@ exports.default = {
           _this.ui.initializeImgUrl = imagePath;
           _this.ui.resizeEditor({ imageSize: sizeValue });
           _this.clearUndoStack();
+          _this._invoker.fire(_consts.eventNames.EXECUTE_COMMAND, _consts.historyNames.LOAD_IMAGE);
         });
       },
       undo: function undo() {
@@ -3506,6 +3510,7 @@ exports.default = {
           exitCropOnAction();
           _this.ui.resizeEditor({ imageSize: sizeValue });
           _this.clearUndoStack();
+          _this._initHistory();
         });
       },
       delete: function _delete() {
@@ -3531,6 +3536,8 @@ exports.default = {
           _this.clearUndoStack();
           _this.ui.activeMenuEvent();
           _this.ui.resizeEditor({ imageSize: sizeValue });
+          _this._clearHistory();
+          _this._invoker.fire(_consts.eventNames.EXECUTE_COMMAND, _consts.historyNames.LOAD_IMAGE);
         })['catch'](function (message) {
           return Promise.reject(message);
         });
@@ -3553,6 +3560,9 @@ exports.default = {
           w = window.open();
           w.document.body.innerHTML = '<img src=\'' + dataURL + '\'>';
         }
+      },
+      history: function history(event) {
+        _this.ui.toggleHistoryMenu(event);
       }
     }, this._commonAction());
   },
@@ -3646,6 +3656,7 @@ exports.default = {
           _this4.addImageObject(imgUrl).then(function () {
             URL.revokeObjectURL(file);
           });
+          _this4._invoker.fire(_consts.eventNames.EXECUTE_COMMAND, _consts.historyNames.LOAD_MASK_IMAGE);
         });
       },
       applyFilter: function applyFilter() {
@@ -3735,6 +3746,7 @@ exports.default = {
             _this8.stopDrawingMode();
             _this8.ui.resizeEditor();
             _this8.ui.changeMenu('crop');
+            _this8._invoker.fire(_consts.eventNames.EXECUTE_COMMAND, _consts.historyNames.CROP);
           })['catch'](function (message) {
             return Promise.reject(message);
           });
@@ -3932,25 +3944,44 @@ exports.default = {
 
 
   /**
+   * History Action
+   * @returns {Object} history actions for ui
+   * @private
+   */
+  _historyAction: function _historyAction() {
+    var _this12 = this;
+
+    return {
+      undo: function undo(count) {
+        return _this12.undo(count);
+      },
+      redo: function redo(count) {
+        return _this12.redo(count);
+      }
+    };
+  },
+
+
+  /**
    * Common Action
    * @returns {Object} common actions for ui
    * @private
    */
   _commonAction: function _commonAction() {
-    var _this12 = this;
+    var _this13 = this;
 
     return {
       modeChange: function modeChange(menu) {
         switch (menu) {
           case 'text':
-            _this12._changeActivateMode('TEXT');
+            _this13._changeActivateMode('TEXT');
             break;
           case 'crop':
-            _this12.startDrawingMode('CROPPER');
+            _this13.startDrawingMode('CROPPER');
             break;
           case 'shape':
-            _this12._changeActivateMode('SHAPE');
-            _this12.setDrawingShape(_this12.ui.shape.type, _this12.ui.shape.options);
+            _this13._changeActivateMode('SHAPE');
+            _this13.setDrawingShape(_this13.ui.shape.type, _this13.ui.shape.options);
             break;
           default:
             break;
@@ -4239,7 +4270,10 @@ var command = {
     var shapeComp = graphics.getComponent(SHAPE);
 
     return shapeComp.add(type, options).then(function (objectProps) {
-      _this.undoData.object = graphics.getObject(objectProps.id);
+      var id = objectProps.id;
+
+
+      _this.undoData.object = graphics.getObject(id);
 
       return objectProps;
     });
@@ -4285,12 +4319,16 @@ var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
 
 var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
 
+var _selectionModifyHelper = __webpack_require__(/*! @/helper/selectionModifyHelper */ "./src/js/helper/selectionModifyHelper.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var TEXT = _consts.componentNames.TEXT; /**
-                                         * @author NHN. FE Development Team <dl_javascript@nhn.com>
-                                         * @fileoverview Add a text object
-                                         */
+/**
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @fileoverview Add a text object
+ */
+var TEXT = _consts.componentNames.TEXT;
+
 
 var command = {
   name: _consts.commandNames.ADD_TEXT,
@@ -4335,6 +4373,10 @@ var command = {
       var textObject = graphics.getObject(id);
 
       _this.undoData.object = textObject;
+
+      (0, _selectionModifyHelper.setCachedUndoDataForDimension)((0, _selectionModifyHelper.makeSelectionUndoData)(textObject, function () {
+        return (0, _selectionModifyHelper.makeSelectionUndoDatum)(id, textObject, false);
+      }));
 
       return objectProps;
     });
@@ -9099,28 +9141,31 @@ exports.default = Text;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.emptyCropRectValues = exports.defaultFilterRangeValues = exports.defaultTextRangeValues = exports.defaultShapeStrokeValues = exports.defaultDrawRangeValues = exports.defaultRotateRangeValues = exports.defaultIconPath = exports.rejectMessages = exports.fObjectOptions = exports.keyCodes = exports.drawingModes = exports.eventNames = exports.commandNames = exports.CROPZONE_DEFAULT_OPTIONS = exports.SHAPE_DEFAULT_OPTIONS = exports.componentNames = exports.SHAPE_TYPE = exports.SHAPE_FILL_TYPE = exports.FILTER_NAME_VALUE_MAP = exports.HELP_MENUS = undefined;
+exports.emptyCropRectValues = exports.defaultFilterRangeValues = exports.defaultTextRangeValues = exports.defaultShapeStrokeValues = exports.defaultDrawRangeValues = exports.defaultRotateRangeValues = exports.defaultIconPath = exports.rejectMessages = exports.fObjectOptions = exports.keyCodes = exports.drawingModes = exports.historyNames = exports.eventNames = exports.commandNames = exports.CROPZONE_DEFAULT_OPTIONS = exports.SHAPE_DEFAULT_OPTIONS = exports.componentNames = exports.filterType = exports.OBJ_TYPE = exports.SHAPE_TYPE = exports.SHAPE_FILL_TYPE = exports.HELP_MENUS = exports.DELETE_HELP_MENUS = exports.COMMAND_HELP_MENUS = undefined;
 
-var _util = __webpack_require__(/*! ./util */ "./src/js/util.js");
+var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
 
 /**
- * Editor help features
+ * Help features for command
  * @type {Array.<string>}
  */
-var HELP_MENUS = exports.HELP_MENUS = ['undo', 'redo', 'reset', 'delete', 'deleteAll'];
+var COMMAND_HELP_MENUS = exports.COMMAND_HELP_MENUS = ['history', 'undo', 'redo', 'reset'];
 
 /**
- * Filter name value map
- * @type {Object.<string, string>}
+ * Help features for delete
+ * @type {Array.<string>}
  */
 /**
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Constants
  */
-var FILTER_NAME_VALUE_MAP = exports.FILTER_NAME_VALUE_MAP = {
-  blur: 'blur',
-  blocksize: 'pixelate'
-};
+var DELETE_HELP_MENUS = exports.DELETE_HELP_MENUS = ['delete', 'deleteAll'];
+
+/**
+ * Editor help features
+ * @type {Array.<string>}
+ */
+var HELP_MENUS = exports.HELP_MENUS = [].concat(COMMAND_HELP_MENUS, DELETE_HELP_MENUS);
 
 /**
  * Fill type for shape
@@ -9136,6 +9181,28 @@ var SHAPE_FILL_TYPE = exports.SHAPE_FILL_TYPE = {
  * @type {Array.<string>}
  */
 var SHAPE_TYPE = exports.SHAPE_TYPE = ['rect', 'circle', 'triangle'];
+
+/**
+ * Object type
+ * @type {Object.<string, string>}
+ */
+var OBJ_TYPE = exports.OBJ_TYPE = {
+  CROPZONE: 'cropzone'
+};
+
+/**
+ * Filter type map
+ * @type {Object.<string, string>}
+ */
+var filterType = exports.filterType = {
+  VINTAGE: 'vintage',
+  SEPIA2: 'sepia2',
+  REMOVE_COLOR: 'removeColor',
+  COLOR_FILTER: 'colorFilter',
+  REMOVE_WHITE: 'removeWhite',
+  BLEND_COLOR: 'blendColor',
+  BLEND: 'blend'
+};
 
 /**
  * Component names
@@ -9220,7 +9287,30 @@ var eventNames = exports.eventNames = {
   REDO_STACK_CHANGED: 'redoStackChanged',
   UNDO_STACK_CHANGED: 'undoStackChanged',
   SELECTION_CLEARED: 'selectionCleared',
-  SELECTION_CREATED: 'selectionCreated'
+  SELECTION_CREATED: 'selectionCreated',
+  EXECUTE_COMMAND: 'executeCommand',
+  AFTER_UNDO: 'afterUndo',
+  AFTER_REDO: 'afterRedo'
+};
+
+/**
+ * History names
+ * @type {Object.<string, string>}
+ */
+var historyNames = exports.historyNames = {
+  LOAD_IMAGE: 'Load',
+  LOAD_MASK_IMAGE: 'Mask',
+  ADD_MASK_IMAGE: 'Mask',
+  ADD_IMAGE_OBJECT: 'Mask',
+  CROP: 'Crop',
+  APPLY_FILTER: 'Filter',
+  REMOVE_FILTER: 'Filter',
+  CHANGE_SHAPE: 'Shape',
+  CHANGE_ICON_COLOR: 'Icon',
+  ADD_TEXT: 'Text',
+  CHANGE_TEXT_STYLE: 'Text',
+  REMOVE_OBJECT: 'Delete',
+  CLEAR_OBJECTS: 'Delete'
 };
 
 /**
@@ -10350,6 +10440,8 @@ var Cropzone = _fabric2.default.util.createClass(_fabric2.default.Rect,
       moving: this._onMoving.bind(this),
       scaling: this._onScaling.bind(this)
     });
+    _fabric2.default.util.addListener(document, 'keydown', this._onKeyDown.bind(this));
+    _fabric2.default.util.addListener(document, 'keyup', this._onKeyUp.bind(this));
   },
   _renderCropzone: function _renderCropzone(ctx) {
     var cropzoneDashLineWidth = 7;
@@ -10659,6 +10751,15 @@ var Cropzone = _fabric2.default.util.createClass(_fabric2.default.Rect,
     height = maxHeight ? (0, _util.clamp)(height, 1, maxHeight) : height;
 
     if (!this.presetRatio) {
+      if (this._withShiftKey) {
+        // make fixed ratio cropzone
+        if (width > height) {
+          height = width;
+        } else if (height > width) {
+          width = height;
+        }
+      }
+
       return {
         width: width,
         height: height,
@@ -10859,6 +10960,34 @@ var Cropzone = _fabric2.default.util.createClass(_fabric2.default.Rect,
    */
   isValid: function isValid() {
     return this.left >= 0 && this.top >= 0 && this.width > 0 && this.height > 0;
+  },
+
+
+  /**
+   * Keydown event handler
+   * @param {{number}} keyCode - Event keyCode
+   * @private
+   */
+  _onKeyDown: function _onKeyDown(_ref4) {
+    var keyCode = _ref4.keyCode;
+
+    if (keyCode === _consts.keyCodes.SHIFT) {
+      this._withShiftKey = true;
+    }
+  },
+
+
+  /**
+   * Keyup event handler
+   * @param {{number}} keyCode - Event keyCode
+   * @private
+   */
+  _onKeyUp: function _onKeyUp(_ref5) {
+    var keyCode = _ref5.keyCode;
+
+    if (keyCode === _consts.keyCodes.SHIFT) {
+      this._withShiftKey = false;
+    }
   }
 });
 
@@ -15502,8 +15631,13 @@ var ImageEditor = function () {
   }, {
     key: '_attachInvokerEvents',
     value: function _attachInvokerEvents() {
+      var _this = this;
+
       var UNDO_STACK_CHANGED = _consts.eventNames.UNDO_STACK_CHANGED,
-          REDO_STACK_CHANGED = _consts.eventNames.REDO_STACK_CHANGED;
+          REDO_STACK_CHANGED = _consts.eventNames.REDO_STACK_CHANGED,
+          EXECUTE_COMMAND = _consts.eventNames.EXECUTE_COMMAND,
+          AFTER_UNDO = _consts.eventNames.AFTER_UNDO,
+          AFTER_REDO = _consts.eventNames.AFTER_REDO;
 
       /**
        * Undo stack changed event
@@ -15526,6 +15660,18 @@ var ImageEditor = function () {
        * });
        */
       this._invoker.on(REDO_STACK_CHANGED, this.fire.bind(this, REDO_STACK_CHANGED));
+
+      if (this.ui) {
+        this._invoker.on(EXECUTE_COMMAND, function (command) {
+          return _this.ui.fire(EXECUTE_COMMAND, command);
+        });
+        this._invoker.on(AFTER_UNDO, function (command) {
+          return _this.ui.fire(AFTER_UNDO, command);
+        });
+        this._invoker.on(AFTER_REDO, function (command) {
+          return _this.ui.fire(AFTER_REDO, command);
+        });
+      }
     }
 
     /**
@@ -15674,12 +15820,12 @@ var ImageEditor = function () {
   }, {
     key: '_pushModifyObjectCommand',
     value: function _pushModifyObjectCommand(obj) {
-      var _this = this;
+      var _this2 = this;
 
       var type = obj.type;
 
       var props = (0, _selectionModifyHelper.makeSelectionUndoData)(obj, function (item) {
-        return (0, _selectionModifyHelper.makeSelectionUndoDatum)(_this._graphics.getObjectId(item), item, type === 'activeSelection');
+        return (0, _selectionModifyHelper.makeSelectionUndoDatum)(_this2._graphics.getObjectId(item), item, type === 'activeSelection');
       });
       var command = _command2.default.create(_consts.commandNames.CHANGE_SELECTION, this._graphics, props);
       command.execute(this._graphics, props);
@@ -15851,6 +15997,30 @@ var ImageEditor = function () {
     }
 
     /**
+     * Init history
+     */
+
+  }, {
+    key: '_initHistory',
+    value: function _initHistory() {
+      if (this.ui) {
+        this.ui.initHistory();
+      }
+    }
+
+    /**
+     * Clear history
+     */
+
+  }, {
+    key: '_clearHistory',
+    value: function _clearHistory() {
+      if (this.ui) {
+        this.ui.clearHistory();
+      }
+    }
+
+    /**
      * Invoke command
      * @param {String} commandName - Command name
      * @param {...*} args - Arguments for creating command
@@ -15898,6 +16068,7 @@ var ImageEditor = function () {
 
     /**
      * Undo
+     * @param {number} [iterationCount=1] - Iteration count of undo
      * @returns {Promise}
      * @example
      * imageEditor.undo();
@@ -15906,11 +16077,24 @@ var ImageEditor = function () {
   }, {
     key: 'undo',
     value: function undo() {
-      return this._invoker.undo();
+      var _this3 = this;
+
+      var iterationCount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+      var promise = _util.Promise.resolve();
+
+      for (var i = 0; i < iterationCount; i += 1) {
+        promise = promise.then(function () {
+          return _this3._invoker.undo();
+        });
+      }
+
+      return promise;
     }
 
     /**
      * Redo
+     * @param {number} [iterationCount=1] - Iteration count of redo
      * @returns {Promise}
      * @example
      * imageEditor.redo();
@@ -15919,7 +16103,19 @@ var ImageEditor = function () {
   }, {
     key: 'redo',
     value: function redo() {
-      return this._invoker.redo();
+      var _this4 = this;
+
+      var iterationCount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
+
+      var promise = _util.Promise.resolve();
+
+      for (var i = 0; i < iterationCount; i += 1) {
+        promise = promise.then(function () {
+          return _this4._invoker.redo();
+        });
+      }
+
+      return promise;
     }
 
     /**
@@ -16164,6 +16360,7 @@ var ImageEditor = function () {
     key: '_rotate',
     value: function _rotate(type, angle, isSilent) {
       var result = null;
+
       if (isSilent) {
         result = this.executeSilent(_consts.commandNames.ROTATE_IMAGE, type, angle);
       } else {
@@ -16568,6 +16765,7 @@ var ImageEditor = function () {
        *     console.log('text editing');
        * });
        */
+
       this.fire(_consts.eventNames.TEXT_EDITING);
     }
 
@@ -16596,6 +16794,7 @@ var ImageEditor = function () {
        *     console.log('text position on brwoser: ' + pos.clientPosition);
        * });
        */
+
       this.fire(_consts.eventNames.ADD_TEXT, {
         originPosition: event.originPosition,
         clientPosition: event.clientPosition
@@ -16612,6 +16811,7 @@ var ImageEditor = function () {
     key: '_onAddObject',
     value: function _onAddObject(objectProps) {
       var obj = this._graphics.getObject(objectProps.id);
+      this._invoker.fire(_consts.eventNames.EXECUTE_COMMAND, (0, _util.getObjectType)(obj.type));
       this._pushAddObjectCommand(obj);
     }
 
@@ -16653,7 +16853,10 @@ var ImageEditor = function () {
   }, {
     key: '_onObjectModified',
     value: function _onObjectModified(obj) {
-      this._pushModifyObjectCommand(obj);
+      if (obj.type !== _consts.OBJ_TYPE.CROPZONE) {
+        this._invoker.fire(_consts.eventNames.EXECUTE_COMMAND, (0, _util.getObjectType)(obj.type));
+        this._pushModifyObjectCommand(obj);
+      }
     }
 
     /**
@@ -16763,7 +16966,10 @@ var ImageEditor = function () {
   }, {
     key: 'removeObject',
     value: function removeObject(id) {
-      return this.execute(_consts.commandNames.REMOVE_OBJECT, id);
+      var _graphics$getObject = this._graphics.getObject(id),
+          type = _graphics$getObject.type;
+
+      return this.execute(_consts.commandNames.REMOVE_OBJECT, id, (0, _util.getObjectType)(type));
     }
 
     /**
@@ -16800,8 +17006,7 @@ var ImageEditor = function () {
     /**
      * Apply filter on canvas image
      * @param {string} type - Filter type
-     * @param {Object} options - Options to apply filter
-     *  @param {number} options.maskObjId - masking image object id
+     * @param {object} options - Options to apply filter
      * @param {boolean} isSilent - is silent execution or not
      * @returns {Promise<FilterResult, ErrorMsg>}
      * @example
@@ -16932,7 +17137,7 @@ var ImageEditor = function () {
   }, {
     key: 'destroy',
     value: function destroy() {
-      var _this2 = this;
+      var _this5 = this;
 
       this.stopDrawingMode();
       this._detachDomEvents();
@@ -16944,7 +17149,7 @@ var ImageEditor = function () {
       }
 
       forEach(this, function (value, key) {
-        _this2[key] = null;
+        _this5[key] = null;
       }, this);
     }
 
@@ -17314,7 +17519,7 @@ var Command = function () {
   }, {
     key: 'isRedo',
     get: function get() {
-      return Object.keys(this.undoData).length;
+      return Object.keys(this.undoData).length > 0;
     }
   }]);
 
@@ -17689,6 +17894,7 @@ var Invoker = function () {
   /**
    * Invoke command execution
    * @param {Command} command - Command
+   * @param {boolean} [isRedo=false] - check if command is redo
    * @returns {Promise}
    * @private
    */
@@ -17698,6 +17904,8 @@ var Invoker = function () {
     key: '_invokeExecution',
     value: function _invokeExecution(command) {
       var _this = this;
+
+      var isRedo = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 
       this.lock();
 
@@ -17710,6 +17918,8 @@ var Invoker = function () {
       return command.execute.apply(command, args).then(function (value) {
         if (!_this._isSilent) {
           _this.pushUndoStack(command);
+
+          _this.fire(isRedo ? _consts.eventNames.AFTER_REDO : _consts.eventNames.EXECUTE_COMMAND, command);
         }
         _this.unlock();
         if (isFunction(command.executeCallback)) {
@@ -17746,6 +17956,7 @@ var Invoker = function () {
 
       return command.undo.apply(command, args).then(function (value) {
         _this2.pushRedoStack(command);
+        _this2.fire(_consts.eventNames.AFTER_UNDO, command);
         _this2.unlock();
         if (isFunction(command.undoCallback)) {
           command.undoCallback(value);
@@ -17903,7 +18114,7 @@ var Invoker = function () {
         if (this.isEmptyRedoStack()) {
           this._fireRedoStackChanged();
         }
-        promise = this._invokeExecution(command);
+        promise = this._invokeExecution(command, true);
       } else {
         message = _consts.rejectMessages.redo;
         if (this._isLocked) {
@@ -18544,6 +18755,10 @@ var _filter = __webpack_require__(/*! @/ui/filter */ "./src/js/ui/filter.js");
 
 var _filter2 = _interopRequireDefault(_filter);
 
+var _history = __webpack_require__(/*! @/ui/history */ "./src/js/ui/history.js");
+
+var _history2 = _interopRequireDefault(_history);
+
 var _locale = __webpack_require__(/*! @/ui/locale/locale */ "./src/js/ui/locale/locale.js");
 
 var _locale2 = _interopRequireDefault(_locale);
@@ -18564,7 +18779,11 @@ var SUB_UI_COMPONENT = {
   Filter: _filter2.default
 };
 
+var CustomEvents = _tuiCodeSnippet2.default.CustomEvents;
+
 var BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
+var HISTORY_MENU = 'history';
+var HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
 
 /**
  * Default UI Class
@@ -18599,13 +18818,15 @@ var Ui = function () {
     this._mainElement = null;
     this._editorElementWrap = null;
     this._editorElement = null;
-    this._menuElement = null;
+    this._menuBarElement = null;
     this._subMenuElement = null;
     this._makeUiElement(element);
     this._setUiSize();
     this._initMenuEvent = false;
 
     this._makeSubMenu();
+
+    this._attachHistoryEvent();
   }
 
   /**
@@ -18796,7 +19017,7 @@ var Ui = function () {
         _this._makeMenuElement(menuName);
 
         // menu btn element
-        _this._buttonElements[menuName] = _this._menuElement.querySelector('.tie-btn-' + menuName);
+        _this._buttonElements[menuName] = _this._menuBarElement.querySelector('.tie-btn-' + menuName);
 
         // submenu ui instance
         _this[menuName] = new SubComponentClass(_this._subMenuElement, {
@@ -18806,6 +19027,19 @@ var Ui = function () {
           usageStatistics: _this.options.usageStatistics
         });
       });
+    }
+
+    /**
+     * Attach history event
+     * @private
+     */
+
+  }, {
+    key: '_attachHistoryEvent',
+    value: function _attachHistoryEvent() {
+      this.on(_consts.eventNames.EXECUTE_COMMAND, this._addHistory.bind(this));
+      this.on(_consts.eventNames.AFTER_UNDO, this._selectPrevHistory.bind(this));
+      this.on(_consts.eventNames.AFTER_REDO, this._selectNextHistory.bind(this));
     }
 
     /**
@@ -18833,7 +19067,8 @@ var Ui = function () {
         locale: this._locale,
         biImage: this.theme.getStyle('common.bi'),
         loadButtonStyle: this.theme.getStyle('loadButton'),
-        downloadButtonStyle: this.theme.getStyle('downloadButton')
+        downloadButtonStyle: this.theme.getStyle('downloadButton'),
+        menuBarPosition: this.options.menuBarPosition
       }) + (0, _mainContainer2.default)({
         locale: this._locale,
         biImage: this.theme.getStyle('common.bi'),
@@ -18850,7 +19085,8 @@ var Ui = function () {
       this._mainElement = selector('.tui-image-editor-main');
       this._editorElementWrap = selector('.tui-image-editor-wrap');
       this._editorElement = selector('.tui-image-editor');
-      this._menuElement = selector('.tui-image-editor-menu');
+      this._helpMenuBarElement = selector('.tui-image-editor-help-menu');
+      this._menuBarElement = selector('.tui-image-editor-menu');
       this._subMenuElement = selector('.tui-image-editor-submenu');
       this._buttonElements = {
         download: this._selectedElement.querySelectorAll('.tui-image-editor-download-btn'),
@@ -18858,6 +19094,11 @@ var Ui = function () {
       };
 
       this._addHelpMenus();
+
+      this._historyMenu = new _history2.default(this._buttonElements[HISTORY_MENU], {
+        locale: this._locale,
+        makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme)
+      });
     }
 
     /**
@@ -18869,10 +19110,7 @@ var Ui = function () {
   }, {
     key: '_makeHelpMenuWithPartition',
     value: function _makeHelpMenuWithPartition() {
-      var helpMenuWithPartition = [].concat(_consts.HELP_MENUS, ['']);
-      helpMenuWithPartition.splice(3, 0, '');
-
-      return helpMenuWithPartition;
+      return [].concat(_consts.COMMAND_HELP_MENUS, [''], _consts.DELETE_HELP_MENUS);
     }
 
     /**
@@ -18893,9 +19131,7 @@ var Ui = function () {
         } else {
           _this2._makeMenuElement(menuName, ['normal', 'disabled', 'hover'], 'help');
 
-          if (menuName) {
-            _this2._buttonElements[menuName] = _this2._menuElement.querySelector('.tie-btn-' + menuName);
-          }
+          _this2._buttonElements[menuName] = _this2._helpMenuBarElement.querySelector('.tie-btn-' + menuName);
         }
       });
     }
@@ -18914,7 +19150,7 @@ var Ui = function () {
       partitionInnerElement.className = (0, _util.cls)('icpartition');
       partitionElement.appendChild(partitionInnerElement);
 
-      this._menuElement.appendChild(partitionElement);
+      this._helpMenuBarElement.appendChild(partitionElement);
     }
 
     /**
@@ -18938,7 +19174,11 @@ var Ui = function () {
       btnElement.className = 'tie-btn-' + menuName + ' ' + (0, _util.cls)('item') + ' ' + menuType;
       btnElement.innerHTML = menuItemHtml;
 
-      this._menuElement.appendChild(btnElement);
+      if (menuType === 'normal') {
+        this._menuBarElement.appendChild(btnElement);
+      } else {
+        this._helpMenuBarElement.appendChild(btnElement);
+      }
     }
 
     /**
@@ -18952,8 +19192,8 @@ var Ui = function () {
       var _this3 = this;
 
       _tuiCodeSnippet2.default.forEach(_consts.HELP_MENUS, function (helpName) {
-        _this3.eventHandler[helpName] = function () {
-          return _this3._actions.main[helpName]();
+        _this3.eventHandler[helpName] = function (event) {
+          return _this3._actions.main[helpName](event);
         };
         _this3._buttonElements[helpName].addEventListener('click', _this3.eventHandler[helpName]);
       });
@@ -18972,6 +19212,82 @@ var Ui = function () {
       _tuiCodeSnippet2.default.forEach(_consts.HELP_MENUS, function (helpName) {
         _this4._buttonElements[helpName].removeEventListener('click', _this4.eventHandler[helpName]);
       });
+    }
+
+    /**
+     * Add history
+     * @param {Command|string} command - command or command name
+     */
+
+  }, {
+    key: '_addHistory',
+    value: function _addHistory(command) {
+      if (!(0, _util.isSilentCommand)(command)) {
+        var historyTitle = typeof command === 'string' ? { name: command } : (0, _util.getHistoryTitle)(command);
+
+        this._historyMenu.add(historyTitle);
+      }
+    }
+
+    /**
+     * Init history
+     */
+
+  }, {
+    key: 'initHistory',
+    value: function initHistory() {
+      this._historyMenu.init();
+    }
+
+    /**
+     * Clear history
+     */
+
+  }, {
+    key: 'clearHistory',
+    value: function clearHistory() {
+      this._historyMenu.clear();
+    }
+
+    /**
+     * Select prev history
+     */
+
+  }, {
+    key: '_selectPrevHistory',
+    value: function _selectPrevHistory() {
+      this._historyMenu.prev();
+    }
+
+    /**
+     * Select next history
+     */
+
+  }, {
+    key: '_selectNextHistory',
+    value: function _selectNextHistory() {
+      this._historyMenu.next();
+    }
+
+    /**
+     * Toggle history menu
+     * @param {object} event - event object
+     */
+
+  }, {
+    key: 'toggleHistoryMenu',
+    value: function toggleHistoryMenu(event) {
+      var target = event.target;
+
+      var item = target.closest('.' + HISTORY_PANEL_CLASS_NAME);
+
+      if (item) {
+        return;
+      }
+
+      var historyButtonClassList = this._buttonElements[HISTORY_MENU].classList;
+
+      historyButtonClassList.toggle('opened');
     }
 
     /**
@@ -19138,6 +19454,7 @@ var Ui = function () {
       this._addDownloadEvent();
       this._addMenuEvent();
       this._initMenu();
+      this._historyMenu.addEvent(this._actions.history);
       this._initMenuEvent = true;
     }
 
@@ -19153,6 +19470,7 @@ var Ui = function () {
       this._removeDownloadEvent();
       this._removeLoadEvent();
       this._removeMainMenuEvent();
+      this._historyMenu.removeEvent();
     }
 
     /**
@@ -19168,6 +19486,8 @@ var Ui = function () {
       _tuiCodeSnippet2.default.forEach(this.options.menu, function (menuName) {
         _this12[menuName].destroy();
       });
+
+      this._historyMenu.destroy();
     }
 
     /**
@@ -19357,6 +19677,8 @@ var Ui = function () {
 
   return Ui;
 }();
+
+CustomEvents.mixin(Ui);
 
 exports.default = Ui;
 
@@ -20506,6 +20828,271 @@ exports.default = Flip;
 
 /***/ }),
 
+/***/ "./src/js/ui/history.js":
+/*!******************************!*\
+  !*** ./src/js/ui/history.js ***!
+  \******************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _panelMenu = __webpack_require__(/*! @/ui/panelMenu */ "./src/js/ui/panelMenu.js");
+
+var _panelMenu2 = _interopRequireDefault(_panelMenu);
+
+var _history = __webpack_require__(/*! @/ui/template/submenu/history */ "./src/js/ui/template/submenu/history.js");
+
+var _history2 = _interopRequireDefault(_history);
+
+var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var HISTORY_ITEM_CLASS_NAME = 'history-item';
+var SELECTED_ITEM_CLASS_NAME = 'selected-item';
+var DISABLED_ITEM_CLASS_NAME = 'disabled-item';
+
+/**
+ * History ui class
+ * @class
+ * @ignore
+ */
+
+var History = function (_Panel) {
+  _inherits(History, _Panel);
+
+  function History(menuElement, _ref) {
+    var locale = _ref.locale,
+        makeSvgIcon = _ref.makeSvgIcon;
+
+    _classCallCheck(this, History);
+
+    var _this = _possibleConstructorReturn(this, (History.__proto__ || Object.getPrototypeOf(History)).call(this, menuElement, { name: 'history' }));
+
+    menuElement.classList.add('enabled');
+
+    _this.locale = locale;
+    _this.makeSvgIcon = makeSvgIcon;
+    _this._eventHandler = {};
+    _this._historyIndex = _this.getListLength();
+    return _this;
+  }
+
+  /**
+   * Add history
+   * @param {string} name - name of history
+   * @param {?string} detail - detail information of history
+   */
+
+
+  _createClass(History, [{
+    key: 'add',
+    value: function add(_ref2) {
+      var name = _ref2.name,
+          detail = _ref2.detail;
+
+      if (this._hasDisabledItem()) {
+        this.deleteListItemElement(this._historyIndex + 1, this.getListLength());
+      }
+
+      var html = (0, _history2.default)({ locale: this.locale, makeSvgIcon: this.makeSvgIcon, name: name, detail: detail });
+      var item = this.makeListItemElement(html);
+
+      this.pushListItemElement(item);
+      this._historyIndex = this.getListLength() - 1;
+      this._selectItem(this._historyIndex);
+    }
+
+    /**
+     * Init history
+     */
+
+  }, {
+    key: 'init',
+    value: function init() {
+      this.deleteListItemElement(1, this.getListLength());
+      this._historyIndex = 0;
+      this._selectItem(this._historyIndex);
+    }
+
+    /**
+     * Clear history
+     */
+
+  }, {
+    key: 'clear',
+    value: function clear() {
+      this.deleteListItemElement(0, this.getListLength());
+      this._historyIndex = -1;
+    }
+
+    /**
+     * Select previous history of current selected history
+     */
+
+  }, {
+    key: 'prev',
+    value: function prev() {
+      this._historyIndex -= 1;
+      this._selectItem(this._historyIndex);
+    }
+
+    /**
+     * Select next history of current selected history
+     */
+
+  }, {
+    key: 'next',
+    value: function next() {
+      this._historyIndex += 1;
+      this._selectItem(this._historyIndex);
+    }
+
+    /**
+     * Whether history menu has disabled item
+     * @returns {boolean}
+     */
+
+  }, {
+    key: '_hasDisabledItem',
+    value: function _hasDisabledItem() {
+      return this.getListLength() - 1 > this._historyIndex;
+    }
+
+    /**
+     * Add history menu event
+     * @private
+     */
+
+  }, {
+    key: '_addHistoryEventListener',
+    value: function _addHistoryEventListener() {
+      var _this2 = this;
+
+      this._eventHandler.history = function (event) {
+        return _this2._clickHistoryItem(event);
+      };
+      this.listElement.addEventListener('click', this._eventHandler.history);
+    }
+
+    /**
+     * Remove history menu event
+     * @private
+     */
+
+  }, {
+    key: '_removeHistoryEventListener',
+    value: function _removeHistoryEventListener() {
+      this.listElement.removeEventListener('click', this._eventHandler.history);
+    }
+
+    /**
+     * onClick history menu event listener
+     * @param {object} event - event object
+     * @private
+     */
+
+  }, {
+    key: '_clickHistoryItem',
+    value: function _clickHistoryItem(event) {
+      var target = event.target;
+
+      var item = target.closest('.' + HISTORY_ITEM_CLASS_NAME);
+
+      if (!item) {
+        return;
+      }
+
+      var index = parseInt(item.getAttribute('data-index'), 10);
+
+      if (index !== this._historyIndex) {
+        var count = Math.abs(index - this._historyIndex);
+
+        if (index < this._historyIndex) {
+          this._actions.undo(count);
+        } else {
+          this._actions.redo(count);
+        }
+      }
+    }
+
+    /**
+     * Change item's state to selected state
+     * @param {number} index - index of selected item
+     */
+
+  }, {
+    key: '_selectItem',
+    value: function _selectItem(index) {
+      for (var i = 0; i < this.getListLength(); i += 1) {
+        this.removeClass(i, SELECTED_ITEM_CLASS_NAME);
+        this.removeClass(i, DISABLED_ITEM_CLASS_NAME);
+        if (i > index) {
+          this.addClass(i, DISABLED_ITEM_CLASS_NAME);
+        }
+      }
+      this.addClass(index, SELECTED_ITEM_CLASS_NAME);
+    }
+
+    /**
+     * Destroys the instance.
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this.removeEvent();
+
+      (0, _util.assignmentForDestroy)(this);
+    }
+
+    /**
+     * Add event for history
+     * @param {Object} actions - actions for crop
+     *   @param {Function} actions.undo - undo action
+     *   @param {Function} actions.redo - redo action
+     */
+
+  }, {
+    key: 'addEvent',
+    value: function addEvent(actions) {
+      this._actions = actions;
+      this._addHistoryEventListener();
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+
+  }, {
+    key: 'removeEvent',
+    value: function removeEvent() {
+      this._removeHistoryEventListener();
+    }
+  }]);
+
+  return History;
+}(_panelMenu2.default);
+
+exports.default = History;
+
+/***/ }),
+
 /***/ "./src/js/ui/icon.js":
 /*!***************************!*\
   !*** ./src/js/ui/icon.js ***!
@@ -20969,6 +21556,193 @@ var Mask = function (_Submenu) {
 }(_submenuBase2.default);
 
 exports.default = Mask;
+
+/***/ }),
+
+/***/ "./src/js/ui/panelMenu.js":
+/*!********************************!*\
+  !*** ./src/js/ui/panelMenu.js ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Menu Panel Class
+ * @class
+ * @ignore
+ */
+
+var Panel = function () {
+  /**
+   * @param {HTMLElement} menuElement - menu dom element
+   * @param {Object} options - menu options
+   *   @param {string} options.name - name of panel menu
+   */
+  function Panel(menuElement, _ref) {
+    var name = _ref.name;
+
+    _classCallCheck(this, Panel);
+
+    this.name = name;
+    this.items = [];
+
+    this.panelElement = this._makePanelElement();
+    this.listElement = this._makeListElement();
+
+    this.panelElement.appendChild(this.listElement);
+    menuElement.appendChild(this.panelElement);
+  }
+
+  /**
+   * Make Panel element
+   * @returns {HTMLElement}
+   */
+
+
+  _createClass(Panel, [{
+    key: '_makePanelElement',
+    value: function _makePanelElement() {
+      var panel = document.createElement('div');
+
+      panel.className = 'tie-panel-' + this.name;
+
+      return panel;
+    }
+
+    /**
+     * Make list element
+     * @returns {HTMLElement} list element
+     * @private
+     */
+
+  }, {
+    key: '_makeListElement',
+    value: function _makeListElement() {
+      var list = document.createElement('ol');
+
+      list.className = this.name + '-list';
+
+      return list;
+    }
+
+    /**
+     * Make list item element
+     * @param {string} html - history list item html
+     * @returns {HTMLElement} list item element
+     */
+
+  }, {
+    key: 'makeListItemElement',
+    value: function makeListItemElement(html) {
+      var listItem = document.createElement('li');
+
+      listItem.innerHTML = html;
+      listItem.className = this.name + '-item';
+      listItem.setAttribute('data-index', this.items.length);
+
+      return listItem;
+    }
+
+    /**
+     * Push list item element
+     * @param {HTMLElement} item - list item element to add to the list
+     */
+
+  }, {
+    key: 'pushListItemElement',
+    value: function pushListItemElement(item) {
+      this.listElement.appendChild(item);
+      this.listElement.scrollTop += item.offsetHeight;
+      this.items.push(item);
+    }
+
+    /**
+     * Delete list item element
+     * @param {number} start - start index to delete
+     * @param {number} end - end index to delete
+     */
+
+  }, {
+    key: 'deleteListItemElement',
+    value: function deleteListItemElement(start, end) {
+      var items = this.items;
+
+
+      for (var i = start; i < end; i += 1) {
+        this.listElement.removeChild(items[i]);
+      }
+      items.splice(start, end - start + 1);
+    }
+
+    /**
+     * Get list's length
+     * @returns {number}
+     */
+
+  }, {
+    key: 'getListLength',
+    value: function getListLength() {
+      return this.items.length;
+    }
+
+    /**
+     * Add class name of item
+     * @param {number} index - index of item
+     * @param {string} className - class name to add
+     */
+
+  }, {
+    key: 'addClass',
+    value: function addClass(index, className) {
+      if (this.items[index]) {
+        this.items[index].classList.add(className);
+      }
+    }
+
+    /**
+     * Remove class name of item
+     * @param {number} index - index of item
+     * @param {string} className - class name to remove
+     */
+
+  }, {
+    key: 'removeClass',
+    value: function removeClass(index, className) {
+      if (this.items[index]) {
+        this.items[index].classList.remove(className);
+      }
+    }
+
+    /**
+     * Toggle class name of item
+     * @param {number} index - index of item
+     * @param {string} className - class name to remove
+     */
+
+  }, {
+    key: 'toggleClass',
+    value: function toggleClass(index, className) {
+      if (this.items[index]) {
+        this.items[index].classList.toggle(className);
+      }
+    }
+  }]);
+
+  return Panel;
+}();
+
+exports.default = Panel;
 
 /***/ }),
 
@@ -21662,12 +22436,15 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
+
 exports.default = function (_ref) {
     var locale = _ref.locale,
         biImage = _ref.biImage,
         loadButtonStyle = _ref.loadButtonStyle,
-        downloadButtonStyle = _ref.downloadButtonStyle;
-    return '\n    <div class="tui-image-editor-controls">\n        <div class="tui-image-editor-controls-logo">\n            <img src="' + biImage + '" />\n        </div>\n        <ul class="tui-image-editor-menu"></ul>\n\n        <div class="tui-image-editor-controls-buttons">\n            <div style="' + loadButtonStyle + '">\n                ' + locale.localize('Load') + '\n                <input type="file" class="tui-image-editor-load-btn" />\n            </div>\n            <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                ' + locale.localize('Download') + '\n            </button>\n        </div>\n    </div>\n';
+        downloadButtonStyle = _ref.downloadButtonStyle,
+        menuBarPosition = _ref.menuBarPosition;
+    return '\n    <ul class="tui-image-editor-help-menu ' + (0, _util.getHelpMenuBarPosition)(menuBarPosition) + '"></ul>\n    <div class="tui-image-editor-controls">\n        <div class="tui-image-editor-controls-logo">\n            <img src="' + biImage + '" />\n        </div>\n        <ul class="tui-image-editor-menu"></ul>\n\n        <div class="tui-image-editor-controls-buttons">\n            <div style="' + loadButtonStyle + '">\n                ' + locale.localize('Load') + '\n                <input type="file" class="tui-image-editor-load-btn" />\n            </div>\n            <button class="tui-image-editor-download-btn" style="' + downloadButtonStyle + '">\n                ' + locale.localize('Download') + '\n            </button>\n        </div>\n    </div>\n';
 };
 
 /***/ }),
@@ -21734,7 +22511,7 @@ exports.default = function (_ref) {
         biSize = _ref.biSize,
         menuIconStyle = _ref.menuIconStyle,
         submenuIconStyle = _ref.submenuIconStyle;
-    return "\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    .tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    .tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    .tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    .tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype=\"icon-star-2\"] label,\n    .tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    .tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    .tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    .tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    .tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    .tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    .tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    .tie-crop-button .tui-image-editor-button.apply.active label,\n    .tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    .tie-shape-button.rect .tui-image-editor-button.rect label,\n    .tie-shape-button.circle .tui-image-editor-button.circle label,\n    .tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    .tie-text-effect-button .tui-image-editor-button.active label,\n    .tie-text-align-button.left .tui-image-editor-button.left label,\n    .tie-text-align-button.center .tui-image-editor-button.center label,\n    .tie-text-align-button.right .tui-image-editor-button.right label,\n    .tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox label > span {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label > span {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label > span {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > span:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > input:checked + span:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n    .tui-image-editor-menu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.normal.color + ";\n        stroke: " + menuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-menu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.active.color + ";\n        stroke: " + menuIconStyle.active.color + ";\n    }\n    .tui-image-editor-menu use.hover.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.hover.color + ";\n        stroke: " + menuIconStyle.hover.color + ";\n    }\n    .tui-image-editor-menu use.disabled.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.disabled.color + ";\n        stroke: " + menuIconStyle.disabled.color + ";\n    }\n    .tui-image-editor-submenu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.normal.color + ";\n        stroke: " + submenuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-submenu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.active.color + ";\n        stroke: " + submenuIconStyle.active.color + ";\n    }\n";
+    return "\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    .tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    .tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    .tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    .tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype=\"icon-star-2\"] label,\n    .tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    .tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    .tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    .tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    .tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    .tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    .tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    .tie-crop-button .tui-image-editor-button.apply.active label,\n    .tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    .tie-shape-button.rect .tui-image-editor-button.rect label,\n    .tie-shape-button.circle .tui-image-editor-button.circle label,\n    .tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    .tie-text-effect-button .tui-image-editor-button.active label,\n    .tie-text-align-button.left .tui-image-editor-button.left label,\n    .tie-text-align-button.center .tui-image-editor-button.center label,\n    .tie-text-align-button.right .tui-image-editor-button.right label,\n    .tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox label > span {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label > span {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label > span {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > span:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > input:checked + span:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n    .tui-image-editor-menu use.normal.use-default,\n    .tui-image-editor-help-menu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.normal.color + ";\n        stroke: " + menuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-menu use.active.use-default,\n    .tui-image-editor-help-menu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.active.color + ";\n        stroke: " + menuIconStyle.active.color + ";\n    }\n    .tui-image-editor-menu use.hover.use-default,\n    .tui-image-editor-help-menu use.hover.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.hover.color + ";\n        stroke: " + menuIconStyle.hover.color + ";\n    }\n    .tui-image-editor-menu use.disabled.use-default,\n    .tui-image-editor-help-menu use.disabled.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.disabled.color + ";\n        stroke: " + menuIconStyle.disabled.color + ";\n    }\n    .tui-image-editor-submenu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.normal.color + ";\n        stroke: " + submenuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-submenu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.active.color + ";\n        stroke: " + submenuIconStyle.active.color + ";\n    }\n";
 };
 
 /***/ }),
@@ -21844,6 +22621,38 @@ exports.default = function (_ref) {
     var locale = _ref.locale,
         makeSvgIcon = _ref.makeSvgIcon;
     return '\n    <ul class="tie-flip-button tui-image-editor-submenu-item">\n        <li>\n            <div class="tui-image-editor-button flipX">\n                <div>\n                    ' + makeSvgIcon(['normal', 'active'], 'flip-x', true) + '\n                </div>\n                <label>\n                    ' + locale.localize('Flip X') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button flipY">\n                <div>\n                    ' + makeSvgIcon(['normal', 'active'], 'flip-y', true) + '\n                </div>\n                <label>\n                    ' + locale.localize('Flip Y') + '\n                </label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition">\n            <div></div>\n        </li>\n        <li>\n            <div class="tui-image-editor-button resetFlip">\n                <div>\n                    ' + makeSvgIcon(['normal', 'active'], 'flip-reset', true) + '\n                </div>\n                <label>\n                    ' + locale.localize('Reset') + '\n                </label>\n            </div>\n        </li>\n    </ul>\n';
+};
+
+/***/ }),
+
+/***/ "./src/js/ui/template/submenu/history.js":
+/*!***********************************************!*\
+  !*** ./src/js/ui/template/submenu/history.js ***!
+  \***********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+/**
+ * @param {Object} submenuInfo - submenu info for make template
+ *   @param {Locale} locale - Translate text
+ *   @param {Function} makeSvgIcon - svg icon generator
+ *   @param {string} name - history name
+ *   @param {string} detail - history detail information
+ * @returns {string}
+ */
+exports.default = function (_ref) {
+    var locale = _ref.locale,
+        makeSvgIcon = _ref.makeSvgIcon,
+        name = _ref.name,
+        detail = _ref.detail;
+    return '\n    <div class="tui-image-editor-history-item history">\n        <div class="history-item-icon">\n            ' + makeSvgIcon(['normal', 'active'], 'history-' + name.toLowerCase(), true) + '\n        </div>\n        <span>\n            ' + locale.localize(name) + '\n            ' + (detail ? '(' + locale.localize(detail) + ')' : '') + '\n        </span>\n        <div class="history-item-checkbox">\n            ' + makeSvgIcon(['normal'], 'history-check', true) + '\n        </div>\n    </div>\n';
 };
 
 /***/ }),
@@ -23709,6 +24518,10 @@ exports.includes = includes;
 exports.getFillTypeFromOption = getFillTypeFromOption;
 exports.getFillTypeFromObject = getFillTypeFromObject;
 exports.isShape = isShape;
+exports.getObjectType = getObjectType;
+exports.isSilentCommand = isSilentCommand;
+exports.getHistoryTitle = getHistoryTitle;
+exports.getHelpMenuBarPosition = getHelpMenuBarPosition;
 exports.isEmptyCropzone = isEmptyCropzone;
 
 var _tuiCodeSnippet = __webpack_require__(/*! tui-code-snippet */ "tui-code-snippet");
@@ -24092,6 +24905,183 @@ function isShape(obj) {
 }
 
 /**
+ * Get object type
+ * @param {string} type - fabric object type
+ * @returns {string} type of object (ex: shape, icon, ...)
+ */
+function getObjectType(type) {
+  if (includes(_consts.SHAPE_TYPE, type)) {
+    return 'Shape';
+  }
+
+  switch (type) {
+    case 'i-text':
+      return 'Text';
+    case 'path':
+    case 'line':
+      return 'Draw';
+    case 'activeSelection':
+      return 'Group';
+    default:
+      return toStartOfCapital(type);
+  }
+}
+
+/**
+ * Get filter type
+ * @param {string} type - fabric filter type
+ * @param {object} [options] - filter type options
+ *   @param {boolean} [options.useAlpha=true] - usage of alpha(true is 'color filter', false is 'remove white')
+ *   @param {string} [options.mode] - mode of blendColor
+ * @returns {string} type of filter (ex: sepia, blur, ...)
+ */
+function getFilterType(type) {
+  var _ref = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+      _ref$useAlpha = _ref.useAlpha,
+      useAlpha = _ref$useAlpha === undefined ? true : _ref$useAlpha,
+      mode = _ref.mode;
+
+  var VINTAGE = _consts.filterType.VINTAGE,
+      REMOVE_COLOR = _consts.filterType.REMOVE_COLOR,
+      BLEND_COLOR = _consts.filterType.BLEND_COLOR,
+      SEPIA2 = _consts.filterType.SEPIA2,
+      COLOR_FILTER = _consts.filterType.COLOR_FILTER,
+      REMOVE_WHITE = _consts.filterType.REMOVE_WHITE,
+      BLEND = _consts.filterType.BLEND;
+
+
+  var filterName = void 0;
+
+  switch (type) {
+    case VINTAGE:
+      filterName = SEPIA2;
+      break;
+    case REMOVE_COLOR:
+      filterName = useAlpha ? COLOR_FILTER : REMOVE_WHITE;
+      break;
+    case BLEND_COLOR:
+      filterName = mode === 'add' ? BLEND : mode;
+      break;
+    default:
+      filterName = type;
+  }
+
+  return toStartOfCapital(filterName);
+}
+
+/**
+ * Check if command is silent command
+ * @param {Command|string} command - command or command name
+ * @returns {boolean}
+ */
+function isSilentCommand(command) {
+  var LOAD_IMAGE = _consts.commandNames.LOAD_IMAGE;
+
+
+  return typeof command === 'string' ? LOAD_IMAGE === command : LOAD_IMAGE === command.name;
+}
+
+/**
+ * Get command name
+ * @param {Command|string} command - command or command name
+ * @returns {{name: string, ?detail: string}}
+ */
+// eslint-disable-next-line complexity, require-jsdoc
+function getHistoryTitle(command) {
+  var FLIP_IMAGE = _consts.commandNames.FLIP_IMAGE,
+      ROTATE_IMAGE = _consts.commandNames.ROTATE_IMAGE,
+      ADD_TEXT = _consts.commandNames.ADD_TEXT,
+      APPLY_FILTER = _consts.commandNames.APPLY_FILTER,
+      REMOVE_FILTER = _consts.commandNames.REMOVE_FILTER,
+      CHANGE_SHAPE = _consts.commandNames.CHANGE_SHAPE,
+      CHANGE_ICON_COLOR = _consts.commandNames.CHANGE_ICON_COLOR,
+      CHANGE_TEXT_STYLE = _consts.commandNames.CHANGE_TEXT_STYLE,
+      CLEAR_OBJECTS = _consts.commandNames.CLEAR_OBJECTS,
+      ADD_IMAGE_OBJECT = _consts.commandNames.ADD_IMAGE_OBJECT,
+      REMOVE_OBJECT = _consts.commandNames.REMOVE_OBJECT;
+  var name = command.name,
+      args = command.args;
+
+  var historyInfo = void 0;
+
+  switch (name) {
+    case FLIP_IMAGE:
+      historyInfo = { name: name, detail: args[1] === 'reset' ? args[1] : args[1].slice(4) };
+      break;
+    case ROTATE_IMAGE:
+      historyInfo = { name: name, detail: args[2] };
+      break;
+    case APPLY_FILTER:
+      historyInfo = { name: _consts.historyNames.APPLY_FILTER, detail: getFilterType(args[1], args[2]) };
+      break;
+    case REMOVE_FILTER:
+      historyInfo = { name: _consts.historyNames.REMOVE_FILTER, detail: 'Remove' };
+      break;
+    case CHANGE_SHAPE:
+      historyInfo = { name: _consts.historyNames.CHANGE_SHAPE, detail: 'Change' };
+      break;
+    case CHANGE_ICON_COLOR:
+      historyInfo = { name: _consts.historyNames.CHANGE_ICON_COLOR, detail: 'Change' };
+      break;
+    case CHANGE_TEXT_STYLE:
+      historyInfo = { name: _consts.historyNames.CHANGE_TEXT_STYLE, detail: 'Change' };
+      break;
+    case REMOVE_OBJECT:
+      historyInfo = { name: _consts.historyNames.REMOVE_OBJECT, detail: args[2] };
+      break;
+    case CLEAR_OBJECTS:
+      historyInfo = { name: _consts.historyNames.CLEAR_OBJECTS, detail: 'All' };
+      break;
+    case ADD_IMAGE_OBJECT:
+      historyInfo = { name: _consts.historyNames.ADD_IMAGE_OBJECT, detail: 'Add' };
+      break;
+    case ADD_TEXT:
+      historyInfo = { name: _consts.historyNames.ADD_TEXT };
+      break;
+
+    default:
+      historyInfo = { name: name };
+      break;
+  }
+
+  if (args[1] === 'mask') {
+    historyInfo = { name: _consts.historyNames.LOAD_MASK_IMAGE, detail: 'Apply' };
+  }
+
+  return historyInfo;
+}
+
+/**
+ * Get help menubar position(opposite of menubar)
+ * @param {string} position - position of menubar
+ * @returns {string} position of help menubar
+ */
+function getHelpMenuBarPosition(position) {
+  if (position === 'top') {
+    return 'bottom';
+  }
+  if (position === 'left') {
+    return 'right';
+  }
+  if (position === 'right') {
+    return 'left';
+  }
+
+  return 'top';
+}
+
+/**
+ * Change to capital start letter
+ * @param {string} str - string to change
+ * @returns {string}
+ */
+function toStartOfCapital(str) {
+  return str.replace(/[a-z]/, function (first) {
+    return first.toUpperCase();
+  });
+}
+
+/**
  * Check if cropRect is Empty.
  * @param {Object} cropRect - cropRect object
  *  @param {Number} cropRect.left - cropRect left position value
@@ -24123,7 +25113,7 @@ function isEmptyCropzone(cropRect) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<svg display=\"none\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs id=\"tui-image-editor-svg-default-icons\"><symbol id=\"ic-apply\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M4 12.011l5 5L20.011 6\"></path></symbol><symbol id=\"ic-cancel\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M6 6l12 12M18 6L6 18\"></path></symbol><symbol id=\"ic-crop\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M4 0h1v20a1 1 0 0 1-1-1V0zM20 17h-1V5h1v12zm0 2v5h-1v-5h1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 19h19v1H5zM4.762 4v1H0V4h4.762zM7 4h12a1 1 0 0 1 1 1H7V4z\"></path></symbol><symbol id=\"ic-delete-all\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M5 23H3a1 1 0 0 1-1-1V6h1v16h2v1zm16-10h-1V6h1v7zM9 13H8v-3h1v3zm3 0h-1v-3h1v3zm3 0h-1v-3h1v3zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM11.286 21H8.714L8 23H7l1-2.8V20h.071L9.5 16h1l1.429 4H12v.2l1 2.8h-1l-.714-2zm-.357-1L10 17.4 9.071 20h1.858zM20 22h3v1h-4v-7h1v6zm-5 0h3v1h-4v-7h1v6z\"></path></symbol><symbol id=\"ic-delete\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M3 6v16h17V6h1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6h1zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM8 10h1v6H8v-6zm3 0h1v6h-1v-6zm3 0h1v6h-1v-6z\"></path></symbol><symbol id=\"ic-draw-free\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 20.929C2.594 10.976 4.323 6 7.686 6c5.872 0 2.524 19 7.697 19s1.89-14.929 6.414-14.929 1.357 10.858 5.13 10.858c1.802 0 2.657-2.262 2.566-6.786\"></path></symbol><symbol id=\"ic-draw-line\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2 15.5h28\"></path></symbol><symbol id=\"ic-draw\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 21.5H5c.245 0 .48-.058.691-.168l.124-.065.14.01c.429.028.85-.127 1.16-.437L22.55 5.405a.5.5 0 0 0 0-.707l-3.246-3.245a.5.5 0 0 0-.707 0L3.162 16.888a1.495 1.495 0 0 0-.437 1.155l.01.14-.065.123c-.111.212-.17.448-.17.694v2.5z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M16.414 3.707l3.89 3.89-.708.706-3.889-3.889z\"></path></symbol><symbol id=\"ic-filter\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M12 7v1H2V7h10zm6 0h4v1h-4V7zM12 16v1h10v-1H12zm-6 0H2v1h4v-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8.5 20a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM15.5 11a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z\"></path></symbol><symbol id=\"ic-flip-reset\" viewBox=\"0 0 31 32\"><path fill=\"none\" stroke=\"none\" d=\"M31 0H0v32h31z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M28 16a8 8 0 0 1-8 8H3v-1h1v-7H3a8 8 0 0 1 8-8h17v1h-1v7h1zM11 9a7 7 0 0 0-7 7v7h16a7 7 0 0 0 7-7V9H11z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M24 5l3.5 3.5L24 12M7 20l-3.5 3.5L7 27\"></path></symbol><symbol id=\"ic-flip-x\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M32 32H0V0h32z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M17 32h-1V0h1zM27.167 11l.5 3h-1.03l-.546-3h1.076zm-.5-3h-1.122L25 5h-5V4h5.153a1 1 0 0 1 .986.836L26.667 8zm1.5 9l.5 3h-.94l-.545-3h.985zm1 6l.639 3.836A1 1 0 0 1 28.819 28H26v-1h3l-.726-4h.894zM23 28h-3v-1h3v1zM13 4v1H7L3 27h10v1H3.18a1 1 0 0 1-.986-1.164l3.666-22A1 1 0 0 1 6.847 4H13z\"></path></symbol><symbol id=\"ic-flip-y\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0v32h32V0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 16v1h32v-1zM11 27.167l3 .5v-1.03l-3-.546v1.076zm-3-.5v-1.122L5 25v-5H4v5.153a1 1 0 0 0 .836.986L8 26.667zm9 1.5l3 .5v-.94l-3-.545v.985zm6 1l3.836.639A1 1 0 0 0 28 28.82V26h-1v3l-4-.727v.894zM28 23v-3h-1v3h1zM4 13h1V7l22-4v10h1V3.18a1 1 0 0 0-1.164-.986l-22 3.667A1 1 0 0 0 4 6.847V13z\"></path></symbol><symbol id=\"ic-flip\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M11 0h1v24h-1zM19 21v-1h2v-2h1v2a1 1 0 0 1-1 1h-2zm-2 0h-3v-1h3v1zm5-5h-1v-3h1v3zm0-5h-1V8h1v3zm0-5h-1V4h-2V3h2a1 1 0 0 1 1 1v2zm-5-3v1h-3V3h3zM9 3v1H2v16h7v1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7z\"></path></symbol><symbol id=\"ic-icon-arrow-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.793 18.5H2.5v-5h18.935l-7.6-8h5.872l10.5 10.5-10.5 10.5h-5.914l8-8z\"></path></symbol><symbol id=\"ic-icon-arrow-3\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M25.288 16.42L14.208 27.5H6.792l11.291-11.291L6.826 4.5h7.381l11.661 11.661-.58.258z\"></path></symbol><symbol id=\"ic-icon-arrow\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 11.5v9h18v5.293L30.293 16 20.5 6.207V11.5h-18z\"></path></symbol><symbol id=\"ic-icon-bubble\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M22.207 24.5L16.5 30.207V24.5H8A6.5 6.5 0 0 1 1.5 18V9A6.5 6.5 0 0 1 8 2.5h16A6.5 6.5 0 0 1 30.5 9v9a6.5 6.5 0 0 1-6.5 6.5h-1.793z\"></path></symbol><symbol id=\"ic-icon-heart\" viewBox=\"0 0 32 32\"><path fill-rule=\"nonzero\" fill=\"none\" stroke=\"inherit\" d=\"M15.996 30.675l1.981-1.79c7.898-7.177 10.365-9.718 12.135-13.012.922-1.716 1.377-3.37 1.377-5.076 0-4.65-3.647-8.297-8.297-8.297-2.33 0-4.86 1.527-6.817 3.824l-.38.447-.381-.447C13.658 4.027 11.126 2.5 8.797 2.5 4.147 2.5.5 6.147.5 10.797c0 1.714.46 3.375 1.389 5.098 1.775 3.288 4.26 5.843 12.123 12.974l1.984 1.806z\"></path></symbol><symbol id=\"ic-icon-load\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M17.314 18.867l1.951-2.53 4 5.184h-17l6.5-8.84 4.549 6.186z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-icon-location\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M16 31.28C23.675 23.302 27.5 17.181 27.5 13c0-6.351-5.149-11.5-11.5-11.5S4.5 6.649 4.5 13c0 4.181 3.825 10.302 11.5 18.28z\"></path><circle fill=\"none\" stroke=\"inherit\" cx=\"16\" cy=\"13\" r=\"4.5\"></circle></symbol><symbol id=\"ic-icon-polygon\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M.576 16L8.29 29.5h15.42L31.424 16 23.71 2.5H8.29L.576 16z\"></path></symbol><symbol id=\"ic-icon-star-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M19.446 31.592l2.265-3.272 3.946.25.636-3.94 3.665-1.505-1.12-3.832 2.655-2.962-2.656-2.962 1.12-3.832-3.664-1.505-.636-3.941-3.946.25-2.265-3.271L16 3.024 12.554 1.07 10.289 4.34l-3.946-.25-.636 3.941-3.665 1.505 1.12 3.832L.508 16.33l2.656 2.962-1.12 3.832 3.664 1.504.636 3.942 3.946-.25 2.265 3.27L16 29.638l3.446 1.955z\"></path></symbol><symbol id=\"ic-icon-star\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M25.292 29.878l-1.775-10.346 7.517-7.327-10.388-1.51L16 1.282l-4.646 9.413-10.388 1.51 7.517 7.327-1.775 10.346L16 24.993l9.292 4.885z\"></path></symbol><symbol id=\"ic-icon\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M11.923 19.136L5.424 22l.715-7.065-4.731-5.296 6.94-1.503L11.923 2l3.574 6.136 6.94 1.503-4.731 5.296L18.42 22z\"></path></symbol><symbol id=\"ic-mask-load\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01zM15 23a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-mask\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4.5\" stroke=\"inherit\" fill=\"none\"></circle><path stroke=\"none\" fill=\"inherit\" d=\"M2 1h20a1 1 0 0 1 1 1v20a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 1v20h20V2H2z\"></path></symbol><symbol id=\"ic-redo\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M21 6H9a6 6 0 1 0 0 12h12v1H9A7 7 0 0 1 9 5h12v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8\"></path></symbol><symbol id=\"ic-reset\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 13v-1a7 7 0 0 1 7-7h13v1h-1v5h1v1a7 7 0 0 1-7 7H2v-1h1v-5H2zm7-7a6 6 0 0 0-6 6v6h12a6 6 0 0 0 6-6V6H9z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8M5 16l-2.5 2.5L5 21\"></path></symbol><symbol id=\"ic-rotate-clockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"inherit\" d=\"M29 17h-.924c0 6.627-5.373 12-12 12-6.628 0-12-5.373-12-12C4.076 10.398 9.407 5.041 16 5V4C8.82 4 3 9.82 3 17s5.82 13 13 13 13-5.82 13-13z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l4 3-4 3\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M16 4h4v1h-4z\"></path></symbol><symbol id=\"ic-rotate-counterclockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" d=\"M3 17h.924c0 6.627 5.373 12 12 12 6.628 0 12-5.373 12-12 0-6.602-5.331-11.96-11.924-12V4c7.18 0 13 5.82 13 13s-5.82 13-13 13S3 24.18 3 17z\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M12 4h4v1h-4z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l-4 3 4 3\"></path></symbol><symbol id=\"ic-rotate\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M8.349 22.254a10.002 10.002 0 0 1-2.778-1.719l.65-.76a9.002 9.002 0 0 0 2.495 1.548l-.367.931zm2.873.704l.078-.997a9 9 0 1 0-.557-17.852l-.14-.99A10.076 10.076 0 0 1 12.145 3c5.523 0 10 4.477 10 10s-4.477 10-10 10c-.312 0-.62-.014-.924-.042zm-7.556-4.655a9.942 9.942 0 0 1-1.253-2.996l.973-.234a8.948 8.948 0 0 0 1.124 2.693l-.844.537zm-1.502-5.91A9.949 9.949 0 0 1 2.88 9.23l.925.382a8.954 8.954 0 0 0-.644 2.844l-.998-.062zm2.21-5.686c.687-.848 1.51-1.58 2.436-2.166l.523.852a9.048 9.048 0 0 0-2.188 1.95l-.771-.636z\"></path><path stroke=\"inherit\" fill=\"none\" stroke-linecap=\"square\" d=\"M13 1l-2.5 2.5L13 6\"></path></symbol><symbol id=\"ic-shape-circle\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"14.5\" fill=\"none\" stroke=\"inherit\"></circle></symbol><symbol id=\"ic-shape-rectangle\" viewBox=\"0 0 32 32\"><rect width=\"27\" height=\"27\" x=\"2.5\" y=\"2.5\" fill=\"none\" stroke=\"inherit\" rx=\"1\"></rect></symbol><symbol id=\"ic-shape-triangle\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16 2.5l15.5 27H.5z\"></path></symbol><symbol id=\"ic-shape\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M14.706 8H21a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-4h1v4h12V9h-5.706l-.588-1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8.5 1.5l7.5 13H1z\"></path></symbol><symbol id=\"ic-text-align-center\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM8 12h16v1H8zM2 19h28v1H2zM8 26h16v1H8z\"></path></symbol><symbol id=\"ic-text-align-left\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM2 12h16v1H2zM2 19h28v1H2zM2 26h16v1H2z\"></path></symbol><symbol id=\"ic-text-align-right\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM14 12h16v1H14zM2 19h28v1H2zM14 26h16v1H14z\"></path></symbol><symbol id=\"ic-text-bold\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M7 2h2v2H7zM7 28h2v2H7z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-width=\"2\" d=\"M9 3v12h9a6 6 0 1 0 0-12H9zM9 15v14h10a7 7 0 0 0 0-14H9z\"></path></symbol><symbol id=\"ic-text-italic\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M15 2h5v1h-5zM11 29h5v1h-5zM17 3h1l-4 26h-1z\"></path></symbol><symbol id=\"ic-text-underline\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8 2v14a8 8 0 1 0 16 0V2h1v14a9 9 0 0 1-18 0V2h1zM3 29h26v1H3z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 2h5v1H5zM22 2h5v1h-5z\"></path></symbol><symbol id=\"ic-text\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M4 3h15a1 1 0 0 1 1 1H3a1 1 0 0 1 1-1zM3 4h1v1H3zM19 4h1v1h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M11 3h1v18h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M10 20h3v1h-3z\"></path></symbol><symbol id=\"ic-undo\" viewBox=\"0 0 24 24\"><path d=\"M24 0H0v24h24z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M3 6h12a6 6 0 1 1 0 12H3v1h12a7 7 0 0 0 0-14H3v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M5 3L2.5 5.5 5 8\"></path></symbol></defs></svg>"
+module.exports = "<svg display=\"none\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs id=\"tui-image-editor-svg-default-icons\"><symbol id=\"ic-apply\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M4 12.011l5 5L20.011 6\"></path></symbol><symbol id=\"ic-cancel\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M6 6l12 12M18 6L6 18\"></path></symbol><symbol id=\"ic-crop\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M4 0h1v20a1 1 0 0 1-1-1V0zM20 17h-1V5h1v12zm0 2v5h-1v-5h1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 19h19v1H5zM4.762 4v1H0V4h4.762zM7 4h12a1 1 0 0 1 1 1H7V4z\"></path></symbol><symbol id=\"ic-delete-all\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M5 23H3a1 1 0 0 1-1-1V6h1v16h2v1zm16-10h-1V6h1v7zM9 13H8v-3h1v3zm3 0h-1v-3h1v3zm3 0h-1v-3h1v3zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM11.286 21H8.714L8 23H7l1-2.8V20h.071L9.5 16h1l1.429 4H12v.2l1 2.8h-1l-.714-2zm-.357-1L10 17.4 9.071 20h1.858zM20 22h3v1h-4v-7h1v6zm-5 0h3v1h-4v-7h1v6z\"></path></symbol><symbol id=\"ic-delete\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M3 6v16h17V6h1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6h1zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM8 10h1v6H8v-6zm3 0h1v6h-1v-6zm3 0h1v6h-1v-6z\"></path></symbol><symbol id=\"ic-draw-free\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 20.929C2.594 10.976 4.323 6 7.686 6c5.872 0 2.524 19 7.697 19s1.89-14.929 6.414-14.929 1.357 10.858 5.13 10.858c1.802 0 2.657-2.262 2.566-6.786\"></path></symbol><symbol id=\"ic-draw-line\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2 15.5h28\"></path></symbol><symbol id=\"ic-draw\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 21.5H5c.245 0 .48-.058.691-.168l.124-.065.14.01c.429.028.85-.127 1.16-.437L22.55 5.405a.5.5 0 0 0 0-.707l-3.246-3.245a.5.5 0 0 0-.707 0L3.162 16.888a1.495 1.495 0 0 0-.437 1.155l.01.14-.065.123c-.111.212-.17.448-.17.694v2.5z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M16.414 3.707l3.89 3.89-.708.706-3.889-3.889z\"></path></symbol><symbol id=\"ic-filter\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M12 7v1H2V7h10zm6 0h4v1h-4V7zM12 16v1h10v-1H12zm-6 0H2v1h4v-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8.5 20a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM15.5 11a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z\"></path></symbol><symbol id=\"ic-flip-reset\" viewBox=\"0 0 31 32\"><path fill=\"none\" stroke=\"none\" d=\"M31 0H0v32h31z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M28 16a8 8 0 0 1-8 8H3v-1h1v-7H3a8 8 0 0 1 8-8h17v1h-1v7h1zM11 9a7 7 0 0 0-7 7v7h16a7 7 0 0 0 7-7V9H11z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M24 5l3.5 3.5L24 12M7 20l-3.5 3.5L7 27\"></path></symbol><symbol id=\"ic-flip-x\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M32 32H0V0h32z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M17 32h-1V0h1zM27.167 11l.5 3h-1.03l-.546-3h1.076zm-.5-3h-1.122L25 5h-5V4h5.153a1 1 0 0 1 .986.836L26.667 8zm1.5 9l.5 3h-.94l-.545-3h.985zm1 6l.639 3.836A1 1 0 0 1 28.819 28H26v-1h3l-.726-4h.894zM23 28h-3v-1h3v1zM13 4v1H7L3 27h10v1H3.18a1 1 0 0 1-.986-1.164l3.666-22A1 1 0 0 1 6.847 4H13z\"></path></symbol><symbol id=\"ic-flip-y\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0v32h32V0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 16v1h32v-1zM11 27.167l3 .5v-1.03l-3-.546v1.076zm-3-.5v-1.122L5 25v-5H4v5.153a1 1 0 0 0 .836.986L8 26.667zm9 1.5l3 .5v-.94l-3-.545v.985zm6 1l3.836.639A1 1 0 0 0 28 28.82V26h-1v3l-4-.727v.894zM28 23v-3h-1v3h1zM4 13h1V7l22-4v10h1V3.18a1 1 0 0 0-1.164-.986l-22 3.667A1 1 0 0 0 4 6.847V13z\"></path></symbol><symbol id=\"ic-flip\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M11 0h1v24h-1zM19 21v-1h2v-2h1v2a1 1 0 0 1-1 1h-2zm-2 0h-3v-1h3v1zm5-5h-1v-3h1v3zm0-5h-1V8h1v3zm0-5h-1V4h-2V3h2a1 1 0 0 1 1 1v2zm-5-3v1h-3V3h3zM9 3v1H2v16h7v1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7z\"></path></symbol><symbol id=\"ic-history\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"none\" d=\"M0 0H24V24H0z\" transform=\"translate(-740 -16) translate(547 8) translate(193 8)\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M12.5 1C18.299 1 23 5.701 23 11.5S18.299 22 12.5 22c-5.29 0-9.665-3.911-10.394-8.999h1.012C3.838 17.534 7.764 21 12.5 21c5.247 0 9.5-4.253 9.5-9.5S17.747 2 12.5 2C8.49 2 5.06 4.485 3.666 8H3h4v1H2V4h1v3.022C4.68 3.462 8.303 1 12.5 1zm.5 5l-.001 5.291 2.537 2.537-.708.708L12.292 12H12V6h1z\" transform=\"translate(-740 -16) translate(547 8) translate(193 8)\"></path></symbol><symbol id=\"ic-history-check\" viewBox=\"0 0 24 24\"><g fill=\"none\" fill-rule=\"evenodd\"><path stroke=\"#555555\" d=\"M4.5 -1L1.5 2 6.5 7\" transform=\"translate(-60 -804) translate(60 804) translate(2 3) rotate(-90 4 3)\"></path></g></symbol><symbol id=\"ic-history-crop\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-84 -804) translate(84 804)\"></path><path fill=\"#434343\" d=\"M2 0h1v10c-.552 0-1-.448-1-1V0zM10 9v3H9V9h1zM9 2h1v6H9V2z\" transform=\"translate(-84 -804) translate(84 804)\"></path><path fill=\"#434343\" d=\"M2 9H12V10H2zM9 2c.513 0 .936.386.993.883L10 3H3V2h6zM2 3H0V2h2v1z\" transform=\"translate(-84 -804) translate(84 804)\"></path></g></symbol><symbol id=\"ic-history-draw\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 1H12V13H0z\" transform=\"translate(-156 -804) translate(156 803)\"></path><path stroke=\"#434343\" d=\"M9.622 1.584l1.835 1.658-8.31 8.407L.5 12.5V11l9.122-9.416z\" transform=\"translate(-156 -804) translate(156 803)\"></path><path fill=\"#434343\" d=\"M7.628 3.753L10.378 3.753 10.378 4.253 7.628 4.253z\" transform=\"translate(-156 -804) translate(156 803) rotate(45 9.003 4.003)\"></path></g></symbol><symbol id=\"ic-history-filter\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-276 -804) translate(276 804)\"></path><path fill=\"#434343\" d=\"M12 3v1H9V3h3zM7 4H0V3h7v1z\" transform=\"translate(-276 -804) translate(276 804)\"></path><path fill=\"#434343\" d=\"M12 8v1H9V8h3zM7 9H0V8h7v1z\" transform=\"translate(-276 -804) translate(276 804) matrix(-1 0 0 1 12 0)\"></path><path fill=\"#434343\" d=\"M8 1c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1zM4 7c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z\" transform=\"translate(-276 -804) translate(276 804)\"></path></g></symbol><symbol id=\"ic-history-flip\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-108 -804) translate(108 804)\"></path><path fill=\"#434343\" d=\"M6 0L7 0 7 12 6 12zM11 10V9h1v1.5c0 .276-.224.5-.5.5H10v-1h1zM5 1v1H1v8h4v1H.5c-.276 0-.5-.224-.5-.5v-9c0-.276.224-.5.5-.5H5zm7 5v2h-1V6h1zm0-3v2h-1V3h1zM9 1v1H7V1h2zm2.5 0c.276 0 .5.224.5.5V2h-2V1h1.5zM9 11H7v-1h2v1z\" transform=\"translate(-108 -804) translate(108 804)\"></path></g></symbol><symbol id=\"ic-history-icon\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-204 -804) translate(204 804)\"></path><path stroke=\"#434343\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.1\" d=\"M6 9.568L2.601 11 2.975 7.467 0.5 4.82 4.13 4.068 6 1 7.87 4.068 11.5 4.82 9.025 7.467 9.399 11z\" transform=\"translate(-204 -804) translate(204 804)\"></path></g></symbol><symbol id=\"ic-history-mask\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-252 -804) translate(252 804)\"><path d=\"M0 0H12V12H0z\"></path><circle cx=\"6\" cy=\"6\" r=\"2.5\" stroke=\"#444\"></circle><path fill=\"#434343\" d=\"M11.5 0c.276 0 .5.224.5.5v11c0 .276-.224.5-.5.5H.5c-.276 0-.5-.224-.5-.5V.5C0 .224.224 0 .5 0h11zM11 1H1v10h10V1z\"></path></g></g></symbol><symbol id=\"ic-history-rotate\" viewBox=\"0 0 24 24\"><defs><path id=\"rfn4rylffa\" d=\"M7 12c-.335 0-.663-.025-.983-.074C3.171 11.492 1 9.205 1 6.444c0-1.363.534-2.613 1.415-3.58\"></path><mask id=\"6f9gn2dysb\" width=\"6\" height=\"9.136\" x=\"0\" y=\"0\" maskUnits=\"objectBoundingBox\"><use xlink:href=\"#rfn4rylffa\" stroke=\"434343\"></use></mask></defs><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-132 -804) translate(132 804)\"><path d=\"M0 0.5H12V12.5H0z\"></path><path fill=\"#434343\" d=\"M6.5 1C9.538 1 12 3.462 12 6.5c0 2.37-1.5 4.39-3.6 5.163l-.407-.916C9.744 10.13 11 8.462 11 6.5 11 4.015 8.985 2 6.5 2c-.777 0-1.509.197-2.147.544L4 1.75l-.205-.04C4.594 1.258 5.517 1 6.5 1z\"></path><use stroke=\"#434343\" stroke-dasharray=\"2 1.25\" stroke-width=\"1\" mask=\"url(#6f9gn2dysb)\" xlink:href=\"#rfn4rylffa\"></use><path fill=\"#434343\" d=\"M4.279 0L6 1.75 4.25 3.571 3.543 2.864 4.586 1.75 3.572 0.707z\" transform=\"matrix(-1 0 0 1 9.543 0)\"></path></g></g></symbol><symbol id=\"ic-history-shape\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-180 -804) translate(180 804)\"></path><path fill=\"#434343\" d=\"M11.5 4c.276 0 .5.224.5.5v7c0 .276-.224.5-.5.5h-7c-.276 0-.5-.224-.5-.5V8.8h1V11h6V5H8.341l-.568-1H11.5z\" transform=\"translate(-180 -804) translate(180 804)\"></path><path stroke=\"#434343\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 0.5L8.5 7.611 0.5 7.611z\" transform=\"translate(-180 -804) translate(180 804)\"></path></g></symbol><symbol id=\"ic-history-text\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M2 1h8c.552 0 1 .448 1 1H1c0-.552.448-1 1-1z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M1 1H2V3H1zM10 1H11V3H10zM5.5 1L6.5 1 6.5 11 5.5 11z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M4 10H8V11H4z\" transform=\"translate(-228 -804) translate(228 804)\"></path></g></symbol><symbol id=\"ic-history-load\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-324 -805) translate(324 805)\"></path><path fill=\"#434343\" d=\"M5 0c.552 0 1 .448 1 1v1h5.5c.276 0 .5.224.5.5v8c0 .276-.224.5-.5.5H.5c-.276 0-.5-.224-.5-.5V1c0-.552.448-1 1-1h4zm0 1H1v9h10V3H5V1z\" transform=\"translate(-324 -805) translate(324 805)\"></path><path fill=\"#434343\" d=\"M1 2L5 2 5 3 1 3z\" transform=\"translate(-324 -805) translate(324 805)\"></path></g></symbol><symbol id=\"ic-history-delete\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g fill=\"#434343\"><path d=\"M2 9h8V1h1v8.5c0 .276-.224.5-.5.5h-9c-.276 0-.5-.224-.5-.5V1h1v8zM0 0H12V1H0z\" transform=\"translate(-300 -804) translate(300 804) translate(0 2)\"></path><path d=\"M4 3H5V7H4zM7 3H8V7H7z\" transform=\"translate(-300 -804) translate(300 804) translate(0 2)\"></path><path d=\"M4 1h4V0h1v1.5c0 .276-.224.5-.5.5h-5c-.276 0-.5-.224-.5-.5V0h1v1z\" transform=\"translate(-300 -804) translate(300 804) matrix(1 0 0 -1 0 2)\"></path></g></g></symbol><symbol id=\"ic-history-group\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-348 -804) translate(348 804)\"><path d=\"M0 0H12V12H0z\"></path><path fill=\"#434343\" d=\"M1 9v2h1v1H.5c-.276 0-.5-.224-.5-.5V9h1zm11 1v1.5c0 .276-.224.5-.5.5H9v-1h2v-1h1zm-4 1v1H6v-1h2zm-3 0v1H3v-1h2zm7-4v2h-1V7h1zM1 6v2H0V6h1zm11-2v2h-1V4h1zM1 3v2H0V3h1zm10.5-3c.276 0 .5.224.5.5V3h-1V1h-1V0h1.5zM6 0v1H4V0h2zm3 0v1H7V0h2zM0 .5C0 .224.224 0 .5 0H3v1H1v1H0V.5zM9.5 4c.276 0 .5.224.5.5v5c0 .276-.224.5-.5.5h-5c-.276 0-.5-.224-.5-.5V8.355c.317.094.652.145 1 .145V9h4V5h-.5c0-.348-.05-.683-.145-1H9.5z\"></path><circle cx=\"5\" cy=\"5\" r=\"2.5\" stroke=\"#434343\"></circle></g></g></symbol><symbol id=\"ic-icon-arrow-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.793 18.5H2.5v-5h18.935l-7.6-8h5.872l10.5 10.5-10.5 10.5h-5.914l8-8z\"></path></symbol><symbol id=\"ic-icon-arrow-3\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M25.288 16.42L14.208 27.5H6.792l11.291-11.291L6.826 4.5h7.381l11.661 11.661-.58.258z\"></path></symbol><symbol id=\"ic-icon-arrow\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 11.5v9h18v5.293L30.293 16 20.5 6.207V11.5h-18z\"></path></symbol><symbol id=\"ic-icon-bubble\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M22.207 24.5L16.5 30.207V24.5H8A6.5 6.5 0 0 1 1.5 18V9A6.5 6.5 0 0 1 8 2.5h16A6.5 6.5 0 0 1 30.5 9v9a6.5 6.5 0 0 1-6.5 6.5h-1.793z\"></path></symbol><symbol id=\"ic-icon-heart\" viewBox=\"0 0 32 32\"><path fill-rule=\"nonzero\" fill=\"none\" stroke=\"inherit\" d=\"M15.996 30.675l1.981-1.79c7.898-7.177 10.365-9.718 12.135-13.012.922-1.716 1.377-3.37 1.377-5.076 0-4.65-3.647-8.297-8.297-8.297-2.33 0-4.86 1.527-6.817 3.824l-.38.447-.381-.447C13.658 4.027 11.126 2.5 8.797 2.5 4.147 2.5.5 6.147.5 10.797c0 1.714.46 3.375 1.389 5.098 1.775 3.288 4.26 5.843 12.123 12.974l1.984 1.806z\"></path></symbol><symbol id=\"ic-icon-load\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M17.314 18.867l1.951-2.53 4 5.184h-17l6.5-8.84 4.549 6.186z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-icon-location\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M16 31.28C23.675 23.302 27.5 17.181 27.5 13c0-6.351-5.149-11.5-11.5-11.5S4.5 6.649 4.5 13c0 4.181 3.825 10.302 11.5 18.28z\"></path><circle fill=\"none\" stroke=\"inherit\" cx=\"16\" cy=\"13\" r=\"4.5\"></circle></symbol><symbol id=\"ic-icon-polygon\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M.576 16L8.29 29.5h15.42L31.424 16 23.71 2.5H8.29L.576 16z\"></path></symbol><symbol id=\"ic-icon-star-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M19.446 31.592l2.265-3.272 3.946.25.636-3.94 3.665-1.505-1.12-3.832 2.655-2.962-2.656-2.962 1.12-3.832-3.664-1.505-.636-3.941-3.946.25-2.265-3.271L16 3.024 12.554 1.07 10.289 4.34l-3.946-.25-.636 3.941-3.665 1.505 1.12 3.832L.508 16.33l2.656 2.962-1.12 3.832 3.664 1.504.636 3.942 3.946-.25 2.265 3.27L16 29.638l3.446 1.955z\"></path></symbol><symbol id=\"ic-icon-star\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M25.292 29.878l-1.775-10.346 7.517-7.327-10.388-1.51L16 1.282l-4.646 9.413-10.388 1.51 7.517 7.327-1.775 10.346L16 24.993l9.292 4.885z\"></path></symbol><symbol id=\"ic-icon\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M11.923 19.136L5.424 22l.715-7.065-4.731-5.296 6.94-1.503L11.923 2l3.574 6.136 6.94 1.503-4.731 5.296L18.42 22z\"></path></symbol><symbol id=\"ic-mask-load\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01zM15 23a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-mask\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4.5\" stroke=\"inherit\" fill=\"none\"></circle><path stroke=\"none\" fill=\"inherit\" d=\"M2 1h20a1 1 0 0 1 1 1v20a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 1v20h20V2H2z\"></path></symbol><symbol id=\"ic-redo\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M21 6H9a6 6 0 1 0 0 12h12v1H9A7 7 0 0 1 9 5h12v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8\"></path></symbol><symbol id=\"ic-reset\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 13v-1a7 7 0 0 1 7-7h13v1h-1v5h1v1a7 7 0 0 1-7 7H2v-1h1v-5H2zm7-7a6 6 0 0 0-6 6v6h12a6 6 0 0 0 6-6V6H9z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8M5 16l-2.5 2.5L5 21\"></path></symbol><symbol id=\"ic-rotate-clockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"inherit\" d=\"M29 17h-.924c0 6.627-5.373 12-12 12-6.628 0-12-5.373-12-12C4.076 10.398 9.407 5.041 16 5V4C8.82 4 3 9.82 3 17s5.82 13 13 13 13-5.82 13-13z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l4 3-4 3\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M16 4h4v1h-4z\"></path></symbol><symbol id=\"ic-rotate-counterclockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" d=\"M3 17h.924c0 6.627 5.373 12 12 12 6.628 0 12-5.373 12-12 0-6.602-5.331-11.96-11.924-12V4c7.18 0 13 5.82 13 13s-5.82 13-13 13S3 24.18 3 17z\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M12 4h4v1h-4z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l-4 3 4 3\"></path></symbol><symbol id=\"ic-rotate\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M8.349 22.254a10.002 10.002 0 0 1-2.778-1.719l.65-.76a9.002 9.002 0 0 0 2.495 1.548l-.367.931zm2.873.704l.078-.997a9 9 0 1 0-.557-17.852l-.14-.99A10.076 10.076 0 0 1 12.145 3c5.523 0 10 4.477 10 10s-4.477 10-10 10c-.312 0-.62-.014-.924-.042zm-7.556-4.655a9.942 9.942 0 0 1-1.253-2.996l.973-.234a8.948 8.948 0 0 0 1.124 2.693l-.844.537zm-1.502-5.91A9.949 9.949 0 0 1 2.88 9.23l.925.382a8.954 8.954 0 0 0-.644 2.844l-.998-.062zm2.21-5.686c.687-.848 1.51-1.58 2.436-2.166l.523.852a9.048 9.048 0 0 0-2.188 1.95l-.771-.636z\"></path><path stroke=\"inherit\" fill=\"none\" stroke-linecap=\"square\" d=\"M13 1l-2.5 2.5L13 6\"></path></symbol><symbol id=\"ic-shape-circle\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"14.5\" fill=\"none\" stroke=\"inherit\"></circle></symbol><symbol id=\"ic-shape-rectangle\" viewBox=\"0 0 32 32\"><rect width=\"27\" height=\"27\" x=\"2.5\" y=\"2.5\" fill=\"none\" stroke=\"inherit\" rx=\"1\"></rect></symbol><symbol id=\"ic-shape-triangle\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16 2.5l15.5 27H.5z\"></path></symbol><symbol id=\"ic-shape\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M14.706 8H21a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-4h1v4h12V9h-5.706l-.588-1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8.5 1.5l7.5 13H1z\"></path></symbol><symbol id=\"ic-text-align-center\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM8 12h16v1H8zM2 19h28v1H2zM8 26h16v1H8z\"></path></symbol><symbol id=\"ic-text-align-left\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM2 12h16v1H2zM2 19h28v1H2zM2 26h16v1H2z\"></path></symbol><symbol id=\"ic-text-align-right\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM14 12h16v1H14zM2 19h28v1H2zM14 26h16v1H14z\"></path></symbol><symbol id=\"ic-text-bold\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M7 2h2v2H7zM7 28h2v2H7z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-width=\"2\" d=\"M9 3v12h9a6 6 0 1 0 0-12H9zM9 15v14h10a7 7 0 0 0 0-14H9z\"></path></symbol><symbol id=\"ic-text-italic\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M15 2h5v1h-5zM11 29h5v1h-5zM17 3h1l-4 26h-1z\"></path></symbol><symbol id=\"ic-text-underline\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8 2v14a8 8 0 1 0 16 0V2h1v14a9 9 0 0 1-18 0V2h1zM3 29h26v1H3z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 2h5v1H5zM22 2h5v1h-5z\"></path></symbol><symbol id=\"ic-text\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M4 3h15a1 1 0 0 1 1 1H3a1 1 0 0 1 1-1zM3 4h1v1H3zM19 4h1v1h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M11 3h1v18h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M10 20h3v1h-3z\"></path></symbol><symbol id=\"ic-undo\" viewBox=\"0 0 24 24\"><path d=\"M24 0H0v24h24z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M3 6h12a6 6 0 1 1 0 12H3v1h12a7 7 0 0 0 0-14H3v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M5 3L2.5 5.5 5 8\"></path></symbol></defs></svg>"
 
 /***/ }),
 

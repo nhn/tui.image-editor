@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.12.0
+ * @version 3.13.0
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -127,7 +127,8 @@ body > textarea {
   position: relative;
   display: inline-block;
 }
-.tui-image-editor-container .tui-image-editor-menu {
+.tui-image-editor-container .tui-image-editor-menu,
+.tui-image-editor-container .tui-image-editor-help-menu {
   width: auto;
   list-style: none;
   padding: 0;
@@ -137,7 +138,8 @@ body > textarea {
   vertical-align: middle;
   white-space: nowrap;
 }
-.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item {
+.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item,
+.tui-image-editor-container .tui-image-editor-help-menu > .tui-image-editor-item {
   position: relative;
   display: inline-block;
   border-radius: 2px;
@@ -145,7 +147,8 @@ body > textarea {
   cursor: pointer;
   margin: 0 4px;
 }
-.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:hover:before {
+.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:hover:before,
+.tui-image-editor-container .tui-image-editor-help-menu > .tui-image-editor-item[tooltip-content]:hover:before {
   content: '';
   position: absolute;
   display: inline-block;
@@ -158,7 +161,8 @@ body > textarea {
   left: 13px;
   top: -2px;
 }
-.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:hover:after {
+.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item[tooltip-content]:hover:after,
+.tui-image-editor-container .tui-image-editor-help-menu > .tui-image-editor-item[tooltip-content]:hover:after {
   content: attr(tooltip-content);
   position: absolute;
   display: inline-block;
@@ -173,7 +177,8 @@ body > textarea {
   left: 0;
   min-width: 24px;
 }
-.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item.active {
+.tui-image-editor-container .tui-image-editor-menu > .tui-image-editor-item.active,
+.tui-image-editor-container .tui-image-editor-help-menu > .tui-image-editor-item.active {
   background-color: #fff;
   transition: all 0.3s ease;
 }
@@ -331,6 +336,92 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-draw .tui-image-editor-submenu,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-filter .tui-image-editor-submenu {
   display: table;
+}
+.tui-image-editor-container .tui-image-editor-help-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0 auto;
+  text-align: center;
+  vertical-align: middle;
+  border-radius: 20px;
+  background-color: rgba(255,255,255,0.06);
+  z-index: 2;
+  position: absolute;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history {
+  display: none;
+  background-color: #fff;
+  color: #444;
+  position: absolute;
+  width: 196px;
+  height: 276px;
+  padding: 4px 2px;
+  box-shadow: 0 2px 6px 0 rgba(0,0,0,0.15);
+  cursor: auto;
+  transform: translateX(calc(-50% + 12px));
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list {
+  height: 268px;
+  padding: 0;
+  overflow: hidden scroll;
+  list-style: none;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item {
+  height: 24px;
+  font-size: 11px;
+  line-height: 24px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item .tui-image-editor-history-item {
+  position: relative;
+  height: 24px;
+  cursor: pointer;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item .tui-image-editor-history-item svg {
+  width: 24px;
+  height: 24px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item .tui-image-editor-history-item span {
+  display: inline-block;
+  width: 128px;
+  height: 24px;
+  text-align: left;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item .tui-image-editor-history-item .history-item-icon {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 6px;
+  left: 6px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item .tui-image-editor-history-item .history-item-checkbox {
+  display: none;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  top: 5px;
+  right: -6px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item.selected-item {
+  background-color: rgba(119,119,119,0.12);
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item.selected-item .history-item-checkbox {
+  display: inline-block;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .tie-panel-history .history-list .history-item.disabled-item {
+  color: #333;
+  opacity: 0.3;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .opened .tie-panel-history {
+  display: block;
+}
+.tui-image-editor-container .tui-image-editor-help-menu .opened .tie-panel-history:before {
+  content: '';
+  position: absolute;
+  display: inline-block;
+  margin: 0 auto;
+  width: 0;
+  height: 0;
 }
 .tui-image-editor-container .filter-color-item {
   display: inline-block;
@@ -529,7 +620,7 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-icpartition {
   display: inline-block;
-  background-color: #282828;
+  background-color: #444;
   width: 1px;
   height: 24px;
 }
@@ -706,6 +797,159 @@ body > textarea {
   top: 0;
   bottom: inherit;
 }
+.tui-image-editor-container .tui-image-editor-help-menu.top {
+  white-space: nowrap;
+  width: 340px;
+  height: 40px;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tui-image-editor-container .tui-image-editor-help-menu.top .tie-panel-history {
+  top: 45px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.top .opened .tie-panel-history:before {
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+  border-bottom: 8px solid #fff;
+  left: 90px;
+  top: -8px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.top > .tui-image-editor-item[tooltip-content]:before {
+  left: 13px;
+  top: 35px;
+  border: none;
+  border-bottom: 7px solid #2f2f2f;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.top > .tui-image-editor-item[tooltip-content]:after {
+  top: 41px;
+  left: -4px;
+  white-space: nowrap;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.top > .tui-image-editor-item[tooltip-content].opened:before,
+.tui-image-editor-container .tui-image-editor-help-menu.top > .tui-image-editor-item[tooltip-content].opened:after {
+  content: none;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.bottom {
+  white-space: nowrap;
+  width: 340px;
+  height: 40px;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tui-image-editor-container .tui-image-editor-help-menu.bottom .tie-panel-history {
+  bottom: 45px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.bottom .opened .tie-panel-history:before {
+  border-right: 8px solid transparent;
+  border-left: 8px solid transparent;
+  border-top: 8px solid #fff;
+  left: 90px;
+  bottom: -8px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.bottom > .tui-image-editor-item[tooltip-content]:before {
+  left: 13px;
+  top: auto;
+  bottom: 36px;
+  border: none;
+  border-top: 7px solid #2f2f2f;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.bottom > .tui-image-editor-item[tooltip-content]:after {
+  top: auto;
+  left: -4px;
+  bottom: 41px;
+  white-space: nowrap;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.bottom > .tui-image-editor-item[tooltip-content].opened:before,
+.tui-image-editor-container .tui-image-editor-help-menu.bottom > .tui-image-editor-item[tooltip-content].opened:after {
+  content: none;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.left {
+  white-space: inherit;
+  width: 40px;
+  height: 340px;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.tui-image-editor-container .tui-image-editor-help-menu.left .tie-panel-history {
+  left: 140px;
+  top: -4px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.left .opened .tie-panel-history:before {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-right: 8px solid #fff;
+  left: -8px;
+  top: 14px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.left .tui-image-editor-item {
+  margin: 4px auto;
+  padding: 6px 8px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.left > .tui-image-editor-item[tooltip-content]:before {
+  left: 27px;
+  top: 11px;
+  border: none;
+  border-right: 7px solid #2f2f2f;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.left > .tui-image-editor-item[tooltip-content]:after {
+  top: 7px;
+  left: 40px;
+  white-space: nowrap;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.left > .tui-image-editor-item[tooltip-content].opened:before,
+.tui-image-editor-container .tui-image-editor-help-menu.left > .tui-image-editor-item[tooltip-content].opened:after {
+  content: none;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.right {
+  white-space: inherit;
+  width: 40px;
+  height: 340px;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+.tui-image-editor-container .tui-image-editor-help-menu.right .tie-panel-history {
+  right: -30px;
+  top: -4px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.right .opened .tie-panel-history:before {
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 8px solid #fff;
+  right: -8px;
+  top: 14px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.right .tui-image-editor-item {
+  margin: 4px auto;
+  padding: 6px 8px;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.right > .tui-image-editor-item[tooltip-content]:before {
+  left: -6px;
+  top: 11px;
+  border: none;
+  border-left: 7px solid #2f2f2f;
+  border-top: 7px solid transparent;
+  border-bottom: 7px solid transparent;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.right > .tui-image-editor-item[tooltip-content]:after {
+  top: 7px;
+  left: auto;
+  right: 39px;
+  white-space: nowrap;
+}
+.tui-image-editor-container .tui-image-editor-help-menu.right > .tui-image-editor-item[tooltip-content].opened:before,
+.tui-image-editor-container .tui-image-editor-help-menu.right > .tui-image-editor-item[tooltip-content].opened:after {
+  content: none;
+}
 .tui-image-editor-container .tie-icon-add-button .tui-image-editor-button {
   min-width: 42px;
 }
@@ -722,33 +966,49 @@ body > textarea {
   width: 257px;
   height: 26px;
 }
+.tui-image-editor-container .tui-image-editor-help-menu svg > use,
 .tui-image-editor-container .tui-image-editor-controls svg > use {
   display: none;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .enabled svg:hover > use.hover,
 .tui-image-editor-container .tui-image-editor-controls .enabled svg:hover > use.hover,
+.tui-image-editor-container .tui-image-editor-help-menu .normal svg:hover > use.hover,
 .tui-image-editor-container .tui-image-editor-controls .normal svg:hover > use.hover {
   display: block;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .active svg:hover > use.hover,
 .tui-image-editor-container .tui-image-editor-controls .active svg:hover > use.hover {
   display: none;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .opened svg > use.hover,
+.tui-image-editor-container .tui-image-editor-controls .opened svg > use.hover {
+  display: block;
+}
+.tui-image-editor-container .tui-image-editor-help-menu svg > use.normal,
 .tui-image-editor-container .tui-image-editor-controls svg > use.normal {
   display: block;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .active svg > use.active,
 .tui-image-editor-container .tui-image-editor-controls .active svg > use.active {
   display: block;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .enabled svg > use.enabled,
 .tui-image-editor-container .tui-image-editor-controls .enabled svg > use.enabled {
   display: block;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .active svg > use.normal,
 .tui-image-editor-container .tui-image-editor-controls .active svg > use.normal,
+.tui-image-editor-container .tui-image-editor-help-menu .enabled svg > use.normal,
 .tui-image-editor-container .tui-image-editor-controls .enabled svg > use.normal {
   display: none;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .help svg > use.disabled,
 .tui-image-editor-container .tui-image-editor-controls .help svg > use.disabled,
+.tui-image-editor-container .tui-image-editor-help-menu .help.enabled svg > use.normal,
 .tui-image-editor-container .tui-image-editor-controls .help.enabled svg > use.normal {
   display: block;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .help.enabled svg > use.disabled,
 .tui-image-editor-container .tui-image-editor-controls .help.enabled svg > use.disabled {
   display: none;
 }
