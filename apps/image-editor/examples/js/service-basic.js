@@ -357,6 +357,7 @@ $btnUndo.on('click', function () {
   $displayingSubMenu.hide();
 
   if (!$(this).hasClass('disabled')) {
+    imageEditor.discardSelection();
     imageEditor.undo();
   }
 });
@@ -365,6 +366,7 @@ $btnRedo.on('click', function () {
   $displayingSubMenu.hide();
 
   if (!$(this).hasClass('disabled')) {
+    imageEditor.discardSelection();
     imageEditor.redo();
   }
 });
