@@ -38,6 +38,14 @@ export const SHAPE_FILL_TYPE = {
 export const SHAPE_TYPE = ['rect', 'circle', 'triangle'];
 
 /**
+ * Object type
+ * @type {Object.<string, string>}
+ */
+export const OBJ_TYPE = {
+  CROPZONE: 'cropzone',
+};
+
+/**
  * Filter type map
  * @type {Object.<string, string>}
  */
