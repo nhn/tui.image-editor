@@ -28,6 +28,9 @@ node_modules
 bower_components
 lib
 
+#JSDOC
+doc
+
 # IDEA
 .idea
 *.iml
@@ -46,11 +49,27 @@ Desktop.ini
 .project
 .metadata
 
-# etc
-temp
-doc
-demo
-report
-*.vim
-test.html
+# build
+build
 
+#report / screenshots
+report
+screenshots
+
+# Atom
+tags
+.ctags
+.tern-project
+
+# etc
+.agignore
+*.swp
+etc
+temp
+api
+.tern-port
+*.vim
+.\#*
+.vscode
+
+dist
