@@ -13,6 +13,7 @@
         width: 257px;
         height: 26px;
 
+    .{prefix}-help-menu
     .{prefix}-controls
         svg > use
             display: none;
@@ -21,6 +22,8 @@
             display: block;
         .active svg:hover > use.hover
             display: none;
+        .opened svg > use.hover
+            display: block;
         svg > use.normal
             display: block;
         .active svg > use.active

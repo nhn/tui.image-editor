@@ -88,3 +88,77 @@
       .{prefix}-submenu
         display: table;
 
+/* Help menu bar */
+.{prefix}-container
+    .{prefix}-help-menu
+        list-style: none;
+        padding: 0;
+        margin: 0 auto;
+        text-align: center;
+        vertical-align: middle;
+        border-radius: 20px;
+        background-color: rgba(255, 255, 255, 0.06);
+        z-index: 2;
+        position: absolute;
+        .tie-panel-history
+            display: none;
+            background-color: #fff;
+            color: #444;
+            position: absolute;
+            width: 196px;
+            height: 276px;
+            padding: 4px 2px;
+            box-shadow: 0 2px 6px 0 rgba(0, 0, 0, 0.15);
+            cursor: auto;
+            transform: translateX(calc(-50% + 12px));
+            .history-list
+                height: 268px;
+                padding: 0;
+                overflow: hidden scroll;
+                list-style: none;
+                .history-item
+                    height: 24px;
+                    font-size: 11px;
+                    line-height: 24px;
+                    .{prefix}-history-item
+                        position: relative;
+                        height: 24px;
+                        cursor: pointer;
+                        svg
+                            width: 24px;
+                            height: 24px;
+                        span
+                            display: inline-block;
+                            width: 128px;
+                            height: 24px;
+                            text-align: left;
+                        .history-item-icon
+                            display: inline-block;
+                            width: 24px;
+                            height: 24px;
+                            position: absolute;
+                            top: 6px;
+                            left: 6px;
+                        .history-item-checkbox
+                            display: none;
+                            width: 24px;
+                            height: 24px;
+                            position: absolute;
+                            top: 5px;
+                            right: -6px;
+                    &.selected-item
+                        background-color: rgba(119, 119, 119, 0.12);
+                        .history-item-checkbox
+                            display: inline-block;
+                    &.disabled-item
+                        color: #333;
+                        opacity: 0.3;
+        .opened .tie-panel-history
+            display: block;
+            &:before
+                content: '';
+                position: absolute;
+                display: inline-block;
+                margin: 0 auto;
+                width: 0;
+                height: 0;
