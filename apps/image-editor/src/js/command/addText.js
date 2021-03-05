@@ -5,7 +5,11 @@
 import commandFactory from '@/factory/command';
 import { Promise } from '@/util';
 import { componentNames, commandNames, rejectMessages } from '@/consts';
-import { setCachedUndoDataForDimension } from '@/helper/selectionModifyHelper';
+import {
+  setCachedUndoDataForDimension,
+  makeSelectionUndoData,
+  makeSelectionUndoDatum,
+} from '@/helper/selectionModifyHelper';
 
 const { TEXT } = componentNames;
 
@@ -46,10 +50,13 @@ const command = {
 
     return textComp.add(text, options).then((objectProps) => {
       const { id } = objectProps;
+      const textObject = graphics.getObject(id);
 
-      this.undoData.object = graphics.getObject(id);
+      this.undoData.object = textObject;
 
-      setCachedUndoDataForDimension([textObject]);
+      setCachedUndoDataForDimension(
+        makeSelectionUndoData(textObject, () => makeSelectionUndoDatum(id, textObject, false))
+      );
 
       return objectProps;
     });
