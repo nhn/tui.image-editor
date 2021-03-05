@@ -4,7 +4,14 @@
  */
 import { forEach, sendHostname, extend, isString, pick, inArray } from 'tui-code-snippet';
 import Promise from 'core-js-pure/features/promise';
-import { SHAPE_FILL_TYPE, SHAPE_TYPE, emptyCropRectValues } from '@/consts';
+import {
+  commandNames,
+  filterType,
+  historyNames,
+  SHAPE_FILL_TYPE,
+  SHAPE_TYPE,
+  emptyCropRectValues,
+} from '@/consts';
 
 const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
@@ -343,6 +350,176 @@ export function getFillTypeFromObject(shapeObj) {
  */
 export function isShape(obj) {
   return inArray(obj.get('type'), SHAPE_TYPE) >= 0;
+}
+
+/**
+ * Get object type
+ * @param {string} type - fabric object type
+ * @returns {string} type of object (ex: shape, icon, ...)
+ */
+export function getObjectType(type) {
+  if (includes(SHAPE_TYPE, type)) {
+    return 'Shape';
+  }
+
+  switch (type) {
+    case 'i-text':
+      return 'Text';
+    case 'path':
+    case 'line':
+      return 'Draw';
+    case 'activeSelection':
+      return 'Group';
+    default:
+      return toStartOfCapital(type);
+  }
+}
+
+/**
+ * Get filter type
+ * @param {string} type - fabric filter type
+ * @param {object} [options] - filter type options
+ *   @param {boolean} [options.useAlpha=true] - usage of alpha(true is 'color filter', false is 'remove white')
+ *   @param {string} [options.mode] - mode of blendColor
+ * @returns {string} type of filter (ex: sepia, blur, ...)
+ */
+function getFilterType(type, { useAlpha = true, mode } = {}) {
+  const {
+    VINTAGE,
+    REMOVE_COLOR,
+    BLEND_COLOR,
+    SEPIA2,
+    COLOR_FILTER,
+    REMOVE_WHITE,
+    BLEND,
+  } = filterType;
+
+  let filterName;
+
+  switch (type) {
+    case VINTAGE:
+      filterName = SEPIA2;
+      break;
+    case REMOVE_COLOR:
+      filterName = useAlpha ? COLOR_FILTER : REMOVE_WHITE;
+      break;
+    case BLEND_COLOR:
+      filterName = mode === 'add' ? BLEND : mode;
+      break;
+    default:
+      filterName = type;
+  }
+
+  return toStartOfCapital(filterName);
+}
+
+/**
+ * Check if command is silent command
+ * @param {Command|string} command - command or command name
+ * @returns {boolean}
+ */
+export function isSilentCommand(command) {
+  const { LOAD_IMAGE } = commandNames;
+
+  return typeof command === 'string' ? LOAD_IMAGE === command : LOAD_IMAGE === command.name;
+}
+
+/**
+ * Get command name
+ * @param {Command|string} command - command or command name
+ * @returns {{name: string, ?detail: string}}
+ */
+// eslint-disable-next-line complexity, require-jsdoc
+export function getHistoryTitle(command) {
+  const {
+    FLIP_IMAGE,
+    ROTATE_IMAGE,
+    ADD_TEXT,
+    APPLY_FILTER,
+    REMOVE_FILTER,
+    CHANGE_SHAPE,
+    CHANGE_ICON_COLOR,
+    CHANGE_TEXT_STYLE,
+    CLEAR_OBJECTS,
+    ADD_IMAGE_OBJECT,
+    REMOVE_OBJECT,
+  } = commandNames;
+  const { name, args } = command;
+  let historyInfo;
+
+  switch (name) {
+    case FLIP_IMAGE:
+      historyInfo = { name, detail: args[1] === 'reset' ? args[1] : args[1].slice(4) };
+      break;
+    case ROTATE_IMAGE:
+      historyInfo = { name, detail: args[2] };
+      break;
+    case APPLY_FILTER:
+      historyInfo = { name: historyNames.APPLY_FILTER, detail: getFilterType(args[1], args[2]) };
+      break;
+    case REMOVE_FILTER:
+      historyInfo = { name: historyNames.REMOVE_FILTER, detail: 'Remove' };
+      break;
+    case CHANGE_SHAPE:
+      historyInfo = { name: historyNames.CHANGE_SHAPE, detail: 'Change' };
+      break;
+    case CHANGE_ICON_COLOR:
+      historyInfo = { name: historyNames.CHANGE_ICON_COLOR, detail: 'Change' };
+      break;
+    case CHANGE_TEXT_STYLE:
+      historyInfo = { name: historyNames.CHANGE_TEXT_STYLE, detail: 'Change' };
+      break;
+    case REMOVE_OBJECT:
+      historyInfo = { name: historyNames.REMOVE_OBJECT, detail: args[2] };
+      break;
+    case CLEAR_OBJECTS:
+      historyInfo = { name: historyNames.CLEAR_OBJECTS, detail: 'All' };
+      break;
+    case ADD_IMAGE_OBJECT:
+      historyInfo = { name: historyNames.ADD_IMAGE_OBJECT, detail: 'Add' };
+      break;
+    case ADD_TEXT:
+      historyInfo = { name: historyNames.ADD_TEXT };
+      break;
+
+    default:
+      historyInfo = { name };
+      break;
+  }
+
+  if (args[1] === 'mask') {
+    historyInfo = { name: historyNames.LOAD_MASK_IMAGE, detail: 'Apply' };
+  }
+
+  return historyInfo;
+}
+
+/**
+ * Get help menubar position(opposite of menubar)
+ * @param {string} position - position of menubar
+ * @returns {string} position of help menubar
+ */
+export function getHelpMenuBarPosition(position) {
+  if (position === 'top') {
+    return 'bottom';
+  }
+  if (position === 'left') {
+    return 'right';
+  }
+  if (position === 'right') {
+    return 'left';
+  }
+
+  return 'top';
+}
+
+/**
+ * Change to capital start letter
+ * @param {string} str - string to change
+ * @returns {string}
+ */
+function toStartOfCapital(str) {
+  return str.replace(/[a-z]/, (first) => first.toUpperCase());
 }
 
 /**
