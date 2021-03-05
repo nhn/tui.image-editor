@@ -5,6 +5,7 @@
 import commandFactory from '@/factory/command';
 import { Promise } from '@/util';
 import { componentNames, commandNames, rejectMessages } from '@/consts';
+import { setCachedUndoDataForDimension } from '@/helper/selectionModifyHelper';
 
 const { TEXT } = componentNames;
 
@@ -47,6 +48,8 @@ const command = {
       const { id } = objectProps;
 
       this.undoData.object = graphics.getObject(id);
+
+      setCachedUndoDataForDimension([textObject]);
 
       return objectProps;
     });
