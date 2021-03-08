@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.13.0
+ * @version 3.14.0
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -323,7 +323,8 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-mask .tui-image-editor-submenu > div.tui-image-editor-menu-mask,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-icon .tui-image-editor-submenu > div.tui-image-editor-menu-icon,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-draw .tui-image-editor-submenu > div.tui-image-editor-menu-draw,
-.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-filter .tui-image-editor-submenu > div.tui-image-editor-menu-filter {
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-filter .tui-image-editor-submenu > div.tui-image-editor-menu-filter,
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-zoom .tui-image-editor-submenu > div.tui-image-editor-menu-zoom {
   display: table-cell;
 }
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-crop .tui-image-editor-submenu,
@@ -334,7 +335,8 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-mask .tui-image-editor-submenu,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-icon .tui-image-editor-submenu,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-draw .tui-image-editor-submenu,
-.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-filter .tui-image-editor-submenu {
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-filter .tui-image-editor-submenu,
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-zoom .tui-image-editor-submenu {
   display: table;
 }
 .tui-image-editor-container .tui-image-editor-help-menu {
@@ -799,7 +801,7 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-help-menu.top {
   white-space: nowrap;
-  width: 340px;
+  width: 506px;
   height: 40px;
   top: 8px;
   left: 50%;
@@ -834,7 +836,7 @@ body > textarea {
 }
 .tui-image-editor-container .tui-image-editor-help-menu.bottom {
   white-space: nowrap;
-  width: 340px;
+  width: 506px;
   height: 40px;
   bottom: 8px;
   left: 50%;
@@ -872,7 +874,7 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-help-menu.left {
   white-space: inherit;
   width: 40px;
-  height: 340px;
+  height: 506px;
   left: 8px;
   top: 50%;
   transform: translateY(-50%);
@@ -912,7 +914,7 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-help-menu.right {
   white-space: inherit;
   width: 40px;
-  height: 340px;
+  height: 506px;
   right: 8px;
   top: 50%;
   transform: translateY(-50%);
@@ -980,6 +982,8 @@ body > textarea {
 .tui-image-editor-container .tui-image-editor-controls .active svg:hover > use.hover {
   display: none;
 }
+.tui-image-editor-container .tui-image-editor-help-menu .on svg > use.hover,
+.tui-image-editor-container .tui-image-editor-controls .on svg > use.hover,
 .tui-image-editor-container .tui-image-editor-help-menu .opened svg > use.hover,
 .tui-image-editor-container .tui-image-editor-controls .opened svg > use.hover {
   display: block;
@@ -1202,6 +1206,16 @@ body > textarea {
   cursor: inherit;
   left: 0;
   top: 0;
+}
+.tie-zoom-button.resetFlip .tui-image-editor-button.resetFlip svg > use.normal,
+.tie-zoom-button.flipX .tui-image-editor-button.flipX svg > use.normal,
+.tie-zoom-button.flipY .tui-image-editor-button.flipY svg > use.normal {
+  display: none;
+}
+.tie-zoom-button.resetFlip .tui-image-editor-button.resetFlip svg > use.active,
+.tie-zoom-button.flipX .tui-image-editor-button.flipX svg > use.active,
+.tie-zoom-button.flipY .tui-image-editor-button.flipY svg > use.active {
+  display: block;
 }
 .tui-image-editor-container.top.tui-image-editor-top-optimization .tui-image-editor-controls ul {
   text-align: right;
