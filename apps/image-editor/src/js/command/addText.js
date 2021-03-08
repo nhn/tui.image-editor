@@ -50,8 +50,9 @@ const command = {
 
     return textComp.add(text, options).then((objectProps) => {
       const { id } = objectProps;
+      const textObject = graphics.getObject(id);
 
-      this.undoData.object = graphics.getObject(id);
+      this.undoData.object = textObject;
 
       setCachedUndoDataForDimension(
         makeSelectionUndoData(textObject, () => makeSelectionUndoDatum(id, textObject, false))

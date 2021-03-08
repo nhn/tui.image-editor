@@ -126,8 +126,13 @@ class Zoom extends Component {
    * @private
    */
   _onKeyDown(e) {
+    if (this.withSpace) {
+      return;
+    }
+
     if (e.keyCode === keyCodes.SPACE) {
       e.preventDefault();
+      this.withSpace = true;
       this.startHandMode();
     }
   }
@@ -140,6 +145,7 @@ class Zoom extends Component {
   _onKeyUp(e) {
     if (e.keyCode === keyCodes.SPACE) {
       e.preventDefault();
+      this.withSpace = false;
       this.endHandMode();
     }
   }
@@ -232,6 +238,8 @@ class Zoom extends Component {
     canvas.on('mouse:down', this._listeners.startHand);
     canvas.selection = false;
     canvas.defaultCursor = 'grab';
+
+    canvas.fire(eventNames.HAND_STARTED);
   }
 
   /**
@@ -248,6 +256,8 @@ class Zoom extends Component {
     canvas.defaultCursor = 'auto';
 
     this._startHandPoint = null;
+
+    canvas.fire(eventNames.HAND_STOPPED);
   }
 
   /**

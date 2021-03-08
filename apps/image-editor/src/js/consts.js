@@ -165,6 +165,8 @@ export const eventNames = {
   AFTER_UNDO: 'afterUndo',
   AFTER_REDO: 'afterRedo',
   ZOOM_CHANGED: 'zoomChanged',
+  HAND_STARTED: 'handStarted',
+  HAND_STOPPED: 'handStopped',
 };
 
 /**
