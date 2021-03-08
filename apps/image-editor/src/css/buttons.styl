@@ -79,3 +79,14 @@
     cursor: inherit;
     left: 0;
     top: 0;
+
+
+/* FLIP BUTTON */
+.tie-zoom-button
+    &.resetFlip .{prefix}-button.resetFlip,
+    &.flipX .{prefix}-button.flipX,
+    &.flipY .{prefix}-button.flipY
+        svg > use.normal
+            display: none;
+        svg > use.active
+            display: block;

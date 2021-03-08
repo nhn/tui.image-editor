@@ -285,6 +285,8 @@ class ImageEditor {
       EXECUTE_COMMAND,
       AFTER_UNDO,
       AFTER_REDO,
+      HAND_STARTED,
+      HAND_STOPPED,
     } = events;
 
     /**
@@ -309,9 +311,14 @@ class ImageEditor {
     this._invoker.on(REDO_STACK_CHANGED, this.fire.bind(this, REDO_STACK_CHANGED));
 
     if (this.ui) {
+      const canvas = this._graphics.getCanvas();
+
       this._invoker.on(EXECUTE_COMMAND, (command) => this.ui.fire(EXECUTE_COMMAND, command));
       this._invoker.on(AFTER_UNDO, (command) => this.ui.fire(AFTER_UNDO, command));
       this._invoker.on(AFTER_REDO, (command) => this.ui.fire(AFTER_REDO, command));
+
+      canvas.on(HAND_STARTED, () => this.ui.fire(HAND_STARTED));
+      canvas.on(HAND_STOPPED, () => this.ui.fire(HAND_STOPPED));
     }
   }
 
@@ -672,6 +679,23 @@ class ImageEditor {
     }
 
     return promise;
+  }
+
+  /**
+   * Zoom
+   * @param {number} x - x axis of center point for zoom
+   * @param {number} y - y axis of center point for zoom
+   * @param {number} zoomLevel - level of zoom(1.0 ~ 5.0)
+   */
+  zoom({ x, y, zoomLevel }) {
+    this._graphics.zoom({ x, y }, zoomLevel);
+  }
+
+  /**
+   * Reset zoom. Change zoom level to 1.0
+   */
+  resetZoom() {
+    this._graphics.resetZoom();
   }
 
   /**
