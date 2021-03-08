@@ -1,7 +1,7 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
 import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone } from '@/util';
-import { eventNames, historyNames } from '@/consts';
+import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
 
 export default {
   /**
@@ -52,6 +52,28 @@ export default {
       setFilterStateRangeBarOnAction(result);
 
       return result;
+    };
+    const toggleZoomMode = () => {
+      const zoomMode = this._graphics.getZoomMode();
+
+      this.stopDrawingMode();
+      if (zoomMode !== zoomModes.ZOOM) {
+        this.startDrawingMode(drawingModes.ZOOM);
+        this._graphics.startZoomInMode();
+      } else {
+        this._graphics.endZoomInMode();
+      }
+    };
+    const toggleHandMode = () => {
+      const zoomMode = this._graphics.getZoomMode();
+
+      this.stopDrawingMode();
+      if (zoomMode !== zoomModes.HAND) {
+        this.startDrawingMode(drawingModes.ZOOM);
+        this._graphics.startHandMode();
+      } else {
+        this._graphics.endHandMode();
+      }
     };
 
     return extend(
@@ -135,6 +157,20 @@ export default {
         },
         history: (event) => {
           this.ui.toggleHistoryMenu(event);
+        },
+        zoomIn: () => {
+          this.ui.toggleZoomButtonStatus('zoomIn');
+          this.deactivateAll();
+          toggleZoomMode();
+        },
+        zoomOut: () => {
+          this._graphics.zoomOut();
+        },
+        hand: () => {
+          this.ui.offZoomInButtonStatus();
+          this.ui.toggleZoomButtonStatus('hand');
+          this.deactivateAll();
+          toggleHandMode();
         },
       },
       this._commonAction()
@@ -523,18 +559,23 @@ export default {
    * @private
    */
   _commonAction() {
+    const { TEXT, CROPPER, SHAPE, ZOOM } = drawingModes;
+
     return {
       modeChange: (menu) => {
         switch (menu) {
-          case 'text':
-            this._changeActivateMode('TEXT');
+          case drawingMenuNames.TEXT:
+            this._changeActivateMode(TEXT);
             break;
-          case 'crop':
-            this.startDrawingMode('CROPPER');
+          case drawingMenuNames.CROP:
+            this.startDrawingMode(CROPPER);
             break;
-          case 'shape':
-            this._changeActivateMode('SHAPE');
+          case drawingMenuNames.SHAPE:
+            this._changeActivateMode(SHAPE);
             this.setDrawingShape(this.ui.shape.type, this.ui.shape.options);
+            break;
+          case drawingMenuNames.ZOOM:
+            this.startDrawingMode(ZOOM);
             break;
           default:
             break;

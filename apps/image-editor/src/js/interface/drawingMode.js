@@ -43,7 +43,7 @@ class DrawingMode {
    * stop this drawing mode
    * @abstract
    */
-  stop() {
+  end() {
     throw new Error(createMessage(errorTypes.UN_IMPLEMENTATION, 'stop'));
   }
 }

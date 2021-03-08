@@ -1,6 +1,12 @@
 import snippet from 'tui-code-snippet';
 import { getSelector, assignmentForDestroy, cls, getHistoryTitle, isSilentCommand } from '@/util';
-import { COMMAND_HELP_MENUS, DELETE_HELP_MENUS, eventNames, HELP_MENUS } from '@/consts';
+import {
+  ZOOM_HELP_MENUS,
+  COMMAND_HELP_MENUS,
+  DELETE_HELP_MENUS,
+  eventNames,
+  HELP_MENUS,
+} from '@/consts';
 import mainContainer from '@/ui/template/mainContainer';
 import controls from '@/ui/template/controls';
 
@@ -30,9 +36,16 @@ const SUB_UI_COMPONENT = {
 };
 
 const { CustomEvents } = snippet;
+
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 const HISTORY_MENU = 'history';
 const HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
+
+const CLASS_NAME_ON = 'on';
+const ZOOM_BUTTON_TYPE = {
+  ZOOM_IN: 'zoomIn',
+  HAND: 'hand',
+};
 
 /**
  * Ui class
@@ -73,6 +86,7 @@ class Ui {
     this._makeSubMenu();
 
     this._attachHistoryEvent();
+    this._attachZoomEvent();
   }
 
   /**
@@ -164,6 +178,41 @@ class Ui {
     } else {
       selectElementClassList.remove('tui-image-editor-top-optimization');
     }
+  }
+
+  /**
+   * Toggle zoom button status
+   * @param {string} type - type of zoom button
+   */
+  toggleZoomButtonStatus(type) {
+    const targetClassList = this._buttonElements[type].classList;
+
+    targetClassList.toggle(CLASS_NAME_ON);
+
+    if (type === ZOOM_BUTTON_TYPE.ZOOM_IN) {
+      this._buttonElements[ZOOM_BUTTON_TYPE.HAND].classList.remove(CLASS_NAME_ON);
+    } else {
+      this._buttonElements[ZOOM_BUTTON_TYPE.ZOOM_IN].classList.remove(CLASS_NAME_ON);
+    }
+  }
+
+  /**
+   * Turn off zoom-in button status
+   */
+  offZoomInButtonStatus() {
+    const zoomInClassList = this._buttonElements[ZOOM_BUTTON_TYPE.ZOOM_IN].classList;
+
+    zoomInClassList.remove(CLASS_NAME_ON);
+  }
+
+  /**
+   * Change hand button status
+   * @param {boolean} enabled - status to change
+   */
+  changeHandButtonStatus(enabled) {
+    const handClassList = this._buttonElements[ZOOM_BUTTON_TYPE.HAND].classList;
+
+    handClassList[enabled ? 'add' : 'remove'](CLASS_NAME_ON);
   }
 
   /**
@@ -259,6 +308,18 @@ class Ui {
   }
 
   /**
+   * Attach zoom event
+   * @private
+   */
+  _attachZoomEvent() {
+    this.on(eventNames.HAND_STARTED, () => {
+      this.offZoomInButtonStatus();
+      this.changeHandButtonStatus(true);
+    });
+    this.on(eventNames.HAND_STOPPED, () => this.changeHandButtonStatus(false));
+  }
+
+  /**
    * Make primary ui dom element
    * @param {string|HTMLElement} element - Wrapper's element or selector
    * @private
@@ -314,6 +375,18 @@ class Ui {
       locale: this._locale,
       makeSvgIcon: this.theme.makeMenSvgIconSet.bind(this.theme),
     });
+
+    this._activateZoomMenus();
+  }
+
+  /**
+   * Activate help menus for zoom.
+   * @private
+   */
+  _activateZoomMenus() {
+    snippet.forEach(ZOOM_HELP_MENUS, (menu) => {
+      this.changeHelpButtonEnabled(menu, true);
+    });
   }
 
   /**
@@ -322,7 +395,7 @@ class Ui {
    * @private
    */
   _makeHelpMenuWithPartition() {
-    return [...COMMAND_HELP_MENUS, '', ...DELETE_HELP_MENUS];
+    return [...ZOOM_HELP_MENUS, '', ...COMMAND_HELP_MENUS, '', ...DELETE_HELP_MENUS];
   }
 
   /**

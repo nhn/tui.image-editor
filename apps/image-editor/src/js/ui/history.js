@@ -2,9 +2,9 @@ import Panel from '@/ui/panelMenu';
 import templateHtml from '@/ui/template/submenu/history';
 import { assignmentForDestroy } from '@/util';
 
-const HISTORY_ITEM_CLASS_NAME = 'history-item';
-const SELECTED_ITEM_CLASS_NAME = 'selected-item';
-const DISABLED_ITEM_CLASS_NAME = 'disabled-item';
+const historyClassName = 'history-item';
+const selectedClassName = 'selected-item';
+const disabledClassName = 'disabled-item';
 
 /**
  * History ui class
@@ -105,13 +105,13 @@ class History extends Panel {
    */
   _clickHistoryItem(event) {
     const { target } = event;
-    const item = target.closest(`.${HISTORY_ITEM_CLASS_NAME}`);
+    const item = target.closest(`.${historyClassName}`);
 
     if (!item) {
       return;
     }
 
-    const index = parseInt(item.getAttribute('data-index'), 10);
+    const index = Number.parseInt(item.getAttribute('data-index'), 10);
 
     if (index !== this._historyIndex) {
       const count = Math.abs(index - this._historyIndex);
@@ -130,13 +130,13 @@ class History extends Panel {
    */
   _selectItem(index) {
     for (let i = 0; i < this.getListLength(); i += 1) {
-      this.removeClass(i, SELECTED_ITEM_CLASS_NAME);
-      this.removeClass(i, DISABLED_ITEM_CLASS_NAME);
+      this.removeClass(i, selectedClassName);
+      this.removeClass(i, disabledClassName);
       if (i > index) {
-        this.addClass(i, DISABLED_ITEM_CLASS_NAME);
+        this.addClass(i, disabledClassName);
       }
     }
-    this.addClass(index, SELECTED_ITEM_CLASS_NAME);
+    this.addClass(index, selectedClassName);
   }
 
   /**

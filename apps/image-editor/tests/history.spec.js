@@ -3,7 +3,7 @@
  * @fileoverview Test cases of "src/js/ui/history.js"
  */
 
-import History from '../src/js/ui/history';
+import History from '@/ui/history';
 
 describe('history', () => {
   let history;
