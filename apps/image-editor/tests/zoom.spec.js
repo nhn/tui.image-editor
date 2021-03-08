@@ -2,11 +2,11 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/zoom.js"
  */
-import ImageEditor from '../src/js/imageEditor';
+import ImageEditor from '@/imageEditor';
 
 describe('Zoom', () => {
   let imageEditor, x, y, zoomLevel;
-  const imageURL = 'base/test/fixtures/sampleImage.jpg';
+  const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
   beforeEach((done) => {
     imageEditor = new ImageEditor(document.createElement('div'), {

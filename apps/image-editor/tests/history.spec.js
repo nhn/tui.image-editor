@@ -3,7 +3,7 @@
  * @fileoverview Test cases of "src/js/ui/history.js"
  */
 
-import History from '../src/js/ui/history';
+import History from '@/ui/history';
 
 describe('history', () => {
   let history;
@@ -68,25 +68,6 @@ describe('history', () => {
       history._clickHistoryItem({ target });
 
       expect(history._selectItem).not.toHaveBeenCalled();
-    });
-
-    it('should undo action when is index less than historyIndex', () => {
-      spyOn(history._actions, 'undo');
-      history.add({ name, detail });
-      history._clickHistoryItem({ target });
-
-      expect(history._actions.undo).toHaveBeenCalledTimes(1);
-    });
-
-    it('should redo action when is index greater than historyIndex', () => {
-      spyOn(history._actions, 'redo');
-      history.add({ name, detail });
-      history._historyIndex = 1;
-
-      target.setAttribute('data-index', 2);
-      history._clickHistoryItem({ target });
-
-      expect(history._actions.redo).toHaveBeenCalledTimes(1);
     });
   });
 
