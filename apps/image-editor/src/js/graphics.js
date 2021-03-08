@@ -14,12 +14,14 @@ import Text from '@/component/text';
 import Icon from '@/component/icon';
 import Filter from '@/component/filter';
 import Shape from '@/component/shape';
+import Zoom from '@/component/zoom';
 import CropperDrawingMode from '@/drawingMode/cropper';
 import FreeDrawingMode from '@/drawingMode/freeDrawing';
 import LineDrawingMode from '@/drawingMode/lineDrawing';
 import ShapeDrawingMode from '@/drawingMode/shape';
 import TextDrawingMode from '@/drawingMode/text';
 import IconDrawingMode from '@/drawingMode/icon';
+import ZoomDrawingMode from '@/drawingMode/zoom';
 import {
   makeSelectionUndoData,
   makeSelectionUndoDatum,
@@ -437,6 +439,81 @@ class Graphics {
   }
 
   /**
+   * Change zoom of canvas
+   * @param {{x: number, y: number}} center - center of zoom
+   * @param {number} zoomLevel - zoom level
+   */
+  zoom({ x, y }, zoomLevel) {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.zoom({ x, y }, zoomLevel);
+  }
+
+  /**
+   * Get zoom mode
+   * @returns {string}
+   */
+  getZoomMode() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    return zoom.mode;
+  }
+
+  /**
+   * Start zoom-in mode
+   */
+  startZoomInMode() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.startZoomInMode();
+  }
+
+  /**
+   * Stop zoom-in mode
+   */
+  endZoomInMode() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.endZoomInMode();
+  }
+
+  /**
+   * Zoom out one step
+   */
+  zoomOut() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.zoomOut();
+  }
+
+  /**
+   * Start hand mode
+   */
+  startHandMode() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.startHandMode();
+  }
+
+  /**
+   * Stop hand mode
+   */
+  endHandMode() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.endHandMode();
+  }
+
+  /**
+   * Zoom reset
+   */
+  resetZoom() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.resetZoom();
+  }
+
+  /**
    * To data url from canvas
    * @param {Object} options - options for toDataURL
    *   @param {String} [options.format=png] The format of the output image. Either "jpeg" or "png"
@@ -550,7 +627,6 @@ class Graphics {
   /**
    * Get fabric.Canvas instance
    * @returns {fabric.Canvas}
-   * @private
    */
   getCanvas() {
     return this._canvas;
@@ -894,6 +970,7 @@ class Graphics {
     this._register(this._drawingModeMap, new ShapeDrawingMode());
     this._register(this._drawingModeMap, new TextDrawingMode());
     this._register(this._drawingModeMap, new IconDrawingMode());
+    this._register(this._drawingModeMap, new ZoomDrawingMode());
   }
 
   /**
@@ -911,6 +988,7 @@ class Graphics {
     this._register(this._componentMap, new Icon(this));
     this._register(this._componentMap, new Filter(this));
     this._register(this._componentMap, new Shape(this));
+    this._register(this._componentMap, new Zoom(this));
   }
 
   /**

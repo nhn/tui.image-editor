@@ -5,6 +5,12 @@
 import { keyMirror } from '@/util';
 
 /**
+ * Help features for zoom
+ * @type {Array.<string>}
+ */
+export const ZOOM_HELP_MENUS = ['zoomIn', 'zoomOut', 'hand'];
+
+/**
  * Help features for command
  * @type {Array.<string>}
  */
@@ -20,7 +26,7 @@ export const DELETE_HELP_MENUS = ['delete', 'deleteAll'];
  * Editor help features
  * @type {Array.<string>}
  */
-export const HELP_MENUS = [...COMMAND_HELP_MENUS, ...DELETE_HELP_MENUS];
+export const HELP_MENUS = [...ZOOM_HELP_MENUS, ...COMMAND_HELP_MENUS, ...DELETE_HELP_MENUS];
 
 /**
  * Fill type for shape
@@ -73,7 +79,8 @@ export const componentNames = keyMirror(
   'TEXT',
   'ICON',
   'FILTER',
-  'SHAPE'
+  'SHAPE',
+  'ZOOM'
 );
 
 /**
@@ -157,6 +164,9 @@ export const eventNames = {
   EXECUTE_COMMAND: 'executeCommand',
   AFTER_UNDO: 'afterUndo',
   AFTER_REDO: 'afterRedo',
+  ZOOM_CHANGED: 'zoomChanged',
+  HAND_STARTED: 'handStarted',
+  HAND_STOPPED: 'handStopped',
 };
 
 /**
@@ -190,8 +200,30 @@ export const drawingModes = keyMirror(
   'LINE_DRAWING',
   'TEXT',
   'SHAPE',
-  'ICON'
+  'ICON',
+  'ZOOM'
 );
+
+/**
+ * Menu names with drawing mode
+ * @type {Object.<string, string>}
+ */
+export const drawingMenuNames = {
+  TEXT: 'text',
+  CROP: 'crop',
+  SHAPE: 'shape',
+  ZOOM: 'zoom',
+};
+
+/**
+ * Zoom modes
+ * @type {Object.<string, string>}
+ */
+export const zoomModes = {
+  DEFAULT: 'normal',
+  ZOOM: 'zoom',
+  HAND: 'hand',
+};
 
 /**
  * Shortcut key values
@@ -207,6 +239,7 @@ export const keyCodes = {
   DEL: 46,
   ARROW_DOWN: 40,
   ARROW_UP: 38,
+  SPACE: 32,
 };
 
 /**
