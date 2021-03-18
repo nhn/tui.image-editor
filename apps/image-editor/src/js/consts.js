@@ -167,6 +167,8 @@ export const eventNames = {
   ZOOM_CHANGED: 'zoomChanged',
   HAND_STARTED: 'handStarted',
   HAND_STOPPED: 'handStopped',
+  KEY_DOWN: 'keydown',
+  KEY_UP: 'keyup',
 };
 
 /**

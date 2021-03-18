@@ -32,6 +32,16 @@ const DEFAULT_HORIZONTAL_SCROLL_RATIO = {
   BORDER_RADIUS: 0.003,
 };
 const DEFAULT_ZOOM_LEVEL = 1.0;
+const {
+  ZOOM_CHANGED,
+  ADD_TEXT,
+  TEXT_EDITING,
+  OBJECT_MODIFIED,
+  KEY_DOWN,
+  KEY_UP,
+  HAND_STARTED,
+  HAND_STOPPED,
+} = eventNames;
 
 /**
  * Zoom components
@@ -88,8 +98,8 @@ class Zoom extends Component {
       moveHand: this._onMouseMoveWithHandMode.bind(this),
       stopHand: this._onMouseUpWithHandMode.bind(this),
       zoomChanged: this._changeScrollState.bind(this),
-      keydown: this._onKeyDown.bind(this),
-      keyup: this._onKeyUp.bind(this),
+      keydown: this._startHandModeWithSpaceBar.bind(this),
+      keyup: this._endHandModeWithSpaceBar.bind(this),
     };
 
     const canvas = this.getCanvas();
@@ -114,19 +124,38 @@ class Zoom extends Component {
      */
     this._horizontalScroll = new fabric.Rect(DEFAULT_SCROLL_OPTION);
 
-    canvas.on(eventNames.ZOOM_CHANGED, this._listeners.zoomChanged);
+    canvas.on(ZOOM_CHANGED, this._listeners.zoomChanged);
 
-    fabric.util.addListener(document, 'keydown', this._listeners.keydown);
-    fabric.util.addListener(document, 'keyup', this._listeners.keyup);
+    this.graphics.on(ADD_TEXT, this._startTextEditingHandler.bind(this));
+    this.graphics.on(TEXT_EDITING, this._startTextEditingHandler.bind(this));
+    this.graphics.on(OBJECT_MODIFIED, this._stopTextEditingHandler.bind(this));
+    fabric.util.addListener(document, KEY_DOWN, this._listeners.keydown);
+    fabric.util.addListener(document, KEY_UP, this._listeners.keyup);
   }
 
   /**
-   * Keydown event handler
+   * Handler when you started editing text
+   * @private
+   */
+  _startTextEditingHandler() {
+    this.isTextEditing = true;
+  }
+
+  /**
+   * Handler when you stopped editing text
+   * @private
+   */
+  _stopTextEditingHandler() {
+    this.isTextEditing = false;
+  }
+
+  /**
+   * Handler who turns on hand mode when the space bar is down
    * @param {KeyboardEvent} e - Event object
    * @private
    */
-  _onKeyDown(e) {
-    if (this.withSpace) {
+  _startHandModeWithSpaceBar(e) {
+    if (this.withSpace || this.isTextEditing) {
       return;
     }
 
@@ -138,11 +167,11 @@ class Zoom extends Component {
   }
 
   /**
-   * Keyup event handler
+   * Handler who turns off hand mode when space bar is up
    * @param {KeyboardEvent} e - Event object
    * @private
    */
-  _onKeyUp(e) {
+  _endHandModeWithSpaceBar(e) {
     if (e.keyCode === keyCodes.SPACE) {
       e.preventDefault();
       this.withSpace = false;
@@ -239,7 +268,7 @@ class Zoom extends Component {
     canvas.selection = false;
     canvas.defaultCursor = 'grab';
 
-    canvas.fire(eventNames.HAND_STARTED);
+    canvas.fire(HAND_STARTED);
   }
 
   /**
@@ -257,7 +286,7 @@ class Zoom extends Component {
 
     this._startHandPoint = null;
 
-    canvas.fire(eventNames.HAND_STOPPED);
+    canvas.fire(HAND_STOPPED);
   }
 
   /**
@@ -657,7 +686,7 @@ class Zoom extends Component {
    * @param {number} zoomLevel - 'zoomChanged' event params
    */
   _fireZoomChanged(canvas, zoomLevel) {
-    canvas.fire(eventNames.ZOOM_CHANGED, { viewport: canvas.calcViewportBoundaries(), zoomLevel });
+    canvas.fire(ZOOM_CHANGED, { viewport: canvas.calcViewportBoundaries(), zoomLevel });
   }
 
   /**
