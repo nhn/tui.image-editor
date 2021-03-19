@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.14.0
+ * @version 3.14.1
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -9238,6 +9238,14 @@ var DEFAULT_HORIZONTAL_SCROLL_RATIO = {
   BORDER_RADIUS: 0.003
 };
 var DEFAULT_ZOOM_LEVEL = 1.0;
+var ZOOM_CHANGED = _consts.eventNames.ZOOM_CHANGED,
+    ADD_TEXT = _consts.eventNames.ADD_TEXT,
+    TEXT_EDITING = _consts.eventNames.TEXT_EDITING,
+    OBJECT_MODIFIED = _consts.eventNames.OBJECT_MODIFIED,
+    KEY_DOWN = _consts.eventNames.KEY_DOWN,
+    KEY_UP = _consts.eventNames.KEY_UP,
+    HAND_STARTED = _consts.eventNames.HAND_STARTED,
+    HAND_STOPPED = _consts.eventNames.HAND_STOPPED;
 
 /**
  * Zoom components
@@ -9299,8 +9307,8 @@ var Zoom = function (_Component) {
       moveHand: _this._onMouseMoveWithHandMode.bind(_this),
       stopHand: _this._onMouseUpWithHandMode.bind(_this),
       zoomChanged: _this._changeScrollState.bind(_this),
-      keydown: _this._onKeyDown.bind(_this),
-      keyup: _this._onKeyUp.bind(_this)
+      keydown: _this._startHandModeWithSpaceBar.bind(_this),
+      keyup: _this._endHandModeWithSpaceBar.bind(_this)
     };
 
     var canvas = _this.getCanvas();
@@ -9325,24 +9333,49 @@ var Zoom = function (_Component) {
      */
     _this._horizontalScroll = new _fabric2.default.Rect(DEFAULT_SCROLL_OPTION);
 
-    canvas.on(_consts.eventNames.ZOOM_CHANGED, _this._listeners.zoomChanged);
+    canvas.on(ZOOM_CHANGED, _this._listeners.zoomChanged);
 
-    _fabric2.default.util.addListener(document, 'keydown', _this._listeners.keydown);
-    _fabric2.default.util.addListener(document, 'keyup', _this._listeners.keyup);
+    _this.graphics.on(ADD_TEXT, _this._startTextEditingHandler.bind(_this));
+    _this.graphics.on(TEXT_EDITING, _this._startTextEditingHandler.bind(_this));
+    _this.graphics.on(OBJECT_MODIFIED, _this._stopTextEditingHandler.bind(_this));
+    _fabric2.default.util.addListener(document, KEY_DOWN, _this._listeners.keydown);
+    _fabric2.default.util.addListener(document, KEY_UP, _this._listeners.keyup);
     return _this;
   }
 
   /**
-   * Keydown event handler
-   * @param {KeyboardEvent} e - Event object
+   * Handler when you started editing text
    * @private
    */
 
 
   _createClass(Zoom, [{
-    key: '_onKeyDown',
-    value: function _onKeyDown(e) {
-      if (this.withSpace) {
+    key: '_startTextEditingHandler',
+    value: function _startTextEditingHandler() {
+      this.isTextEditing = true;
+    }
+
+    /**
+     * Handler when you stopped editing text
+     * @private
+     */
+
+  }, {
+    key: '_stopTextEditingHandler',
+    value: function _stopTextEditingHandler() {
+      this.isTextEditing = false;
+    }
+
+    /**
+     * Handler who turns on hand mode when the space bar is down
+     * @param {KeyboardEvent} e - Event object
+     * @private
+     */
+
+  }, {
+    key: '_startHandModeWithSpaceBar',
+    value: function _startHandModeWithSpaceBar(e) {
+      if (this.withSpace || this.isTextEditing) {
         return;
       }
 
@@ -9354,14 +9387,14 @@ var Zoom = function (_Component) {
     }
 
     /**
-     * Keyup event handler
+     * Handler who turns off hand mode when space bar is up
      * @param {KeyboardEvent} e - Event object
      * @private
      */
 
   }, {
-    key: '_onKeyUp',
-    value: function _onKeyUp(e) {
+    key: '_endHandModeWithSpaceBar',
+    value: function _endHandModeWithSpaceBar(e) {
       if (e.keyCode === _consts.keyCodes.SPACE) {
         e.preventDefault();
         this.withSpace = false;
@@ -9477,7 +9510,7 @@ var Zoom = function (_Component) {
       canvas.selection = false;
       canvas.defaultCursor = 'grab';
 
-      canvas.fire(_consts.eventNames.HAND_STARTED);
+      canvas.fire(HAND_STARTED);
     }
 
     /**
@@ -9498,7 +9531,7 @@ var Zoom = function (_Component) {
 
       this._startHandPoint = null;
 
-      canvas.fire(_consts.eventNames.HAND_STOPPED);
+      canvas.fire(HAND_STOPPED);
     }
 
     /**
@@ -10009,7 +10042,7 @@ var Zoom = function (_Component) {
   }, {
     key: '_fireZoomChanged',
     value: function _fireZoomChanged(canvas, zoomLevel) {
-      canvas.fire(_consts.eventNames.ZOOM_CHANGED, { viewport: canvas.calcViewportBoundaries(), zoomLevel: zoomLevel });
+      canvas.fire(ZOOM_CHANGED, { viewport: canvas.calcViewportBoundaries(), zoomLevel: zoomLevel });
     }
 
     /**
@@ -10201,7 +10234,9 @@ var eventNames = exports.eventNames = {
   AFTER_REDO: 'afterRedo',
   ZOOM_CHANGED: 'zoomChanged',
   HAND_STARTED: 'handStarted',
-  HAND_STOPPED: 'handStopped'
+  HAND_STOPPED: 'handStopped',
+  KEY_DOWN: 'keydown',
+  KEY_UP: 'keyup'
 };
 
 /**
