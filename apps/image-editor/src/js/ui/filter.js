@@ -18,6 +18,7 @@ const FILTER_OPTIONS = [
   'emboss',
   'remove-white',
   'brightness',
+  'contrast',
   'noise',
   'pixelate',
   'color-filter',
@@ -53,6 +54,7 @@ const RANGE_INSTANCE_NAMES = [
   'pixelateRange',
   'noiseRange',
   'brightnessRange',
+  'contrastRange',
   'tintOpacity',
 ];
 const COLORPICKER_INSTANCE_NAMES = ['filterBlendColor', 'filterMultiplyColor', 'filterTintColor'];
@@ -143,6 +145,7 @@ class Filter extends Submenu {
     this._els.pixelateRange.on('change', changeFilterStateForRange('pixelate'));
     this._els.noiseRange.on('change', changeFilterStateForRange('noise'));
     this._els.brightnessRange.on('change', changeFilterStateForRange('brightness'));
+    this._els.contrastRange.on('change', changeFilterStateForRange('contrast'));
 
     this._els.filterBlendColor.on('change', this.eventHandler.changeBlendFilter);
     this._els.filterMultiplyColor.on('change', changeFilterState('multiply'));
@@ -191,6 +194,8 @@ class Filter extends Submenu {
       this._els.pixelateRange.value = options.blocksize;
     } else if (filterName === 'brightness') {
       this._els.brightnessRange.value = options.brightness;
+    } else if (filterName === 'contrast') {
+      this._els.contrastRange.value = options.contrast;
     } else if (filterName === 'noise') {
       this._els.noiseRange.value = options.noise;
     } else if (filterName === 'tint') {
@@ -275,6 +280,9 @@ class Filter extends Submenu {
       case 'brightness':
         option.brightness = parseFloat(this._els.brightnessRange.value);
         break;
+      case 'contrast':
+        option.contrast = parseFloat(this._els.contrastRange.value);
+        break;
       case 'blend':
         option.mode = 'add';
         option.color = this._els.filterBlendColor.color;
@@ -312,6 +320,10 @@ class Filter extends Submenu {
       brightnessRange: new Range(
         { slider: this.selector('.tie-brightness-range') },
         FILTER_RANGE.brightnessRange
+      ),
+      contrastRange: new Range(
+        { slider: this.selector('.tie-contrast-range') },
+        FILTER_RANGE.contrastRange
       ),
       noiseRange: new Range({ slider: this.selector('.tie-noise-range') }, FILTER_RANGE.noiseRange),
       pixelateRange: new Range(

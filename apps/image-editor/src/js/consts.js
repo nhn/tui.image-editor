@@ -351,6 +351,13 @@ export const defaultFilterRangeValues = {
     value: 0,
     useDecimal: true,
   },
+  contrastRange: {
+    realTimeEvent: true,
+    min: -1,
+    max: 1,
+    value: 0,
+    useDecimal: true,
+  },
   noiseRange: {
     realTimeEvent: true,
     min: 0,
