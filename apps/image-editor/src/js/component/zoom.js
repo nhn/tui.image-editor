@@ -160,7 +160,6 @@ class Zoom extends Component {
     }
 
     if (e.keyCode === keyCodes.SPACE) {
-      e.preventDefault();
       this.withSpace = true;
       this.startHandMode();
     }
@@ -173,7 +172,6 @@ class Zoom extends Component {
    */
   _endHandModeWithSpaceBar(e) {
     if (e.keyCode === keyCodes.SPACE) {
-      e.preventDefault();
       this.withSpace = false;
       this.endHandMode();
     }
