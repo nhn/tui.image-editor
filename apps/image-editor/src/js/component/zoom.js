@@ -129,8 +129,22 @@ class Zoom extends Component {
     this.graphics.on(ADD_TEXT, this._startTextEditingHandler.bind(this));
     this.graphics.on(TEXT_EDITING, this._startTextEditingHandler.bind(this));
     this.graphics.on(OBJECT_MODIFIED, this._stopTextEditingHandler.bind(this));
+  }
+
+  /**
+   * Attach zoom keyboard events
+   */
+  attachKeyboardZoomEvents() {
     fabric.util.addListener(document, KEY_DOWN, this._listeners.keydown);
     fabric.util.addListener(document, KEY_UP, this._listeners.keyup);
+  }
+
+  /**
+   * Detach zoom keyboard events
+   */
+  detachKeyboardZoomEvents() {
+    fabric.util.removeListener(document, KEY_DOWN, this._listeners.keydown);
+    fabric.util.removeListener(document, KEY_UP, this._listeners.keyup);
   }
 
   /**
