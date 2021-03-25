@@ -162,6 +162,7 @@ class Graphics {
     this._createDrawingModeInstances();
     this._createComponents();
     this._attachCanvasEvents();
+    this._attachZoomEvents();
   }
 
   /**
@@ -173,6 +174,26 @@ class Graphics {
     this._canvas.clear();
 
     wrapperEl.parentNode.removeChild(wrapperEl);
+
+    this._detachZoomEvents();
+  }
+
+  /**
+   * Attach zoom events
+   */
+  _attachZoomEvents() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.attachKeyboardZoomEvents();
+  }
+
+  /**
+   * Detach zoom events
+   */
+  _detachZoomEvents() {
+    const zoom = this.getComponent(components.ZOOM);
+
+    zoom.detachKeyboardZoomEvents();
   }
 
   /**
