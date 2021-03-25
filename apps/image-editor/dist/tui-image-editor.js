@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.14.1
+ * @version 3.14.2
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -9338,18 +9338,38 @@ var Zoom = function (_Component) {
     _this.graphics.on(ADD_TEXT, _this._startTextEditingHandler.bind(_this));
     _this.graphics.on(TEXT_EDITING, _this._startTextEditingHandler.bind(_this));
     _this.graphics.on(OBJECT_MODIFIED, _this._stopTextEditingHandler.bind(_this));
-    _fabric2.default.util.addListener(document, KEY_DOWN, _this._listeners.keydown);
-    _fabric2.default.util.addListener(document, KEY_UP, _this._listeners.keyup);
     return _this;
   }
 
   /**
-   * Handler when you started editing text
-   * @private
+   * Attach zoom keyboard events
    */
 
 
   _createClass(Zoom, [{
+    key: 'attachKeyboardZoomEvents',
+    value: function attachKeyboardZoomEvents() {
+      _fabric2.default.util.addListener(document, KEY_DOWN, this._listeners.keydown);
+      _fabric2.default.util.addListener(document, KEY_UP, this._listeners.keyup);
+    }
+
+    /**
+     * Detach zoom keyboard events
+     */
+
+  }, {
+    key: 'detachKeyboardZoomEvents',
+    value: function detachKeyboardZoomEvents() {
+      _fabric2.default.util.removeListener(document, KEY_DOWN, this._listeners.keydown);
+      _fabric2.default.util.removeListener(document, KEY_UP, this._listeners.keyup);
+    }
+
+    /**
+     * Handler when you started editing text
+     * @private
+     */
+
+  }, {
     key: '_startTextEditingHandler',
     value: function _startTextEditingHandler() {
       this.isTextEditing = true;
@@ -9380,7 +9400,6 @@ var Zoom = function (_Component) {
       }
 
       if (e.keyCode === _consts.keyCodes.SPACE) {
-        e.preventDefault();
         this.withSpace = true;
         this.startHandMode();
       }
@@ -9396,7 +9415,6 @@ var Zoom = function (_Component) {
     key: '_endHandModeWithSpaceBar',
     value: function _endHandModeWithSpaceBar(e) {
       if (e.keyCode === _consts.keyCodes.SPACE) {
-        e.preventDefault();
         this.withSpace = false;
         this.endHandMode();
       }
@@ -12638,6 +12656,7 @@ var Graphics = function () {
     this._createDrawingModeInstances();
     this._createComponents();
     this._attachCanvasEvents();
+    this._attachZoomEvents();
   }
 
   /**
@@ -12654,6 +12673,32 @@ var Graphics = function () {
       this._canvas.clear();
 
       wrapperEl.parentNode.removeChild(wrapperEl);
+
+      this._detachZoomEvents();
+    }
+
+    /**
+     * Attach zoom events
+     */
+
+  }, {
+    key: '_attachZoomEvents',
+    value: function _attachZoomEvents() {
+      var zoom = this.getComponent(_consts.componentNames.ZOOM);
+
+      zoom.attachKeyboardZoomEvents();
+    }
+
+    /**
+     * Detach zoom events
+     */
+
+  }, {
+    key: '_detachZoomEvents',
+    value: function _detachZoomEvents() {
+      var zoom = this.getComponent(_consts.componentNames.ZOOM);
+
+      zoom.detachKeyboardZoomEvents();
     }
 
     /**
