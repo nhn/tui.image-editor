@@ -80,7 +80,8 @@ export const componentNames = keyMirror(
   'ICON',
   'FILTER',
   'SHAPE',
-  'ZOOM'
+  'ZOOM',
+  'RESIZE'
 );
 
 /**
@@ -132,6 +133,7 @@ export const commandNames = {
   SET_OBJECT_PROPERTIES: 'setObjectProperties',
   SET_OBJECT_POSITION: 'setObjectPosition',
   CHANGE_SELECTION: 'changeSelection',
+  RESIZE_IMAGE: 'resizeImage',
 };
 
 /**
@@ -181,6 +183,7 @@ export const historyNames = {
   ADD_MASK_IMAGE: 'Mask',
   ADD_IMAGE_OBJECT: 'Mask',
   CROP: 'Crop',
+  RESIZE: 'Resize',
   APPLY_FILTER: 'Filter',
   REMOVE_FILTER: 'Filter',
   CHANGE_SHAPE: 'Shape',
@@ -213,6 +216,7 @@ export const drawingModes = keyMirror(
 export const drawingMenuNames = {
   TEXT: 'text',
   CROP: 'crop',
+  RESIZE: 'resize',
   SHAPE: 'shape',
   ZOOM: 'zoom',
 };

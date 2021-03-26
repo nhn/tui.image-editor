@@ -14,6 +14,7 @@ export default {
       main: this._mainAction(),
       shape: this._shapeAction(),
       crop: this._cropAction(),
+      resize: this._resizeAction(),
       flip: this._flipAction(),
       rotate: this._rotateAction(),
       text: this._textAction(),
@@ -35,6 +36,10 @@ export default {
       if (this.ui.submenu === 'crop') {
         this.stopDrawingMode();
         this.ui.changeMenu('crop');
+      }
+      if (this.ui.submenu === 'resize') {
+        this.stopDrawingMode();
+        this.ui.changeMenu('resize');
       }
     };
     const setAngleRangeBarOnAction = (angle) => {
@@ -399,6 +404,63 @@ export default {
   },
 
   /**
+   * Resize Action
+   * @returns {Object} actions for ui resize
+   * @private
+   */
+  _resizeAction() {
+    return extend(
+      {
+        crop: () => {
+          const cropRect = this.getCropzoneRect();
+          if (cropRect && !isEmptyCropzone(cropRect)) {
+            this.crop(cropRect)
+              .then(() => {
+                this.stopDrawingMode();
+                this.ui.resizeEditor();
+                this.ui.changeMenu('crop');
+                this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
+              })
+              ['catch']((message) => Promise.reject(message));
+          }
+        },
+        cancel: () => {
+          this.stopDrawingMode();
+          this.ui.changeMenu('crop');
+        },
+        /* eslint-disable */
+        preset: (presetType) => {
+          switch (presetType) {
+            case 'preset-square':
+              this.setCropzoneRect(1 / 1);
+              break;
+            case 'preset-3-2':
+              this.setCropzoneRect(3 / 2);
+              break;
+            case 'preset-4-3':
+              this.setCropzoneRect(4 / 3);
+              break;
+            case 'preset-5-4':
+              this.setCropzoneRect(5 / 4);
+              break;
+            case 'preset-7-5':
+              this.setCropzoneRect(7 / 5);
+              break;
+            case 'preset-16-9':
+              this.setCropzoneRect(16 / 9);
+              break;
+            default:
+              this.setCropzoneRect();
+              this.ui.crop.changeApplyButtonStatus(false);
+              break;
+          }
+        },
+      },
+      this._commonAction()
+    );
+  },
+
+  /**
    * Flip Action
    * @returns {Object} actions for ui flip
    * @private
@@ -534,7 +596,7 @@ export default {
         this.activeObjectId = null;
         if (this.ui.submenu === 'text') {
           this.changeCursor('text');
-        } else if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop') {
+        } else if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop' && this.ui.submenu !== 'resize') {
           this.stopDrawingMode();
         }
       },

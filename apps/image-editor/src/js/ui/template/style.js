@@ -37,6 +37,8 @@ export default ({
     .tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,
     .tie-crop-button .tui-image-editor-button.apply.active label,
     .tie-crop-preset-button .tui-image-editor-button.preset.active label,
+    .tie-resize-button .tui-image-editor-button.apply.active label,
+    .tie-resize-preset-button .tui-image-editor-button.preset.active label,
     .tie-shape-button.rect .tui-image-editor-button.rect label,
     .tie-shape-button.circle .tui-image-editor-button.circle label,
     .tie-shape-button.triangle .tui-image-editor-button.triangle label,
