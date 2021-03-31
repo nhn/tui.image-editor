@@ -104,6 +104,14 @@ class Submenu {
 
     this.subMenuElement.appendChild(iconSubMenu);
   }
+
+  _onStartEditingInputBox() {
+    this.fire('inputBoxEditingStarted');
+  }
+
+  _onStopEditingInputBox() {
+    this.fire('inputBoxEditingStopped');
+  }
 }
 
 export default Submenu;

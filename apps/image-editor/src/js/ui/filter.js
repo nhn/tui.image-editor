@@ -105,6 +105,15 @@ class Filter extends Submenu {
 
     this._els.blendType.removeEventListener('change', this.eventHandler.changeBlendFilter);
     this._els.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
+        inputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   _destroyToolInstance() {
@@ -154,6 +163,15 @@ class Filter extends Submenu {
 
     this._els.blendType.addEventListener('change', this.eventHandler.changeBlendFilter);
     this._els.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
+        inputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   /**
@@ -349,6 +367,17 @@ class Filter extends Submenu {
     this.colorPickerControls.push(this._els.filterTintColor);
     this.colorPickerControls.push(this._els.filterMultiplyColor);
     this.colorPickerControls.push(this._els.filterBlendColor);
+
+    this.colorPickerInputBoxes = [];
+    this.colorPickerInputBoxes.push(
+      this._els.filterTintColor.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+    );
+    this.colorPickerInputBoxes.push(
+      this._els.filterMultiplyColor.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+    );
+    this.colorPickerInputBoxes.push(
+      this._els.filterBlendColor.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+    );
   }
 
   /**
@@ -459,5 +488,7 @@ class Filter extends Submenu {
     });
   }
 }
+
+snippet.CustomEvents.mixin(Filter);
 
 export default Filter;

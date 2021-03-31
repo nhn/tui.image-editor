@@ -1,3 +1,4 @@
+import { CustomEvents } from 'tui-code-snippet';
 import Range from '@/ui/tools/range';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
@@ -10,7 +11,7 @@ import { defaultTextRangeValues } from '@/consts';
  * @class
  * @ignore
  */
-export default class Text extends Submenu {
+class Text extends Submenu {
   constructor(subMenuElement, { locale, makeSvgIcon, menuBarPosition, usageStatistics }) {
     super(subMenuElement, {
       locale,
@@ -43,6 +44,10 @@ export default class Text extends Submenu {
         defaultTextRangeValues
       ),
     };
+
+    this.colorPickerInputBox = this._els.textColorpicker.colorpickerElement.querySelector(
+      '.tui-colorpicker-palette-hex'
+    );
   }
 
   /**
@@ -75,6 +80,9 @@ export default class Text extends Submenu {
     this._els.textAlignButton.addEventListener('click', setTextAlign);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
+
+    this.colorPickerInputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
+    this.colorPickerInputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
   }
 
   /**
@@ -88,6 +96,9 @@ export default class Text extends Submenu {
     this._els.textAlignButton.removeEventListener('click', setTextAlign);
     this._els.textRange.off();
     this._els.textColorpicker.off();
+
+    this.colorPickerInputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
+    this.colorPickerInputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
   }
 
   /**
@@ -253,3 +264,7 @@ export default class Text extends Submenu {
     });
   }
 }
+
+CustomEvents.mixin(Text);
+
+export default Text;

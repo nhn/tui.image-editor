@@ -1,3 +1,4 @@
+import snippet from 'tui-code-snippet';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
@@ -55,6 +56,14 @@ class Shape extends Submenu {
 
     this.colorPickerControls.push(this._els.fillColorpicker);
     this.colorPickerControls.push(this._els.strokeColorpicker);
+
+    this.colorPickerInputBoxes = [];
+    this.colorPickerInputBoxes.push(
+      this._els.fillColorpicker.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+    );
+    this.colorPickerInputBoxes.push(
+      this._els.strokeColorpicker.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+    );
   }
 
   /**
@@ -85,6 +94,15 @@ class Shape extends Submenu {
     this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
     this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
     this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
+        inputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   /**
@@ -96,6 +114,15 @@ class Shape extends Submenu {
     this._els.strokeRange.off();
     this._els.fillColorpicker.off();
     this._els.strokeColorpicker.off();
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
+        inputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   /**
@@ -232,5 +259,7 @@ class Shape extends Submenu {
     });
   }
 }
+
+snippet.CustomEvents.mixin(Shape);
 
 export default Shape;

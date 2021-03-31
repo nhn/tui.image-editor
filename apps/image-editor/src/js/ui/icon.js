@@ -34,6 +34,10 @@ class Icon extends Submenu {
         this.usageStatistics
       ),
     };
+
+    this.colorPickerInputBox = this._els.iconColorpicker.colorpickerElement.querySelector(
+      '.tui-colorpicker-palette-hex'
+    );
   }
 
   /**
@@ -66,6 +70,9 @@ class Icon extends Submenu {
     this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
     this._els.registerIconButton.addEventListener('change', registerIcon);
     this._els.addIconButton.addEventListener('click', addIcon);
+
+    this.colorPickerInputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
+    this.colorPickerInputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
   }
 
   /**
@@ -76,6 +83,9 @@ class Icon extends Submenu {
     this._els.iconColorpicker.off();
     this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
     this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
+
+    this.colorPickerInputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
+    this.colorPickerInputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
   }
 
   /**
@@ -166,5 +176,7 @@ class Icon extends Submenu {
     }
   }
 }
+
+snippet.CustomEvents.mixin(Icon);
 
 export default Icon;
