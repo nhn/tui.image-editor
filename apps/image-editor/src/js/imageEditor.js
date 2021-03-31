@@ -244,8 +244,23 @@ class ImageEditor {
     if (this.ui) {
       this.ui.initCanvas();
       this.setReAction();
+      this._attachColorPickerInputBoxEvents();
     }
     fabric.enableGLFiltering = false;
+  }
+
+  _attachColorPickerInputBoxEvents() {
+    this.ui.on('inputBoxEditingStarted', () => {
+      this.isColorPickerInputBoxEditing = true;
+    });
+    this.ui.on('inputBoxEditingStopped', () => {
+      this.isColorPickerInputBoxEditing = false;
+    });
+  }
+
+  _detachColorPickerInputBoxEvents() {
+    this.ui.off('inputBoxEditingStarted');
+    this.ui.off('inputBoxEditingStopped');
   }
 
   /**
@@ -392,7 +407,7 @@ class ImageEditor {
     const isDeleteKey = keyCode === keyCodes.BACKSPACE || keyCode === keyCodes.DEL;
     const isRemoveReady = this._graphics.isReadyRemoveObject();
 
-    if (isRemoveReady && isDeleteKey) {
+    if (!this.isColorPickerInputBoxEditing && isRemoveReady && isDeleteKey) {
       e.preventDefault();
       this.removeActiveObject();
     }
@@ -1574,6 +1589,7 @@ class ImageEditor {
     this._graphics = null;
 
     if (this.ui) {
+      this._detachColorPickerInputBoxEvents();
       this.ui.destroy();
     }
 

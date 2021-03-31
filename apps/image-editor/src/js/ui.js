@@ -602,6 +602,8 @@ class Ui {
    */
   _addSubMenuEvent(menuName) {
     this[menuName].addEvent(this._actions[menuName]);
+    this[menuName].on('inputBoxEditingStarted', () => this.fire('inputBoxEditingStarted'));
+    this[menuName].on('inputBoxEditingStopped', () => this.fire('inputBoxEditingStopped'));
   }
 
   /**
@@ -622,6 +624,8 @@ class Ui {
   _removeMainMenuEvent() {
     snippet.forEach(this.options.menu, (menuName) => {
       this._buttonElements[menuName].removeEventListener('click', this.eventHandler[menuName]);
+      this[menuName].off('inputBoxEditingStarted');
+      this[menuName].off('inputBoxEditingStopped');
     });
   }
 
