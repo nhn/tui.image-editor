@@ -136,9 +136,13 @@ export default {
               this._clearHistory();
               this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_IMAGE);
             })
-            ['catch']((message) => Promise.reject(message));
+          ['catch']((message) => Promise.reject(message));
         },
         download: () => {
+          if (this.ui.options.saveImage !== undefined) {
+            this.ui.options.saveImage(this);
+            return;
+          }
           const dataURL = this.toDataURL();
           let imageName = this.getImageName();
           let blob, type, w;
@@ -359,7 +363,7 @@ export default {
                 this.ui.changeMenu('crop');
                 this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
               })
-              ['catch']((message) => Promise.reject(message));
+            ['catch']((message) => Promise.reject(message));
           }
         },
         cancel: () => {

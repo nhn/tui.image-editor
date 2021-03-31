@@ -60,6 +60,7 @@ const ZOOM_BUTTON_TYPE = {
  *   @param {Object} [options.uiSize] - ui size of editor
  *     @param {string} options.uiSize.width - width of ui
  *     @param {string} options.uiSize.height - height of ui
+ *   @param {Object} options.saveImage - custom save image
  * @param {Object} actions - ui action instance
  */
 class Ui {
@@ -254,6 +255,7 @@ class Ui {
           height: '100%',
         },
         menuBarPosition: 'bottom',
+        saveImage: undefined,
       },
       options
     );
