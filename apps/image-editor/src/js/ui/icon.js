@@ -177,6 +177,4 @@ class Icon extends Submenu {
   }
 }
 
-snippet.CustomEvents.mixin(Icon);
-
 export default Icon;

@@ -489,6 +489,4 @@ class Filter extends Submenu {
   }
 }
 
-snippet.CustomEvents.mixin(Filter);
-
 export default Filter;

@@ -1,3 +1,5 @@
+import { CustomEvents } from 'tui-code-snippet';
+
 /**
  * Submenu Base Class
  * @class
@@ -113,5 +115,7 @@ class Submenu {
     this.fire('inputBoxEditingStopped');
   }
 }
+
+CustomEvents.mixin(Submenu);
 
 export default Submenu;

@@ -1,4 +1,3 @@
-import { CustomEvents } from 'tui-code-snippet';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
@@ -173,7 +172,5 @@ class Draw extends Submenu {
     }
   }
 }
-
-CustomEvents.mixin(Draw);
 
 export default Draw;

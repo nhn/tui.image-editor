@@ -260,6 +260,4 @@ class Shape extends Submenu {
   }
 }
 
-snippet.CustomEvents.mixin(Shape);
-
 export default Shape;

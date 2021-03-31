@@ -1,4 +1,3 @@
-import { CustomEvents } from 'tui-code-snippet';
 import Range from '@/ui/tools/range';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
@@ -264,7 +263,5 @@ class Text extends Submenu {
     });
   }
 }
-
-CustomEvents.mixin(Text);
 
 export default Text;
