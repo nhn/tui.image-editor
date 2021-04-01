@@ -3,7 +3,7 @@ import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/text';
 import { assignmentForDestroy } from '@/util';
-import { defaultTextRangeValues } from '@/consts';
+import { defaultTextRangeValues, eventNames, selectorNames } from '@/consts';
 
 /**
  * Crop ui class
@@ -45,7 +45,7 @@ class Text extends Submenu {
     };
 
     this.colorPickerInputBox = this._els.textColorpicker.colorpickerElement.querySelector(
-      '.tui-colorpicker-palette-hex'
+      selectorNames.COLOR_PICKER_INPUT_BOX
     );
   }
 
@@ -80,8 +80,14 @@ class Text extends Submenu {
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
 
-    this.colorPickerInputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
-    this.colorPickerInputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
+    this.colorPickerInputBox.addEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.addEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**
@@ -96,8 +102,14 @@ class Text extends Submenu {
     this._els.textRange.off();
     this._els.textColorpicker.off();
 
-    this.colorPickerInputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
-    this.colorPickerInputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**

@@ -1,4 +1,5 @@
 import { CustomEvents } from 'tui-code-snippet';
+import { eventNames } from '@/consts';
 
 /**
  * Submenu Base Class
@@ -108,11 +109,11 @@ class Submenu {
   }
 
   _onStartEditingInputBox() {
-    this.fire('inputBoxEditingStarted');
+    this.fire(eventNames.INPUT_BOX_EDITING_STARTED);
   }
 
   _onStopEditingInputBox() {
-    this.fire('inputBoxEditingStopped');
+    this.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
   }
 }
 

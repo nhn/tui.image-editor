@@ -4,7 +4,7 @@ import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/shape';
 import { toInteger, assignmentForDestroy } from '@/util';
-import { defaultShapeStrokeValues } from '@/consts';
+import { defaultShapeStrokeValues, eventNames, selectorNames } from '@/consts';
 
 const SHAPE_DEFAULT_OPTION = {
   stroke: '#ffbb3b',
@@ -59,10 +59,14 @@ class Shape extends Submenu {
 
     this.colorPickerInputBoxes = [];
     this.colorPickerInputBoxes.push(
-      this._els.fillColorpicker.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+      this._els.fillColorpicker.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
     );
     this.colorPickerInputBoxes.push(
-      this._els.strokeColorpicker.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+      this._els.strokeColorpicker.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
     );
   }
 
@@ -98,8 +102,8 @@ class Shape extends Submenu {
     snippet.forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
-        inputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
-        inputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
+        inputBox.addEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.addEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
       },
       this
     );
@@ -118,8 +122,8 @@ class Shape extends Submenu {
     snippet.forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
-        inputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
-        inputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
+        inputBox.removeEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.removeEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
       },
       this
     );

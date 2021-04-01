@@ -250,17 +250,17 @@ class ImageEditor {
   }
 
   _attachColorPickerInputBoxEvents() {
-    this.ui.on('inputBoxEditingStarted', () => {
+    this.ui.on(events.INPUT_BOX_EDITING_STARTED, () => {
       this.isColorPickerInputBoxEditing = true;
     });
-    this.ui.on('inputBoxEditingStopped', () => {
+    this.ui.on(events.INPUT_BOX_EDITING_STOPPED, () => {
       this.isColorPickerInputBoxEditing = false;
     });
   }
 
   _detachColorPickerInputBoxEvents() {
-    this.ui.off('inputBoxEditingStarted');
-    this.ui.off('inputBoxEditingStopped');
+    this.ui.off(events.INPUT_BOX_EDITING_STARTED);
+    this.ui.off(events.INPUT_BOX_EDITING_STOPPED);
   }
 
   /**

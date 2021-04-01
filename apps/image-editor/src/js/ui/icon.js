@@ -3,7 +3,7 @@ import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/icon';
 import { isSupportFileApi, assignmentForDestroy } from '@/util';
-import { defaultIconPath } from '@/consts';
+import { defaultIconPath, eventNames, selectorNames } from '@/consts';
 
 /**
  * Icon ui class
@@ -36,7 +36,7 @@ class Icon extends Submenu {
     };
 
     this.colorPickerInputBox = this._els.iconColorpicker.colorpickerElement.querySelector(
-      '.tui-colorpicker-palette-hex'
+      selectorNames.COLOR_PICKER_INPUT_BOX
     );
   }
 
@@ -71,8 +71,14 @@ class Icon extends Submenu {
     this._els.registerIconButton.addEventListener('change', registerIcon);
     this._els.addIconButton.addEventListener('click', addIcon);
 
-    this.colorPickerInputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
-    this.colorPickerInputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
+    this.colorPickerInputBox.addEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.addEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**
@@ -84,8 +90,14 @@ class Icon extends Submenu {
     this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
     this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
 
-    this.colorPickerInputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
-    this.colorPickerInputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**

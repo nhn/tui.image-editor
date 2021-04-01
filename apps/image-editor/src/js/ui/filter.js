@@ -4,7 +4,7 @@ import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/filter';
 import { toInteger, toCamelCase, assignmentForDestroy } from '@/util';
-import { defaultFilterRangeValues as FILTER_RANGE } from '@/consts';
+import { defaultFilterRangeValues as FILTER_RANGE, eventNames, selectorNames } from '@/consts';
 
 const PICKER_CONTROL_HEIGHT = '130px';
 const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
@@ -109,8 +109,8 @@ class Filter extends Submenu {
     snippet.forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
-        inputBox.removeEventListener('focus', this._onStartEditingInputBox.bind(this));
-        inputBox.removeEventListener('blur', this._onStopEditingInputBox.bind(this));
+        inputBox.removeEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.removeEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
       },
       this
     );
@@ -167,8 +167,8 @@ class Filter extends Submenu {
     snippet.forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
-        inputBox.addEventListener('focus', this._onStartEditingInputBox.bind(this));
-        inputBox.addEventListener('blur', this._onStopEditingInputBox.bind(this));
+        inputBox.addEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.addEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
       },
       this
     );
@@ -370,13 +370,19 @@ class Filter extends Submenu {
 
     this.colorPickerInputBoxes = [];
     this.colorPickerInputBoxes.push(
-      this._els.filterTintColor.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+      this._els.filterTintColor.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
     );
     this.colorPickerInputBoxes.push(
-      this._els.filterMultiplyColor.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+      this._els.filterMultiplyColor.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
     );
     this.colorPickerInputBoxes.push(
-      this._els.filterBlendColor.colorpickerElement.querySelector('.tui-colorpicker-palette-hex')
+      this._els.filterBlendColor.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
     );
   }
 
