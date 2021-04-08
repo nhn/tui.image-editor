@@ -1,9 +1,10 @@
+import snippet from 'tui-code-snippet';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/shape';
 import { toInteger, assignmentForDestroy } from '@/util';
-import { defaultShapeStrokeValues } from '@/consts';
+import { defaultShapeStrokeValues, eventNames, selectorNames } from '@/consts';
 
 const SHAPE_DEFAULT_OPTION = {
   stroke: '#ffbb3b',
@@ -55,6 +56,18 @@ class Shape extends Submenu {
 
     this.colorPickerControls.push(this._els.fillColorpicker);
     this.colorPickerControls.push(this._els.strokeColorpicker);
+
+    this.colorPickerInputBoxes = [];
+    this.colorPickerInputBoxes.push(
+      this._els.fillColorpicker.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
+    );
+    this.colorPickerInputBoxes.push(
+      this._els.strokeColorpicker.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
+    );
   }
 
   /**
@@ -85,6 +98,15 @@ class Shape extends Submenu {
     this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
     this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
     this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.addEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.addEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   /**
@@ -96,6 +118,15 @@ class Shape extends Submenu {
     this._els.strokeRange.off();
     this._els.fillColorpicker.off();
     this._els.strokeColorpicker.off();
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.removeEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.removeEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   /**

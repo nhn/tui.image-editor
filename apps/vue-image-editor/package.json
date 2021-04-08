@@ -1,6 +1,6 @@
 {
   "name": "@toast-ui/vue-image-editor",
-  "version": "3.14.2",
+  "version": "3.14.3",
   "description": "TOAST UI Image-Editor for Vue",
   "main": "dist/toastui-vue-image-editor.js",
   "files": [
@@ -43,6 +43,6 @@
   },
   "dependencies": {
     "fabric": "^4.2.0",
-    "tui-image-editor": "^3.14.2"
+    "tui-image-editor": "^3.14.3"
   }
 }

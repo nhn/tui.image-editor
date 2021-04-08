@@ -3,7 +3,7 @@ import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/draw';
 import { assignmentForDestroy, getRgb } from '@/util';
-import { defaultDrawRangeValues } from '@/consts';
+import { defaultDrawRangeValues, eventNames, selectorNames } from '@/consts';
 
 const DRAW_OPACITY = 0.7;
 
@@ -43,6 +43,10 @@ class Draw extends Submenu {
     this.type = null;
     this.color = this._els.drawColorPicker.color;
     this.width = this._els.drawRange.value;
+
+    this.colorPickerInputBox = this._els.drawColorPicker.colorpickerElement.querySelector(
+      selectorNames.COLOR_PICKER_INPUT_BOX
+    );
   }
 
   /**
@@ -68,6 +72,15 @@ class Draw extends Submenu {
     this._els.lineSelectButton.addEventListener('click', this.eventHandler.changeDrawType);
     this._els.drawColorPicker.on('change', this._changeDrawColor.bind(this));
     this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+
+    this.colorPickerInputBox.addEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.addEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**
@@ -78,6 +91,15 @@ class Draw extends Submenu {
     this._els.lineSelectButton.removeEventListener('click', this.eventHandler.changeDrawType);
     this._els.drawColorPicker.off();
     this._els.drawRange.off();
+
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**

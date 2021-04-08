@@ -1,3 +1,6 @@
+import { CustomEvents } from 'tui-code-snippet';
+import { eventNames } from '@/consts';
+
 /**
  * Submenu Base Class
  * @class
@@ -104,6 +107,16 @@ class Submenu {
 
     this.subMenuElement.appendChild(iconSubMenu);
   }
+
+  _onStartEditingInputBox() {
+    this.fire(eventNames.INPUT_BOX_EDITING_STARTED);
+  }
+
+  _onStopEditingInputBox() {
+    this.fire(eventNames.INPUT_BOX_EDITING_STOPPED);
+  }
 }
+
+CustomEvents.mixin(Submenu);
 
 export default Submenu;
