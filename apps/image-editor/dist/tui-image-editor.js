@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.14.2
+ * @version 3.14.3
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -3501,6 +3501,11 @@ exports.default = {
         _this._graphics.endHandMode();
       }
     };
+    var initFilterState = function initFilterState() {
+      if (_this.ui.filter) {
+        _this.ui.filter.initFilterCheckBoxState();
+      }
+    };
 
     return (0, _tuiCodeSnippet.extend)({
       initLoadImage: function initLoadImage(imagePath, imageName) {
@@ -3530,6 +3535,7 @@ exports.default = {
         exitCropOnAction();
         _this.loadImageFromURL(_this.ui.initializeImgUrl, 'resetImage').then(function (sizeValue) {
           exitCropOnAction();
+          initFilterState();
           _this.ui.resizeEditor({ imageSize: sizeValue });
           _this.clearUndoStack();
           _this._initHistory();
@@ -3555,6 +3561,7 @@ exports.default = {
         _this.ui.initializeImgUrl = URL.createObjectURL(file);
         _this.loadImageFromFile(file).then(function (sizeValue) {
           exitCropOnAction();
+          initFilterState();
           _this.clearUndoStack();
           _this.ui.activeMenuEvent();
           _this.ui.resizeEditor({ imageSize: sizeValue });
@@ -10094,7 +10101,7 @@ exports.default = Zoom;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.emptyCropRectValues = exports.defaultFilterRangeValues = exports.defaultTextRangeValues = exports.defaultShapeStrokeValues = exports.defaultDrawRangeValues = exports.defaultRotateRangeValues = exports.defaultIconPath = exports.rejectMessages = exports.fObjectOptions = exports.keyCodes = exports.zoomModes = exports.drawingMenuNames = exports.drawingModes = exports.historyNames = exports.eventNames = exports.commandNames = exports.CROPZONE_DEFAULT_OPTIONS = exports.SHAPE_DEFAULT_OPTIONS = exports.componentNames = exports.filterType = exports.OBJ_TYPE = exports.SHAPE_TYPE = exports.SHAPE_FILL_TYPE = exports.HELP_MENUS = exports.DELETE_HELP_MENUS = exports.COMMAND_HELP_MENUS = exports.ZOOM_HELP_MENUS = undefined;
+exports.emptyCropRectValues = exports.defaultFilterRangeValues = exports.defaultTextRangeValues = exports.defaultShapeStrokeValues = exports.defaultDrawRangeValues = exports.defaultRotateRangeValues = exports.defaultIconPath = exports.rejectMessages = exports.fObjectOptions = exports.keyCodes = exports.zoomModes = exports.drawingMenuNames = exports.drawingModes = exports.historyNames = exports.selectorNames = exports.eventNames = exports.commandNames = exports.CROPZONE_DEFAULT_OPTIONS = exports.SHAPE_DEFAULT_OPTIONS = exports.componentNames = exports.filterType = exports.OBJ_TYPE = exports.SHAPE_TYPE = exports.SHAPE_FILL_TYPE = exports.HELP_MENUS = exports.DELETE_HELP_MENUS = exports.COMMAND_HELP_MENUS = exports.ZOOM_HELP_MENUS = undefined;
 
 var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
 
@@ -10254,7 +10261,19 @@ var eventNames = exports.eventNames = {
   HAND_STARTED: 'handStarted',
   HAND_STOPPED: 'handStopped',
   KEY_DOWN: 'keydown',
-  KEY_UP: 'keyup'
+  KEY_UP: 'keyup',
+  INPUT_BOX_EDITING_STARTED: 'inputBoxEditingStarted',
+  INPUT_BOX_EDITING_STOPPED: 'inputBoxEditingStopped',
+  FOCUS: 'focus',
+  BLUR: 'blur'
+};
+
+/**
+ * Selector names
+ * @type {Object.<string, string>}
+ */
+var selectorNames = exports.selectorNames = {
+  COLOR_PICKER_INPUT_BOX: '.tui-colorpicker-palette-hex'
 };
 
 /**
@@ -16795,21 +16814,40 @@ var ImageEditor = function () {
     if (this.ui) {
       this.ui.initCanvas();
       this.setReAction();
+      this._attachColorPickerInputBoxEvents();
     }
     fabric.enableGLFiltering = false;
   }
 
-  /**
-   * Set selection style by init option
-   * @param {Object} selectionStyle - Selection styles
-   * @param {Object} applyTargets - Selection apply targets
-   *   @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
-   *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
-   * @private
-   */
-
-
   _createClass(ImageEditor, [{
+    key: '_attachColorPickerInputBoxEvents',
+    value: function _attachColorPickerInputBoxEvents() {
+      var _this = this;
+
+      this.ui.on(_consts.eventNames.INPUT_BOX_EDITING_STARTED, function () {
+        _this.isColorPickerInputBoxEditing = true;
+      });
+      this.ui.on(_consts.eventNames.INPUT_BOX_EDITING_STOPPED, function () {
+        _this.isColorPickerInputBoxEditing = false;
+      });
+    }
+  }, {
+    key: '_detachColorPickerInputBoxEvents',
+    value: function _detachColorPickerInputBoxEvents() {
+      this.ui.off(_consts.eventNames.INPUT_BOX_EDITING_STARTED);
+      this.ui.off(_consts.eventNames.INPUT_BOX_EDITING_STOPPED);
+    }
+
+    /**
+     * Set selection style by init option
+     * @param {Object} selectionStyle - Selection styles
+     * @param {Object} applyTargets - Selection apply targets
+     *   @param {boolean} applyCropSelectionStyle - whether apply with crop selection style or not
+     *   @param {boolean} applyGroupSelectionStyle - whether apply with group selection style or not
+     * @private
+     */
+
+  }, {
     key: '_setSelectionStyle',
     value: function _setSelectionStyle(selectionStyle, _ref) {
       var applyCropSelectionStyle = _ref.applyCropSelectionStyle,
@@ -16840,7 +16878,7 @@ var ImageEditor = function () {
   }, {
     key: '_attachInvokerEvents',
     value: function _attachInvokerEvents() {
-      var _this = this;
+      var _this2 = this;
 
       var UNDO_STACK_CHANGED = _consts.eventNames.UNDO_STACK_CHANGED,
           REDO_STACK_CHANGED = _consts.eventNames.REDO_STACK_CHANGED,
@@ -16876,20 +16914,20 @@ var ImageEditor = function () {
         var canvas = this._graphics.getCanvas();
 
         this._invoker.on(EXECUTE_COMMAND, function (command) {
-          return _this.ui.fire(EXECUTE_COMMAND, command);
+          return _this2.ui.fire(EXECUTE_COMMAND, command);
         });
         this._invoker.on(AFTER_UNDO, function (command) {
-          return _this.ui.fire(AFTER_UNDO, command);
+          return _this2.ui.fire(AFTER_UNDO, command);
         });
         this._invoker.on(AFTER_REDO, function (command) {
-          return _this.ui.fire(AFTER_REDO, command);
+          return _this2.ui.fire(AFTER_REDO, command);
         });
 
         canvas.on(HAND_STARTED, function () {
-          return _this.ui.fire(HAND_STARTED);
+          return _this2.ui.fire(HAND_STARTED);
         });
         canvas.on(HAND_STOPPED, function () {
-          return _this.ui.fire(HAND_STOPPED);
+          return _this2.ui.fire(HAND_STOPPED);
         });
       }
     }
@@ -16965,7 +17003,7 @@ var ImageEditor = function () {
       var isDeleteKey = keyCode === _consts.keyCodes.BACKSPACE || keyCode === _consts.keyCodes.DEL;
       var isRemoveReady = this._graphics.isReadyRemoveObject();
 
-      if (isRemoveReady && isDeleteKey) {
+      if (!this.isColorPickerInputBoxEditing && isRemoveReady && isDeleteKey) {
         e.preventDefault();
         this.removeActiveObject();
       }
@@ -17040,12 +17078,12 @@ var ImageEditor = function () {
   }, {
     key: '_pushModifyObjectCommand',
     value: function _pushModifyObjectCommand(obj) {
-      var _this2 = this;
+      var _this3 = this;
 
       var type = obj.type;
 
       var props = (0, _selectionModifyHelper.makeSelectionUndoData)(obj, function (item) {
-        return (0, _selectionModifyHelper.makeSelectionUndoDatum)(_this2._graphics.getObjectId(item), item, type === 'activeSelection');
+        return (0, _selectionModifyHelper.makeSelectionUndoDatum)(_this3._graphics.getObjectId(item), item, type === 'activeSelection');
       });
       var command = _command2.default.create(_consts.commandNames.CHANGE_SELECTION, this._graphics, props);
       command.execute(this._graphics, props);
@@ -17297,7 +17335,7 @@ var ImageEditor = function () {
   }, {
     key: 'undo',
     value: function undo() {
-      var _this3 = this;
+      var _this4 = this;
 
       var iterationCount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -17305,7 +17343,7 @@ var ImageEditor = function () {
 
       for (var i = 0; i < iterationCount; i += 1) {
         promise = promise.then(function () {
-          return _this3._invoker.undo();
+          return _this4._invoker.undo();
         });
       }
 
@@ -17323,7 +17361,7 @@ var ImageEditor = function () {
   }, {
     key: 'redo',
     value: function redo() {
-      var _this4 = this;
+      var _this5 = this;
 
       var iterationCount = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
 
@@ -17331,7 +17369,7 @@ var ImageEditor = function () {
 
       for (var i = 0; i < iterationCount; i += 1) {
         promise = promise.then(function () {
-          return _this4._invoker.redo();
+          return _this5._invoker.redo();
         });
       }
 
@@ -18384,7 +18422,7 @@ var ImageEditor = function () {
   }, {
     key: 'destroy',
     value: function destroy() {
-      var _this5 = this;
+      var _this6 = this;
 
       this.stopDrawingMode();
       this._detachDomEvents();
@@ -18392,11 +18430,12 @@ var ImageEditor = function () {
       this._graphics = null;
 
       if (this.ui) {
+        this._detachColorPickerInputBoxEvents();
         this.ui.destroy();
       }
 
       forEach(this, function (value, key) {
-        _this5[key] = null;
+        _this6[key] = null;
       }, this);
     }
 
@@ -20727,7 +20766,15 @@ var Ui = function () {
   }, {
     key: '_addSubMenuEvent',
     value: function _addSubMenuEvent(menuName) {
+      var _this12 = this;
+
       this[menuName].addEvent(this._actions[menuName]);
+      this[menuName].on(_consts.eventNames.INPUT_BOX_EDITING_STARTED, function () {
+        return _this12.fire(_consts.eventNames.INPUT_BOX_EDITING_STARTED);
+      });
+      this[menuName].on(_consts.eventNames.INPUT_BOX_EDITING_STOPPED, function () {
+        return _this12.fire(_consts.eventNames.INPUT_BOX_EDITING_STOPPED);
+      });
     }
 
     /**
@@ -20738,11 +20785,11 @@ var Ui = function () {
   }, {
     key: '_addMenuEvent',
     value: function _addMenuEvent() {
-      var _this12 = this;
+      var _this13 = this;
 
       _tuiCodeSnippet2.default.forEach(this.options.menu, function (menuName) {
-        _this12._addMainMenuEvent(menuName);
-        _this12._addSubMenuEvent(menuName);
+        _this13._addMainMenuEvent(menuName);
+        _this13._addSubMenuEvent(menuName);
       });
     }
 
@@ -20754,10 +20801,12 @@ var Ui = function () {
   }, {
     key: '_removeMainMenuEvent',
     value: function _removeMainMenuEvent() {
-      var _this13 = this;
+      var _this14 = this;
 
       _tuiCodeSnippet2.default.forEach(this.options.menu, function (menuName) {
-        _this13._buttonElements[menuName].removeEventListener('click', _this13.eventHandler[menuName]);
+        _this14._buttonElements[menuName].removeEventListener('click', _this14.eventHandler[menuName]);
+        _this14[menuName].off(_consts.eventNames.INPUT_BOX_EDITING_STARTED);
+        _this14[menuName].off(_consts.eventNames.INPUT_BOX_EDITING_STOPPED);
       });
     }
 
@@ -20816,10 +20865,10 @@ var Ui = function () {
   }, {
     key: '_destroyAllMenu',
     value: function _destroyAllMenu() {
-      var _this14 = this;
+      var _this15 = this;
 
       _tuiCodeSnippet2.default.forEach(this.options.menu, function (menuName) {
-        _this14[menuName].destroy();
+        _this15[menuName].destroy();
       });
 
       this._historyMenu.destroy();
@@ -20833,12 +20882,12 @@ var Ui = function () {
   }, {
     key: 'initCanvas',
     value: function initCanvas() {
-      var _this15 = this;
+      var _this16 = this;
 
       var loadImageInfo = this._getLoadImage();
       if (loadImageInfo.path) {
         this._actions.main.initLoadImage(loadImageInfo.path, loadImageInfo.name).then(function () {
-          _this15.activeMenuEvent();
+          _this16.activeMenuEvent();
         });
       }
 
@@ -21319,6 +21368,8 @@ var Draw = function (_Submenu) {
     _this.type = null;
     _this.color = _this._els.drawColorPicker.color;
     _this.width = _this._els.drawRange.value;
+
+    _this.colorPickerInputBox = _this._els.drawColorPicker.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX);
     return _this;
   }
 
@@ -21352,6 +21403,9 @@ var Draw = function (_Submenu) {
       this._els.lineSelectButton.addEventListener('click', this.eventHandler.changeDrawType);
       this._els.drawColorPicker.on('change', this._changeDrawColor.bind(this));
       this._els.drawRange.on('change', this._changeDrawRange.bind(this));
+
+      this.colorPickerInputBox.addEventListener(_consts.eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+      this.colorPickerInputBox.addEventListener(_consts.eventNames.BLUR, this._onStopEditingInputBox.bind(this));
     }
 
     /**
@@ -21365,6 +21419,9 @@ var Draw = function (_Submenu) {
       this._els.lineSelectButton.removeEventListener('click', this.eventHandler.changeDrawType);
       this._els.drawColorPicker.off();
       this._els.drawRange.off();
+
+      this.colorPickerInputBox.removeEventListener(_consts.eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+      this.colorPickerInputBox.removeEventListener(_consts.eventNames.BLUR, this._onStopEditingInputBox.bind(this));
     }
 
     /**
@@ -21618,6 +21675,11 @@ var Filter = function (_Submenu) {
 
       this._els.blendType.removeEventListener('change', this.eventHandler.changeBlendFilter);
       this._els.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
+
+      _tuiCodeSnippet2.default.forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+        inputBox.removeEventListener(_consts.eventNames.FOCUS, _this2._onStartEditingInputBox.bind(_this2));
+        inputBox.removeEventListener(_consts.eventNames.BLUR, _this2._onStopEditingInputBox.bind(_this2));
+      }, this);
     }
   }, {
     key: '_destroyToolInstance',
@@ -21683,6 +21745,11 @@ var Filter = function (_Submenu) {
 
       this._els.blendType.addEventListener('change', this.eventHandler.changeBlendFilter);
       this._els.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
+
+      _tuiCodeSnippet2.default.forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+        inputBox.addEventListener(_consts.eventNames.FOCUS, _this4._onStartEditingInputBox.bind(_this4));
+        inputBox.addEventListener(_consts.eventNames.BLUR, _this4._onStopEditingInputBox.bind(_this4));
+      }, this);
     }
 
     /**
@@ -21708,6 +21775,18 @@ var Filter = function (_Submenu) {
       }
 
       this.checkedMap[filterName].checked = !isRemove;
+    }
+
+    /**
+     * Init all filter's checkbox to unchecked state
+     */
+
+  }, {
+    key: 'initFilterCheckBoxState',
+    value: function initFilterCheckBoxState() {
+      _tuiCodeSnippet2.default.forEach(this.checkedMap, function (filter) {
+        filter.checked = false;
+      }, this);
     }
 
     /**
@@ -21874,6 +21953,11 @@ var Filter = function (_Submenu) {
       this.colorPickerControls.push(this._els.filterTintColor);
       this.colorPickerControls.push(this._els.filterMultiplyColor);
       this.colorPickerControls.push(this._els.filterBlendColor);
+
+      this.colorPickerInputBoxes = [];
+      this.colorPickerInputBoxes.push(this._els.filterTintColor.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX));
+      this.colorPickerInputBoxes.push(this._els.filterMultiplyColor.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX));
+      this.colorPickerInputBoxes.push(this._els.filterBlendColor.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX));
     }
 
     /**
@@ -22505,6 +22589,8 @@ var Icon = function (_Submenu) {
       addIconButton: _this.selector('.tie-icon-add-button'),
       iconColorpicker: new _colorpicker2.default(_this.selector('.tie-icon-color'), '#ffbb3b', _this.toggleDirection, _this.usageStatistics)
     };
+
+    _this.colorPickerInputBox = _this._els.iconColorpicker.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX);
     return _this;
   }
 
@@ -22545,6 +22631,9 @@ var Icon = function (_Submenu) {
       this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
       this._els.registerIconButton.addEventListener('change', registerIcon);
       this._els.addIconButton.addEventListener('click', addIcon);
+
+      this.colorPickerInputBox.addEventListener(_consts.eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+      this.colorPickerInputBox.addEventListener(_consts.eventNames.BLUR, this._onStopEditingInputBox.bind(this));
     }
 
     /**
@@ -22558,6 +22647,9 @@ var Icon = function (_Submenu) {
       this._els.iconColorpicker.off();
       this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
       this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
+
+      this.colorPickerInputBox.removeEventListener(_consts.eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+      this.colorPickerInputBox.removeEventListener(_consts.eventNames.BLUR, this._onStopEditingInputBox.bind(this));
     }
 
     /**
@@ -23287,6 +23379,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _tuiCodeSnippet = __webpack_require__(/*! tui-code-snippet */ "tui-code-snippet");
+
+var _tuiCodeSnippet2 = _interopRequireDefault(_tuiCodeSnippet);
+
 var _colorpicker = __webpack_require__(/*! @/ui/tools/colorpicker */ "./src/js/ui/tools/colorpicker.js");
 
 var _colorpicker2 = _interopRequireDefault(_colorpicker);
@@ -23363,6 +23459,10 @@ var Shape = function (_Submenu) {
 
     _this.colorPickerControls.push(_this._els.fillColorpicker);
     _this.colorPickerControls.push(_this._els.strokeColorpicker);
+
+    _this.colorPickerInputBoxes = [];
+    _this.colorPickerInputBoxes.push(_this._els.fillColorpicker.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX));
+    _this.colorPickerInputBoxes.push(_this._els.strokeColorpicker.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX));
     return _this;
   }
 
@@ -23392,6 +23492,8 @@ var Shape = function (_Submenu) {
   }, {
     key: 'addEvent',
     value: function addEvent(actions) {
+      var _this2 = this;
+
       this.eventHandler.shapeTypeSelected = this._changeShapeHandler.bind(this);
       this.actions = actions;
 
@@ -23401,6 +23503,11 @@ var Shape = function (_Submenu) {
       this._els.strokeColorpicker.on('change', this._changeStrokeColorHandler.bind(this));
       this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
       this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
+
+      _tuiCodeSnippet2.default.forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+        inputBox.addEventListener(_consts.eventNames.FOCUS, _this2._onStartEditingInputBox.bind(_this2));
+        inputBox.addEventListener(_consts.eventNames.BLUR, _this2._onStopEditingInputBox.bind(_this2));
+      }, this);
     }
 
     /**
@@ -23411,10 +23518,17 @@ var Shape = function (_Submenu) {
   }, {
     key: '_removeEvent',
     value: function _removeEvent() {
+      var _this3 = this;
+
       this._els.shapeSelectButton.removeEventListener('click', this.eventHandler.shapeTypeSelected);
       this._els.strokeRange.off();
       this._els.fillColorpicker.off();
       this._els.strokeColorpicker.off();
+
+      _tuiCodeSnippet2.default.forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+        inputBox.removeEventListener(_consts.eventNames.FOCUS, _this3._onStartEditingInputBox.bind(_this3));
+        inputBox.removeEventListener(_consts.eventNames.BLUR, _this3._onStopEditingInputBox.bind(_this3));
+      }, this);
     }
 
     /**
@@ -23606,6 +23720,10 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _tuiCodeSnippet = __webpack_require__(/*! tui-code-snippet */ "tui-code-snippet");
+
+var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
@@ -23748,10 +23866,22 @@ var Submenu = function () {
 
       this.subMenuElement.appendChild(iconSubMenu);
     }
+  }, {
+    key: '_onStartEditingInputBox',
+    value: function _onStartEditingInputBox() {
+      this.fire(_consts.eventNames.INPUT_BOX_EDITING_STARTED);
+    }
+  }, {
+    key: '_onStopEditingInputBox',
+    value: function _onStopEditingInputBox() {
+      this.fire(_consts.eventNames.INPUT_BOX_EDITING_STOPPED);
+    }
   }]);
 
   return Submenu;
 }();
+
+_tuiCodeSnippet.CustomEvents.mixin(Submenu);
 
 exports.default = Submenu;
 
@@ -24216,6 +24346,8 @@ var Text = function (_Submenu) {
         input: _this.selector('.tie-text-range-value')
       }, _consts.defaultTextRangeValues)
     };
+
+    _this.colorPickerInputBox = _this._els.textColorpicker.colorpickerElement.querySelector(_consts.selectorNames.COLOR_PICKER_INPUT_BOX);
     return _this;
   }
 
@@ -24256,6 +24388,9 @@ var Text = function (_Submenu) {
       this._els.textAlignButton.addEventListener('click', setTextAlign);
       this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
       this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
+
+      this.colorPickerInputBox.addEventListener(_consts.eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+      this.colorPickerInputBox.addEventListener(_consts.eventNames.BLUR, this._onStopEditingInputBox.bind(this));
     }
 
     /**
@@ -24275,6 +24410,9 @@ var Text = function (_Submenu) {
       this._els.textAlignButton.removeEventListener('click', setTextAlign);
       this._els.textRange.off();
       this._els.textColorpicker.off();
+
+      this.colorPickerInputBox.removeEventListener(_consts.eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+      this.colorPickerInputBox.removeEventListener(_consts.eventNames.BLUR, this._onStopEditingInputBox.bind(this));
     }
 
     /**
