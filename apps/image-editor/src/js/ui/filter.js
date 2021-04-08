@@ -194,6 +194,19 @@ class Filter extends Submenu {
   }
 
   /**
+   * Init all filter's checkbox to unchecked state
+   */
+  initFilterCheckBoxState() {
+    snippet.forEach(
+      this.checkedMap,
+      (filter) => {
+        filter.checked = false;
+      },
+      this
+    );
+  }
+
+  /**
    * Set filter for undo changed
    * @param {string} filterName - filter name
    * @param {Object} options - filter options
