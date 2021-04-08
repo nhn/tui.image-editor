@@ -3,7 +3,7 @@ import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/icon';
 import { isSupportFileApi, assignmentForDestroy } from '@/util';
-import { defaultIconPath } from '@/consts';
+import { defaultIconPath, eventNames, selectorNames } from '@/consts';
 
 /**
  * Icon ui class
@@ -34,6 +34,10 @@ class Icon extends Submenu {
         this.usageStatistics
       ),
     };
+
+    this.colorPickerInputBox = this._els.iconColorpicker.colorpickerElement.querySelector(
+      selectorNames.COLOR_PICKER_INPUT_BOX
+    );
   }
 
   /**
@@ -66,6 +70,15 @@ class Icon extends Submenu {
     this._els.iconColorpicker.on('change', this._changeColorHandler.bind(this));
     this._els.registerIconButton.addEventListener('change', registerIcon);
     this._els.addIconButton.addEventListener('click', addIcon);
+
+    this.colorPickerInputBox.addEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.addEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**
@@ -76,6 +89,15 @@ class Icon extends Submenu {
     this._els.iconColorpicker.off();
     this._els.registerIconButton.removeEventListener('change', this.eventHandler.registerIcon);
     this._els.addIconButton.removeEventListener('click', this.eventHandler.addIcon);
+
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**
