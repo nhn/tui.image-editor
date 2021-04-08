@@ -4,7 +4,7 @@ import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/filter';
 import { toInteger, toCamelCase, assignmentForDestroy } from '@/util';
-import { defaultFilterRangeValues as FILTER_RANGE } from '@/consts';
+import { defaultFilterRangeValues as FILTER_RANGE, eventNames, selectorNames } from '@/consts';
 
 const PICKER_CONTROL_HEIGHT = '130px';
 const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
@@ -105,6 +105,15 @@ class Filter extends Submenu {
 
     this._els.blendType.removeEventListener('change', this.eventHandler.changeBlendFilter);
     this._els.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.removeEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.removeEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   _destroyToolInstance() {
@@ -154,6 +163,15 @@ class Filter extends Submenu {
 
     this._els.blendType.addEventListener('change', this.eventHandler.changeBlendFilter);
     this._els.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
+
+    snippet.forEachArray(
+      this.colorPickerInputBoxes,
+      (inputBox) => {
+        inputBox.addEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
+        inputBox.addEventListener(eventNames.BLUR, this._onStopEditingInputBox.bind(this));
+      },
+      this
+    );
   }
 
   /**
@@ -173,6 +191,19 @@ class Filter extends Submenu {
     }
 
     this.checkedMap[filterName].checked = !isRemove;
+  }
+
+  /**
+   * Init all filter's checkbox to unchecked state
+   */
+  initFilterCheckBoxState() {
+    snippet.forEach(
+      this.checkedMap,
+      (filter) => {
+        filter.checked = false;
+      },
+      this
+    );
   }
 
   /**
@@ -349,6 +380,23 @@ class Filter extends Submenu {
     this.colorPickerControls.push(this._els.filterTintColor);
     this.colorPickerControls.push(this._els.filterMultiplyColor);
     this.colorPickerControls.push(this._els.filterBlendColor);
+
+    this.colorPickerInputBoxes = [];
+    this.colorPickerInputBoxes.push(
+      this._els.filterTintColor.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
+    );
+    this.colorPickerInputBoxes.push(
+      this._els.filterMultiplyColor.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
+    );
+    this.colorPickerInputBoxes.push(
+      this._els.filterBlendColor.colorpickerElement.querySelector(
+        selectorNames.COLOR_PICKER_INPUT_BOX
+      )
+    );
   }
 
   /**
