@@ -6,55 +6,36 @@
  */
 export default ({ locale, makeSvgIcon }) => `
     <ul class="tui-image-editor-submenu-item">
-        <li class="tie-resize-preset-button">
-            <div class="tui-image-editor-button preset preset-none active">
-                <div>
-                    ${makeSvgIcon(['normal', 'active'], 'shape-rectangle', true)}
-                </div>
-                <label> ${locale.localize('Custom')} </label>
-            </div>
-            <div class="tui-image-editor-button preset preset-square">
-                <div>
-                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
-                </div>
-                <label> ${locale.localize('Square')} </label>
-            </div>
-            <div class="tui-image-editor-button preset preset-3-2">
-                <div>
-                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
-                </div>
-                <label> ${locale.localize('3:2')} </label>
-            </div>
-            <div class="tui-image-editor-button preset preset-4-3">
-                <div>
-                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
-                </div>
-                <label> ${locale.localize('4:3')} </label>
-            </div>
-            <div class="tui-image-editor-button preset preset-5-4">
-                <div>
-                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
-                </div>
-                <label> ${locale.localize('5:4')} </label>
-            </div>
-            <div class="tui-image-editor-button preset preset-7-5">
-                <div>
-                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
-                </div>
-                <label> ${locale.localize('7:5')} </label>
-            </div>
-            <div class="tui-image-editor-button preset preset-16-9">
-                <div>
-                    ${makeSvgIcon(['normal', 'active'], 'crop', true)}
-                </div>
-                <label> ${locale.localize('16:9')} </label>
+        <li class="tui-image-editor-submenu-align">
+            <div class="tui-image-editor-range-wrap tui-image-editor-newline">
+                <label class="range">${locale.localize('Width')}&nbsp;</label>
+                <div class="tie-width-range"></div>
+                <input class="tie-width-range-value tui-image-editor-range-value" value="0" /> <label class="range">px</label>
+                <div class="tui-image-editor-partition tui-image-editor-newline"></div>
+                <label class="range">${locale.localize('Height')}</label>
+                <div class="tie-height-range"></div>
+                <input class="tie-height-range-value tui-image-editor-range-value" value="0" /> <label class="range">px</label>
             </div>
         </li>
-        <li class="tui-image-editor-partition tui-image-editor-newline">
-        </li>
+        <li class="tui-image-editor-partition tui-image-editor-newline"></li>
         <li class="tui-image-editor-partition only-left-right">
             <div></div>
         </li>
+        <li class="tui-image-editor-submenu-align">
+            <div class="tui-image-editor-checkbox-wrap">
+                <div class="tui-image-editor-checkbox">
+                    <label>
+                        <input type="checkbox" class="tie-lock-aspect-ratio">
+                        <span>${locale.localize('Lock Aspect Ratio')}</span>
+                    </label>
+                </div>
+            </div>
+        </li>
+        <li class="tui-image-editor-partition tui-image-editor-newline"></li>
+        <li class="tui-image-editor-partition only-left-right">
+            <div></div>
+        </li>
+        <li class="tui-image-editor-partition tui-image-editor-newline"></li>
         <li class="tie-resize-button action">
             <div class="tui-image-editor-button apply">
                 ${makeSvgIcon(['normal', 'active'], 'apply')}

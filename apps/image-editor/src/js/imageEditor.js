@@ -1742,6 +1742,14 @@ class ImageEditor {
   setObjectPosition(id, posInfo) {
     return this.execute(commands.SET_OBJECT_POSITION, id, posInfo);
   }
+
+  /**
+   * @param {object} dimensions - Image Dimensions
+   * @returns {Promise<ErrorMsg>}
+   */
+  resize(dimensions) {
+    return this.execute(commands.RESIZE_IMAGE, dimensions);
+  }
 }
 
 action.mixin(ImageEditor);

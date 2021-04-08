@@ -171,6 +171,7 @@ export const eventNames = {
   HAND_STOPPED: 'handStopped',
   KEY_DOWN: 'keydown',
   KEY_UP: 'keyup',
+  IMAGE_RESIZED: 'imageResized',
 };
 
 /**
@@ -206,7 +207,8 @@ export const drawingModes = keyMirror(
   'TEXT',
   'SHAPE',
   'ICON',
-  'ZOOM'
+  'ZOOM',
+  'RESIZE'
 );
 
 /**
@@ -384,4 +386,11 @@ export const emptyCropRectValues = {
   TOP: 0,
   WIDTH: 0.5,
   HEIGHT: 0.5,
+};
+
+export const defaultResizePixelValues = {
+  realTimeEvent: true,
+  min: 32,
+  max: 4088,
+  value: 800,
 };

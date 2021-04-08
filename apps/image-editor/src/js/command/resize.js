@@ -15,12 +15,12 @@ let cachedUndoDataForSilent = null;
 
 /**
  * Make undo data
- * @param {Component} resizeComp - resize component
+ * @param {Resize} resizeComp - resize component
  * @returns {object} - undodata
  */
 function makeUndoData(resizeComp) {
   return {
-    angle: resizeComp.getCurrentSize(), // @todo make getCurrentSize() method
+    dimensions: resizeComp.getCurrentDimensions(),
   };
 }
 
@@ -28,15 +28,13 @@ const command = {
   name: commandNames.RESIZE_IMAGE,
 
   /**
-   * Rotate an image
+   * Resize an image
    * @param {Graphics} graphics - Graphics instance
-   * @param {string} type - 'rotate' or 'setAngle'
-   * @param {number} angle - angle value (degree)
+   * @param {object} dimensions - Image Dimensions
    * @param {boolean} isSilent - is silent execution or not
    * @returns {Promise}
    */
-  execute(graphics, type, angle, isSilent) {
-    // @todo params and docs
+  execute(graphics, dimensions, isSilent) {
     const resizeComp = graphics.getComponent(RESIZE);
 
     if (!this.isRedo) {
@@ -45,7 +43,7 @@ const command = {
       cachedUndoDataForSilent = this.setUndoData(undoData, cachedUndoDataForSilent, isSilent);
     }
 
-    return resizeComp[type](angle);
+    return resizeComp.resize(dimensions);
   },
 
   /**
@@ -53,14 +51,14 @@ const command = {
    * @returns {Promise}
    */
   undo(graphics) {
-    const rotationComp = graphics.getComponent(RESIZE);
-    const [, type, angle] = this.args;
+    const resizeComp = graphics.getComponent(RESIZE);
+    const [, type, dimensions] = this.args;
 
-    if (type === 'setAngle') {
-      return rotationComp[type](this.undoData.angle);
+    if (type === 'resize') {
+      return resizeComp[type](this.undoData.dimensions);
     }
 
-    return rotationComp.resize(-angle);
+    return resizeComp.resize(dimensions);
   },
 };
 

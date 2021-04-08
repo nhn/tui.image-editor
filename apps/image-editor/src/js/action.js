@@ -1,7 +1,14 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
 import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone } from '@/util';
-import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
+import {
+  eventNames,
+  historyNames,
+  drawingModes,
+  drawingMenuNames,
+  zoomModes,
+  componentNames,
+} from '@/consts';
 
 export default {
   /**
@@ -36,10 +43,6 @@ export default {
       if (this.ui.submenu === 'crop') {
         this.stopDrawingMode();
         this.ui.changeMenu('crop');
-      }
-      if (this.ui.submenu === 'resize') {
-        this.stopDrawingMode();
-        this.ui.changeMenu('resize');
       }
     };
     const setAngleRangeBarOnAction = (angle) => {
@@ -411,49 +414,75 @@ export default {
   _resizeAction() {
     return extend(
       {
-        crop: () => {
-          const cropRect = this.getCropzoneRect();
-          if (cropRect && !isEmptyCropzone(cropRect)) {
-            this.crop(cropRect)
-              .then(() => {
-                this.stopDrawingMode();
-                this.ui.resizeEditor();
-                this.ui.changeMenu('crop');
-                this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.CROP);
-              })
-              ['catch']((message) => Promise.reject(message));
-          }
+        getCurrentDimensions: () => {
+          return this._graphics.getComponent(componentNames.RESIZE).getCurrentDimensions();
         },
-        cancel: () => {
-          this.stopDrawingMode();
-          this.ui.changeMenu('crop');
-        },
-        /* eslint-disable */
-        preset: (presetType) => {
-          switch (presetType) {
-            case 'preset-square':
-              this.setCropzoneRect(1 / 1);
+        preview: (actor, value, lockState) => {
+          const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
+
+          const currentDimensions = resizeComponent.getCurrentDimensions();
+          const calcAspectRatio = () => currentDimensions.width / currentDimensions.height;
+
+          let dimensions = {};
+          switch(actor) {
+            case 'width':
+              dimensions.width = value;
+              if (lockState) {
+                dimensions.height = value / calcAspectRatio();
+              } else {
+                dimensions.height = currentDimensions.height;
+              }
               break;
-            case 'preset-3-2':
-              this.setCropzoneRect(3 / 2);
-              break;
-            case 'preset-4-3':
-              this.setCropzoneRect(4 / 3);
-              break;
-            case 'preset-5-4':
-              this.setCropzoneRect(5 / 4);
-              break;
-            case 'preset-7-5':
-              this.setCropzoneRect(7 / 5);
-              break;
-            case 'preset-16-9':
-              this.setCropzoneRect(16 / 9);
+            case 'height':
+              dimensions.height = value;
+              if (lockState) {
+                dimensions.width = value * calcAspectRatio();
+              } else {
+                dimensions.width = currentDimensions.width;
+              }
               break;
             default:
-              this.setCropzoneRect();
-              this.ui.crop.changeApplyButtonStatus(false);
-              break;
           }
+
+          resizeComponent.resize(dimensions).then(() => {
+            this.ui.resizeEditor();
+          });
+
+          if (lockState) {
+            this.ui.resize.setWidthValue(dimensions.width);
+            this.ui.resize.setHeightValue(dimensions.height);
+          }
+        },
+        resize: (dimensions = null) => {
+          const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
+          if (!dimensions) {
+            dimensions = resizeComponent.getCurrentDimensions();
+          }
+
+          this.resize(dimensions)
+            .then(() => {
+              resizeComponent.setOriginalDimensions(dimensions);
+              this.stopDrawingMode();
+              this.ui.resizeEditor();
+              this.ui.changeMenu('resize');
+              this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.RESIZE);
+            })
+            ['catch']((message) => Promise.reject(message));
+        },
+        reset: (standByMode = false) => {
+          const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
+          const dimensions = resizeComponent.getOriginalDimensions();
+
+          this.ui.resize.setWidthValue(dimensions.width, true);
+          this.ui.resize.setHeightValue(dimensions.height, true);
+
+          resizeComponent.resize(dimensions).then(() => {
+            if (!standByMode) {
+              this.stopDrawingMode();
+              this.ui.resizeEditor();
+              this.ui.changeMenu('resize');
+            }
+          });
         },
       },
       this._commonAction()
@@ -621,7 +650,7 @@ export default {
    * @private
    */
   _commonAction() {
-    const { TEXT, CROPPER, SHAPE, ZOOM } = drawingModes;
+    const { TEXT, CROPPER, SHAPE, ZOOM, RESIZE } = drawingModes;
 
     return {
       modeChange: (menu) => {
@@ -638,6 +667,9 @@ export default {
             break;
           case drawingMenuNames.ZOOM:
             this.startDrawingMode(ZOOM);
+            break;
+          case drawingMenuNames.RESIZE:
+            this.startDrawingMode(RESIZE);
             break;
           default:
             break;

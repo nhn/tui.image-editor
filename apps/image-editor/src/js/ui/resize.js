@@ -1,10 +1,11 @@
-import snippet from 'tui-code-snippet';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/resize';
-import { assignmentForDestroy } from '@/util';
+import { assignmentForDestroy, toInteger } from '@/util';
+import Range from '@/ui/tools/range';
+import { defaultResizePixelValues } from '@/consts';
 
 /**
- * Crop ui class
+ * Resize ui class
  * @class
  * @ignore
  */
@@ -18,16 +19,95 @@ class Resize extends Submenu {
       templateHtml,
       usageStatistics,
     });
-    console.log('templateHtml', templateHtml);
+
     this.status = 'active';
 
+    this._lockState = false;
+
+    /**
+     * Original dimensions
+     * @type {Object}
+     * @private
+     */
+    this._originalDimensions = null;
+
     this._els = {
+      widthRange: new Range(
+        {
+          slider: this.selector('.tie-width-range'),
+          input: this.selector('.tie-width-range-value'),
+        },
+        defaultResizePixelValues
+      ),
+      heightRange: new Range(
+        {
+          slider: this.selector('.tie-height-range'),
+          input: this.selector('.tie-height-range-value'),
+        },
+        defaultResizePixelValues
+      ),
+      lockAspectRatio: this.selector('.tie-lock-aspect-ratio'),
       apply: this.selector('.tie-resize-button .apply'),
       cancel: this.selector('.tie-resize-button .cancel'),
-      preset: this.selector('.tie-resize-preset-button'),
     };
+  }
 
-    this.defaultPresetButton = this._els.preset.querySelector('.preset-none');
+  /**
+   * Executed when the menu starts.
+   */
+  changeStartMode() {
+    this.actions.modeChange('resize');
+    const dimensions = this.actions.getCurrentDimensions();
+
+    this._originalDimensions = dimensions;
+
+    this.setWidthValue(dimensions.width);
+    this.setHeightValue(dimensions.height);
+  }
+
+  /**
+   * Returns the menu to its default state.
+   */
+  changeStandbyMode() {
+    this.actions.stopDrawingMode();
+    this.actions.reset(true);
+  }
+
+  /**
+   * set range dimension max value
+   * @param {number} maxValue - expect max value for change
+   */
+  setMaxDimensionValue(maxValue) {
+    let dimensionMaxValue = maxValue;
+    if (dimensionMaxValue <= 0) {
+      dimensionMaxValue = defaultResizePixelValues.max;
+    }
+    this._els.widthRange.max = dimensionMaxValue;
+    this._els.heightRange.max = dimensionMaxValue;
+  }
+
+  /**
+   * Set width value
+   * @param {number} value - expect value for widthRange change
+   * @param {boolean} trigger - fire change event control
+   */
+  setWidthValue(value, trigger = false) {
+    this._els.widthRange.value = value;
+    if (trigger) {
+      this._els.widthRange.trigger('change');
+    }
+  }
+
+  /**
+   * Set height value
+   * @param {number} value - expect value for heightRange change
+   * @param {boolean} trigger - fire change event control
+   */
+  setHeightValue(value, trigger = false) {
+    this._els.heightRange.value = value;
+    if (trigger) {
+      this._els.heightRange.trigger('change');
+    }
   }
 
   /**
@@ -43,24 +123,55 @@ class Resize extends Submenu {
    * Add event for resize
    * @param {Object} actions - actions for resize
    *   @param {Function} actions.resize - resize action
-   *   @param {Function} actions.cancel - cancel action
-   *   @param {Function} actions.preset - draw rectzone at a predefined ratio
+   *   @param {Function} actions.preview - preview action
+   *   @param {Function} actions.getCurrentDimensions - Get current dimensions action
+   *   @param {Function} actions.modeChange - change mode
+   *   @param {Function} actions.stopDrawingMode - stop drawing mode
+   *   @param {Function} actions.reset - reset action
    */
   addEvent(actions) {
+    this._els.widthRange.on('change', this._changeWidthRangeHandler.bind(this));
+    this._els.heightRange.on('change', this._changeHeightRangeHandler.bind(this));
+    this._els.lockAspectRatio.addEventListener('change', this._changeLockAspectRatio.bind(this));
+
     const apply = this._applyEventHandler.bind(this);
     const cancel = this._cancelEventHandler.bind(this);
-    const cropzonePreset = this._cropzonePresetEventHandler.bind(this);
 
     this.eventHandler = {
       apply,
       cancel,
-      cropzonePreset,
     };
 
     this.actions = actions;
     this._els.apply.addEventListener('click', apply);
     this._els.cancel.addEventListener('click', cancel);
-    this._els.preset.addEventListener('click', cropzonePreset);
+  }
+
+  /**
+   * Change width
+   * @param {number} value - width range value
+   * @private
+   */
+  _changeWidthRangeHandler(value) {
+    this.actions.preview('width', toInteger(value), this._lockState);
+  }
+
+  /**
+   * Change height
+   * @param {number} value - height range value
+   * @private
+   */
+  _changeHeightRangeHandler(value) {
+    this.actions.preview('height', toInteger(value), this._lockState);
+  }
+
+  /**
+   * Change lock aspect ratio state
+   * @param {Event} event - aspect ratio check event
+   * @private
+   */
+  _changeLockAspectRatio(event) {
+    this._lockState = event.target.checked;
   }
 
   /**
@@ -70,42 +181,16 @@ class Resize extends Submenu {
   _removeEvent() {
     this._els.apply.removeEventListener('click', this.eventHandler.apply);
     this._els.cancel.removeEventListener('click', this.eventHandler.cancel);
-    this._els.preset.removeEventListener('click', this.eventHandler.cropzonePreset);
   }
 
   _applyEventHandler() {
-    this.actions.crop();
+    this.actions.resize();
     this._els.apply.classList.remove('active');
   }
 
   _cancelEventHandler() {
-    this.actions.cancel();
-    this._els.apply.classList.remove('active');
-  }
-
-  _cropzonePresetEventHandler(event) {
-    const button = event.target.closest('.tui-image-editor-button.preset');
-    if (button) {
-      const [presetType] = button.className.match(/preset-[^\s]+/);
-
-      this._setPresetButtonActive(button);
-      this.actions.preset(presetType);
-    }
-  }
-
-  /**
-   * Executed when the menu starts.
-   */
-  changeStartMode() {
-    this.actions.modeChange('crop');
-  }
-
-  /**
-   * Returns the menu to its default state.
-   */
-  changeStandbyMode() {
-    this.actions.stopDrawingMode();
-    this._setPresetButtonActive();
+    this.actions.reset();
+    this._els.cancel.classList.remove('active');
   }
 
   /**
@@ -117,21 +202,6 @@ class Resize extends Submenu {
       this._els.apply.classList.add('active');
     } else {
       this._els.apply.classList.remove('active');
-    }
-  }
-
-  /**
-   * Set preset button to active status
-   * @param {HTMLElement} button - event target element
-   * @private
-   */
-  _setPresetButtonActive(button = this.defaultPresetButton) {
-    snippet.forEach([].slice.call(this._els.preset.querySelectorAll('.preset')), (presetButton) => {
-      presetButton.classList.remove('active');
-    });
-
-    if (button) {
-      button.classList.add('active');
     }
   }
 }
