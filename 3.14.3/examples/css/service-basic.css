@@ -1,0 +1,128 @@
+.border {
+  border: 1px solid black;
+}
+.body-container {
+  width: 1000px;
+}
+.tui-image-editor-controls {
+  min-height: 250px;
+}
+.menu {
+  padding: 0;
+  margin-bottom: 5px;
+  text-align: center;
+  color: #544b61;
+  font-weight: 400;
+  list-style-type: none;
+  user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+}
+.logo {
+  margin: 0 auto;
+  width: 300px;
+  vertical-align: middle;
+}
+.header .name {
+  padding: 10px;
+  line-height: 50px;
+  font-size: 30px;
+  font-weight: 100;
+  vertical-align: middle;
+}
+.header .menu {
+  display: inline-block;
+}
+.menu-item {
+  padding: 10px;
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+}
+.menu-item a {
+  text-decoration: none;
+}
+.menu-item.no-pointer {
+  cursor: default;
+}
+.menu-item.active,
+.menu-item:hover {
+  background-color: #f3f3f3;
+}
+.menu-item.disabled {
+  cursor: default;
+  color: #bfbebe;
+}
+.align-left-top {
+  text-align: left;
+  vertical-align: top;
+}
+.range-narrow {
+  width: 80px;
+}
+.sub-menu-container {
+  font-size: 14px;
+  margin-bottom: 1em;
+  display: none;
+}
+.tui-image-editor {
+  height: 500px;
+}
+.tui-image-editor-canvas-container {
+  margin: 0 auto;
+  top: 50%;
+  transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  -moz-transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  border: 1px dashed black;
+  overflow: hidden;
+}
+.tui-colorpicker-container {
+  margin: 5px auto 0;
+}
+.tui-colorpicker-palette-toggle-slider {
+  display: none;
+}
+.input-wrapper {
+  position: relative;
+}
+.input-wrapper input {
+  cursor: pointer;
+  position: absolute;
+  font-size: 999px;
+  left: 0;
+  top: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+.btn-text-style {
+  padding: 5px;
+  margin: 3px 1px;
+  border: 1px dashed #bfbebe;
+  outline: 0;
+  background-color: #eee;
+  cursor: pointer;
+}
+.icon-text {
+  font-size: 20px;
+}
+.select-line-type {
+  outline: 0;
+  vertical-align: middle;
+}
+#tui-color-picker {
+  display: inline-block;
+  vertical-align: middle;
+}
+#tui-text-palette {
+  display: none;
+  position: absolute;
+  padding: 10px;
+  border: 1px solid #bfbebe;
+  background-color: #fff;
+  z-index: 9999;
+}
