@@ -615,6 +615,12 @@ class Ui {
    */
   _addSubMenuEvent(menuName) {
     this[menuName].addEvent(this._actions[menuName]);
+    this[menuName].on(eventNames.INPUT_BOX_EDITING_STARTED, () =>
+      this.fire(eventNames.INPUT_BOX_EDITING_STARTED)
+    );
+    this[menuName].on(eventNames.INPUT_BOX_EDITING_STOPPED, () =>
+      this.fire(eventNames.INPUT_BOX_EDITING_STOPPED)
+    );
   }
 
   /**
@@ -635,6 +641,8 @@ class Ui {
   _removeMainMenuEvent() {
     snippet.forEach(this.options.menu, (menuName) => {
       this._buttonElements[menuName].removeEventListener('click', this.eventHandler[menuName]);
+      this[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
+      this[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
     });
   }
 

@@ -3,14 +3,14 @@ import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/text';
 import { assignmentForDestroy } from '@/util';
-import { defaultTextRangeValues } from '@/consts';
+import { defaultTextRangeValues, eventNames, selectorNames } from '@/consts';
 
 /**
  * Crop ui class
  * @class
  * @ignore
  */
-export default class Text extends Submenu {
+class Text extends Submenu {
   constructor(subMenuElement, { locale, makeSvgIcon, menuBarPosition, usageStatistics }) {
     super(subMenuElement, {
       locale,
@@ -43,6 +43,10 @@ export default class Text extends Submenu {
         defaultTextRangeValues
       ),
     };
+
+    this.colorPickerInputBox = this._els.textColorpicker.colorpickerElement.querySelector(
+      selectorNames.COLOR_PICKER_INPUT_BOX
+    );
   }
 
   /**
@@ -75,6 +79,15 @@ export default class Text extends Submenu {
     this._els.textAlignButton.addEventListener('click', setTextAlign);
     this._els.textRange.on('change', this._changeTextRnageHandler.bind(this));
     this._els.textColorpicker.on('change', this._changeColorHandler.bind(this));
+
+    this.colorPickerInputBox.addEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.addEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**
@@ -88,6 +101,15 @@ export default class Text extends Submenu {
     this._els.textAlignButton.removeEventListener('click', setTextAlign);
     this._els.textRange.off();
     this._els.textColorpicker.off();
+
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.FOCUS,
+      this._onStartEditingInputBox.bind(this)
+    );
+    this.colorPickerInputBox.removeEventListener(
+      eventNames.BLUR,
+      this._onStopEditingInputBox.bind(this)
+    );
   }
 
   /**
@@ -253,3 +275,5 @@ export default class Text extends Submenu {
     });
   }
 }
+
+export default Text;
