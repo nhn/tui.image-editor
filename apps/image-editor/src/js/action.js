@@ -83,6 +83,11 @@ export default {
         this._graphics.endHandMode();
       }
     };
+    const initFilterState = () => {
+      if (this.ui.filter) {
+        this.ui.filter.initFilterCheckBoxState();
+      }
+    };
 
     return extend(
       {
@@ -112,6 +117,7 @@ export default {
           exitCropOnAction();
           this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then((sizeValue) => {
             exitCropOnAction();
+            initFilterState();
             this.ui.resizeEditor({ imageSize: sizeValue });
             this.clearUndoStack();
             this._initHistory();
@@ -138,6 +144,7 @@ export default {
           this.loadImageFromFile(file)
             .then((sizeValue) => {
               exitCropOnAction();
+              initFilterState();
               this.clearUndoStack();
               this.ui.activeMenuEvent();
               this.ui.resizeEditor({ imageSize: sizeValue });

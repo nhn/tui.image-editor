@@ -171,7 +171,19 @@ export const eventNames = {
   HAND_STOPPED: 'handStopped',
   KEY_DOWN: 'keydown',
   KEY_UP: 'keyup',
+  INPUT_BOX_EDITING_STARTED: 'inputBoxEditingStarted',
+  INPUT_BOX_EDITING_STOPPED: 'inputBoxEditingStopped',
+  FOCUS: 'focus',
+  BLUR: 'blur',
   IMAGE_RESIZED: 'imageResized',
+};
+
+/**
+ * Selector names
+ * @type {Object.<string, string>}
+ */
+export const selectorNames = {
+  COLOR_PICKER_INPUT_BOX: '.tui-colorpicker-palette-hex',
 };
 
 /**
