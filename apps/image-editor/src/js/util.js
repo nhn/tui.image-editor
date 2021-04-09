@@ -480,7 +480,7 @@ export function getHistoryTitle(command) {
       historyInfo = { name: historyNames.ADD_TEXT };
       break;
     case RESIZE_IMAGE:
-      historyInfo = { name: historyNames.RESIZE, detail: `${args[1].width}x${args[1].height}` };
+      historyInfo = { name: historyNames.RESIZE, detail: `${~~args[1].width}x${~~args[1].height}` };
       break;
 
     default:
