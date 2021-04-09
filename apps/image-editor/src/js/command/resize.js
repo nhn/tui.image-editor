@@ -7,23 +7,6 @@ import { componentNames, commandNames } from '@/consts';
 
 const { RESIZE } = componentNames;
 
-/**
- * Cached data for undo
- * @type {Object}
- */
-let cachedUndoDataForSilent = null;
-
-/**
- * Make undo data
- * @param {Resize} resizeComp - resize component
- * @returns {object} - undodata
- */
-function makeUndoData(resizeComp) {
-  return {
-    dimensions: resizeComp.getCurrentDimensions(),
-  };
-}
-
 const command = {
   name: commandNames.RESIZE_IMAGE,
 
@@ -31,16 +14,13 @@ const command = {
    * Resize an image
    * @param {Graphics} graphics - Graphics instance
    * @param {object} dimensions - Image Dimensions
-   * @param {boolean} isSilent - is silent execution or not
    * @returns {Promise}
    */
-  execute(graphics, dimensions, isSilent) {
+  execute(graphics, dimensions) {
     const resizeComp = graphics.getComponent(RESIZE);
 
     if (!this.isRedo) {
-      const undoData = makeUndoData(resizeComp);
-
-      cachedUndoDataForSilent = this.setUndoData(undoData, cachedUndoDataForSilent, isSilent);
+      this.undoData.dimensions = resizeComp.getOriginalDimensions();
     }
 
     return resizeComp.resize(dimensions);
@@ -52,13 +32,8 @@ const command = {
    */
   undo(graphics) {
     const resizeComp = graphics.getComponent(RESIZE);
-    const [, type, dimensions] = this.args;
 
-    if (type === 'resize') {
-      return resizeComp[type](this.undoData.dimensions);
-    }
-
-    return resizeComp.resize(dimensions);
+    return resizeComp.resize(this.undoData.dimensions);
   },
 };
 

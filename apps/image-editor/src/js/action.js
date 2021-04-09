@@ -472,7 +472,6 @@ export default {
               this.stopDrawingMode();
               this.ui.resizeEditor();
               this.ui.changeMenu('resize');
-              this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.RESIZE);
             })
             ['catch']((message) => Promise.reject(message));
         },
