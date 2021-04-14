@@ -39,8 +39,9 @@ class Resize extends Component {
    * @returns {object}
    */
   getCurrentDimensions() {
-    if (!this._dimensions) {
-      const { width, height } = this.getCanvasImage();
+    const canvasImage = this.getCanvasImage();
+    if (!this._dimensions && canvasImage) {
+      const { width, height } = canvasImage;
       this._dimensions = { width, height };
     }
 
