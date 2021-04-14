@@ -1,14 +1,7 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
 import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone } from '@/util';
-import {
-  eventNames,
-  historyNames,
-  drawingModes,
-  drawingMenuNames,
-  zoomModes,
-  componentNames,
-} from '@/consts';
+import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
 
 export default {
   /**
@@ -421,13 +414,9 @@ export default {
   _resizeAction() {
     return extend(
       {
-        getCurrentDimensions: () => {
-          return this._graphics.getComponent(componentNames.RESIZE).getCurrentDimensions();
-        },
+        getCurrentDimensions: () => this._graphics.getCurrentDimensions(),
         preview: (actor, value, lockState) => {
-          const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
-
-          const currentDimensions = resizeComponent.getCurrentDimensions();
+          const currentDimensions = this._graphics.getCurrentDimensions();
           const calcAspectRatio = () => currentDimensions.width / currentDimensions.height;
 
           let dimensions = {};
@@ -451,7 +440,7 @@ export default {
             default:
           }
 
-          resizeComponent.resize(dimensions).then(() => {
+          this._graphics.resize(dimensions).then(() => {
             this.ui.resizeEditor();
           });
 
@@ -461,14 +450,14 @@ export default {
           }
         },
         resize: (dimensions = null) => {
-          const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
+          // const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
           if (!dimensions) {
-            dimensions = resizeComponent.getCurrentDimensions();
+            dimensions = this._graphics.getCurrentDimensions();
           }
 
           this.resize(dimensions)
             .then(() => {
-              resizeComponent.setOriginalDimensions(dimensions);
+              this._graphics.setOriginalDimensions(dimensions);
               this.stopDrawingMode();
               this.ui.resizeEditor();
               this.ui.changeMenu('resize');
@@ -476,13 +465,13 @@ export default {
             ['catch']((message) => Promise.reject(message));
         },
         reset: (standByMode = false) => {
-          const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
-          const dimensions = resizeComponent.getOriginalDimensions();
+          // const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
+          const dimensions = this._graphics.getOriginalDimensions();
 
           this.ui.resize.setWidthValue(dimensions.width, true);
           this.ui.resize.setHeightValue(dimensions.height, true);
 
-          resizeComponent.resize(dimensions).then(() => {
+          this._graphics.resize(dimensions).then(() => {
             if (!standByMode) {
               this.stopDrawingMode();
               this.ui.resizeEditor();

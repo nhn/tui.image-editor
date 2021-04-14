@@ -78,7 +78,6 @@ class Resize extends Component {
    * Resize Image
    * @param {Object} dimensions - Resize dimensions
    * @returns {Promise}
-   * @private
    */
   resize(dimensions) {
     const canvasImage = this.getCanvasImage();

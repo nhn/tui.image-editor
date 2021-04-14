@@ -1502,6 +1502,46 @@ class Graphics {
       });
     });
   }
+
+  /**
+   * Get current dimensions
+   * @returns {object}
+   */
+  getCurrentDimensions() {
+    const resize = this.getComponent(components.RESIZE);
+
+    return resize.getCurrentDimensions();
+  }
+
+  /**
+   * Get original dimensions
+   * @returns {object}
+   */
+  getOriginalDimensions() {
+    const resize = this.getComponent(components.RESIZE);
+
+    return resize.getOriginalDimensions();
+  }
+
+  /**
+   * Set original dimensions
+   * @param {object} dimensions - Dimensions
+   */
+  setOriginalDimensions(dimensions) {
+    const resize = this.getComponent(components.RESIZE);
+    resize.setOriginalDimensions(dimensions);
+  }
+
+  /**
+   * Resize Image
+   * @param {Object} dimensions - Resize dimensions
+   * @returns {Promise}
+   */
+  resize(dimensions) {
+    const resize = this.getComponent(components.RESIZE);
+
+    return resize.resize(dimensions);
+  }
 }
 
 CustomEvents.mixin(Graphics);
