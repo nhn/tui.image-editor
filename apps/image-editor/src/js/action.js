@@ -619,7 +619,7 @@ export default {
         this.activeObjectId = null;
         if (this.ui.submenu === 'text') {
           this.changeCursor('text');
-        } else if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop' && this.ui.submenu !== 'resize') {
+        } else if (!['draw', 'crop', 'resize'].includes(this.ui.submenu)) {
           this.stopDrawingMode();
         }
       },
