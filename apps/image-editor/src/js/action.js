@@ -438,6 +438,7 @@ export default {
               }
               break;
             default:
+              dimensions = currentDimensions;
           }
 
           this._graphics.resize(dimensions).then(() => {
