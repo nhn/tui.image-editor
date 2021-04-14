@@ -2,10 +2,10 @@ import Component from '@/interface/component';
 import { componentNames } from '@/consts';
 
 /**
- * Zoom components
+ * Resize components
  * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
- * @class Zoom
+ * @class Resize
  * @ignore
  */
 class Resize extends Component {
