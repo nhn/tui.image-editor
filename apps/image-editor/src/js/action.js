@@ -451,7 +451,6 @@ export default {
           }
         },
         resize: (dimensions = null) => {
-          // const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
           if (!dimensions) {
             dimensions = this._graphics.getCurrentDimensions();
           }
@@ -466,7 +465,6 @@ export default {
             ['catch']((message) => Promise.reject(message));
         },
         reset: (standByMode = false) => {
-          // const resizeComponent = this._graphics.getComponent(componentNames.RESIZE);
           const dimensions = this._graphics.getOriginalDimensions();
 
           this.ui.resize.setWidthValue(dimensions.width, true);
