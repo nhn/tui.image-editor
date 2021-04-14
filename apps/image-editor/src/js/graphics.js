@@ -588,7 +588,7 @@ class Graphics {
   }
 
   adjustCanvasDimensionBase(canvasImage = null) {
-    if (canvasImage === null) {
+    if (!canvasImage) {
       canvasImage = this.canvasImage;
     }
 
