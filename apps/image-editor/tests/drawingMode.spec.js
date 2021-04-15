@@ -35,7 +35,7 @@ describe('DrawingMode', () => {
   });
 
   it('enter all drawing mode with startDrawingMode in consecutive order', () => {
-    const drawingModes = ['CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE'];
+    const drawingModes = ['CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE', 'RESIZE'];
     const { length } = drawingModes;
     let i;
 

@@ -19,9 +19,12 @@ const command = {
   execute(graphics, dimensions) {
     const resizeComp = graphics.getComponent(RESIZE);
 
-    if (!this.isRedo) {
-      this.undoData.dimensions = resizeComp.getOriginalDimensions();
+    let originalDimensions = resizeComp.getOriginalDimensions();
+    if (!originalDimensions) {
+      originalDimensions = resizeComp.getCurrentDimensions();
     }
+
+    this.undoData.dimensions = originalDimensions;
 
     return resizeComp.resize(dimensions);
   },
