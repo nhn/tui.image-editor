@@ -25,13 +25,6 @@ class Resize extends Component {
      * @private
      */
     this._originalDimensions = null;
-
-    /**
-     * Lock aspect ratio state
-     * @type {boolean}
-     * @private
-     */
-    this._lockState = false;
   }
 
   /**
@@ -62,14 +55,6 @@ class Resize extends Component {
    */
   setOriginalDimensions(dimensions) {
     this._originalDimensions = dimensions;
-  }
-
-  /**
-   * Set states of lock aspect ratio
-   * @param {boolean} lockState - Lock aspect ratio state
-   */
-  setLockState(lockState) {
-    this._lockState = lockState;
   }
 
   /**
