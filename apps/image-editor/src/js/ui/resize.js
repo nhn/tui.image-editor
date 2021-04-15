@@ -74,16 +74,61 @@ class Resize extends Submenu {
   }
 
   /**
-   * set range dimension max value
-   * @param {number} maxValue - expect max value for change
+   * Calculate max value
+   * @param {number} maxValue - max value
+   * @returns {number}
    */
-  setMaxDimensionValue(maxValue) {
-    let dimensionMaxValue = maxValue;
-    if (dimensionMaxValue <= 0) {
-      dimensionMaxValue = defaultResizePixelValues.max;
+  calcMaxValue(maxValue) {
+    if (maxValue <= 0) {
+      maxValue = defaultResizePixelValues.max;
     }
-    this._els.widthRange.max = dimensionMaxValue;
-    this._els.heightRange.max = dimensionMaxValue;
+
+    return maxValue;
+  }
+
+  /**
+   * Set range dimension max value
+   * @param {number} maxWidthValue - expect max width value for change
+   */
+  setMaxWidthValue(maxWidthValue) {
+    this._els.widthRange.max = this.calcMaxValue(maxWidthValue);
+  }
+
+  /**
+   * Set range dimension max value
+   * @param {number} maxHeightValue - expect max width value for change
+   */
+  setMaxHeightValue(maxHeightValue) {
+    this._els.heightRange.max = this.calcMaxValue(maxHeightValue);
+  }
+
+  /**
+   * Calculate min value
+   * @param {number} minValue - min value
+   * @returns {number}
+   */
+  calcMinValue(minValue) {
+    if (minValue <= 0) {
+      minValue = defaultResizePixelValues.min;
+    }
+
+    return minValue;
+  }
+
+  /**
+   * Set range dimension min value
+   * @param {number} minWidthValue - expect min width value for change
+   */
+  setMinWidthValue(minWidthValue) {
+    this._els.widthRange.min = this.calcMinValue(minWidthValue);
+  }
+
+  /**
+   * Set range dimension min value
+   * @param {number} minHeightValue - expect min width value for change
+   */
+  setMinHeightValue(minHeightValue) {
+    this._els.heightRange.min = this.calcMinValue(minHeightValue);
   }
 
   /**
@@ -127,6 +172,7 @@ class Resize extends Submenu {
    *   @param {Function} actions.getCurrentDimensions - Get current dimensions action
    *   @param {Function} actions.modeChange - change mode
    *   @param {Function} actions.stopDrawingMode - stop drawing mode
+   *   @param {Function} actions.lockAspectRatio - lock aspect ratio
    *   @param {Function} actions.reset - reset action
    */
   addEvent(actions) {
@@ -172,6 +218,11 @@ class Resize extends Submenu {
    */
   _changeLockAspectRatio(event) {
     this._lockState = event.target.checked;
+    this.actions.lockAspectRatio(
+      this._lockState,
+      defaultResizePixelValues.min,
+      defaultResizePixelValues.max
+    );
   }
 
   /**

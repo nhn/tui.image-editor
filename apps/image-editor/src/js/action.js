@@ -450,6 +450,32 @@ export default {
             this.ui.resize.setHeightValue(dimensions.height);
           }
         },
+        lockAspectRatio: (lockState, min, max) => {
+          const { width, height } = this._graphics.getCurrentDimensions();
+          const aspectRatio = width / height;
+          if (lockState) {
+            if (width > height) {
+              const pMax = max / aspectRatio;
+              const pMin = min * aspectRatio;
+              this.ui.resize.setMaxHeightValue(pMax < max ? pMax : max);
+              this.ui.resize.setMinWidthValue(pMin > min ? pMin : min);
+              this.ui.resize.setMaxWidthValue(max);
+              this.ui.resize.setMinHeightValue(min);
+            } else {
+              const pMax = max * aspectRatio;
+              const pMin = min / aspectRatio;
+              this.ui.resize.setMaxWidthValue(pMax < max ? pMax : max);
+              this.ui.resize.setMinHeightValue(pMin > min ? pMin : min);
+              this.ui.resize.setMaxHeightValue(max);
+              this.ui.resize.setMinWidthValue(min);
+            }
+          } else {
+            this.ui.resize.setMaxHeightValue(max);
+            this.ui.resize.setMaxWidthValue(max);
+            this.ui.resize.setMinWidthValue(min);
+            this.ui.resize.setMinHeightValue(min);
+          }
+        },
         resize: (dimensions = null) => {
           if (!dimensions) {
             dimensions = this._graphics.getCurrentDimensions();

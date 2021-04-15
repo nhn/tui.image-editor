@@ -83,6 +83,19 @@ class Range {
   }
 
   /**
+   * Set range min value and re position cursor
+   * @param {number} minValue - min value
+   */
+  set min(minValue) {
+    this._min = minValue;
+    this.max = this._max;
+  }
+
+  get min() {
+    return this._min;
+  }
+
+  /**
    * Get range value
    * @returns {Number} range value
    */
