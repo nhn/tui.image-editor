@@ -74,6 +74,17 @@ class Resize extends Submenu {
   }
 
   /**
+   * Set dimension limits
+   * @param {object} limits - expect dimension limits for change
+   */
+  setLimit(limits) {
+    this._els.widthRange.min = this.calcMinValue(limits.minWidth);
+    this._els.heightRange.min = this.calcMinValue(limits.minHeight);
+    this._els.widthRange.max = this.calcMaxValue(limits.maxWidth);
+    this._els.heightRange.max = this.calcMaxValue(limits.maxHeight);
+  }
+
+  /**
    * Calculate max value
    * @param {number} maxValue - max value
    * @returns {number}
@@ -87,22 +98,6 @@ class Resize extends Submenu {
   }
 
   /**
-   * Set range dimension max value
-   * @param {number} maxWidthValue - expect max width value for change
-   */
-  setMaxWidthValue(maxWidthValue) {
-    this._els.widthRange.max = this.calcMaxValue(maxWidthValue);
-  }
-
-  /**
-   * Set range dimension max value
-   * @param {number} maxHeightValue - expect max width value for change
-   */
-  setMaxHeightValue(maxHeightValue) {
-    this._els.heightRange.max = this.calcMaxValue(maxHeightValue);
-  }
-
-  /**
    * Calculate min value
    * @param {number} minValue - min value
    * @returns {number}
@@ -113,22 +108,6 @@ class Resize extends Submenu {
     }
 
     return minValue;
-  }
-
-  /**
-   * Set range dimension min value
-   * @param {number} minWidthValue - expect min width value for change
-   */
-  setMinWidthValue(minWidthValue) {
-    this._els.widthRange.min = this.calcMinValue(minWidthValue);
-  }
-
-  /**
-   * Set range dimension min value
-   * @param {number} minHeightValue - expect min width value for change
-   */
-  setMinHeightValue(minHeightValue) {
-    this._els.heightRange.min = this.calcMinValue(minHeightValue);
   }
 
   /**

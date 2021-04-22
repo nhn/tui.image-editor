@@ -457,23 +457,29 @@ export default {
             if (width > height) {
               const pMax = max / aspectRatio;
               const pMin = min * aspectRatio;
-              this.ui.resize.setMaxHeightValue(pMax < max ? pMax : max);
-              this.ui.resize.setMinWidthValue(pMin > min ? pMin : min);
-              this.ui.resize.setMaxWidthValue(max);
-              this.ui.resize.setMinHeightValue(min);
+              this.ui.resize.setLimit({
+                minWidth: pMin > min ? pMin : min,
+                minHeight: min,
+                maxWidth: max,
+                maxHeight: pMax < max ? pMax : max,
+              });
             } else {
               const pMax = max * aspectRatio;
               const pMin = min / aspectRatio;
-              this.ui.resize.setMaxWidthValue(pMax < max ? pMax : max);
-              this.ui.resize.setMinHeightValue(pMin > min ? pMin : min);
-              this.ui.resize.setMaxHeightValue(max);
-              this.ui.resize.setMinWidthValue(min);
+              this.ui.resize.setLimit({
+                minWidth: min,
+                minHeight: pMin > min ? pMin : min,
+                maxWidth: pMax < max ? pMax : max,
+                maxHeight: max,
+              });
             }
           } else {
-            this.ui.resize.setMaxHeightValue(max);
-            this.ui.resize.setMaxWidthValue(max);
-            this.ui.resize.setMinWidthValue(min);
-            this.ui.resize.setMinHeightValue(min);
+            this.ui.resize.setLimit({
+              minWidth: min,
+              minHeight: min,
+              maxWidth: max,
+              maxHeight: max,
+            });
           }
         },
         resize: (dimensions = null) => {
