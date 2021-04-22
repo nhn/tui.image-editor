@@ -78,7 +78,7 @@ describe('Resize', () => {
     expect(originalDimensions).toEqual(resizeModule.getCurrentDimensions());
   });
 
-  it('"start()" should setted original dimensions', () => {
+  it('"start()" should set original dimensions', () => {
     resizeModule.setOriginalDimensions(null);
 
     resizeModule.start();
