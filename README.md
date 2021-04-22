@@ -127,6 +127,7 @@
 - Crop
 - Flip
 - Rotation
+- Resize
 - Free drawing
 - Line drawing
 - Shape
