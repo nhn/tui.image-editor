@@ -123,6 +123,10 @@ class Component {
   adjustCanvasDimension() {
     this.graphics.adjustCanvasDimension();
   }
+
+  adjustCanvasDimensionBase() {
+    this.graphics.adjustCanvasDimensionBase();
+  }
 }
 
 export default Component;

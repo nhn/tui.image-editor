@@ -13,6 +13,7 @@ import controls from '@/ui/template/controls';
 import Theme from '@/ui/theme/theme';
 import Shape from '@/ui/shape';
 import Crop from '@/ui/crop';
+import Resize from '@/ui/resize';
 import Flip from '@/ui/flip';
 import Rotate from '@/ui/rotate';
 import Text from '@/ui/text';
@@ -26,6 +27,7 @@ import Locale from '@/ui/locale/locale';
 const SUB_UI_COMPONENT = {
   Shape,
   Crop,
+  Resize,
   Flip,
   Rotate,
   Text,
@@ -247,7 +249,18 @@ class Ui {
         },
         locale: {},
         menuIconPath: '',
-        menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
+        menu: [
+          'resize',
+          'crop',
+          'flip',
+          'rotate',
+          'draw',
+          'shape',
+          'icon',
+          'text',
+          'mask',
+          'filter',
+        ],
         initMenu: '',
         uiSize: {
           width: '100%',
