@@ -25,7 +25,7 @@ class Text extends Submenu {
       italic: false,
       underline: false,
     };
-    this.align = 'left';
+    this.align = 'tie-text-align-left';
     this._els = {
       textEffectButton: this.selector('.tie-text-effect-button'),
       textAlignButton: this.selector('.tie-text-align-button'),
@@ -186,7 +186,7 @@ class Text extends Submenu {
     this.setEffectState('italic', fontStyle);
     this.setEffectState('bold', fontWeight);
     this.setEffectState('underline', textDecoration);
-    this.setAlignState(textAlign);
+    this.setAlignState(`tie-text-align-${textAlign}`);
   }
 
   setEffectState(effectName, value) {
@@ -237,14 +237,15 @@ class Text extends Submenu {
     const button = event.target.closest('.tui-image-editor-button');
     if (button) {
       const styleType = this.getButtonType(button, ['left', 'center', 'right']);
+      const styleTypeAlias = `tie-text-align-${styleType}`;
 
       event.currentTarget.classList.remove(this.align);
-      if (this.align !== styleType) {
-        event.currentTarget.classList.add(styleType);
+      if (this.align !== styleTypeAlias) {
+        event.currentTarget.classList.add(styleTypeAlias);
       }
       this.actions.changeTextStyle({ textAlign: styleType });
 
-      this.align = styleType;
+      this.align = styleTypeAlias;
     }
   }
 
