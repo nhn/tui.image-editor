@@ -23,7 +23,7 @@
 ## 🚩 Table of Contents
 
 - [!Toast UI ImageEditor](#)
-  - [Packages](#packages)
+  - [📦 Packages](#packages)
   - [🚩 Table of Contents](#-table-of-contents)
   - [🌏 Browser Support](#-browser-support)
   - [💪 Has full features that stick to the basic.](#-has-full-features-that-stick-to-the-basic)
