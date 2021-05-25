@@ -11,30 +11,38 @@
 
 ## Packages
 
-- [toast-ui.image-editor](https://github.com/nhn/tui.image-editor/tree/main/apps/image-editor) - Plain JavaScript component implemented by [NHN](https://github.com/nhn).
-- [toast-ui.vue-image-editor](https://github.com/nhn/tui.image-editor/tree/main/apps/vue-image-editor) - **Vue** wrapper component is powered by [NHN](https://github.com/nhn).
-- [toast-ui.react-image-editor](https://github.com/nhn/tui.image-editor/tree/main/apps/react-image-editor) - **React** wrapper component is powered by [NHN](https://github.com/nhn).
+- [toast-ui.image-editor](https://github.com/nhn/tui.image-editor/tree/master/apps/image-editor
+) - Plain JavaScript component implemented by [NHN](https://github.com/nhn).
+- [toast-ui.vue-image-editor](https://github.com/nhn/tui.image-editor/tree/master/apps/vue-image-editor
+) - **Vue** wrapper component is powered by [NHN](https://github.com/nhn).
+- [toast-ui.react-image-editor](https://github.com/nhn/tui.image-editor/tree/master/apps/react-image-editor
+) - **React** wrapper component is powered by [NHN](https://github.com/nhn).
 
 ![6 -20-2018 17-45-54](https://user-images.githubusercontent.com/35218826/41647896-7b218ae0-74b2-11e8-90db-d7805cc23e8c.gif)
 
 ## 🚩 Table of Contents
 
-- [Browser Support](#-browser-support)
-- [Has full features that stick to the basic.](#-has-full-features-that-stick-to-the-basic)
-  - [Photo manipulation](#photo-manipulation)
-  - [Integration function](#integration-function)
-  - [Powerful filter function](#powerful-filter-function)
-- [Easy to apply the size and design you want](#-easy-to-apply-the-size-and-design-you-want)
-  - [Can be used everywhere](#can-be-used-everywhere)
-  - [Nice default & Fully customizable Themes](#nice-default--fully-customizable-themes)
-- [Features](#-features)
-- [Pull Request Steps](#-pull-request-steps)
-- [Documents](#-documents)
-- [Contributing](#-contributing)
-- [Dependency](#-dependency)
-- [TOAST UI Family](#-toast-ui-family)
-- [Used By](#-used-by)
-- [License](#-license)
+- [!Toast UI ImageEditor](#)
+  - [📦 Packages](#packages)
+  - [🚩 Table of Contents](#-table-of-contents)
+  - [🌏 Browser Support](#-browser-support)
+  - [💪 Has full features that stick to the basic.](#-has-full-features-that-stick-to-the-basic)
+    - [Photo manipulation](#photo-manipulation)
+    - [Integration function](#integration-function)
+    - [Powerful filter function](#powerful-filter-function)
+  - [🙆 Easy to apply the size and design you want](#-easy-to-apply-the-size-and-design-you-want)
+    - [Can be used everywhere.](#can-be-used-everywhere)
+    - [Nice default & Fully customizable Themes](#nice-default--fully-customizable-themes)
+  - [🎨 Features](#-features)
+  - [🔧 Pull Request Steps](#-pull-request-steps)
+    - [Setup](#setup)
+    - [Pull Request](#pull-request)
+  - [📙 Documents](#-documents)
+  - [💬 Contributing](#-contributing)
+  - [🔩 Dependency](#-dependency)
+  - [🍞 TOAST UI Family](#-toast-ui-family)
+  - [🚀 Used By](#-used-by)
+  - [📜 License](#-license)
 
 ## 🌏 Browser Support
 
