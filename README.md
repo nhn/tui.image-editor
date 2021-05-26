@@ -9,7 +9,7 @@
 [![code with hearth by NHN](https://img.shields.io/badge/%3C%2F%3E%20with%20%E2%99%A5%20by-NHN-ff1414.svg)](https://github.com/nhn)
 [![lerna](https://img.shields.io/badge/maintained%20with-lerna-cc00ff.svg)](https://lerna.js.org/)
 
-## Packages
+## 📦 Packages
 
 - [toast-ui.image-editor](https://github.com/nhn/tui.image-editor/tree/master/apps/image-editor
 ) - Plain JavaScript component implemented by [NHN](https://github.com/nhn).
