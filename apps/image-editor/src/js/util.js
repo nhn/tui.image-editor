@@ -381,15 +381,8 @@ export function getObjectType(type) {
  * @returns {string} type of filter (ex: sepia, blur, ...)
  */
 function getFilterType(type, { useAlpha = true, mode } = {}) {
-  const {
-    VINTAGE,
-    REMOVE_COLOR,
-    BLEND_COLOR,
-    SEPIA2,
-    COLOR_FILTER,
-    REMOVE_WHITE,
-    BLEND,
-  } = filterType;
+  const { VINTAGE, REMOVE_COLOR, BLEND_COLOR, SEPIA2, COLOR_FILTER, REMOVE_WHITE, BLEND } =
+    filterType;
 
   let filterName;
 
