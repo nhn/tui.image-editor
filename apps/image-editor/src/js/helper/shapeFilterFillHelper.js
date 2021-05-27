@@ -518,12 +518,8 @@ function getShapeEdgePoint(shapeObj) {
  * @returns {Object} Rotated shape dimension
  */
 function getRotatedDimension(shapeObj) {
-  const [
-    { x: ax, y: ay },
-    { x: bx, y: by },
-    { x: cx, y: cy },
-    { x: dx, y: dy },
-  ] = getShapeEdgePoint(shapeObj);
+  const [{ x: ax, y: ay }, { x: bx, y: by }, { x: cx, y: cy }, { x: dx, y: dy }] =
+    getShapeEdgePoint(shapeObj);
 
   const left = Math.min(ax, bx, cx, dx);
   const top = Math.min(ay, by, cy, dy);
