@@ -1,6 +1,6 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
-import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone } from '@/util';
+import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone, includes } from '@/util';
 import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
 
 export default {
@@ -420,7 +420,7 @@ export default {
           const calcAspectRatio = () => currentDimensions.width / currentDimensions.height;
 
           let dimensions = {};
-          switch(actor) {
+          switch (actor) {
             case 'width':
               dimensions.width = value;
               if (lockState) {
@@ -651,7 +651,7 @@ export default {
         this.activeObjectId = null;
         if (this.ui.submenu === 'text') {
           this.changeCursor('text');
-        } else if (!['draw', 'crop', 'resize'].includes(this.ui.submenu)) {
+        } else if (!includes(['draw', 'crop', 'resize'], this.ui.submenu)) {
           this.stopDrawingMode();
         }
       },
