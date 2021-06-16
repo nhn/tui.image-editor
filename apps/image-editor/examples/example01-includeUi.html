@@ -1,35 +1,47 @@
 <!DOCTYPE html>
 <html>
-
-<head>
-  <meta charset="UTF-8" />
-  <title>0. Design</title>
-  <link type="text/css" href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css" rel="stylesheet" />
-  <link type="text/css" href="../dist/tui-image-editor.css" rel="stylesheet" />
-  <style>
-    @import url(http://fonts.googleapis.com/css?family=Noto+Sans);
-
-    html,
-    body {
-      height: 100%;
-      margin: 0;
-    }
-  </style>
-</head>
-
-<body>
-  <div id="tui-image-editor-container"></div>
-  <script type="text/javascript"
-    src="https://api-storage.cloud.toast.com/v1/AUTH_e18353c4ea5746c097143946d0644e61/toast-ui-cdn/tui-image-editor/v3.11.0/example/fabric-v4.2.0.js"></script>
-  <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"></script>
-  <script type="text/javascript" src="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.js"></script>
-  <script type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
-  <script type="text/javascript" src="../dist/tui-image-editor.js"></script>
-  <script type="text/javascript" src="js/theme/white-theme.js"></script>
-  <script type="text/javascript" src="js/theme/black-theme.js"></script>
-  <script>
-    function saveImage(editor) {
+  <head>
+    <meta charset="UTF-8" />
+    <title>0. Design</title>
+    <link
+      type="text/css"
+      href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
+      rel="stylesheet"
+    />
+    <link type="text/css" href="../dist/tui-image-editor.css" rel="stylesheet" />
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Noto+Sans);
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="tui-image-editor-container"></div>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.4.0/fabric.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://uicdn.toast.com/tui.code-snippet/v1.5.0/tui-code-snippet.min.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"
+    ></script>
+    <script type="text/javascript" src="../dist/tui-image-editor.js"></script>
+    <script type="text/javascript" src="js/theme/white-theme.js"></script>
+    <script type="text/javascript" src="js/theme/black-theme.js"></script>
+    <script>
+      function saveImage(editor) {
+      //TODO: add custom save logic here
       // const dataURL = this.toDataURL();
       // let imageName = this.getImageName();
       // let blob, type, w;
@@ -46,29 +58,29 @@
       //   w.document.body.innerHTML = `<img src='${dataURL}'>`;
       // }
 
-      const dataURL = editor.toDataURL();
-      window.open().document.body.innerHTML = `<img src='${dataURL}'>`;
-    }
-    // Image editor
-    var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
-      includeUI: {
-        loadImage: {
-          path: 'img/sampleImage2.png',
-          name: 'SampleImage',
+      //const dataURL = editor.toDataURL();
+      //window.open().document.body.innerHTML = `<img src='${dataURL}'>`;
+      }
+      
+      // Image editor
+      var imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
+        includeUI: {
+          loadImage: {
+            path: 'img/sampleImage2.png',
+            name: 'SampleImage',
+          },
+          theme: blackTheme, // or whiteTheme
+          initMenu: 'filter',
+          menuBarPosition: 'bottom',
+          saveImage: saveImage,
         },
-        theme: blackTheme, // or whiteTheme
-        initMenu: 'filter',
-        menuBarPosition: 'bottom',
-        saveImage: saveImage,
-      },
-      cssMaxWidth: 700,
-      cssMaxHeight: 500,
-      usageStatistics: false,
-    });
-    window.onresize = function () {
-      imageEditor.ui.resizeEditor();
-    };
-  </script>
-</body>
-
+        cssMaxWidth: 700,
+        cssMaxHeight: 500,
+        usageStatistics: false,
+      });
+      window.onresize = function () {
+        imageEditor.ui.resizeEditor();
+      };
+    </script>
+  </body>
 </html>

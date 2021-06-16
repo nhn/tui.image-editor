@@ -4,6 +4,7 @@
  */
 
 import { extend } from 'tui-code-snippet';
+import fabric from 'fabric';
 
 /**
  * Cached selection's info
@@ -44,7 +45,7 @@ export function makeSelectionUndoData(obj, undoDatumMaker) {
     undoData = obj.getObjects().map((item) => {
       const { angle, left, top, scaleX, scaleY, width, height } = item;
 
-      obj.realizeTransform(item);
+      fabric.util.addTransformToObject(item, obj.calcTransformMatrix());
       const result = undoDatumMaker(item);
 
       item.set({

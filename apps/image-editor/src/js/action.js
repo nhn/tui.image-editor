@@ -1,6 +1,6 @@
 import { extend } from 'tui-code-snippet';
 import Imagetracer from '@/helper/imagetracer';
-import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone } from '@/util';
+import { isSupportFileApi, base64ToBlob, toInteger, isEmptyCropzone, includes } from '@/util';
 import { eventNames, historyNames, drawingModes, drawingMenuNames, zoomModes } from '@/consts';
 
 export default {
@@ -14,6 +14,7 @@ export default {
       main: this._mainAction(),
       shape: this._shapeAction(),
       crop: this._cropAction(),
+      resize: this._resizeAction(),
       flip: this._flipAction(),
       rotate: this._rotateAction(),
       text: this._textAction(),
@@ -410,6 +411,115 @@ export default {
   },
 
   /**
+   * Resize Action
+   * @returns {Object} actions for ui resize
+   * @private
+   */
+  _resizeAction() {
+    return extend(
+      {
+        getCurrentDimensions: () => this._graphics.getCurrentDimensions(),
+        preview: (actor, value, lockState) => {
+          const currentDimensions = this._graphics.getCurrentDimensions();
+          const calcAspectRatio = () => currentDimensions.width / currentDimensions.height;
+
+          let dimensions = {};
+          switch (actor) {
+            case 'width':
+              dimensions.width = value;
+              if (lockState) {
+                dimensions.height = value / calcAspectRatio();
+              } else {
+                dimensions.height = currentDimensions.height;
+              }
+              break;
+            case 'height':
+              dimensions.height = value;
+              if (lockState) {
+                dimensions.width = value * calcAspectRatio();
+              } else {
+                dimensions.width = currentDimensions.width;
+              }
+              break;
+            default:
+              dimensions = currentDimensions;
+          }
+
+          this._graphics.resize(dimensions).then(() => {
+            this.ui.resizeEditor();
+          });
+
+          if (lockState) {
+            this.ui.resize.setWidthValue(dimensions.width);
+            this.ui.resize.setHeightValue(dimensions.height);
+          }
+        },
+        lockAspectRatio: (lockState, min, max) => {
+          const { width, height } = this._graphics.getCurrentDimensions();
+          const aspectRatio = width / height;
+          if (lockState) {
+            if (width > height) {
+              const pMax = max / aspectRatio;
+              const pMin = min * aspectRatio;
+              this.ui.resize.setLimit({
+                minWidth: pMin > min ? pMin : min,
+                minHeight: min,
+                maxWidth: max,
+                maxHeight: pMax < max ? pMax : max,
+              });
+            } else {
+              const pMax = max * aspectRatio;
+              const pMin = min / aspectRatio;
+              this.ui.resize.setLimit({
+                minWidth: min,
+                minHeight: pMin > min ? pMin : min,
+                maxWidth: pMax < max ? pMax : max,
+                maxHeight: max,
+              });
+            }
+          } else {
+            this.ui.resize.setLimit({
+              minWidth: min,
+              minHeight: min,
+              maxWidth: max,
+              maxHeight: max,
+            });
+          }
+        },
+        resize: (dimensions = null) => {
+          if (!dimensions) {
+            dimensions = this._graphics.getCurrentDimensions();
+          }
+
+          this.resize(dimensions)
+            .then(() => {
+              this._graphics.setOriginalDimensions(dimensions);
+              this.stopDrawingMode();
+              this.ui.resizeEditor();
+              this.ui.changeMenu('resize');
+            })
+            ['catch']((message) => Promise.reject(message));
+        },
+        reset: (standByMode = false) => {
+          const dimensions = this._graphics.getOriginalDimensions();
+
+          this.ui.resize.setWidthValue(dimensions.width, true);
+          this.ui.resize.setHeightValue(dimensions.height, true);
+
+          this._graphics.resize(dimensions).then(() => {
+            if (!standByMode) {
+              this.stopDrawingMode();
+              this.ui.resizeEditor();
+              this.ui.changeMenu('resize');
+            }
+          });
+        },
+      },
+      this._commonAction()
+    );
+  },
+
+  /**
    * Flip Action
    * @returns {Object} actions for ui flip
    * @private
@@ -545,7 +655,7 @@ export default {
         this.activeObjectId = null;
         if (this.ui.submenu === 'text') {
           this.changeCursor('text');
-        } else if (this.ui.submenu !== 'draw' && this.ui.submenu !== 'crop') {
+        } else if (!includes(['draw', 'crop', 'resize'], this.ui.submenu)) {
           this.stopDrawingMode();
         }
       },
@@ -570,7 +680,7 @@ export default {
    * @private
    */
   _commonAction() {
-    const { TEXT, CROPPER, SHAPE, ZOOM } = drawingModes;
+    const { TEXT, CROPPER, SHAPE, ZOOM, RESIZE } = drawingModes;
 
     return {
       modeChange: (menu) => {
@@ -587,6 +697,9 @@ export default {
             break;
           case drawingMenuNames.ZOOM:
             this.startDrawingMode(ZOOM);
+            break;
+          case drawingMenuNames.RESIZE:
+            this.startDrawingMode(RESIZE);
             break;
           default:
             break;

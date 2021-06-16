@@ -80,7 +80,8 @@ export const componentNames = keyMirror(
   'ICON',
   'FILTER',
   'SHAPE',
-  'ZOOM'
+  'ZOOM',
+  'RESIZE'
 );
 
 /**
@@ -132,6 +133,7 @@ export const commandNames = {
   SET_OBJECT_PROPERTIES: 'setObjectProperties',
   SET_OBJECT_POSITION: 'setObjectPosition',
   CHANGE_SELECTION: 'changeSelection',
+  RESIZE_IMAGE: 'resize',
 };
 
 /**
@@ -173,6 +175,7 @@ export const eventNames = {
   INPUT_BOX_EDITING_STOPPED: 'inputBoxEditingStopped',
   FOCUS: 'focus',
   BLUR: 'blur',
+  IMAGE_RESIZED: 'imageResized',
 };
 
 /**
@@ -193,6 +196,7 @@ export const historyNames = {
   ADD_MASK_IMAGE: 'Mask',
   ADD_IMAGE_OBJECT: 'Mask',
   CROP: 'Crop',
+  RESIZE: 'Resize',
   APPLY_FILTER: 'Filter',
   REMOVE_FILTER: 'Filter',
   CHANGE_SHAPE: 'Shape',
@@ -215,7 +219,8 @@ export const drawingModes = keyMirror(
   'TEXT',
   'SHAPE',
   'ICON',
-  'ZOOM'
+  'ZOOM',
+  'RESIZE'
 );
 
 /**
@@ -225,6 +230,7 @@ export const drawingModes = keyMirror(
 export const drawingMenuNames = {
   TEXT: 'text',
   CROP: 'crop',
+  RESIZE: 'resize',
   SHAPE: 'shape',
   ZOOM: 'zoom',
 };
@@ -392,4 +398,11 @@ export const emptyCropRectValues = {
   TOP: 0,
   WIDTH: 0.5,
   HEIGHT: 0.5,
+};
+
+export const defaultResizePixelValues = {
+  realTimeEvent: true,
+  min: 32,
+  max: 4088,
+  value: 800,
 };

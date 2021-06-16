@@ -34,16 +34,11 @@ import {
   drawingModes,
   fObjectOptions,
 } from '@/consts';
+import Resize from '@/component/resize';
+import ResizeDrawingMode from '@/drawingMode/resize';
 
-const {
-  extend,
-  stamp,
-  isArray,
-  isString,
-  forEachArray,
-  forEachOwnProperties,
-  CustomEvents,
-} = snippet;
+const { extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents } =
+  snippet;
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
 const EXTRA_PX_FOR_PASTE = 10;
@@ -582,7 +577,14 @@ class Graphics {
    * Adjust canvas dimension with scaling image
    */
   adjustCanvasDimension() {
-    const canvasImage = this.canvasImage.scale(1);
+    this.adjustCanvasDimensionBase(this.canvasImage.scale(1));
+  }
+
+  adjustCanvasDimensionBase(canvasImage = null) {
+    if (!canvasImage) {
+      canvasImage = this.canvasImage;
+    }
+
     const { width, height } = canvasImage.getBoundingRect();
     const maxDimension = this._calcMaxDimension(width, height);
 
@@ -992,6 +994,7 @@ class Graphics {
     this._register(this._drawingModeMap, new TextDrawingMode());
     this._register(this._drawingModeMap, new IconDrawingMode());
     this._register(this._drawingModeMap, new ZoomDrawingMode());
+    this._register(this._drawingModeMap, new ResizeDrawingMode());
   }
 
   /**
@@ -1010,6 +1013,7 @@ class Graphics {
     this._register(this._componentMap, new Filter(this));
     this._register(this._componentMap, new Shape(this));
     this._register(this._componentMap, new Zoom(this));
+    this._register(this._componentMap, new Resize(this));
   }
 
   /**
@@ -1490,6 +1494,46 @@ class Graphics {
         resolve(cloned);
       });
     });
+  }
+
+  /**
+   * Get current dimensions
+   * @returns {object}
+   */
+  getCurrentDimensions() {
+    const resize = this.getComponent(components.RESIZE);
+
+    return resize.getCurrentDimensions();
+  }
+
+  /**
+   * Get original dimensions
+   * @returns {object}
+   */
+  getOriginalDimensions() {
+    const resize = this.getComponent(components.RESIZE);
+
+    return resize.getOriginalDimensions();
+  }
+
+  /**
+   * Set original dimensions
+   * @param {object} dimensions - Dimensions
+   */
+  setOriginalDimensions(dimensions) {
+    const resize = this.getComponent(components.RESIZE);
+    resize.setOriginalDimensions(dimensions);
+  }
+
+  /**
+   * Resize Image
+   * @param {Object} dimensions - Resize dimensions
+   * @returns {Promise}
+   */
+  resize(dimensions) {
+    const resize = this.getComponent(components.RESIZE);
+
+    return resize.resize(dimensions);
   }
 }
 

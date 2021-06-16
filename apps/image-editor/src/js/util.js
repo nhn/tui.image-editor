@@ -381,15 +381,8 @@ export function getObjectType(type) {
  * @returns {string} type of filter (ex: sepia, blur, ...)
  */
 function getFilterType(type, { useAlpha = true, mode } = {}) {
-  const {
-    VINTAGE,
-    REMOVE_COLOR,
-    BLEND_COLOR,
-    SEPIA2,
-    COLOR_FILTER,
-    REMOVE_WHITE,
-    BLEND,
-  } = filterType;
+  const { VINTAGE, REMOVE_COLOR, BLEND_COLOR, SEPIA2, COLOR_FILTER, REMOVE_WHITE, BLEND } =
+    filterType;
 
   let filterName;
 
@@ -440,6 +433,7 @@ export function getHistoryTitle(command) {
     CLEAR_OBJECTS,
     ADD_IMAGE_OBJECT,
     REMOVE_OBJECT,
+    RESIZE_IMAGE,
   } = commandNames;
   const { name, args } = command;
   let historyInfo;
@@ -477,6 +471,9 @@ export function getHistoryTitle(command) {
       break;
     case ADD_TEXT:
       historyInfo = { name: historyNames.ADD_TEXT };
+      break;
+    case RESIZE_IMAGE:
+      historyInfo = { name: historyNames.RESIZE, detail: `${~~args[1].width}x${~~args[1].height}` };
       break;
 
     default:

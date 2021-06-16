@@ -23,5 +23,6 @@ import '@/command/rotate';
 import '@/command/setObjectProperties';
 import '@/command/setObjectPosition';
 import '@/command/changeSelection';
+import '@/command/resize';
 
 module.exports = ImageEditor;
