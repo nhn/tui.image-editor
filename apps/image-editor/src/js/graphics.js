@@ -819,6 +819,26 @@ class Graphics {
   }
 
   /**
+   * Set fabric control option
+   * @param {Object} controlsVisibility - objects
+   */
+  _setFabricControlsVisibility(controlsVisibility = {}) {
+    fabric.Object.prototype.setControlsVisibility(
+      controlsVisibility || {
+        bl: true, // bottom-left
+        br: true, // bottom-right
+        mb: true, // middle-bottom
+        ml: true, // middle-left
+        mr: true, // middle-right
+        mt: true, // middle-top
+        tl: true, // top-left
+        tr: true, // top-right
+        mtr: true, // rotate
+      }
+    );
+  }
+
+  /**
    * Set object properties
    * @param {number} id - object id
    * @param {Object} props - props

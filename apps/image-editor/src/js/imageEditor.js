@@ -236,7 +236,7 @@ class ImageEditor {
       applyCropSelectionStyle: options.applyCropSelectionStyle,
       applyGroupSelectionStyle: options.applyGroupSelectionStyle,
     });
-
+    this._setFabricControlsVisibility(options.controlsVisibility);
     if (options.usageStatistics) {
       sendHostName();
     }
@@ -286,6 +286,16 @@ class ImageEditor {
           eventTarget.set(selectionStyle);
         }
       });
+    }
+  }
+
+  /**
+   * Set fabric control option
+   * @param {Object} controlsVisibility - objects
+   */
+  _setFabricControlsVisibility(controlsVisibility) {
+    if (controlsVisibility) {
+      fabric.Object.prototype.setControlsVisibility(controlsVisibility);
     }
   }
 
