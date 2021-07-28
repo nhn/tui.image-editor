@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.14.3
+ * @version 3.15.0
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -197,7 +197,8 @@ body > textarea {
   transition: none;
 }
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-flip .tui-image-editor-grid-visual,
-.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-rotate .tui-image-editor-grid-visual {
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-rotate .tui-image-editor-grid-visual,
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-resize .tui-image-editor-grid-visual {
   display: block;
 }
 .tui-image-editor-container .tui-image-editor-grid-visual table {
@@ -316,6 +317,7 @@ body > textarea {
   width: 70px;
 }
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-crop .tui-image-editor-submenu > div.tui-image-editor-menu-crop,
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-resize .tui-image-editor-submenu > div.tui-image-editor-menu-resize,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-flip .tui-image-editor-submenu > div.tui-image-editor-menu-flip,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-rotate .tui-image-editor-submenu > div.tui-image-editor-menu-rotate,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-shape .tui-image-editor-submenu > div.tui-image-editor-menu-shape,
@@ -328,6 +330,7 @@ body > textarea {
   display: table-cell;
 }
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-crop .tui-image-editor-submenu,
+.tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-resize .tui-image-editor-submenu,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-flip .tui-image-editor-submenu,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-rotate .tui-image-editor-submenu,
 .tui-image-editor-container .tui-image-editor-main.tui-image-editor-menu-shape .tui-image-editor-submenu,
@@ -608,7 +611,7 @@ body > textarea {
   font-weight: lighter;
   vertical-align: baseline;
   font-family: 'Noto Sans', sans-serif;
-  margin-top: 21px;
+  margin-top: 15px;
   margin-left: 4px;
 }
 .tui-image-editor-container .tui-image-editor-controls {
@@ -1178,6 +1181,18 @@ body > textarea {
 .tie-crop-preset-button .tui-image-editor-button.apply.active svg > use.active {
   display: block;
 }
+.tie-resize-button .tui-image-editor-button.apply,
+.tie-resize-preset-button .tui-image-editor-button.apply {
+  margin-right: 24px;
+}
+.tie-resize-button .tui-image-editor-button.preset.active svg > use.active,
+.tie-resize-preset-button .tui-image-editor-button.preset.active svg > use.active {
+  display: block;
+}
+.tie-resize-button .tui-image-editor-button.apply.active svg > use.active,
+.tie-resize-preset-button .tui-image-editor-button.apply.active svg > use.active {
+  display: block;
+}
 .tie-shape-button.rect .tui-image-editor-button.rect svg > use.normal,
 .tie-shape-button.circle .tui-image-editor-button.circle svg > use.normal,
 .tie-shape-button.triangle .tui-image-editor-button.triangle svg > use.normal {
@@ -1191,9 +1206,9 @@ body > textarea {
 .tie-text-effect-button .tui-image-editor-button.active svg > use.active {
   display: block;
 }
-.tie-text-align-button.left .tui-image-editor-button.left svg > use.active,
-.tie-text-align-button.center .tui-image-editor-button.center svg > use.active,
-.tie-text-align-button.right .tui-image-editor-button.right svg > use.active {
+.tie-text-align-button.tie-text-align-left .tui-image-editor-button.left svg > use.active,
+.tie-text-align-button.tie-text-align-center .tui-image-editor-button.center svg > use.active,
+.tie-text-align-button.tie-text-align-right .tui-image-editor-button.right svg > use.active {
   display: block;
 }
 .tie-mask-image-file,

@@ -1,6 +1,6 @@
 /*!
  * tui-image-editor.js
- * @version 3.14.3
+ * @version 3.15.0
  * @author NHN. FE Development Lab <dl_javascript@nhn.com>
  * @license MIT
  */
@@ -109,12 +109,14 @@ return /******/ (function(modules) { // webpackBootstrap
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+__webpack_require__(/*! ../../modules/es.aggregate-error */ "./node_modules/core-js-pure/modules/es.aggregate-error.js");
 __webpack_require__(/*! ../../modules/es.object.to-string */ "./node_modules/core-js-pure/modules/es.object.to-string.js");
-__webpack_require__(/*! ../../modules/es.string.iterator */ "./node_modules/core-js-pure/modules/es.string.iterator.js");
-__webpack_require__(/*! ../../modules/web.dom-collections.iterator */ "./node_modules/core-js-pure/modules/web.dom-collections.iterator.js");
 __webpack_require__(/*! ../../modules/es.promise */ "./node_modules/core-js-pure/modules/es.promise.js");
 __webpack_require__(/*! ../../modules/es.promise.all-settled */ "./node_modules/core-js-pure/modules/es.promise.all-settled.js");
+__webpack_require__(/*! ../../modules/es.promise.any */ "./node_modules/core-js-pure/modules/es.promise.any.js");
 __webpack_require__(/*! ../../modules/es.promise.finally */ "./node_modules/core-js-pure/modules/es.promise.finally.js");
+__webpack_require__(/*! ../../modules/es.string.iterator */ "./node_modules/core-js-pure/modules/es.string.iterator.js");
+__webpack_require__(/*! ../../modules/web.dom-collections.iterator */ "./node_modules/core-js-pure/modules/web.dom-collections.iterator.js");
 var path = __webpack_require__(/*! ../../internals/path */ "./node_modules/core-js-pure/internals/path.js");
 
 module.exports = path.Promise;
@@ -240,10 +242,10 @@ var createMethod = function (IS_INCLUDES) {
     var index = toAbsoluteIndex(fromIndex, length);
     var value;
     // Array#includes uses SameValueZero equality algorithm
-    // eslint-disable-next-line no-self-compare
+    // eslint-disable-next-line no-self-compare -- NaN check
     if (IS_INCLUDES && el != el) while (length > index) {
       value = O[index++];
-      // eslint-disable-next-line no-self-compare
+      // eslint-disable-next-line no-self-compare -- NaN check
       if (value != value) return true;
     // Array#indexOf ignores holes, Array#includes - not
     } else for (;length > index; index++) {
@@ -254,35 +256,11 @@ var createMethod = function (IS_INCLUDES) {
 
 module.exports = {
   // `Array.prototype.includes` method
-  // https://tc39.github.io/ecma262/#sec-array.prototype.includes
+  // https://tc39.es/ecma262/#sec-array.prototype.includes
   includes: createMethod(true),
   // `Array.prototype.indexOf` method
-  // https://tc39.github.io/ecma262/#sec-array.prototype.indexof
+  // https://tc39.es/ecma262/#sec-array.prototype.indexof
   indexOf: createMethod(false)
-};
-
-
-/***/ }),
-
-/***/ "./node_modules/core-js-pure/internals/call-with-safe-iteration-closing.js":
-/*!*********************************************************************************!*\
-  !*** ./node_modules/core-js-pure/internals/call-with-safe-iteration-closing.js ***!
-  \*********************************************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
-
-// call something on iterator step with safe closing on error
-module.exports = function (iterator, fn, value, ENTRIES) {
-  try {
-    return ENTRIES ? fn(anObject(value)[0], value[1]) : fn(value);
-  // 7.4.6 IteratorClose(iterator, completion)
-  } catch (error) {
-    var returnMethod = iterator['return'];
-    if (returnMethod !== undefined) anObject(returnMethod.call(iterator));
-    throw error;
-  }
 };
 
 
@@ -313,7 +291,7 @@ try {
   iteratorWithReturn[ITERATOR] = function () {
     return this;
   };
-  // eslint-disable-next-line no-throw-literal
+  // eslint-disable-next-line es/no-array-from, no-throw-literal -- required for testing
   Array.from(iteratorWithReturn, function () { throw 2; });
 } catch (error) { /* empty */ }
 
@@ -402,6 +380,7 @@ var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-j
 module.exports = !fails(function () {
   function F() { /* empty */ }
   F.prototype.constructor = null;
+  // eslint-disable-next-line es/no-object-getprototypeof -- required for testing
   return Object.getPrototypeOf(new F()) !== F.prototype;
 });
 
@@ -587,8 +566,9 @@ module.exports = function (Iterable, NAME, IteratorConstructor, next, DEFAULT, I
 
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
 
-// Thank's IE8 for his funny defineProperty
+// Detect IE8's incomplete defineProperty implementation
 module.exports = !fails(function () {
+  // eslint-disable-next-line es/no-object-defineproperty -- required for testing
   return Object.defineProperty({}, 1, { get: function () { return 7; } })[1] != 7;
 });
 
@@ -662,6 +642,18 @@ module.exports = {
 
 /***/ }),
 
+/***/ "./node_modules/core-js-pure/internals/engine-is-browser.js":
+/*!******************************************************************!*\
+  !*** ./node_modules/core-js-pure/internals/engine-is-browser.js ***!
+  \******************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = typeof window == 'object';
+
+
+/***/ }),
+
 /***/ "./node_modules/core-js-pure/internals/engine-is-ios.js":
 /*!**************************************************************!*\
   !*** ./node_modules/core-js-pure/internals/engine-is-ios.js ***!
@@ -671,7 +663,36 @@ module.exports = {
 
 var userAgent = __webpack_require__(/*! ../internals/engine-user-agent */ "./node_modules/core-js-pure/internals/engine-user-agent.js");
 
-module.exports = /(iphone|ipod|ipad).*applewebkit/i.test(userAgent);
+module.exports = /(?:iphone|ipod|ipad).*applewebkit/i.test(userAgent);
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/internals/engine-is-node.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/core-js-pure/internals/engine-is-node.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var classof = __webpack_require__(/*! ../internals/classof-raw */ "./node_modules/core-js-pure/internals/classof-raw.js");
+var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js-pure/internals/global.js");
+
+module.exports = classof(global.process) == 'process';
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/internals/engine-is-webos-webkit.js":
+/*!***********************************************************************!*\
+  !*** ./node_modules/core-js-pure/internals/engine-is-webos-webkit.js ***!
+  \***********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var userAgent = __webpack_require__(/*! ../internals/engine-user-agent */ "./node_modules/core-js-pure/internals/engine-user-agent.js");
+
+module.exports = /web0s(?!.*chrome)/i.test(userAgent);
 
 
 /***/ }),
@@ -707,7 +728,7 @@ var match, version;
 
 if (v8) {
   match = v8.split('.');
-  version = match[0] + match[1];
+  version = match[0] < 4 ? 1 : match[0] + match[1];
 } else if (userAgent) {
   match = userAgent.match(/Edge\/(\d+)/);
   if (!match || match[1] >= 74) {
@@ -962,13 +983,14 @@ module.exports = function (it) {
 
 // https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
 module.exports =
-  // eslint-disable-next-line no-undef
+  // eslint-disable-next-line es/no-global-this -- safe
   check(typeof globalThis == 'object' && globalThis) ||
   check(typeof window == 'object' && window) ||
+  // eslint-disable-next-line no-restricted-globals -- safe
   check(typeof self == 'object' && self) ||
   check(typeof global == 'object' && global) ||
-  // eslint-disable-next-line no-new-func
-  Function('return this')();
+  // eslint-disable-next-line no-new-func -- fallback
+  (function () { return this; })() || Function('return this')();
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js")))
 
@@ -979,12 +1001,14 @@ module.exports =
   !*** ./node_modules/core-js-pure/internals/has.js ***!
   \****************************************************/
 /*! no static exports found */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
+
+var toObject = __webpack_require__(/*! ../internals/to-object */ "./node_modules/core-js-pure/internals/to-object.js");
 
 var hasOwnProperty = {}.hasOwnProperty;
 
-module.exports = function (it, key) {
-  return hasOwnProperty.call(it, key);
+module.exports = function hasOwn(it, key) {
+  return hasOwnProperty.call(toObject(it), key);
 };
 
 
@@ -1048,6 +1072,7 @@ var createElement = __webpack_require__(/*! ../internals/document-create-element
 
 // Thank's IE8 for his funny defineProperty
 module.exports = !DESCRIPTORS && !fails(function () {
+  // eslint-disable-next-line es/no-object-defineproperty -- requied for testing
   return Object.defineProperty(createElement('div'), 'a', {
     get: function () { return 7; }
   }).a != 7;
@@ -1071,7 +1096,7 @@ var split = ''.split;
 // fallback for non-array-like ES3 and non-enumerable old V8 strings
 module.exports = fails(function () {
   // throws an error in rhino, see https://github.com/mozilla/rhino/issues/346
-  // eslint-disable-next-line no-prototype-builtins
+  // eslint-disable-next-line no-prototype-builtins -- safe
   return !Object('z').propertyIsEnumerable(0);
 }) ? function (it) {
   return classof(it) == 'String' ? split.call(it, '') : Object(it);
@@ -1115,9 +1140,11 @@ var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core
 var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js-pure/internals/is-object.js");
 var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js-pure/internals/create-non-enumerable-property.js");
 var objectHas = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js-pure/internals/has.js");
+var shared = __webpack_require__(/*! ../internals/shared-store */ "./node_modules/core-js-pure/internals/shared-store.js");
 var sharedKey = __webpack_require__(/*! ../internals/shared-key */ "./node_modules/core-js-pure/internals/shared-key.js");
 var hiddenKeys = __webpack_require__(/*! ../internals/hidden-keys */ "./node_modules/core-js-pure/internals/hidden-keys.js");
 
+var OBJECT_ALREADY_INITIALIZED = 'Object already initialized';
 var WeakMap = global.WeakMap;
 var set, get, has;
 
@@ -1134,12 +1161,14 @@ var getterFor = function (TYPE) {
   };
 };
 
-if (NATIVE_WEAK_MAP) {
-  var store = new WeakMap();
+if (NATIVE_WEAK_MAP || shared.state) {
+  var store = shared.state || (shared.state = new WeakMap());
   var wmget = store.get;
   var wmhas = store.has;
   var wmset = store.set;
   set = function (it, metadata) {
+    if (wmhas.call(store, it)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+    metadata.facade = it;
     wmset.call(store, it, metadata);
     return metadata;
   };
@@ -1153,6 +1182,8 @@ if (NATIVE_WEAK_MAP) {
   var STATE = sharedKey('state');
   hiddenKeys[STATE] = true;
   set = function (it, metadata) {
+    if (objectHas(it, STATE)) throw new TypeError(OBJECT_ALREADY_INITIALIZED);
+    metadata.facade = it;
     createNonEnumerableProperty(it, STATE, metadata);
     return metadata;
   };
@@ -1266,16 +1297,32 @@ var isArrayIteratorMethod = __webpack_require__(/*! ../internals/is-array-iterat
 var toLength = __webpack_require__(/*! ../internals/to-length */ "./node_modules/core-js-pure/internals/to-length.js");
 var bind = __webpack_require__(/*! ../internals/function-bind-context */ "./node_modules/core-js-pure/internals/function-bind-context.js");
 var getIteratorMethod = __webpack_require__(/*! ../internals/get-iterator-method */ "./node_modules/core-js-pure/internals/get-iterator-method.js");
-var callWithSafeIterationClosing = __webpack_require__(/*! ../internals/call-with-safe-iteration-closing */ "./node_modules/core-js-pure/internals/call-with-safe-iteration-closing.js");
+var iteratorClose = __webpack_require__(/*! ../internals/iterator-close */ "./node_modules/core-js-pure/internals/iterator-close.js");
 
 var Result = function (stopped, result) {
   this.stopped = stopped;
   this.result = result;
 };
 
-var iterate = module.exports = function (iterable, fn, that, AS_ENTRIES, IS_ITERATOR) {
-  var boundFunction = bind(fn, that, AS_ENTRIES ? 2 : 1);
+module.exports = function (iterable, unboundFunction, options) {
+  var that = options && options.that;
+  var AS_ENTRIES = !!(options && options.AS_ENTRIES);
+  var IS_ITERATOR = !!(options && options.IS_ITERATOR);
+  var INTERRUPTED = !!(options && options.INTERRUPTED);
+  var fn = bind(unboundFunction, that, 1 + AS_ENTRIES + INTERRUPTED);
   var iterator, iterFn, index, length, result, next, step;
+
+  var stop = function (condition) {
+    if (iterator) iteratorClose(iterator);
+    return new Result(true, condition);
+  };
+
+  var callFn = function (value) {
+    if (AS_ENTRIES) {
+      anObject(value);
+      return INTERRUPTED ? fn(value[0], value[1], stop) : fn(value[0], value[1]);
+    } return INTERRUPTED ? fn(value, stop) : fn(value);
+  };
 
   if (IS_ITERATOR) {
     iterator = iterable;
@@ -1285,9 +1332,7 @@ var iterate = module.exports = function (iterable, fn, that, AS_ENTRIES, IS_ITER
     // optimisation for array iterators
     if (isArrayIteratorMethod(iterFn)) {
       for (index = 0, length = toLength(iterable.length); length > index; index++) {
-        result = AS_ENTRIES
-          ? boundFunction(anObject(step = iterable[index])[0], step[1])
-          : boundFunction(iterable[index]);
+        result = callFn(iterable[index]);
         if (result && result instanceof Result) return result;
       } return new Result(false);
     }
@@ -1296,13 +1341,33 @@ var iterate = module.exports = function (iterable, fn, that, AS_ENTRIES, IS_ITER
 
   next = iterator.next;
   while (!(step = next.call(iterator)).done) {
-    result = callWithSafeIterationClosing(iterator, boundFunction, step.value, AS_ENTRIES);
+    try {
+      result = callFn(step.value);
+    } catch (error) {
+      iteratorClose(iterator);
+      throw error;
+    }
     if (typeof result == 'object' && result && result instanceof Result) return result;
   } return new Result(false);
 };
 
-iterate.stop = function (result) {
-  return new Result(true, result);
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/internals/iterator-close.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/core-js-pure/internals/iterator-close.js ***!
+  \***************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
+
+module.exports = function (iterator) {
+  var returnMethod = iterator['return'];
+  if (returnMethod !== undefined) {
+    return anObject(returnMethod.call(iterator)).value;
+  }
 };
 
 
@@ -1317,6 +1382,7 @@ iterate.stop = function (result) {
 
 "use strict";
 
+var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
 var getPrototypeOf = __webpack_require__(/*! ../internals/object-get-prototype-of */ "./node_modules/core-js-pure/internals/object-get-prototype-of.js");
 var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js-pure/internals/create-non-enumerable-property.js");
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js-pure/internals/has.js");
@@ -1329,9 +1395,10 @@ var BUGGY_SAFARI_ITERATORS = false;
 var returnThis = function () { return this; };
 
 // `%IteratorPrototype%` object
-// https://tc39.github.io/ecma262/#sec-%iteratorprototype%-object
+// https://tc39.es/ecma262/#sec-%iteratorprototype%-object
 var IteratorPrototype, PrototypeOfArrayIteratorPrototype, arrayIterator;
 
+/* eslint-disable es/no-array-prototype-keys -- safe */
 if ([].keys) {
   arrayIterator = [].keys();
   // Safari 8 has buggy iterators w/o `next`
@@ -1342,10 +1409,16 @@ if ([].keys) {
   }
 }
 
-if (IteratorPrototype == undefined) IteratorPrototype = {};
+var NEW_ITERATOR_PROTOTYPE = IteratorPrototype == undefined || fails(function () {
+  var test = {};
+  // FF44- legacy iterators case
+  return IteratorPrototype[ITERATOR].call(test) !== test;
+});
+
+if (NEW_ITERATOR_PROTOTYPE) IteratorPrototype = {};
 
 // 25.1.2.1.1 %IteratorPrototype%[@@iterator]()
-if (!IS_PURE && !has(IteratorPrototype, ITERATOR)) {
+if ((!IS_PURE || NEW_ITERATOR_PROTOTYPE) && !has(IteratorPrototype, ITERATOR)) {
   createNonEnumerableProperty(IteratorPrototype, ITERATOR, returnThis);
 }
 
@@ -1378,14 +1451,15 @@ module.exports = {};
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js-pure/internals/global.js");
 var getOwnPropertyDescriptor = __webpack_require__(/*! ../internals/object-get-own-property-descriptor */ "./node_modules/core-js-pure/internals/object-get-own-property-descriptor.js").f;
-var classof = __webpack_require__(/*! ../internals/classof-raw */ "./node_modules/core-js-pure/internals/classof-raw.js");
 var macrotask = __webpack_require__(/*! ../internals/task */ "./node_modules/core-js-pure/internals/task.js").set;
 var IS_IOS = __webpack_require__(/*! ../internals/engine-is-ios */ "./node_modules/core-js-pure/internals/engine-is-ios.js");
+var IS_WEBOS_WEBKIT = __webpack_require__(/*! ../internals/engine-is-webos-webkit */ "./node_modules/core-js-pure/internals/engine-is-webos-webkit.js");
+var IS_NODE = __webpack_require__(/*! ../internals/engine-is-node */ "./node_modules/core-js-pure/internals/engine-is-node.js");
 
 var MutationObserver = global.MutationObserver || global.WebKitMutationObserver;
+var document = global.document;
 var process = global.process;
 var Promise = global.Promise;
-var IS_NODE = classof(process) == 'process';
 // Node.js 11 shows ExperimentalWarning on getting `queueMicrotask`
 var queueMicrotaskDescriptor = getOwnPropertyDescriptor(global, 'queueMicrotask');
 var queueMicrotask = queueMicrotaskDescriptor && queueMicrotaskDescriptor.value;
@@ -1411,13 +1485,9 @@ if (!queueMicrotask) {
     if (parent) parent.enter();
   };
 
-  // Node.js
-  if (IS_NODE) {
-    notify = function () {
-      process.nextTick(flush);
-    };
   // browsers with MutationObserver, except iOS - https://github.com/zloirock/core-js/issues/339
-  } else if (MutationObserver && !IS_IOS) {
+  // also except WebOS Webkit https://github.com/zloirock/core-js/issues/898
+  if (!IS_IOS && !IS_NODE && !IS_WEBOS_WEBKIT && MutationObserver && document) {
     toggle = true;
     node = document.createTextNode('');
     new MutationObserver(flush).observe(node, { characterData: true });
@@ -1428,9 +1498,16 @@ if (!queueMicrotask) {
   } else if (Promise && Promise.resolve) {
     // Promise.resolve without an argument throws an error in LG WebOS 2
     promise = Promise.resolve(undefined);
+    // workaround of WebKit ~ iOS Safari 10.1 bug
+    promise.constructor = Promise;
     then = promise.then;
     notify = function () {
       then.call(promise, flush);
+    };
+  // Node.js without promises
+  } else if (IS_NODE) {
+    notify = function () {
+      process.nextTick(flush);
     };
   // for other environments - macrotask based on:
   // - setImmediate
@@ -1479,12 +1556,16 @@ module.exports = global.Promise;
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* eslint-disable es/no-symbol -- required for testing */
+var V8_VERSION = __webpack_require__(/*! ../internals/engine-v8-version */ "./node_modules/core-js-pure/internals/engine-v8-version.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
 
+// eslint-disable-next-line es/no-object-getownpropertysymbols -- required for testing
 module.exports = !!Object.getOwnPropertySymbols && !fails(function () {
-  // Chrome 38 Symbol has incorrect toString conversion
-  // eslint-disable-next-line no-undef
-  return !String(Symbol());
+  return !String(Symbol()) ||
+    // Chrome 38 Symbol has incorrect toString conversion
+    // Chrome 38-40 symbols are not inherited from DOM collections prototypes to instances
+    !Symbol.sham && V8_VERSION && V8_VERSION < 41;
 });
 
 
@@ -1598,7 +1679,7 @@ var NullProtoObjectViaIFrame = function () {
 var activeXDocument;
 var NullProtoObject = function () {
   try {
-    /* global ActiveXObject */
+    /* global ActiveXObject -- old IE */
     activeXDocument = document.domain && new ActiveXObject('htmlfile');
   } catch (error) { /* ignore */ }
   NullProtoObject = activeXDocument ? NullProtoObjectViaActiveX(activeXDocument) : NullProtoObjectViaIFrame();
@@ -1610,7 +1691,7 @@ var NullProtoObject = function () {
 hiddenKeys[IE_PROTO] = true;
 
 // `Object.create` method
-// https://tc39.github.io/ecma262/#sec-object.create
+// https://tc39.es/ecma262/#sec-object.create
 module.exports = Object.create || function create(O, Properties) {
   var result;
   if (O !== null) {
@@ -1639,7 +1720,8 @@ var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules
 var objectKeys = __webpack_require__(/*! ../internals/object-keys */ "./node_modules/core-js-pure/internals/object-keys.js");
 
 // `Object.defineProperties` method
-// https://tc39.github.io/ecma262/#sec-object.defineproperties
+// https://tc39.es/ecma262/#sec-object.defineproperties
+// eslint-disable-next-line es/no-object-defineproperties -- safe
 module.exports = DESCRIPTORS ? Object.defineProperties : function defineProperties(O, Properties) {
   anObject(O);
   var keys = objectKeys(Properties);
@@ -1665,16 +1747,17 @@ var IE8_DOM_DEFINE = __webpack_require__(/*! ../internals/ie8-dom-define */ "./n
 var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
 var toPrimitive = __webpack_require__(/*! ../internals/to-primitive */ "./node_modules/core-js-pure/internals/to-primitive.js");
 
-var nativeDefineProperty = Object.defineProperty;
+// eslint-disable-next-line es/no-object-defineproperty -- safe
+var $defineProperty = Object.defineProperty;
 
 // `Object.defineProperty` method
-// https://tc39.github.io/ecma262/#sec-object.defineproperty
-exports.f = DESCRIPTORS ? nativeDefineProperty : function defineProperty(O, P, Attributes) {
+// https://tc39.es/ecma262/#sec-object.defineproperty
+exports.f = DESCRIPTORS ? $defineProperty : function defineProperty(O, P, Attributes) {
   anObject(O);
   P = toPrimitive(P, true);
   anObject(Attributes);
   if (IE8_DOM_DEFINE) try {
-    return nativeDefineProperty(O, P, Attributes);
+    return $defineProperty(O, P, Attributes);
   } catch (error) { /* empty */ }
   if ('get' in Attributes || 'set' in Attributes) throw TypeError('Accessors not supported');
   if ('value' in Attributes) O[P] = Attributes.value;
@@ -1699,15 +1782,16 @@ var toPrimitive = __webpack_require__(/*! ../internals/to-primitive */ "./node_m
 var has = __webpack_require__(/*! ../internals/has */ "./node_modules/core-js-pure/internals/has.js");
 var IE8_DOM_DEFINE = __webpack_require__(/*! ../internals/ie8-dom-define */ "./node_modules/core-js-pure/internals/ie8-dom-define.js");
 
-var nativeGetOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
+var $getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // `Object.getOwnPropertyDescriptor` method
-// https://tc39.github.io/ecma262/#sec-object.getownpropertydescriptor
-exports.f = DESCRIPTORS ? nativeGetOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
+// https://tc39.es/ecma262/#sec-object.getownpropertydescriptor
+exports.f = DESCRIPTORS ? $getOwnPropertyDescriptor : function getOwnPropertyDescriptor(O, P) {
   O = toIndexedObject(O);
   P = toPrimitive(P, true);
   if (IE8_DOM_DEFINE) try {
-    return nativeGetOwnPropertyDescriptor(O, P);
+    return $getOwnPropertyDescriptor(O, P);
   } catch (error) { /* empty */ }
   if (has(O, P)) return createPropertyDescriptor(!propertyIsEnumerableModule.f.call(O, P), O[P]);
 };
@@ -1731,7 +1815,8 @@ var IE_PROTO = sharedKey('IE_PROTO');
 var ObjectPrototype = Object.prototype;
 
 // `Object.getPrototypeOf` method
-// https://tc39.github.io/ecma262/#sec-object.getprototypeof
+// https://tc39.es/ecma262/#sec-object.getprototypeof
+// eslint-disable-next-line es/no-object-getprototypeof -- safe
 module.exports = CORRECT_PROTOTYPE_GETTER ? Object.getPrototypeOf : function (O) {
   O = toObject(O);
   if (has(O, IE_PROTO)) return O[IE_PROTO];
@@ -1782,7 +1867,8 @@ var internalObjectKeys = __webpack_require__(/*! ../internals/object-keys-intern
 var enumBugKeys = __webpack_require__(/*! ../internals/enum-bug-keys */ "./node_modules/core-js-pure/internals/enum-bug-keys.js");
 
 // `Object.keys` method
-// https://tc39.github.io/ecma262/#sec-object.keys
+// https://tc39.es/ecma262/#sec-object.keys
+// eslint-disable-next-line es/no-object-keys -- safe
 module.exports = Object.keys || function keys(O) {
   return internalObjectKeys(O, enumBugKeys);
 };
@@ -1799,18 +1885,19 @@ module.exports = Object.keys || function keys(O) {
 
 "use strict";
 
-var nativePropertyIsEnumerable = {}.propertyIsEnumerable;
+var $propertyIsEnumerable = {}.propertyIsEnumerable;
+// eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
 var getOwnPropertyDescriptor = Object.getOwnPropertyDescriptor;
 
 // Nashorn ~ JDK8 bug
-var NASHORN_BUG = getOwnPropertyDescriptor && !nativePropertyIsEnumerable.call({ 1: 2 }, 1);
+var NASHORN_BUG = getOwnPropertyDescriptor && !$propertyIsEnumerable.call({ 1: 2 }, 1);
 
 // `Object.prototype.propertyIsEnumerable` method implementation
-// https://tc39.github.io/ecma262/#sec-object.prototype.propertyisenumerable
+// https://tc39.es/ecma262/#sec-object.prototype.propertyisenumerable
 exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
   var descriptor = getOwnPropertyDescriptor(this, V);
   return !!descriptor && descriptor.enumerable;
-} : nativePropertyIsEnumerable;
+} : $propertyIsEnumerable;
 
 
 /***/ }),
@@ -1822,18 +1909,20 @@ exports.f = NASHORN_BUG ? function propertyIsEnumerable(V) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* eslint-disable no-proto -- safe */
 var anObject = __webpack_require__(/*! ../internals/an-object */ "./node_modules/core-js-pure/internals/an-object.js");
 var aPossiblePrototype = __webpack_require__(/*! ../internals/a-possible-prototype */ "./node_modules/core-js-pure/internals/a-possible-prototype.js");
 
 // `Object.setPrototypeOf` method
-// https://tc39.github.io/ecma262/#sec-object.setprototypeof
+// https://tc39.es/ecma262/#sec-object.setprototypeof
 // Works with __proto__ only. Old v8 can't work with null proto objects.
-/* eslint-disable no-proto */
+// eslint-disable-next-line es/no-object-setprototypeof -- safe
 module.exports = Object.setPrototypeOf || ('__proto__' in {} ? function () {
   var CORRECT_SETTER = false;
   var test = {};
   var setter;
   try {
+    // eslint-disable-next-line es/no-object-getownpropertydescriptor -- safe
     setter = Object.getOwnPropertyDescriptor(Object.prototype, '__proto__').set;
     setter.call(test, []);
     CORRECT_SETTER = test instanceof Array;
@@ -1863,7 +1952,7 @@ var TO_STRING_TAG_SUPPORT = __webpack_require__(/*! ../internals/to-string-tag-s
 var classof = __webpack_require__(/*! ../internals/classof */ "./node_modules/core-js-pure/internals/classof.js");
 
 // `Object.prototype.toString` method implementation
-// https://tc39.github.io/ecma262/#sec-object.prototype.tostring
+// https://tc39.es/ecma262/#sec-object.prototype.tostring
 module.exports = TO_STRING_TAG_SUPPORT ? {}.toString : function toString() {
   return '[object ' + classof(this) + ']';
 };
@@ -1968,7 +2057,7 @@ module.exports = function (target, key, value, options) {
 /***/ (function(module, exports) {
 
 // `RequireObjectCoercible` abstract operation
-// https://tc39.github.io/ecma262/#sec-requireobjectcoercible
+// https://tc39.es/ecma262/#sec-requireobjectcoercible
 module.exports = function (it) {
   if (it == undefined) throw TypeError("Can't call method on " + it);
   return it;
@@ -2110,9 +2199,9 @@ var store = __webpack_require__(/*! ../internals/shared-store */ "./node_modules
 (module.exports = function (key, value) {
   return store[key] || (store[key] = value !== undefined ? value : {});
 })('versions', []).push({
-  version: '3.6.4',
+  version: '3.13.0',
   mode: IS_PURE ? 'pure' : 'global',
-  copyright: '© 2020 Denis Pushkarev (zloirock.ru)'
+  copyright: '© 2021 Denis Pushkarev (zloirock.ru)'
 });
 
 
@@ -2132,7 +2221,7 @@ var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ 
 var SPECIES = wellKnownSymbol('species');
 
 // `SpeciesConstructor` abstract operation
-// https://tc39.github.io/ecma262/#sec-speciesconstructor
+// https://tc39.es/ecma262/#sec-speciesconstructor
 module.exports = function (O, defaultConstructor) {
   var C = anObject(O).constructor;
   var S;
@@ -2170,7 +2259,7 @@ var createMethod = function (CONVERT_TO_STRING) {
 
 module.exports = {
   // `String.prototype.codePointAt` method
-  // https://tc39.github.io/ecma262/#sec-string.prototype.codepointat
+  // https://tc39.es/ecma262/#sec-string.prototype.codepointat
   codeAt: createMethod(false),
   // `String.prototype.at` method
   // https://github.com/mathiasbynens/String.prototype.at
@@ -2189,11 +2278,11 @@ module.exports = {
 
 var global = __webpack_require__(/*! ../internals/global */ "./node_modules/core-js-pure/internals/global.js");
 var fails = __webpack_require__(/*! ../internals/fails */ "./node_modules/core-js-pure/internals/fails.js");
-var classof = __webpack_require__(/*! ../internals/classof-raw */ "./node_modules/core-js-pure/internals/classof-raw.js");
 var bind = __webpack_require__(/*! ../internals/function-bind-context */ "./node_modules/core-js-pure/internals/function-bind-context.js");
 var html = __webpack_require__(/*! ../internals/html */ "./node_modules/core-js-pure/internals/html.js");
 var createElement = __webpack_require__(/*! ../internals/document-create-element */ "./node_modules/core-js-pure/internals/document-create-element.js");
 var IS_IOS = __webpack_require__(/*! ../internals/engine-is-ios */ "./node_modules/core-js-pure/internals/engine-is-ios.js");
+var IS_NODE = __webpack_require__(/*! ../internals/engine-is-node */ "./node_modules/core-js-pure/internals/engine-is-node.js");
 
 var location = global.location;
 var set = global.setImmediate;
@@ -2207,7 +2296,7 @@ var ONREADYSTATECHANGE = 'onreadystatechange';
 var defer, channel, port;
 
 var run = function (id) {
-  // eslint-disable-next-line no-prototype-builtins
+  // eslint-disable-next-line no-prototype-builtins -- safe
   if (queue.hasOwnProperty(id)) {
     var fn = queue[id];
     delete queue[id];
@@ -2237,7 +2326,7 @@ if (!set || !clear) {
     var i = 1;
     while (arguments.length > i) args.push(arguments[i++]);
     queue[++counter] = function () {
-      // eslint-disable-next-line no-new-func
+      // eslint-disable-next-line no-new-func -- spec requirement
       (typeof fn == 'function' ? fn : Function(fn)).apply(undefined, args);
     };
     defer(counter);
@@ -2247,7 +2336,7 @@ if (!set || !clear) {
     delete queue[id];
   };
   // Node.js 0.8-
-  if (classof(process) == 'process') {
+  if (IS_NODE) {
     defer = function (id) {
       process.nextTick(runner(id));
     };
@@ -2265,7 +2354,13 @@ if (!set || !clear) {
     defer = bind(port.postMessage, port, 1);
   // Browsers with postMessage, skip WebWorkers
   // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-  } else if (global.addEventListener && typeof postMessage == 'function' && !global.importScripts && !fails(post)) {
+  } else if (
+    global.addEventListener &&
+    typeof postMessage == 'function' &&
+    !global.importScripts &&
+    location && location.protocol !== 'file:' &&
+    !fails(post)
+  ) {
     defer = post;
     global.addEventListener('message', listener, false);
   // IE8-
@@ -2344,7 +2439,7 @@ var ceil = Math.ceil;
 var floor = Math.floor;
 
 // `ToInteger` abstract operation
-// https://tc39.github.io/ecma262/#sec-tointeger
+// https://tc39.es/ecma262/#sec-tointeger
 module.exports = function (argument) {
   return isNaN(argument = +argument) ? 0 : (argument > 0 ? floor : ceil)(argument);
 };
@@ -2364,7 +2459,7 @@ var toInteger = __webpack_require__(/*! ../internals/to-integer */ "./node_modul
 var min = Math.min;
 
 // `ToLength` abstract operation
-// https://tc39.github.io/ecma262/#sec-tolength
+// https://tc39.es/ecma262/#sec-tolength
 module.exports = function (argument) {
   return argument > 0 ? min(toInteger(argument), 0x1FFFFFFFFFFFFF) : 0; // 2 ** 53 - 1 == 9007199254740991
 };
@@ -2382,7 +2477,7 @@ module.exports = function (argument) {
 var requireObjectCoercible = __webpack_require__(/*! ../internals/require-object-coercible */ "./node_modules/core-js-pure/internals/require-object-coercible.js");
 
 // `ToObject` abstract operation
-// https://tc39.github.io/ecma262/#sec-toobject
+// https://tc39.es/ecma262/#sec-toobject
 module.exports = function (argument) {
   return Object(requireObjectCoercible(argument));
 };
@@ -2400,7 +2495,7 @@ module.exports = function (argument) {
 var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js-pure/internals/is-object.js");
 
 // `ToPrimitive` abstract operation
-// https://tc39.github.io/ecma262/#sec-toprimitive
+// https://tc39.es/ecma262/#sec-toprimitive
 // instead of the ES6 spec version, we didn't implement @@toPrimitive case
 // and the second argument - flag - preferred type is a string
 module.exports = function (input, PREFERRED_STRING) {
@@ -2458,12 +2553,11 @@ module.exports = function (key) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
+/* eslint-disable es/no-symbol -- required for testing */
 var NATIVE_SYMBOL = __webpack_require__(/*! ../internals/native-symbol */ "./node_modules/core-js-pure/internals/native-symbol.js");
 
 module.exports = NATIVE_SYMBOL
-  // eslint-disable-next-line no-undef
   && !Symbol.sham
-  // eslint-disable-next-line no-undef
   && typeof Symbol.iterator == 'symbol';
 
 
@@ -2488,11 +2582,60 @@ var Symbol = global.Symbol;
 var createWellKnownSymbol = USE_SYMBOL_AS_UID ? Symbol : Symbol && Symbol.withoutSetter || uid;
 
 module.exports = function (name) {
-  if (!has(WellKnownSymbolsStore, name)) {
-    if (NATIVE_SYMBOL && has(Symbol, name)) WellKnownSymbolsStore[name] = Symbol[name];
-    else WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+  if (!has(WellKnownSymbolsStore, name) || !(NATIVE_SYMBOL || typeof WellKnownSymbolsStore[name] == 'string')) {
+    if (NATIVE_SYMBOL && has(Symbol, name)) {
+      WellKnownSymbolsStore[name] = Symbol[name];
+    } else {
+      WellKnownSymbolsStore[name] = createWellKnownSymbol('Symbol.' + name);
+    }
   } return WellKnownSymbolsStore[name];
 };
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/modules/es.aggregate-error.js":
+/*!*****************************************************************!*\
+  !*** ./node_modules/core-js-pure/modules/es.aggregate-error.js ***!
+  \*****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
+var getPrototypeOf = __webpack_require__(/*! ../internals/object-get-prototype-of */ "./node_modules/core-js-pure/internals/object-get-prototype-of.js");
+var setPrototypeOf = __webpack_require__(/*! ../internals/object-set-prototype-of */ "./node_modules/core-js-pure/internals/object-set-prototype-of.js");
+var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js-pure/internals/object-create.js");
+var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js-pure/internals/create-non-enumerable-property.js");
+var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js-pure/internals/create-property-descriptor.js");
+var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
+
+var $AggregateError = function AggregateError(errors, message) {
+  var that = this;
+  if (!(that instanceof $AggregateError)) return new $AggregateError(errors, message);
+  if (setPrototypeOf) {
+    // eslint-disable-next-line unicorn/error-message -- expected
+    that = setPrototypeOf(new Error(undefined), getPrototypeOf(that));
+  }
+  if (message !== undefined) createNonEnumerableProperty(that, 'message', String(message));
+  var errorsArray = [];
+  iterate(errors, errorsArray.push, { that: errorsArray });
+  createNonEnumerableProperty(that, 'errors', errorsArray);
+  return that;
+};
+
+$AggregateError.prototype = create(Error.prototype, {
+  constructor: createPropertyDescriptor(5, $AggregateError),
+  message: createPropertyDescriptor(5, ''),
+  name: createPropertyDescriptor(5, 'AggregateError')
+});
+
+// `AggregateError` constructor
+// https://tc39.es/ecma262/#sec-aggregate-error-constructor
+$({ global: true }, {
+  AggregateError: $AggregateError
+});
 
 
 /***/ }),
@@ -2517,15 +2660,15 @@ var setInternalState = InternalStateModule.set;
 var getInternalState = InternalStateModule.getterFor(ARRAY_ITERATOR);
 
 // `Array.prototype.entries` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.entries
+// https://tc39.es/ecma262/#sec-array.prototype.entries
 // `Array.prototype.keys` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.keys
+// https://tc39.es/ecma262/#sec-array.prototype.keys
 // `Array.prototype.values` method
-// https://tc39.github.io/ecma262/#sec-array.prototype.values
+// https://tc39.es/ecma262/#sec-array.prototype.values
 // `Array.prototype[@@iterator]` method
-// https://tc39.github.io/ecma262/#sec-array.prototype-@@iterator
+// https://tc39.es/ecma262/#sec-array.prototype-@@iterator
 // `CreateArrayIterator` internal method
-// https://tc39.github.io/ecma262/#sec-createarrayiterator
+// https://tc39.es/ecma262/#sec-createarrayiterator
 module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
   setInternalState(this, {
     type: ARRAY_ITERATOR,
@@ -2534,7 +2677,7 @@ module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
     kind: kind                         // kind
   });
 // `%ArrayIteratorPrototype%.next` method
-// https://tc39.github.io/ecma262/#sec-%arrayiteratorprototype%.next
+// https://tc39.es/ecma262/#sec-%arrayiteratorprototype%.next
 }, function () {
   var state = getInternalState(this);
   var target = state.target;
@@ -2550,11 +2693,11 @@ module.exports = defineIterator(Array, 'Array', function (iterated, kind) {
 }, 'values');
 
 // argumentsList[@@iterator] is %ArrayProto_values%
-// https://tc39.github.io/ecma262/#sec-createunmappedargumentsobject
-// https://tc39.github.io/ecma262/#sec-createmappedargumentsobject
+// https://tc39.es/ecma262/#sec-createunmappedargumentsobject
+// https://tc39.es/ecma262/#sec-createmappedargumentsobject
 Iterators.Arguments = Iterators.Array;
 
-// https://tc39.github.io/ecma262/#sec-array.prototype-@@unscopables
+// https://tc39.es/ecma262/#sec-array.prototype-@@unscopables
 addToUnscopables('keys');
 addToUnscopables('values');
 addToUnscopables('entries');
@@ -2590,7 +2733,7 @@ var perform = __webpack_require__(/*! ../internals/perform */ "./node_modules/co
 var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
 
 // `Promise.allSettled` method
-// https://github.com/tc39/proposal-promise-allSettled
+// https://tc39.es/ecma262/#sec-promise.allsettled
 $({ target: 'Promise', stat: true }, {
   allSettled: function allSettled(iterable) {
     var C = this;
@@ -2612,14 +2755,72 @@ $({ target: 'Promise', stat: true }, {
           alreadyCalled = true;
           values[index] = { status: 'fulfilled', value: value };
           --remaining || resolve(values);
-        }, function (e) {
+        }, function (error) {
           if (alreadyCalled) return;
           alreadyCalled = true;
-          values[index] = { status: 'rejected', reason: e };
+          values[index] = { status: 'rejected', reason: error };
           --remaining || resolve(values);
         });
       });
       --remaining || resolve(values);
+    });
+    if (result.error) reject(result.value);
+    return capability.promise;
+  }
+});
+
+
+/***/ }),
+
+/***/ "./node_modules/core-js-pure/modules/es.promise.any.js":
+/*!*************************************************************!*\
+  !*** ./node_modules/core-js-pure/modules/es.promise.any.js ***!
+  \*************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
+var aFunction = __webpack_require__(/*! ../internals/a-function */ "./node_modules/core-js-pure/internals/a-function.js");
+var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js-pure/internals/get-built-in.js");
+var newPromiseCapabilityModule = __webpack_require__(/*! ../internals/new-promise-capability */ "./node_modules/core-js-pure/internals/new-promise-capability.js");
+var perform = __webpack_require__(/*! ../internals/perform */ "./node_modules/core-js-pure/internals/perform.js");
+var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
+
+var PROMISE_ANY_ERROR = 'No one promise resolved';
+
+// `Promise.any` method
+// https://tc39.es/ecma262/#sec-promise.any
+$({ target: 'Promise', stat: true }, {
+  any: function any(iterable) {
+    var C = this;
+    var capability = newPromiseCapabilityModule.f(C);
+    var resolve = capability.resolve;
+    var reject = capability.reject;
+    var result = perform(function () {
+      var promiseResolve = aFunction(C.resolve);
+      var errors = [];
+      var counter = 0;
+      var remaining = 1;
+      var alreadyResolved = false;
+      iterate(iterable, function (promise) {
+        var index = counter++;
+        var alreadyRejected = false;
+        errors.push(undefined);
+        remaining++;
+        promiseResolve.call(C, promise).then(function (value) {
+          if (alreadyRejected || alreadyResolved) return;
+          alreadyResolved = true;
+          resolve(value);
+        }, function (error) {
+          if (alreadyRejected || alreadyResolved) return;
+          alreadyRejected = true;
+          errors[index] = error;
+          --remaining || reject(new (getBuiltIn('AggregateError'))(errors, PROMISE_ANY_ERROR));
+        });
+      });
+      --remaining || reject(new (getBuiltIn('AggregateError'))(errors, PROMISE_ANY_ERROR));
     });
     if (result.error) reject(result.value);
     return capability.promise;
@@ -2653,7 +2854,7 @@ var NON_GENERIC = !!NativePromise && fails(function () {
 });
 
 // `Promise.prototype.finally` method
-// https://tc39.github.io/ecma262/#sec-promise.prototype.finally
+// https://tc39.es/ecma262/#sec-promise.prototype.finally
 $({ target: 'Promise', proto: true, real: true, forced: NON_GENERIC }, {
   'finally': function (onFinally) {
     var C = speciesConstructor(this, getBuiltIn('Promise'));
@@ -2669,9 +2870,12 @@ $({ target: 'Promise', proto: true, real: true, forced: NON_GENERIC }, {
   }
 });
 
-// patch native Promise.prototype for native async functions
-if (!IS_PURE && typeof NativePromise == 'function' && !NativePromise.prototype['finally']) {
-  redefine(NativePromise.prototype, 'finally', getBuiltIn('Promise').prototype['finally']);
+// makes sure that native promise-based APIs `Promise#finally` properly works with patched `Promise#then`
+if (!IS_PURE && typeof NativePromise == 'function') {
+  var method = getBuiltIn('Promise').prototype['finally'];
+  if (NativePromise.prototype['finally'] !== method) {
+    redefine(NativePromise.prototype, 'finally', method, { unsafe: true });
+  }
 }
 
 
@@ -2693,12 +2897,12 @@ var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_mo
 var NativePromise = __webpack_require__(/*! ../internals/native-promise-constructor */ "./node_modules/core-js-pure/internals/native-promise-constructor.js");
 var redefine = __webpack_require__(/*! ../internals/redefine */ "./node_modules/core-js-pure/internals/redefine.js");
 var redefineAll = __webpack_require__(/*! ../internals/redefine-all */ "./node_modules/core-js-pure/internals/redefine-all.js");
+var setPrototypeOf = __webpack_require__(/*! ../internals/object-set-prototype-of */ "./node_modules/core-js-pure/internals/object-set-prototype-of.js");
 var setToStringTag = __webpack_require__(/*! ../internals/set-to-string-tag */ "./node_modules/core-js-pure/internals/set-to-string-tag.js");
 var setSpecies = __webpack_require__(/*! ../internals/set-species */ "./node_modules/core-js-pure/internals/set-species.js");
 var isObject = __webpack_require__(/*! ../internals/is-object */ "./node_modules/core-js-pure/internals/is-object.js");
 var aFunction = __webpack_require__(/*! ../internals/a-function */ "./node_modules/core-js-pure/internals/a-function.js");
 var anInstance = __webpack_require__(/*! ../internals/an-instance */ "./node_modules/core-js-pure/internals/an-instance.js");
-var classof = __webpack_require__(/*! ../internals/classof-raw */ "./node_modules/core-js-pure/internals/classof-raw.js");
 var inspectSource = __webpack_require__(/*! ../internals/inspect-source */ "./node_modules/core-js-pure/internals/inspect-source.js");
 var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
 var checkCorrectnessOfIteration = __webpack_require__(/*! ../internals/check-correctness-of-iteration */ "./node_modules/core-js-pure/internals/check-correctness-of-iteration.js");
@@ -2712,6 +2916,8 @@ var perform = __webpack_require__(/*! ../internals/perform */ "./node_modules/co
 var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js-pure/internals/internal-state.js");
 var isForced = __webpack_require__(/*! ../internals/is-forced */ "./node_modules/core-js-pure/internals/is-forced.js");
 var wellKnownSymbol = __webpack_require__(/*! ../internals/well-known-symbol */ "./node_modules/core-js-pure/internals/well-known-symbol.js");
+var IS_BROWSER = __webpack_require__(/*! ../internals/engine-is-browser */ "./node_modules/core-js-pure/internals/engine-is-browser.js");
+var IS_NODE = __webpack_require__(/*! ../internals/engine-is-node */ "./node_modules/core-js-pure/internals/engine-is-node.js");
 var V8_VERSION = __webpack_require__(/*! ../internals/engine-v8-version */ "./node_modules/core-js-pure/internals/engine-v8-version.js");
 
 var SPECIES = wellKnownSymbol('species');
@@ -2719,15 +2925,16 @@ var PROMISE = 'Promise';
 var getInternalState = InternalStateModule.get;
 var setInternalState = InternalStateModule.set;
 var getInternalPromiseState = InternalStateModule.getterFor(PROMISE);
+var NativePromisePrototype = NativePromise && NativePromise.prototype;
 var PromiseConstructor = NativePromise;
+var PromiseConstructorPrototype = NativePromisePrototype;
 var TypeError = global.TypeError;
 var document = global.document;
 var process = global.process;
-var $fetch = getBuiltIn('fetch');
 var newPromiseCapability = newPromiseCapabilityModule.f;
 var newGenericPromiseCapability = newPromiseCapability;
-var IS_NODE = classof(process) == 'process';
 var DISPATCH_EVENT = !!(document && document.createEvent && global.dispatchEvent);
+var NATIVE_REJECTION_EVENT = typeof PromiseRejectionEvent == 'function';
 var UNHANDLED_REJECTION = 'unhandledrejection';
 var REJECTION_HANDLED = 'rejectionhandled';
 var PENDING = 0;
@@ -2735,32 +2942,32 @@ var FULFILLED = 1;
 var REJECTED = 2;
 var HANDLED = 1;
 var UNHANDLED = 2;
+var SUBCLASSING = false;
 var Internal, OwnPromiseCapability, PromiseWrapper, nativeThen;
 
 var FORCED = isForced(PROMISE, function () {
   var GLOBAL_CORE_JS_PROMISE = inspectSource(PromiseConstructor) !== String(PromiseConstructor);
-  if (!GLOBAL_CORE_JS_PROMISE) {
-    // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
-    // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
-    // We can't detect it synchronously, so just check versions
-    if (V8_VERSION === 66) return true;
-    // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
-    if (!IS_NODE && typeof PromiseRejectionEvent != 'function') return true;
-  }
+  // V8 6.6 (Node 10 and Chrome 66) have a bug with resolving custom thenables
+  // https://bugs.chromium.org/p/chromium/issues/detail?id=830565
+  // We can't detect it synchronously, so just check versions
+  if (!GLOBAL_CORE_JS_PROMISE && V8_VERSION === 66) return true;
   // We need Promise#finally in the pure version for preventing prototype pollution
-  if (IS_PURE && !PromiseConstructor.prototype['finally']) return true;
+  if (IS_PURE && !PromiseConstructorPrototype['finally']) return true;
   // We can't use @@species feature detection in V8 since it causes
   // deoptimization and performance degradation
   // https://github.com/zloirock/core-js/issues/679
   if (V8_VERSION >= 51 && /native code/.test(PromiseConstructor)) return false;
   // Detect correctness of subclassing with @@species support
-  var promise = PromiseConstructor.resolve(1);
+  var promise = new PromiseConstructor(function (resolve) { resolve(1); });
   var FakePromise = function (exec) {
     exec(function () { /* empty */ }, function () { /* empty */ });
   };
   var constructor = promise.constructor = {};
   constructor[SPECIES] = FakePromise;
-  return !(promise.then(function () { /* empty */ }) instanceof FakePromise);
+  SUBCLASSING = promise.then(function () { /* empty */ }) instanceof FakePromise;
+  if (!SUBCLASSING) return true;
+  // Unhandled rejections tracking support, NodeJS Promise without it fails @@species test
+  return !GLOBAL_CORE_JS_PROMISE && IS_BROWSER && !NATIVE_REJECTION_EVENT;
 });
 
 var INCORRECT_ITERATION = FORCED || !checkCorrectnessOfIteration(function (iterable) {
@@ -2773,7 +2980,7 @@ var isThenable = function (it) {
   return isObject(it) && typeof (then = it.then) == 'function' ? then : false;
 };
 
-var notify = function (promise, state, isReject) {
+var notify = function (state, isReject) {
   if (state.notified) return;
   state.notified = true;
   var chain = state.reactions;
@@ -2792,7 +2999,7 @@ var notify = function (promise, state, isReject) {
       try {
         if (handler) {
           if (!ok) {
-            if (state.rejection === UNHANDLED) onHandleUnhandled(promise, state);
+            if (state.rejection === UNHANDLED) onHandleUnhandled(state);
             state.rejection = HANDLED;
           }
           if (handler === true) result = value;
@@ -2817,7 +3024,7 @@ var notify = function (promise, state, isReject) {
     }
     state.reactions = [];
     state.notified = false;
-    if (isReject && !state.rejection) onUnhandled(promise, state);
+    if (isReject && !state.rejection) onUnhandled(state);
   });
 };
 
@@ -2830,12 +3037,13 @@ var dispatchEvent = function (name, promise, reason) {
     event.initEvent(name, false, true);
     global.dispatchEvent(event);
   } else event = { promise: promise, reason: reason };
-  if (handler = global['on' + name]) handler(event);
+  if (!NATIVE_REJECTION_EVENT && (handler = global['on' + name])) handler(event);
   else if (name === UNHANDLED_REJECTION) hostReportErrors('Unhandled promise rejection', reason);
 };
 
-var onUnhandled = function (promise, state) {
+var onUnhandled = function (state) {
   task.call(global, function () {
+    var promise = state.facade;
     var value = state.value;
     var IS_UNHANDLED = isUnhandled(state);
     var result;
@@ -2856,55 +3064,56 @@ var isUnhandled = function (state) {
   return state.rejection !== HANDLED && !state.parent;
 };
 
-var onHandleUnhandled = function (promise, state) {
+var onHandleUnhandled = function (state) {
   task.call(global, function () {
+    var promise = state.facade;
     if (IS_NODE) {
       process.emit('rejectionHandled', promise);
     } else dispatchEvent(REJECTION_HANDLED, promise, state.value);
   });
 };
 
-var bind = function (fn, promise, state, unwrap) {
+var bind = function (fn, state, unwrap) {
   return function (value) {
-    fn(promise, state, value, unwrap);
+    fn(state, value, unwrap);
   };
 };
 
-var internalReject = function (promise, state, value, unwrap) {
+var internalReject = function (state, value, unwrap) {
   if (state.done) return;
   state.done = true;
   if (unwrap) state = unwrap;
   state.value = value;
   state.state = REJECTED;
-  notify(promise, state, true);
+  notify(state, true);
 };
 
-var internalResolve = function (promise, state, value, unwrap) {
+var internalResolve = function (state, value, unwrap) {
   if (state.done) return;
   state.done = true;
   if (unwrap) state = unwrap;
   try {
-    if (promise === value) throw TypeError("Promise can't be resolved itself");
+    if (state.facade === value) throw TypeError("Promise can't be resolved itself");
     var then = isThenable(value);
     if (then) {
       microtask(function () {
         var wrapper = { done: false };
         try {
           then.call(value,
-            bind(internalResolve, promise, wrapper, state),
-            bind(internalReject, promise, wrapper, state)
+            bind(internalResolve, wrapper, state),
+            bind(internalReject, wrapper, state)
           );
         } catch (error) {
-          internalReject(promise, wrapper, error, state);
+          internalReject(wrapper, error, state);
         }
       });
     } else {
       state.value = value;
       state.state = FULFILLED;
-      notify(promise, state, false);
+      notify(state, false);
     }
   } catch (error) {
-    internalReject(promise, { done: false }, error, state);
+    internalReject({ done: false }, error, state);
   }
 };
 
@@ -2917,12 +3126,13 @@ if (FORCED) {
     Internal.call(this);
     var state = getInternalState(this);
     try {
-      executor(bind(internalResolve, this, state), bind(internalReject, this, state));
+      executor(bind(internalResolve, state), bind(internalReject, state));
     } catch (error) {
-      internalReject(this, state, error);
+      internalReject(state, error);
     }
   };
-  // eslint-disable-next-line no-unused-vars
+  PromiseConstructorPrototype = PromiseConstructor.prototype;
+  // eslint-disable-next-line no-unused-vars -- required for `.length`
   Internal = function Promise(executor) {
     setInternalState(this, {
       type: PROMISE,
@@ -2935,9 +3145,9 @@ if (FORCED) {
       value: undefined
     });
   };
-  Internal.prototype = redefineAll(PromiseConstructor.prototype, {
+  Internal.prototype = redefineAll(PromiseConstructorPrototype, {
     // `Promise.prototype.then` method
-    // https://tc39.github.io/ecma262/#sec-promise.prototype.then
+    // https://tc39.es/ecma262/#sec-promise.prototype.then
     then: function then(onFulfilled, onRejected) {
       var state = getInternalPromiseState(this);
       var reaction = newPromiseCapability(speciesConstructor(this, PromiseConstructor));
@@ -2946,11 +3156,11 @@ if (FORCED) {
       reaction.domain = IS_NODE ? process.domain : undefined;
       state.parent = true;
       state.reactions.push(reaction);
-      if (state.state != PENDING) notify(this, state, false);
+      if (state.state != PENDING) notify(state, false);
       return reaction.promise;
     },
     // `Promise.prototype.catch` method
-    // https://tc39.github.io/ecma262/#sec-promise.prototype.catch
+    // https://tc39.es/ecma262/#sec-promise.prototype.catch
     'catch': function (onRejected) {
       return this.then(undefined, onRejected);
     }
@@ -2959,8 +3169,8 @@ if (FORCED) {
     var promise = new Internal();
     var state = getInternalState(promise);
     this.promise = promise;
-    this.resolve = bind(internalResolve, promise, state);
-    this.reject = bind(internalReject, promise, state);
+    this.resolve = bind(internalResolve, state);
+    this.reject = bind(internalReject, state);
   };
   newPromiseCapabilityModule.f = newPromiseCapability = function (C) {
     return C === PromiseConstructor || C === PromiseWrapper
@@ -2968,25 +3178,32 @@ if (FORCED) {
       : newGenericPromiseCapability(C);
   };
 
-  if (!IS_PURE && typeof NativePromise == 'function') {
-    nativeThen = NativePromise.prototype.then;
+  if (!IS_PURE && typeof NativePromise == 'function' && NativePromisePrototype !== Object.prototype) {
+    nativeThen = NativePromisePrototype.then;
 
-    // wrap native Promise#then for native async functions
-    redefine(NativePromise.prototype, 'then', function then(onFulfilled, onRejected) {
-      var that = this;
-      return new PromiseConstructor(function (resolve, reject) {
-        nativeThen.call(that, resolve, reject);
-      }).then(onFulfilled, onRejected);
-    // https://github.com/zloirock/core-js/issues/640
-    }, { unsafe: true });
+    if (!SUBCLASSING) {
+      // make `Promise#then` return a polyfilled `Promise` for native promise-based APIs
+      redefine(NativePromisePrototype, 'then', function then(onFulfilled, onRejected) {
+        var that = this;
+        return new PromiseConstructor(function (resolve, reject) {
+          nativeThen.call(that, resolve, reject);
+        }).then(onFulfilled, onRejected);
+      // https://github.com/zloirock/core-js/issues/640
+      }, { unsafe: true });
 
-    // wrap fetch result
-    if (typeof $fetch == 'function') $({ global: true, enumerable: true, forced: true }, {
-      // eslint-disable-next-line no-unused-vars
-      fetch: function fetch(input /* , init */) {
-        return promiseResolve(PromiseConstructor, $fetch.apply(global, arguments));
-      }
-    });
+      // makes sure that native promise-based APIs `Promise#catch` properly works with patched `Promise#then`
+      redefine(NativePromisePrototype, 'catch', PromiseConstructorPrototype['catch'], { unsafe: true });
+    }
+
+    // make `.constructor === Promise` work for native promise-based APIs
+    try {
+      delete NativePromisePrototype.constructor;
+    } catch (error) { /* empty */ }
+
+    // make `instanceof Promise` work for native promise-based APIs
+    if (setPrototypeOf) {
+      setPrototypeOf(NativePromisePrototype, PromiseConstructorPrototype);
+    }
   }
 }
 
@@ -3002,7 +3219,7 @@ PromiseWrapper = getBuiltIn(PROMISE);
 // statics
 $({ target: PROMISE, stat: true, forced: FORCED }, {
   // `Promise.reject` method
-  // https://tc39.github.io/ecma262/#sec-promise.reject
+  // https://tc39.es/ecma262/#sec-promise.reject
   reject: function reject(r) {
     var capability = newPromiseCapability(this);
     capability.reject.call(undefined, r);
@@ -3012,7 +3229,7 @@ $({ target: PROMISE, stat: true, forced: FORCED }, {
 
 $({ target: PROMISE, stat: true, forced: IS_PURE || FORCED }, {
   // `Promise.resolve` method
-  // https://tc39.github.io/ecma262/#sec-promise.resolve
+  // https://tc39.es/ecma262/#sec-promise.resolve
   resolve: function resolve(x) {
     return promiseResolve(IS_PURE && this === PromiseWrapper ? PromiseConstructor : this, x);
   }
@@ -3020,7 +3237,7 @@ $({ target: PROMISE, stat: true, forced: IS_PURE || FORCED }, {
 
 $({ target: PROMISE, stat: true, forced: INCORRECT_ITERATION }, {
   // `Promise.all` method
-  // https://tc39.github.io/ecma262/#sec-promise.all
+  // https://tc39.es/ecma262/#sec-promise.all
   all: function all(iterable) {
     var C = this;
     var capability = newPromiseCapability(C);
@@ -3049,7 +3266,7 @@ $({ target: PROMISE, stat: true, forced: INCORRECT_ITERATION }, {
     return capability.promise;
   },
   // `Promise.race` method
-  // https://tc39.github.io/ecma262/#sec-promise.race
+  // https://tc39.es/ecma262/#sec-promise.race
   race: function race(iterable) {
     var C = this;
     var capability = newPromiseCapability(C);
@@ -3086,7 +3303,7 @@ var setInternalState = InternalStateModule.set;
 var getInternalState = InternalStateModule.getterFor(STRING_ITERATOR);
 
 // `String.prototype[@@iterator]` method
-// https://tc39.github.io/ecma262/#sec-string.prototype-@@iterator
+// https://tc39.es/ecma262/#sec-string.prototype-@@iterator
 defineIterator(String, 'String', function (iterated) {
   setInternalState(this, {
     type: STRING_ITERATOR,
@@ -3094,7 +3311,7 @@ defineIterator(String, 'String', function (iterated) {
     index: 0
   });
 // `%StringIteratorPrototype%.next` method
-// https://tc39.github.io/ecma262/#sec-%stringiteratorprototype%.next
+// https://tc39.es/ecma262/#sec-%stringiteratorprototype%.next
 }, function next() {
   var state = getInternalState(this);
   var string = state.string;
@@ -3116,52 +3333,8 @@ defineIterator(String, 'String', function (iterated) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
-var DESCRIPTORS = __webpack_require__(/*! ../internals/descriptors */ "./node_modules/core-js-pure/internals/descriptors.js");
-var getPrototypeOf = __webpack_require__(/*! ../internals/object-get-prototype-of */ "./node_modules/core-js-pure/internals/object-get-prototype-of.js");
-var setPrototypeOf = __webpack_require__(/*! ../internals/object-set-prototype-of */ "./node_modules/core-js-pure/internals/object-set-prototype-of.js");
-var create = __webpack_require__(/*! ../internals/object-create */ "./node_modules/core-js-pure/internals/object-create.js");
-var defineProperty = __webpack_require__(/*! ../internals/object-define-property */ "./node_modules/core-js-pure/internals/object-define-property.js");
-var createPropertyDescriptor = __webpack_require__(/*! ../internals/create-property-descriptor */ "./node_modules/core-js-pure/internals/create-property-descriptor.js");
-var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
-var createNonEnumerableProperty = __webpack_require__(/*! ../internals/create-non-enumerable-property */ "./node_modules/core-js-pure/internals/create-non-enumerable-property.js");
-var InternalStateModule = __webpack_require__(/*! ../internals/internal-state */ "./node_modules/core-js-pure/internals/internal-state.js");
-
-var setInternalState = InternalStateModule.set;
-var getInternalAggregateErrorState = InternalStateModule.getterFor('AggregateError');
-
-var $AggregateError = function AggregateError(errors, message) {
-  var that = this;
-  if (!(that instanceof $AggregateError)) return new $AggregateError(errors, message);
-  if (setPrototypeOf) {
-    that = setPrototypeOf(new Error(message), getPrototypeOf(that));
-  }
-  var errorsArray = [];
-  iterate(errors, errorsArray.push, errorsArray);
-  if (DESCRIPTORS) setInternalState(that, { errors: errorsArray, type: 'AggregateError' });
-  else that.errors = errorsArray;
-  if (message !== undefined) createNonEnumerableProperty(that, 'message', String(message));
-  return that;
-};
-
-$AggregateError.prototype = create(Error.prototype, {
-  constructor: createPropertyDescriptor(5, $AggregateError),
-  message: createPropertyDescriptor(5, ''),
-  name: createPropertyDescriptor(5, 'AggregateError')
-});
-
-if (DESCRIPTORS) defineProperty.f($AggregateError.prototype, 'errors', {
-  get: function () {
-    return getInternalAggregateErrorState(this).errors;
-  },
-  configurable: true
-});
-
-$({ global: true }, {
-  AggregateError: $AggregateError
-});
+// TODO: Remove from `core-js@4`
+__webpack_require__(/*! ./es.aggregate-error */ "./node_modules/core-js-pure/modules/es.aggregate-error.js");
 
 
 /***/ }),
@@ -3186,53 +3359,8 @@ __webpack_require__(/*! ./es.promise.all-settled.js */ "./node_modules/core-js-p
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-
-var $ = __webpack_require__(/*! ../internals/export */ "./node_modules/core-js-pure/internals/export.js");
-var aFunction = __webpack_require__(/*! ../internals/a-function */ "./node_modules/core-js-pure/internals/a-function.js");
-var getBuiltIn = __webpack_require__(/*! ../internals/get-built-in */ "./node_modules/core-js-pure/internals/get-built-in.js");
-var newPromiseCapabilityModule = __webpack_require__(/*! ../internals/new-promise-capability */ "./node_modules/core-js-pure/internals/new-promise-capability.js");
-var perform = __webpack_require__(/*! ../internals/perform */ "./node_modules/core-js-pure/internals/perform.js");
-var iterate = __webpack_require__(/*! ../internals/iterate */ "./node_modules/core-js-pure/internals/iterate.js");
-
-var PROMISE_ANY_ERROR = 'No one promise resolved';
-
-// `Promise.any` method
-// https://github.com/tc39/proposal-promise-any
-$({ target: 'Promise', stat: true }, {
-  any: function any(iterable) {
-    var C = this;
-    var capability = newPromiseCapabilityModule.f(C);
-    var resolve = capability.resolve;
-    var reject = capability.reject;
-    var result = perform(function () {
-      var promiseResolve = aFunction(C.resolve);
-      var errors = [];
-      var counter = 0;
-      var remaining = 1;
-      var alreadyResolved = false;
-      iterate(iterable, function (promise) {
-        var index = counter++;
-        var alreadyRejected = false;
-        errors.push(undefined);
-        remaining++;
-        promiseResolve.call(C, promise).then(function (value) {
-          if (alreadyRejected || alreadyResolved) return;
-          alreadyResolved = true;
-          resolve(value);
-        }, function (e) {
-          if (alreadyRejected || alreadyResolved) return;
-          alreadyRejected = true;
-          errors[index] = e;
-          --remaining || reject(new (getBuiltIn('AggregateError'))(errors, PROMISE_ANY_ERROR));
-        });
-      });
-      --remaining || reject(new (getBuiltIn('AggregateError'))(errors, PROMISE_ANY_ERROR));
-    });
-    if (result.error) reject(result.value);
-    return capability.promise;
-  }
-});
+// TODO: Remove from `core-js@4`
+__webpack_require__(/*! ./es.promise.any */ "./node_modules/core-js-pure/modules/es.promise.any.js");
 
 
 /***/ }),
@@ -3393,10 +3521,13 @@ __webpack_require__(/*! @/command/setObjectPosition */ "./src/js/command/setObje
 
 __webpack_require__(/*! @/command/changeSelection */ "./src/js/command/changeSelection.js");
 
+__webpack_require__(/*! @/command/resize */ "./src/js/command/resize.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// commands
 module.exports = _imageEditor2.default;
+
+// commands
 
 /***/ }),
 
@@ -3437,6 +3568,7 @@ exports.default = {
       main: this._mainAction(),
       shape: this._shapeAction(),
       crop: this._cropAction(),
+      resize: this._resizeAction(),
       flip: this._flipAction(),
       rotate: this._rotateAction(),
       text: this._textAction(),
@@ -3831,16 +3963,136 @@ exports.default = {
 
 
   /**
+   * Resize Action
+   * @returns {Object} actions for ui resize
+   * @private
+   */
+  _resizeAction: function _resizeAction() {
+    var _this9 = this;
+
+    return (0, _tuiCodeSnippet.extend)({
+      getCurrentDimensions: function getCurrentDimensions() {
+        return _this9._graphics.getCurrentDimensions();
+      },
+      preview: function preview(actor, value, lockState) {
+        var currentDimensions = _this9._graphics.getCurrentDimensions();
+        var calcAspectRatio = function calcAspectRatio() {
+          return currentDimensions.width / currentDimensions.height;
+        };
+
+        var dimensions = {};
+        switch (actor) {
+          case 'width':
+            dimensions.width = value;
+            if (lockState) {
+              dimensions.height = value / calcAspectRatio();
+            } else {
+              dimensions.height = currentDimensions.height;
+            }
+            break;
+          case 'height':
+            dimensions.height = value;
+            if (lockState) {
+              dimensions.width = value * calcAspectRatio();
+            } else {
+              dimensions.width = currentDimensions.width;
+            }
+            break;
+          default:
+            dimensions = currentDimensions;
+        }
+
+        _this9._graphics.resize(dimensions).then(function () {
+          _this9.ui.resizeEditor();
+        });
+
+        if (lockState) {
+          _this9.ui.resize.setWidthValue(dimensions.width);
+          _this9.ui.resize.setHeightValue(dimensions.height);
+        }
+      },
+      lockAspectRatio: function lockAspectRatio(lockState, min, max) {
+        var _graphics$getCurrentD = _this9._graphics.getCurrentDimensions(),
+            width = _graphics$getCurrentD.width,
+            height = _graphics$getCurrentD.height;
+
+        var aspectRatio = width / height;
+        if (lockState) {
+          if (width > height) {
+            var pMax = max / aspectRatio;
+            var pMin = min * aspectRatio;
+            _this9.ui.resize.setLimit({
+              minWidth: pMin > min ? pMin : min,
+              minHeight: min,
+              maxWidth: max,
+              maxHeight: pMax < max ? pMax : max
+            });
+          } else {
+            var _pMax = max * aspectRatio;
+            var _pMin = min / aspectRatio;
+            _this9.ui.resize.setLimit({
+              minWidth: min,
+              minHeight: _pMin > min ? _pMin : min,
+              maxWidth: _pMax < max ? _pMax : max,
+              maxHeight: max
+            });
+          }
+        } else {
+          _this9.ui.resize.setLimit({
+            minWidth: min,
+            minHeight: min,
+            maxWidth: max,
+            maxHeight: max
+          });
+        }
+      },
+      resize: function resize() {
+        var dimensions = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+        if (!dimensions) {
+          dimensions = _this9._graphics.getCurrentDimensions();
+        }
+
+        _this9.resize(dimensions).then(function () {
+          _this9._graphics.setOriginalDimensions(dimensions);
+          _this9.stopDrawingMode();
+          _this9.ui.resizeEditor();
+          _this9.ui.changeMenu('resize');
+        })['catch'](function (message) {
+          return Promise.reject(message);
+        });
+      },
+      reset: function reset() {
+        var standByMode = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+        var dimensions = _this9._graphics.getOriginalDimensions();
+
+        _this9.ui.resize.setWidthValue(dimensions.width, true);
+        _this9.ui.resize.setHeightValue(dimensions.height, true);
+
+        _this9._graphics.resize(dimensions).then(function () {
+          if (!standByMode) {
+            _this9.stopDrawingMode();
+            _this9.ui.resizeEditor();
+            _this9.ui.changeMenu('resize');
+          }
+        });
+      }
+    }, this._commonAction());
+  },
+
+
+  /**
    * Flip Action
    * @returns {Object} actions for ui flip
    * @private
    */
   _flipAction: function _flipAction() {
-    var _this9 = this;
+    var _this10 = this;
 
     return (0, _tuiCodeSnippet.extend)({
       flip: function flip(flipType) {
-        return _this9[flipType]();
+        return _this10[flipType]();
       }
     }, this._commonAction());
   },
@@ -3852,14 +4104,14 @@ exports.default = {
    * @private
    */
   _filterAction: function _filterAction() {
-    var _this10 = this;
+    var _this11 = this;
 
     return (0, _tuiCodeSnippet.extend)({
       applyFilter: function applyFilter(applying, type, options, isSilent) {
         if (applying) {
-          _this10.applyFilter(type, options, isSilent);
-        } else if (_this10.hasFilter(type)) {
-          _this10.removeFilter(type);
+          _this11.applyFilter(type, options, isSilent);
+        } else if (_this11.hasFilter(type)) {
+          _this11.removeFilter(type);
         }
       }
     }, this._commonAction());
@@ -3870,70 +4122,70 @@ exports.default = {
    * Image Editor Event Observer
    */
   setReAction: function setReAction() {
-    var _this11 = this;
+    var _this12 = this;
 
     this.on({
       undoStackChanged: function undoStackChanged(length) {
         if (length) {
-          _this11.ui.changeHelpButtonEnabled('undo', true);
-          _this11.ui.changeHelpButtonEnabled('reset', true);
+          _this12.ui.changeHelpButtonEnabled('undo', true);
+          _this12.ui.changeHelpButtonEnabled('reset', true);
         } else {
-          _this11.ui.changeHelpButtonEnabled('undo', false);
-          _this11.ui.changeHelpButtonEnabled('reset', false);
+          _this12.ui.changeHelpButtonEnabled('undo', false);
+          _this12.ui.changeHelpButtonEnabled('reset', false);
         }
-        _this11.ui.resizeEditor();
+        _this12.ui.resizeEditor();
       },
       redoStackChanged: function redoStackChanged(length) {
         if (length) {
-          _this11.ui.changeHelpButtonEnabled('redo', true);
+          _this12.ui.changeHelpButtonEnabled('redo', true);
         } else {
-          _this11.ui.changeHelpButtonEnabled('redo', false);
+          _this12.ui.changeHelpButtonEnabled('redo', false);
         }
-        _this11.ui.resizeEditor();
+        _this12.ui.resizeEditor();
       },
       /* eslint-disable complexity */
       objectActivated: function objectActivated(obj) {
-        _this11.activeObjectId = obj.id;
+        _this12.activeObjectId = obj.id;
 
-        _this11.ui.changeHelpButtonEnabled('delete', true);
-        _this11.ui.changeHelpButtonEnabled('deleteAll', true);
+        _this12.ui.changeHelpButtonEnabled('delete', true);
+        _this12.ui.changeHelpButtonEnabled('deleteAll', true);
 
         if (obj.type === 'cropzone') {
-          _this11.ui.crop.changeApplyButtonStatus(true);
+          _this12.ui.crop.changeApplyButtonStatus(true);
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this11.stopDrawingMode();
-          if (_this11.ui.submenu !== 'shape') {
-            _this11.ui.changeMenu('shape', false, false);
+          _this12.stopDrawingMode();
+          if (_this12.ui.submenu !== 'shape') {
+            _this12.ui.changeMenu('shape', false, false);
           }
-          _this11.ui.shape.setShapeStatus({
+          _this12.ui.shape.setShapeStatus({
             strokeColor: obj.stroke,
             strokeWidth: obj.strokeWidth,
             fillColor: obj.fill
           });
 
-          _this11.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+          _this12.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
         } else if (obj.type === 'path' || obj.type === 'line') {
-          if (_this11.ui.submenu !== 'draw') {
-            _this11.ui.changeMenu('draw', false, false);
-            _this11.ui.draw.changeStandbyMode();
+          if (_this12.ui.submenu !== 'draw') {
+            _this12.ui.changeMenu('draw', false, false);
+            _this12.ui.draw.changeStandbyMode();
           }
         } else if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          if (_this11.ui.submenu !== 'text') {
-            _this11.ui.changeMenu('text', false, false);
+          if (_this12.ui.submenu !== 'text') {
+            _this12.ui.changeMenu('text', false, false);
           }
 
-          _this11.ui.text.setTextStyleStateOnAction(obj);
+          _this12.ui.text.setTextStyleStateOnAction(obj);
         } else if (obj.type === 'icon') {
-          _this11.stopDrawingMode();
-          if (_this11.ui.submenu !== 'icon') {
-            _this11.ui.changeMenu('icon', false, false);
+          _this12.stopDrawingMode();
+          if (_this12.ui.submenu !== 'icon') {
+            _this12.ui.changeMenu('icon', false, false);
           }
-          _this11.ui.icon.setIconPickerColor(obj.fill);
+          _this12.ui.icon.setIconPickerColor(obj.fill);
         }
       },
       /* eslint-enable complexity */
       addText: function addText(pos) {
-        var _ui$text = _this11.ui.text,
+        var _ui$text = _this12.ui.text,
             fill = _ui$text.textColor,
             fontSize = _ui$text.fontSize,
             fontStyle = _ui$text.fontStyle,
@@ -3942,44 +4194,44 @@ exports.default = {
 
         var fontFamily = 'Noto Sans';
 
-        _this11.addText('Double Click', {
+        _this12.addText('Double Click', {
           position: pos.originPosition,
           styles: { fill: fill, fontSize: fontSize, fontFamily: fontFamily, fontStyle: fontStyle, fontWeight: fontWeight, underline: underline }
         }).then(function () {
-          _this11.changeCursor('default');
+          _this12.changeCursor('default');
         });
       },
       addObjectAfter: function addObjectAfter(obj) {
         if (obj.type === 'icon') {
-          _this11.ui.icon.changeStandbyMode();
+          _this12.ui.icon.changeStandbyMode();
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) > -1) {
-          _this11.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
-          _this11.ui.shape.changeStandbyMode();
+          _this12.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
+          _this12.ui.shape.changeStandbyMode();
         }
       },
       objectScaled: function objectScaled(obj) {
         if (['i-text', 'text'].indexOf(obj.type) > -1) {
-          _this11.ui.text.fontSize = (0, _util.toInteger)(obj.fontSize);
+          _this12.ui.text.fontSize = (0, _util.toInteger)(obj.fontSize);
         } else if (['rect', 'circle', 'triangle'].indexOf(obj.type) >= 0) {
           var width = obj.width,
               height = obj.height;
 
-          var strokeValue = _this11.ui.shape.getStrokeValue();
+          var strokeValue = _this12.ui.shape.getStrokeValue();
 
           if (width < strokeValue) {
-            _this11.ui.shape.setStrokeValue(width);
+            _this12.ui.shape.setStrokeValue(width);
           }
           if (height < strokeValue) {
-            _this11.ui.shape.setStrokeValue(height);
+            _this12.ui.shape.setStrokeValue(height);
           }
         }
       },
       selectionCleared: function selectionCleared() {
-        _this11.activeObjectId = null;
-        if (_this11.ui.submenu === 'text') {
-          _this11.changeCursor('text');
-        } else if (_this11.ui.submenu !== 'draw' && _this11.ui.submenu !== 'crop') {
-          _this11.stopDrawingMode();
+        _this12.activeObjectId = null;
+        if (_this12.ui.submenu === 'text') {
+          _this12.changeCursor('text');
+        } else if (!(0, _util.includes)(['draw', 'crop', 'resize'], _this12.ui.submenu)) {
+          _this12.stopDrawingMode();
         }
       }
     });
@@ -3992,14 +4244,14 @@ exports.default = {
    * @private
    */
   _historyAction: function _historyAction() {
-    var _this12 = this;
+    var _this13 = this;
 
     return {
       undo: function undo(count) {
-        return _this12.undo(count);
+        return _this13.undo(count);
       },
       redo: function redo(count) {
-        return _this12.redo(count);
+        return _this13.redo(count);
       }
     };
   },
@@ -4011,29 +4263,33 @@ exports.default = {
    * @private
    */
   _commonAction: function _commonAction() {
-    var _this13 = this;
+    var _this14 = this;
 
     var TEXT = _consts.drawingModes.TEXT,
         CROPPER = _consts.drawingModes.CROPPER,
         SHAPE = _consts.drawingModes.SHAPE,
-        ZOOM = _consts.drawingModes.ZOOM;
+        ZOOM = _consts.drawingModes.ZOOM,
+        RESIZE = _consts.drawingModes.RESIZE;
 
 
     return {
       modeChange: function modeChange(menu) {
         switch (menu) {
           case _consts.drawingMenuNames.TEXT:
-            _this13._changeActivateMode(TEXT);
+            _this14._changeActivateMode(TEXT);
             break;
           case _consts.drawingMenuNames.CROP:
-            _this13.startDrawingMode(CROPPER);
+            _this14.startDrawingMode(CROPPER);
             break;
           case _consts.drawingMenuNames.SHAPE:
-            _this13._changeActivateMode(SHAPE);
-            _this13.setDrawingShape(_this13.ui.shape.type, _this13.ui.shape.options);
+            _this14._changeActivateMode(SHAPE);
+            _this14.setDrawingShape(_this14.ui.shape.type, _this14.ui.shape.options);
             break;
           case _consts.drawingMenuNames.ZOOM:
-            _this13.startDrawingMode(ZOOM);
+            _this14.startDrawingMode(ZOOM);
+            break;
+          case _consts.drawingMenuNames.RESIZE:
+            _this14.startDrawingMode(RESIZE);
             break;
           default:
             break;
@@ -5379,6 +5635,75 @@ var command = {
     * @fileoverview Remove an object
     */
 
+
+_command2.default.register(command);
+
+exports.default = command;
+
+/***/ }),
+
+/***/ "./src/js/command/resize.js":
+/*!**********************************!*\
+  !*** ./src/js/command/resize.js ***!
+  \**********************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _command = __webpack_require__(/*! @/factory/command */ "./src/js/factory/command.js");
+
+var _command2 = _interopRequireDefault(_command);
+
+var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @fileoverview Resize an image
+ */
+var RESIZE = _consts.componentNames.RESIZE;
+
+
+var command = {
+  name: _consts.commandNames.RESIZE_IMAGE,
+
+  /**
+   * Resize an image
+   * @param {Graphics} graphics - Graphics instance
+   * @param {object} dimensions - Image Dimensions
+   * @returns {Promise}
+   */
+  execute: function execute(graphics, dimensions) {
+    var resizeComp = graphics.getComponent(RESIZE);
+
+    var originalDimensions = resizeComp.getOriginalDimensions();
+    if (!originalDimensions) {
+      originalDimensions = resizeComp.getCurrentDimensions();
+    }
+
+    this.undoData.dimensions = originalDimensions;
+
+    return resizeComp.resize(dimensions);
+  },
+
+
+  /**
+   * @param {Graphics} graphics - Graphics instance
+   * @returns {Promise}
+   */
+  undo: function undo(graphics) {
+    var resizeComp = graphics.getComponent(RESIZE);
+
+    return resizeComp.resize(this.undoData.dimensions);
+  }
+};
 
 _command2.default.register(command);
 
@@ -7620,6 +7945,175 @@ exports.default = Line;
 
 /***/ }),
 
+/***/ "./src/js/component/resize.js":
+/*!************************************!*\
+  !*** ./src/js/component/resize.js ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
+
+var _component = __webpack_require__(/*! @/interface/component */ "./src/js/interface/component.js");
+
+var _component2 = _interopRequireDefault(_component);
+
+var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Resize components
+ * @param {Graphics} graphics - Graphics instance
+ * @extends {Component}
+ * @class Resize
+ * @ignore
+ */
+var Resize = function (_Component) {
+  _inherits(Resize, _Component);
+
+  function Resize(graphics) {
+    _classCallCheck(this, Resize);
+
+    /**
+     * Current dimensions
+     * @type {Object}
+     * @private
+     */
+    var _this = _possibleConstructorReturn(this, (Resize.__proto__ || Object.getPrototypeOf(Resize)).call(this, _consts.componentNames.RESIZE, graphics));
+
+    _this._dimensions = null;
+
+    /**
+     * Original dimensions
+     * @type {Object}
+     * @private
+     */
+    _this._originalDimensions = null;
+    return _this;
+  }
+
+  /**
+   * Get current dimensions
+   * @returns {object}
+   */
+
+
+  _createClass(Resize, [{
+    key: 'getCurrentDimensions',
+    value: function getCurrentDimensions() {
+      var canvasImage = this.getCanvasImage();
+      if (!this._dimensions && canvasImage) {
+        var width = canvasImage.width,
+            height = canvasImage.height;
+
+        this._dimensions = { width: width, height: height };
+      }
+
+      return this._dimensions;
+    }
+
+    /**
+     * Get original dimensions
+     * @returns {object}
+     */
+
+  }, {
+    key: 'getOriginalDimensions',
+    value: function getOriginalDimensions() {
+      return this._originalDimensions;
+    }
+
+    /**
+     * Set original dimensions
+     * @param {object} dimensions - Dimensions
+     */
+
+  }, {
+    key: 'setOriginalDimensions',
+    value: function setOriginalDimensions(dimensions) {
+      this._originalDimensions = dimensions;
+    }
+
+    /**
+     * Resize Image
+     * @param {Object} dimensions - Resize dimensions
+     * @returns {Promise}
+     */
+
+  }, {
+    key: 'resize',
+    value: function resize(dimensions) {
+      var canvasImage = this.getCanvasImage();
+      var width = canvasImage.width,
+          height = canvasImage.height,
+          scaleX = canvasImage.scaleX,
+          scaleY = canvasImage.scaleY;
+      var dimensionsWidth = dimensions.width,
+          dimensionsHeight = dimensions.height;
+
+
+      var scaleValues = {
+        scaleX: dimensionsWidth ? dimensionsWidth / width : scaleX,
+        scaleY: dimensionsHeight ? dimensionsHeight / height : scaleY
+      };
+
+      if (scaleX !== scaleValues.scaleX || scaleY !== scaleValues.scaleY) {
+        canvasImage.set(scaleValues).setCoords();
+
+        this._dimensions = {
+          width: canvasImage.width * canvasImage.scaleX,
+          height: canvasImage.height * canvasImage.scaleY
+        };
+      }
+
+      this.adjustCanvasDimensionBase();
+
+      return _util.Promise.resolve();
+    }
+
+    /**
+     * Start resizing
+     */
+
+  }, {
+    key: 'start',
+    value: function start() {
+      var dimensions = this.getCurrentDimensions();
+      this.setOriginalDimensions(dimensions);
+    }
+
+    /**
+     * End resizing
+     */
+
+  }, {
+    key: 'end',
+    value: function end() {}
+  }]);
+
+  return Resize;
+}(_component2.default);
+
+exports.default = Resize;
+
+/***/ }),
+
 /***/ "./src/js/component/rotation.js":
 /*!**************************************!*\
   !*** ./src/js/component/rotation.js ***!
@@ -8448,7 +8942,7 @@ var Shape = function (_Component) {
           top = shapeObj.top;
 
 
-      activeSelection.realizeTransform(shapeObj);
+      _fabric2.default.util.addTransformToObject(shapeObj, activeSelection.calcTransformMatrix());
       this._resetPositionFillFilter(shapeObj);
 
       shapeObj.set({
@@ -8519,7 +9013,7 @@ var resetStyles = {
   fill: '#000000',
   fontStyle: 'normal',
   fontWeight: 'normal',
-  textAlign: 'left',
+  textAlign: 'tie-text-align-left',
   underline: false
 };
 var DBCLICK_TIME = 500;
@@ -10101,7 +10595,7 @@ exports.default = Zoom;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.emptyCropRectValues = exports.defaultFilterRangeValues = exports.defaultTextRangeValues = exports.defaultShapeStrokeValues = exports.defaultDrawRangeValues = exports.defaultRotateRangeValues = exports.defaultIconPath = exports.rejectMessages = exports.fObjectOptions = exports.keyCodes = exports.zoomModes = exports.drawingMenuNames = exports.drawingModes = exports.historyNames = exports.selectorNames = exports.eventNames = exports.commandNames = exports.CROPZONE_DEFAULT_OPTIONS = exports.SHAPE_DEFAULT_OPTIONS = exports.componentNames = exports.filterType = exports.OBJ_TYPE = exports.SHAPE_TYPE = exports.SHAPE_FILL_TYPE = exports.HELP_MENUS = exports.DELETE_HELP_MENUS = exports.COMMAND_HELP_MENUS = exports.ZOOM_HELP_MENUS = undefined;
+exports.defaultResizePixelValues = exports.emptyCropRectValues = exports.defaultFilterRangeValues = exports.defaultTextRangeValues = exports.defaultShapeStrokeValues = exports.defaultDrawRangeValues = exports.defaultRotateRangeValues = exports.defaultIconPath = exports.rejectMessages = exports.fObjectOptions = exports.keyCodes = exports.zoomModes = exports.drawingMenuNames = exports.drawingModes = exports.historyNames = exports.selectorNames = exports.eventNames = exports.commandNames = exports.CROPZONE_DEFAULT_OPTIONS = exports.SHAPE_DEFAULT_OPTIONS = exports.componentNames = exports.filterType = exports.OBJ_TYPE = exports.SHAPE_TYPE = exports.SHAPE_FILL_TYPE = exports.HELP_MENUS = exports.DELETE_HELP_MENUS = exports.COMMAND_HELP_MENUS = exports.ZOOM_HELP_MENUS = undefined;
 
 var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
 
@@ -10174,7 +10668,7 @@ var filterType = exports.filterType = {
  * Component names
  * @type {Object.<string, string>}
  */
-var componentNames = exports.componentNames = (0, _util.keyMirror)('IMAGE_LOADER', 'CROPPER', 'FLIP', 'ROTATION', 'FREE_DRAWING', 'LINE', 'TEXT', 'ICON', 'FILTER', 'SHAPE', 'ZOOM');
+var componentNames = exports.componentNames = (0, _util.keyMirror)('IMAGE_LOADER', 'CROPPER', 'FLIP', 'ROTATION', 'FREE_DRAWING', 'LINE', 'TEXT', 'ICON', 'FILTER', 'SHAPE', 'ZOOM', 'RESIZE');
 
 /**
  * Shape default option
@@ -10224,7 +10718,8 @@ var commandNames = exports.commandNames = {
   RESIZE_CANVAS_DIMENSION: 'resizeCanvasDimension',
   SET_OBJECT_PROPERTIES: 'setObjectProperties',
   SET_OBJECT_POSITION: 'setObjectPosition',
-  CHANGE_SELECTION: 'changeSelection'
+  CHANGE_SELECTION: 'changeSelection',
+  RESIZE_IMAGE: 'resize'
 };
 
 /**
@@ -10265,7 +10760,8 @@ var eventNames = exports.eventNames = {
   INPUT_BOX_EDITING_STARTED: 'inputBoxEditingStarted',
   INPUT_BOX_EDITING_STOPPED: 'inputBoxEditingStopped',
   FOCUS: 'focus',
-  BLUR: 'blur'
+  BLUR: 'blur',
+  IMAGE_RESIZED: 'imageResized'
 };
 
 /**
@@ -10286,6 +10782,7 @@ var historyNames = exports.historyNames = {
   ADD_MASK_IMAGE: 'Mask',
   ADD_IMAGE_OBJECT: 'Mask',
   CROP: 'Crop',
+  RESIZE: 'Resize',
   APPLY_FILTER: 'Filter',
   REMOVE_FILTER: 'Filter',
   CHANGE_SHAPE: 'Shape',
@@ -10300,7 +10797,7 @@ var historyNames = exports.historyNames = {
  * Editor states
  * @type {Object.<string, string>}
  */
-var drawingModes = exports.drawingModes = (0, _util.keyMirror)('NORMAL', 'CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE', 'ICON', 'ZOOM');
+var drawingModes = exports.drawingModes = (0, _util.keyMirror)('NORMAL', 'CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE', 'ICON', 'ZOOM', 'RESIZE');
 
 /**
  * Menu names with drawing mode
@@ -10309,6 +10806,7 @@ var drawingModes = exports.drawingModes = (0, _util.keyMirror)('NORMAL', 'CROPPE
 var drawingMenuNames = exports.drawingMenuNames = {
   TEXT: 'text',
   CROP: 'crop',
+  RESIZE: 'resize',
   SHAPE: 'shape',
   ZOOM: 'zoom'
 };
@@ -10470,6 +10968,13 @@ var emptyCropRectValues = exports.emptyCropRectValues = {
   TOP: 0,
   WIDTH: 0.5,
   HEIGHT: 0.5
+};
+
+var defaultResizePixelValues = exports.defaultResizePixelValues = {
+  realTimeEvent: true,
+  min: 32,
+  max: 4088,
+  value: 800
 };
 
 /***/ }),
@@ -10805,6 +11310,85 @@ var LineDrawingMode = function (_DrawingMode) {
 }(_drawingMode2.default);
 
 exports.default = LineDrawingMode;
+
+/***/ }),
+
+/***/ "./src/js/drawingMode/resize.js":
+/*!**************************************!*\
+  !*** ./src/js/drawingMode/resize.js ***!
+  \**************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _drawingMode = __webpack_require__(/*! @/interface/drawingMode */ "./src/js/interface/drawingMode.js");
+
+var _drawingMode2 = _interopRequireDefault(_drawingMode);
+
+var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * ResizeDrawingMode class
+ * @class
+ * @ignore
+ */
+var ResizeDrawingMode = function (_DrawingMode) {
+  _inherits(ResizeDrawingMode, _DrawingMode);
+
+  function ResizeDrawingMode() {
+    _classCallCheck(this, ResizeDrawingMode);
+
+    return _possibleConstructorReturn(this, (ResizeDrawingMode.__proto__ || Object.getPrototypeOf(ResizeDrawingMode)).call(this, _consts.drawingModes.RESIZE));
+  }
+
+  /**
+   * start this drawing mode
+   * @param {Graphics} graphics - Graphics instance
+   * @override
+   */
+
+
+  _createClass(ResizeDrawingMode, [{
+    key: 'start',
+    value: function start(graphics) {
+      var resize = graphics.getComponent(_consts.componentNames.RESIZE);
+      resize.start();
+    }
+
+    /**
+     * stop this drawing mode
+     * @param {Graphics} graphics - Graphics instance
+     * @override
+     */
+
+  }, {
+    key: 'end',
+    value: function end(graphics) {
+      var resize = graphics.getComponent(_consts.componentNames.RESIZE);
+      resize.end();
+    }
+  }]);
+
+  return ResizeDrawingMode;
+}(_drawingMode2.default);
+
+exports.default = ResizeDrawingMode;
 
 /***/ }),
 
@@ -12538,6 +13122,14 @@ var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
 
 var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
 
+var _resize = __webpack_require__(/*! @/component/resize */ "./src/js/component/resize.js");
+
+var _resize2 = _interopRequireDefault(_resize);
+
+var _resize3 = __webpack_require__(/*! @/drawingMode/resize */ "./src/js/drawingMode/resize.js");
+
+var _resize4 = _interopRequireDefault(_resize3);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -13213,7 +13805,16 @@ var Graphics = function () {
   }, {
     key: 'adjustCanvasDimension',
     value: function adjustCanvasDimension() {
-      var canvasImage = this.canvasImage.scale(1);
+      this.adjustCanvasDimensionBase(this.canvasImage.scale(1));
+    }
+  }, {
+    key: 'adjustCanvasDimensionBase',
+    value: function adjustCanvasDimensionBase() {
+      var canvasImage = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+      if (!canvasImage) {
+        canvasImage = this.canvasImage;
+      }
 
       var _canvasImage$getBound = canvasImage.getBoundingRect(),
           width = _canvasImage$getBound.width,
@@ -13717,6 +14318,7 @@ var Graphics = function () {
       this._register(this._drawingModeMap, new _text4.default());
       this._register(this._drawingModeMap, new _icon4.default());
       this._register(this._drawingModeMap, new _zoom4.default());
+      this._register(this._drawingModeMap, new _resize4.default());
     }
 
     /**
@@ -13738,6 +14340,7 @@ var Graphics = function () {
       this._register(this._componentMap, new _filter2.default(this));
       this._register(this._componentMap, new _shape2.default(this));
       this._register(this._componentMap, new _zoom2.default(this));
+      this._register(this._componentMap, new _resize2.default(this));
     }
 
     /**
@@ -14310,6 +14913,58 @@ var Graphics = function () {
           resolve(cloned);
         });
       });
+    }
+
+    /**
+     * Get current dimensions
+     * @returns {object}
+     */
+
+  }, {
+    key: 'getCurrentDimensions',
+    value: function getCurrentDimensions() {
+      var resize = this.getComponent(_consts.componentNames.RESIZE);
+
+      return resize.getCurrentDimensions();
+    }
+
+    /**
+     * Get original dimensions
+     * @returns {object}
+     */
+
+  }, {
+    key: 'getOriginalDimensions',
+    value: function getOriginalDimensions() {
+      var resize = this.getComponent(_consts.componentNames.RESIZE);
+
+      return resize.getOriginalDimensions();
+    }
+
+    /**
+     * Set original dimensions
+     * @param {object} dimensions - Dimensions
+     */
+
+  }, {
+    key: 'setOriginalDimensions',
+    value: function setOriginalDimensions(dimensions) {
+      var resize = this.getComponent(_consts.componentNames.RESIZE);
+      resize.setOriginalDimensions(dimensions);
+    }
+
+    /**
+     * Resize Image
+     * @param {Object} dimensions - Resize dimensions
+     * @returns {Promise}
+     */
+
+  }, {
+    key: 'resize',
+    value: function resize(dimensions) {
+      var resize = this.getComponent(_consts.componentNames.RESIZE);
+
+      return resize.resize(dimensions);
     }
   }]);
 
@@ -15520,16 +16175,15 @@ exports.makeSelectionUndoDatum = makeSelectionUndoDatum;
 
 var _tuiCodeSnippet = __webpack_require__(/*! tui-code-snippet */ "tui-code-snippet");
 
+var _fabric = __webpack_require__(/*! fabric */ "fabric");
+
+var _fabric2 = _interopRequireDefault(_fabric);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
 /**
  * Cached selection's info
  * @type {Array}
- * @private
- */
-var cachedUndoDataForChangeDimension = null;
-
-/**
- * Set cached undo data
- * @param {Array} undoData - selection object
  * @private
  */
 /**
@@ -15537,6 +16191,13 @@ var cachedUndoDataForChangeDimension = null;
  * @fileoverview Selection modification helper
  */
 
+var cachedUndoDataForChangeDimension = null;
+
+/**
+ * Set cached undo data
+ * @param {Array} undoData - selection object
+ * @private
+ */
 function setCachedUndoDataForDimension(undoData) {
   cachedUndoDataForChangeDimension = undoData;
 }
@@ -15571,7 +16232,7 @@ function makeSelectionUndoData(obj, undoDatumMaker) {
           height = item.height;
 
 
-      obj.realizeTransform(item);
+      _fabric2.default.util.addTransformToObject(item, obj.calcTransformMatrix());
       var result = undoDatumMaker(item);
 
       item.set({
@@ -18616,6 +19277,17 @@ var ImageEditor = function () {
     value: function setObjectPosition(id, posInfo) {
       return this.execute(_consts.commandNames.SET_OBJECT_POSITION, id, posInfo);
     }
+
+    /**
+     * @param {object} dimensions - Image Dimensions
+     * @returns {Promise<ErrorMsg>}
+     */
+
+  }, {
+    key: 'resize',
+    value: function resize(dimensions) {
+      return this.execute(_consts.commandNames.RESIZE_IMAGE, dimensions);
+    }
   }]);
 
   return ImageEditor;
@@ -19001,6 +19673,11 @@ var Component = function () {
     key: "adjustCanvasDimension",
     value: function adjustCanvasDimension() {
       this.graphics.adjustCanvasDimension();
+    }
+  }, {
+    key: "adjustCanvasDimensionBase",
+    value: function adjustCanvasDimensionBase() {
+      this.graphics.adjustCanvasDimensionBase();
     }
   }]);
 
@@ -20013,6 +20690,10 @@ var _crop = __webpack_require__(/*! @/ui/crop */ "./src/js/ui/crop.js");
 
 var _crop2 = _interopRequireDefault(_crop);
 
+var _resize = __webpack_require__(/*! @/ui/resize */ "./src/js/ui/resize.js");
+
+var _resize2 = _interopRequireDefault(_resize);
+
 var _flip = __webpack_require__(/*! @/ui/flip */ "./src/js/ui/flip.js");
 
 var _flip2 = _interopRequireDefault(_flip);
@@ -20056,6 +20737,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var SUB_UI_COMPONENT = {
   Shape: _shape2.default,
   Crop: _crop2.default,
+  Resize: _resize2.default,
   Flip: _flip2.default,
   Rotate: _rotate2.default,
   Text: _text2.default,
@@ -20308,7 +20990,7 @@ var Ui = function () {
         },
         locale: {},
         menuIconPath: '',
-        menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
+        menu: ['resize', 'crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
         initMenu: '',
         uiSize: {
           width: '100%',
@@ -23173,6 +23855,334 @@ exports.default = Panel;
 
 /***/ }),
 
+/***/ "./src/js/ui/resize.js":
+/*!*****************************!*\
+  !*** ./src/js/ui/resize.js ***!
+  \*****************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _submenuBase = __webpack_require__(/*! @/ui/submenuBase */ "./src/js/ui/submenuBase.js");
+
+var _submenuBase2 = _interopRequireDefault(_submenuBase);
+
+var _resize = __webpack_require__(/*! @/ui/template/submenu/resize */ "./src/js/ui/template/submenu/resize.js");
+
+var _resize2 = _interopRequireDefault(_resize);
+
+var _util = __webpack_require__(/*! @/util */ "./src/js/util.js");
+
+var _range = __webpack_require__(/*! @/ui/tools/range */ "./src/js/ui/tools/range.js");
+
+var _range2 = _interopRequireDefault(_range);
+
+var _consts = __webpack_require__(/*! @/consts */ "./src/js/consts.js");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+/**
+ * Resize ui class
+ * @class
+ * @ignore
+ */
+var Resize = function (_Submenu) {
+  _inherits(Resize, _Submenu);
+
+  function Resize(subMenuElement, _ref) {
+    var locale = _ref.locale,
+        makeSvgIcon = _ref.makeSvgIcon,
+        menuBarPosition = _ref.menuBarPosition,
+        usageStatistics = _ref.usageStatistics;
+
+    _classCallCheck(this, Resize);
+
+    var _this = _possibleConstructorReturn(this, (Resize.__proto__ || Object.getPrototypeOf(Resize)).call(this, subMenuElement, {
+      locale: locale,
+      name: 'resize',
+      makeSvgIcon: makeSvgIcon,
+      menuBarPosition: menuBarPosition,
+      templateHtml: _resize2.default,
+      usageStatistics: usageStatistics
+    }));
+
+    _this.status = 'active';
+
+    _this._lockState = false;
+
+    /**
+     * Original dimensions
+     * @type {Object}
+     * @private
+     */
+    _this._originalDimensions = null;
+
+    _this._els = {
+      widthRange: new _range2.default({
+        slider: _this.selector('.tie-width-range'),
+        input: _this.selector('.tie-width-range-value')
+      }, _consts.defaultResizePixelValues),
+      heightRange: new _range2.default({
+        slider: _this.selector('.tie-height-range'),
+        input: _this.selector('.tie-height-range-value')
+      }, _consts.defaultResizePixelValues),
+      lockAspectRatio: _this.selector('.tie-lock-aspect-ratio'),
+      apply: _this.selector('.tie-resize-button .apply'),
+      cancel: _this.selector('.tie-resize-button .cancel')
+    };
+    return _this;
+  }
+
+  /**
+   * Executed when the menu starts.
+   */
+
+
+  _createClass(Resize, [{
+    key: 'changeStartMode',
+    value: function changeStartMode() {
+      this.actions.modeChange('resize');
+      var dimensions = this.actions.getCurrentDimensions();
+
+      this._originalDimensions = dimensions;
+
+      this.setWidthValue(dimensions.width);
+      this.setHeightValue(dimensions.height);
+    }
+
+    /**
+     * Returns the menu to its default state.
+     */
+
+  }, {
+    key: 'changeStandbyMode',
+    value: function changeStandbyMode() {
+      this.actions.stopDrawingMode();
+      this.actions.reset(true);
+    }
+
+    /**
+     * Set dimension limits
+     * @param {object} limits - expect dimension limits for change
+     */
+
+  }, {
+    key: 'setLimit',
+    value: function setLimit(limits) {
+      this._els.widthRange.min = this.calcMinValue(limits.minWidth);
+      this._els.heightRange.min = this.calcMinValue(limits.minHeight);
+      this._els.widthRange.max = this.calcMaxValue(limits.maxWidth);
+      this._els.heightRange.max = this.calcMaxValue(limits.maxHeight);
+    }
+
+    /**
+     * Calculate max value
+     * @param {number} maxValue - max value
+     * @returns {number}
+     */
+
+  }, {
+    key: 'calcMaxValue',
+    value: function calcMaxValue(maxValue) {
+      if (maxValue <= 0) {
+        maxValue = _consts.defaultResizePixelValues.max;
+      }
+
+      return maxValue;
+    }
+
+    /**
+     * Calculate min value
+     * @param {number} minValue - min value
+     * @returns {number}
+     */
+
+  }, {
+    key: 'calcMinValue',
+    value: function calcMinValue(minValue) {
+      if (minValue <= 0) {
+        minValue = _consts.defaultResizePixelValues.min;
+      }
+
+      return minValue;
+    }
+
+    /**
+     * Set width value
+     * @param {number} value - expect value for widthRange change
+     * @param {boolean} trigger - fire change event control
+     */
+
+  }, {
+    key: 'setWidthValue',
+    value: function setWidthValue(value) {
+      var trigger = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      this._els.widthRange.value = value;
+      if (trigger) {
+        this._els.widthRange.trigger('change');
+      }
+    }
+
+    /**
+     * Set height value
+     * @param {number} value - expect value for heightRange change
+     * @param {boolean} trigger - fire change event control
+     */
+
+  }, {
+    key: 'setHeightValue',
+    value: function setHeightValue(value) {
+      var trigger = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+      this._els.heightRange.value = value;
+      if (trigger) {
+        this._els.heightRange.trigger('change');
+      }
+    }
+
+    /**
+     * Destroys the instance.
+     */
+
+  }, {
+    key: 'destroy',
+    value: function destroy() {
+      this._removeEvent();
+
+      (0, _util.assignmentForDestroy)(this);
+    }
+
+    /**
+     * Add event for resize
+     * @param {Object} actions - actions for resize
+     *   @param {Function} actions.resize - resize action
+     *   @param {Function} actions.preview - preview action
+     *   @param {Function} actions.getCurrentDimensions - Get current dimensions action
+     *   @param {Function} actions.modeChange - change mode
+     *   @param {Function} actions.stopDrawingMode - stop drawing mode
+     *   @param {Function} actions.lockAspectRatio - lock aspect ratio
+     *   @param {Function} actions.reset - reset action
+     */
+
+  }, {
+    key: 'addEvent',
+    value: function addEvent(actions) {
+      this._els.widthRange.on('change', this._changeWidthRangeHandler.bind(this));
+      this._els.heightRange.on('change', this._changeHeightRangeHandler.bind(this));
+      this._els.lockAspectRatio.addEventListener('change', this._changeLockAspectRatio.bind(this));
+
+      var apply = this._applyEventHandler.bind(this);
+      var cancel = this._cancelEventHandler.bind(this);
+
+      this.eventHandler = {
+        apply: apply,
+        cancel: cancel
+      };
+
+      this.actions = actions;
+      this._els.apply.addEventListener('click', apply);
+      this._els.cancel.addEventListener('click', cancel);
+    }
+
+    /**
+     * Change width
+     * @param {number} value - width range value
+     * @private
+     */
+
+  }, {
+    key: '_changeWidthRangeHandler',
+    value: function _changeWidthRangeHandler(value) {
+      this.actions.preview('width', (0, _util.toInteger)(value), this._lockState);
+    }
+
+    /**
+     * Change height
+     * @param {number} value - height range value
+     * @private
+     */
+
+  }, {
+    key: '_changeHeightRangeHandler',
+    value: function _changeHeightRangeHandler(value) {
+      this.actions.preview('height', (0, _util.toInteger)(value), this._lockState);
+    }
+
+    /**
+     * Change lock aspect ratio state
+     * @param {Event} event - aspect ratio check event
+     * @private
+     */
+
+  }, {
+    key: '_changeLockAspectRatio',
+    value: function _changeLockAspectRatio(event) {
+      this._lockState = event.target.checked;
+      this.actions.lockAspectRatio(this._lockState, _consts.defaultResizePixelValues.min, _consts.defaultResizePixelValues.max);
+    }
+
+    /**
+     * Remove event
+     * @private
+     */
+
+  }, {
+    key: '_removeEvent',
+    value: function _removeEvent() {
+      this._els.apply.removeEventListener('click', this.eventHandler.apply);
+      this._els.cancel.removeEventListener('click', this.eventHandler.cancel);
+    }
+  }, {
+    key: '_applyEventHandler',
+    value: function _applyEventHandler() {
+      this.actions.resize();
+      this._els.apply.classList.remove('active');
+    }
+  }, {
+    key: '_cancelEventHandler',
+    value: function _cancelEventHandler() {
+      this.actions.reset();
+      this._els.cancel.classList.remove('active');
+    }
+
+    /**
+     * Change apply button status
+     * @param {Boolean} enableStatus - apply button status
+     */
+
+  }, {
+    key: 'changeApplyButtonStatus',
+    value: function changeApplyButtonStatus(enableStatus) {
+      if (enableStatus) {
+        this._els.apply.classList.add('active');
+      } else {
+        this._els.apply.classList.remove('active');
+      }
+    }
+  }]);
+
+  return Resize;
+}(_submenuBase2.default);
+
+exports.default = Resize;
+
+/***/ }),
+
 /***/ "./src/js/ui/rotate.js":
 /*!*****************************!*\
   !*** ./src/js/ui/rotate.js ***!
@@ -23976,7 +24986,7 @@ exports.default = function (_ref) {
         biSize = _ref.biSize,
         menuIconStyle = _ref.menuIconStyle,
         submenuIconStyle = _ref.submenuIconStyle;
-    return "\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    .tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    .tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    .tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    .tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype=\"icon-star-2\"] label,\n    .tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    .tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    .tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    .tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    .tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    .tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    .tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    .tie-crop-button .tui-image-editor-button.apply.active label,\n    .tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    .tie-shape-button.rect .tui-image-editor-button.rect label,\n    .tie-shape-button.circle .tui-image-editor-button.circle label,\n    .tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    .tie-text-effect-button .tui-image-editor-button.active label,\n    .tie-text-align-button.left .tui-image-editor-button.left label,\n    .tie-text-align-button.center .tui-image-editor-button.center label,\n    .tie-text-align-button.right .tui-image-editor-button.right label,\n    .tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox label > span {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label > span {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label > span {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > span:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > input:checked + span:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n    .tui-image-editor-menu use.normal.use-default,\n    .tui-image-editor-help-menu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.normal.color + ";\n        stroke: " + menuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-menu use.active.use-default,\n    .tui-image-editor-help-menu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.active.color + ";\n        stroke: " + menuIconStyle.active.color + ";\n    }\n    .tui-image-editor-menu use.hover.use-default,\n    .tui-image-editor-help-menu use.hover.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.hover.color + ";\n        stroke: " + menuIconStyle.hover.color + ";\n    }\n    .tui-image-editor-menu use.disabled.use-default,\n    .tui-image-editor-help-menu use.disabled.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.disabled.color + ";\n        stroke: " + menuIconStyle.disabled.color + ";\n    }\n    .tui-image-editor-submenu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.normal.color + ";\n        stroke: " + submenuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-submenu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.active.color + ";\n        stroke: " + submenuIconStyle.active.color + ";\n    }\n";
+    return "\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    .tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    .tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    .tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    .tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype=\"icon-star-2\"] label,\n    .tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    .tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    .tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    .tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    .tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    .tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    .tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    .tie-crop-button .tui-image-editor-button.apply.active label,\n    .tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    .tie-resize-button .tui-image-editor-button.apply.active label,\n    .tie-resize-preset-button .tui-image-editor-button.preset.active label,\n    .tie-shape-button.rect .tui-image-editor-button.rect label,\n    .tie-shape-button.circle .tui-image-editor-button.circle label,\n    .tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    .tie-text-effect-button .tui-image-editor-button.active label,\n    .tie-text-align-button.tie-text-align-left .tui-image-editor-button.left label,\n    .tie-text-align-button.tie-text-align-center .tui-image-editor-button.center label,\n    .tie-text-align-button.tie-text-align-right .tui-image-editor-button.right label,\n    .tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox label > span {\n        " + subMenuLabelActive + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label > span {\n        " + subMenuLabelNormal + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label > span {\n        " + subMenuRangeTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        " + submenuPartitionVertical + "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        " + submenuPartitionHorizontal + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > span:before {\n        " + submenuCheckbox + "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > input:checked + span:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        " + submenuRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        " + submenuRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        " + submenuRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        " + submenuDisabledRangePointer + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        " + submenuDisabledRangeSubbar + "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        " + submenuDisabledRangeBar + "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        " + submenuRangeValue + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        " + submenuColorpickerTitle + "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        " + submenuColorpickerButton + "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        " + menuIconSize + "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        " + submenuIconSize + "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        " + biSize + "\n    }\n    .tui-image-editor-menu use.normal.use-default,\n    .tui-image-editor-help-menu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.normal.color + ";\n        stroke: " + menuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-menu use.active.use-default,\n    .tui-image-editor-help-menu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.active.color + ";\n        stroke: " + menuIconStyle.active.color + ";\n    }\n    .tui-image-editor-menu use.hover.use-default,\n    .tui-image-editor-help-menu use.hover.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.hover.color + ";\n        stroke: " + menuIconStyle.hover.color + ";\n    }\n    .tui-image-editor-menu use.disabled.use-default,\n    .tui-image-editor-help-menu use.disabled.use-default {\n        fill-rule: evenodd;\n        fill: " + menuIconStyle.disabled.color + ";\n        stroke: " + menuIconStyle.disabled.color + ";\n    }\n    .tui-image-editor-submenu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.normal.color + ";\n        stroke: " + submenuIconStyle.normal.color + ";\n    }\n    .tui-image-editor-submenu use.active.use-default {\n        fill-rule: evenodd;\n        fill: " + submenuIconStyle.active.color + ";\n        stroke: " + submenuIconStyle.active.color + ";\n    }\n";
 };
 
 /***/ }),
@@ -24178,6 +25188,34 @@ exports.default = function (_ref) {
 
 /***/ }),
 
+/***/ "./src/js/ui/template/submenu/resize.js":
+/*!**********************************************!*\
+  !*** ./src/js/ui/template/submenu/resize.js ***!
+  \**********************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+/**
+ * @param {Object} submenuInfo - submenu info for make template
+ *   @param {Locale} locale - Translate text
+ *   @param {Function} makeSvgIcon - svg icon generator
+ * @returns {string}
+ */
+exports.default = function (_ref) {
+    var locale = _ref.locale,
+        makeSvgIcon = _ref.makeSvgIcon;
+    return '\n    <ul class="tui-image-editor-submenu-item">\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-range-wrap tui-image-editor-newline">\n                <label class="range">' + locale.localize('Width') + '&nbsp;</label>\n                <div class="tie-width-range"></div>\n                <input class="tie-width-range-value tui-image-editor-range-value" value="0" /> <label class="range">px</label>\n                <div class="tui-image-editor-partition tui-image-editor-newline"></div>\n                <label class="range">' + locale.localize('Height') + '</label>\n                <div class="tie-height-range"></div>\n                <input class="tie-height-range-value tui-image-editor-range-value" value="0" /> <label class="range">px</label>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition tui-image-editor-newline"></li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-submenu-align">\n            <div class="tui-image-editor-checkbox-wrap">\n                <div class="tui-image-editor-checkbox">\n                    <label>\n                        <input type="checkbox" class="tie-lock-aspect-ratio">\n                        <span>' + locale.localize('Lock Aspect Ratio') + '</span>\n                    </label>\n                </div>\n            </div>\n        </li>\n        <li class="tui-image-editor-partition tui-image-editor-newline"></li>\n        <li class="tui-image-editor-partition only-left-right">\n            <div></div>\n        </li>\n        <li class="tui-image-editor-partition tui-image-editor-newline"></li>\n        <li class="tie-resize-button action">\n            <div class="tui-image-editor-button apply">\n                ' + makeSvgIcon(['normal', 'active'], 'apply') + '\n                <label>\n                    ' + locale.localize('Apply') + '\n                </label>\n            </div>\n            <div class="tui-image-editor-button cancel">\n                ' + makeSvgIcon(['normal', 'active'], 'cancel') + '\n                <label>\n                    ' + locale.localize('Cancel') + '\n                </label>\n            </div>\n        </li>\n    </ul>\n';
+};
+
+/***/ }),
+
 /***/ "./src/js/ui/template/submenu/rotate.js":
 /*!**********************************************!*\
   !*** ./src/js/ui/template/submenu/rotate.js ***!
@@ -24336,7 +25374,7 @@ var Text = function (_Submenu) {
       italic: false,
       underline: false
     };
-    _this.align = 'left';
+    _this.align = 'tie-text-align-left';
     _this._els = {
       textEffectButton: _this.selector('.tie-text-effect-button'),
       textAlignButton: _this.selector('.tie-text-align-button'),
@@ -24451,7 +25489,7 @@ var Text = function (_Submenu) {
       this.setEffectState('italic', fontStyle);
       this.setEffectState('bold', fontWeight);
       this.setEffectState('underline', textDecoration);
-      this.setAlignState(textAlign);
+      this.setAlignState('tie-text-align-' + textAlign);
     }
   }, {
     key: 'setEffectState',
@@ -24510,14 +25548,15 @@ var Text = function (_Submenu) {
       var button = event.target.closest('.tui-image-editor-button');
       if (button) {
         var styleType = this.getButtonType(button, ['left', 'center', 'right']);
+        var styleTypeAlias = 'tie-text-align-' + styleType;
 
         event.currentTarget.classList.remove(this.align);
-        if (this.align !== styleType) {
-          event.currentTarget.classList.add(styleType);
+        if (this.align !== styleTypeAlias) {
+          event.currentTarget.classList.add(styleTypeAlias);
         }
         this.actions.changeTextStyle({ textAlign: styleType });
 
-        this.align = styleType;
+        this.align = styleTypeAlias;
       }
     }
 
@@ -25909,6 +26948,21 @@ var Range = function () {
     }
 
     /**
+     * Set range min value and re position cursor
+     * @param {number} minValue - min value
+     */
+
+  }, {
+    key: 'min',
+    set: function set(minValue) {
+      this._min = minValue;
+      this.max = this._max;
+    },
+    get: function get() {
+      return this._min;
+    }
+
+    /**
      * Get range value
      * @returns {Number} range value
      */
@@ -26470,7 +27524,8 @@ function getHistoryTitle(command) {
       CHANGE_TEXT_STYLE = _consts.commandNames.CHANGE_TEXT_STYLE,
       CLEAR_OBJECTS = _consts.commandNames.CLEAR_OBJECTS,
       ADD_IMAGE_OBJECT = _consts.commandNames.ADD_IMAGE_OBJECT,
-      REMOVE_OBJECT = _consts.commandNames.REMOVE_OBJECT;
+      REMOVE_OBJECT = _consts.commandNames.REMOVE_OBJECT,
+      RESIZE_IMAGE = _consts.commandNames.RESIZE_IMAGE;
   var name = command.name,
       args = command.args;
 
@@ -26509,6 +27564,9 @@ function getHistoryTitle(command) {
       break;
     case ADD_TEXT:
       historyInfo = { name: _consts.historyNames.ADD_TEXT };
+      break;
+    case RESIZE_IMAGE:
+      historyInfo = { name: _consts.historyNames.RESIZE, detail: ~~args[1].width + 'x' + ~~args[1].height };
       break;
 
     default:
@@ -26585,7 +27643,7 @@ function isEmptyCropzone(cropRect) {
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<svg display=\"none\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs id=\"tui-image-editor-svg-default-icons\"><symbol id=\"ic-apply\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M4 12.011l5 5L20.011 6\"></path></symbol><symbol id=\"ic-cancel\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M6 6l12 12M18 6L6 18\"></path></symbol><symbol id=\"ic-crop\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M4 0h1v20a1 1 0 0 1-1-1V0zM20 17h-1V5h1v12zm0 2v5h-1v-5h1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 19h19v1H5zM4.762 4v1H0V4h4.762zM7 4h12a1 1 0 0 1 1 1H7V4z\"></path></symbol><symbol id=\"ic-delete-all\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M5 23H3a1 1 0 0 1-1-1V6h1v16h2v1zm16-10h-1V6h1v7zM9 13H8v-3h1v3zm3 0h-1v-3h1v3zm3 0h-1v-3h1v3zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM11.286 21H8.714L8 23H7l1-2.8V20h.071L9.5 16h1l1.429 4H12v.2l1 2.8h-1l-.714-2zm-.357-1L10 17.4 9.071 20h1.858zM20 22h3v1h-4v-7h1v6zm-5 0h3v1h-4v-7h1v6z\"></path></symbol><symbol id=\"ic-delete\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M3 6v16h17V6h1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6h1zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM8 10h1v6H8v-6zm3 0h1v6h-1v-6zm3 0h1v6h-1v-6z\"></path></symbol><symbol id=\"ic-draw-free\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 20.929C2.594 10.976 4.323 6 7.686 6c5.872 0 2.524 19 7.697 19s1.89-14.929 6.414-14.929 1.357 10.858 5.13 10.858c1.802 0 2.657-2.262 2.566-6.786\"></path></symbol><symbol id=\"ic-draw-line\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2 15.5h28\"></path></symbol><symbol id=\"ic-draw\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 21.5H5c.245 0 .48-.058.691-.168l.124-.065.14.01c.429.028.85-.127 1.16-.437L22.55 5.405a.5.5 0 0 0 0-.707l-3.246-3.245a.5.5 0 0 0-.707 0L3.162 16.888a1.495 1.495 0 0 0-.437 1.155l.01.14-.065.123c-.111.212-.17.448-.17.694v2.5z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M16.414 3.707l3.89 3.89-.708.706-3.889-3.889z\"></path></symbol><symbol id=\"ic-filter\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M12 7v1H2V7h10zm6 0h4v1h-4V7zM12 16v1h10v-1H12zm-6 0H2v1h4v-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8.5 20a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM15.5 11a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z\"></path></symbol><symbol id=\"ic-flip-reset\" viewBox=\"0 0 31 32\"><path fill=\"none\" stroke=\"none\" d=\"M31 0H0v32h31z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M28 16a8 8 0 0 1-8 8H3v-1h1v-7H3a8 8 0 0 1 8-8h17v1h-1v7h1zM11 9a7 7 0 0 0-7 7v7h16a7 7 0 0 0 7-7V9H11z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M24 5l3.5 3.5L24 12M7 20l-3.5 3.5L7 27\"></path></symbol><symbol id=\"ic-flip-x\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M32 32H0V0h32z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M17 32h-1V0h1zM27.167 11l.5 3h-1.03l-.546-3h1.076zm-.5-3h-1.122L25 5h-5V4h5.153a1 1 0 0 1 .986.836L26.667 8zm1.5 9l.5 3h-.94l-.545-3h.985zm1 6l.639 3.836A1 1 0 0 1 28.819 28H26v-1h3l-.726-4h.894zM23 28h-3v-1h3v1zM13 4v1H7L3 27h10v1H3.18a1 1 0 0 1-.986-1.164l3.666-22A1 1 0 0 1 6.847 4H13z\"></path></symbol><symbol id=\"ic-flip-y\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0v32h32V0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 16v1h32v-1zM11 27.167l3 .5v-1.03l-3-.546v1.076zm-3-.5v-1.122L5 25v-5H4v5.153a1 1 0 0 0 .836.986L8 26.667zm9 1.5l3 .5v-.94l-3-.545v.985zm6 1l3.836.639A1 1 0 0 0 28 28.82V26h-1v3l-4-.727v.894zM28 23v-3h-1v3h1zM4 13h1V7l22-4v10h1V3.18a1 1 0 0 0-1.164-.986l-22 3.667A1 1 0 0 0 4 6.847V13z\"></path></symbol><symbol id=\"ic-flip\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M11 0h1v24h-1zM19 21v-1h2v-2h1v2a1 1 0 0 1-1 1h-2zm-2 0h-3v-1h3v1zm5-5h-1v-3h1v3zm0-5h-1V8h1v3zm0-5h-1V4h-2V3h2a1 1 0 0 1 1 1v2zm-5-3v1h-3V3h3zM9 3v1H2v16h7v1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7z\"></path></symbol><symbol id=\"ic-history\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"none\" d=\"M0 0H24V24H0z\" transform=\"translate(-740 -16) translate(547 8) translate(193 8)\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M12.5 1C18.299 1 23 5.701 23 11.5S18.299 22 12.5 22c-5.29 0-9.665-3.911-10.394-8.999h1.012C3.838 17.534 7.764 21 12.5 21c5.247 0 9.5-4.253 9.5-9.5S17.747 2 12.5 2C8.49 2 5.06 4.485 3.666 8H3h4v1H2V4h1v3.022C4.68 3.462 8.303 1 12.5 1zm.5 5l-.001 5.291 2.537 2.537-.708.708L12.292 12H12V6h1z\" transform=\"translate(-740 -16) translate(547 8) translate(193 8)\"></path></symbol><symbol id=\"ic-history-check\" viewBox=\"0 0 24 24\"><g fill=\"none\" fill-rule=\"evenodd\"><path stroke=\"#555555\" d=\"M4.5 -1L1.5 2 6.5 7\" transform=\"translate(-60 -804) translate(60 804) translate(2 3) rotate(-90 4 3)\"></path></g></symbol><symbol id=\"ic-history-crop\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-84 -804) translate(84 804)\"></path><path fill=\"#434343\" d=\"M2 0h1v10c-.552 0-1-.448-1-1V0zM10 9v3H9V9h1zM9 2h1v6H9V2z\" transform=\"translate(-84 -804) translate(84 804)\"></path><path fill=\"#434343\" d=\"M2 9H12V10H2zM9 2c.513 0 .936.386.993.883L10 3H3V2h6zM2 3H0V2h2v1z\" transform=\"translate(-84 -804) translate(84 804)\"></path></g></symbol><symbol id=\"ic-history-draw\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 1H12V13H0z\" transform=\"translate(-156 -804) translate(156 803)\"></path><path stroke=\"#434343\" d=\"M9.622 1.584l1.835 1.658-8.31 8.407L.5 12.5V11l9.122-9.416z\" transform=\"translate(-156 -804) translate(156 803)\"></path><path fill=\"#434343\" d=\"M7.628 3.753L10.378 3.753 10.378 4.253 7.628 4.253z\" transform=\"translate(-156 -804) translate(156 803) rotate(45 9.003 4.003)\"></path></g></symbol><symbol id=\"ic-history-filter\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-276 -804) translate(276 804)\"></path><path fill=\"#434343\" d=\"M12 3v1H9V3h3zM7 4H0V3h7v1z\" transform=\"translate(-276 -804) translate(276 804)\"></path><path fill=\"#434343\" d=\"M12 8v1H9V8h3zM7 9H0V8h7v1z\" transform=\"translate(-276 -804) translate(276 804) matrix(-1 0 0 1 12 0)\"></path><path fill=\"#434343\" d=\"M8 1c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1zM4 7c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z\" transform=\"translate(-276 -804) translate(276 804)\"></path></g></symbol><symbol id=\"ic-history-flip\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-108 -804) translate(108 804)\"></path><path fill=\"#434343\" d=\"M6 0L7 0 7 12 6 12zM11 10V9h1v1.5c0 .276-.224.5-.5.5H10v-1h1zM5 1v1H1v8h4v1H.5c-.276 0-.5-.224-.5-.5v-9c0-.276.224-.5.5-.5H5zm7 5v2h-1V6h1zm0-3v2h-1V3h1zM9 1v1H7V1h2zm2.5 0c.276 0 .5.224.5.5V2h-2V1h1.5zM9 11H7v-1h2v1z\" transform=\"translate(-108 -804) translate(108 804)\"></path></g></symbol><symbol id=\"ic-history-icon\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-204 -804) translate(204 804)\"></path><path stroke=\"#434343\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.1\" d=\"M6 9.568L2.601 11 2.975 7.467 0.5 4.82 4.13 4.068 6 1 7.87 4.068 11.5 4.82 9.025 7.467 9.399 11z\" transform=\"translate(-204 -804) translate(204 804)\"></path></g></symbol><symbol id=\"ic-history-mask\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-252 -804) translate(252 804)\"><path d=\"M0 0H12V12H0z\"></path><circle cx=\"6\" cy=\"6\" r=\"2.5\" stroke=\"#444\"></circle><path fill=\"#434343\" d=\"M11.5 0c.276 0 .5.224.5.5v11c0 .276-.224.5-.5.5H.5c-.276 0-.5-.224-.5-.5V.5C0 .224.224 0 .5 0h11zM11 1H1v10h10V1z\"></path></g></g></symbol><symbol id=\"ic-history-rotate\" viewBox=\"0 0 24 24\"><defs><path id=\"rfn4rylffa\" d=\"M7 12c-.335 0-.663-.025-.983-.074C3.171 11.492 1 9.205 1 6.444c0-1.363.534-2.613 1.415-3.58\"></path><mask id=\"6f9gn2dysb\" width=\"6\" height=\"9.136\" x=\"0\" y=\"0\" maskUnits=\"objectBoundingBox\"><use xlink:href=\"#rfn4rylffa\" stroke=\"434343\"></use></mask></defs><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-132 -804) translate(132 804)\"><path d=\"M0 0.5H12V12.5H0z\"></path><path fill=\"#434343\" d=\"M6.5 1C9.538 1 12 3.462 12 6.5c0 2.37-1.5 4.39-3.6 5.163l-.407-.916C9.744 10.13 11 8.462 11 6.5 11 4.015 8.985 2 6.5 2c-.777 0-1.509.197-2.147.544L4 1.75l-.205-.04C4.594 1.258 5.517 1 6.5 1z\"></path><use stroke=\"#434343\" stroke-dasharray=\"2 1.25\" stroke-width=\"1\" mask=\"url(#6f9gn2dysb)\" xlink:href=\"#rfn4rylffa\"></use><path fill=\"#434343\" d=\"M4.279 0L6 1.75 4.25 3.571 3.543 2.864 4.586 1.75 3.572 0.707z\" transform=\"matrix(-1 0 0 1 9.543 0)\"></path></g></g></symbol><symbol id=\"ic-history-shape\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-180 -804) translate(180 804)\"></path><path fill=\"#434343\" d=\"M11.5 4c.276 0 .5.224.5.5v7c0 .276-.224.5-.5.5h-7c-.276 0-.5-.224-.5-.5V8.8h1V11h6V5H8.341l-.568-1H11.5z\" transform=\"translate(-180 -804) translate(180 804)\"></path><path stroke=\"#434343\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 0.5L8.5 7.611 0.5 7.611z\" transform=\"translate(-180 -804) translate(180 804)\"></path></g></symbol><symbol id=\"ic-history-text\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M2 1h8c.552 0 1 .448 1 1H1c0-.552.448-1 1-1z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M1 1H2V3H1zM10 1H11V3H10zM5.5 1L6.5 1 6.5 11 5.5 11z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M4 10H8V11H4z\" transform=\"translate(-228 -804) translate(228 804)\"></path></g></symbol><symbol id=\"ic-history-load\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-324 -805) translate(324 805)\"></path><path fill=\"#434343\" d=\"M5 0c.552 0 1 .448 1 1v1h5.5c.276 0 .5.224.5.5v8c0 .276-.224.5-.5.5H.5c-.276 0-.5-.224-.5-.5V1c0-.552.448-1 1-1h4zm0 1H1v9h10V3H5V1z\" transform=\"translate(-324 -805) translate(324 805)\"></path><path fill=\"#434343\" d=\"M1 2L5 2 5 3 1 3z\" transform=\"translate(-324 -805) translate(324 805)\"></path></g></symbol><symbol id=\"ic-history-delete\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g fill=\"#434343\"><path d=\"M2 9h8V1h1v8.5c0 .276-.224.5-.5.5h-9c-.276 0-.5-.224-.5-.5V1h1v8zM0 0H12V1H0z\" transform=\"translate(-300 -804) translate(300 804) translate(0 2)\"></path><path d=\"M4 3H5V7H4zM7 3H8V7H7z\" transform=\"translate(-300 -804) translate(300 804) translate(0 2)\"></path><path d=\"M4 1h4V0h1v1.5c0 .276-.224.5-.5.5h-5c-.276 0-.5-.224-.5-.5V0h1v1z\" transform=\"translate(-300 -804) translate(300 804) matrix(1 0 0 -1 0 2)\"></path></g></g></symbol><symbol id=\"ic-history-group\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-348 -804) translate(348 804)\"><path d=\"M0 0H12V12H0z\"></path><path fill=\"#434343\" d=\"M1 9v2h1v1H.5c-.276 0-.5-.224-.5-.5V9h1zm11 1v1.5c0 .276-.224.5-.5.5H9v-1h2v-1h1zm-4 1v1H6v-1h2zm-3 0v1H3v-1h2zm7-4v2h-1V7h1zM1 6v2H0V6h1zm11-2v2h-1V4h1zM1 3v2H0V3h1zm10.5-3c.276 0 .5.224.5.5V3h-1V1h-1V0h1.5zM6 0v1H4V0h2zm3 0v1H7V0h2zM0 .5C0 .224.224 0 .5 0H3v1H1v1H0V.5zM9.5 4c.276 0 .5.224.5.5v5c0 .276-.224.5-.5.5h-5c-.276 0-.5-.224-.5-.5V8.355c.317.094.652.145 1 .145V9h4V5h-.5c0-.348-.05-.683-.145-1H9.5z\"></path><circle cx=\"5\" cy=\"5\" r=\"2.5\" stroke=\"#434343\"></circle></g></g></symbol><symbol id=\"ic-icon-arrow-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.793 18.5H2.5v-5h18.935l-7.6-8h5.872l10.5 10.5-10.5 10.5h-5.914l8-8z\"></path></symbol><symbol id=\"ic-icon-arrow-3\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M25.288 16.42L14.208 27.5H6.792l11.291-11.291L6.826 4.5h7.381l11.661 11.661-.58.258z\"></path></symbol><symbol id=\"ic-icon-arrow\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 11.5v9h18v5.293L30.293 16 20.5 6.207V11.5h-18z\"></path></symbol><symbol id=\"ic-icon-bubble\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M22.207 24.5L16.5 30.207V24.5H8A6.5 6.5 0 0 1 1.5 18V9A6.5 6.5 0 0 1 8 2.5h16A6.5 6.5 0 0 1 30.5 9v9a6.5 6.5 0 0 1-6.5 6.5h-1.793z\"></path></symbol><symbol id=\"ic-icon-heart\" viewBox=\"0 0 32 32\"><path fill-rule=\"nonzero\" fill=\"none\" stroke=\"inherit\" d=\"M15.996 30.675l1.981-1.79c7.898-7.177 10.365-9.718 12.135-13.012.922-1.716 1.377-3.37 1.377-5.076 0-4.65-3.647-8.297-8.297-8.297-2.33 0-4.86 1.527-6.817 3.824l-.38.447-.381-.447C13.658 4.027 11.126 2.5 8.797 2.5 4.147 2.5.5 6.147.5 10.797c0 1.714.46 3.375 1.389 5.098 1.775 3.288 4.26 5.843 12.123 12.974l1.984 1.806z\"></path></symbol><symbol id=\"ic-icon-load\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M17.314 18.867l1.951-2.53 4 5.184h-17l6.5-8.84 4.549 6.186z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-icon-location\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M16 31.28C23.675 23.302 27.5 17.181 27.5 13c0-6.351-5.149-11.5-11.5-11.5S4.5 6.649 4.5 13c0 4.181 3.825 10.302 11.5 18.28z\"></path><circle fill=\"none\" stroke=\"inherit\" cx=\"16\" cy=\"13\" r=\"4.5\"></circle></symbol><symbol id=\"ic-icon-polygon\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M.576 16L8.29 29.5h15.42L31.424 16 23.71 2.5H8.29L.576 16z\"></path></symbol><symbol id=\"ic-icon-star-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M19.446 31.592l2.265-3.272 3.946.25.636-3.94 3.665-1.505-1.12-3.832 2.655-2.962-2.656-2.962 1.12-3.832-3.664-1.505-.636-3.941-3.946.25-2.265-3.271L16 3.024 12.554 1.07 10.289 4.34l-3.946-.25-.636 3.941-3.665 1.505 1.12 3.832L.508 16.33l2.656 2.962-1.12 3.832 3.664 1.504.636 3.942 3.946-.25 2.265 3.27L16 29.638l3.446 1.955z\"></path></symbol><symbol id=\"ic-icon-star\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M25.292 29.878l-1.775-10.346 7.517-7.327-10.388-1.51L16 1.282l-4.646 9.413-10.388 1.51 7.517 7.327-1.775 10.346L16 24.993l9.292 4.885z\"></path></symbol><symbol id=\"ic-icon\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M11.923 19.136L5.424 22l.715-7.065-4.731-5.296 6.94-1.503L11.923 2l3.574 6.136 6.94 1.503-4.731 5.296L18.42 22z\"></path></symbol><symbol id=\"ic-mask-load\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01zM15 23a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-mask\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4.5\" stroke=\"inherit\" fill=\"none\"></circle><path stroke=\"none\" fill=\"inherit\" d=\"M2 1h20a1 1 0 0 1 1 1v20a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 1v20h20V2H2z\"></path></symbol><symbol id=\"ic-redo\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M21 6H9a6 6 0 1 0 0 12h12v1H9A7 7 0 0 1 9 5h12v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8\"></path></symbol><symbol id=\"ic-reset\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 13v-1a7 7 0 0 1 7-7h13v1h-1v5h1v1a7 7 0 0 1-7 7H2v-1h1v-5H2zm7-7a6 6 0 0 0-6 6v6h12a6 6 0 0 0 6-6V6H9z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8M5 16l-2.5 2.5L5 21\"></path></symbol><symbol id=\"ic-rotate-clockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"inherit\" d=\"M29 17h-.924c0 6.627-5.373 12-12 12-6.628 0-12-5.373-12-12C4.076 10.398 9.407 5.041 16 5V4C8.82 4 3 9.82 3 17s5.82 13 13 13 13-5.82 13-13z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l4 3-4 3\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M16 4h4v1h-4z\"></path></symbol><symbol id=\"ic-rotate-counterclockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" d=\"M3 17h.924c0 6.627 5.373 12 12 12 6.628 0 12-5.373 12-12 0-6.602-5.331-11.96-11.924-12V4c7.18 0 13 5.82 13 13s-5.82 13-13 13S3 24.18 3 17z\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M12 4h4v1h-4z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l-4 3 4 3\"></path></symbol><symbol id=\"ic-rotate\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M8.349 22.254a10.002 10.002 0 0 1-2.778-1.719l.65-.76a9.002 9.002 0 0 0 2.495 1.548l-.367.931zm2.873.704l.078-.997a9 9 0 1 0-.557-17.852l-.14-.99A10.076 10.076 0 0 1 12.145 3c5.523 0 10 4.477 10 10s-4.477 10-10 10c-.312 0-.62-.014-.924-.042zm-7.556-4.655a9.942 9.942 0 0 1-1.253-2.996l.973-.234a8.948 8.948 0 0 0 1.124 2.693l-.844.537zm-1.502-5.91A9.949 9.949 0 0 1 2.88 9.23l.925.382a8.954 8.954 0 0 0-.644 2.844l-.998-.062zm2.21-5.686c.687-.848 1.51-1.58 2.436-2.166l.523.852a9.048 9.048 0 0 0-2.188 1.95l-.771-.636z\"></path><path stroke=\"inherit\" fill=\"none\" stroke-linecap=\"square\" d=\"M13 1l-2.5 2.5L13 6\"></path></symbol><symbol id=\"ic-shape-circle\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"14.5\" fill=\"none\" stroke=\"inherit\"></circle></symbol><symbol id=\"ic-shape-rectangle\" viewBox=\"0 0 32 32\"><rect width=\"27\" height=\"27\" x=\"2.5\" y=\"2.5\" fill=\"none\" stroke=\"inherit\" rx=\"1\"></rect></symbol><symbol id=\"ic-shape-triangle\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16 2.5l15.5 27H.5z\"></path></symbol><symbol id=\"ic-shape\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M14.706 8H21a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-4h1v4h12V9h-5.706l-.588-1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8.5 1.5l7.5 13H1z\"></path></symbol><symbol id=\"ic-text-align-center\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM8 12h16v1H8zM2 19h28v1H2zM8 26h16v1H8z\"></path></symbol><symbol id=\"ic-text-align-left\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM2 12h16v1H2zM2 19h28v1H2zM2 26h16v1H2z\"></path></symbol><symbol id=\"ic-text-align-right\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM14 12h16v1H14zM2 19h28v1H2zM14 26h16v1H14z\"></path></symbol><symbol id=\"ic-text-bold\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M7 2h2v2H7zM7 28h2v2H7z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-width=\"2\" d=\"M9 3v12h9a6 6 0 1 0 0-12H9zM9 15v14h10a7 7 0 0 0 0-14H9z\"></path></symbol><symbol id=\"ic-text-italic\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M15 2h5v1h-5zM11 29h5v1h-5zM17 3h1l-4 26h-1z\"></path></symbol><symbol id=\"ic-text-underline\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8 2v14a8 8 0 1 0 16 0V2h1v14a9 9 0 0 1-18 0V2h1zM3 29h26v1H3z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 2h5v1H5zM22 2h5v1h-5z\"></path></symbol><symbol id=\"ic-text\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M4 3h15a1 1 0 0 1 1 1H3a1 1 0 0 1 1-1zM3 4h1v1H3zM19 4h1v1h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M11 3h1v18h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M10 20h3v1h-3z\"></path></symbol><symbol id=\"ic-undo\" viewBox=\"0 0 24 24\"><path d=\"M24 0H0v24h24z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M3 6h12a6 6 0 1 1 0 12H3v1h12a7 7 0 0 0 0-14H3v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M5 3L2.5 5.5 5 8\"></path></symbol><symbol id=\"ic-zoom-in\" viewBox=\"0 0 24 24\"><g transform=\"translate(-229 -290) translate(229 290)\"><circle cx=\"10.5\" cy=\"10.5\" r=\"9\" stroke=\"inherit\" fill=\"none\"></circle><path fill=\"inherit\" d=\"M18.828 15.828H19.828V22.828H18.828z\" transform=\"rotate(-45 19.328 19.328)\"></path><path fill=\"inherit\" d=\"M7 10H14V11H7z\"></path><path fill=\"inherit\" d=\"M10 7H11V14H10z\"></path></g></symbol><symbol id=\"ic-zoom-out\" viewBox=\"0 0 24 24\"><g transform=\"translate(-263 -290) translate(263 290)\"><circle cx=\"10.5\" cy=\"10.5\" r=\"9\" stroke=\"inherit\" fill=\"none\"></circle><path fill=\"inherit\" d=\"M18.828 15.828H19.828V22.828H18.828z\" transform=\"rotate(-45 19.328 19.328)\"></path><path fill=\"inherit\" d=\"M7 10H14V11H7z\"></path></g></symbol><symbol id=\"ic-hand\" viewBox=\"0 0 24 24\"><g fill=\"none\" fill-rule=\"evenodd\" stroke-linejoin=\"round\"><path fill=\"inherit\" fill-rule=\"nonzero\" d=\"M8.672 3.36c1.328 0 2.114.78 2.29 1.869l.014.101.023.006v1.042l-.638-.185c-.187-.055-.323-.211-.354-.399L10 5.713c0-.825-.42-1.353-1.328-1.353C7.695 4.36 7 5.041 7 5.713v7.941c0 .439-.524.665-.843.364l-1.868-1.761c-.595-.528-1.316-.617-1.918-.216-.522.348-.562 1.203-.18 1.8L7.738 22h11.013l.285-.518c1.247-2.326 1.897-4.259 1.96-5.785l.004-.239V8.035c0-.656-.5-1.17-1-1.17-.503 0-1 .456-1 1.17 0 .333-.32.573-.64.48L18 8.41V7.368l.086.026.042-.136c.279-.805.978-1.332 1.738-1.388L20 5.865c1.057 0 2 .967 2 2.17v7.423c0 1.929-.845 4.352-2.521 7.29-.09.156-.255.252-.435.252H7.474c-.166 0-.321-.082-.414-.219l-5.704-8.39c-.653-1.019-.584-2.486.46-3.182 1-.666 2.216-.516 3.148.31L6 12.495V5.713c0-1.18 1.058-2.263 2.49-2.348z\" transform=\"translate(-297 -290) translate(297 290)\"></path><path fill=\"inherit\" fill-rule=\"nonzero\" d=\"M12.5 1.5c1.325 0 2.41 1.032 2.495 2.336L15 4v7.22h-1V4c0-.828-.672-1.5-1.5-1.5-.78 0-1.42.595-1.493 1.356L11 4v7.22h-1V4c0-1.38 1.12-2.5 2.5-2.5z\" transform=\"translate(-297 -290) translate(297 290)\"></path><path fill=\"inherit\" fill-rule=\"nonzero\" d=\"M16.5 3.5c1.325 0 2.41 1.032 2.495 2.336L19 6v6.3h-1V6c0-.828-.672-1.5-1.5-1.5-.78 0-1.42.595-1.493 1.356L15 6v2.44h-1V6c0-1.38 1.12-2.5 2.5-2.5z\" transform=\"translate(-297 -290) translate(297 290)\"></path></g></symbol></defs></svg>"
+module.exports = "<svg display=\"none\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"><defs id=\"tui-image-editor-svg-default-icons\"><symbol id=\"ic-apply\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M4 12.011l5 5L20.011 6\"></path></symbol><symbol id=\"ic-cancel\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M6 6l12 12M18 6L6 18\"></path></symbol><symbol id=\"ic-crop\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M4 0h1v20a1 1 0 0 1-1-1V0zM20 17h-1V5h1v12zm0 2v5h-1v-5h1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 19h19v1H5zM4.762 4v1H0V4h4.762zM7 4h12a1 1 0 0 1 1 1H7V4z\"></path></symbol><symbol id=\"ic-resize\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M 18.988281 3.011719 C 18.800781 2.824219 18.5 2.824219 18.3125 3.011719 L 11.621094 9.707031 C 11.429688 9.894531 11.429688 10.195312 11.621094 10.378906 C 11.710938 10.472656 11.835938 10.519531 11.957031 10.519531 C 12.078125 10.519531 12.203125 10.472656 12.292969 10.378906 L 18.988281 3.6875 C 19.175781 3.5 19.175781 3.199219 18.988281 3.011719 Z M 18.988281 3.011719 \"></path><path stroke=\"none\" fill=\"inherit\" d=\"M 18.652344 2.867188 C 18.386719 2.867188 18.171875 3.082031 18.171875 3.347656 L 18.171875 9.085938 C 18.171875 9.347656 18.386719 9.5625 18.652344 9.5625 C 18.917969 9.5625 19.132812 9.347656 19.132812 9.085938 L 19.132812 3.347656 C 19.132812 3.082031 18.917969 2.867188 18.652344 2.867188 Z M 18.652344 2.867188 \"></path><path stroke=\"none\" fill=\"inherit\" d=\"M 18.652344 2.867188 L 12.914062 2.867188 C 12.652344 2.867188 12.4375 3.082031 12.4375 3.347656 C 12.4375 3.613281 12.652344 3.828125 12.914062 3.828125 L 18.652344 3.828125 C 18.917969 3.828125 19.132812 3.613281 19.132812 3.347656 C 19.132812 3.082031 18.917969 2.867188 18.652344 2.867188 Z M 18.652344 2.867188 \"></path><path stroke=\"none\" fill=\"inherit\" d=\"M 10.378906 11.621094 C 10.195312 11.433594 9.890625 11.433594 9.703125 11.621094 L 3.007812 18.316406 C 2.820312 18.5 2.820312 18.804688 3.007812 18.992188 C 3.105469 19.085938 3.226562 19.132812 3.347656 19.132812 C 3.46875 19.132812 3.589844 19.085938 3.683594 18.992188 L 10.378906 12.296875 C 10.566406 12.109375 10.566406 11.804688 10.378906 11.621094 Z M 10.378906 11.621094 \"></path><path stroke=\"none\" fill=\"inherit\" d=\"M 3.347656 12.4375 C 3.082031 12.4375 2.867188 12.652344 2.867188 12.914062 L 2.867188 18.652344 C 2.867188 18.917969 3.082031 19.132812 3.347656 19.132812 C 3.613281 19.132812 3.828125 18.917969 3.828125 18.652344 L 3.828125 12.914062 C 3.828125 12.652344 3.613281 12.4375 3.347656 12.4375 Z M 3.347656 12.4375 \"></path><path stroke=\"none\" fill=\"inherit\" d=\"M 9.085938 18.171875 L 3.347656 18.171875 C 3.082031 18.171875 2.867188 18.386719 2.867188 18.652344 C 2.867188 18.917969 3.082031 19.132812 3.347656 19.132812 L 9.085938 19.132812 C 9.347656 19.132812 9.5625 18.917969 9.5625 18.652344 C 9.5625 18.386719 9.347656 18.171875 9.085938 18.171875 Z M 9.085938 18.171875 \"></path><path stroke=\"none\" fill=\"inherit\" d=\"M 20.5625 0 L 1.4375 0 C 0.644531 0 0 0.644531 0 1.4375 L 0 20.5625 C 0 21.355469 0.644531 22 1.4375 22 L 20.5625 22 C 21.355469 22 22 21.355469 22 20.5625 L 22 1.4375 C 22 0.644531 21.355469 0 20.5625 0 Z M 21.042969 20.5625 C 21.042969 20.828125 20.828125 21.042969 20.5625 21.042969 L 1.4375 21.042969 C 1.171875 21.042969 0.957031 20.828125 0.957031 20.5625 L 0.957031 1.4375 C 0.957031 1.171875 1.171875 0.957031 1.4375 0.957031 L 20.5625 0.957031 C 20.828125 0.957031 21.042969 1.171875 21.042969 1.4375 Z M 21.042969 20.5625 \"></path></symbol><symbol id=\"ic-delete-all\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M5 23H3a1 1 0 0 1-1-1V6h1v16h2v1zm16-10h-1V6h1v7zM9 13H8v-3h1v3zm3 0h-1v-3h1v3zm3 0h-1v-3h1v3zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM11.286 21H8.714L8 23H7l1-2.8V20h.071L9.5 16h1l1.429 4H12v.2l1 2.8h-1l-.714-2zm-.357-1L10 17.4 9.071 20h1.858zM20 22h3v1h-4v-7h1v6zm-5 0h3v1h-4v-7h1v6z\"></path></symbol><symbol id=\"ic-delete\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M3 6v16h17V6h1v16a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6h1zM14.794 3.794L13 2h-3L8.206 3.794A.963.963 0 0 1 8 2.5l.703-1.055A1 1 0 0 1 9.535 1h3.93a1 1 0 0 1 .832.445L15 2.5a.965.965 0 0 1-.206 1.294zM14.197 4H8.803h5.394z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 3h23v1H0zM8 10h1v6H8v-6zm3 0h1v6h-1v-6zm3 0h1v6h-1v-6z\"></path></symbol><symbol id=\"ic-draw-free\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 20.929C2.594 10.976 4.323 6 7.686 6c5.872 0 2.524 19 7.697 19s1.89-14.929 6.414-14.929 1.357 10.858 5.13 10.858c1.802 0 2.657-2.262 2.566-6.786\"></path></symbol><symbol id=\"ic-draw-line\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2 15.5h28\"></path></symbol><symbol id=\"ic-draw\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 21.5H5c.245 0 .48-.058.691-.168l.124-.065.14.01c.429.028.85-.127 1.16-.437L22.55 5.405a.5.5 0 0 0 0-.707l-3.246-3.245a.5.5 0 0 0-.707 0L3.162 16.888a1.495 1.495 0 0 0-.437 1.155l.01.14-.065.123c-.111.212-.17.448-.17.694v2.5z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M16.414 3.707l3.89 3.89-.708.706-3.889-3.889z\"></path></symbol><symbol id=\"ic-filter\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M12 7v1H2V7h10zm6 0h4v1h-4V7zM12 16v1h10v-1H12zm-6 0H2v1h4v-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8.5 20a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM15.5 11a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7zm0-1a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z\"></path></symbol><symbol id=\"ic-flip-reset\" viewBox=\"0 0 31 32\"><path fill=\"none\" stroke=\"none\" d=\"M31 0H0v32h31z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M28 16a8 8 0 0 1-8 8H3v-1h1v-7H3a8 8 0 0 1 8-8h17v1h-1v7h1zM11 9a7 7 0 0 0-7 7v7h16a7 7 0 0 0 7-7V9H11z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M24 5l3.5 3.5L24 12M7 20l-3.5 3.5L7 27\"></path></symbol><symbol id=\"ic-flip-x\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M32 32H0V0h32z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M17 32h-1V0h1zM27.167 11l.5 3h-1.03l-.546-3h1.076zm-.5-3h-1.122L25 5h-5V4h5.153a1 1 0 0 1 .986.836L26.667 8zm1.5 9l.5 3h-.94l-.545-3h.985zm1 6l.639 3.836A1 1 0 0 1 28.819 28H26v-1h3l-.726-4h.894zM23 28h-3v-1h3v1zM13 4v1H7L3 27h10v1H3.18a1 1 0 0 1-.986-1.164l3.666-22A1 1 0 0 1 6.847 4H13z\"></path></symbol><symbol id=\"ic-flip-y\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0v32h32V0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M0 16v1h32v-1zM11 27.167l3 .5v-1.03l-3-.546v1.076zm-3-.5v-1.122L5 25v-5H4v5.153a1 1 0 0 0 .836.986L8 26.667zm9 1.5l3 .5v-.94l-3-.545v.985zm6 1l3.836.639A1 1 0 0 0 28 28.82V26h-1v3l-4-.727v.894zM28 23v-3h-1v3h1zM4 13h1V7l22-4v10h1V3.18a1 1 0 0 0-1.164-.986l-22 3.667A1 1 0 0 0 4 6.847V13z\"></path></symbol><symbol id=\"ic-flip\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M11 0h1v24h-1zM19 21v-1h2v-2h1v2a1 1 0 0 1-1 1h-2zm-2 0h-3v-1h3v1zm5-5h-1v-3h1v3zm0-5h-1V8h1v3zm0-5h-1V4h-2V3h2a1 1 0 0 1 1 1v2zm-5-3v1h-3V3h3zM9 3v1H2v16h7v1H2a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h7z\"></path></symbol><symbol id=\"ic-history\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"none\" d=\"M0 0H24V24H0z\" transform=\"translate(-740 -16) translate(547 8) translate(193 8)\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M12.5 1C18.299 1 23 5.701 23 11.5S18.299 22 12.5 22c-5.29 0-9.665-3.911-10.394-8.999h1.012C3.838 17.534 7.764 21 12.5 21c5.247 0 9.5-4.253 9.5-9.5S17.747 2 12.5 2C8.49 2 5.06 4.485 3.666 8H3h4v1H2V4h1v3.022C4.68 3.462 8.303 1 12.5 1zm.5 5l-.001 5.291 2.537 2.537-.708.708L12.292 12H12V6h1z\" transform=\"translate(-740 -16) translate(547 8) translate(193 8)\"></path></symbol><symbol id=\"ic-history-check\" viewBox=\"0 0 24 24\"><g fill=\"none\" fill-rule=\"evenodd\"><path stroke=\"#555555\" d=\"M4.5 -1L1.5 2 6.5 7\" transform=\"translate(-60 -804) translate(60 804) translate(2 3) rotate(-90 4 3)\"></path></g></symbol><symbol id=\"ic-history-crop\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-84 -804) translate(84 804)\"></path><path fill=\"#434343\" d=\"M2 0h1v10c-.552 0-1-.448-1-1V0zM10 9v3H9V9h1zM9 2h1v6H9V2z\" transform=\"translate(-84 -804) translate(84 804)\"></path><path fill=\"#434343\" d=\"M2 9H12V10H2zM9 2c.513 0 .936.386.993.883L10 3H3V2h6zM2 3H0V2h2v1z\" transform=\"translate(-84 -804) translate(84 804)\"></path></g></symbol><symbol id=\"ic-history-resize\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path fill=\"#434343\" d=\"M 9.492188 1.507812 C 9.398438 1.414062 9.25 1.414062 9.15625 1.507812 L 5.8125 4.851562 C 5.714844 4.945312 5.714844 5.097656 5.8125 5.1875 C 5.855469 5.234375 5.917969 5.257812 5.976562 5.257812 C 6.039062 5.257812 6.101562 5.234375 6.148438 5.1875 L 9.492188 1.84375 C 9.585938 1.75 9.585938 1.601562 9.492188 1.507812 Z M 9.492188 1.507812 \"></path><path fill=\"#434343\" d=\"M 9.328125 1.433594 C 9.195312 1.433594 9.085938 1.539062 9.085938 1.671875 L 9.085938 4.542969 C 9.085938 4.671875 9.195312 4.78125 9.328125 4.78125 C 9.460938 4.78125 9.566406 4.671875 9.566406 4.542969 L 9.566406 1.671875 C 9.566406 1.539062 9.460938 1.433594 9.328125 1.433594 Z M 9.328125 1.433594 \"></path><path fill=\"#434343\" d=\"M 9.328125 1.433594 L 6.457031 1.433594 C 6.328125 1.433594 6.21875 1.539062 6.21875 1.671875 C 6.21875 1.804688 6.328125 1.914062 6.457031 1.914062 L 9.328125 1.914062 C 9.460938 1.914062 9.566406 1.804688 9.566406 1.671875 C 9.566406 1.539062 9.460938 1.433594 9.328125 1.433594 Z M 9.328125 1.433594 \"></path><path fill=\"#434343\" d=\"M 5.1875 5.8125 C 5.097656 5.71875 4.945312 5.71875 4.851562 5.8125 L 1.503906 9.15625 C 1.410156 9.25 1.410156 9.402344 1.503906 9.496094 C 1.554688 9.542969 1.613281 9.566406 1.671875 9.566406 C 1.734375 9.566406 1.796875 9.542969 1.84375 9.496094 L 5.1875 6.148438 C 5.28125 6.054688 5.28125 5.902344 5.1875 5.8125 Z M 5.1875 5.8125 \"></path><path fill=\"#434343\" d=\"M 1.671875 6.21875 C 1.539062 6.21875 1.433594 6.328125 1.433594 6.457031 L 1.433594 9.328125 C 1.433594 9.460938 1.539062 9.566406 1.671875 9.566406 C 1.804688 9.566406 1.914062 9.460938 1.914062 9.328125 L 1.914062 6.457031 C 1.914062 6.328125 1.804688 6.21875 1.671875 6.21875 Z M 1.671875 6.21875 \"></path><path fill=\"#434343\" d=\"M 4.542969 9.085938 L 1.671875 9.085938 C 1.539062 9.085938 1.433594 9.195312 1.433594 9.328125 C 1.433594 9.460938 1.539062 9.566406 1.671875 9.566406 L 4.542969 9.566406 C 4.671875 9.566406 4.78125 9.460938 4.78125 9.328125 C 4.78125 9.195312 4.671875 9.085938 4.542969 9.085938 Z M 4.542969 9.085938 \"></path><path fill=\"#434343\" d=\"M 10.28125 0 L 0.71875 0 C 0.320312 0 0 0.320312 0 0.71875 L 0 10.28125 C 0 10.679688 0.320312 11 0.71875 11 L 10.28125 11 C 10.679688 11 11 10.679688 11 10.28125 L 11 0.71875 C 11 0.320312 10.679688 0 10.28125 0 Z M 10.523438 10.28125 C 10.523438 10.414062 10.414062 10.523438 10.28125 10.523438 L 0.71875 10.523438 C 0.585938 10.523438 0.476562 10.414062 0.476562 10.28125 L 0.476562 0.71875 C 0.476562 0.585938 0.585938 0.476562 0.71875 0.476562 L 10.28125 0.476562 C 10.414062 0.476562 10.523438 0.585938 10.523438 0.71875 Z M 10.523438 10.28125 \"></path></g></symbol><symbol id=\"ic-history-draw\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 1H12V13H0z\" transform=\"translate(-156 -804) translate(156 803)\"></path><path stroke=\"#434343\" d=\"M9.622 1.584l1.835 1.658-8.31 8.407L.5 12.5V11l9.122-9.416z\" transform=\"translate(-156 -804) translate(156 803)\"></path><path fill=\"#434343\" d=\"M7.628 3.753L10.378 3.753 10.378 4.253 7.628 4.253z\" transform=\"translate(-156 -804) translate(156 803) rotate(45 9.003 4.003)\"></path></g></symbol><symbol id=\"ic-history-filter\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-276 -804) translate(276 804)\"></path><path fill=\"#434343\" d=\"M12 3v1H9V3h3zM7 4H0V3h7v1z\" transform=\"translate(-276 -804) translate(276 804)\"></path><path fill=\"#434343\" d=\"M12 8v1H9V8h3zM7 9H0V8h7v1z\" transform=\"translate(-276 -804) translate(276 804) matrix(-1 0 0 1 12 0)\"></path><path fill=\"#434343\" d=\"M8 1c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1zM4 7c1.105 0 2 .895 2 2s-.895 2-2 2-2-.895-2-2 .895-2 2-2zm0 1c-.552 0-1 .448-1 1s.448 1 1 1 1-.448 1-1-.448-1-1-1z\" transform=\"translate(-276 -804) translate(276 804)\"></path></g></symbol><symbol id=\"ic-history-flip\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-108 -804) translate(108 804)\"></path><path fill=\"#434343\" d=\"M6 0L7 0 7 12 6 12zM11 10V9h1v1.5c0 .276-.224.5-.5.5H10v-1h1zM5 1v1H1v8h4v1H.5c-.276 0-.5-.224-.5-.5v-9c0-.276.224-.5.5-.5H5zm7 5v2h-1V6h1zm0-3v2h-1V3h1zM9 1v1H7V1h2zm2.5 0c.276 0 .5.224.5.5V2h-2V1h1.5zM9 11H7v-1h2v1z\" transform=\"translate(-108 -804) translate(108 804)\"></path></g></symbol><symbol id=\"ic-history-icon\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-204 -804) translate(204 804)\"></path><path stroke=\"#434343\" stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"1.1\" d=\"M6 9.568L2.601 11 2.975 7.467 0.5 4.82 4.13 4.068 6 1 7.87 4.068 11.5 4.82 9.025 7.467 9.399 11z\" transform=\"translate(-204 -804) translate(204 804)\"></path></g></symbol><symbol id=\"ic-history-mask\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-252 -804) translate(252 804)\"><path d=\"M0 0H12V12H0z\"></path><circle cx=\"6\" cy=\"6\" r=\"2.5\" stroke=\"#444\"></circle><path fill=\"#434343\" d=\"M11.5 0c.276 0 .5.224.5.5v11c0 .276-.224.5-.5.5H.5c-.276 0-.5-.224-.5-.5V.5C0 .224.224 0 .5 0h11zM11 1H1v10h10V1z\"></path></g></g></symbol><symbol id=\"ic-history-rotate\" viewBox=\"0 0 24 24\"><defs><path id=\"rfn4rylffa\" d=\"M7 12c-.335 0-.663-.025-.983-.074C3.171 11.492 1 9.205 1 6.444c0-1.363.534-2.613 1.415-3.58\"></path><mask id=\"6f9gn2dysb\" width=\"6\" height=\"9.136\" x=\"0\" y=\"0\" maskUnits=\"objectBoundingBox\"><use xlink:href=\"#rfn4rylffa\" stroke=\"434343\"></use></mask></defs><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-132 -804) translate(132 804)\"><path d=\"M0 0.5H12V12.5H0z\"></path><path fill=\"#434343\" d=\"M6.5 1C9.538 1 12 3.462 12 6.5c0 2.37-1.5 4.39-3.6 5.163l-.407-.916C9.744 10.13 11 8.462 11 6.5 11 4.015 8.985 2 6.5 2c-.777 0-1.509.197-2.147.544L4 1.75l-.205-.04C4.594 1.258 5.517 1 6.5 1z\"></path><use stroke=\"#434343\" stroke-dasharray=\"2 1.25\" stroke-width=\"1\" mask=\"url(#6f9gn2dysb)\" xlink:href=\"#rfn4rylffa\"></use><path fill=\"#434343\" d=\"M4.279 0L6 1.75 4.25 3.571 3.543 2.864 4.586 1.75 3.572 0.707z\" transform=\"matrix(-1 0 0 1 9.543 0)\"></path></g></g></symbol><symbol id=\"ic-history-shape\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-180 -804) translate(180 804)\"></path><path fill=\"#434343\" d=\"M11.5 4c.276 0 .5.224.5.5v7c0 .276-.224.5-.5.5h-7c-.276 0-.5-.224-.5-.5V8.8h1V11h6V5H8.341l-.568-1H11.5z\" transform=\"translate(-180 -804) translate(180 804)\"></path><path stroke=\"#434343\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M4.5 0.5L8.5 7.611 0.5 7.611z\" transform=\"translate(-180 -804) translate(180 804)\"></path></g></symbol><symbol id=\"ic-history-text\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M2 1h8c.552 0 1 .448 1 1H1c0-.552.448-1 1-1z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M1 1H2V3H1zM10 1H11V3H10zM5.5 1L6.5 1 6.5 11 5.5 11z\" transform=\"translate(-228 -804) translate(228 804)\"></path><path fill=\"#434343\" d=\"M4 10H8V11H4z\" transform=\"translate(-228 -804) translate(228 804)\"></path></g></symbol><symbol id=\"ic-history-load\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><path d=\"M0 0H12V12H0z\" transform=\"translate(-324 -805) translate(324 805)\"></path><path fill=\"#434343\" d=\"M5 0c.552 0 1 .448 1 1v1h5.5c.276 0 .5.224.5.5v8c0 .276-.224.5-.5.5H.5c-.276 0-.5-.224-.5-.5V1c0-.552.448-1 1-1h4zm0 1H1v9h10V3H5V1z\" transform=\"translate(-324 -805) translate(324 805)\"></path><path fill=\"#434343\" d=\"M1 2L5 2 5 3 1 3z\" transform=\"translate(-324 -805) translate(324 805)\"></path></g></symbol><symbol id=\"ic-history-delete\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g fill=\"#434343\"><path d=\"M2 9h8V1h1v8.5c0 .276-.224.5-.5.5h-9c-.276 0-.5-.224-.5-.5V1h1v8zM0 0H12V1H0z\" transform=\"translate(-300 -804) translate(300 804) translate(0 2)\"></path><path d=\"M4 3H5V7H4zM7 3H8V7H7z\" transform=\"translate(-300 -804) translate(300 804) translate(0 2)\"></path><path d=\"M4 1h4V0h1v1.5c0 .276-.224.5-.5.5h-5c-.276 0-.5-.224-.5-.5V0h1v1z\" transform=\"translate(-300 -804) translate(300 804) matrix(1 0 0 -1 0 2)\"></path></g></g></symbol><symbol id=\"ic-history-group\" viewBox=\"0 0 24 24\"><g fill=\"none\" stroke=\"none\" fill-rule=\"evenodd\"><g transform=\"translate(-348 -804) translate(348 804)\"><path d=\"M0 0H12V12H0z\"></path><path fill=\"#434343\" d=\"M1 9v2h1v1H.5c-.276 0-.5-.224-.5-.5V9h1zm11 1v1.5c0 .276-.224.5-.5.5H9v-1h2v-1h1zm-4 1v1H6v-1h2zm-3 0v1H3v-1h2zm7-4v2h-1V7h1zM1 6v2H0V6h1zm11-2v2h-1V4h1zM1 3v2H0V3h1zm10.5-3c.276 0 .5.224.5.5V3h-1V1h-1V0h1.5zM6 0v1H4V0h2zm3 0v1H7V0h2zM0 .5C0 .224.224 0 .5 0H3v1H1v1H0V.5zM9.5 4c.276 0 .5.224.5.5v5c0 .276-.224.5-.5.5h-5c-.276 0-.5-.224-.5-.5V8.355c.317.094.652.145 1 .145V9h4V5h-.5c0-.348-.05-.683-.145-1H9.5z\"></path><circle cx=\"5\" cy=\"5\" r=\"2.5\" stroke=\"#434343\"></circle></g></g></symbol><symbol id=\"ic-icon-arrow-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M21.793 18.5H2.5v-5h18.935l-7.6-8h5.872l10.5 10.5-10.5 10.5h-5.914l8-8z\"></path></symbol><symbol id=\"ic-icon-arrow-3\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M25.288 16.42L14.208 27.5H6.792l11.291-11.291L6.826 4.5h7.381l11.661 11.661-.58.258z\"></path></symbol><symbol id=\"ic-icon-arrow\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M2.5 11.5v9h18v5.293L30.293 16 20.5 6.207V11.5h-18z\"></path></symbol><symbol id=\"ic-icon-bubble\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M22.207 24.5L16.5 30.207V24.5H8A6.5 6.5 0 0 1 1.5 18V9A6.5 6.5 0 0 1 8 2.5h16A6.5 6.5 0 0 1 30.5 9v9a6.5 6.5 0 0 1-6.5 6.5h-1.793z\"></path></symbol><symbol id=\"ic-icon-heart\" viewBox=\"0 0 32 32\"><path fill-rule=\"nonzero\" fill=\"none\" stroke=\"inherit\" d=\"M15.996 30.675l1.981-1.79c7.898-7.177 10.365-9.718 12.135-13.012.922-1.716 1.377-3.37 1.377-5.076 0-4.65-3.647-8.297-8.297-8.297-2.33 0-4.86 1.527-6.817 3.824l-.38.447-.381-.447C13.658 4.027 11.126 2.5 8.797 2.5 4.147 2.5.5 6.147.5 10.797c0 1.714.46 3.375 1.389 5.098 1.775 3.288 4.26 5.843 12.123 12.974l1.984 1.806z\"></path></symbol><symbol id=\"ic-icon-load\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M17.314 18.867l1.951-2.53 4 5.184h-17l6.5-8.84 4.549 6.186z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-icon-location\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M16 31.28C23.675 23.302 27.5 17.181 27.5 13c0-6.351-5.149-11.5-11.5-11.5S4.5 6.649 4.5 13c0 4.181 3.825 10.302 11.5 18.28z\"></path><circle fill=\"none\" stroke=\"inherit\" cx=\"16\" cy=\"13\" r=\"4.5\"></circle></symbol><symbol id=\"ic-icon-polygon\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M.576 16L8.29 29.5h15.42L31.424 16 23.71 2.5H8.29L.576 16z\"></path></symbol><symbol id=\"ic-icon-star-2\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M19.446 31.592l2.265-3.272 3.946.25.636-3.94 3.665-1.505-1.12-3.832 2.655-2.962-2.656-2.962 1.12-3.832-3.664-1.505-.636-3.941-3.946.25-2.265-3.271L16 3.024 12.554 1.07 10.289 4.34l-3.946-.25-.636 3.941-3.665 1.505 1.12 3.832L.508 16.33l2.656 2.962-1.12 3.832 3.664 1.504.636 3.942 3.946-.25 2.265 3.27L16 29.638l3.446 1.955z\"></path></symbol><symbol id=\"ic-icon-star\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"inherit\" d=\"M25.292 29.878l-1.775-10.346 7.517-7.327-10.388-1.51L16 1.282l-4.646 9.413-10.388 1.51 7.517 7.327-1.775 10.346L16 24.993l9.292 4.885z\"></path></symbol><symbol id=\"ic-icon\" viewBox=\"0 0 24 24\"><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M11.923 19.136L5.424 22l.715-7.065-4.731-5.296 6.94-1.503L11.923 2l3.574 6.136 6.94 1.503-4.731 5.296L18.42 22z\"></path></symbol><symbol id=\"ic-mask-load\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M18.01 4a11.798 11.798 0 0 0 0 1H3v24h24V14.986a8.738 8.738 0 0 0 1 0V29a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1h15.01zM15 23a6 6 0 1 1 0-12 6 6 0 0 1 0 12zm0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M25 3h1v9h-1z\"></path><path fill=\"none\" stroke=\"inherit\" d=\"M22 6l3.5-3.5L29 6\"></path></symbol><symbol id=\"ic-mask\" viewBox=\"0 0 24 24\"><circle cx=\"12\" cy=\"12\" r=\"4.5\" stroke=\"inherit\" fill=\"none\"></circle><path stroke=\"none\" fill=\"inherit\" d=\"M2 1h20a1 1 0 0 1 1 1v20a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zm0 1v20h20V2H2z\"></path></symbol><symbol id=\"ic-redo\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M21 6H9a6 6 0 1 0 0 12h12v1H9A7 7 0 0 1 9 5h12v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8\"></path></symbol><symbol id=\"ic-reset\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" opacity=\".5\" stroke=\"none\" fill=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 13v-1a7 7 0 0 1 7-7h13v1h-1v5h1v1a7 7 0 0 1-7 7H2v-1h1v-5H2zm7-7a6 6 0 0 0-6 6v6h12a6 6 0 0 0 6-6V6H9z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M19 3l2.5 2.5L19 8M5 16l-2.5 2.5L5 21\"></path></symbol><symbol id=\"ic-rotate-clockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"inherit\" d=\"M29 17h-.924c0 6.627-5.373 12-12 12-6.628 0-12-5.373-12-12C4.076 10.398 9.407 5.041 16 5V4C8.82 4 3 9.82 3 17s5.82 13 13 13 13-5.82 13-13z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l4 3-4 3\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M16 4h4v1h-4z\"></path></symbol><symbol id=\"ic-rotate-counterclockwise\" viewBox=\"0 0 32 32\"><path stroke=\"none\" d=\"M3 17h.924c0 6.627 5.373 12 12 12 6.628 0 12-5.373 12-12 0-6.602-5.331-11.96-11.924-12V4c7.18 0 13 5.82 13 13s-5.82 13-13 13S3 24.18 3 17z\"></path><path stroke=\"none\" fill=\"inherit\" fill-rule=\"nonzero\" d=\"M12 4h4v1h-4z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M16 1.5l-4 3 4 3\"></path></symbol><symbol id=\"ic-rotate\" viewBox=\"0 0 24 24\"><path d=\"M0 0h24v24H0z\" fill=\"none\" stroke=\"none\"></path><path fill=\"inherit\" stroke=\"none\" d=\"M8.349 22.254a10.002 10.002 0 0 1-2.778-1.719l.65-.76a9.002 9.002 0 0 0 2.495 1.548l-.367.931zm2.873.704l.078-.997a9 9 0 1 0-.557-17.852l-.14-.99A10.076 10.076 0 0 1 12.145 3c5.523 0 10 4.477 10 10s-4.477 10-10 10c-.312 0-.62-.014-.924-.042zm-7.556-4.655a9.942 9.942 0 0 1-1.253-2.996l.973-.234a8.948 8.948 0 0 0 1.124 2.693l-.844.537zm-1.502-5.91A9.949 9.949 0 0 1 2.88 9.23l.925.382a8.954 8.954 0 0 0-.644 2.844l-.998-.062zm2.21-5.686c.687-.848 1.51-1.58 2.436-2.166l.523.852a9.048 9.048 0 0 0-2.188 1.95l-.771-.636z\"></path><path stroke=\"inherit\" fill=\"none\" stroke-linecap=\"square\" d=\"M13 1l-2.5 2.5L13 6\"></path></symbol><symbol id=\"ic-shape-circle\" viewBox=\"0 0 32 32\"><circle cx=\"16\" cy=\"16\" r=\"14.5\" fill=\"none\" stroke=\"inherit\"></circle></symbol><symbol id=\"ic-shape-rectangle\" viewBox=\"0 0 32 32\"><rect width=\"27\" height=\"27\" x=\"2.5\" y=\"2.5\" fill=\"none\" stroke=\"inherit\" rx=\"1\"></rect></symbol><symbol id=\"ic-shape-triangle\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16 2.5l15.5 27H.5z\"></path></symbol><symbol id=\"ic-shape\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M14.706 8H21a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1v-4h1v4h12V9h-5.706l-.588-1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M8.5 1.5l7.5 13H1z\"></path></symbol><symbol id=\"ic-text-align-center\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM8 12h16v1H8zM2 19h28v1H2zM8 26h16v1H8z\"></path></symbol><symbol id=\"ic-text-align-left\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM2 12h16v1H2zM2 19h28v1H2zM2 26h16v1H2z\"></path></symbol><symbol id=\"ic-text-align-right\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M2 5h28v1H2zM14 12h16v1H14zM2 19h28v1H2zM14 26h16v1H14z\"></path></symbol><symbol id=\"ic-text-bold\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M7 2h2v2H7zM7 28h2v2H7z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-width=\"2\" d=\"M9 3v12h9a6 6 0 1 0 0-12H9zM9 15v14h10a7 7 0 0 0 0-14H9z\"></path></symbol><symbol id=\"ic-text-italic\" viewBox=\"0 0 32 32\"><path fill=\"none\" stroke=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M15 2h5v1h-5zM11 29h5v1h-5zM17 3h1l-4 26h-1z\"></path></symbol><symbol id=\"ic-text-underline\" viewBox=\"0 0 32 32\"><path stroke=\"none\" fill=\"none\" d=\"M0 0h32v32H0z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M8 2v14a8 8 0 1 0 16 0V2h1v14a9 9 0 0 1-18 0V2h1zM3 29h26v1H3z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M5 2h5v1H5zM22 2h5v1h-5z\"></path></symbol><symbol id=\"ic-text\" viewBox=\"0 0 24 24\"><path stroke=\"none\" fill=\"inherit\" d=\"M4 3h15a1 1 0 0 1 1 1H3a1 1 0 0 1 1-1zM3 4h1v1H3zM19 4h1v1h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M11 3h1v18h-1z\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M10 20h3v1h-3z\"></path></symbol><symbol id=\"ic-undo\" viewBox=\"0 0 24 24\"><path d=\"M24 0H0v24h24z\" opacity=\".5\" fill=\"none\" stroke=\"none\"></path><path stroke=\"none\" fill=\"inherit\" d=\"M3 6h12a6 6 0 1 1 0 12H3v1h12a7 7 0 0 0 0-14H3v1z\"></path><path fill=\"none\" stroke=\"inherit\" stroke-linecap=\"square\" d=\"M5 3L2.5 5.5 5 8\"></path></symbol><symbol id=\"ic-zoom-in\" viewBox=\"0 0 24 24\"><g transform=\"translate(-229 -290) translate(229 290)\"><circle cx=\"10.5\" cy=\"10.5\" r=\"9\" stroke=\"inherit\" fill=\"none\"></circle><path fill=\"inherit\" d=\"M18.828 15.828H19.828V22.828H18.828z\" transform=\"rotate(-45 19.328 19.328)\"></path><path fill=\"inherit\" d=\"M7 10H14V11H7z\"></path><path fill=\"inherit\" d=\"M10 7H11V14H10z\"></path></g></symbol><symbol id=\"ic-zoom-out\" viewBox=\"0 0 24 24\"><g transform=\"translate(-263 -290) translate(263 290)\"><circle cx=\"10.5\" cy=\"10.5\" r=\"9\" stroke=\"inherit\" fill=\"none\"></circle><path fill=\"inherit\" d=\"M18.828 15.828H19.828V22.828H18.828z\" transform=\"rotate(-45 19.328 19.328)\"></path><path fill=\"inherit\" d=\"M7 10H14V11H7z\"></path></g></symbol><symbol id=\"ic-hand\" viewBox=\"0 0 24 24\"><g fill=\"none\" fill-rule=\"evenodd\" stroke-linejoin=\"round\"><path fill=\"inherit\" fill-rule=\"nonzero\" d=\"M8.672 3.36c1.328 0 2.114.78 2.29 1.869l.014.101.023.006v1.042l-.638-.185c-.187-.055-.323-.211-.354-.399L10 5.713c0-.825-.42-1.353-1.328-1.353C7.695 4.36 7 5.041 7 5.713v7.941c0 .439-.524.665-.843.364l-1.868-1.761c-.595-.528-1.316-.617-1.918-.216-.522.348-.562 1.203-.18 1.8L7.738 22h11.013l.285-.518c1.247-2.326 1.897-4.259 1.96-5.785l.004-.239V8.035c0-.656-.5-1.17-1-1.17-.503 0-1 .456-1 1.17 0 .333-.32.573-.64.48L18 8.41V7.368l.086.026.042-.136c.279-.805.978-1.332 1.738-1.388L20 5.865c1.057 0 2 .967 2 2.17v7.423c0 1.929-.845 4.352-2.521 7.29-.09.156-.255.252-.435.252H7.474c-.166 0-.321-.082-.414-.219l-5.704-8.39c-.653-1.019-.584-2.486.46-3.182 1-.666 2.216-.516 3.148.31L6 12.495V5.713c0-1.18 1.058-2.263 2.49-2.348z\" transform=\"translate(-297 -290) translate(297 290)\"></path><path fill=\"inherit\" fill-rule=\"nonzero\" d=\"M12.5 1.5c1.325 0 2.41 1.032 2.495 2.336L15 4v7.22h-1V4c0-.828-.672-1.5-1.5-1.5-.78 0-1.42.595-1.493 1.356L11 4v7.22h-1V4c0-1.38 1.12-2.5 2.5-2.5z\" transform=\"translate(-297 -290) translate(297 290)\"></path><path fill=\"inherit\" fill-rule=\"nonzero\" d=\"M16.5 3.5c1.325 0 2.41 1.032 2.495 2.336L19 6v6.3h-1V6c0-.828-.672-1.5-1.5-1.5-.78 0-1.42.595-1.493 1.356L15 6v2.44h-1V6c0-1.38 1.12-2.5 2.5-2.5z\" transform=\"translate(-297 -290) translate(297 290)\"></path></g></symbol></defs></svg>"
 
 /***/ }),
 
