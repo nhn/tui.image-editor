@@ -16,7 +16,7 @@ describe('UI', () => {
         path: 'mockImagePath',
         name: '',
       },
-      menu: ['crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
+      menu: ['resize', 'crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
       initMenu: 'shape',
       menuBarPosition: 'bottom',
     };

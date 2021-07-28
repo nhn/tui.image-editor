@@ -594,7 +594,7 @@ export default class Shape extends Component {
 
     const { angle, left, top } = shapeObj;
 
-    activeSelection.realizeTransform(shapeObj);
+    fabric.util.addTransformToObject(shapeObj, activeSelection.calcTransformMatrix());
     this._resetPositionFillFilter(shapeObj);
 
     shapeObj.set({

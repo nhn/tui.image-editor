@@ -17,7 +17,7 @@ const resetStyles = {
   fill: '#000000',
   fontStyle: 'normal',
   fontWeight: 'normal',
-  textAlign: 'left',
+  textAlign: 'tie-text-align-left',
   underline: false,
 };
 const DBCLICK_TIME = 500;

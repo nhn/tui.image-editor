@@ -11,12 +11,16 @@ import { Promise } from '@/util';
 import { commandNames as commands } from '@/consts';
 
 describe('commandFactory', () => {
-  let invoker, mockImage, canvas, graphics;
+  let invoker, mockImage, canvas, graphics, dimensions;
 
   beforeEach(() => {
+    dimensions = {
+      width: 100,
+      height: 100,
+    };
     graphics = new Graphics(document.createElement('canvas'));
     invoker = new Invoker();
-    mockImage = new fabric.Image();
+    mockImage = new fabric.Image(null, dimensions);
 
     graphics.setCanvasImage('', mockImage);
     canvas = graphics.getCanvas();
@@ -554,6 +558,43 @@ describe('commandFactory', () => {
           expect(object.top).toBe(10);
           expect(object2.left).toBe(5);
           expect(object2.top).toBe(20);
+          done();
+        });
+    });
+  });
+
+  describe('resizeCommand', () => {
+    it('resize', () => {
+      const newDimensions = {
+        width: 20,
+        height: 20,
+      };
+
+      invoker.execute(commands.RESIZE_IMAGE, graphics, newDimensions);
+
+      const { width, height, scaleX, scaleY } = mockImage;
+
+      expect({
+        width: width * scaleX,
+        height: height * scaleY,
+      }).toEqual(newDimensions);
+    });
+
+    it('"undo()" should restore dimensions of image', (done) => {
+      const newDimensions = {
+        width: 20,
+        height: 20,
+      };
+
+      invoker
+        .execute(commands.RESIZE_IMAGE, graphics, newDimensions)
+        .then(() => invoker.undo())
+        .then(() => {
+          const { width, height, scaleX, scaleY } = mockImage;
+          expect({
+            width: width * scaleX,
+            height: height * scaleY,
+          }).toEqual(dimensions);
           done();
         });
     });
