@@ -10,11 +10,11 @@ export default ({ locale, makeSvgIcon }) => `
             <div class="tui-image-editor-range-wrap tui-image-editor-newline">
                 <label class="range">${locale.localize('Width')}&nbsp;</label>
                 <div class="tie-width-range"></div>
-                <input class="tie-width-range-value tui-image-editor-range-value" value="0" /> <label class="range">px</label>
+                <input class="tie-width-range-value tui-image-editor-range-value" value="0" /> <label>px</label>
                 <div class="tui-image-editor-partition tui-image-editor-newline"></div>
                 <label class="range">${locale.localize('Height')}</label>
                 <div class="tie-height-range"></div>
-                <input class="tie-height-range-value tui-image-editor-range-value" value="0" /> <label class="range">px</label>
+                <input class="tie-height-range-value tui-image-editor-range-value" value="0" /> <label>px</label>
             </div>
         </li>
         <li class="tui-image-editor-partition tui-image-editor-newline"></li>
