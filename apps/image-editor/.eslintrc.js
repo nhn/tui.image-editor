@@ -5,8 +5,7 @@ module.exports = {
     browser: true,
     amd: true,
     node: true,
-    jasmine: true,
-    jquery: true,
+    jest: true,
     es6: true,
   },
   globals: {
