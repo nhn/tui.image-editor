@@ -1,12 +1,13 @@
 module.exports = {
-  extends: ['tui/es6', 'plugin:prettier/recommended'],
-  plugins: ['prettier'],
+  extends: ['tui/es6', 'plugin:prettier/recommended', 'plugin:jest/recommended'],
+  plugins: ['prettier', 'jest'],
   env: {
     browser: true,
     amd: true,
     node: true,
-    jest: true,
     es6: true,
+    jest: true,
+    'jest/globals': true,
   },
   globals: {
     fabric: true,
