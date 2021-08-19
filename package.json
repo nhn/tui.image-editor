@@ -2,6 +2,7 @@
   "name": "root",
   "private": true,
   "devDependencies": {
+    "jest": "^27.0.6",
     "lerna": "^3.22.1",
     "prettier": "^2.0.5"
   },
