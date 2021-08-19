@@ -63,16 +63,6 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'eslint-loader',
-        enforce: 'pre',
-        options: {
-          failOnWarning: false,
-          failOnError: false,
-        },
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
         loader: 'babel-loader?cacheDirectory',
         options: {
           babelrc: true,
@@ -131,5 +121,5 @@ module.exports = {
     host: '0.0.0.0',
     disableHostCheck: true,
   },
-  devtool: 'source-map'
+  devtool: 'source-map',
 };
