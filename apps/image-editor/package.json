@@ -25,8 +25,7 @@
     "fabric"
   ],
   "scripts": {
-    "test": "karma start --no-single-run",
-    "test:ne": "KARMA_SERVER=ne karma start",
+    "test": "jest --forceExit --detectOpenHandles",
     "test:types": "tsc --project tests/types",
     "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
     "bundle:svg": "node makesvg.js",
