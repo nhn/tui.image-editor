@@ -1,18 +1,11 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/action.js"
- */
 import snippet from 'tui-code-snippet';
 import ImageEditor from '@/imageEditor';
-import action from '@/action';
 import { Promise } from '@/util';
 
 describe('UI', () => {
-  let actions;
-  let imageEditorMock;
+  let actions, imageEditorMock;
 
   beforeEach(() => {
-    action.mixin(ImageEditor);
     imageEditorMock = new ImageEditor(document.createElement('div'), {
       includeUI: {
         loadImage: false,
@@ -22,8 +15,6 @@ describe('UI', () => {
       },
     });
     actions = imageEditorMock.getActions();
-
-    spyOn(snippet, 'imagePing');
   });
 
   afterEach(() => {
@@ -32,87 +23,80 @@ describe('UI', () => {
 
   describe('mainAction', () => {
     let mainAction;
+
     beforeEach(() => {
       mainAction = actions.main;
     });
 
-    it('LoadImageFromURL() API should be executed When the initLoadImage action occurs', (done) => {
-      const promise = new Promise((resolve) => {
-        resolve(300);
-      });
-      spyOn(imageEditorMock, 'loadImageFromURL').and.returnValue(promise);
-      spyOn(imageEditorMock, 'clearUndoStack');
-      spyOn(imageEditorMock.ui, 'resizeEditor');
+    it('should be executed When the initLoadImage action occurs', () => {
+      jest
+        .spyOn(imageEditorMock, 'loadImageFromURL')
+        .mockReturnValue(new Promise((resolve) => resolve(300)));
+      jest.spyOn(imageEditorMock, 'clearUndoStack');
+      jest.spyOn(imageEditorMock.ui, 'resizeEditor');
 
-      mainAction.initLoadImage('path', 'imageName').then(() => {
+      return mainAction.initLoadImage('path', 'imageName').then(() => {
         expect(imageEditorMock.clearUndoStack).toHaveBeenCalled();
         expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
         expect(imageEditorMock.loadImageFromURL).toHaveBeenCalled();
-        done();
       });
     });
 
-    it('Undo() API should be executed When the undo action occurs', () => {
-      spyOn(imageEditorMock, 'isEmptyUndoStack').and.returnValue(false);
-      spyOn(imageEditorMock, 'undo').and.returnValue({ then: () => {} });
+    it('should be executed When the undo action occurs', () => {
+      jest.spyOn(imageEditorMock, 'isEmptyUndoStack').mockReturnValue(false);
+      const undoSpy = jest.spyOn(imageEditorMock, 'undo').mockReturnValue({ then: () => {} });
 
       mainAction.undo();
 
-      expect(imageEditorMock.undo).toHaveBeenCalled();
+      expect(undoSpy).toHaveBeenCalled();
     });
 
-    it('Redo() API should be executed When the redo action occurs', () => {
-      spyOn(imageEditorMock, 'isEmptyRedoStack').and.returnValue(false);
-      spyOn(imageEditorMock, 'redo').and.returnValue({ then: () => {} });
+    it('should be executed When the redo action occurs', () => {
+      jest.spyOn(imageEditorMock, 'isEmptyRedoStack').mockReturnValue(false);
+      const redoSpy = jest.spyOn(imageEditorMock, 'redo').mockReturnValue({ then: () => {} });
 
       mainAction.redo();
 
-      expect(imageEditorMock.redo).toHaveBeenCalled();
+      expect(redoSpy).toHaveBeenCalled();
     });
 
-    it('removeObject() API should be executed When the delete action occurs', () => {
+    it('should be executed When the delete action occurs', () => {
       imageEditorMock.activeObjectId = 10;
-      spyOn(imageEditorMock, 'removeActiveObject');
+      imageEditorMock.removeActiveObject = jest.fn();
 
-      mainAction['delete']();
+      mainAction.delete();
 
       expect(imageEditorMock.removeActiveObject).toHaveBeenCalled();
-      expect(imageEditorMock.activeObjectId).toBe(null);
+      expect(imageEditorMock.activeObjectId).toBeNull();
     });
 
-    it('clearObjects() API should be run and the enabled state should be changed When the deleteAll action occurs', () => {
-      spyOn(imageEditorMock, 'clearObjects');
-      spyOn(imageEditorMock.ui, 'changeHelpButtonEnabled');
+    it('should be run and the enabled state should be changed When the deleteAll action occurs', () => {
+      imageEditorMock.clearObjects = jest.fn();
+      const changeHelpButtonEnabledSpy = jest.spyOn(imageEditorMock.ui, 'changeHelpButtonEnabled');
 
       mainAction.deleteAll();
 
-      const changeHelpButtonCalls = imageEditorMock.ui.changeHelpButtonEnabled.calls;
-
       expect(imageEditorMock.clearObjects).toHaveBeenCalled();
-      expect(changeHelpButtonCalls.argsFor(0)[0]).toBe('delete');
-      expect(changeHelpButtonCalls.argsFor(1)[0]).toBe('deleteAll');
+      expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(1, 'delete', false);
+      expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(2, 'deleteAll', false);
     });
 
-    it('loadImageFromFile() API should be executed When the load action occurs', (done) => {
-      const promise = new Promise((resolve) => {
-        resolve();
-      });
+    it('should be executed When the load action occurs', () => {
+      const promise = new Promise((resolve) => resolve());
+      const loadImageFromFileSpy = jest
+        .spyOn(imageEditorMock, 'loadImageFromFile')
+        .mockReturnValue(promise);
+      const clearUndoStackSpy = jest.spyOn(imageEditorMock, 'clearUndoStack');
+      const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
 
-      spyOn(imageEditorMock, 'loadImageFromFile').and.returnValue(promise);
-      spyOn(imageEditorMock, 'clearUndoStack');
-      spyOn(imageEditorMock.ui, 'resizeEditor');
-
-      window.URL = {
-        createObjectURL: jasmine.createSpy('URL'),
-      };
+      global.URL.createObjectURL = jest.fn();
 
       mainAction.load();
 
-      promise.then(() => {
-        expect(imageEditorMock.loadImageFromFile).toHaveBeenCalled();
-        expect(imageEditorMock.clearUndoStack).toHaveBeenCalled();
-        expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
-        done();
+      return promise.then(() => {
+        expect(loadImageFromFileSpy).toHaveBeenCalled();
+        expect(clearUndoStackSpy).toHaveBeenCalled();
+        expect(resizeEditorSpy).toHaveBeenCalled();
       });
     });
   });
@@ -124,69 +108,78 @@ describe('UI', () => {
       shapeAction = actions.shape;
     });
 
-    it('changeShape() API should be executed When the changeShape action occurs', () => {
+    it('should be executed When the changeShape action occurs', () => {
       imageEditorMock.activeObjectId = 10;
-      spyOn(imageEditorMock, 'changeShape');
+      imageEditorMock.changeShape = jest.fn();
 
-      shapeAction.changeShape({
-        strokeWidth: '#000000',
-      });
-      expect(imageEditorMock.changeShape).toHaveBeenCalled();
+      shapeAction.changeShape({ strokeWidth: '#000000' });
+
+      expect(imageEditorMock.changeShape).toHaveBeenCalledWith(
+        10,
+        { strokeWidth: '#000000' },
+        undefined
+      );
     });
 
-    it('setDrawingShape() API should be executed When the setDrawingShape action occurs', () => {
-      spyOn(imageEditorMock, 'setDrawingShape');
+    it('should be executed When the setDrawingShape action occurs', () => {
+      imageEditorMock.setDrawingShape = jest.fn();
 
       shapeAction.setDrawingShape();
+
       expect(imageEditorMock.setDrawingShape).toHaveBeenCalled();
     });
   });
 
   describe('cropAction', () => {
     let cropAction;
+
     beforeEach(() => {
       cropAction = actions.crop;
     });
-    it('getCropzoneRect(), stopDrawingMode(), ui.resizeEditor(), ui.changeMenu() API should be executed When the crop action occurs', (done) => {
-      const promise = new Promise((resolve) => {
-        resolve();
-      });
-      spyOn(imageEditorMock, 'crop').and.returnValue(promise);
-      spyOn(imageEditorMock, 'getCropzoneRect').and.returnValue(true);
-      spyOn(imageEditorMock, 'stopDrawingMode');
-      spyOn(imageEditorMock.ui, 'resizeEditor');
-      spyOn(imageEditorMock.ui, 'changeMenu');
+
+    it('should be executed When the crop action occurs', () => {
+      const promise = new Promise((resolve) => resolve());
+      const getCropzoneRectSpy = jest
+        .spyOn(imageEditorMock, 'getCropzoneRect')
+        .mockReturnValue(true);
+      const cropSpy = jest.spyOn(imageEditorMock, 'crop').mockReturnValue(promise);
+      const stopDrawingModeSpy = jest.spyOn(imageEditorMock, 'stopDrawingMode');
+      const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
+      const changeMenuSpy = jest.spyOn(imageEditorMock.ui, 'changeMenu');
 
       cropAction.crop();
 
-      expect(imageEditorMock.getCropzoneRect).toHaveBeenCalled();
-      expect(imageEditorMock.crop).toHaveBeenCalled();
-      promise.then(() => {
-        expect(imageEditorMock.stopDrawingMode).toHaveBeenCalled();
-        expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
-        expect(imageEditorMock.ui.changeMenu).toHaveBeenCalled();
-        done();
+      expect(getCropzoneRectSpy).toHaveBeenCalled();
+      expect(cropSpy).toHaveBeenCalled();
+
+      return promise.then(() => {
+        expect(stopDrawingModeSpy).toHaveBeenCalled();
+        expect(resizeEditorSpy).toHaveBeenCalled();
+        expect(changeMenuSpy).toHaveBeenCalled();
       });
     });
 
-    it('stopDrawingMode() API should be executed When the cancel action occurs', () => {
-      spyOn(imageEditorMock, 'stopDrawingMode');
-      spyOn(imageEditorMock.ui, 'changeMenu');
+    it('should be executed When the cancel action occurs', () => {
+      const stopDrawingModeSpy = jest.spyOn(imageEditorMock, 'stopDrawingMode');
+      imageEditorMock.ui.changeMenu = jest.fn();
 
       cropAction.cancel();
-      expect(imageEditorMock.stopDrawingMode).toHaveBeenCalled();
+
+      expect(stopDrawingModeSpy).toHaveBeenCalled();
       expect(imageEditorMock.ui.changeMenu).toHaveBeenCalled();
     });
   });
 
   describe('flipAction', () => {
     let flipAction;
+
     beforeEach(() => {
       flipAction = actions.flip;
     });
-    it('{flipType}() API should be executed When the flip(fliptype) action occurs', () => {
-      spyOn(imageEditorMock, 'flipX');
-      spyOn(imageEditorMock, 'flipY');
+
+    it('should be executed When the flip(flipType) action occurs', () => {
+      imageEditorMock.flipX = jest.fn();
+      imageEditorMock.flipY = jest.fn();
 
       flipAction.flip('flipX');
       expect(imageEditorMock.flipX).toHaveBeenCalled();
@@ -198,80 +191,86 @@ describe('UI', () => {
 
   describe('rotateAction', () => {
     let rotateAction;
+
     beforeEach(() => {
       rotateAction = actions.rotate;
     });
 
-    it('rotate() API should be executed When the rotate action occurs', () => {
-      spyOn(imageEditorMock, 'rotate');
-      spyOn(imageEditorMock.ui, 'resizeEditor');
+    it('should be executed When the rotate action occurs', () => {
+      const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
+      imageEditorMock.rotate = jest.fn();
 
       rotateAction.rotate(30);
-      expect(imageEditorMock.rotate).toHaveBeenCalled();
-      expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
+
+      expect(imageEditorMock.rotate).toHaveBeenCalledWith(30, undefined);
+      expect(resizeEditorSpy).toHaveBeenCalled();
     });
 
-    it('setAngle() API should be executed When the setAngle action occurs', () => {
-      spyOn(imageEditorMock, 'setAngle');
-      spyOn(imageEditorMock.ui, 'resizeEditor');
+    it('should be executed When the setAngle action occurs', () => {
+      const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
+      imageEditorMock.setAngle = jest.fn();
 
       rotateAction.setAngle(30);
-      expect(imageEditorMock.setAngle).toHaveBeenCalled();
-      expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
+
+      expect(imageEditorMock.setAngle).toHaveBeenCalledWith(30, undefined);
+      expect(resizeEditorSpy).toHaveBeenCalled();
     });
   });
 
   describe('textAction', () => {
     let textAction;
+
     beforeEach(() => {
       textAction = actions.text;
     });
 
-    it('changeTextStyle() API should be executed When the changeTextStyle action occurs', () => {
+    it('should be executed When the changeTextStyle action occurs', () => {
       imageEditorMock.activeObjectId = 10;
-      spyOn(imageEditorMock, 'changeTextStyle');
+      imageEditorMock.changeTextStyle = jest.fn();
 
       textAction.changeTextStyle({ fontSize: 10 });
-      expect(imageEditorMock.changeTextStyle.calls.mostRecent().args[0]).toBe(10);
-      expect(imageEditorMock.changeTextStyle.calls.mostRecent().args[1]).toEqual({ fontSize: 10 });
+
+      expect(imageEditorMock.changeTextStyle).toHaveBeenCalledWith(10, { fontSize: 10 }, undefined);
     });
   });
 
   describe('maskAction', () => {
     let maskAction;
+
     beforeEach(() => {
       maskAction = actions.mask;
     });
 
-    it('applyFilter() API should be executed When the applyFilter action occurs', () => {
+    it('should be executed When the applyFilter action occurs', () => {
       imageEditorMock.activeObjectId = 10;
-      spyOn(imageEditorMock, 'applyFilter');
+      imageEditorMock.applyFilter = jest.fn();
+      jest.spyOn(imageEditorMock, 'applyFilter');
 
       maskAction.applyFilter();
-      expect(imageEditorMock.applyFilter.calls.mostRecent().args[1]).toEqual({ maskObjId: 10 });
+
+      expect(imageEditorMock.applyFilter).toHaveBeenCalledWith('mask', { maskObjId: 10 });
     });
   });
 
   describe('drawAction', () => {
-    let drawAction, expected;
+    let drawAction;
+
     beforeEach(() => {
       drawAction = actions.draw;
     });
 
-    it('startDrawingMode("FREE_DRAWING") API should be executed When the setDrawMode("free") action occurs', () => {
-      spyOn(imageEditorMock, 'startDrawingMode');
+    it('should be executed When the setDrawMode("free") action occurs', () => {
+      imageEditorMock.startDrawingMode = jest.fn();
       drawAction.setDrawMode('free');
 
-      expected = imageEditorMock.startDrawingMode.calls.mostRecent().args[0];
-      expect(expected).toBe('FREE_DRAWING');
+      expect(imageEditorMock.startDrawingMode).toHaveBeenCalledWith('FREE_DRAWING', undefined);
     });
 
-    it('setBrush() API should be executed When the setColor() action occurs', () => {
-      spyOn(imageEditorMock, 'setBrush');
+    it('should be executed When the setColor() action occurs', () => {
+      imageEditorMock.setBrush = jest.fn();
       drawAction.setColor('#000000');
 
-      expected = imageEditorMock.setBrush.calls.mostRecent().args[0].color;
-      expect(expected).toBe('#000000');
+      expect(imageEditorMock.setBrush).toBeCalledWith({ color: '#000000' });
     });
   });
 
@@ -282,33 +281,36 @@ describe('UI', () => {
       iconAction = actions.icon;
     });
 
-    it('when the add icon occurs, the drawing mode should be run.', () => {
-      spyOn(imageEditorMock, 'startDrawingMode');
-      spyOn(imageEditorMock, 'setDrawingIcon');
+    it('should run drawing mode when the add icon occurs', () => {
+      const startDrawingModeSpy = jest.spyOn(imageEditorMock, 'startDrawingMode');
+      const setDrawingIconSpy = jest.spyOn(imageEditorMock, 'setDrawingIcon');
 
       iconAction.addIcon('iconTypeA', '#fff');
 
-      expect(imageEditorMock.startDrawingMode).toHaveBeenCalled();
-      expect(imageEditorMock.setDrawingIcon).toHaveBeenCalled();
+      expect(startDrawingModeSpy).toHaveBeenCalledWith('ICON');
+      expect(setDrawingIconSpy).toHaveBeenCalledWith('iconTypeA', '#fff');
     });
   });
 
   describe('filterAction', () => {
     let filterAction;
+
     beforeEach(() => {
       filterAction = actions.filter;
     });
 
-    it('removeFilter() API should be executed When the type of applyFilter is false', () => {
-      spyOn(imageEditorMock, 'removeFilter');
-      spyOn(imageEditorMock, 'hasFilter').and.returnValue(true);
+    it('should be executed When the type of applyFilter is false', () => {
+      imageEditorMock.removeFilter = jest.fn();
+      jest.spyOn(imageEditorMock, 'hasFilter').mockReturnValue(true);
+
       filterAction.applyFilter(false, {});
 
       expect(imageEditorMock.removeFilter).toHaveBeenCalled();
     });
 
-    it('applyFilter() API should be executed When the type of applyFilter is true', () => {
-      spyOn(imageEditorMock, 'applyFilter');
+    it('should be executed When the type of applyFilter is true', () => {
+      imageEditorMock.applyFilter = jest.fn();
+
       filterAction.applyFilter(true, {});
 
       expect(imageEditorMock.applyFilter).toHaveBeenCalled();
@@ -316,7 +318,7 @@ describe('UI', () => {
   });
 
   describe('commonAction', () => {
-    it('Each action returned to the getActions method must contain commonAction.', () => {
+    it('should return to the getActions method must contain commonAction.', () => {
       const submenus = [
         'shape',
         'crop',
@@ -328,6 +330,7 @@ describe('UI', () => {
         'icon',
         'filter',
       ];
+
       snippet.forEach(submenus, (submenu) => {
         expect(actions[submenu].modeChange).toBeDefined();
         expect(actions[submenu].deactivateAll).toBeDefined();
@@ -339,189 +342,167 @@ describe('UI', () => {
 
     describe('modeChange()', () => {
       let commonAction;
+
       beforeEach(() => {
         commonAction = actions.main;
       });
 
-      it('_changeActivateMode("TEXT") API should be executed When the modeChange("text") action occurs', () => {
-        spyOn(imageEditorMock, '_changeActivateMode');
+      it('should be executed When the modeChange("text") action occurs', () => {
+        const changeActivateModeSpy = jest.spyOn(imageEditorMock, '_changeActivateMode');
 
         commonAction.modeChange('text');
-        expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
+
+        expect(changeActivateModeSpy).toHaveBeenCalledWith('TEXT');
       });
 
-      it('startDrawingMode() API should be executed When the modeChange("crop") action occurs', () => {
-        spyOn(imageEditorMock, 'startDrawingMode');
+      it('should be executed When the modeChange("crop") action occurs', () => {
+        const startDrawingModeSpy = jest.spyOn(imageEditorMock, 'startDrawingMode');
 
         commonAction.modeChange('crop');
-        expect(imageEditorMock.startDrawingMode).toHaveBeenCalled();
+
+        expect(startDrawingModeSpy).toHaveBeenCalledWith('CROPPER');
       });
 
-      it('stopDrawingMode(), setDrawingShape(), _changeActivateMode()  API should be executed When the modeChange("shape") action occurs', () => {
-        spyOn(imageEditorMock, 'setDrawingShape');
-        spyOn(imageEditorMock, '_changeActivateMode');
+      it('should be executed When the modeChange("shape") action occurs', () => {
+        const setDrawingShapeSpy = jest.spyOn(imageEditorMock, 'setDrawingShape');
+        const changeActivateModeSpy = jest.spyOn(imageEditorMock, '_changeActivateMode');
 
         commonAction.modeChange('shape');
-        expect(imageEditorMock.setDrawingShape).toHaveBeenCalled();
-        expect(imageEditorMock._changeActivateMode).toHaveBeenCalled();
+
+        expect(setDrawingShapeSpy).toHaveBeenCalled();
+        expect(changeActivateModeSpy).toHaveBeenCalledWith('SHAPE');
       });
     });
   });
 
   describe('reAction', () => {
+    let changeHelpButtonEnabledSpy;
+
     beforeEach(() => {
       imageEditorMock.setReAction();
-      spyOn(imageEditorMock.ui, 'changeHelpButtonEnabled');
+      changeHelpButtonEnabledSpy = jest.spyOn(imageEditorMock.ui, 'changeHelpButtonEnabled');
     });
 
     describe('undoStackChanged', () => {
-      it('If the undo stack has a length greater than zero, the state of changeUndoButtonStatus, changeResetButtonStatus should be true.', () => {
+      it('should be true if the undo stack has a length greater than zero', () => {
         imageEditorMock.fire('undoStackChanged', 1);
 
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual(['undo', true]);
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(1)).toEqual([
-          'reset',
-          true,
-        ]);
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(1, 'undo', true);
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(2, 'reset', true);
       });
 
-      it('If the undo stack has a length of 0, the state of changeUndoButtonStatus, changeResetButtonStatus should be false.', () => {
+      it('should be false if the undo stack has a length of 0', () => {
         imageEditorMock.fire('undoStackChanged', 0);
 
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual([
-          'undo',
-          false,
-        ]);
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(1)).toEqual([
-          'reset',
-          false,
-        ]);
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(1, 'undo', false);
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(2, 'reset', false);
       });
     });
 
     describe('redoStackChanged', () => {
-      it('If the redo stack is greater than zero length, the state of changeRedoButtonStatus should be true.', () => {
+      it('should be true if the redo stack is greater than 0 length', () => {
         imageEditorMock.fire('redoStackChanged', 1);
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual(['redo', true]);
+
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(1, 'redo', true);
       });
 
-      it('If the redo stack has a length of zero, the state of changeRedoButtonStatus should be false.', () => {
+      it('should be false if the redo stack has a length of 0', () => {
         imageEditorMock.fire('redoStackChanged', 0);
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual([
-          'redo',
-          false,
-        ]);
+
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(1, 'redo', false);
       });
     });
 
     describe('objectActivated', () => {
-      it('When objectActivated occurs, the state of the delete button should be enabled.', () => {
+      it('should be enabled when objectActivated occurs', () => {
         imageEditorMock.fire('objectActivated', { id: 1 });
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(0)).toEqual([
-          'delete',
-          true,
-        ]);
-        expect(imageEditorMock.ui.changeHelpButtonEnabled.calls.argsFor(1)).toEqual([
-          'deleteAll',
-          true,
-        ]);
+
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(1, 'delete', true);
+        expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(2, 'deleteAll', true);
       });
 
-      it("When objectActivated's target is cropzone, changeApplyButtonStatus should be enabled.", () => {
-        spyOn(imageEditorMock.ui.crop, 'changeApplyButtonStatus');
-        imageEditorMock.fire('objectActivated', {
-          id: 1,
-          type: 'cropzone',
-        });
-        expect(imageEditorMock.ui.crop.changeApplyButtonStatus.calls.mostRecent().args[0]).toBe(
-          true
+      it('should be enabled when objectActivated target is cropzone', () => {
+        const changeApplyButtonStatusSpy = jest.spyOn(
+          imageEditorMock.ui.crop,
+          'changeApplyButtonStatus'
         );
+        imageEditorMock.fire('objectActivated', { id: 1, type: 'cropzone' });
+
+        expect(changeApplyButtonStatusSpy).toHaveBeenCalledWith(true);
       });
 
-      it('If the target of objectActivated is shape and the existing menu is not shpe, the menu should be changed to shape.', () => {
+      it('should be changed to shape if the target of objectActivated is shape and the existing menu is not shape', () => {
         imageEditorMock.ui.submenu = 'crop';
-        spyOn(imageEditorMock.ui, 'changeMenu');
-        spyOn(imageEditorMock.ui.shape, 'setShapeStatus');
-        spyOn(imageEditorMock.ui.shape, 'setMaxStrokeValue');
-        imageEditorMock.fire('objectActivated', {
-          id: 1,
-          type: 'circle',
-        });
+        imageEditorMock.ui.changeMenu = jest.fn();
+        imageEditorMock.ui.shape.setShapeStatus = jest.fn();
+        const setMaxStrokeValueSpy = jest.spyOn(imageEditorMock.ui.shape, 'setMaxStrokeValue');
 
-        expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('shape');
-        expect(imageEditorMock.ui.shape.setMaxStrokeValue).toHaveBeenCalled();
+        imageEditorMock.fire('objectActivated', { id: 1, type: 'circle' });
+
+        expect(imageEditorMock.ui.changeMenu).toHaveBeenCalledWith('shape', false, false);
+        expect(setMaxStrokeValueSpy).toHaveBeenCalled();
       });
 
-      it('If the target of objectActivated is text and the existing menu is not text, the menu should be changed to text.', () => {
+      it('should be changed to text if the target of objectActivated is text and the existing menu is not text', () => {
         imageEditorMock.ui.submenu = 'crop';
-        spyOn(imageEditorMock.ui, 'changeMenu');
-        imageEditorMock.fire('objectActivated', {
-          id: 1,
-          type: 'i-text',
-        });
+        imageEditorMock.ui.changeMenu = jest.fn();
 
-        expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('text');
+        imageEditorMock.fire('objectActivated', { id: 1, type: 'i-text' });
+
+        expect(imageEditorMock.ui.changeMenu).toHaveBeenCalledWith('text', false, false);
       });
 
-      it('If the target of objectActivated is icon and the existing menu is not icon, the menu should be changed to icon.', () => {
+      it('should be changed to icon if the target of objectActivated is icon and the existing menu is not icon', () => {
         imageEditorMock.ui.submenu = 'crop';
-        spyOn(imageEditorMock.ui, 'changeMenu');
-        spyOn(imageEditorMock.ui.icon, 'setIconPickerColor');
-        imageEditorMock.fire('objectActivated', {
-          id: 1,
-          type: 'icon',
-        });
+        imageEditorMock.ui.changeMenu = jest.fn();
+        const setIconPickerColorSpy = jest.spyOn(imageEditorMock.ui.icon, 'setIconPickerColor');
 
-        expect(imageEditorMock.ui.changeMenu.calls.mostRecent().args[0]).toBe('icon');
-        expect(imageEditorMock.ui.icon.setIconPickerColor).toHaveBeenCalled();
+        imageEditorMock.fire('objectActivated', { id: 1, type: 'icon' });
+
+        expect(imageEditorMock.ui.changeMenu).toHaveBeenCalledWith('icon', false, false);
+        expect(setIconPickerColorSpy).toHaveBeenCalled();
       });
     });
 
     describe('addObjectAfter', () => {
-      it("When addObjectAfter occurs, the shape's maxStrokeValue should be changed to match the size of the added object.", () => {
-        spyOn(imageEditorMock.ui.shape, 'setMaxStrokeValue');
-        spyOn(imageEditorMock.ui.shape, 'changeStandbyMode');
-        imageEditorMock.fire('addObjectAfter', {
-          type: 'circle',
-          width: 100,
-          height: 200,
-        });
+      it('should be changed to match the size of the added object when addObjectAfter occurs', () => {
+        const setMaxStrokeValueSpy = jest.spyOn(imageEditorMock.ui.shape, 'setMaxStrokeValue');
+        imageEditorMock.ui.shape.changeStandbyMode = jest.fn();
 
-        expect(imageEditorMock.ui.shape.setMaxStrokeValue.calls.mostRecent().args[0]).toBe(100);
+        imageEditorMock.fire('addObjectAfter', { type: 'circle', width: 100, height: 200 });
+
+        expect(setMaxStrokeValueSpy).toHaveBeenCalledWith(100);
         expect(imageEditorMock.ui.shape.changeStandbyMode).toHaveBeenCalled();
       });
     });
 
     describe('objectScaled', () => {
-      it('If objectScaled occurs on an object of type text, fontSize must be changed.', () => {
+      it('should be changed if objectScaled occurs on an object of type text', () => {
         imageEditorMock.ui.text.fontSize = 0;
-        imageEditorMock.fire('objectScaled', {
-          type: 'i-text',
-          fontSize: 20,
-        });
+
+        imageEditorMock.fire('objectScaled', { type: 'i-text', fontSize: 20 });
 
         expect(imageEditorMock.ui.text.fontSize).toBe(20);
       });
 
-      it('If objectScaled is for a shape type object and strokeValue is greater than the size of the object, the value should change.', () => {
-        spyOn(imageEditorMock.ui.shape, 'getStrokeValue').and.returnValue(20);
-        spyOn(imageEditorMock.ui.shape, 'setStrokeValue');
-        imageEditorMock.fire('objectScaled', {
-          type: 'rect',
-          width: 10,
-          height: 10,
-        });
-        expect(imageEditorMock.ui.shape.setStrokeValue.calls.mostRecent().args[0]).toBe(10);
+      it('should be changed if objectScaled is for a shape type object and strokeValue is greater than the size of the object', () => {
+        jest.spyOn(imageEditorMock.ui.shape, 'getStrokeValue').mockReturnValue(20);
+        const setStrokeValueSpy = jest.spyOn(imageEditorMock.ui.shape, 'setStrokeValue');
+
+        imageEditorMock.fire('objectScaled', { type: 'rect', width: 10, height: 10 });
+
+        expect(setStrokeValueSpy).toHaveBeenCalledWith(10);
       });
     });
 
     describe('selectionCleared', () => {
-      it('If selectionCleared occurs in the text menu state, the menu should be closed.', () => {
+      it('should be closed if selectionCleared occurs in the text menu state', () => {
         imageEditorMock.ui.submenu = 'text';
-        spyOn(imageEditorMock, 'changeCursor');
+        const changeCursorSpy = jest.spyOn(imageEditorMock, 'changeCursor');
 
         imageEditorMock.fire('selectionCleared');
-        expect(imageEditorMock.changeCursor.calls.mostRecent().args[0]).toBe('text');
+
+        expect(changeCursorSpy).toHaveBeenCalledWith('text');
       });
     });
   });
