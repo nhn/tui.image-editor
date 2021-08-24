@@ -9,11 +9,6 @@ module.exports = {
     jest: true,
     'jest/globals': true,
   },
-  globals: {
-    fabric: true,
-    tui: true,
-    loadFixtures: true,
-  },
   parserOptions: {
     sourceType: 'module',
   },
