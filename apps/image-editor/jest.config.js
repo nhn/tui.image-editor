@@ -12,6 +12,8 @@ module.exports = {
   clearMocks: true,
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/js/$1',
+    '^@css/(.*)$': '<rootDir>/src/css/$1',
+    '^@svg/(.*)$': '<rootDir>/src/svg/$1',
   },
   setupFiles: [setupFile],
 };

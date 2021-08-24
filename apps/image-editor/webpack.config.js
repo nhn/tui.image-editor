@@ -25,15 +25,15 @@ module.exports = {
   output: {
     library: ['tui', 'ImageEditor'],
     libraryTarget: 'umd',
-    path: path.resolve(__dirname, 'dist'),
+    path: path.resolve('dist'),
     publicPath: '/dist',
     filename: `${FILENAME}.js`,
   },
   resolve: {
     alias: {
-      '@': path.resolve(__dirname, 'src/js/'),
-      '@css': path.resolve(__dirname, 'src/css/'),
-      '@svg': path.resolve(__dirname, 'src/svg/'),
+      '@': path.resolve('src/js'),
+      '@css': path.resolve('src/css'),
+      '@svg': path.resolve('src/svg'),
     },
   },
   externals: [
