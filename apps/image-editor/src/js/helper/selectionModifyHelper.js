@@ -4,7 +4,7 @@
  */
 
 import { extend } from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 
 /**
  * Cached selection's info

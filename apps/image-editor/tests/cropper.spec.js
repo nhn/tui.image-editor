@@ -3,8 +3,7 @@
  * @fileoverview Test cases of "src/js/component/cropper.js"
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric';
-import $ from 'jquery';
+import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import Cropper from '@/component/cropper';
 import { eventNames, CROPZONE_DEFAULT_OPTIONS } from '@/consts';

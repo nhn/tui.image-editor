@@ -3,7 +3,7 @@
  * @fileoverview Text module
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import Component from '@/interface/component';
 import { Promise } from '@/util';
 import { componentNames, eventNames as events, fObjectOptions } from '@/consts';

@@ -50,12 +50,6 @@ module.exports = {
         amd: 'tui-color-picker',
         root: ['tui', 'colorPicker'],
       },
-      fabric: {
-        commonjs: ['fabric', 'fabric'],
-        commonjs2: ['fabric', 'fabric'],
-        amd: 'fabric',
-        root: 'fabric',
-      },
     },
   ],
   module: {

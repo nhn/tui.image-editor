@@ -3,7 +3,7 @@
  * @fileoverview Tests command with command-factory
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import { drawingModes, componentNames as components } from '@/consts';
 

@@ -3,7 +3,7 @@
  * @fileoverview Free drawing module, Set brush
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import Component from '@/interface/component';
 import ArrowLine from '@/extension/arrowLine';
 import { eventNames, componentNames, fObjectOptions } from '@/consts';
