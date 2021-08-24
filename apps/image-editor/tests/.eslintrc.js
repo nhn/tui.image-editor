@@ -1,5 +1,6 @@
 module.exports = {
   rules: {
-    'max-nested-callbacks': 0,
+    'max-nested-callbacks': ['error', { max: 5 }],
+    'dot-notation': ['error', { allowKeywords: true }],
   },
 };
