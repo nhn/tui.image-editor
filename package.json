@@ -3,6 +3,7 @@
   "private": true,
   "devDependencies": {
     "jest": "^27.0.6",
+    "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
     "lerna": "^3.22.1",
     "prettier": "^2.0.5"

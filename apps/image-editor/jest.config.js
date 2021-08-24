@@ -1,3 +1,6 @@
+const path = require('path');
+const setupFile = path.resolve(__dirname, './jest-setup.js');
+
 module.exports = {
   moduleFileExtensions: ['js'],
   testEnvironment: 'jsdom',
@@ -10,4 +13,5 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/js/$1',
   },
+  setupFiles: [setupFile],
 };
