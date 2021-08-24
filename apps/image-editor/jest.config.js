@@ -13,7 +13,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/js/$1',
     '^@css/(.*)$': '<rootDir>/src/css/$1',
-    '^@svg/(.*)$': '<rootDir>/src/svg/$1',
+    '^@svg/(.*)$': 'jest-svg-transformer',
   },
   setupFiles: [setupFile],
 };
