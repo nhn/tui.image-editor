@@ -14,6 +14,7 @@ module.exports = {
     '^@/(.*)$': '<rootDir>/src/js/$1',
     '^@css/(.*)$': '<rootDir>/src/css/$1',
     '^@svg/(.*)$': 'jest-svg-transformer',
+    '^fixtures/(.*)$': '<rootDir>/__mocks__/fileMock.js',
   },
   setupFiles: [setupFile],
 };
