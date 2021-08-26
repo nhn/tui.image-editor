@@ -1,18 +1,13 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/flip.js"
- */
 import { fabric } from 'fabric';
-import $ from 'jquery';
 import Graphics from '@/graphics';
 import Flip from '@/component/flip';
 
 describe('Flip', () => {
-  let graphics, flipModule, mockImage;
+  let graphics, flip, mockImage;
 
   beforeAll(() => {
-    graphics = new Graphics($('<canvas>')[0]);
-    flipModule = new Flip(graphics);
+    graphics = new Graphics(document.createElement('canvas'));
+    flip = new Flip(graphics);
   });
 
   beforeEach(() => {
@@ -20,77 +15,48 @@ describe('Flip', () => {
     graphics.setCanvasImage('mockImage', mockImage);
   });
 
-  it('"getCurrentSetting()" should return current flip-setting', () => {
-    let setting = flipModule.getCurrentSetting();
+  it('should return current flip-setting', () => {
+    let setting = flip.getCurrentSetting();
 
-    expect(setting).toEqual({
-      flipX: false,
-      flipY: false,
-    });
+    expect(setting).toEqual({ flipX: false, flipY: false });
 
     mockImage.set({ flipX: true });
-    setting = flipModule.getCurrentSetting();
-    expect(setting).toEqual({
-      flipX: true,
-      flipY: false,
-    });
+    setting = flip.getCurrentSetting();
+
+    expect(setting).toEqual({ flipX: true, flipY: false });
   });
 
-  it('"set()" should set flip-setting', () => {
-    flipModule.set({
-      flipX: false,
-      flipY: true,
-    });
+  it('should set flip-setting', () => {
+    flip.set({ flipX: false, flipY: true });
 
-    expect(flipModule.getCurrentSetting()).toEqual({
-      flipX: false,
-      flipY: true,
-    });
+    expect(flip.getCurrentSetting()).toEqual({ flipX: false, flipY: true });
   });
 
-  it('"reset()" should reset flip-setting to false', () => {
-    mockImage.set({
-      flipX: true,
-      flipY: true,
-    });
-    flipModule.reset();
+  it('should reset flip-setting to false', () => {
+    mockImage.set({ flipX: true, flipY: true });
+    flip.reset();
 
-    expect(flipModule.getCurrentSetting()).toEqual({
-      flipX: false,
-      flipY: false,
-    });
+    expect(flip.getCurrentSetting()).toEqual({ flipX: false, flipY: false });
   });
 
-  it('"flipX()" should toggle flipX', () => {
-    flipModule.flipX();
+  it('should be flipped over relative to the x-axis', () => {
+    flip.flipX();
 
-    expect(flipModule.getCurrentSetting()).toEqual({
-      flipX: true,
-      flipY: false,
-    });
+    expect(flip.getCurrentSetting()).toEqual({ flipX: true, flipY: false });
 
-    flipModule.flipX();
+    flip.flipX();
 
-    expect(flipModule.getCurrentSetting()).toEqual({
-      flipX: false,
-      flipY: false,
-    });
+    expect(flip.getCurrentSetting()).toEqual({ flipX: false, flipY: false });
   });
 
-  it('"flipY()" should toggle flipY', () => {
-    flipModule.flipY();
+  it('should be flipped over relative to the y-axis', () => {
+    flip.flipY();
 
-    expect(flipModule.getCurrentSetting()).toEqual({
-      flipX: false,
-      flipY: true,
-    });
+    expect(flip.getCurrentSetting()).toEqual({ flipX: false, flipY: true });
 
-    flipModule.flipY();
+    flip.flipY();
 
-    expect(flipModule.getCurrentSetting()).toEqual({
-      flipX: false,
-      flipY: false,
-    });
+    expect(flip.getCurrentSetting()).toEqual({ flipX: false, flipY: false });
   });
 
   describe('Promise is returned with settings and angle,', () => {
@@ -98,53 +64,22 @@ describe('Flip', () => {
       mockImage.angle = 10;
     });
 
-    it('flipX() is called.', (done) => {
-      flipModule.flipX().then((obj) => {
-        expect(obj).toEqual({
-          flipX: true,
-          flipY: false,
-          angle: -10,
-        });
-        done();
-      });
+    it('should be changed if it is flipped over relative to the x-axis', async () => {
+      const obj = await flip.flipX();
+
+      expect(obj).toEqual({ flipX: true, flipY: false, angle: -10 });
     });
 
-    it('flipY() is called.', (done) => {
-      flipModule.flipY().then((obj) => {
-        expect(obj).toEqual({
-          flipX: false,
-          flipY: true,
-          angle: -10,
-        });
-        done();
-      });
+    it('should be changed if it is flipped over relative to the y-axis', async () => {
+      const obj = await flip.flipY();
+
+      expect(obj).toEqual({ flipX: false, flipY: true, angle: -10 });
     });
 
-    it('flipY() is called.', (done) => {
-      flipModule.flipY().then((obj) => {
-        expect(obj).toEqual({
-          flipX: false,
-          flipY: true,
-          angle: -10,
-        });
-        done();
-      });
-    });
+    it('should be changed if it is flipped over relative to the x-axis and y-axis', async () => {
+      const obj = await flip.set({ flipX: true, flipY: false });
 
-    it('set() is called.', (done) => {
-      flipModule
-        .set({
-          flipX: true,
-          flipY: false,
-        })
-        .then((obj) => {
-          expect(obj).toEqual({
-            flipX: true,
-            flipY: false,
-            angle: -10,
-          });
-          done();
-        });
+      expect(obj).toEqual({ flipX: true, flipY: false, angle: -10 });
     });
   });
 });
