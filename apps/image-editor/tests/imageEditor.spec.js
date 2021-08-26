@@ -3,7 +3,7 @@
  * @fileoverview Test env
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import ImageEditor from '@/imageEditor';
 import { eventNames, keyCodes } from '@/consts';
 

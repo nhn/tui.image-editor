@@ -3,7 +3,7 @@
  * @fileoverview Test env
  */
 import '../src';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 
 fabric.Object.prototype.objectCaching = false;
 

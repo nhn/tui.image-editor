@@ -14,7 +14,6 @@
     "data.js",
     "Gruntfile.js",
     "gulpfile.js",
-    "karma.*.js",
     "conf.json",
     "package.json",
     ".gitignore",

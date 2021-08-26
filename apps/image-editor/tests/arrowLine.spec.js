@@ -1,19 +1,24 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/extension/allowLine.js"
- */
 import ArrowLine from '@/extension/arrowLine';
 
-describe('AllowLine', () => {
+describe('ArrowLine', () => {
   let ctx, arrowLine, linePath;
+  function assertPointsToMatchSnapshots() {
+    const [firstPoint] = ctx.moveTo.mock.calls;
+    const [secondPoint] = ctx.lineTo.mock.calls;
+    const [, lastPoint] = ctx.lineTo.mock.calls;
+
+    expect(firstPoint).toMatchSnapshot();
+    expect(secondPoint).toMatchSnapshot();
+    expect(lastPoint).toMatchSnapshot();
+  }
 
   beforeEach(() => {
     ctx = {
       lineWidth: 1,
-      beginPath: jasmine.createSpy('beginPath'),
-      moveTo: jasmine.createSpy('moveTo'),
-      lineTo: jasmine.createSpy('lineTo'),
-      closePath: jasmine.createSpy('closePath'),
+      beginPath: jest.fn(),
+      moveTo: jest.fn(),
+      lineTo: jest.fn(),
+      closePath: jest.fn(),
     };
     arrowLine = new ArrowLine();
     arrowLine.ctx = ctx;
@@ -25,49 +30,25 @@ describe('AllowLine', () => {
     };
   });
 
-  it('When attaching the "chevron" type to the endpoint, you need to draw the "v" calculated according to the angle around the "tail" of the line.', () => {
-    arrowLine.arrowType = {
-      tail: 'chevron',
-    };
+  it('should draw the "v" calculated according to the angle around the "tail" of the line when attaching the "chevron" type to the end point', () => {
+    arrowLine.arrowType = { tail: 'chevron' };
     arrowLine._drawDecoratorPath(linePath);
 
-    const firstPoint = ctx.moveTo.calls.argsFor(0).map((value) => Math.round(value));
-    const secondPoint = ctx.lineTo.calls.argsFor(0).map((value) => Math.round(value));
-    const lastPoint = ctx.lineTo.calls.argsFor(1).map((value) => Math.round(value));
-
-    expect(firstPoint).toEqual([9, 7]);
-    expect(secondPoint).toEqual([10, 10]);
-    expect(lastPoint).toEqual([7, 9]);
+    assertPointsToMatchSnapshots();
   });
 
-  it('When attaching the "chevron" type to the startpoint, you need to draw the "v" calculated according to the angle around the "head" of the line.', () => {
-    arrowLine.arrowType = {
-      head: 'chevron',
-    };
+  it('should draw the "v" calculated according to the angle around the "head" of the line when attaching the "chevron" type to the start point', () => {
+    arrowLine.arrowType = { head: 'chevron' };
     arrowLine._drawDecoratorPath(linePath);
 
-    const firstPoint = ctx.moveTo.calls.argsFor(0).map((value) => Math.round(value));
-    const secondPoint = ctx.lineTo.calls.argsFor(0).map((value) => Math.round(value));
-    const lastPoint = ctx.lineTo.calls.argsFor(1).map((value) => Math.round(value));
-
-    expect(firstPoint).toEqual([2, 4]);
-    expect(secondPoint).toEqual([1, 1]);
-    expect(lastPoint).toEqual([4, 2]);
+    assertPointsToMatchSnapshots();
   });
 
-  it('"triangle" should be a triangular shape that closes the path with closePath after drawing.', () => {
-    arrowLine.arrowType = {
-      head: 'triangle',
-    };
+  it('should be a triangular shape that closes the path with closePath after drawing', () => {
+    arrowLine.arrowType = { head: 'triangle' };
     arrowLine._drawDecoratorPath(linePath);
 
-    const firstPoint = ctx.moveTo.calls.argsFor(0).map((value) => Math.round(value));
-    const secondPoint = ctx.lineTo.calls.argsFor(0).map((value) => Math.round(value));
-    const thirdPoint = ctx.lineTo.calls.argsFor(1).map((value) => Math.round(value));
-
-    expect(firstPoint).toEqual([1, 3]);
-    expect(secondPoint).toEqual([1, 1]);
-    expect(thirdPoint).toEqual([3, 1]);
-    expect(ctx.closePath.calls.count()).toBe(1);
+    assertPointsToMatchSnapshots();
+    expect(ctx.closePath).toBeCalledTimes(1);
   });
 });

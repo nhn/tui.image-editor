@@ -3,7 +3,7 @@
  * @fileoverview Cropzone extending fabric.Rect
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import { clamp } from '@/util';
 import { eventNames as events, keyCodes } from '@/consts';
 

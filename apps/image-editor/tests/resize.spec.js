@@ -2,7 +2,7 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/resize.js"
  */
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import $ from 'jquery';
 import Graphics from '@/graphics';
 import Resize from '@/component/resize';

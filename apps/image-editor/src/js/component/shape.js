@@ -3,7 +3,7 @@
  * @fileoverview Shape component
  */
 import { extend } from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import Component from '@/interface/component';
 import resizeHelper from '@/helper/shapeResizeHelper';
 import {

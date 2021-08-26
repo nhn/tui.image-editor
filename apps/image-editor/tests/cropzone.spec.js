@@ -3,7 +3,7 @@
  * @fileoverview Test cases of "src/js/extension/cropzone.js"
  */
 import snippet from 'tui-code-snippet';
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import Cropzone from '@/extension/cropzone';
 
 describe('Cropzone', () => {

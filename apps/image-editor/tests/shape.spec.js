@@ -2,7 +2,7 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Test cases of "src/js/component/shape.js"
  */
-import fabric from 'fabric';
+import { fabric } from 'fabric';
 import $ from 'jquery';
 import Graphics from '@/graphics';
 import Shape from '@/component/shape';
