@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/extension/cropzone.js"
- */
 import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Cropzone from '@/extension/cropzone';
@@ -25,7 +21,7 @@ describe('Cropzone', () => {
   canvas.height = 400;
   canvas.width = 300;
 
-  it('"_getCoordinates()" should return outer&inner rect coordinates(array)', () => {
+  it('should return outer&inner rect coordinates(array)', () => {
     const cropzone = new Cropzone(canvas, options, {});
     const coords = cropzone._getCoordinates();
 
@@ -35,35 +31,27 @@ describe('Cropzone', () => {
     });
   });
 
-  it('"_onMoving()" should set left and top between 0 and canvas size', () => {
+  it('should set left and top between 0 and canvas size', () => {
     const cropzone = new Cropzone(canvas, options, {});
-    const mockFabricCanvas = {
-      getWidth() {
-        return 300;
-      },
-      getHeight() {
-        return 400;
-      },
-    };
 
-    cropzone.canvas = mockFabricCanvas;
+    jest.spyOn(cropzone.canvas, 'getWidth').mockReturnValue(300);
+    jest.spyOn(cropzone.canvas, 'getHeight').mockReturnValue(400);
     cropzone.left = -1;
     cropzone.top = -1;
     cropzone._onMoving();
 
-    expect(cropzone.top).toEqual(0);
-    expect(cropzone.left).toEqual(0);
+    expect(cropzone).toEqual(expect.objectContaining({ top: 0, left: 0 }));
 
     cropzone.left = 1000;
     cropzone.top = 1000;
     cropzone._onMoving();
 
-    expect(cropzone.left).toEqual(200);
-    expect(cropzone.top).toEqual(300);
+    expect(cropzone).toEqual(expect.objectContaining({ top: 300, left: 200 }));
   });
 
-  it('"isValid()" should return whether the cropzone has real area or not', () => {
+  it('should return whether the cropzone has real area or not', () => {
     const cropzone = new Cropzone(canvas, options, {});
+
     cropzone.left = -1;
     expect(cropzone.isValid()).toBe(false);
 
@@ -77,75 +65,38 @@ describe('Cropzone', () => {
     expect(cropzone.isValid()).toBe(true);
   });
 
-  it('"_resizeTL" should give the expected value at run', () => {
+  it('should give the expected value at run', () => {
     const cropzone = new Cropzone(canvas, options, {});
+    let resizedCropzone = cropzone._resizeCropZone({ x: 30, y: 40 }, 'tl');
 
-    expect(
-      cropzone._resizeCropZone(
-        {
-          x: 30,
-          y: 40,
-        },
-        'tl'
-      )
-    ).toEqual({
+    expect(resizedCropzone).toEqual({
       left: 30,
       top: 40,
       width: 80,
       height: 70,
     });
-  });
 
-  it('"_resizeTR" should give the expected value at run', () => {
-    const cropzone = new Cropzone(canvas, options, {});
+    resizedCropzone = cropzone._resizeCropZone({ x: 80, y: 50 }, 'tr');
 
-    expect(
-      cropzone._resizeCropZone(
-        {
-          x: 80,
-          y: 50,
-        },
-        'tr'
-      )
-    ).toEqual({
+    expect(resizedCropzone).toEqual({
       left: 10,
       top: 50,
       width: 70,
       height: 60,
     });
-  });
 
-  it('"_resizeBL" should give the expected value at run', () => {
-    const cropzone = new Cropzone(canvas, options, {});
+    resizedCropzone = cropzone._resizeCropZone({ x: 30, y: 40 }, 'bl');
 
-    expect(
-      cropzone._resizeCropZone(
-        {
-          x: 30,
-          y: 40,
-        },
-        'bl'
-      )
-    ).toEqual({
+    expect(resizedCropzone).toEqual({
       left: 30,
       top: 10,
       width: 80,
       height: 30,
     });
-  });
 
-  it('"_resizeBR" should give the expected value at run', () => {
-    const cropzone = new Cropzone(canvas, options, {});
+    resizedCropzone = cropzone._resizeCropZone({ x: 30, y: 40 }, 'br');
 
-    expect(
-      cropzone._resizeCropZone(
-        {
-          x: 30,
-          y: 40,
-        },
-        'br'
-      )
-    ).toEqual({
+    expect(resizedCropzone).toEqual({
       left: 10,
       top: 10,
       width: 20,
@@ -157,22 +108,12 @@ describe('Cropzone', () => {
     const presetRatio = 5 / 4;
     const cropzone = new Cropzone(
       canvas,
-      snippet.extend({}, options, {
-        width: 50,
-        height: 40,
-        presetRatio,
-      }),
+      snippet.extend({}, options, { width: 50, height: 40, presetRatio }),
       {}
     );
 
     snippet.forEach(['tl', 'tr', 'mt', 'ml', 'mr', 'mb', 'bl', 'br'], (cornerType) => {
-      const { width, height } = cropzone._resizeCropZone(
-        {
-          x: 20,
-          y: 20,
-        },
-        cornerType
-      );
+      const { width, height } = cropzone._resizeCropZone({ x: 20, y: 20 }, cornerType);
 
       expect(width / height).toEqual(presetRatio);
     });
