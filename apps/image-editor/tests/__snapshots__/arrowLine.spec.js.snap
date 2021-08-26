@@ -1,0 +1,64 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ArrowLine should be a triangular shape that closes the path with closePath after drawing 1`] = `
+Array [
+  1.4399923766742853,
+  2.642073904691416,
+]
+`;
+
+exports[`ArrowLine should be a triangular shape that closes the path with closePath after drawing 2`] = `
+Array [
+  1,
+  1,
+]
+`;
+
+exports[`ArrowLine should be a triangular shape that closes the path with closePath after drawing 3`] = `
+Array [
+  2.642073904691416,
+  1.4399923766742853,
+]
+`;
+
+exports[`ArrowLine should draw the "v" calculated according to the angle around the "head" of the line when attaching the "chevron" type to the start point 1`] = `
+Array [
+  1.698811421776806,
+  3.6079997309804845,
+]
+`;
+
+exports[`ArrowLine should draw the "v" calculated according to the angle around the "head" of the line when attaching the "chevron" type to the start point 2`] = `
+Array [
+  1,
+  1,
+]
+`;
+
+exports[`ArrowLine should draw the "v" calculated according to the angle around the "head" of the line when attaching the "chevron" type to the start point 3`] = `
+Array [
+  3.6079997309804845,
+  1.698811421776806,
+]
+`;
+
+exports[`ArrowLine should draw the "v" calculated according to the angle around the "tail" of the line when attaching the "chevron" type to the end point 1`] = `
+Array [
+  9.301188578223194,
+  7.3920002690195155,
+]
+`;
+
+exports[`ArrowLine should draw the "v" calculated according to the angle around the "tail" of the line when attaching the "chevron" type to the end point 2`] = `
+Array [
+  10,
+  10,
+]
+`;
+
+exports[`ArrowLine should draw the "v" calculated according to the angle around the "tail" of the line when attaching the "chevron" type to the end point 3`] = `
+Array [
+  7.3920002690195155,
+  9.301188578223194,
+]
+`;

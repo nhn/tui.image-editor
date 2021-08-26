@@ -52,10 +52,11 @@ describe('commandFactory', () => {
 
   describe('functions', () => {
     it('should register custom command', () => {
-      const testCommand = { name: 'testCommand', execute() {}, undo() {} };
-
-      jest.spyOn(testCommand, 'execute').mockReturnValue(Promise.resolve('testCommand'));
-      jest.spyOn(testCommand, 'undo').mockReturnValue(Promise.resolve());
+      const testCommand = {
+        name: 'testCommand',
+        execute: jest.fn(() => Promise.resolve('testCommand')),
+        undo: jest.fn(() => Promise.resolve()),
+      };
 
       commandFactory.register(testCommand);
 
@@ -166,34 +167,30 @@ describe('commandFactory', () => {
 
     it('should work undo command correctly', () => {
       return invoker.undo().then(() => {
-        expect(obj).toEqual(
-          expect.objectContaining({
-            width: 10,
-            height: 10,
-            left: 10,
-            top: 10,
-            scaleX: 1,
-            scaleY: 1,
-            angle: 0,
-          })
-        );
+        expect(obj).toMatchObject({
+          width: 10,
+          height: 10,
+          left: 10,
+          top: 10,
+          scaleX: 1,
+          scaleY: 1,
+          angle: 0,
+        });
       });
     });
 
     it('should work redo command correctly', () => {
       return invoker.undo().then(() => {
         invoker.redo().then(() => {
-          expect(obj).toEqual(
-            expect.objectContaining({
-              width: 30,
-              height: 30,
-              left: 30,
-              top: 30,
-              scaleX: 0.5,
-              scaleY: 0.5,
-              angle: 10,
-            })
-          );
+          expect(obj).toMatchObject({
+            width: 30,
+            height: 30,
+            left: 30,
+            top: 30,
+            scaleX: 0.5,
+            scaleY: 0.5,
+            angle: 10,
+          });
         });
       });
     });
@@ -217,14 +214,12 @@ describe('commandFactory', () => {
     it('should load new image', () => {
       return invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img).then((changedSize) => {
         expect(graphics.getImageName()).toBe('image');
-        expect(changedSize).toEqual(
-          expect.objectContaining({
-            oldWidth: expect.any(Number),
-            oldHeight: expect.any(Number),
-            newWidth: expect.any(Number),
-            newHeight: expect.any(Number),
-          })
-        );
+        expect(changedSize).toMatchObject({
+          oldWidth: expect.any(Number),
+          oldHeight: expect.any(Number),
+          newWidth: expect.any(Number),
+          newHeight: expect.any(Number),
+        });
       });
     });
 
@@ -303,7 +298,7 @@ describe('commandFactory', () => {
       mockImage.flipY = true;
 
       return invoker.execute(commands.FLIP_IMAGE, graphics, 'reset').then(() => {
-        expect(mockImage).toEqual(expect.objectContaining({ flipX: false, flipY: false }));
+        expect(mockImage).toMatchObject({ flipX: false, flipY: false });
       });
     });
 
@@ -359,7 +354,7 @@ describe('commandFactory', () => {
         .then(() => {
           const textObject = graphics.getObject(textObjectId);
 
-          expect(textObject).toEqual(expect.objectContaining({ fontSize: 30, underline: true }));
+          expect(textObject).toMatchObject({ fontSize: 30, underline: true });
         });
     });
 
@@ -373,7 +368,7 @@ describe('commandFactory', () => {
         .then(() => {
           const textObject = graphics.getObject(textObjectId);
 
-          expect(textObject).toEqual(expect.objectContaining({ fontSize, underline }));
+          expect(textObject).toMatchObject({ fontSize, underline });
         });
     });
   });
@@ -542,8 +537,8 @@ describe('commandFactory', () => {
         .execute(commands.REMOVE_OBJECT, graphics, graphics.getActiveObjectIdForRemove())
         .then(() => invoker.undo())
         .then(() => {
-          expect(object).toEqual(expect.objectContaining({ left: 10, top: 10 }));
-          expect(object2).toEqual(expect.objectContaining({ left: 5, top: 20 }));
+          expect(object).toMatchObject({ left: 10, top: 10 });
+          expect(object2).toMatchObject({ left: 5, top: 20 });
         });
     });
   });

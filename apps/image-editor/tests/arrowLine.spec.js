@@ -1,8 +1,16 @@
 import ArrowLine from '@/extension/arrowLine';
 
 describe('ArrowLine', () => {
-  const transformFn = (value) => Math.round(value);
   let ctx, arrowLine, linePath;
+  function assertPointsToMatchSnapshots() {
+    const [firstPoint] = ctx.moveTo.mock.calls;
+    const [secondPoint] = ctx.lineTo.mock.calls;
+    const [, lastPoint] = ctx.lineTo.mock.calls;
+
+    expect(firstPoint).toMatchSnapshot();
+    expect(secondPoint).toMatchSnapshot();
+    expect(lastPoint).toMatchSnapshot();
+  }
 
   beforeEach(() => {
     ctx = {
@@ -26,39 +34,21 @@ describe('ArrowLine', () => {
     arrowLine.arrowType = { tail: 'chevron' };
     arrowLine._drawDecoratorPath(linePath);
 
-    const firstPoint = ctx.moveTo.mock.calls[0].map(transformFn);
-    const secondPoint = ctx.lineTo.mock.calls[0].map(transformFn);
-    const lastPoint = ctx.lineTo.mock.calls[1].map(transformFn);
-
-    expect(firstPoint).toEqual([9, 7]);
-    expect(secondPoint).toEqual([10, 10]);
-    expect(lastPoint).toEqual([7, 9]);
+    assertPointsToMatchSnapshots();
   });
 
   it('should draw the "v" calculated according to the angle around the "head" of the line when attaching the "chevron" type to the start point', () => {
     arrowLine.arrowType = { head: 'chevron' };
     arrowLine._drawDecoratorPath(linePath);
 
-    const firstPoint = ctx.moveTo.mock.calls[0].map(transformFn);
-    const secondPoint = ctx.lineTo.mock.calls[0].map(transformFn);
-    const lastPoint = ctx.lineTo.mock.calls[1].map(transformFn);
-
-    expect(firstPoint).toEqual([2, 4]);
-    expect(secondPoint).toEqual([1, 1]);
-    expect(lastPoint).toEqual([4, 2]);
+    assertPointsToMatchSnapshots();
   });
 
   it('should be a triangular shape that closes the path with closePath after drawing', () => {
     arrowLine.arrowType = { head: 'triangle' };
     arrowLine._drawDecoratorPath(linePath);
 
-    const firstPoint = ctx.moveTo.mock.calls[0].map(transformFn);
-    const secondPoint = ctx.lineTo.mock.calls[0].map(transformFn);
-    const lastPoint = ctx.lineTo.mock.calls[1].map(transformFn);
-
-    expect(firstPoint).toEqual([1, 3]);
-    expect(secondPoint).toEqual([1, 1]);
-    expect(lastPoint).toEqual([3, 1]);
+    assertPointsToMatchSnapshots();
     expect(ctx.closePath).toBeCalledTimes(1);
   });
 });
