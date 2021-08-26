@@ -1,4 +1,3 @@
-import snippet from 'tui-code-snippet';
 import ImageEditor from '@/imageEditor';
 import { Promise } from '@/util';
 
@@ -28,18 +27,18 @@ describe('UI', () => {
       mainAction = actions.main;
     });
 
-    it('should be executed When the initLoadImage action occurs', () => {
-      jest
+    it('should be executed When the initLoadImage action occurs', async () => {
+      const loadImageFromURLSpy = jest
         .spyOn(imageEditorMock, 'loadImageFromURL')
         .mockReturnValue(new Promise((resolve) => resolve(300)));
-      jest.spyOn(imageEditorMock, 'clearUndoStack');
-      jest.spyOn(imageEditorMock.ui, 'resizeEditor');
+      const clearUndoStackSpy = jest.spyOn(imageEditorMock, 'clearUndoStack');
+      const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
 
-      return mainAction.initLoadImage('path', 'imageName').then(() => {
-        expect(imageEditorMock.clearUndoStack).toHaveBeenCalled();
-        expect(imageEditorMock.ui.resizeEditor).toHaveBeenCalled();
-        expect(imageEditorMock.loadImageFromURL).toHaveBeenCalled();
-      });
+      await mainAction.initLoadImage('path', 'imageName');
+
+      expect(loadImageFromURLSpy).toHaveBeenCalled();
+      expect(clearUndoStackSpy).toHaveBeenCalled();
+      expect(resizeEditorSpy).toHaveBeenCalled();
     });
 
     it('should be executed When the undo action occurs', () => {
@@ -81,23 +80,20 @@ describe('UI', () => {
       expect(changeHelpButtonEnabledSpy).toHaveBeenNthCalledWith(2, 'deleteAll', false);
     });
 
-    it('should be executed When the load action occurs', () => {
-      const promise = new Promise((resolve) => resolve());
+    it('should be executed When the load action occurs', async () => {
       const loadImageFromFileSpy = jest
         .spyOn(imageEditorMock, 'loadImageFromFile')
-        .mockReturnValue(promise);
+        .mockReturnValue(new Promise((resolve) => resolve()));
       const clearUndoStackSpy = jest.spyOn(imageEditorMock, 'clearUndoStack');
       const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
 
       global.URL.createObjectURL = jest.fn();
 
-      mainAction.load();
+      await mainAction.load();
 
-      return promise.then(() => {
-        expect(loadImageFromFileSpy).toHaveBeenCalled();
-        expect(clearUndoStackSpy).toHaveBeenCalled();
-        expect(resizeEditorSpy).toHaveBeenCalled();
-      });
+      expect(loadImageFromFileSpy).toHaveBeenCalled();
+      expect(clearUndoStackSpy).toHaveBeenCalled();
+      expect(resizeEditorSpy).toHaveBeenCalled();
     });
   });
 
@@ -137,26 +133,24 @@ describe('UI', () => {
       cropAction = actions.crop;
     });
 
-    it('should be executed When the crop action occurs', () => {
-      const promise = new Promise((resolve) => resolve());
+    it('should be executed When the crop action occurs', async () => {
       const getCropzoneRectSpy = jest
         .spyOn(imageEditorMock, 'getCropzoneRect')
         .mockReturnValue(true);
-      const cropSpy = jest.spyOn(imageEditorMock, 'crop').mockReturnValue(promise);
+      const cropSpy = jest
+        .spyOn(imageEditorMock, 'crop')
+        .mockReturnValue(new Promise((resolve) => resolve()));
       const stopDrawingModeSpy = jest.spyOn(imageEditorMock, 'stopDrawingMode');
       const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
       const changeMenuSpy = jest.spyOn(imageEditorMock.ui, 'changeMenu');
 
-      cropAction.crop();
+      await cropAction.crop();
 
       expect(getCropzoneRectSpy).toHaveBeenCalled();
       expect(cropSpy).toHaveBeenCalled();
-
-      return promise.then(() => {
-        expect(stopDrawingModeSpy).toHaveBeenCalled();
-        expect(resizeEditorSpy).toHaveBeenCalled();
-        expect(changeMenuSpy).toHaveBeenCalled();
-      });
+      expect(stopDrawingModeSpy).toHaveBeenCalled();
+      expect(resizeEditorSpy).toHaveBeenCalled();
+      expect(changeMenuSpy).toHaveBeenCalled();
     });
 
     it('should be executed When the cancel action occurs', () => {
@@ -319,25 +313,15 @@ describe('UI', () => {
 
   describe('commonAction', () => {
     it('should return to the getActions method must contain commonAction.', () => {
-      const submenus = [
-        'shape',
-        'crop',
-        'flip',
-        'rotate',
-        'text',
-        'mask',
-        'draw',
-        'icon',
-        'filter',
-      ];
-
-      snippet.forEach(submenus, (submenu) => {
-        expect(actions[submenu].modeChange).toBeDefined();
-        expect(actions[submenu].deactivateAll).toBeDefined();
-        expect(actions[submenu].changeSelectableAll).toBeDefined();
-        expect(actions[submenu].discardSelection).toBeDefined();
-        expect(actions[submenu].stopDrawingMode).toBeDefined();
-      });
+      ['shape', 'crop', 'flip', 'rotate', 'text', 'mask', 'draw', 'icon', 'filter'].forEach(
+        (submenu) => {
+          expect(actions[submenu].modeChange).toBeDefined();
+          expect(actions[submenu].deactivateAll).toBeDefined();
+          expect(actions[submenu].changeSelectableAll).toBeDefined();
+          expect(actions[submenu].discardSelection).toBeDefined();
+          expect(actions[submenu].stopDrawingMode).toBeDefined();
+        }
+      );
     });
 
     describe('modeChange()', () => {

@@ -1,4 +1,3 @@
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import Cropper from '@/component/cropper';
@@ -24,7 +23,7 @@ describe('Cropper', () => {
       cropper.start();
       const cropzone = cropper._cropzone;
 
-      snippet.forEach(CROPZONE_DEFAULT_OPTIONS, (optionValue, optionName) => {
+      Object.entries(CROPZONE_DEFAULT_OPTIONS).forEach(([optionName, optionValue]) => {
         expect(cropzone[optionName]).toBe(optionValue);
       });
     });

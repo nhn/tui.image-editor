@@ -1,4 +1,4 @@
-import snippet from 'tui-code-snippet';
+import { stamp, hasStamp } from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import Invoker from '@/invoker';
@@ -51,26 +51,25 @@ describe('commandFactory', () => {
   });
 
   describe('functions', () => {
-    it('should register custom command', () => {
+    it('should register custom command', async () => {
       const testCommand = {
         name: 'testCommand',
         execute: jest.fn(() => Promise.resolve('testCommand')),
         undo: jest.fn(() => Promise.resolve()),
       };
-
       commandFactory.register(testCommand);
 
       const command = commandFactory.create('testCommand');
 
       expect(command).not.toBeNull();
 
-      return invoker.execute('testCommand', graphics).then((commandName) => {
-        expect(commandName).toBe('testCommand');
-        expect(testCommand.execute).toHaveBeenCalledWith(graphics);
-      });
+      const commandName = await invoker.execute('testCommand', graphics);
+
+      expect(commandName).toBe('testCommand');
+      expect(testCommand.execute).toHaveBeenCalledWith(graphics);
     });
 
-    it('should pass parameters on execute', () => {
+    it('should pass parameters on execute', async () => {
       commandFactory.register({
         name: 'testCommand',
         execute(compMap, obj1, obj2, obj3) {
@@ -82,10 +81,10 @@ describe('commandFactory', () => {
         },
       });
 
-      return invoker.execute('testCommand', graphics, 1, 2, 3).then(() => {});
+      await invoker.execute('testCommand', graphics, 1, 2, 3);
     });
 
-    it('should pass parameters on undo', () => {
+    it('should pass parameters on undo', async () => {
       commandFactory.register({
         name: 'testCommand',
         execute() {
@@ -100,7 +99,8 @@ describe('commandFactory', () => {
         },
       });
 
-      return invoker.execute('testCommand', graphics, 1, 2, 3).then(() => invoker.undo());
+      await invoker.execute('testCommand', graphics, 1, 2, 3);
+      await invoker.undo();
     });
   });
 
@@ -111,23 +111,23 @@ describe('commandFactory', () => {
       obj = new fabric.Rect();
     });
 
-    it('should stamp object', () => {
-      return invoker.execute(commands.ADD_OBJECT, graphics, obj).then(() => {
-        expect(snippet.hasStamp(obj)).toBe(true);
-      });
+    it('should stamp object', async () => {
+      await invoker.execute(commands.ADD_OBJECT, graphics, obj);
+
+      expect(hasStamp(obj)).toBe(true);
     });
 
-    it('should add object to canvas', () => {
-      return invoker.execute(commands.ADD_OBJECT, graphics, obj).then(() => {
-        expect(canvas.contains(obj)).toBe(true);
-      });
+    it('should add object to canvas', async () => {
+      await invoker.execute(commands.ADD_OBJECT, graphics, obj);
+
+      expect(canvas.contains(obj)).toBe(true);
     });
 
-    it('should remove object from canvas', () => {
-      return invoker
-        .execute(commands.ADD_OBJECT, graphics, obj)
-        .then(() => invoker.undo())
-        .then(() => expect(canvas.contains(obj)).toBe(false));
+    it('should remove object from canvas', async () => {
+      await invoker.execute(commands.ADD_OBJECT, graphics, obj);
+      await invoker.undo();
+
+      expect(canvas.contains(obj)).toBe(false);
     });
   });
 
@@ -165,33 +165,32 @@ describe('commandFactory', () => {
       invoker.pushUndoStack(makeCommand);
     });
 
-    it('should work undo command correctly', () => {
-      return invoker.undo().then(() => {
-        expect(obj).toMatchObject({
-          width: 10,
-          height: 10,
-          left: 10,
-          top: 10,
-          scaleX: 1,
-          scaleY: 1,
-          angle: 0,
-        });
+    it('should work undo command correctly', async () => {
+      await invoker.undo();
+
+      expect(obj).toMatchObject({
+        width: 10,
+        height: 10,
+        left: 10,
+        top: 10,
+        scaleX: 1,
+        scaleY: 1,
+        angle: 0,
       });
     });
 
-    it('should work redo command correctly', () => {
-      return invoker.undo().then(() => {
-        invoker.redo().then(() => {
-          expect(obj).toMatchObject({
-            width: 30,
-            height: 30,
-            left: 30,
-            top: 30,
-            scaleX: 0.5,
-            scaleY: 0.5,
-            angle: 10,
-          });
-        });
+    it('should work redo command correctly', async () => {
+      await invoker.undo();
+      await invoker.redo();
+
+      expect(obj).toMatchObject({
+        width: 30,
+        height: 30,
+        left: 30,
+        top: 30,
+        scaleX: 0.5,
+        scaleY: 0.5,
+        angle: 10,
       });
     });
   });
@@ -203,125 +202,114 @@ describe('commandFactory', () => {
       graphics.setCanvasImage('', null);
     });
 
-    it('should clear canvas', () => {
+    it('should clear canvas', async () => {
       jest.spyOn(canvas, 'clear');
 
-      return invoker
-        .execute(commands.LOAD_IMAGE, graphics, 'image', img)
-        .then(() => expect(canvas.clear).toHaveBeenCalled());
+      await invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img);
+
+      expect(canvas.clear).toHaveBeenCalled();
     });
 
-    it('should load new image', () => {
-      return invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img).then((changedSize) => {
-        expect(graphics.getImageName()).toBe('image');
-        expect(changedSize).toMatchObject({
-          oldWidth: expect.any(Number),
-          oldHeight: expect.any(Number),
-          newWidth: expect.any(Number),
-          newHeight: expect.any(Number),
-        });
+    it('should load new image', async () => {
+      const changedSize = await invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img);
+
+      expect(graphics.getImageName()).toBe('image');
+      expect(changedSize).toMatchObject({
+        oldWidth: expect.any(Number),
+        oldHeight: expect.any(Number),
+        newWidth: expect.any(Number),
+        newHeight: expect.any(Number),
       });
     });
 
-    it('should not include cropzone after running the LOAD_IMAGE command', () => {
+    it('should not include cropzone after running the LOAD_IMAGE command', async () => {
       const objCropzone = new fabric.Object({ type: 'cropzone' });
 
-      return invoker.execute(commands.ADD_OBJECT, graphics, objCropzone).then(() => {
-        invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img).then(() => {
-          const lastUndoIndex = invoker._undoStack.length - 1;
-          const savedObjects = invoker._undoStack[lastUndoIndex].undoData.objects;
+      await invoker.execute(commands.ADD_OBJECT, graphics, objCropzone);
+      await invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img);
 
-          expect(savedObjects).toHaveLength(0);
-        });
-      });
+      const lastUndoIndex = invoker._undoStack.length - 1;
+      const savedObjects = invoker._undoStack[lastUndoIndex].undoData.objects;
+
+      expect(savedObjects).toHaveLength(0);
     });
 
-    it('should be true after LOAD_IMAGE.', () => {
+    it('should be true after LOAD_IMAGE command.', async () => {
       const objCircle = new fabric.Object({ type: 'circle', evented: false });
 
-      return invoker.execute(commands.ADD_OBJECT, graphics, objCircle).then(() => {
-        invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img).then(() => {
-          const lastUndoIndex = invoker._undoStack.length - 1;
-          const [savedObject] = invoker._undoStack[lastUndoIndex].undoData.objects;
+      await invoker.execute(commands.ADD_OBJECT, graphics, objCircle);
+      await invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img);
 
-          expect(savedObject.evented).toBe(true);
-        });
-      });
+      const lastUndoIndex = invoker._undoStack.length - 1;
+      const [savedObject] = invoker._undoStack[lastUndoIndex].undoData.objects;
+
+      expect(savedObject.evented).toBe(true);
     });
 
-    it('should clear image if not exists prev image', () => {
-      return invoker
-        .execute(commands.LOAD_IMAGE, graphics, 'image', img)
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(graphics.getCanvasImage()).toBeNull();
-          expect(graphics.getImageName()).toBe('');
-        });
+    it('should clear image if not exists prev image', async () => {
+      await invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img);
+      await invoker.undo();
+
+      expect(graphics.getCanvasImage()).toBeNull();
+      expect(graphics.getImageName()).toBe('');
     });
 
-    it('should restore to prev image', () => {
+    it('should restore to prev image', async () => {
       const newImg = new fabric.Image(img2);
 
-      return invoker
-        .execute(commands.LOAD_IMAGE, graphics, 'image', img)
-        .then(() => invoker.execute(commands.LOAD_IMAGE, graphics, 'newImage', newImg))
-        .then(() => {
-          expect(graphics.getImageName()).toBe('newImage');
+      await invoker.execute(commands.LOAD_IMAGE, graphics, 'image', img);
+      await invoker.execute(commands.LOAD_IMAGE, graphics, 'newImage', newImg);
 
-          return invoker.undo();
-        })
-        .then(() => {
-          expect(graphics.getImageName()).toBe('image');
-        });
+      expect(graphics.getImageName()).toBe('newImage');
+
+      await invoker.undo();
+
+      expect(graphics.getImageName()).toBe('image');
     });
   });
 
   describe('flipImageCommand', () => {
-    it('should be flipped over to the x-axis.', () => {
+    it('should be flipped over to the x-axis.', async () => {
       const flipStatus = mockImage.flipX;
 
-      return invoker.execute(commands.FLIP_IMAGE, graphics, 'flipX').then(() => {
-        expect(mockImage.flipX).toBe(!flipStatus);
-      });
+      await invoker.execute(commands.FLIP_IMAGE, graphics, 'flipX');
+
+      expect(mockImage.flipX).toBe(!flipStatus);
     });
 
-    it('should be flipped over to the y-axis.', () => {
+    it('should be flipped over to the y-axis.', async () => {
       const flipStatus = mockImage.flipY;
 
-      return invoker.execute(commands.FLIP_IMAGE, graphics, 'flipY').then(() => {
-        expect(mockImage.flipY).toBe(!flipStatus);
-      });
+      await invoker.execute(commands.FLIP_IMAGE, graphics, 'flipY');
+
+      expect(mockImage.flipY).toBe(!flipStatus);
     });
 
-    it('should reset flip', () => {
+    it('should reset flip', async () => {
       mockImage.flipX = true;
       mockImage.flipY = true;
 
-      return invoker.execute(commands.FLIP_IMAGE, graphics, 'reset').then(() => {
-        expect(mockImage).toMatchObject({ flipX: false, flipY: false });
-      });
+      await invoker.execute(commands.FLIP_IMAGE, graphics, 'reset');
+
+      expect(mockImage).toMatchObject({ flipX: false, flipY: false });
     });
 
-    it('should restore flipX', () => {
+    it('should restore flipX', async () => {
       const flipStatus = mockImage.flipX;
 
-      return invoker
-        .execute(commands.FLIP_IMAGE, graphics, 'flipX')
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(mockImage.flipX).toBe(flipStatus);
-        });
+      await invoker.execute(commands.FLIP_IMAGE, graphics, 'flipX');
+      await invoker.undo();
+
+      expect(mockImage.flipX).toBe(flipStatus);
     });
 
-    it('should restore flipY', () => {
+    it('should restore flipY', async () => {
       const flipStatus = mockImage.flipY;
 
-      return invoker
-        .execute(commands.FLIP_IMAGE, graphics, 'flipY')
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(mockImage.flipY).toBe(flipStatus);
-        });
+      await invoker.execute(commands.FLIP_IMAGE, graphics, 'flipY');
+      await invoker.undo();
+
+      expect(mockImage.flipY).toBe(flipStatus);
     });
   });
 
@@ -332,73 +320,64 @@ describe('commandFactory', () => {
     const newFontSize = 30;
     const newUnderline = true;
 
-    beforeEach(() => {
-      return invoker
-        .execute(commands.ADD_TEXT, graphics, 'text', {
-          styles: {
-            fontSize,
-            underline,
-          },
-        })
-        .then((textObject) => {
-          textObjectId = textObject.id;
-        });
+    beforeEach(async () => {
+      const textObject = await invoker.execute(commands.ADD_TEXT, graphics, 'text', {
+        styles: {
+          fontSize,
+          underline,
+        },
+      });
+      textObjectId = textObject.id;
     });
 
-    it('should set text style', () => {
-      return invoker
-        .execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
-          fontSize: newFontSize,
-          underline: newUnderline,
-        })
-        .then(() => {
-          const textObject = graphics.getObject(textObjectId);
+    it('should set text style', async () => {
+      await invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
+        fontSize: newFontSize,
+        underline: newUnderline,
+      });
 
-          expect(textObject).toMatchObject({ fontSize: 30, underline: true });
-        });
+      const textObject = graphics.getObject(textObjectId);
+
+      expect(textObject).toMatchObject({ fontSize: 30, underline: true });
     });
 
-    it('should restore fontSize', () => {
-      return invoker
-        .execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
-          fontSize: newFontSize,
-          underline: newUnderline,
-        })
-        .then(() => invoker.undo())
-        .then(() => {
-          const textObject = graphics.getObject(textObjectId);
+    it('should restore fontSize', async () => {
+      await invoker.execute(commands.CHANGE_TEXT_STYLE, graphics, textObjectId, {
+        fontSize: newFontSize,
+        underline: newUnderline,
+      });
+      await invoker.undo();
 
-          expect(textObject).toMatchObject({ fontSize, underline });
-        });
+      const textObject = graphics.getObject(textObjectId);
+
+      expect(textObject).toMatchObject({ fontSize, underline });
     });
   });
 
   describe('rotateCommand', () => {
-    it('should add angle', () => {
+    it('should add angle', async () => {
       const originAngle = mockImage.angle;
 
-      return invoker.execute(commands.ROTATE_IMAGE, graphics, 'rotate', 10).then(() => {
-        expect(mockImage.angle).toBe(originAngle + 10);
-      });
+      await invoker.execute(commands.ROTATE_IMAGE, graphics, 'rotate', 10);
+
+      expect(mockImage.angle).toBe(originAngle + 10);
     });
 
-    it('should set angle', () => {
+    it('should set angle', async () => {
       mockImage.angle = 100;
 
-      return invoker.execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 30).then(() => {
-        expect(mockImage.angle).toBe(30);
-      });
+      await invoker.execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 30);
+
+      expect(mockImage.angle).toBe(30);
     });
 
-    it('should restore angle', () => {
+    it('should restore angle', async () => {
       const originalAngle = mockImage.angle;
 
-      return invoker
-        .execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 100)
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(mockImage.angle).toBe(originalAngle);
-        });
+      await invoker.execute(commands.ROTATE_IMAGE, graphics, 'setAngle', 100);
+      await invoker.undo();
+
+      expect(mockImage.angle).toBe(originalAngle);
     });
   });
 
@@ -407,35 +386,28 @@ describe('commandFactory', () => {
     const defaultStrokeWidth = 12;
     const strokeWidth = 50;
 
-    beforeEach(() => {
-      return invoker
-        .execute(commands.ADD_SHAPE, graphics, 'rect', {
-          strokeWidth: defaultStrokeWidth,
-        })
-        .then((shapeObject) => {
-          shapeObjectId = shapeObject.id;
-        });
+    beforeEach(async () => {
+      const shapeObject = await invoker.execute(commands.ADD_SHAPE, graphics, 'rect', {
+        strokeWidth: defaultStrokeWidth,
+      });
+      shapeObjectId = shapeObject.id;
     });
 
-    it('should set strokeWidth', () => {
-      return invoker
-        .execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, { strokeWidth })
-        .then(() => {
-          const shapeObject = graphics.getObject(shapeObjectId);
+    it('should set strokeWidth', async () => {
+      await invoker.execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, { strokeWidth });
 
-          expect(shapeObject.strokeWidth).toBe(strokeWidth);
-        });
+      const shapeObject = graphics.getObject(shapeObjectId);
+
+      expect(shapeObject.strokeWidth).toBe(strokeWidth);
     });
 
-    it('should restore strokeWidth', () => {
-      return invoker
-        .execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, { strokeWidth })
-        .then(() => invoker.undo())
-        .then(() => {
-          const shapeObject = graphics.getObject(shapeObjectId);
+    it('should restore strokeWidth', async () => {
+      await invoker.execute(commands.CHANGE_SHAPE, graphics, shapeObjectId, { strokeWidth });
+      await invoker.undo();
 
-          expect(shapeObject.strokeWidth).toBe(defaultStrokeWidth);
-        });
+      const shapeObject = graphics.getObject(shapeObjectId);
+
+      expect(shapeObject.strokeWidth).toBe(defaultStrokeWidth);
     });
   });
 
@@ -447,31 +419,29 @@ describe('commandFactory', () => {
       objects = [new fabric.Rect(), new fabric.Rect(), new fabric.Rect()];
     });
 
-    it('should clear all objects', () => {
+    it('should clear all objects', async () => {
       canvas.add.apply(canvasContext, objects);
 
       expect(canvas.contains(objects[0])).toBe(true);
       expect(canvas.contains(objects[1])).toBe(true);
       expect(canvas.contains(objects[2])).toBe(true);
 
-      return invoker.execute(commands.CLEAR_OBJECTS, graphics).then(() => {
-        expect(canvas.contains(objects[0])).toBe(false);
-        expect(canvas.contains(objects[1])).toBe(false);
-        expect(canvas.contains(objects[2])).toBe(false);
-      });
+      await invoker.execute(commands.CLEAR_OBJECTS, graphics);
+
+      expect(canvas.contains(objects[0])).toBe(false);
+      expect(canvas.contains(objects[1])).toBe(false);
+      expect(canvas.contains(objects[2])).toBe(false);
     });
 
-    it('should restore all objects', () => {
+    it('should restore all objects', async () => {
       canvas.add.apply(canvasContext, objects);
 
-      return invoker
-        .execute(commands.CLEAR_OBJECTS, graphics)
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(canvas.contains(objects[0])).toBe(true);
-          expect(canvas.contains(objects[1])).toBe(true);
-          expect(canvas.contains(objects[2])).toBe(true);
-        });
+      await invoker.execute(commands.CLEAR_OBJECTS, graphics);
+      await invoker.undo();
+
+      expect(canvas.contains(objects[0])).toBe(true);
+      expect(canvas.contains(objects[1])).toBe(true);
+      expect(canvas.contains(objects[2])).toBe(true);
     });
   });
 
@@ -489,86 +459,76 @@ describe('commandFactory', () => {
       group.add(object, object2);
     });
 
-    it('should remove an object', () => {
+    it('should remove an object', async () => {
       graphics.setActiveObject(object);
 
-      return invoker.execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(object)).then(() => {
-        expect(canvas.contains(object)).toBe(false);
-      });
+      await invoker.execute(commands.REMOVE_OBJECT, graphics, stamp(object));
+
+      expect(canvas.contains(object)).toBe(false);
     });
 
-    it('should remove objects in group', () => {
+    it('should remove objects in group', async () => {
       canvas.setActiveObject(group);
 
-      return invoker.execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(group)).then(() => {
-        expect(canvas.contains(object)).toBe(false);
-        expect(canvas.contains(object2)).toBe(false);
-      });
+      await invoker.execute(commands.REMOVE_OBJECT, graphics, stamp(group));
+
+      expect(canvas.contains(object)).toBe(false);
+      expect(canvas.contains(object2)).toBe(false);
     });
 
-    it('should restore the removed object', () => {
+    it('should restore the removed object', async () => {
       canvas.setActiveObject(object);
 
-      return invoker
-        .execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(object))
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(canvas.contains(object)).toBe(true);
-        });
+      await invoker.execute(commands.REMOVE_OBJECT, graphics, stamp(object));
+      await invoker.undo();
+
+      expect(canvas.contains(object)).toBe(true);
     });
 
-    it('should restore the removed objects in group', () => {
+    it('should restore the removed objects in group', async () => {
       canvas.setActiveObject(group);
 
-      return invoker
-        .execute(commands.REMOVE_OBJECT, graphics, snippet.stamp(group))
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(canvas.contains(object)).toBe(true);
-          expect(canvas.contains(object2)).toBe(true);
-        });
+      await invoker.execute(commands.REMOVE_OBJECT, graphics, stamp(group));
+      await invoker.undo();
+
+      expect(canvas.contains(object)).toBe(true);
+      expect(canvas.contains(object2)).toBe(true);
     });
 
-    it('should restore the position of the removed object in group', () => {
+    it('should restore the position of the removed object in group', async () => {
       const activeSelection = graphics.getActiveSelectionFromObjects(canvas.getObjects());
       graphics.setActiveObject(activeSelection);
 
-      return invoker
-        .execute(commands.REMOVE_OBJECT, graphics, graphics.getActiveObjectIdForRemove())
-        .then(() => invoker.undo())
-        .then(() => {
-          expect(object).toMatchObject({ left: 10, top: 10 });
-          expect(object2).toMatchObject({ left: 5, top: 20 });
-        });
+      await invoker.execute(
+        commands.REMOVE_OBJECT,
+        graphics,
+        graphics.getActiveObjectIdForRemove()
+      );
+      await invoker.undo();
+
+      expect(object).toMatchObject({ left: 10, top: 10 });
+      expect(object2).toMatchObject({ left: 5, top: 20 });
     });
   });
 
   describe('resizeCommand', () => {
     const newDimensions = { width: 20, height: 20 };
 
-    it('should resize image', () => {
-      return invoker.execute(commands.RESIZE_IMAGE, graphics, newDimensions).then(() => {
-        const { width, height, scaleX, scaleY } = mockImage;
+    it('should resize image', async () => {
+      await invoker.execute(commands.RESIZE_IMAGE, graphics, newDimensions);
 
-        expect({
-          width: width * scaleX,
-          height: height * scaleY,
-        }).toEqual(newDimensions);
-      });
+      const { width, height, scaleX, scaleY } = mockImage;
+
+      expect({ width: width * scaleX, height: height * scaleY }).toEqual(newDimensions);
     });
 
-    it('should restore dimensions of image', () => {
-      return invoker
-        .execute(commands.RESIZE_IMAGE, graphics, newDimensions)
-        .then(() => invoker.undo())
-        .then(() => {
-          const { width, height, scaleX, scaleY } = mockImage;
+    it('should restore dimensions of image', async () => {
+      await invoker.execute(commands.RESIZE_IMAGE, graphics, newDimensions);
+      await invoker.undo();
 
-          expect({
-            width: width * scaleX,
-            height: height * scaleY,
-          }).toEqual(dimensions);
-        });
+      const { width, height, scaleX, scaleY } = mockImage;
+
+      expect({ width: width * scaleX, height: height * scaleY }).toEqual(dimensions);
     });
   });
 });
