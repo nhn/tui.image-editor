@@ -7,14 +7,14 @@ import img from 'fixtures/sampleImage.jpg';
 describe('DrawingMode', () => {
   let imageEditor;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     imageEditor = new ImageEditor(document.createElement('div'), {
       cssMaxWidth: 700,
       cssMaxHeight: 500,
     });
     const image = new fabric.Image(img);
 
-    return imageEditor.loadImageFromURL(image, 'sampleImage');
+    await imageEditor.loadImageFromURL(image, 'sampleImage');
   });
 
   afterEach(() => {

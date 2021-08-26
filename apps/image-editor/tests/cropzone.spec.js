@@ -1,4 +1,3 @@
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Cropzone from '@/extension/cropzone';
 
@@ -106,13 +105,9 @@ describe('Cropzone', () => {
 
   it('should yield the result of maintaining the ratio at running the resize function at a fixed rate', () => {
     const presetRatio = 5 / 4;
-    const cropzone = new Cropzone(
-      canvas,
-      snippet.extend({}, options, { width: 50, height: 40, presetRatio }),
-      {}
-    );
+    const cropzone = new Cropzone(canvas, { ...options, width: 50, height: 40, presetRatio }, {});
 
-    snippet.forEach(['tl', 'tr', 'mt', 'ml', 'mr', 'mb', 'bl', 'br'], (cornerType) => {
+    ['tl', 'tr', 'mt', 'ml', 'mr', 'mb', 'bl', 'br'].forEach((cornerType) => {
       const { width, height } = cropzone._resizeCropZone({ x: 20, y: 20 }, cornerType);
 
       expect(width / height).toEqual(presetRatio);
