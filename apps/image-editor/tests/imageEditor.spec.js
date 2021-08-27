@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @fileoverview Test env
- */
 import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import ImageEditor from '@/imageEditor';
@@ -10,62 +6,50 @@ import { eventNames, keyCodes } from '@/consts';
 const { OBJECT_ROTATED } = eventNames;
 
 describe('ImageEditor', () => {
-  // hostnameSent module scope variable can not be reset.
-  // maintain cases with xit as it always fail, if you want to test these cases, change xit to fit one by one
   describe('constructor', () => {
     let imageEditor, el;
 
     beforeEach(() => {
       el = document.createElement('div');
-      spyOn(snippet, 'sendHostname');
+      snippet.sendHostname = jest.fn();
 
-      imageEditor = new ImageEditor(el, {
-        usageStatistics: false,
-      });
+      imageEditor = new ImageEditor(el, { usageStatistics: false });
     });
 
     afterEach(() => {
       imageEditor.destroy();
     });
 
-    xit('should send hostname by default', () => {
+    it('should send hostname by default', () => {
       imageEditor = new ImageEditor(el);
 
       expect(snippet.sendHostname).toHaveBeenCalled();
     });
 
-    xit('should not send hostname on usageStatistics option false', () => {
-      imageEditor = new ImageEditor(el, {
-        usageStatistics: false,
-      });
+    it('should not send hostname on usageStatistics option false', () => {
+      imageEditor = new ImageEditor(el, { usageStatistics: false });
 
       expect(snippet.sendHostname).not.toHaveBeenCalled();
     });
 
-    it('`preventDefault` of BACKSPACE key events should not be executed when object is selected state.', () => {
-      const spyCallback = jasmine.createSpy();
+    it('should not be executed when object is selected state', () => {
+      const preventDefaultSpy = jest.fn();
+      jest.spyOn(imageEditor._graphics, 'getActiveObject').mockReturnValue(null);
 
-      spyOn(imageEditor._graphics, 'getActiveObject').and.returnValue(null);
+      imageEditor._onKeyDown({ keyCode: keyCodes.BACKSPACE, preventDefault: preventDefaultSpy });
 
-      imageEditor._onKeyDown({
-        keyCode: keyCodes.BACKSPACE,
-        preventDefault: spyCallback,
-      });
-
-      expect(spyCallback).not.toHaveBeenCalled();
+      expect(preventDefaultSpy).not.toHaveBeenCalled();
     });
 
-    it('"objectRotated" event should be fire at object is rotate.', () => {
+    it('should be fire at object is rotated', () => {
       const canvas = imageEditor._graphics.getCanvas();
       const obj = new fabric.Object({});
-      const mock = { target: obj };
       canvas.add(obj);
+      imageEditor.fire = jest.fn();
 
-      spyOn(imageEditor, 'fire').and.callThrough();
+      canvas.fire('object:rotating', { target: obj });
 
-      canvas.fire('object:rotating', mock);
-
-      expect(imageEditor.fire.calls.mostRecent().args[0]).toBe(OBJECT_ROTATED);
+      expect(imageEditor.fire).toHaveBeenCalledWith(OBJECT_ROTATED, expect.any(Object));
     });
   });
 });
