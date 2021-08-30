@@ -1,9 +1,4 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/text.js"
- */
 import { fabric } from 'fabric';
-import $ from 'jquery';
 import Graphics from '@/graphics';
 import Text from '@/component/text';
 
@@ -11,7 +6,7 @@ describe('Text', () => {
   let canvas, graphics, mockImage, text;
 
   beforeAll(() => {
-    graphics = new Graphics($('<canvas>')[0]);
+    graphics = new Graphics(document.createElement('canvas'));
     canvas = graphics.getCanvas();
     text = new Text(graphics);
   });
@@ -32,43 +27,38 @@ describe('Text', () => {
 
     beforeEach(() => {
       text.add('', {});
-
       activeObj = canvas.getActiveObject();
     });
 
-    it('should make the blank text object when text parameter is empty string.', () => {
+    it('should make the blank text object when text parameter is empty string', () => {
       const newText = activeObj.text;
 
-      expect(newText).toEqual('');
+      expect(newText).toBe('');
     });
 
-    it('should make the text object set default option when parameter has not "styles" property.', () => {
+    it('should make the text object set default option when parameter has not "styles" property', () => {
       const newTextStyle = activeObj.fontWeight;
 
-      expect(newTextStyle).toEqual('normal');
+      expect(newTextStyle).toBe('normal');
     });
 
-    it('should create the text object on center of canvas when parameter has not "position" property.', () => {
-      const mockImagePos = mockImage.getCenterPoint();
+    it('should create the text object on center of canvas when parameter has not "position" property', () => {
+      const { x, y } = mockImage.getCenterPoint();
 
-      expect(activeObj.left).toEqual(mockImagePos.x);
-      expect(activeObj.top).toEqual(mockImagePos.y);
+      expect(activeObj).toMatchObject({ left: x, top: y });
     });
 
-    it('Default option for autofocus should be true when adding text.', (done) => {
-      text.add('default', {}).then((info) => {
-        const newText = graphics.getObject(info.id);
+    it('should be true when adding text', async () => {
+      const info = await text.add('default', {});
+      const newText = graphics.getObject(info.id);
 
-        expect(newText.selectionStart).toBe(0);
-        expect(newText.selectionEnd).toBe(7);
-        expect(newText.isEditing).toBe(true);
-
-        done();
-      });
+      expect(newText.selectionStart).toBe(0);
+      expect(newText.selectionEnd).toBe(7);
+      expect(newText.isEditing).toBe(true);
     });
   });
 
-  it('Rotated text elements must also maintain consistent left and top positions after entering and exiting drawing mode.', () => {
+  it('should maintain consistent left and top positions after entering and exiting drawing mode', () => {
     const left = 10;
     const top = 20;
     const newText = new fabric.IText('testString', {
@@ -86,69 +76,55 @@ describe('Text', () => {
     text.start();
     text.end();
 
-    expect(newText.left).toEqual(left);
-    expect(newText.top).toEqual(top);
+    expect(newText).toMatchSnapshot();
   });
 
-  it('change() should change contents in the text object as input.', () => {
+  it('should change contents in the text object as input', () => {
     text.add('text123', {});
 
     const activeObj = canvas.getActiveObject();
 
     text.change(activeObj, 'abc');
 
-    expect(activeObj.text).toEqual('abc');
+    expect(activeObj.text).toBe('abc');
 
     text.change(activeObj, 'def');
 
-    expect(activeObj.text).toEqual('def');
+    expect(activeObj.text).toBe('def');
   });
 
   describe('setStyle()', () => {
     beforeEach(() => {
-      text.add('new text', {
-        styles: {
-          fontWeight: 'bold',
-        },
-      });
+      text.add('new text', { styles: { fontWeight: 'bold' } });
     });
 
-    it('should unlock style when a selected style already apply on the activated text object.', () => {
+    it('should unlock style when a selected style already apply on the activated text object', () => {
       const activeObj = canvas.getActiveObject();
 
-      text.setStyle(activeObj, {
-        fontWeight: 'bold',
-      });
+      text.setStyle(activeObj, { fontWeight: 'bold' });
 
-      expect(activeObj.fontWeight).not.toEqual('bold');
+      expect(activeObj.fontWeight).not.toBe('bold');
     });
 
-    it('should apply style when the activated text object has not a selected style.', () => {
+    it('should apply style when the activated text object has not a selected style', () => {
       const activeObj = canvas.getActiveObject();
 
-      text.setStyle(activeObj, {
-        fontStyle: 'italic',
-      });
+      text.setStyle(activeObj, { fontStyle: 'italic' });
 
-      expect(activeObj.fontStyle).toEqual('italic');
+      expect(activeObj.fontStyle).toBe('italic');
     });
   });
 
-  it('_onFabricScaling() should change size of selected text object.', () => {
+  it('should change size of selected text object', () => {
     const obj = new fabric.Text('test');
-    const mock = {
-      target: obj,
-    };
     const scale = 10;
-    const originSize = obj.fontSize;
+    const { fontSize } = obj;
 
     text.start({});
-
     canvas.add(obj);
     obj.scaleY = scale;
+    canvas.fire('object:scaling', { target: obj });
 
-    canvas.fire('object:scaling', mock);
-
-    expect(obj.fontSize).toEqual(originSize * scale);
+    expect(obj.fontSize).toBe(fontSize * scale);
   });
 });
