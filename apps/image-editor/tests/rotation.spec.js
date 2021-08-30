@@ -1,19 +1,14 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/rotation.js"
- */
 import { fabric } from 'fabric';
-import $ from 'jquery';
 import Graphics from '@/graphics';
 import Rotation from '@/component/rotation';
 
 describe('Rotation', () => {
-  let graphics, rotationModule, mockImage, canvas;
+  let graphics, rotation, mockImage, canvas;
 
   beforeAll(() => {
-    graphics = new Graphics($('<canvas>')[0]);
+    graphics = new Graphics(document.createElement('canvas'));
     canvas = graphics.getCanvas();
-    rotationModule = new Rotation(graphics);
+    rotation = new Rotation(graphics);
   });
 
   beforeEach(() => {
@@ -21,48 +16,45 @@ describe('Rotation', () => {
     graphics.setCanvasImage('mockImage', mockImage);
   });
 
-  it('"getCurrentAngle()" should return current angle value', () => {
+  it('should return current angle', () => {
     mockImage.angle = 30;
 
-    expect(rotationModule.getCurrentAngle()).toEqual(30);
+    expect(rotation.getCurrentAngle()).toEqual(30);
   });
 
-  it('"setAngle()" should set angle value', () => {
-    rotationModule.setAngle(40);
+  it('should set angle', () => {
+    rotation.setAngle(40);
 
-    expect(rotationModule.getCurrentAngle()).toEqual(40);
+    expect(rotation.getCurrentAngle()).toEqual(40);
   });
 
-  it('"rotate()" should add angle value', () => {
-    let current = rotationModule.getCurrentAngle();
+  it('should add angle', () => {
+    let angle = rotation.getCurrentAngle();
 
-    rotationModule.rotate(10);
-    expect(rotationModule.getCurrentAngle()).toBe(current + 10);
+    rotation.rotate(10);
 
-    current = rotationModule.getCurrentAngle();
-    rotationModule.rotate(20);
-    expect(rotationModule.getCurrentAngle()).toBe(current + 20);
+    expect(rotation.getCurrentAngle()).toBe(angle + 10);
+
+    angle = rotation.getCurrentAngle();
+
+    rotation.rotate(20);
+
+    expect(rotation.getCurrentAngle()).toBe(angle + 20);
   });
 
-  it('"rotate()" should add angle value modular 360(===2*PI)', (done) => {
-    rotationModule
-      .setAngle(10)
-      .then(() => rotationModule.rotate(380))
-      .then(() => {
-        expect(rotationModule.getCurrentAngle()).toBe(30);
-        done();
-      });
+  it('should add angle modular 360(===2*PI)', async () => {
+    await rotation.setAngle(10);
+    await rotation.rotate(380);
+
+    expect(rotation.getCurrentAngle()).toBe(30);
   });
 
-  // @todo Move this tc to main.spec.js
-  it('"adjustCanvasDimension()" should set canvas dimension from image-rect', () => {
-    spyOn(mockImage, 'getBoundingRect').and.returnValue({
-      width: 100,
-      height: 110,
-    });
+  it('should set canvas dimension from image-rect', () => {
+    jest.spyOn(mockImage, 'getBoundingRect').mockReturnValue({ width: 100, height: 110 });
 
-    rotationModule.adjustCanvasDimension();
-    expect(canvas.getWidth()).toEqual(100);
-    expect(canvas.getHeight()).toEqual(110);
+    rotation.adjustCanvasDimension();
+
+    expect(canvas.getWidth()).toBe(100);
+    expect(canvas.getHeight()).toBe(110);
   });
 });
