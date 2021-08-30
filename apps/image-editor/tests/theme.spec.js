@@ -1,44 +1,40 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/ui/theme/theme.js"
- */
-import snippet from 'tui-code-snippet';
 import Theme from '@/ui/theme/theme';
 import defaultTheme from '@/ui/theme/standard';
 
 describe('Theme', () => {
   let theme;
+
   beforeEach(() => {
     theme = new Theme(defaultTheme);
   });
+
   describe('getStyle()', () => {
-    it('When the user sets the icon file location, the path and name information must be included.', () => {
-      const addUserIconPath = 'base/tests/fixtures/icon-d.svg';
-      const addUserIconName = 'icon-d';
-      const themeForIconPathSet = new Theme(
-        snippet.extend({}, defaultTheme, {
-          'menu.normalIcon.path': addUserIconPath,
-          'menu.normalIcon.name': addUserIconName,
-        })
-      );
+    it('should have "path" and "name" when the user sets the icon file location', () => {
+      const userIconPath = 'fixtures/icon-d.svg';
+      const userIconName = 'icon-d';
+      const themeForIconPathSet = new Theme({
+        ...defaultTheme,
+        'menu.normalIcon.path': userIconPath,
+        'menu.normalIcon.name': userIconName,
+      });
       const {
         normal: { path, name },
       } = themeForIconPathSet.getStyle('menu.icon');
 
-      expect(path).toEqual('base/tests/fixtures/icon-d.svg');
-      expect(name).toEqual('icon-d');
+      expect(path).toBe(userIconPath);
+      expect(name).toBe(userIconName);
     });
 
-    it('should return default icon color information.', () => {
+    it('should return default icon color information', () => {
       const { normal, active, disabled, hover } = theme.getStyle('menu.icon');
 
-      expect(normal.color).toEqual('#8a8a8a');
-      expect(active.color).toEqual('#555555');
-      expect(disabled.color).toEqual('#434343');
-      expect(hover.color).toEqual('#e9e9e9');
+      expect(normal.color).toBe('#8a8a8a');
+      expect(active.color).toBe('#555555');
+      expect(disabled.color).toBe('#434343');
+      expect(hover.color).toBe('#e9e9e9');
     });
 
-    it('In normal types, cssText should be returned.', () => {
+    it('should return cssText in normal types', () => {
       theme.styles.normal = {
         backgroundColor: '#fdba3b',
         border: '1px solid #fdba3b',
@@ -47,12 +43,10 @@ describe('Theme', () => {
         fontSize: '12px',
       };
 
-      const expected =
-        'background-color: #fdba3b;border: 1px solid #fdba3b;color: #fff;font-family: NotoSans, sans-serif;font-size: 12px';
-      expect(theme.getStyle('normal')).toBe(expected);
+      expect(theme.getStyle('normal')).toMatchSnapshot();
     });
 
-    it('If all members are objects, you must leave the structure intact and return cssText.', () => {
+    it('should return cssText if all members are objects', () => {
       theme.styles['submenu.normalLabel'] = {
         color: '#858585',
         fontWeight: 'normal',
@@ -62,16 +56,12 @@ describe('Theme', () => {
         fontWeight: 'normal',
       };
 
-      const expected = {
-        normal: 'color: #858585;font-weight: normal',
-        active: 'color: #000;font-weight: normal',
-      };
-      expect(theme.getStyle('submenu.label')).toEqual(expected);
+      expect(theme.getStyle('submenu.label')).toMatchSnapshot();
     });
   });
 
   describe('_makeCssText()', () => {
-    it('Should return the cssText of the expected value for the object.', () => {
+    it('should return the cssText of the expected value for the object', () => {
       const styleObject = {
         backgroundColor: '#fff',
         backgroundImage: './img/bg.png',
@@ -80,31 +70,27 @@ describe('Theme', () => {
         fontFamily: 'NotoSans, sans-serif',
         fontSize: '12px',
       };
-      const expected =
-        'background-color: #fff;background-image: url(./img/bg.png);border: 1px solid #ddd;color: #222;font-family: NotoSans, sans-serif;font-size: 12px';
-      expect(theme._makeCssText(styleObject)).toBe(expected);
+
+      expect(theme._makeCssText(styleObject)).toMatchSnapshot();
     });
   });
 
   describe('_makeSvgItem()', () => {
-    it('When using the default icon, a svg set with the path prefix and no use-default class should be created.', () => {
+    it('should create path prefix and use-default class when using the default icon', () => {
       const useTagString = theme._makeSvgItem(['normal'], 'crop');
 
-      expect(useTagString).toBe('<use xlink:href="#ic-crop" class="normal use-default"/>');
+      expect(useTagString).toMatchSnapshot();
     });
 
-    it('Setting the icon file should create a svg path with the prefix.', () => {
-      const themeForIconPathSet = new Theme(
-        snippet.extend({}, defaultTheme, {
-          'menu.normalIcon.path': 'base/tests/fixtures/icon-d.svg',
-          'menu.normalIcon.name': 'icon-d',
-        })
-      );
+    it('should create a svg path with the prefix when set the icon file', () => {
+      const themeForIconPathSet = new Theme({
+        ...defaultTheme,
+        'menu.normalIcon.path': 'fixtures/icon-d.svg',
+        'menu.normalIcon.name': 'icon-d',
+      });
       const useTagString = themeForIconPathSet._makeSvgItem(['normal'], 'crop');
 
-      expect(useTagString).toBe(
-        '<use xlink:href="base/tests/fixtures/icon-d.svg#icon-d-ic-crop" class="normal"/>'
-      );
+      expect(useTagString).toMatchSnapshot();
     });
   });
 });
