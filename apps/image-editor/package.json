@@ -27,8 +27,8 @@
   "scripts": {
     "test": "jest --forceExit --detectOpenHandles",
     "test:types": "tsc --project tests/types",
-    "bundle": "webpack && webpack -p && npm run bundle:svg && node tsBannerGenerator.js",
-    "bundle:svg": "node makesvg.js",
+    "build": "webpack && webpack -p && npm run build:svg && node tsBannerGenerator.js",
+    "build:svg": "node makesvg.js",
     "serve": "webpack-dev-server",
     "doc:dev": "tuidoc --serv",
     "doc": "tuidoc"
