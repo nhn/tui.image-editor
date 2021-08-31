@@ -39,13 +39,13 @@ describe('Cropzone', () => {
     cropzone.top = -1;
     cropzone._onMoving();
 
-    expect(cropzone).toEqual(expect.objectContaining({ top: 0, left: 0 }));
+    expect(cropzone).toMatchObject({ top: 0, left: 0 });
 
     cropzone.left = 1000;
     cropzone.top = 1000;
     cropzone._onMoving();
 
-    expect(cropzone).toEqual(expect.objectContaining({ top: 300, left: 200 }));
+    expect(cropzone).toMatchObject({ top: 300, left: 200 });
   });
 
   it('should return whether the cropzone has real area or not', () => {
