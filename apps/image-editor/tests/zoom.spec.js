@@ -1,22 +1,20 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/zoom.js"
- */
+import { fabric } from 'fabric';
 import ImageEditor from '@/imageEditor';
+
+import '@/command/loadImage';
+
+import img from 'fixtures/sampleImage.jpg';
 
 describe('Zoom', () => {
   let imageEditor, x, y, zoomLevel;
-  const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
-  beforeEach((done) => {
+  beforeEach(async () => {
     imageEditor = new ImageEditor(document.createElement('div'), {
       cssMaxWidth: 700,
       cssMaxHeight: 500,
     });
-    imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => {
-      done();
-    });
-
+    const image = new fabric.Image(img);
+    await imageEditor.loadImageFromURL(image, 'sampleImage');
     x = 0;
     y = 0;
     zoomLevel = 1.0;
