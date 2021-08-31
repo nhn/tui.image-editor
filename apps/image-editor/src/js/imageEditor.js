@@ -3,6 +3,7 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
+import { fabric } from 'fabric';
 import Invoker from '@/invoker';
 import UI from '@/ui';
 import action from '@/action';

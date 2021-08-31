@@ -126,16 +126,16 @@ class Text extends Submenu {
     this.actions.modeChange('text');
   }
 
-  set textColor(color) {
-    this._els.textColorpicker.color = color;
-  }
-
   /**
    * Get text color
    * @returns {string} - text color
    */
   get textColor() {
     return this._els.textColorpicker.color;
+  }
+
+  set textColor(color) {
+    this._els.textColorpicker.color = color;
   }
 
   /**

@@ -68,6 +68,10 @@ class Range {
     });
   }
 
+  get max() {
+    return this._max;
+  }
+
   /**
    * Set range max value and re position cursor
    * @param {number} maxValue - max value
@@ -78,8 +82,8 @@ class Range {
     this.value = this._value;
   }
 
-  get max() {
-    return this._max;
+  get min() {
+    return this._min;
   }
 
   /**
@@ -89,10 +93,6 @@ class Range {
   set min(minValue) {
     this._min = minValue;
     this.max = this._max;
-  }
-
-  get min() {
-    return this._min;
   }
 
   /**
