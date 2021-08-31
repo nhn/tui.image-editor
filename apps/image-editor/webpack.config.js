@@ -57,9 +57,10 @@ module.exports = {
       {
         test: /\.js$/,
         exclude: /node_modules/,
-        loader: 'babel-loader?cacheDirectory',
+        loader: 'babel-loader',
         options: {
-          babelrc: true,
+          presets: [['@babel/preset-env', { targets: 'defaults' }]],
+          plugins: ['@babel/plugin-proposal-class-properties'],
         },
       },
       {
