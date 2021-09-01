@@ -9,6 +9,7 @@ module.exports = {
     jest: true,
     'jest/globals': true,
   },
+  parser: '@babel/eslint-parser',
   parserOptions: {
     sourceType: 'module',
   },
