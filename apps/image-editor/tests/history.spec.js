@@ -1,15 +1,7 @@
-/**
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/ui/history.js"
- */
-
 import History from '@/ui/history';
 
 describe('history', () => {
-  let history;
-  let options;
-  let name;
-  let detail;
+  let history, options, name, detail;
 
   beforeEach(() => {
     options = {};
@@ -23,7 +15,7 @@ describe('history', () => {
   });
 
   it('should add a history item', () => {
-    spyOn(history, '_selectItem');
+    jest.spyOn(history, '_selectItem');
 
     history.add({ name, detail });
 
@@ -32,7 +24,7 @@ describe('history', () => {
   });
 
   it('should add an event listener', () => {
-    spyOn(history.listElement, 'addEventListener');
+    jest.spyOn(history.listElement, 'addEventListener');
 
     history._addHistoryEventListener();
 
@@ -40,7 +32,7 @@ describe('history', () => {
   });
 
   it('should remove an event listener', () => {
-    spyOn(history.listElement, 'removeEventListener');
+    jest.spyOn(history.listElement, 'removeEventListener');
 
     history._removeHistoryEventListener();
 
@@ -62,8 +54,8 @@ describe('history', () => {
       history.add({ name, detail });
     });
 
-    it('should nothing when index is the same as historyIndex', () => {
-      spyOn(history, '_selectItem');
+    it('should do nothing when index is the same as historyIndex', () => {
+      jest.spyOn(history, '_selectItem');
 
       history._clickHistoryItem({ target });
 
@@ -72,8 +64,7 @@ describe('history', () => {
   });
 
   describe('_selectItem', () => {
-    let index;
-    let listLength;
+    let index, listLength;
 
     beforeEach(() => {
       history.add({ name, detail });
@@ -83,8 +74,8 @@ describe('history', () => {
     });
 
     it('should select item', () => {
-      spyOn(history, 'addClass');
-      spyOn(history, 'removeClass');
+      jest.spyOn(history, 'addClass');
+      jest.spyOn(history, 'removeClass');
 
       history._selectItem(index);
 
@@ -97,16 +88,14 @@ describe('history', () => {
   it('should destroy history instance', () => {
     history.destroy();
 
-    for (const prop in history) {
-      if (history.hasOwnProperty(prop)) {
-        expect(history[prop]).toBe(null);
-      }
-    }
+    Object.values(history).forEach((propValue) => {
+      expect(propValue).toBeNull();
+    });
   });
 
   it('should register an action and add event listener', () => {
     const actions = {};
-    spyOn(history, '_addHistoryEventListener');
+    jest.spyOn(history, '_addHistoryEventListener');
 
     history.addEvent(actions);
 
@@ -114,8 +103,8 @@ describe('history', () => {
     expect(history._actions).toEqual(actions);
   });
 
-  it('should register an action and add event listener', () => {
-    spyOn(history, '_removeHistoryEventListener');
+  it('should remove an action and event listener', () => {
+    jest.spyOn(history, '_removeHistoryEventListener');
 
     history.removeEvent();
 

@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/helper/selectionModifyHelper.js"
- */
 import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import {

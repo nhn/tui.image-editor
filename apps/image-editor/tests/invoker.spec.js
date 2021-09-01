@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/invoker.js"
- */
 import Invoker from '@/invoker';
 import Command from '@/interface/command';
 import { Promise } from '@/util';
@@ -11,49 +7,37 @@ describe('Invoker', () => {
 
   beforeEach(() => {
     invoker = new Invoker();
-
     cmd = new Command({
-      execute: jasmine.createSpy().and.returnValue(Promise.resolve()),
-      undo: jasmine.createSpy().and.returnValue(Promise.resolve()),
+      execute: jest.fn(() => Promise.resolve()),
+      undo: jest.fn(() => Promise.resolve()),
     });
   });
 
-  it('"redo()" should call "command.execute" again', (done) => {
-    invoker
-      .execute(cmd)
-      .then(() => invoker.undo())
-      .then(() => {
-        cmd.execute.calls.reset();
+  it('should call "command.execute" again', async () => {
+    await invoker.execute(cmd);
+    await invoker.undo();
+    await invoker.redo();
 
-        return invoker.redo();
-      })
-      .then(() => {
-        expect(cmd.execute).toHaveBeenCalled();
-        done();
-      });
+    expect(cmd.execute).toHaveBeenCalledTimes(2);
   });
 
-  it('should call the "command.executeCallback" after invoke', (done) => {
-    const spyCallback = jasmine.createSpy();
+  it('should call the "command.executeCallback" after invoke', async () => {
+    const callbackSpy = jest.fn();
 
-    cmd.setExecuteCallback(spyCallback);
-    invoker.execute(cmd).then(() => {
-      expect(spyCallback).toHaveBeenCalled();
-      done();
-    });
+    cmd.setExecuteCallback(callbackSpy);
+    await invoker.execute(cmd);
+
+    expect(callbackSpy).toHaveBeenCalled();
   });
 
-  it('should call the "command.undoCallback" after undo', (done) => {
-    const spyCallback = jasmine.createSpy();
+  it('should call the "command.undoCallback" after undo', async () => {
+    const callbackSpy = jest.fn();
 
-    cmd.setUndoCallback(spyCallback);
-    invoker
-      .execute(cmd)
-      .then(() => invoker.undo())
-      .then(() => {
-        expect(spyCallback).toHaveBeenCalled();
-        done();
-      });
+    cmd.setUndoCallback(callbackSpy);
+    await invoker.execute(cmd);
+    await invoker.undo();
+
+    expect(callbackSpy).toHaveBeenCalled();
   });
 
   describe('invoker.customEvents', () => {
@@ -61,115 +45,71 @@ describe('Invoker', () => {
 
     beforeEach(() => {
       spyEvents = {
-        undoStackChanged: jasmine.createSpy(),
-        redoStackChanged: jasmine.createSpy(),
+        undoStackChanged: jest.fn(),
+        redoStackChanged: jest.fn(),
       };
     });
 
-    it(
-      '"invoke()" should fire a event - ' + ' "pushUndoStack" (when redoStack is empty before)"',
-      (done) => {
-        invoker.on(spyEvents);
-        invoker.execute(cmd).then(() => {
-          expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
-          expect(spyEvents.redoStackChanged).not.toHaveBeenCalled();
-          done();
-        });
-      }
-    );
+    it('should fire a event when redoStack is empty before', async () => {
+      invoker.on(spyEvents);
+      await invoker.execute(cmd);
 
-    it(
-      '"invoke()" should fire events - ' +
-        ' "pushUndoStack", "clearRedoStack" (when redoStack is not empty before)',
-      (done) => {
-        invoker.pushRedoStack({});
+      expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
+      expect(spyEvents.redoStackChanged).not.toHaveBeenCalled();
+    });
 
-        invoker.on(spyEvents);
-        invoker.execute(cmd).then(() => {
-          expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
-          expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(0);
-          done();
-        });
-      }
-    );
+    it('should fire events when redoStack is not empty before', async () => {
+      invoker.pushRedoStack({});
+      invoker.on(spyEvents);
+      await invoker.execute(cmd);
 
-    it(
-      '"undo()" should fire a event - ' + ' "pushRedoStack" (when undoStack is not empty after)',
-      (done) => {
-        invoker
-          .execute(cmd)
-          .then(() => invoker.execute(cmd))
-          .then(() => {
-            invoker.on(spyEvents);
+      expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
+      expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(0);
+    });
 
-            return invoker.undo();
-          })
-          .then(() => {
-            expect(spyEvents.undoStackChanged).not.toHaveBeenCalled();
-            expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(1);
-            done();
-          });
-      }
-    );
+    it('should fire redo event when undoStack is not empty after', async () => {
+      await invoker.execute(cmd);
+      await invoker.execute(cmd);
 
-    it(
-      '"undo()" should fire events - ' +
-        ' "pushRedoStack", "emptyUndoStack" (when undoStack is empty after)',
-      (done) => {
-        invoker
-          .execute(cmd)
-          .then(() => {
-            invoker.on(spyEvents);
+      invoker.on(spyEvents);
+      await invoker.undo();
 
-            return invoker.undo();
-          })
-          .then(() => {
-            expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(1);
-            expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(0);
-            done();
-          });
-      }
-    );
+      expect(spyEvents.undoStackChanged).not.toHaveBeenCalled();
+      expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(1);
+    });
 
-    it(
-      '"redo()" should fire a event - ' + ' "pushUndoStack" (when redoStack is not empty after)',
-      (done) => {
-        invoker
-          .execute(cmd)
-          .then(() => invoker.execute(cmd))
-          .then(() => invoker.undo())
-          .then(() => invoker.undo())
-          .then(() => {
-            invoker.on(spyEvents);
+    it('should fire undo event when undoStack is empty after', async () => {
+      await invoker.execute(cmd);
 
-            return invoker.redo();
-          })
-          .then(() => {
-            expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
-            expect(spyEvents.redoStackChanged).not.toHaveBeenCalled();
-            done();
-          });
-      }
-    );
+      invoker.on(spyEvents);
+      await invoker.undo();
 
-    it(
-      '"redo()" should fire events - ' +
-        ' "pushUndoStack", "emptyRedoStack" (when undoStack is empty after)',
-      (done) => {
-        invoker
-          .execute(cmd)
-          .then(() => invoker.undo())
-          .then(() => {
-            invoker.on(spyEvents);
+      expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(0);
+      expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(1);
+    });
 
-            return invoker.redo(cmd);
-          })
-          .then(() => {
-            expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
-            expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(0);
-            done();
-          });
-      }
-    );
+    it('should fire undo event when redoStack is not empty after', async () => {
+      await invoker.execute(cmd);
+      await invoker.execute(cmd);
+      await invoker.undo();
+      await invoker.undo();
+
+      invoker.on(spyEvents);
+      await invoker.redo();
+
+      expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
+      expect(spyEvents.redoStackChanged).not.toHaveBeenCalled();
+    });
+
+    it('should fire redo event when undoStack is empty after', async () => {
+      await invoker.execute(cmd);
+      await invoker.undo();
+
+      invoker.on(spyEvents);
+      await invoker.redo();
+
+      expect(spyEvents.undoStackChanged).toHaveBeenCalledWith(1);
+      expect(spyEvents.redoStackChanged).toHaveBeenCalledWith(0);
+    });
   });
 });

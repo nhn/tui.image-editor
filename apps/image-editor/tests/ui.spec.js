@@ -1,137 +1,119 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/ui.js"
- */
-import snippet from 'tui-code-snippet';
 import UI from '@/ui';
 import { Promise } from '@/util';
 import { HELP_MENUS } from '@/consts';
 
 describe('UI', () => {
-  let ui;
-  let uiOptions;
+  let ui, options;
+
   beforeEach(() => {
-    uiOptions = {
-      loadImage: {
-        path: 'mockImagePath',
-        name: '',
-      },
+    options = {
+      loadImage: { path: 'mockImagePath', name: '' },
       menu: ['resize', 'crop', 'flip', 'rotate', 'draw', 'shape', 'icon', 'text', 'mask', 'filter'],
       initMenu: 'shape',
       menuBarPosition: 'bottom',
     };
-    ui = new UI(document.createElement('div'), uiOptions, {});
+    ui = new UI(document.createElement('div'), options, {});
   });
 
   describe('Destroy()', () => {
-    it('"_destroyAllMenu()" The "destroy" function of all menu instances must be executed.', () => {
-      snippet.forEach(uiOptions.menu, (menuName) => {
-        spyOn(ui[menuName], 'destroy');
+    it('should be executed for all menu instances', () => {
+      const spies = [];
+      options.menu.forEach((menu) => {
+        spies.push(jest.spyOn(ui[menu], 'destroy'));
       });
 
       ui._destroyAllMenu();
 
-      snippet.forEach(uiOptions.menu, (menuName) => {
-        expect(ui[menuName].destroy).toHaveBeenCalled();
+      spies.forEach((spy) => {
+        expect(spy).toHaveBeenCalled();
       });
     });
 
-    it('"_removeUiEvent()" must execute "removeEventListener" of all menus.', () => {
-      const allUiButtonElementName = [...uiOptions.menu, ...HELP_MENUS];
-      snippet.forEach(allUiButtonElementName, (elementName) => {
-        spyOn(ui._buttonElements[elementName], 'removeEventListener');
+    it('should execute "removeEventListener" for all menus', () => {
+      const allUiButtonElementName = [...options.menu, ...HELP_MENUS];
+      allUiButtonElementName.forEach((element) => {
+        jest.spyOn(ui._buttonElements[element], 'removeEventListener');
       });
 
       ui._removeUiEvent();
 
-      snippet.forEach(allUiButtonElementName, (elementName) => {
-        expect(ui._buttonElements[elementName].removeEventListener).toHaveBeenCalled();
+      allUiButtonElementName.forEach((element) => {
+        expect(ui._buttonElements[element].removeEventListener).toHaveBeenCalled();
       });
     });
   });
 
   describe('_changeMenu()', () => {
-    beforeEach(() => {
+    it('should execute when the menu changes', () => {
       ui.submenu = 'shape';
-      spyOn(ui, 'resizeEditor');
-      spyOn(ui.shape, 'changeStandbyMode');
-      spyOn(ui.filter, 'changeStartMode');
-      ui._actions.main = {
-        changeSelectableAll: jasmine.createSpy('changeSelectableAll'),
-      };
-      ui._changeMenu('filter', false, false);
-    });
-    it('When the menu changes, the changeStartMode () of the menu instance to be changed must be executed.', () => {
-      expect(ui.shape.changeStandbyMode).toHaveBeenCalled();
-    });
+      jest.spyOn(ui, 'resizeEditor');
+      ui.shape.changeStandbyMode = jest.fn();
+      jest.spyOn(ui.filter, 'changeStartMode');
+      ui._actions.main = { changeSelectableAll: jest.fn() };
+      ui.resizeEditor = jest.fn();
 
-    it('When the menu changes, the changeStandbyMode () of the existing menu instance must be executed.', () => {
+      ui._changeMenu('filter', false, false);
+
+      expect(ui.shape.changeStandbyMode).toHaveBeenCalled();
       expect(ui.filter.changeStartMode).toHaveBeenCalled();
     });
   });
 
   describe('_makeSubMenu()', () => {
-    it('MakeMenuElement should be executed for the number of menus specified in the option.', () => {
-      spyOn(ui, '_makeMenuElement');
+    it('should execute for the number of menus specified in the option.', () => {
+      const makeMenuElementSpy = jest.spyOn(ui, '_makeMenuElement');
 
       ui._makeSubMenu();
-      expect(ui._makeMenuElement.calls.count()).toBe(uiOptions.menu.length);
+
+      expect(makeMenuElementSpy).toHaveBeenCalledTimes(options.menu.length);
     });
 
-    it('Instance of the menu specified in the option must be created.', () => {
-      spyOn(ui, '_makeMenuElement');
-      const getConstructorName = (constructor) =>
-        constructor.toString().match(/^function\s(.+?)\(/)[1];
+    it('should create instance of the menu specified in the option', () => {
+      jest.spyOn(ui, '_makeMenuElement');
+      const getConstructorName = (constructor) => constructor.toString().match(/^class (.+?) /)[1];
 
       ui._makeSubMenu();
-      snippet.forEach(uiOptions.menu, (menuName) => {
-        const constructorNameOfInstance = getConstructorName(ui[menuName].constructor);
-        const expected = menuName.replace(/^[a-z]/, ($0) => $0.toUpperCase());
+
+      options.menu.forEach((menu) => {
+        const constructorNameOfInstance = getConstructorName(ui[menu].constructor);
+        const expected = menu.replace(/^[a-z]/, ($0) => $0.toUpperCase());
+
         expect(constructorNameOfInstance).toBe(expected);
       });
     });
   });
 
   describe('initCanvas()', () => {
-    let promise;
-
     beforeEach(() => {
-      promise = new Promise((resolve) => {
-        resolve();
-      });
       ui._editorElement = {
-        querySelector: jasmine
-          .createSpy('querySelector')
-          .and.returnValue(document.createElement('div')),
+        querySelector: jest.fn(() => document.createElement('div')),
       };
       ui._actions.main = {
-        initLoadImage: jasmine.createSpy('initLoadImage').and.returnValue(promise),
+        initLoadImage: jest.fn(() => Promise.resolve()),
       };
     });
 
-    it('When initCanvas is executed, some internal methods must be run as required.', (done) => {
-      spyOn(ui, 'activeMenuEvent');
-      spyOn(ui, '_addLoadEvent');
+    it('should be run as required when initCanvas is executed', async () => {
+      const activeMenuEventSpy = jest.spyOn(ui, 'activeMenuEvent');
+      const addLoadEventSpy = jest.spyOn(ui, '_addLoadEvent');
 
-      ui.initCanvas();
-      promise.then(() => {
-        expect(ui.activeMenuEvent).toHaveBeenCalled();
-        expect(ui._addLoadEvent).toHaveBeenCalled();
-        done();
-      });
+      await ui.initCanvas();
+
+      expect(activeMenuEventSpy).toHaveBeenCalled();
+      expect(addLoadEventSpy).toHaveBeenCalled();
     });
 
-    it('`initLoadImage()` should not be run when has not image path.', () => {
-      spyOn(ui, '_getLoadImage').and.returnValue({ path: '' });
+    it('should not be run when has not image path', () => {
+      jest.spyOn(ui, '_getLoadImage').mockReturnValue({ path: '' });
 
       ui.initCanvas();
 
       expect(ui._actions.main.initLoadImage).not.toHaveBeenCalled();
     });
 
-    it('`_AddLoadEvent()` should be executed even if there is no image path.', () => {
-      spyOn(ui, '_getLoadImage').and.returnValue({ path: '' });
-      spyOn(ui, '_addLoadEvent');
+    it('should be executed even if there is no image path', () => {
+      jest.spyOn(ui, '_getLoadImage').mockReturnValue({ path: '' });
+      jest.spyOn(ui, '_addLoadEvent');
 
       ui.initCanvas();
 
@@ -142,40 +124,39 @@ describe('UI', () => {
   describe('_setEditorPosition()', () => {
     beforeEach(() => {
       ui._editorElement = document.createElement('div');
-      spyOn(ui, '_getCanvasMaxDimension').and.returnValue({
-        width: 300,
-        height: 300,
-      });
+      jest.spyOn(ui, '_getCanvasMaxDimension').mockReturnValue({ width: 300, height: 300 });
     });
 
-    it('Position is bottom, it should be reflected in the bottom of the editor position.', () => {
+    it('should be reflected in the bottom of the editor position', () => {
       ui.submenu = true;
+
       ui._setEditorPosition('bottom');
 
-      expect(ui._editorElement.style.top).toBe('150px');
-      expect(ui._editorElement.style.left).toBe('0px');
+      expect(ui._editorElement.style).toMatchObject({ top: '150px', left: '0px' });
     });
 
-    it('Position is top, it should be reflected in the top of the editor position.', () => {
+    it('should be reflected in the top of the editor position', () => {
       ui.submenu = true;
+
       ui._setEditorPosition('top');
 
-      expect(ui._editorElement.style.top).toBe('-150px');
-      expect(ui._editorElement.style.left).toBe('0px');
+      expect(ui._editorElement.style).toMatchObject({ top: '-150px', left: '0px' });
     });
-    it('Position is left, it should be reflected in the left, right of the editor position.', () => {
+
+    it('should be reflected in the left, right of the editor position', () => {
       ui.submenu = true;
+
       ui._setEditorPosition('left');
 
-      expect(ui._editorElement.style.top).toBe('0px');
-      expect(ui._editorElement.style.left).toBe('-150px');
+      expect(ui._editorElement.style).toMatchObject({ top: '0px', left: '-150px' });
     });
-    it('Position is right, it should be reflected in the right of the editor position.', () => {
+
+    it('should be reflected in the right of the editor position', () => {
       ui.submenu = true;
+
       ui._setEditorPosition('right');
 
-      expect(ui._editorElement.style.top).toBe('0px');
-      expect(ui._editorElement.style.left).toBe('150px');
+      expect(ui._editorElement.style).toMatchObject({ top: '0px', left: '150px' });
     });
   });
 });

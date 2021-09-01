@@ -1,49 +1,46 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/imageEditor.js"
- */
+import { fabric } from 'fabric';
 import ImageEditor from '@/imageEditor';
+import '@/command/loadImage';
+
+import img from 'fixtures/sampleImage.jpg';
 
 describe('DrawingMode', () => {
   let imageEditor;
-  const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
-  beforeEach((done) => {
+  beforeEach(async () => {
     imageEditor = new ImageEditor(document.createElement('div'), {
       cssMaxWidth: 700,
       cssMaxHeight: 500,
     });
-    imageEditor.loadImageFromURL(imageURL, 'sampleImage').then(() => {
-      done();
-    });
+    const image = new fabric.Image(img);
+
+    await imageEditor.loadImageFromURL(image, 'sampleImage');
   });
 
   afterEach(() => {
     imageEditor.destroy();
   });
 
-  it('enter a drawing mode with startDrawingMode, CROPPER', () => {
+  it('should enter a drawing mode with startDrawingMode, CROPPER', () => {
     imageEditor.startDrawingMode('CROPPER');
 
     expect(imageEditor.getDrawingMode()).toBe('CROPPER');
   });
 
-  it('stop a drawing mode with stopDrawingMode, ie, to normal', () => {
+  it('should stop a drawing mode with stopDrawingMode, ie, to normal', () => {
     imageEditor.stopDrawingMode();
 
     expect(imageEditor.getDrawingMode()).toBe('NORMAL');
   });
 
-  it('enter all drawing mode with startDrawingMode in consecutive order', () => {
-    const drawingModes = ['CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE', 'RESIZE'];
-    const { length } = drawingModes;
-    let i;
+  it('should enter all drawing mode with startDrawingMode in consecutive order', () => {
+    ['CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE', 'RESIZE'].forEach(
+      (drawingMode) => {
+        imageEditor.startDrawingMode(drawingMode);
 
-    for (i = 0; i < length; i += 1) {
-      imageEditor.startDrawingMode(drawingModes[i]);
-
-      expect(imageEditor.getDrawingMode()).toBe(drawingModes[i]);
-    }
+        expect(imageEditor.getDrawingMode()).toBe(drawingMode);
+      }
+    );
 
     expect(imageEditor.startDrawingMode('CROPPER')).toBe(true);
     expect(imageEditor.startDrawingMode('CROPPER')).toBe(true); // call again, should return true

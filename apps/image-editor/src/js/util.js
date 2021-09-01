@@ -24,6 +24,10 @@ let hostnameSent = false;
  */
 export { Promise };
 
+export function isFunction(value) {
+  return typeof value === 'function';
+}
+
 /**
  * Clamp value
  * @param {number} value - Value

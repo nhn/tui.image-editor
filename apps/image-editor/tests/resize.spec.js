@@ -1,104 +1,84 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of "src/js/component/resize.js"
- */
 import { fabric } from 'fabric';
-import $ from 'jquery';
 import Graphics from '@/graphics';
 import Resize from '@/component/resize';
 
 describe('Resize', () => {
-  let graphics, resizeModule, mockImage;
+  let graphics, resize, mockImage;
 
   beforeAll(() => {
-    graphics = new Graphics($('<canvas>')[0]);
-    resizeModule = new Resize(graphics);
+    graphics = new Graphics(document.createElement('canvas'));
+    resize = new Resize(graphics);
   });
 
   beforeEach(() => {
-    mockImage = new fabric.Image(null, {
-      width: 100,
-      height: 100,
-    });
+    mockImage = new fabric.Image(null, { width: 100, height: 100 });
     graphics.setCanvasImage('mockImage', mockImage);
   });
 
-  it('"getCurrentDimensions()" should return current image dimensions', () => {
-    const dimensions = resizeModule.getCurrentDimensions();
+  it('should return current image dimensions', () => {
+    let currentDimensions = resize.getCurrentDimensions();
 
-    expect(dimensions).toEqual({
-      width: 100,
-      height: 100,
-    });
+    expect(currentDimensions).toEqual({ width: 100, height: 100 });
 
-    const newDimensions = {
-      width: 20,
-      height: 20,
-    };
+    const newDimensions = { width: 20, height: 20 };
 
-    resizeModule.resize(newDimensions);
-    expect(newDimensions).toEqual(resizeModule.getCurrentDimensions());
+    resize.resize(newDimensions);
+    currentDimensions = resize.getCurrentDimensions();
+
+    expect(newDimensions).toEqual(currentDimensions);
   });
 
-  it('"getOriginalDimensions()" should return original image dimensions after resizing', () => {
-    const originalDimensions = resizeModule.getOriginalDimensions();
-    const newDimensions = {
-      width: 20,
-      height: 20,
-    };
+  it('should return original image dimensions after resizing', () => {
+    const originalDimensionsBeforeResizing = resize.getOriginalDimensions();
+    const newDimensions = { width: 20, height: 20 };
 
-    resizeModule.resize(newDimensions);
-    resizeModule.getOriginalDimensions();
+    resize.resize(newDimensions);
+    const originalDimensionsAfterResizing = resize.getOriginalDimensions();
 
-    expect(originalDimensions).toEqual(resizeModule.getOriginalDimensions());
+    expect(originalDimensionsBeforeResizing).toEqual(originalDimensionsAfterResizing);
   });
 
-  it('"setOriginalDimensions()" should set original dimensions', () => {
-    const newDimensions = {
-      width: 20,
-      height: 20,
-    };
+  it('should set original dimensions', () => {
+    const newDimensions = { width: 20, height: 20 };
 
-    resizeModule.setOriginalDimensions(newDimensions);
+    resize.setOriginalDimensions(newDimensions);
+    const originalDimensions = resize.getOriginalDimensions();
 
-    expect(newDimensions).toEqual(resizeModule.getOriginalDimensions());
+    expect(newDimensions).toEqual(originalDimensions);
   });
 
-  it('"resize()" should resize image', () => {
-    const originalDimensions = resizeModule.getOriginalDimensions();
-    const newDimensions = {
-      width: 20,
-      height: 20,
-    };
+  it('should resize image', () => {
+    const originalDimensions = resize.getOriginalDimensions();
+    const newDimensions = { width: 20, height: 20 };
 
-    resizeModule.resize(newDimensions);
-    expect(newDimensions).toEqual(resizeModule.getCurrentDimensions());
+    resize.resize(newDimensions);
+    let currentDimensions = resize.getCurrentDimensions();
 
-    resizeModule.resize(originalDimensions);
-    expect(originalDimensions).toEqual(resizeModule.getCurrentDimensions());
+    expect(newDimensions).toEqual(currentDimensions);
+
+    resize.resize(originalDimensions);
+    currentDimensions = resize.getCurrentDimensions();
+
+    expect(originalDimensions).toEqual(currentDimensions);
   });
 
-  it('"start()" should set original dimensions', () => {
-    resizeModule.setOriginalDimensions(null);
+  it('should set original dimensions when drawing mode is started', () => {
+    resize.setOriginalDimensions(null);
 
-    resizeModule.start();
+    resize.start();
 
-    expect(resizeModule.getOriginalDimensions()).not.toBeNull();
+    expect(resize.getOriginalDimensions()).not.toBeNull();
   });
 
-  it('"end()" function is defined', () => {
-    expect(typeof resizeModule.end === 'function').toBeTruthy();
+  it('should have end method', () => {
+    expect(typeof resize.end === 'function').toBe(true);
   });
 
-  it('"resize()" returned promise', (done) => {
-    const newDimensions = {
-      width: 20,
-      height: 20,
-    };
+  it('should return promise', async () => {
+    const newDimensions = { width: 20, height: 20 };
 
-    resizeModule.resize(newDimensions).then((obj) => {
-      expect(obj).toBeUndefined();
-      done();
-    });
+    const obj = await resize.resize(newDimensions);
+
+    expect(obj).toBeUndefined();
   });
 });

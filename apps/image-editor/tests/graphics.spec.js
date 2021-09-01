@@ -1,8 +1,4 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Tests command with command-factory
- */
-import snippet from 'tui-code-snippet';
+import { stamp } from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import { drawingModes, componentNames as components } from '@/consts';
@@ -13,49 +9,44 @@ describe('Graphics', () => {
   let graphics, canvas;
 
   beforeEach(() => {
-    graphics = new Graphics(document.createElement('canvas'), {
-      cssMaxWidth,
-      cssMaxHeight,
-    });
+    graphics = new Graphics(document.createElement('canvas'), { cssMaxWidth, cssMaxHeight });
     canvas = graphics.getCanvas();
   });
 
-  it('has several properties', () => {
-    expect(canvas).not.toBe(null);
-    expect(canvas).toEqual(jasmine.any(fabric.Canvas));
-    expect(graphics.cssMaxWidth).toBe(900);
-    expect(graphics.cssMaxHeight).toBe(700);
-    expect(graphics.canvasImage).toBe(null);
-    expect(graphics.imageName).toBe('');
-    expect(graphics._drawingMode).toBe(drawingModes.NORMAL);
-    expect(graphics._componentMap).not.toBe(null);
+  afterEach(() => {
+    graphics.stopDrawingMode();
   });
 
-  it('After the path has been drawn, "origin" should change to "left top-> center center" and "position" should change to the center coordinates of path.', () => {
+  it('should have several properties', () => {
+    expect(canvas).not.toBeNull();
+    expect(canvas).toEqual(expect.any(fabric.Canvas));
+    expect(graphics.cssMaxWidth).toBe(900);
+    expect(graphics.cssMaxHeight).toBe(700);
+    expect(graphics.canvasImage).toBeNull();
+    expect(graphics.imageName).toBe('');
+    expect(graphics._drawingMode).toBe(drawingModes.NORMAL);
+    expect(graphics._componentMap).not.toBeNull();
+  });
+
+  it('should be changed after the path has been drawn', () => {
     const pathObj = new fabric.Path('M 0 0 L 100 0 L 100 100 L 0 100 z');
-    const expectPosition = pathObj.getCenterPoint();
-    const expectX = expectPosition.x;
-    const expectY = expectPosition.y;
+    const { x, y } = pathObj.getCenterPoint();
 
     graphics._onPathCreated({ path: pathObj });
 
     expect(pathObj.originX).toBe('center');
     expect(pathObj.originY).toBe('center');
-    expect(pathObj.left).toBe(expectX);
-    expect(pathObj.top).toBe(expectY);
+    expect(pathObj.left).toBe(x);
+    expect(pathObj.top).toBe(y);
   });
 
-  it('can attach canvas events', () => {
-    const onMousedown = jasmine.createSpy('onMousedown');
-    const onObjectAdded = jasmine.createSpy('onObjectAdded');
-    const onObjectSelected = jasmine.createSpy('onObjectSelected');
+  it('should attach canvas events', () => {
+    const onMousedown = jest.fn();
+    const onObjectAdded = jest.fn();
+    const onObjectSelected = jest.fn();
 
-    graphics.on({
-      mousedown: onMousedown,
-      'object:added': onObjectAdded,
-    });
+    graphics.on({ mousedown: onMousedown, 'object:added': onObjectAdded });
     graphics.once('object:selected', onObjectSelected);
-
     graphics.fire('mousedown');
     graphics.fire('mousedown');
     graphics.fire('object:added');
@@ -63,101 +54,86 @@ describe('Graphics', () => {
     graphics.fire('object:selected');
     graphics.fire('object:selected');
 
-    expect(onMousedown.calls.count()).toBe(2);
-    expect(onObjectAdded.calls.count()).toBe(2);
-    expect(onObjectSelected.calls.count()).toBe(1);
+    expect(onMousedown).toHaveBeenCalledTimes(2);
+    expect(onObjectAdded).toHaveBeenCalledTimes(2);
+    expect(onObjectSelected).toHaveBeenCalledTimes(1);
   });
 
-  it('deactivates all objects', () => {
-    const triangle = new fabric.Triangle({
-      width: 20,
-      height: 30,
-    });
+  it('should deactivate all objects', () => {
+    const triangle = new fabric.Triangle({ width: 20, height: 30 });
 
     canvas.add(triangle).setActiveObject(triangle);
-    expect(canvas.getActiveObject()).not.toBe(null);
+    expect(canvas.getActiveObject()).not.toBeNull();
+
     graphics.deactivateAll();
-    expect(canvas.getActiveObject()).toBe(null);
+    expect(canvas.getActiveObject()).toBeNull();
   });
 
-  it('renders objects', (done) => {
+  it('should render objects', () => {
     let beforeRender = false;
-    const triangle = new fabric.Triangle({
-      width: 20,
-      height: 30,
-    });
+    const triangle = new fabric.Triangle({ width: 20, height: 30 });
 
     canvas.add(triangle);
     canvas.on('before:render', () => {
       beforeRender = true;
     });
-    canvas.on('after:render', () => {
-      expect(beforeRender).toBe(true);
-      done();
-    });
+    canvas.on('after:render', () => expect(beforeRender).toBe(true));
     graphics.renderAll();
   });
 
-  it('removes a object or group by id', () => {
-    const triangle = new fabric.Triangle({
-      width: 20,
-      height: 30,
-    });
+  it('should remove a object or group by id', () => {
+    const triangle = new fabric.Triangle({ width: 20, height: 30 });
 
     graphics.add(triangle);
-    const objectId = snippet.stamp(triangle);
+    const objectId = stamp(triangle);
     graphics.removeObjectById(objectId);
-    expect(graphics.getObjects().length).toBe(0);
+
+    expect(graphics.getObjects()).toHaveLength(0);
   });
 
-  it('switches drawing modes', () => {
-    let modeName;
-    for (modeName in drawingModes) {
-      if (drawingModes.hasOwnProperty(modeName)) {
-        graphics.startDrawingMode(modeName);
-        expect(graphics.getDrawingMode()).toBe(modeName);
-        graphics.stopDrawingMode();
-        expect(graphics.getDrawingMode()).toBe(drawingModes.NORMAL);
-      }
-    }
-  });
+  it('should switch drawing modes', () => {
+    Object.keys(drawingModes).forEach((modeName) => {
+      graphics.startDrawingMode(modeName);
+      expect(graphics.getDrawingMode()).toBe(modeName);
 
-  it('can get the cropped image data', () => {
-    graphics.startDrawingMode(drawingModes.CROPPER);
-    spyOn(graphics.getComponent(components.CROPPER)._cropzone, 'isValid').and.returnValue(true);
-
-    expect(graphics.getCropzoneRect()).toBeTruthy();
-    expect(graphics.getCroppedImageData(graphics.getCropzoneRect())).toEqual({
-      imageName: jasmine.any(String),
-      url: jasmine.any(String),
+      graphics.stopDrawingMode();
+      expect(graphics.getDrawingMode()).toBe(drawingModes.NORMAL);
     });
-
-    graphics.stopDrawingMode();
   });
 
-  it('Cropzone must be hidden initially and then redisplayed after completion at toDataURL is executed with a cropzone present', () => {
+  it('should get the cropped image data', () => {
     const cropper = graphics.getComponent(components.CROPPER);
-    spyOn(cropper, 'changeVisibility');
+    graphics.startDrawingMode(drawingModes.CROPPER);
+    jest.spyOn(cropper._cropzone, 'isValid').mockReturnValue(true);
+    const cropzoneRect = graphics.getCropzoneRect();
+
+    expect(cropzoneRect).not.toBeNull();
+    expect(graphics.getCroppedImageData(cropzoneRect)).toEqual({
+      imageName: expect.any(String),
+      url: expect.any(String),
+    });
+  });
+
+  it('should be hidden initially and then redisplayed after completion at toDataURL is executed with a cropzone present', () => {
+    const cropper = graphics.getComponent(components.CROPPER);
+    const changeVisibilitySpy = jest.spyOn(cropper, 'changeVisibility');
 
     graphics.startDrawingMode(drawingModes.CROPPER);
     graphics.toDataURL();
 
-    expect(cropper.changeVisibility.calls.allArgs()).toEqual([[false], [true]]);
+    expect(changeVisibilitySpy).toHaveBeenNthCalledWith(1, false);
+    expect(changeVisibilitySpy).toHaveBeenNthCalledWith(2, true);
   });
 
-  it('can set brush setting into LINE_DRAWING, FREE_DRAWING', () => {
+  it('should set brush setting into LINE_DRAWING, FREE_DRAWING', () => {
     graphics.startDrawingMode(drawingModes.LINE_DRAWING);
-    graphics.setBrush({
-      width: 12,
-      color: 'FFFF00',
-    });
+    graphics.setBrush({ width: 12, color: 'FFFF00' });
     const brush = canvas.freeDrawingBrush;
-    expect(brush.width).toBe(12);
-    expect(brush.color).toBe('rgba(255,255,0,1)');
-    graphics.stopDrawingMode();
+
+    expect(brush).toMatchObject({ width: 12, color: 'rgba(255,255,0,1)' });
   });
 
-  it('can change a drawing shape', () => {
+  it('should change a drawing shape', () => {
     const shapeComp = graphics.getComponent(components.SHAPE);
     graphics.setDrawingShape('circle', {
       fill: 'transparent',
@@ -166,6 +142,7 @@ describe('Graphics', () => {
       rx: 10,
       ry: 100,
     });
+
     expect(shapeComp._type).toBe('circle');
     expect(shapeComp._options).toEqual({
       strokeWidth: 3,
@@ -182,20 +159,15 @@ describe('Graphics', () => {
     });
   });
 
-  it('can register custom icon', () => {
+  it('should register custom icon', () => {
+    const pathMap = { customIcon: 'M 0 0 L 20 20 L 10 10 Z' };
     const iconComp = graphics.getComponent(components.ICON);
-    graphics.registerPaths({
-      customIcon: 'M 0 0 L 20 20 L 10 10 Z',
-    });
+    graphics.registerPaths(pathMap);
 
-    expect(iconComp._pathMap).toEqual(
-      jasmine.objectContaining({
-        customIcon: 'M 0 0 L 20 20 L 10 10 Z',
-      })
-    );
+    expect(iconComp._pathMap).toMatchObject(pathMap);
   });
 
-  it('has the filter', () => {
+  it('should not have the filter', () => {
     expect(graphics.hasFilter('Grayscale')).toBe(false);
   });
 
@@ -210,25 +182,23 @@ describe('Graphics', () => {
       canvas.add(targetObject2);
     });
 
-    it('Group objects must be duplicated as many as the number of objects in the group.', (done) => {
+    it('should be duplicated as many as the number of objects in the group', async () => {
       const groupObject = graphics.getActiveSelectionFromObjects(canvas.getObjects());
       graphics.setActiveObject(groupObject);
       graphics.resetTargetObjectForCopyPaste();
 
-      graphics.pasteObject().then(() => {
-        expect(canvas.getObjects().length).toBe(4);
-        done();
-      });
+      await graphics.pasteObject();
+
+      expect(canvas.getObjects()).toHaveLength(4);
     });
 
-    it('Only one object should be duplicated.', (done) => {
+    it('should be duplicated', async () => {
       graphics.setActiveObject(targetObject1);
       graphics.resetTargetObjectForCopyPaste();
 
-      graphics.pasteObject().then(() => {
-        expect(canvas.getObjects().length).toBe(3);
-        done();
-      });
+      await graphics.pasteObject();
+
+      expect(canvas.getObjects()).toHaveLength(3);
     });
   });
 });

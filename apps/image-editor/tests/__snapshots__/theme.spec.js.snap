@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Theme _makeCssText() should return the cssText of the expected value for the object 1`] = `"background-color: #fff;background-image: url(./img/bg.png);border: 1px solid #ddd;color: #222;font-family: NotoSans, sans-serif;font-size: 12px"`;
+
+exports[`Theme _makeSvgItem() should create a svg path with the prefix when set the icon file 1`] = `"<use xlink:href=\\"fixtures/icon-d.svg#icon-d-ic-crop\\" class=\\"normal\\"/>"`;
+
+exports[`Theme _makeSvgItem() should create path prefix and use-default class when using the default icon 1`] = `"<use xlink:href=\\"#ic-crop\\" class=\\"normal use-default\\"/>"`;
+
+exports[`Theme getStyle() should return cssText if all members are objects 1`] = `
+Object {
+  "active": "color: #000;font-weight: normal",
+  "normal": "color: #858585;font-weight: normal",
+}
+`;
+
+exports[`Theme getStyle() should return cssText in normal types 1`] = `"background-color: #fdba3b;border: 1px solid #fdba3b;color: #fff;font-family: NotoSans, sans-serif;font-size: 12px"`;

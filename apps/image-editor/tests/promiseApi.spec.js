@@ -1,12 +1,25 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Test cases of Promise API
- */
+import { fabric } from 'fabric';
+import { stamp } from 'tui-code-snippet';
 import ImageEditor from '@/imageEditor';
+import { rejectMessages } from '@/consts';
+
+import '@/command/loadImage';
+import '@/command/addIcon';
+import '@/command/clearObjects';
+import '@/command/changeIconColor';
+import '@/command/addShape';
+import '@/command/changeShape';
+import '@/command/addImageObject';
+import '@/command/flip';
+import '@/command/rotate';
+import '@/command/removeObject';
+import '@/command/setObjectProperties';
+import '@/command/setObjectPosition';
+
+import img from 'fixtures/sampleImage.jpg';
 
 describe('Promise API', () => {
   let imageEditor, canvas, activeObjectId;
-  const imageURL = 'base/tests/fixtures/sampleImage.jpg';
 
   beforeAll(() => {
     imageEditor = new ImageEditor(document.createElement('div'), {
@@ -15,8 +28,11 @@ describe('Promise API', () => {
     });
     canvas = imageEditor._graphics.getCanvas();
 
-    imageEditor.on('objectActivated', (objectProps) => {
-      activeObjectId = objectProps.id;
+    imageEditor.on('objectActivated', ({ id }) => {
+      activeObjectId = id;
+    });
+    imageEditor.on('objectAdded', ({ id }) => {
+      activeObjectId = id;
     });
   });
 
@@ -24,451 +40,195 @@ describe('Promise API', () => {
     imageEditor.destroy();
   });
 
-  beforeEach((done) => {
-    imageEditor
-      .loadImageFromURL(imageURL, 'sampleImage')
-      .then(() => done())
-      ['catch'](() => done());
+  beforeEach(async () => {
+    const image = new fabric.Image(img);
+    await imageEditor.loadImageFromURL(image, 'sampleImage');
   });
 
-  it('addIcon() supports Promise', (done) => {
-    imageEditor
-      .addIcon('arrow', {
-        left: 10,
-        top: 10,
-      })
-      .then(() => {
-        expect(canvas.getObjects().length).toBe(1);
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(addIcon)', async () => {
+    await imageEditor.addIcon('arrow', { left: 10, top: 10 });
+
+    expect(canvas.getObjects()).toHaveLength(1);
   });
 
-  it('clearObjects() supports Promise', (done) => {
-    imageEditor
-      .addIcon('arrow', {
-        left: 10,
-        top: 10,
-      })
-      .then(() => imageEditor.clearObjects())
-      .then(() => {
-        expect(canvas.getObjects().length).toBe(0);
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(clearObjects)', async () => {
+    await imageEditor.addIcon('arrow', { left: 10, top: 10 });
+    await imageEditor.clearObjects();
+
+    expect(canvas.getObjects()).toHaveLength(0);
   });
 
-  it('changeIconColor() supports Promise', (done) => {
-    imageEditor
-      .addIcon('arrow', {
-        left: 10,
-        top: 10,
-      })
-      .then(() => imageEditor.changeIconColor(activeObjectId, '#FFFF00'))
-      .then(() => {
-        expect(canvas.getObjects()[0].fill).toBe('#FFFF00');
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(changeIconColor)', async () => {
+    await imageEditor.addIcon('arrow', { left: 10, top: 10 });
+    await imageEditor.changeIconColor(activeObjectId, '#FFFF00');
+
+    const [object] = canvas.getObjects();
+    expect(object).toMatchObject({ fill: '#FFFF00' });
   });
 
-  it('addShape() supports Promise', (done) => {
-    imageEditor
-      .addShape('rect', {
-        width: 100,
-        height: 100,
-        fill: '#FFFF00',
-      })
-      .then(() => {
-        const [shape] = canvas.getObjects();
-        expect(shape.type).toBe('rect');
-        expect(shape.width).toBe(100);
-        expect(shape.height).toBe(100);
-        expect(shape.fill).toBe('#FFFF00');
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(addShape)', async () => {
+    await imageEditor.addShape('rect', { width: 100, height: 100, fill: '#FFFF00' });
+
+    const [object] = canvas.getObjects();
+    expect(object).toMatchObject({ type: 'rect', width: 100, height: 100, fill: '#FFFF00' });
   });
 
-  it('changeShape() supports Promise', (done) => {
-    imageEditor
-      .addShape('rect', {
-        width: 100,
-        height: 100,
-        fill: '#FFFF00',
-      })
-      .then(() =>
-        imageEditor.changeShape(activeObjectId, {
-          type: 'triangle',
-          width: 200,
-          fill: '#FF0000',
-        })
-      )
-      .then(() => {
-        const [shape] = canvas.getObjects();
-        expect(shape.type).toBe('triangle');
-        expect(shape.width).toBe(200);
-        expect(shape.fill).toBe('#FF0000');
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(changeShape)', async () => {
+    await imageEditor.addShape('rect', { width: 100, height: 100, fill: '#FFFF00' });
+    await imageEditor.changeShape(activeObjectId, {
+      type: 'triangle',
+      width: 200,
+      fill: '#FF0000',
+    });
+
+    const [object] = canvas.getObjects();
+    expect(object).toMatchObject({ type: 'triangle', width: 200, fill: '#FF0000' });
   });
 
-  it('can catch on failure', (done) => {
-    imageEditor
-      .addShape('rect', {
-        width: 100,
-        height: 100,
-        fill: '#FFFF00',
-      })
-      .then(() => {
-        imageEditor.deactivateAll();
+  it('should catch on failure when object is not in canvas', async () => {
+    await imageEditor.addShape('rect', { width: 100, height: 100, fill: '#FFFF00' });
+    imageEditor.deactivateAll();
 
-        return imageEditor.changeShape(null, {
-          type: 'triangle',
-          widht: 200,
-          fill: '#FF0000',
-        });
-      })
-      .then(() => {
-        fail();
-        done();
-      })
-      ['catch']((message) => {
-        expect(message).toBe('The object is not in canvas.');
-        done();
-      });
+    await expect(
+      imageEditor.changeShape(null, { type: 'triangle', width: 200, fill: '#FF0000' })
+    ).rejects.toBe(rejectMessages.noObject);
   });
 
-  it('addImageObject() supports Promise', (done) => {
-    const maskImageURL = 'base/tests/fixtures/mask.png';
-    imageEditor
-      .addImageObject(maskImageURL)
-      .then((objectProps) => {
-        expect(canvas.getObjects().length).toBe(1);
-        expect(objectProps.id).toBe(activeObjectId);
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(addImageObject)', async () => {
+    imageEditor._graphics.addImageObject = jest.fn(() => {
+      canvas.add(new fabric.Object());
+
+      return Promise.resolve({ id: activeObjectId });
+    });
+
+    const objectProps = await imageEditor.addImageObject('fixtures/mask.png');
+
+    expect(canvas.getObjects()).toHaveLength(1);
+    expect(objectProps.id).toBe(activeObjectId);
   });
 
-  it('resizeCanvasDimension() supports Promise', (done) => {
-    imageEditor
-      .resizeCanvasDimension({
-        width: 900,
-        height: 700,
-      })
-      .then(() =>
-        // There is no way to get canvas dimension
-        done()
-      )
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(undo)', async () => {
+    await imageEditor.addShape('rect', { width: 100, height: 100, fill: '#FFFF00' });
+    await imageEditor.undo();
+
+    expect(canvas.getObjects()).toHaveLength(0);
   });
 
-  it('undo() supports Promise', (done) => {
-    imageEditor
-      .addShape('rect', {
-        width: 100,
-        height: 100,
-        fill: '#FFFF00',
-      })
-      .then(() => imageEditor.undo())
-      .then(() => {
-        expect(canvas.getObjects().length).toBe(0);
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(flipX)', async () => {
+    const obj = await imageEditor.flipX();
+
+    expect(obj).toEqual({ flipX: true, flipY: false, angle: 0 });
   });
 
-  it('flipX() supports Promise', (done) => {
-    imageEditor
-      .flipX()
-      .then((obj) => {
-        expect(obj).toEqual({
-          flipX: true,
-          flipY: false,
-          angle: 0,
-        });
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(flipY)', async () => {
+    const obj = await imageEditor.flipY();
+
+    expect(obj).toEqual({ flipX: false, flipY: true, angle: 0 });
   });
 
-  it('flipY() supports Promise', (done) => {
-    imageEditor
-      .flipY()
-      .then((obj) => {
-        expect(obj).toEqual({
-          flipX: false,
-          flipY: true,
-          angle: 0,
-        });
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(resetFlip)', async () => {
+    await expect(imageEditor.resetFlip()).rejects.toBe(rejectMessages.flip);
   });
 
-  it('resetFlip() supports Promise', (done) => {
-    imageEditor
-      .resetFlip()
-      .then((obj) => {
-        expect(obj).toEqual({
-          flipX: false,
-          flipY: false,
-          angle: 0,
-        });
-        fail();
-        done();
-      })
-      ['catch']((message) => {
-        expect(message).toBe('The flipX and flipY setting values are not changed.');
-        done();
-      });
+  it('should support Promise(rotate)', async () => {
+    const angle = await imageEditor.rotate(10);
+
+    expect(angle).toBe(10);
   });
 
-  it('rotate() supports Promise', (done) => {
-    imageEditor
-      .rotate(10)
-      .then((angle) => {
-        expect(angle).toBe(10);
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+  it('should support Promise(setAngle)', async () => {
+    const angle = await imageEditor.setAngle(10);
+
+    expect(angle).toBe(10);
   });
 
-  it('setAngle() supports Promise', (done) => {
-    imageEditor
-      .setAngle(10)
-      .then((angle) => {
-        expect(angle).toBe(10);
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
-  });
+  it('should support Promise(removeObject)', async () => {
+    const objectProps = await imageEditor.addShape('rect', { width: 100, height: 100 });
+    await imageEditor.removeObject(objectProps.id);
 
-  it('removeObject() supports Promise', (done) => {
-    imageEditor
-      .addShape('rect', {
-        width: 100,
-        height: 100,
-      })
-      .then((objectProps) => imageEditor.removeObject(objectProps.id))
-      .then(() => {
-        expect(canvas.getObjects().length).toBe(0);
-        done();
-      })
-      ['catch']((message) => {
-        fail(message);
-        done();
-      });
+    expect(canvas.getObjects()).toHaveLength(0);
   });
 
   describe('Watermark', () => {
-    const maskImageURL = 'base/tests/fixtures/mask.png';
-    const properties = {
-      fill: 'rgba(255, 255, 0, 0.5)',
-      left: 150,
-      top: 30,
-    };
+    const properties = { fill: 'rgba(255, 255, 0, 0.5)', left: 150, top: 30 };
 
-    beforeEach((done) => {
-      imageEditor.addImageObject(maskImageURL).then(() => {
-        done();
+    beforeEach(async () => {
+      imageEditor._graphics.addImageObject = jest.fn(() => {
+        const obj = new fabric.Object({ width: 1, height: 1, strokeWidth: 0 });
+        canvas.add(obj);
+        activeObjectId = stamp(obj);
+
+        return Promise.resolve({ id: activeObjectId });
+      });
+      await imageEditor.addImageObject('fixtures/mask.png');
+    });
+
+    it("should return object's properties", async () => {
+      await imageEditor.setObjectProperties(activeObjectId, properties);
+      const propKeys = { fill: null, left: null, top: null };
+      const result = imageEditor.getObjectProperties(activeObjectId, propKeys);
+
+      expect(result).not.toBeNull();
+      expect(result).toEqual(properties);
+    });
+
+    it('should return null if there is no object', async () => {
+      await imageEditor.setObjectProperties(activeObjectId, properties);
+      const propKeys = { fill: null, width: null, left: null, top: null, height: null };
+      imageEditor.deactivateAll();
+
+      const result = imageEditor.getObjectProperties(null, propKeys);
+
+      expect(result).toBeNull();
+    });
+
+    it("should return object's properties with object's keys", async () => {
+      await imageEditor.setObjectProperties(activeObjectId, properties);
+      const keys = ['fill', 'width', 'left', 'top', 'height'];
+      const result = imageEditor.getObjectProperties(activeObjectId, keys);
+
+      expect(result).not.toBeNull();
+      keys.forEach((key) => expect(result).toHaveProperty(key));
+    });
+
+    it("should return object's property with string keys", async () => {
+      await imageEditor.setObjectProperties(activeObjectId, properties);
+      const result = imageEditor.getObjectProperties(activeObjectId, 'fill');
+
+      expect(result).not.toBeNull();
+      expect(result).toEqual({ fill: properties.fill });
+    });
+
+    it("should return canvas's width, height", () => {
+      expect(imageEditor.getCanvasSize()).toEqual({
+        width: expect.any(Number),
+        height: expect.any(Number),
       });
     });
 
-    it("setObjectProperties() should change object's properties", (done) => {
-      imageEditor
-        .setObjectProperties(activeObjectId, properties)
-        .then(() => {
-          done();
-        })
-        ['catch']((message) => {
-          fail(message);
-          done();
-        });
-    });
-
-    it("getObjectProperties() should return object's properties", (done) => {
-      imageEditor
-        .setObjectProperties(activeObjectId, properties)
-        .then(() => {
-          const propKeys = {
-            fill: null,
-            left: null,
-            top: null,
-          };
-          const result = imageEditor.getObjectProperties(activeObjectId, propKeys);
-
-          expect(result).not.toBe(null);
-          expect(result).toEqual(
-            jasmine.objectContaining({
-              fill: 'rgba(255, 255, 0, 0.5)',
-              left: 150,
-              top: 30,
-            })
-          );
-          done();
-        })
-        ['catch']((message) => {
-          fail(message);
-          done();
-        });
-    });
-
-    it('getObjectProperties(objectKeys) should return false if there is no object', (done) => {
-      imageEditor
-        .setObjectProperties(activeObjectId, properties)
-        .then(() => {
-          const propKeys = {
-            fill: null,
-            width: null,
-            left: null,
-            top: null,
-            height: null,
-          };
-
-          imageEditor.deactivateAll();
-
-          const result = imageEditor.getObjectProperties(null, propKeys);
-
-          expect(result).toBe(null);
-          done();
-        })
-        ['catch']((message) => {
-          fail(message);
-          done();
-        });
-    });
-
-    it("getObjectProperties(arrayKeys) should return object's properties", (done) => {
-      imageEditor
-        .setObjectProperties(activeObjectId, properties)
-        .then(() => {
-          const arrayKeys = ['fill', 'width', 'left', 'top', 'height'];
-          const result = imageEditor.getObjectProperties(activeObjectId, arrayKeys);
-
-          expect(result).not.toBe(null);
-          expect(result).toEqual(jasmine.objectContaining(properties));
-          done();
-        })
-        ['catch']((message) => {
-          fail(message);
-          done();
-        });
-    });
-
-    it("getObjectProperties(stringKey) should return object's property", (done) => {
-      imageEditor
-        .setObjectProperties(activeObjectId, properties)
-        .then(() => {
-          const result = imageEditor.getObjectProperties(activeObjectId, 'fill');
-
-          expect(result).not.toBe(null);
-          expect(result).toEqual(
-            jasmine.objectContaining({
-              fill: 'rgba(255, 255, 0, 0.5)',
-            })
-          );
-          done();
-        })
-        ['catch']((message) => {
-          fail(message);
-          done();
-        });
-    });
-
-    it("getCanvasSize() should return canvas's width, height.", () => {
-      expect(imageEditor.getCanvasSize()).toEqual(
-        jasmine.objectContaining({
-          width: 1600,
-          height: 1066,
-        })
-      );
-    });
-
-    it('getObjectPosition() should return global point by origin.', () => {
-      // ImageEditor's object has origin('center', 'center').
-      const { left, top, width, height } = imageEditor.getObjectProperties(activeObjectId, [
-        'left',
-        'top',
-        'width',
-        'height',
-      ]);
+    it('should return global point by origin', () => {
+      const keys = ['left', 'top', 'width', 'height'];
       const ltPoint = imageEditor.getObjectPosition(activeObjectId, 'left', 'top');
       const ccPoint = imageEditor.getObjectPosition(activeObjectId, 'center', 'center');
       const rbPoint = imageEditor.getObjectPosition(activeObjectId, 'right', 'bottom');
+      const { left, top, width, height } = imageEditor.getObjectProperties(activeObjectId, keys);
 
-      expect(ltPoint.x).toBe(left - width / 2);
-      expect(ltPoint.y).toBe(top - height / 2);
-      expect(ccPoint.x).toBe(left);
-      expect(ccPoint.y).toBe(top);
-      expect(rbPoint.x).toBe(left + width / 2);
-      expect(rbPoint.y).toBe(top + height / 2);
+      expect(ltPoint).toMatchObject({ x: left, y: top });
+      expect(ccPoint).toMatchObject({ x: width / 2, y: height / 2 });
+      expect(rbPoint).toMatchObject({ x: left + width, y: top + height });
     });
 
-    it('setObjectPosition() can set object position by origin', (done) => {
-      imageEditor
-        .setObjectProperties(activeObjectId, {
-          width: 200,
-          height: 100,
-        })
-        .then(() =>
-          imageEditor.setObjectPosition(activeObjectId, {
-            x: 0,
-            y: 0,
-            originX: 'left',
-            originY: 'top',
-          })
-        )
-        .then(() => {
-          const result = imageEditor.getObjectProperties(activeObjectId, ['left', 'top']);
+    it('should set object position by origin', async () => {
+      await imageEditor.setObjectProperties(activeObjectId, { width: 200, height: 100 });
+      await imageEditor.setObjectPosition(activeObjectId, {
+        x: 0,
+        y: 0,
+        originX: 'left',
+        originY: 'top',
+      });
+      const result = imageEditor.getObjectProperties(activeObjectId, ['left', 'top']);
 
-          expect(result.left).toBe(100);
-          expect(result.top).toBe(50);
-
-          done();
-        })
-        ['catch']((message) => {
-          fail(message);
-          done();
-        });
+      expect(result).toMatchObject({ left: 100, top: 50 });
     });
   });
 });
