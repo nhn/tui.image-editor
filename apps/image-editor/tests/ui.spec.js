@@ -24,8 +24,8 @@ describe('UI', () => {
 
       ui._destroyAllMenu();
 
-      options.menu.forEach((_, index) => {
-        expect(spies[index]).toHaveBeenCalled();
+      spies.forEach((spy) => {
+        expect(spy).toHaveBeenCalled();
       });
     });
 
@@ -89,7 +89,7 @@ describe('UI', () => {
         querySelector: jest.fn(() => document.createElement('div')),
       };
       ui._actions.main = {
-        initLoadImage: jest.fn(() => new Promise((resolve) => resolve())),
+        initLoadImage: jest.fn(() => Promise.resolve()),
       };
     });
 
