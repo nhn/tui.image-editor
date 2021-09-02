@@ -25,6 +25,7 @@ module.exports = {
   output: {
     library: ['tui', 'ImageEditor'],
     libraryTarget: 'umd',
+    libraryExport: 'default',
     path: path.resolve('dist'),
     publicPath: '/dist',
     filename: `${FILENAME}.js`,
@@ -58,9 +59,6 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
-        options: {
-          configFile: './.babelrc',
-        },
       },
       {
         test: /\.styl$/,

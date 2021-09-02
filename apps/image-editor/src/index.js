@@ -25,4 +25,5 @@ import '@/command/setObjectPosition';
 import '@/command/changeSelection';
 import '@/command/resize';
 
-module.exports = ImageEditor;
+export default ImageEditor;
+export { ImageEditor };
