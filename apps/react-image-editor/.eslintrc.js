@@ -1,4 +1,6 @@
 module.exports = {
+  extends: ['tui/es6', 'plugin:react/recommended', 'plugin:prettier/recommended'],
+  plugins: ['react', 'prettier'],
   parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 7,
@@ -7,8 +9,6 @@ module.exports = {
       jsx: true,
     },
   },
-  extends: ['tui/es6', 'plugin:react/recommended', 'plugin:prettier/recommended'],
-  plugins: ['react', 'prettier'],
   ignorePatterns: ['node_modules/*', 'dist'],
   rules: {
     'react/prop-types': 0,

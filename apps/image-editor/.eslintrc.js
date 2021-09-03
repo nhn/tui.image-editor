@@ -1,6 +1,6 @@
 module.exports = {
-  extends: ['tui/es6', 'plugin:prettier/recommended', 'plugin:jest/recommended'],
-  plugins: ['prettier', 'jest'],
+  extends: ['tui/es6', 'plugin:jest/recommended', 'plugin:prettier/recommended'],
+  plugins: ['jest', 'prettier'],
   env: {
     browser: true,
     amd: true,
@@ -16,6 +16,7 @@ module.exports = {
       rootMode: 'upward',
     },
   },
+  ignorePatterns: ['node_modules/*', 'dist', 'examples'],
   rules: {
     'prefer-destructuring': [
       'error',
@@ -25,4 +26,15 @@ module.exports = {
       },
     ],
   },
+  overrides: [
+    {
+      files: ['*.spec.js'],
+      rules: {
+        'max-nested-callbacks': ['error', { max: 5 }],
+        'dot-notation': ['error', { allowKeywords: true }],
+        'no-undefined': 'off',
+        'jest/expect-expect': ['error', { assertFunctionNames: ['expect', 'assert*'] }],
+      },
+    },
+  ],
 };
