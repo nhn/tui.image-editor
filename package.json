@@ -13,12 +13,14 @@
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.25.1",
+    "eslint-plugin-vue": "^7.17.0",
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
     "jest-svg-transformer": "^1.0.0",
     "lerna": "^3.22.1",
-    "prettier": "^2.0.5"
+    "prettier": "^2.0.5",
+    "vue-eslint-parser": "^7.10.0"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.15.4"
