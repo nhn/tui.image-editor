@@ -1,5 +1,5 @@
 module.exports = {
-  parser: 'babel-eslint',
+  parser: '@babel/eslint-parser',
   parserOptions: {
     ecmaVersion: 7,
     sourceType: 'module',
@@ -9,6 +9,7 @@ module.exports = {
   },
   extends: ['tui/es6', 'plugin:react/recommended', 'plugin:prettier/recommended'],
   plugins: ['react', 'prettier'],
+  ignorePatterns: ['node_modules/*', 'dist'],
   rules: {
     'react/prop-types': 0,
   },

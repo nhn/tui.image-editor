@@ -12,6 +12,7 @@
     "eslint-config-tui": "^4.2.0",
     "eslint-plugin-jest": "^24.4.0",
     "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.25.1",
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
