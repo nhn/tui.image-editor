@@ -256,13 +256,14 @@ declare namespace tuiImageEditor {
     public ui: UI;
 
     public addIcon(type: string, options?: IIconOptions): Promise<IObjectProps>;
-    public addImageObject(imgUrl: string): Promise<void>;
+    public addImageObject(imgUrl: string): Promise<IObjectProps>
     public addShape(type: string, options?: IShapeOptions): Promise<IObjectProps>;
     public addText(text: string, options?: IGenerateTextOptions): Promise<ITextObjectProps>;
     public applyFilter(
       type: string,
       options?: {
-        maskObjId: number;
+        maskObjId?: number;
+        blur?: number
       },
       isSilent?: boolean
     ): Promise<IFilterResolveObject>;
