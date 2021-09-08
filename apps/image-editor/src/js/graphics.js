@@ -27,7 +27,7 @@ import {
   makeSelectionUndoDatum,
   setCachedUndoDataForDimension,
 } from '@/helper/selectionModifyHelper';
-import { getProperties, includes, isShape, Promise } from '@/util';
+import { getProperties, includes, isShape } from '@/util';
 import {
   componentNames as components,
   eventNames as events,

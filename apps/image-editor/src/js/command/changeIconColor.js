@@ -3,7 +3,6 @@
  * @fileoverview Change icon color
  */
 import commandFactory from '@/factory/command';
-import { Promise } from '@/util';
 import { componentNames, rejectMessages, commandNames } from '@/consts';
 
 const { ICON } = componentNames;

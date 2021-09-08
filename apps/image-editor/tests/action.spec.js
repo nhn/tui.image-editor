@@ -1,5 +1,4 @@
 import ImageEditor from '@/imageEditor';
-import { Promise } from '@/util';
 
 describe('UI', () => {
   let actions, imageEditorMock;
@@ -30,7 +29,7 @@ describe('UI', () => {
     it('should be executed When the initLoadImage action occurs', async () => {
       const loadImageFromURLSpy = jest
         .spyOn(imageEditorMock, 'loadImageFromURL')
-        .mockReturnValue(new Promise((resolve) => resolve(300)));
+        .mockReturnValue(Promise.resolve(300));
       const clearUndoStackSpy = jest.spyOn(imageEditorMock, 'clearUndoStack');
       const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
 
@@ -83,7 +82,7 @@ describe('UI', () => {
     it('should be executed When the load action occurs', async () => {
       const loadImageFromFileSpy = jest
         .spyOn(imageEditorMock, 'loadImageFromFile')
-        .mockReturnValue(new Promise((resolve) => resolve()));
+        .mockReturnValue(Promise.resolve());
       const clearUndoStackSpy = jest.spyOn(imageEditorMock, 'clearUndoStack');
       const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
 
@@ -137,9 +136,7 @@ describe('UI', () => {
       const getCropzoneRectSpy = jest
         .spyOn(imageEditorMock, 'getCropzoneRect')
         .mockReturnValue(true);
-      const cropSpy = jest
-        .spyOn(imageEditorMock, 'crop')
-        .mockReturnValue(new Promise((resolve) => resolve()));
+      const cropSpy = jest.spyOn(imageEditorMock, 'crop').mockReturnValue(Promise.resolve());
       const stopDrawingModeSpy = jest.spyOn(imageEditorMock, 'stopDrawingMode');
       const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
       const changeMenuSpy = jest.spyOn(imageEditorMock.ui, 'changeMenu');

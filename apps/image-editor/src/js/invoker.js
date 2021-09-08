@@ -4,7 +4,7 @@
  */
 import { isString, CustomEvents } from 'tui-code-snippet';
 import commandFactory from '@/factory/command';
-import { isFunction, Promise } from '@/util';
+import { isFunction } from '@/util';
 import { eventNames, rejectMessages } from '@/consts';
 
 /**

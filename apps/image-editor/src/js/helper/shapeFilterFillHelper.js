@@ -2,6 +2,7 @@
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @fileoverview Shape resize helper
  */
+import { fabric } from 'fabric';
 import { forEach, map, extend } from 'tui-code-snippet';
 import resizeHelper from '@/helper/shapeResizeHelper';
 import { capitalizeString, flipObject, setCustomProperty, getCustomProperty } from '@/util';

@@ -2,6 +2,11 @@
   "name": "root",
   "private": true,
   "devDependencies": {
+    "@babel/core": "^7.15.0",
+    "@babel/eslint-parser": "^7.15.0",
+    "@babel/plugin-transform-runtime": "^7.15.0",
+    "@babel/preset-env": "^7.15.0",
+    "babel-loader": "^8.2.2",
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
@@ -9,9 +14,12 @@
     "lerna": "^3.22.1",
     "prettier": "^2.0.5"
   },
+  "dependencies": {
+    "@babel/runtime-corejs3": "^7.15.4"
+  },
   "scripts": {
     "build": "lerna run build",
-    "build:image-editor": "lerna run --scope tui-image-editor bundle",
+    "build:image-editor": "lerna run --scope tui-image-editor build",
     "build:react": "lerna run --scope @toast-ui/react-image-editor build",
     "build:vue": "lerna run --scope @toast-ui/vue-image-editor build"
   }

@@ -3,13 +3,14 @@
  * @fileoverview Image-editor application class
  */
 import snippet from 'tui-code-snippet';
+import { fabric } from 'fabric';
 import Invoker from '@/invoker';
 import UI from '@/ui';
 import action from '@/action';
 import commandFactory from '@/factory/command';
 import Graphics from '@/graphics';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from '@/helper/selectionModifyHelper';
-import { sendHostName, Promise, getObjectType } from '@/util';
+import { sendHostName, getObjectType } from '@/util';
 import {
   eventNames as events,
   commandNames as commands,
