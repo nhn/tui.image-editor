@@ -97,6 +97,10 @@ declare namespace tuiImageEditor {
     fontWeight?: string;
     textAlign?: string;
     textDecoration?: string;
+    strokeWidth: number;
+    stroke: number;
+    shadow: number;
+    textBackgroundColor: number;
   }
 
   interface IRectConfig {
