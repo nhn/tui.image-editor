@@ -4,7 +4,6 @@
  */
 import snippet from 'tui-code-snippet';
 import Component from '@/interface/component';
-import { Promise } from '@/util';
 import { componentNames, rejectMessages } from '@/consts';
 
 /**

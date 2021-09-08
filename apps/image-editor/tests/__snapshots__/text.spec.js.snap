@@ -25,6 +25,8 @@ Object {
   "overline": false,
   "paintFirst": "fill",
   "path": null,
+  "pathSide": "left",
+  "pathStartOffset": 0,
   "scaleX": 1,
   "scaleY": 1,
   "shadow": null,
@@ -45,7 +47,7 @@ Object {
   "top": 20,
   "type": "i-text",
   "underline": false,
-  "version": "4.5.1",
+  "version": "4.6.0",
   "visible": true,
   "width": 1,
 }

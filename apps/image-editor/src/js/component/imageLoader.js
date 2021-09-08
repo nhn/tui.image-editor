@@ -3,7 +3,6 @@
  * @fileoverview Image loader
  */
 import Component from '@/interface/component';
-import { Promise } from '@/util';
 import { componentNames, rejectMessages } from '@/consts';
 
 const imageOption = {

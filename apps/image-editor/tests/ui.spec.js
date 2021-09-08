@@ -1,5 +1,4 @@
 import UI from '@/ui';
-import { Promise } from '@/util';
 import { HELP_MENUS } from '@/consts';
 
 describe('UI', () => {

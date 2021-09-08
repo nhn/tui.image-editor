@@ -15,7 +15,6 @@ import {
   resetFillPatternCanvas,
 } from '@/helper/shapeFilterFillHelper';
 import {
-  Promise,
   changeOrigin,
   getCustomProperty,
   getFillTypeFromOption,

@@ -1,6 +1,5 @@
 import Invoker from '@/invoker';
 import Command from '@/interface/command';
-import { Promise } from '@/util';
 
 describe('Invoker', () => {
   let invoker, cmd;

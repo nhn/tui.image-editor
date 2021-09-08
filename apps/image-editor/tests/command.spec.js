@@ -3,7 +3,6 @@ import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import Invoker from '@/invoker';
 import commandFactory from '@/factory/command';
-import { Promise } from '@/util';
 import { commandNames as commands } from '@/consts';
 
 import addObjectCommand from '@/command/addObject';

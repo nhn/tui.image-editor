@@ -10,7 +10,7 @@ import action from '@/action';
 import commandFactory from '@/factory/command';
 import Graphics from '@/graphics';
 import { makeSelectionUndoData, makeSelectionUndoDatum } from '@/helper/selectionModifyHelper';
-import { sendHostName, Promise, getObjectType } from '@/util';
+import { sendHostName, getObjectType } from '@/util';
 import {
   eventNames as events,
   commandNames as commands,
