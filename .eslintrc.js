@@ -1,4 +1,5 @@
 module.exports = {
+  root: true,
   extends: ['tui/es6', 'plugin:jest/recommended', 'plugin:prettier/recommended'],
   plugins: ['jest', 'prettier'],
   env: {

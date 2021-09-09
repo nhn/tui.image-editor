@@ -1,4 +1,4 @@
 {
-  "presets": [["@babel/preset-env", { "targets": { "ie": "10" }, "debug": true }]],
+  "presets": [["@babel/preset-env", { "targets": { "ie": "10" } }]],
   "plugins": [["@babel/plugin-transform-runtime", { "corejs": 3 }]]
 }
