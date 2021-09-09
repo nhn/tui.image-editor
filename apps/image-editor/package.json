@@ -1,18 +1,6 @@
 {
   "name": "tui-image-editor",
-  "author": "NHN. FE Development Lab <dl_javascript@nhn.com>",
   "version": "3.15.0",
-  "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nhn/tui.image-editor.git"
-  },
-  "main": "dist/tui-image-editor.js",
-  "files": [
-    "src",
-    "dist",
-    "index.d.ts"
-  ],
   "description": "TOAST UI Component: ImageEditor",
   "keywords": [
     "nhn",
@@ -24,6 +12,12 @@
     "canvas",
     "fabric"
   ],
+  "main": "dist/tui-image-editor.js",
+  "files": [
+    "src",
+    "dist",
+    "index.d.ts"
+  ],
   "scripts": {
     "test": "jest --forceExit --detectOpenHandles",
     "test:types": "tsc --project tests/types",
@@ -33,6 +27,18 @@
     "doc:dev": "tuidoc --serv",
     "doc": "tuidoc"
   },
+  "homepage": "https://github.com/nhn/tui.image-editor",
+  "bugs": "https://github.com/nhn/tui.image-editor/issues",
+  "author": "NHN. FE Development Team <dl_javascript@nhn.com>",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nhn/tui.image-editor.git"
+  },
+  "license": "MIT",
+  "browserslist": [
+    "last 2 versions",
+    "not ie <= 9"
+  ],
   "devDependencies": {
     "css-loader": "^3.4.1",
     "file-saver": "^1.3.3",
