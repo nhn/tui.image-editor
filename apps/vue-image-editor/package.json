@@ -18,13 +18,8 @@
   "repository": "https://github.com/nhn/tui.image-editor.git",
   "license": "MIT",
   "devDependencies": {
-    "@babel/core": "^7.1.2",
-    "@babel/preset-env": "^7.1.0",
     "@storybook/vue": "^5.3.13",
-    "@vue/babel-preset-app": "^3.12.1",
     "@vue/cli": "^3.2.1",
-    "babel-loader": "^8.0.4",
-    "babel-preset-vue": "^2.0.2",
     "clean-webpack-plugin": "^0.1.19",
     "vue": "^2.6.14",
     "vue-loader": "^15.4.2",
