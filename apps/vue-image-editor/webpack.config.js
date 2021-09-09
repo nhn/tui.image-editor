@@ -26,21 +26,13 @@ module.exports = {
   module: {
     rules: [
       {
-        enforce: 'pre',
-        test: /\.(js|vue)$/,
-        exclude: /node_modules|example/,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            failOnError: true,
-          },
-        },
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+          options: {
+            rootMode: 'upward',
+          },
         },
       },
       {
