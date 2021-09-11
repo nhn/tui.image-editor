@@ -6,7 +6,6 @@ import templateHtml from '@/ui/template/submenu/filter';
 import { toInteger, toCamelCase, assignmentForDestroy } from '@/util';
 import { defaultFilterRangeValues as FILTER_RANGE, eventNames, selectorNames } from '@/consts';
 
-const PICKER_CONTROL_HEIGHT = '130px';
 const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
 const FILTER_OPTIONS = [
   'grayscale',
@@ -415,7 +414,6 @@ class Filter extends Submenu {
     rangeWrap.appendChild(rangeLabel);
     rangeWrap.appendChild(slider);
     pickerControl.appendChild(rangeWrap);
-    pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
     return new Range({ slider }, FILTER_RANGE.tintOpacityRange);
   }
@@ -440,7 +438,6 @@ class Filter extends Submenu {
     this._makeSelectOptionList(selectlist);
 
     pickerControl.appendChild(selectlistWrap);
-    pickerControl.style.height = PICKER_CONTROL_HEIGHT;
 
     this._drawSelectOptionList(selectlist, optionlist);
     this._pickerWithSelectboxForAddEvent(selectlist, optionlist);

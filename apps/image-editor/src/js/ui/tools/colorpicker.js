@@ -235,13 +235,8 @@ class Colorpicker {
     const controlStyle = this.pickerControl.style;
     const halfPickerWidth = this._colorpickerElement.clientWidth / 2 + 2;
     const left = this.pickerControl.offsetWidth / 2 - halfPickerWidth;
-    let top = (this.pickerControl.offsetHeight + 10) * -1;
 
-    if (this._toggleDirection === 'down') {
-      top = 30;
-    }
-
-    controlStyle.top = `${top}px`;
+    controlStyle[this._toggleDirection === 'down' ? 'top' : 'bottom'] = `calc(100% + 8px)`;
     controlStyle.left = `-${left}px`;
   }
 }
