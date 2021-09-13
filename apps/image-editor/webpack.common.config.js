@@ -1,7 +1,9 @@
 /* eslint-disable */
 const path = require('path');
 
-module.exports = ({ minify }) => ({
+const ESLintPlugin = require('eslint-webpack-plugin');
+
+module.exports = ({ minify }, { mode }) => ({
   entry: './src/index.js',
   output: {
     library: {
@@ -52,4 +54,10 @@ module.exports = ({ minify }) => ({
       },
     ],
   },
+  plugins: [
+    new ESLintPlugin({
+      extensions: ['js'],
+      failOnError: mode === 'production',
+    }),
+  ],
 });

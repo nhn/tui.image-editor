@@ -353,24 +353,21 @@ class Filter extends Submenu {
         { slider: this.selector('.tie-colorfilter-threshold-range') },
         FILTER_RANGE.colorfilterThresholdRange
       ),
-      filterTintColor: new Colorpicker(
-        this.selector('.tie-filter-tint-color'),
-        '#03bd9e',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
-      filterMultiplyColor: new Colorpicker(
-        this.selector('.tie-filter-multiply-color'),
-        '#515ce6',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
-      filterBlendColor: new Colorpicker(
-        this.selector('.tie-filter-blend-color'),
-        '#ffbb3b',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
+      filterTintColor: new Colorpicker(this.selector('.tie-filter-tint-color'), {
+        defaultColor: '#03bd9e',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
+      filterMultiplyColor: new Colorpicker(this.selector('.tie-filter-multiply-color'), {
+        defaultColor: '#515ce6',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
+      filterBlendColor: new Colorpicker(this.selector('.tie-filter-blend-color'), {
+        defaultColor: '#ffbb3b',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
       blurRange: FILTER_RANGE.blurFilterRange,
     };
 

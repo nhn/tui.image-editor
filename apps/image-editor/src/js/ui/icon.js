@@ -27,12 +27,11 @@ class Icon extends Submenu {
     this._els = {
       registerIconButton: this.selector('.tie-icon-image-file'),
       addIconButton: this.selector('.tie-icon-add-button'),
-      iconColorpicker: new Colorpicker(
-        this.selector('.tie-icon-color'),
-        '#ffbb3b',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
+      iconColorpicker: new Colorpicker(this.selector('.tie-icon-color'), {
+        defaultColor: '#ffbb3b',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
     };
 
     this.colorPickerInputBox = this._els.iconColorpicker.colorpickerElement.querySelector(

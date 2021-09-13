@@ -17,6 +17,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.25.1",
     "eslint-plugin-vue": "^7.17.0",
+    "eslint-webpack-plugin": "^3.0.1",
     "file-saver": "^2.0.5",
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
