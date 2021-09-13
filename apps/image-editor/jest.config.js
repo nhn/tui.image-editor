@@ -6,6 +6,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.js$': 'jest-esm-transformer',
+    '^.+\\.svg$': '<rootDir>/__mocks__/svgMock.js',
   },
   transformIgnorePatterns: ['<rootDir>/node_modules/'],
   testMatch: ['<rootDir>/**/*.spec.js'],
@@ -13,7 +14,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/js/$1',
     '^@css/(.*)$': '<rootDir>/src/css/$1',
-    '^@svg/(.*)$': 'jest-svg-transformer',
+    '^@svg/(.*)$': '<rootDir>/src/svg/$1',
     '^fixtures/(.*)$': '<rootDir>/__mocks__/fileMock.js',
   },
   setupFiles: [setupFile],

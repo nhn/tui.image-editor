@@ -15,10 +15,6 @@ describe('UI', () => {
     actions = imageEditorMock.getActions();
   });
 
-  afterEach(() => {
-    imageEditorMock.destroy();
-  });
-
   describe('mainAction', () => {
     let mainAction;
 

@@ -22,7 +22,6 @@
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
-    "jest-svg-transformer": "^1.0.0",
     "lerna": "^3.22.1",
     "mini-css-extract-plugin": "^2.2.2",
     "mkdirp": "^1.0.4",
