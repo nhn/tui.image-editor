@@ -1,11 +1,16 @@
+/* eslint-disable */
 const path = require('path');
+const { version, author, license } = require('./package.json');
 
-const config = {
+const webpack = require('webpack');
+
+module.exports = () => ({
+  mode: 'production',
   entry: './src/index.js',
   output: {
     filename: 'toastui-react-image-editor.js',
     path: path.resolve(__dirname, 'dist'),
-    libraryTarget: 'commonjs2',
+    library: { type: 'commonjs2' },
   },
   externals: {
     'tui-image-editor': {
@@ -21,13 +26,21 @@ const config = {
     rules: [
       {
         test: /\.js$/,
-        include: [path.resolve(__dirname, 'src')],
+        include: path.resolve(__dirname, 'src'),
         use: {
           loader: 'babel-loader',
         },
       },
     ],
   },
-};
-
-module.exports = () => config;
+  plugins: [
+    new webpack.BannerPlugin({
+      banner: [
+        'TOAST UI Image-Editor : React Wrapper',
+        `@version ${version}`,
+        `@author ${author}`,
+        `@license ${license}`,
+      ].join('\n'),
+    }),
+  ],
+});

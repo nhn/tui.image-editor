@@ -8,9 +8,7 @@
     "src"
   ],
   "scripts": {
-    "build:dev": "webpack --mode development",
-    "build": "webpack --mode production",
-    "serve": "webpack-dev-server",
+    "build": "webpack",
     "storybook": "start-storybook -s ./node_modules/tui-image-editor/dist/svg,.storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -24,22 +22,13 @@
     "not ie <= 9"
   ],
   "peerDependencies": {
-    "react": "^16.0.0"
+    "react": "^17.0.0"
   },
   "devDependencies": {
-    "@storybook/addon-actions": "^4.1.7",
-    "@storybook/addon-knobs": "^4.1.7",
-    "@storybook/addon-links": "^4.1.7",
-    "@storybook/addons": "^4.1.7",
-    "@storybook/react": "^4.1.7",
-    "css-loader": "^2.1.0",
-    "react": "^16.7.0",
-    "react-dom": "^16.7.0",
-    "storybook": "^5.3.13",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.29.0",
-    "webpack-cli": "^3.2.1",
-    "webpack-dev-server": "^3.1.14"
+    "@storybook/builder-webpack5": "^6.3.8",
+    "@storybook/manager-webpack5": "^6.3.8",
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
   },
   "dependencies": {
     "fabric": "^4.2.0",

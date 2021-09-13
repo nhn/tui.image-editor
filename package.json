@@ -7,6 +7,8 @@
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
     "@babel/preset-react": "^7.14.5",
+    "@storybook/cli": "^6.3.8",
+    "@storybook/react": "^6.3.8",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
     "css-minimizer-webpack-plugin": "^3.0.2",
@@ -45,5 +47,8 @@
     "build:image-editor": "lerna run --scope tui-image-editor build",
     "build:react": "lerna run --scope @toast-ui/react-image-editor build",
     "build:vue": "lerna run --scope @toast-ui/vue-image-editor build"
-  }
+  },
+  "workspaces": [
+    "apps/*"
+  ]
 }
