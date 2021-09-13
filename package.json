@@ -30,7 +30,7 @@
     "stylus-loader": "^6.1.0",
     "svgstore": "*",
     "terser-webpack-plugin": "^5.2.3",
-    "tui-code-snippet": "^2.3.3",
+    "tui-code-snippet": "^1.5.0",
     "typescript": "^3.2.2",
     "vue-eslint-parser": "^7.10.0",
     "webpack": "^5.52.0",
