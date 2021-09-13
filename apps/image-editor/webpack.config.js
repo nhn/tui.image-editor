@@ -1,120 +1,103 @@
-/**
- * webpack.config.js created on 2016. 12. 01.
- * @author NHN. FE Development Lab <dl_javascript@nhn.com>
- */
 const pkg = require('./package.json');
 const path = require('path');
 const webpack = require('webpack');
+
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
 
-const isProduction = process.argv.indexOf('-p') > -1;
+module.exports = (env, args) => {
+  const { minify } = env;
+  const { mode } = args;
+  const isProduction = mode === 'production';
+  const FILENAME = pkg.name + (minify ? '.min' : '');
 
-const FILENAME = pkg.name + (isProduction ? '.min' : '');
-const BANNER = [
-  `${FILENAME}.js`,
-  `@version ${pkg.version}`,
-  `@author ${pkg.author}`,
-  `@license ${pkg.license}`,
-].join('\n');
-
-module.exports = {
-  mode: isProduction ? 'production' : 'development',
-  entry: './src/index.js',
-  output: {
-    library: ['tui', 'ImageEditor'],
-    libraryTarget: 'umd',
-    libraryExport: 'default',
-    path: path.resolve('dist'),
-    publicPath: '/dist',
-    filename: `${FILENAME}.js`,
-  },
-  resolve: {
-    alias: {
-      '@': path.resolve('src/js'),
-      '@css': path.resolve('src/css'),
-      '@svg': path.resolve('src/svg'),
+  const config = {
+    mode,
+    entry: './src/index.js',
+    output: {
+      library: ['tui', 'ImageEditor'],
+      libraryTarget: 'umd',
+      libraryExport: 'default',
+      path: path.resolve('dist'),
+      publicPath: '/dist',
+      filename: `${FILENAME}.js`,
     },
-  },
-  externals: [
-    {
-      'tui-code-snippet': {
-        commonjs: 'tui-code-snippet',
-        commonjs2: 'tui-code-snippet',
-        amd: 'tui-code-snippet',
-        root: ['tui', 'util'],
-      },
-      'tui-color-picker': {
-        commonjs: 'tui-color-picker',
-        commonjs2: 'tui-color-picker',
-        amd: 'tui-color-picker',
-        root: ['tui', 'colorPicker'],
+    resolve: {
+      alias: {
+        '@': path.resolve('src/js'),
+        '@css': path.resolve('src/css'),
+        '@svg': path.resolve('src/svg'),
       },
     },
-  ],
-  module: {
-    rules: [
+    externals: [
       {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'babel-loader',
-        options: {
-          rootMode: 'upward',
+        'tui-code-snippet': {
+          commonjs: 'tui-code-snippet',
+          commonjs2: 'tui-code-snippet',
+          amd: 'tui-code-snippet',
+          root: ['tui', 'util'],
+        },
+        'tui-color-picker': {
+          commonjs: 'tui-color-picker',
+          commonjs2: 'tui-color-picker',
+          amd: 'tui-color-picker',
+          root: ['tui', 'colorPicker'],
         },
       },
-      {
-        test: /\.styl$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          {
-            loader: 'css-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-          {
-            loader: 'stylus-loader',
-            options: {
-              sourceMap: true,
-            },
-          },
-        ],
-      },
-      {
-        test: /\.svg$/,
-        loader: 'svg-inline-loader',
-      },
     ],
-  },
-  plugins: [
-    new webpack.BannerPlugin(BANNER),
-    new MiniCssExtractPlugin({
-      filename: `${FILENAME}.css`,
-    }),
-  ],
-  optimization: {
-    minimizer: [
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true,
-      }),
-      new OptimizeCSSAssetsPlugin({
-        cssProcessorOptions: {
-          map: {
-            inline: false,
+    module: {
+      rules: [
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          loader: 'babel-loader',
+          options: {
+            rootMode: 'upward',
           },
         },
+        {
+          test: /\.styl$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader', 'stylus-loader'],
+        },
+        {
+          test: /\.svg$/,
+          type: 'asset/inline',
+        },
+      ],
+    },
+    plugins: [
+      new webpack.BannerPlugin({
+        banner: [
+          `${FILENAME}.js`,
+          `@version ${pkg.version}`,
+          `@author ${pkg.author}`,
+          `@license ${pkg.license}`,
+        ].join('\n'),
+      }),
+      new MiniCssExtractPlugin({
+        filename: `${FILENAME}.css`,
       }),
     ],
-  },
-  devServer: {
-    historyApiFallback: false,
-    progress: true,
-    inline: true,
-    host: '0.0.0.0',
-    disableHostCheck: true,
-  },
-  devtool: 'source-map',
+  };
+
+  if (!isProduction) {
+    config.devServer = {
+      compress: true,
+      open: true,
+      hot: true,
+      host: '0.0.0.0',
+      static: './examples',
+    };
+    config.devtool = 'eval-source-map';
+  }
+
+  if (minify) {
+    config.optimization = {
+      minimize: true,
+      minimizer: [new TerserPlugin({ extractComments: false }), new CssMinimizerPlugin()],
+    };
+  }
+
+  return config;
 };
