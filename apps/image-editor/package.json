@@ -21,9 +21,12 @@
   "scripts": {
     "test": "jest --forceExit --detectOpenHandles",
     "test:types": "tsc --project tests/types",
-    "build": "webpack && webpack -p && npm run build:svg && node tsBannerGenerator.js",
+    "build": "npm run build:clean && npm run build:svg && npm run build:prod && npm run build:minify && node tsBannerGenerator.js",
+    "build:clean": "rm -rf ./dist",
+    "build:prod": "webpack --mode=production",
+    "build:minify": "webpack --mode=production --env minify",
     "build:svg": "node makesvg.js",
-    "serve": "webpack-dev-server",
+    "serve": "webpack serve --mode=development",
     "doc:dev": "tuidoc --serv",
     "doc": "tuidoc"
   },
@@ -39,27 +42,8 @@
     "last 2 versions",
     "not ie <= 9"
   ],
-  "devDependencies": {
-    "css-loader": "^3.4.1",
-    "file-saver": "^1.3.3",
-    "jsdoc": "^3.5.4",
-    "mini-css-extract-plugin": "^0.9.0",
-    "mkdirp": "^0.5.1",
-    "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "stylus": "^0.54.5",
-    "stylus-loader": "^3.0.2",
-    "svg-inline-loader": "^0.8.2",
-    "svgstore": "^2.0.3",
-    "tui-jsdoc-template": "^1.0.4",
-    "typescript": "^3.2.2",
-    "uglifyjs-webpack-plugin": "^2.2.0",
-    "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10",
-    "webpack-dev-server": "^3.10.1"
-  },
   "dependencies": {
     "fabric": "^4.2.0",
-    "tui-code-snippet": "^1.5.0",
     "tui-color-picker": "^2.2.6"
   }
 }
