@@ -1,14 +1,6 @@
 /* eslint-disable */
 module.exports = () => ({
   mode: 'development',
-  module: {
-    rules: [
-      {
-        test: /\.styl$/,
-        use: ['css-loader', 'stylus-loader'],
-      },
-    ],
-  },
   devServer: {
     compress: true,
     open: true,

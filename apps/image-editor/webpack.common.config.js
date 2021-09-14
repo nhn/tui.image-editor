@@ -2,6 +2,7 @@
 const path = require('path');
 
 const ESLintPlugin = require('eslint-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = ({ minify }, { mode }) => ({
   entry: './src/index.js',
@@ -49,6 +50,10 @@ module.exports = ({ minify }, { mode }) => ({
         },
       },
       {
+        test: /\.styl$/,
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'stylus-loader'],
+      },
+      {
         test: /\.svg$/,
         type: 'asset/inline',
       },
@@ -58,6 +63,9 @@ module.exports = ({ minify }, { mode }) => ({
     new ESLintPlugin({
       extensions: ['js'],
       failOnError: mode === 'production',
+    }),
+    new MiniCssExtractPlugin({
+      filename: `tui-image-editor${minify ? '.min' : ''}.css`,
     }),
   ],
 });
