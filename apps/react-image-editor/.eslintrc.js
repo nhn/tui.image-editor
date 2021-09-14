@@ -3,6 +3,9 @@ module.exports = {
   plugins: ['react', 'prettier'],
   parser: '@babel/eslint-parser',
   parserOptions: {
+    babelOptions: {
+      presets: ['@babel/preset-react'],
+    },
     ecmaVersion: 7,
     sourceType: 'module',
     ecmaFeatures: {

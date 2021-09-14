@@ -27,6 +27,7 @@
   "devDependencies": {
     "@storybook/builder-webpack5": "^6.3.8",
     "@storybook/manager-webpack5": "^6.3.8",
+    "@storybook/react": "^6.3.8",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"
   },

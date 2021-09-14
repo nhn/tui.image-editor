@@ -26,6 +26,7 @@
   "devDependencies": {
     "@storybook/builder-webpack5": "^6.3.8",
     "@storybook/manager-webpack5": "^6.3.8",
+    "@storybook/vue": "^6.3.8",
     "vue": "^2.6.14"
   },
   "dependencies": {
