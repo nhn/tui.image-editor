@@ -7,6 +7,7 @@ module.exports = () => ({
     hot: true,
     host: '0.0.0.0',
     static: './examples',
+    allowedHosts: 'all',
   },
   devtool: 'eval-source-map',
 });
