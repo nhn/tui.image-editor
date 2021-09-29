@@ -11,7 +11,7 @@ module.exports = ({ minify }) => {
     plugins: [
       new webpack.BannerPlugin({
         banner: [
-          'TOAST UI Image-Editor',
+          'TOAST UI ImageEditor',
           `@version ${version}`,
           `@author ${author}`,
           `@license ${license}`,

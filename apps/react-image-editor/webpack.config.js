@@ -36,7 +36,7 @@ module.exports = () => ({
   plugins: [
     new webpack.BannerPlugin({
       banner: [
-        'TOAST UI Image-Editor : React Wrapper',
+        'TOAST UI ImageEditor : React Wrapper',
         `@version ${version}`,
         `@author ${author}`,
         `@license ${license}`,

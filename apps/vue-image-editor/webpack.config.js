@@ -51,7 +51,7 @@ module.exports = {
     new VueLoaderPlugin(),
     new webpack.BannerPlugin({
       banner: [
-        'TOAST UI Image-Editor : Vue Wrapper',
+        'TOAST UI ImageEditor : Vue Wrapper',
         `@version ${version}`,
         `@author ${author}`,
         `@license ${license}`,
