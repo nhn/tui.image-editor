@@ -40,18 +40,16 @@ class Shape extends Submenu {
         },
         defaultShapeStrokeValues
       ),
-      fillColorpicker: new Colorpicker(
-        this.selector('.tie-color-fill'),
-        '',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
-      strokeColorpicker: new Colorpicker(
-        this.selector('.tie-color-stroke'),
-        '#ffbb3b',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
+      fillColorpicker: new Colorpicker(this.selector('.tie-color-fill'), {
+        defaultColor: '',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
+      strokeColorpicker: new Colorpicker(this.selector('.tie-color-stroke'), {
+        defaultColor: '#ffbb3b',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
     };
 
     this.colorPickerControls.push(this._els.fillColorpicker);

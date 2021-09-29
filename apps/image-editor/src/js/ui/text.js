@@ -29,12 +29,11 @@ class Text extends Submenu {
     this._els = {
       textEffectButton: this.selector('.tie-text-effect-button'),
       textAlignButton: this.selector('.tie-text-align-button'),
-      textColorpicker: new Colorpicker(
-        this.selector('.tie-text-color'),
-        '#ffbb3b',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
+      textColorpicker: new Colorpicker(this.selector('.tie-text-color'), {
+        defaultColor: '#ffbb3b',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
       textRange: new Range(
         {
           slider: this.selector('.tie-text-range'),

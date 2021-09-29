@@ -25,12 +25,11 @@ class Draw extends Submenu {
 
     this._els = {
       lineSelectButton: this.selector('.tie-draw-line-select-button'),
-      drawColorPicker: new Colorpicker(
-        this.selector('.tie-draw-color'),
-        '#00a9ff',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
+      drawColorPicker: new Colorpicker(this.selector('.tie-draw-color'), {
+        defaultColor: '#00a9ff',
+        toggleDirection: this.toggleDirection,
+        usageStatistics: this.usageStatistics,
+      }),
       drawRange: new Range(
         {
           slider: this.selector('.tie-draw-range'),

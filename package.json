@@ -6,13 +6,39 @@
     "@babel/eslint-parser": "^7.15.0",
     "@babel/plugin-transform-runtime": "^7.15.0",
     "@babel/preset-env": "^7.15.0",
+    "@babel/preset-react": "^7.14.5",
+    "@storybook/cli": "^6.3.8",
     "babel-loader": "^8.2.2",
+    "css-loader": "^6.2.0",
+    "css-minimizer-webpack-plugin": "^3.0.2",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-config-tui": "^4.2.0",
+    "eslint-plugin-jest": "^24.4.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.25.1",
+    "eslint-plugin-vue": "^7.17.0",
+    "eslint-webpack-plugin": "^3.0.1",
+    "file-saver": "^2.0.5",
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
-    "jest-svg-transformer": "^1.0.0",
-    "lerna": "^3.22.1",
-    "prettier": "^2.0.5"
+    "lerna": "^4.0.0",
+    "mini-css-extract-plugin": "^2.2.2",
+    "mkdirp": "^1.0.4",
+    "prettier": "^2.0.5",
+    "stylus-loader": "^6.1.0",
+    "svgstore": "*",
+    "terser-webpack-plugin": "^5.2.3",
+    "tui-code-snippet": "^1.5.0",
+    "typescript": "^3.2.2",
+    "vue-eslint-parser": "^7.10.0",
+    "vue-loader": "^15.9.8",
+    "vue-template-compiler": "^2.6.14",
+    "webpack": "^5.52.0",
+    "webpack-cli": "^4.8.0",
+    "webpack-dev-server": "^4.2.0",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.15.4"
@@ -22,5 +48,8 @@
     "build:image-editor": "lerna run --scope tui-image-editor build",
     "build:react": "lerna run --scope @toast-ui/react-image-editor build",
     "build:vue": "lerna run --scope @toast-ui/vue-image-editor build"
-  }
+  },
+  "workspaces": [
+    "apps/*"
+  ]
 }

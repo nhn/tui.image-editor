@@ -1,9 +1,10 @@
 /*eslint-disable*/
 var fs = require('fs');
 var path = require('path');
+var rootPkg = require('../../package.json');
 var pkg = require('./package.json');
 
-var tsVersion = /[0-9.]+/.exec(pkg.devDependencies.typescript)[0];
+var tsVersion = /[0-9.]+/.exec(rootPkg.devDependencies.typescript)[0];
 var declareFilePath = path.join(__dirname, 'index.d.ts');
 var declareRows = [];
 var TS_BANNER = [
@@ -19,7 +20,7 @@ fs.readFile(declareFilePath, 'utf8', function (error, data) {
   declareRows = data.toString().split('\n');
   declareRows.splice(0, 2, TS_BANNER);
 
-  fs.writeFile(declareFilePath, declareRows.join('\n'), 'utf8', function (error, data) {
+  fs.writeFile(declareFilePath, declareRows.join('\n'), 'utf8', function (error) {
     if (error) {
       throw error;
     }

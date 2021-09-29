@@ -1,14 +1,17 @@
+/* eslint-disable */
 const path = require('path');
-const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const { version, author, license } = require('./package.json');
+
 const webpack = require('webpack');
+const { VueLoaderPlugin } = require('vue-loader');
 
 module.exports = {
+  mode: 'production',
   entry: './src/index.js',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'toastui-vue-image-editor.js',
-    library: 'toastui',
-    libraryTarget: 'umd',
+    library: { type: 'commonjs2' },
   },
   resolve: {
     alias: {
@@ -26,21 +29,13 @@ module.exports = {
   module: {
     rules: [
       {
-        enforce: 'pre',
-        test: /\.(js|vue)$/,
-        exclude: /node_modules|example/,
-        use: {
-          loader: 'eslint-loader',
-          options: {
-            failOnError: true,
-          },
-        },
-      },
-      {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
           loader: 'babel-loader',
+          options: {
+            rootMode: 'upward',
+          },
         },
       },
       {
@@ -51,9 +46,13 @@ module.exports = {
   },
   plugins: [
     new VueLoaderPlugin(),
-    new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production'),
+    new webpack.BannerPlugin({
+      banner: [
+        'TOAST UI ImageEditor : Vue Wrapper',
+        `@version ${version}`,
+        `@author ${author}`,
+        `@license ${license}`,
+      ].join('\n'),
     }),
   ],
-  devtool: 'source-map',
 };
