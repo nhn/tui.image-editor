@@ -11,10 +11,7 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'toastui-vue-image-editor.js',
-    library: {
-      name: 'toastui',
-      type: 'umd',
-    },
+    library: { type: 'commonjs2' },
   },
   resolve: {
     alias: {
