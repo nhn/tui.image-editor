@@ -23,10 +23,10 @@
     "test:types": "tsc --project tests/types",
     "build": "npm run build:clean && npm run build:svg && npm run build:prod && npm run build:minify && node tsBannerGenerator.js",
     "build:clean": "rm -rf ./dist",
-    "build:prod": "webpack --mode=production",
-    "build:minify": "webpack --mode=production --env minify",
+    "build:prod": "webpack",
+    "build:minify": "webpack --env minify",
     "build:svg": "node makesvg.js",
-    "serve": "webpack serve --mode=development",
+    "serve": "webpack serve",
     "doc:dev": "tuidoc --serv",
     "doc": "tuidoc"
   },

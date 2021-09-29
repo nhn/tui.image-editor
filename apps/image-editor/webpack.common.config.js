@@ -4,7 +4,7 @@ const path = require('path');
 const ESLintPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
-module.exports = ({ minify }, { mode }) => ({
+module.exports = ({ minify, WEBPACK_BUILD }) => ({
   entry: './src/index.js',
   output: {
     library: {
@@ -62,7 +62,7 @@ module.exports = ({ minify }, { mode }) => ({
   plugins: [
     new ESLintPlugin({
       extensions: ['js'],
-      failOnError: mode === 'production',
+      failOnError: WEBPACK_BUILD,
     }),
     new MiniCssExtractPlugin({
       filename: `tui-image-editor${minify ? '.min' : ''}.css`,
