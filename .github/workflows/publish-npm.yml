@@ -1,0 +1,66 @@
+name: NPM Publish
+on: [workflow_dispatch]
+
+env:
+  WORKING_DIRECTORY: ./apps/image-editor
+  CACHED_ROOT_PATH: ./node_modules
+  CACHED_PACKAGE_PATH: ./apps/image-editor/node_modules
+
+jobs:
+  check-version:
+    name: Check package version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check package version
+        id: check
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ./apps/image-editor/
+      - name: Cancel actions when version is unchanged
+        uses: andymckay/cancel-action@0.2
+        if: steps.check.outputs.is-new-version == 'false'
+
+  install-dependencies:
+    name: Install root and package dependencies using cache
+    needs: [check-version]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: Check root dependency cache
+        uses: actions/cache@v2
+        id: root_dependencies_cache
+        with:
+          path: ${{ env.CACHED_ROOT_PATH }}
+          key: ${{ hashFiles('package-lock.json') }}
+      - name: Install root dependencies
+        if: steps.root_dependencies_cache.outputs.cache-hit != 'true'
+        run: npm install
+      - name: Check package dependency cache
+        uses: actions/cache@v2
+        id: package_dependencies_cache
+        with:
+          path: ${{ env.CACHED_PACKAGE_PATH }}
+          key: ${{ hashFiles('./apps/image-editor/package-lock.json') }}
+      - name: Install package dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        if: steps.package_dependencies_cache.outputs.cache-hit != 'true'
+        run: npm install
+
+  test:
+    needs: [install-dependencies]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: Test
+        run: npm run test
