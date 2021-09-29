@@ -7,19 +7,20 @@ env:
   CACHED_PACKAGE_PATH: ./apps/image-editor/node_modules
 
 jobs:
-  check-version:
-    name: Check package version
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Check package version
-        id: check
-        uses: PostHog/check-package-version@v2
-        with:
-          path: ./apps/image-editor/
-      - name: Cancel actions when version is unchanged
-        uses: andymckay/cancel-action@0.2
-        if: steps.check.outputs.is-new-version == 'false'
+#  check-version:
+#    name: Check package version
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v2
+#      - name: Check package version
+#        id: check
+#        uses: PostHog/check-package-version@v2
+#        with:
+#          path: ./apps/image-editor/
+#      - name: Cancel actions when version is unchanged
+#        uses: andymckay/cancel-action@0.2
+#        if: steps.check.outputs.is-new-version == 'false'
+
 
   install-dependencies:
     name: Install root and package dependencies using cache
