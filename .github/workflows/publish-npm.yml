@@ -3,24 +3,23 @@ on: [workflow_dispatch]
 
 env:
   WORKING_DIRECTORY: ./apps/image-editor
-  CACHED_ROOT_PATH: ./node_modules
-  CACHED_PACKAGE_PATH: ./apps/image-editor/node_modules
+  PACKAGE_DEPENDENCIES_PATH: ./apps/image-editor/node_modules
+  BUILD_CACHE_KEY: ${{ github.sha }}
 
 jobs:
-#  check-version:
-#    name: Check package version
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#      - name: Check package version
-#        id: check
-#        uses: PostHog/check-package-version@v2
-#        with:
-#          path: ./apps/image-editor/
-#      - name: Cancel actions when version is unchanged
-#        uses: andymckay/cancel-action@0.2
-#        if: steps.check.outputs.is-new-version == 'false'
-
+  check-version:
+    name: Check package version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Check package version
+        id: check
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ./apps/image-editor/
+      - name: Cancel actions when version is unchanged
+        uses: andymckay/cancel-action@0.2
+        if: steps.check.outputs.is-new-version == 'false'
 
   install-dependencies:
     name: Install root and package dependencies using cache
@@ -29,32 +28,38 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
-      - name: Use Node.js 15.x
-        uses: actions/setup-node@v1
+      - name: Install dependencies
+        id: cache-keys
+        uses: ./.github/composite-actions/install-dependencies
         with:
-          node-version: '15.x'
-      - name: Check root dependency cache
-        uses: actions/cache@v2
-        id: root_dependencies_cache
-        with:
-          path: ${{ env.CACHED_ROOT_PATH }}
-          key: ${{ hashFiles('package-lock.json') }}
-      - name: Install root dependencies
-        if: steps.root_dependencies_cache.outputs.cache-hit != 'true'
-        run: npm install
-      - name: Check package dependency cache
-        uses: actions/cache@v2
-        id: package_dependencies_cache
-        with:
-          path: ${{ env.CACHED_PACKAGE_PATH }}
-          key: ${{ hashFiles('./apps/image-editor/package-lock.json') }}
-      - name: Install package dependencies
-        working-directory: ${{ env.WORKING_DIRECTORY }}
-        if: steps.package_dependencies_cache.outputs.cache-hit != 'true'
-        run: npm install
+          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
+          PACKAGE_DEPENDENCIES_PATH: ${{ env.PACKAGE_DEPENDENCIES_PATH }}
+    outputs:
+      root_cache_key: ${{ steps.cache-keys.outputs.root_cache_key }}
+      package_cache_key: ${{ steps.cache-keys.outputs.package_cache_key }}
 
-  test:
+  build:
+    name: Build package using cache
     needs: [install-dependencies]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: build
+        uses: ./.github/composite-actions/build-package
+        with:
+          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
+          PACKAGE_DEPENDENCIES_PATH: ${{ env.PACKAGE_DEPENDENCIES_PATH }}
+          ROOT_CACHE_KEY: ${{ needs.install-dependencies.outputs.root_cache_key }}
+          PACKAGE_CACHE_KEY: ${{ needs.install-dependencies.outputs.package_cache_key }}
+          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
+    outputs:
+      root_cache_key: ${{ needs.install_dependencies.outputs.root_cache_key }}
+      package_cache_key: ${{ needs.install_dependencies.outputs.package_cache_key }}
+
+  push-tag:
+    needs: [build]
+    name: Push tag
     runs-on: ubuntu-latest
     steps:
       - name: Checkout branch
@@ -63,5 +68,66 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '15.x'
-      - name: Test
-        run: npm run test
+      - name: Get package version
+        id: version
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ${{ env.WORKING_DIRECTORY }}/
+      - name: Create Tag
+        run: |
+          git config --local user.name "lja1018"
+          git config --local user.email "jaeeon.lim@nhn.com"
+          git tag v${{ steps.version.outputs.committed-version }}
+      - name: Push tag
+        run: |
+          git push origin v${{ steps.version.outputs.committed-version }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-package:
+    needs: [build]
+    name: Publish package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Publish package
+        uses: ./.github/actions/publish-package
+        with:
+          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
+          PACKAGE_DEPENDENCIES_PATH: ${{ env.PACKAGE_DEPENDENCIES_PATH }}
+          ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
+          PACKAGE_CACHE_KEY: ${{ needs.build.outputs.package_cache_key }}
+          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+
+  publish-cdn:
+    needs: [build]
+    name: Publish CDN
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Publish CDN
+        uses: ./.github/composite-actions/publish-cdn
+        with:
+          ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
+          PACKAGE_CACHE_KEY: ${{ needs.build.outputs.package_cache_key }}
+          BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
+          TOAST_CLOUD_TENANTID: ${{ secrets.TOAST_CLOUD_TENANTID }}
+          TOAST_CLOUD_STORAGEID: ${{ secrets.TOAST_CLOUD_STORAGEID }}
+          TOAST_CLOUD_USERNAME: ${{ secrets.TOAST_CLOUD_USERNAME }}
+          TOAST_CLOUD_PASSWORD: ${{ secrets.TOAST_CLOUD_PASSWORD }}
+
+  publish-docs:
+    needs: [build]
+    name: Publish docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Publish docs
+        uses: ./.github/composite-actions/publish-docs
+        with:
+          ROOT_CACHE_KEY: ${{ needs.build.outputs.root_cache_key }}
+          PACKAGE_CACHE_KEY: ${{ needs.build.outputs.package_cache_key }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
