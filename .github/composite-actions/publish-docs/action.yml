@@ -1,0 +1,69 @@
+name: 'Publish docs'
+description: 'Publish docs'
+inputs:
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencies cache'
+    required: true
+  PACKAGE_CACHE_KEY:
+    description: 'Key of package dependencies cache'
+    required: true
+  GITHUB_TOKEN:
+    description: 'Github token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+    - name: Get package version
+      id: version
+      uses: PostHog/check-package-version@v2
+      with:
+        path: ./apps/image-editor
+    - name: Check root dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: ./node_modules
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: Check package dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: ./apps/image-editor/node_modules
+        key: ${{ inputs.PACKAGE_CACHE_KEY }}
+    - name: Install toast-ui doc
+      run: npm i -g @toast-ui/doc
+      shell: bash
+    - name: Run doc
+      working-directory: ./apps/image-editor
+      run: |
+        npm run doc
+        mv _${{ steps.version.outputs.committed-version }} ../../${{ steps.version.outputs.committed-version }}
+        mv -i _latest ../../latest
+        rm -rf tmpdoc
+        git stash --include-untracked
+      shell: bash
+    - name: Checkout gh-pages branch
+      uses: actions/checkout@v2
+      with:
+        ref: gh-pages
+    - name: Commit files
+      run: |
+        git config --local user.name "lja1018"
+        git config --local user.email "jaeeon.lim@nhn.com"
+        rm -rf latest
+        rm -rf ${{ steps.version.outputs.committed-version }}
+        git stash pop
+        git add .
+        git commit -m "${{ steps.version.outputs.committed-version }}"
+      shell: bash
+    - name: Push changes
+      uses: ad-m/github-push-action@master
+      with:
+        github_token: ${{ inputs.GITHUB_TOKEN }}
+        branch: gh-pages
+    - name: Checkout branch
+      uses: actions/checkout@v2
+      with:
+        ref: master
