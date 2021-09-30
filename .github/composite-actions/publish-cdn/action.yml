@@ -1,0 +1,57 @@
+name: 'Publish CDN'
+description: 'Publish CDN'
+inputs:
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencies cache'
+    required: true
+  PACKAGE_CACHE_KEY:
+    description: 'Key of package dependencies cache'
+    required: true
+  BUILD_CACHE_KEY:
+    description: 'Key of build cache'
+    required: true
+  TOAST_CLOUD_TENANTID:
+    description: 'Tenant id for CDN'
+    required: true
+  TOAST_CLOUD_STORAGEID:
+    description: 'Storage id for CDN'
+    required: true
+  TOAST_CLOUD_USERNAME:
+    description: 'User name for CDN'
+    required: true
+  TOAST_CLOUD_PASSWORD:
+    description: 'password for CDN'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+        registry-url: https://registry.npmjs.org/
+    - name: Check root dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ./node_modules
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: Check package dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.PACKAGE_DEPENDENCIES_PATH }}
+        key: ${{ inputs.PACKAGE_CACHE_KEY }}
+    - name: Check build cache
+      uses: actions/cache@v2
+      with:
+        path: ./apps/image-editor/dist
+        key: ${{ inputs.BUILD_CACHE_KEY }}
+    - name: Upload files to CDN
+      working-directory: ./apps/image-editor
+      run: |
+        npm run publish:cdn
+      env:
+        TOAST_CLOUD_TENANTID: ${{ inputs.TOAST_CLOUD_TENANTID }}
+        TOAST_CLOUD_STORAGEID: ${{ inputs.TOAST_CLOUD_STORAGEID }}
+        TOAST_CLOUD_USERNAME: ${{ inputs.TOAST_CLOUD_USERNAME }}
+        TOAST_CLOUD_PASSWORD: ${{ inputs.TOAST_CLOUD_PASSWORD }}
+      shell: bash
