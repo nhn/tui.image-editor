@@ -26,6 +26,7 @@
     "lerna": "^4.0.0",
     "mini-css-extract-plugin": "^2.2.2",
     "mkdirp": "^1.0.4",
+    "node-fetch": "^3.0.0",
     "prettier": "^2.0.5",
     "stylus-loader": "^6.1.0",
     "svgstore": "*",
