@@ -1,0 +1,50 @@
+name: 'Publish package'
+description: 'Publish package'
+inputs:
+  WORKING_DIRECTORY:
+    description: 'Path of working directory'
+    required: true
+  PACKAGE_DEPENDENCIES_PATH:
+    description: 'Path of node_modules'
+    required: true
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencies cache'
+    required: true
+  PACKAGE_CACHE_KEY:
+    description: 'Key of package dependencies cache'
+    required: true
+  BUILD_CACHE_KEY:
+    description: 'Key of build cache'
+    required: true
+  NODE_AUTH_TOKEN:
+    description: 'NPM authorization token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+    - uses: actions/checkout@v2
+    - name: Check root dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ./node_modules
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: Check package dependency cache
+      uses: actions/cache@v2
+      with:
+        path: ${{ inputs.PACKAGE_DEPENDENCIES_PATH }}
+        key: ${{ inputs.PACKAGE_CACHE_KEY }}
+    - name: Check build cache
+      uses: actions/cache@v2
+      with:
+        path: ./apps/image-editor/dist
+        key: ${{ inputs.BUILD_CACHE_KEY }}
+    - name: Publish package
+      working-directory: ${{ inputs.WORKING_DIRECTORY }}
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
+      shell: bash
