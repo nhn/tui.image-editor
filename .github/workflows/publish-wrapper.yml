@@ -1,0 +1,54 @@
+name: Publish wrapper
+on: [workflow_dispatch]
+
+env:
+  WORKING_DIRECTORY: ./apps/image-editor
+  REACT_WRAPPER_DIRECTORY: ./apps/react-image-editor
+  VUE_WRAPPER_DIRECTORY: ./apps/vue-image-editor
+
+jobs:
+  publish-wrapper:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Use Node.js 15.x
+        uses: actions/setup-node@v1
+        with:
+          node-version: '15.x'
+      - name: Get package version
+        id: version
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ${{ env.WORKING_DIRECTORY }}/
+      - name: Update version of wrappers in package.json
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: |
+          npm run update:wrapper
+      - name: Update react wrapper lock file
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm install
+      - name: Update vue wrapper lock file
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm install
+      - name: Commit files
+        run: |
+          git config --local user.name "lja1018"
+          git config --local user.email "jaeeon.lim@nhn.com"
+          git add .
+          git commit -m "chore: update version of wrappers to v${{ steps.version.outputs.committed-version }}"
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: master
+      - name: Publish react wrapper
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm publish
+      - name: Publish vue wrapper
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm publish
