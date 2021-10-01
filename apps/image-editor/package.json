@@ -28,7 +28,9 @@
     "build:svg": "node makesvg.js",
     "serve": "webpack serve",
     "doc:dev": "tuidoc --serv",
-    "doc": "tuidoc"
+    "doc": "tuidoc",
+    "update:wrapper": "node scripts/updateWrapper.js",
+    "publish:cdn": "node scripts/publishToCDN.js"
   },
   "homepage": "https://github.com/nhn/tui.image-editor",
   "bugs": "https://github.com/nhn/tui.image-editor/issues",

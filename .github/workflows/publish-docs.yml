@@ -1,0 +1,28 @@
+name: Publish docs
+on: [workflow_dispatch]
+
+jobs:
+  install-dependencies:
+    name: Install dependencies
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        id: cache-keys
+        uses: ./.github/composite-actions/install-dependencies
+    outputs:
+      root_cache_key: ${{ steps.cache-keys.outputs.root_cache_key }}
+
+  publish-docs:
+    needs: [install-dependencies]
+    name: Publish docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v2
+      - name: Publish docs
+        uses: ./.github/composite-actions/publish-docs
+        with:
+          ROOT_CACHE_KEY: ${{ needs.install-dependencies.outputs.root_cache_key }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -1,0 +1,32 @@
+name: 'Install root dependencies using cache'
+description: 'Set Node.js version and install node_modules'
+outputs:
+  root_cache_key:
+    description: 'Key of root dependencies cache'
+    value: ${{ steps.root_lockfile_hash.outputs.hash }}
+runs:
+  using: 'composite'
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+    - name: Compute root dependencies cache key
+      id: root_lockfile_hash
+      run: echo "::set-output name=hash::${{ hashFiles('package-lock.json') }}"
+      shell: bash
+    - name: Check root dependencies cache
+      uses: actions/cache@v2
+      id: root_cache_dependencies
+      with:
+        path: ./node_modules
+        key: ${{ steps.root_lockfile_hash.outputs.hash }}
+    - name: Install root dependencies
+      run: |
+        if echo ${{ steps.root_cache_dependencies.outputs.cache-hit }} | grep -c "true"
+        then
+          echo "Cache hit - skipping root dependency installation"
+        else
+          npm install
+        fi
+      shell: bash

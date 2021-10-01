@@ -1,0 +1,41 @@
+name: 'Publish package'
+description: 'Publish package'
+inputs:
+  ROOT_CACHE_KEY:
+    description: 'Key of root dependencies cache'
+    required: true
+  BUILD_CACHE_KEY:
+    description: 'Key of build cache'
+    required: true
+  NODE_AUTH_TOKEN:
+    description: 'NPM authorization token'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Use Node.js 15.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: '15.x'
+    - uses: actions/checkout@v2
+    - name: Check root dependencies cache
+      uses: actions/cache@v2
+      with:
+        path: ./node_modules
+        key: ${{ inputs.ROOT_CACHE_KEY }}
+    - name: Install package dependencies and remove package-lock file
+      working-directory: ./apps/image-editor
+      run: |
+        npm install && rm -rf ./package-lock.json
+      shell: bash
+    - name: Check build cache
+      uses: actions/cache@v2
+      with:
+        path: ./apps/image-editor/dist
+        key: ${{ inputs.BUILD_CACHE_KEY }}
+    - name: Publish package
+      working-directory: ./apps/image-editor
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}
+      shell: bash
