@@ -1,17 +1,8 @@
 name: 'Publish package'
 description: 'Publish package'
 inputs:
-  WORKING_DIRECTORY:
-    description: 'Path of working directory'
-    required: true
-  PACKAGE_DEPENDENCIES_PATH:
-    description: 'Path of node_modules'
-    required: true
   ROOT_CACHE_KEY:
     description: 'Key of root dependencies cache'
-    required: true
-  PACKAGE_CACHE_KEY:
-    description: 'Key of package dependencies cache'
     required: true
   BUILD_CACHE_KEY:
     description: 'Key of build cache'
@@ -32,18 +23,18 @@ runs:
       with:
         path: ./node_modules
         key: ${{ inputs.ROOT_CACHE_KEY }}
-    - name: Check package dependencies cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ inputs.PACKAGE_DEPENDENCIES_PATH }}
-        key: ${{ inputs.PACKAGE_CACHE_KEY }}
+    - name: Install package dependencies and remove package-lock file
+      working-directory: ./apps/image-editor
+      run: |
+        npm install && rm -rf ./package-lock.json
+      shell: bash
     - name: Check build cache
       uses: actions/cache@v2
       with:
         path: ./apps/image-editor/dist
         key: ${{ inputs.BUILD_CACHE_KEY }}
     - name: Publish package
-      working-directory: ${{ inputs.WORKING_DIRECTORY }}
+      working-directory: ./apps/image-editor
       run: npm publish
       env:
         NODE_AUTH_TOKEN: ${{ inputs.NODE_AUTH_TOKEN }}

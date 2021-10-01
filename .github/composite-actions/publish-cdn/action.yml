@@ -4,9 +4,6 @@ inputs:
   ROOT_CACHE_KEY:
     description: 'Key of root dependencies cache'
     required: true
-  PACKAGE_CACHE_KEY:
-    description: 'Key of package dependencies cache'
-    required: true
   BUILD_CACHE_KEY:
     description: 'Key of build cache'
     required: true
@@ -29,17 +26,16 @@ runs:
       uses: actions/setup-node@v1
       with:
         node-version: '15.x'
-        registry-url: https://registry.npmjs.org/
     - name: Check root dependencies cache
       uses: actions/cache@v2
       with:
         path: ./node_modules
         key: ${{ inputs.ROOT_CACHE_KEY }}
-    - name: Check package dependencies cache
-      uses: actions/cache@v2
-      with:
-        path: ${{ inputs.PACKAGE_DEPENDENCIES_PATH }}
-        key: ${{ inputs.PACKAGE_CACHE_KEY }}
+    - name: Install package dependencies and remove package-lock file
+      working-directory: ./apps/image-editor
+      run: |
+        npm install && rm -rf ./package-lock.json
+      shell: bash
     - name: Check build cache
       uses: actions/cache@v2
       with:

@@ -4,9 +4,6 @@ inputs:
   ROOT_CACHE_KEY:
     description: 'Key of root dependencies cache'
     required: true
-  PACKAGE_CACHE_KEY:
-    description: 'Key of package dependencies cache'
-    required: true
   GITHUB_TOKEN:
     description: 'Github token'
     required: true
@@ -27,11 +24,11 @@ runs:
       with:
         path: ./node_modules
         key: ${{ inputs.ROOT_CACHE_KEY }}
-    - name: Check package dependencies cache
-      uses: actions/cache@v2
-      with:
-        path: ./apps/image-editor/node_modules
-        key: ${{ inputs.PACKAGE_CACHE_KEY }}
+    - name: Install package dependencies and remove package-lock file
+      working-directory: ./apps/image-editor
+      run: |
+        npm install && rm -rf ./package-lock.json
+      shell: bash
     - name: Install toast-ui doc
       run: npm i -g @toast-ui/doc
       shell: bash

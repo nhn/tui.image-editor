@@ -1,10 +1,6 @@
 name: Publish docs
 on: [workflow_dispatch]
 
-env:
-  WORKING_DIRECTORY: ./apps/image-editor
-  PACKAGE_DEPENDENCIES_PATH: ./apps/image-editor/node_modules
-
 jobs:
   install-dependencies:
     name: Install dependencies
@@ -15,12 +11,8 @@ jobs:
       - name: Install dependencies
         id: cache-keys
         uses: ./.github/composite-actions/install-dependencies
-        with:
-          WORKING_DIRECTORY: ${{ env.WORKING_DIRECTORY }}
-          PACKAGE_DEPENDENCIES_PATH: ${{ env.PACKAGE_DEPENDENCIES_PATH }}
     outputs:
       root_cache_key: ${{ steps.cache-keys.outputs.root_cache_key }}
-      package_cache_key: ${{ steps.cache-keys.outputs.package_cache_key }}
 
   publish-docs:
     needs: [install-dependencies]
@@ -29,9 +21,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
-      - name: Publish documents
+      - name: Publish docs
         uses: ./.github/composite-actions/publish-docs
         with:
           ROOT_CACHE_KEY: ${{ needs.install-dependencies.outputs.root_cache_key }}
-          package_cache_key: ${{ needs.install-dependencies.outputs.package_cache_key }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
