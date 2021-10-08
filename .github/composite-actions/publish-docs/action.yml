@@ -4,6 +4,9 @@ inputs:
   ROOT_CACHE_KEY:
     description: 'Key of root dependencies cache'
     required: true
+  BUILD_CACHE_KEY:
+    description: 'Key of build'
+    required: true
   GITHUB_TOKEN:
     description: 'Github token'
     required: true
@@ -29,6 +32,11 @@ runs:
       run: |
         npm install && rm -rf ./package-lock.json
       shell: bash
+    - name: Check build cache
+      uses: actions/cache@v2
+      with:
+        path: ./apps/image-editor/dist
+        key: ${{ inputs.BUILD_CACHE_KEY }}
     - name: Install toast-ui doc
       run: npm i -g @toast-ui/doc
       shell: bash
@@ -36,8 +44,8 @@ runs:
       working-directory: ./apps/image-editor
       run: |
         npm run doc
-        mv _${{ steps.version.outputs.committed-version }} ../../${{ steps.version.outputs.committed-version }}
-        mv -i _latest ../../latest
+        mv _${{ steps.version.outputs.committed-version }} ../../_${{ steps.version.outputs.committed-version }}
+        mv -i _latest ../../_latest
         rm -rf tmpdoc
         git stash --include-untracked
       shell: bash
@@ -52,6 +60,8 @@ runs:
         rm -rf latest
         rm -rf ${{ steps.version.outputs.committed-version }}
         git stash pop
+        mv _${{ steps.version.outputs.committed-version }} ${{ steps.version.outputs.committed-version }}
+        mv -i _latest latest
         git add .
         git commit -m "${{ steps.version.outputs.committed-version }}"
       shell: bash
