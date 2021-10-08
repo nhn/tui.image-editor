@@ -25,6 +25,22 @@ jobs:
         working-directory: ${{ env.WORKING_DIRECTORY }}
         run: |
           npm run update:wrapper
+      - name: Update lock file of react wrapper
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm install
+      - name: Build react wrapper
+        working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
+        run: |
+          npm run build
+      - name: Update lock file of Vue wrapper
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm install
+      - name: Build vue wrapper
+        working-directory: ${{ env.VUE_WRAPPER_DIRECTORY }}
+        run: |
+          npm run build
       - name: Commit files
         run: |
           rm -rf ./apps/react-image-editor/package-lock.json
