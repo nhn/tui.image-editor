@@ -59,7 +59,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
-      root_cache_key: ${{ needs.install_dependencies.outputs.root_cache_key }}
+      root_cache_key: ${{ needs.install-dependencies.outputs.root_cache_key }}
 
   push-tag:
     needs: [build]
