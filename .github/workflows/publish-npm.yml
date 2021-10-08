@@ -39,11 +39,25 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+        with:
+          ref: production
       - name: build
         uses: ./.github/composite-actions/build-package
         with:
           ROOT_CACHE_KEY: ${{ needs.install-dependencies.outputs.root_cache_key }}
           BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
+      - name: Commit files
+        run: |
+          git config --local user.name "lja1018"
+          git config --local user.email "jaeeon.lim@nhn.com"
+          git add .
+          git commit -m "chore: update version to v${{ steps.version.outputs.committed-version }}"
+        shell: bash
+      - name: Push built file
+        run: |
+          git push origin production
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     outputs:
       root_cache_key: ${{ needs.install_dependencies.outputs.root_cache_key }}
 
@@ -52,8 +66,10 @@ jobs:
     name: Push tag
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
+      - name: Checkout production branch
         uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Use Node.js 15.x
         uses: actions/setup-node@v1
         with:
