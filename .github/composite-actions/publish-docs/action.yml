@@ -63,7 +63,7 @@ runs:
         mv _${{ steps.version.outputs.committed-version }} ${{ steps.version.outputs.committed-version }}
         mv -i _latest latest
         git add .
-        git commit -m "${{ steps.version.outputs.committed-version }}"
+        git commit -m "v${{ steps.version.outputs.committed-version }}"
       shell: bash
     - name: Push changes
       uses: ad-m/github-push-action@master
