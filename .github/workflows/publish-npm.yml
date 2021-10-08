@@ -54,10 +54,10 @@ jobs:
           git commit -m "chore: update version to v${{ steps.version.outputs.committed-version }}"
         shell: bash
       - name: Push built file
-        run: |
-          git push origin production
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: production
     outputs:
       root_cache_key: ${{ needs.install-dependencies.outputs.root_cache_key }}
 
