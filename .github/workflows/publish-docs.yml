@@ -30,7 +30,7 @@ jobs:
           ROOT_CACHE_KEY: ${{ needs.install-dependencies.outputs.root_cache_key }}
           BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
     outputs:
-      root_cache_key: ${{ needs.install_dependencies.outputs.root_cache_key }}
+      root_cache_key: ${{ needs.install-dependencies.outputs.root_cache_key }}
 
   publish-docs:
     needs: [build]
