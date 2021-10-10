@@ -102,13 +102,13 @@ export function toInteger(value) {
 }
 
 /**
- * String to camelcase string
- * @param {string} targetString - change target
+ * String to toKebabCase
+ * @param {string} str - change target
  * @returns {string}
  * @private
  */
-export function toCamelCase(targetString) {
-  return targetString.replace(/-([a-z])/g, ($0, $1) => $1.toUpperCase());
+export function toKebabCase(str) {
+  return str.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
 }
 
 /**
@@ -377,34 +377,12 @@ export function getObjectType(type) {
 }
 
 /**
- * Get filter type
+ * Get filter name
  * @param {string} type - fabric filter type
- * @param {object} [options] - filter type options
- *   @param {boolean} [options.useAlpha=true] - usage of alpha(true is 'color filter', false is 'remove white')
- *   @param {string} [options.mode] - mode of blendColor
- * @returns {string} type of filter (ex: sepia, blur, ...)
+ * @returns {string} name of filter
  */
-function getFilterType(type, { useAlpha = true, mode } = {}) {
-  const { VINTAGE, REMOVE_COLOR, BLEND_COLOR, SEPIA2, COLOR_FILTER, REMOVE_WHITE, BLEND } =
-    filterType;
-
-  let filterName;
-
-  switch (type) {
-    case VINTAGE:
-      filterName = SEPIA2;
-      break;
-    case REMOVE_COLOR:
-      filterName = useAlpha ? COLOR_FILTER : REMOVE_WHITE;
-      break;
-    case BLEND_COLOR:
-      filterName = mode === 'add' ? BLEND : mode;
-      break;
-    default:
-      filterName = type;
-  }
-
-  return toStartOfCapital(filterName);
+export function getFilterName(type) {
+  return filterType[type] || toStartOfCapital(type).replace(/([A-Z])/g, ' $1'); 
 }
 
 /**
@@ -450,7 +428,7 @@ export function getHistoryTitle(command) {
       historyInfo = { name, detail: args[2] };
       break;
     case APPLY_FILTER:
-      historyInfo = { name: historyNames.APPLY_FILTER, detail: getFilterType(args[1], args[2]) };
+      historyInfo = { name: historyNames.APPLY_FILTER, detail: getFilterName(args[1])};
       break;
     case REMOVE_FILTER:
       historyInfo = { name: historyNames.REMOVE_FILTER, detail: 'Remove' };

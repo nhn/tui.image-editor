@@ -3,58 +3,17 @@ import Colorpicker from '@/ui/tools/colorpicker';
 import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/filter';
-import { toInteger, toCamelCase, assignmentForDestroy } from '@/util';
-import { defaultFilterRangeValues as FILTER_RANGE, eventNames, selectorNames } from '@/consts';
+import { toInteger, toKebabCase, assignmentForDestroy } from '@/util';
+import {
+  defaultFilterRangeValues as FILTER_RANGE,
+  defaultFilterColorValues as FILTER_COLOR,
+  filterOptions,
+  eventNames,
+  selectorNames,
+  filterMenu
+} from '@/consts';
 
-const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken'];
-const FILTER_OPTIONS = [
-  'grayscale',
-  'invert',
-  'sepia',
-  'vintage',
-  'blur',
-  'sharpen',
-  'emboss',
-  'remove-white',
-  'brightness',
-  'noise',
-  'pixelate',
-  'color-filter',
-  'tint',
-  'multiply',
-  'blend',
-];
-const filterNameMap = {
-  grayscale: 'grayscale',
-  invert: 'invert',
-  sepia: 'sepia',
-  blur: 'blur',
-  sharpen: 'sharpen',
-  emboss: 'emboss',
-  removeWhite: 'removeColor',
-  brightness: 'brightness',
-  contrast: 'contrast',
-  saturation: 'saturation',
-  vintage: 'vintage',
-  polaroid: 'polaroid',
-  noise: 'noise',
-  pixelate: 'pixelate',
-  colorFilter: 'removeColor',
-  tint: 'blendColor',
-  multiply: 'blendColor',
-  blend: 'blendColor',
-  hue: 'hue',
-  gamma: 'gamma',
-};
-const RANGE_INSTANCE_NAMES = [
-  'removewhiteDistanceRange',
-  'colorfilterThresholdRange',
-  'pixelateRange',
-  'noiseRange',
-  'brightnessRange',
-  'tintOpacity',
-];
-const COLORPICKER_INSTANCE_NAMES = ['filterBlendColor', 'filterMultiplyColor', 'filterTintColor'];
+const BLEND_OPTIONS = ['add', 'diff', 'subtract', 'multiply', 'screen', 'lighten', 'darken', 'tint'];
 
 /**
  * Filter ui class
@@ -91,19 +50,22 @@ class Filter extends Submenu {
    * Remove event for filter
    */
   _removeEvent() {
-    snippet.forEach(FILTER_OPTIONS, (filter) => {
-      const filterCheckElement = this.selector(`.tie-${filter}`);
-      const filterNameCamelCase = toCamelCase(filter);
+    snippet.forEach(filterOptions, (filter) => {
+      const filterCheckElement = this.selector(`.tie-${toKebabCase(filter)}`);
 
-      filterCheckElement.removeEventListener('change', this.eventHandler[filterNameCamelCase]);
+      filterCheckElement.removeEventListener('change', this.eventHandler[filter]);
     });
 
-    snippet.forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], (instanceName) => {
-      this._els[instanceName].off();
-    });
+    for(let name in this._els.ranges){
+      this._els.ranges[name].off();
+    }
 
-    this._els.blendType.removeEventListener('change', this.eventHandler.changeBlendFilter);
-    this._els.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
+    for(let name in this._els.colors){
+      this._els.colors[name].off();
+    }
+
+    this._els.other.blendType.removeEventListener('change', this.eventHandler.changeBlendFilter);
+    this._els.other.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
 
     snippet.forEachArray(
       this.colorPickerInputBoxes,
@@ -116,11 +78,22 @@ class Filter extends Submenu {
   }
 
   _destroyToolInstance() {
-    snippet.forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], (instanceName) => {
-      this._els[instanceName].destroy();
-    });
+    for(let name in this._els.ranges){
+      this._els.ranges[name].destroy();
+    }
+
+    for(let name in this._els.colors){
+      this._els.colors[name].destroy();
+    }
+
   }
 
+
+  _getFilterType(name){
+    for(let type in filterMenu){
+      if(filterMenu[type].includes(name))return type;
+    }
+  }
   /**
    * Add event for filter
    * @param {Object} actions - actions for crop
@@ -133,35 +106,33 @@ class Filter extends Submenu {
       this._changeFilterState(applyFilter, filterName, isLast);
 
     this.eventHandler = {
-      changeBlendFilter: changeFilterState('blend'),
+      changeBlendFilter: changeFilterState('blendColor'),
+      changeRemoveColor: changeFilterState('removeColor'),
       blandTypeClick: (event) => event.stopPropagation(),
     };
 
-    snippet.forEach(FILTER_OPTIONS, (filter) => {
-      const filterCheckElement = this.selector(`.tie-${filter}`);
-      const filterNameCamelCase = toCamelCase(filter);
-      this.checkedMap[filterNameCamelCase] = filterCheckElement;
-      this.eventHandler[filterNameCamelCase] = changeFilterState(filterNameCamelCase);
+    snippet.forEach(filterOptions, (filter) => {
+      const filterCheckElement = this.selector(`.tie-${toKebabCase(filter)}`);
+      this.checkedMap[filter] = filterCheckElement;
+      this.eventHandler[filter] = changeFilterState(filter);
+      filterCheckElement.addEventListener('change', this.eventHandler[filter]);
 
-      filterCheckElement.addEventListener('change', this.eventHandler[filterNameCamelCase]);
+      const type = this._getFilterType(filter);
+
+      if(type === 'range'){
+        this._els.ranges[filter].on('change', changeFilterStateForRange(filter));
+      }else if(type === 'color'){
+        this._els.colors[filter].on('change', this.eventHandler.changeBlendFilter);
+        this._els.colors[filter].on('changeShow', this.colorPickerChangeShow.bind(this));
+      }
     });
 
-    this._els.removewhiteDistanceRange.on('change', changeFilterStateForRange('removeWhite'));
-    this._els.colorfilterThresholdRange.on('change', changeFilterStateForRange('colorFilter'));
-    this._els.pixelateRange.on('change', changeFilterStateForRange('pixelate'));
-    this._els.noiseRange.on('change', changeFilterStateForRange('noise'));
-    this._els.brightnessRange.on('change', changeFilterStateForRange('brightness'));
+    this._els.other.filterBlendThresholdRange.on('change', changeFilterStateForRange('blendColor'));
+    this._els.other.removeColorThresholdRange.on('change', changeFilterStateForRange('removeColor'));
 
-    this._els.filterBlendColor.on('change', this.eventHandler.changeBlendFilter);
-    this._els.filterMultiplyColor.on('change', changeFilterState('multiply'));
-    this._els.filterTintColor.on('change', changeFilterState('tint'));
-    this._els.tintOpacity.on('change', changeFilterStateForRange('tint'));
-    this._els.filterMultiplyColor.on('changeShow', this.colorPickerChangeShow.bind(this));
-    this._els.filterTintColor.on('changeShow', this.colorPickerChangeShow.bind(this));
-    this._els.filterBlendColor.on('changeShow', this.colorPickerChangeShow.bind(this));
 
-    this._els.blendType.addEventListener('change', this.eventHandler.changeBlendFilter);
-    this._els.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
+    this._els.other.blendType.addEventListener('change', this.eventHandler.changeBlendFilter);
+    this._els.other.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
 
     snippet.forEachArray(
       this.colorPickerInputBoxes,
@@ -207,29 +178,53 @@ class Filter extends Submenu {
 
   /**
    * Set filter for undo changed
-   * @param {string} filterName - filter name
-   * @param {Object} options - filter options
+   * @param {string} filter - filter name
+   * @param {Object} option - filter options
    * @private
    */
   // eslint-disable-next-line complexity
-  _setFilterState(filterName, options) {
-    if (filterName === 'colorFilter') {
-      this._els.colorfilterThresholdRange.value = options.distance;
-    } else if (filterName === 'removeWhite') {
-      this._els.removewhiteDistanceRange.value = options.distance;
-    } else if (filterName === 'pixelate') {
-      this._els.pixelateRange.value = options.blocksize;
-    } else if (filterName === 'brightness') {
-      this._els.brightnessRange.value = options.brightness;
-    } else if (filterName === 'noise') {
-      this._els.noiseRange.value = options.noise;
-    } else if (filterName === 'tint') {
-      this._els.tintOpacity.value = options.alpha;
-      this._els.filterTintColor.color = options.color;
-    } else if (filterName === 'blend') {
-      this._els.filterBlendColor.color = options.color;
-    } else if (filterName === 'multiply') {
-      this._els.filterMultiplyColor.color = options.color;
+  _setFilterState(filter, option) {
+    let value;
+    switch (filter) {
+      case 'removeColor':
+        option.color = value;
+        this._els.other.removeColorThresholdRange.value = option.distance;
+        break;
+      case 'pixelate':
+        value = option.blocksize;
+        break;
+      case 'noise':
+        value = option.noise;
+        break;
+      case 'brightness':
+        value = option.brightness * 100;
+        break;
+      case 'contrast':
+        value = option.contrast * 100;
+        break;
+      case 'saturation':
+        value = option.saturation * 100;
+        break;
+      case 'blendColor':
+        value = option.color;
+        this._els.other.filterBlendThresholdRange.value = option.alpha;
+        this._els.other.blendType.value = option.mode;
+        break;
+      case 'blur':
+        value = option.blur * 100;
+        break;
+      case 'vibrance':
+        value = option.vibrance * 100;
+        break;
+      case 'hueRotation':
+        value = option.rotation * 100;
+        break;
+    }
+    const type = this._getFilterType(filter);
+    if(type === 'color'){
+      this._els.colors[filter].color = value;
+    }else if(type === 'range'){
+      this._els.ranges[filter].value = value;
     }
   }
 
@@ -242,17 +237,6 @@ class Filter extends Submenu {
    */
   _getFilterNameFromOptions(type, options) {
     let filterName = type;
-
-    if (type === 'removeColor') {
-      filterName = snippet.isExisty(options.useAlpha) ? 'removeWhite' : 'colorFilter';
-    } else if (type === 'blendColor') {
-      filterName = {
-        add: 'blend',
-        multiply: 'multiply',
-        tint: 'tint',
-      }[options.mode];
-    }
-
     return filterName;
   }
 
@@ -263,8 +247,8 @@ class Filter extends Submenu {
    * @param {boolean} [isLast] - Is last change
    */
   _changeFilterState(applyFilter, filterName, isLast = true) {
+    console.log('t',this.checkedMap, filterName);
     const apply = this.checkedMap[filterName].checked;
-    const type = filterNameMap[filterName];
 
     const checkboxGroup = this.checkedMap[filterName].closest('.tui-image-editor-checkbox-group');
     if (checkboxGroup) {
@@ -274,7 +258,7 @@ class Filter extends Submenu {
         checkboxGroup.classList.add('tui-image-editor-disabled');
       }
     }
-    applyFilter(apply, type, this._getFilterOption(filterName), !isLast);
+    applyFilter(apply, filterName, this._getFilterOption(filterName), !isLast);
   }
 
   /**
@@ -284,45 +268,49 @@ class Filter extends Submenu {
    * @private
    */
   // eslint-disable-next-line complexity
-  _getFilterOption(type) {
+  _getFilterOption(filter) {
     const option = {};
-    switch (type) {
-      case 'removeWhite':
-        option.color = '#FFFFFF';
-        option.useAlpha = false;
-        option.distance = parseFloat(this._els.removewhiteDistanceRange.value);
-        break;
-      case 'colorFilter':
-        option.color = '#FFFFFF';
-        option.distance = parseFloat(this._els.colorfilterThresholdRange.value);
+    const type = this._getFilterType(filter);
+    
+    let value;
+    if(type === 'color'){
+      value = this._els.colors[filter].color;
+    }else if(type === 'range'){
+      value = this._els.ranges[filter].value;
+    }
+    switch (filter) {
+      case 'removeColor':
+        option.color = value;
+        option.distance = parseFloat(this._els.other.removeColorThresholdRange.value);
         break;
       case 'pixelate':
-        option.blocksize = toInteger(this._els.pixelateRange.value);
+        option.blocksize = toInteger(value);
         break;
       case 'noise':
-        option.noise = toInteger(this._els.noiseRange.value);
+        option.noise = toInteger(value);
         break;
       case 'brightness':
-        option.brightness = parseFloat(this._els.brightnessRange.value);
+        option.brightness = parseFloat(value) / 100;
         break;
-      case 'blend':
-        option.mode = 'add';
-        option.color = this._els.filterBlendColor.color;
-        option.mode = this._els.blendType.value;
+      case 'contrast':
+        option.contrast = parseFloat(value) / 100;
         break;
-      case 'multiply':
-        option.mode = 'multiply';
-        option.color = this._els.filterMultiplyColor.color;
+      case 'saturation':
+        option.saturation = parseFloat(value) / 100;
         break;
-      case 'tint':
-        option.mode = 'tint';
-        option.color = this._els.filterTintColor.color;
-        option.alpha = this._els.tintOpacity.value;
+      case 'blendColor':
+        option.color = value;
+        option.alpha = parseFloat(this._els.other.filterBlendThresholdRange.value);
+        option.mode = this._els.other.blendType.value;
         break;
       case 'blur':
-        option.blur = this._els.blurRange.value;
+        option.blur = parseFloat(value) / 100;
         break;
-      default:
+      case 'vibrance':
+        option.vibrance = parseFloat(value) / 100;
+        break;
+      case 'hueRotation':
+        option.rotation = parseFloat(value) / 100;
         break;
     }
 
@@ -335,87 +323,76 @@ class Filter extends Submenu {
    */
   _makeControlElement() {
     this._els = {
-      removewhiteDistanceRange: new Range(
-        { slider: this.selector('.tie-removewhite-distance-range') },
-        FILTER_RANGE.removewhiteDistanceRange
-      ),
-      brightnessRange: new Range(
-        { slider: this.selector('.tie-brightness-range') },
-        FILTER_RANGE.brightnessRange
-      ),
-      noiseRange: new Range({ slider: this.selector('.tie-noise-range') }, FILTER_RANGE.noiseRange),
-      pixelateRange: new Range(
-        { slider: this.selector('.tie-pixelate-range') },
-        FILTER_RANGE.pixelateRange
-      ),
-      colorfilterThresholdRange: new Range(
-        { slider: this.selector('.tie-colorfilter-threshold-range') },
-        FILTER_RANGE.colorfilterThresholdRange
-      ),
-      filterTintColor: new Colorpicker(
-        this.selector('.tie-filter-tint-color'),
-        '#03bd9e',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
-      filterMultiplyColor: new Colorpicker(
-        this.selector('.tie-filter-multiply-color'),
-        '#515ce6',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
-      filterBlendColor: new Colorpicker(
-        this.selector('.tie-filter-blend-color'),
-        '#ffbb3b',
-        this.toggleDirection,
-        this.usageStatistics
-      ),
-      blurRange: FILTER_RANGE.blurFilterRange,
+      ranges: {},
+      colors: {},
+      other: {}
     };
 
-    this._els.tintOpacity = this._pickerWithRange(this._els.filterTintColor.pickerControl);
-    this._els.blendType = this._pickerWithSelectbox(this._els.filterBlendColor.pickerControl);
 
-    this.colorPickerControls.push(this._els.filterTintColor);
-    this.colorPickerControls.push(this._els.filterMultiplyColor);
-    this.colorPickerControls.push(this._els.filterBlendColor);
+    filterMenu.range.forEach((name) => {
+      const tag = toKebabCase(name);
+      this._els.ranges[name] = new Range(
+        {
+          slider: this.selector(`.tie-${tag}-range`),
+          input: this.selector(`.tie-${tag}-range-value`),
+        },
+        FILTER_RANGE[name]
+      );
+    });
 
     this.colorPickerInputBoxes = [];
-    this.colorPickerInputBoxes.push(
-      this._els.filterTintColor.colorpickerElement.querySelector(
-        selectorNames.COLOR_PICKER_INPUT_BOX
-      )
+
+    filterMenu.color.forEach((name) => {
+      const tag = toKebabCase(name);
+      const colorpicker = new Colorpicker(
+        this.selector(`.tie-${tag}-color`),
+        FILTER_COLOR[name],
+        this.toggleDirection,
+        this.usageStatistics
+      );
+
+      this._els.colors[name] = colorpicker;
+      this.colorPickerControls.push(this._els.colors[name]);
+
+      this.colorPickerInputBoxes.push(
+        colorpicker.colorpickerElement.querySelector(selectorNames.COLOR_PICKER_INPUT_BOX)
+      );
+    });
+
+    this._els.other.blendType = this._pickerWithSelectbox(this._els.colors.blendColor.pickerControl);
+    this._els.other.removeColorThresholdRange = this._pickerWithRange(
+      this._els.colors.removeColor.pickerControl,
+      FILTER_RANGE.removeColorThresholdRange,
+      'Threshold'
     );
-    this.colorPickerInputBoxes.push(
-      this._els.filterMultiplyColor.colorpickerElement.querySelector(
-        selectorNames.COLOR_PICKER_INPUT_BOX
-      )
-    );
-    this.colorPickerInputBoxes.push(
-      this._els.filterBlendColor.colorpickerElement.querySelector(
-        selectorNames.COLOR_PICKER_INPUT_BOX
-      )
+
+    this._els.other.filterBlendThresholdRange = this._pickerWithRange(
+      this._els.colors.blendColor.pickerControl,
+      FILTER_RANGE.removeColorThresholdRange,
+      'Opacity'
     );
   }
 
   /**
    * Make submenu control for picker & range mixin
    * @param {HTMLElement} pickerControl - pickerControl dom element
+   * @param {Object} range - options for range
+   * @param {String} label - name of control
    * @returns {Range}
    * @private
    */
-  _pickerWithRange(pickerControl) {
+  _pickerWithRange(pickerControl, range, label) {
     const rangeWrap = document.createElement('div');
     const rangeLabel = document.createElement('label');
     const slider = document.createElement('div');
 
-    slider.id = 'tie-filter-tint-opacity';
-    rangeLabel.innerHTML = 'Opacity';
+    //slider.id = 'tie-filter-tint-opacity';
+    rangeLabel.innerHTML = label;
     rangeWrap.appendChild(rangeLabel);
     rangeWrap.appendChild(slider);
     pickerControl.appendChild(rangeWrap);
 
-    return new Range({ slider }, FILTER_RANGE.tintOpacityRange);
+    return new Range({ slider }, range);
   }
 
   /**

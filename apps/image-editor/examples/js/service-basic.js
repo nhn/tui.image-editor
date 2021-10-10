@@ -55,23 +55,19 @@ var $inputCheckInvert = $('#input-check-invert');
 var $inputCheckSepia = $('#input-check-sepia');
 var $inputCheckSepia2 = $('#input-check-sepia2');
 var $inputCheckBlur = $('#input-check-blur');
+var $inputRangeBlurValue = $('#input-range-blur-value');
 var $inputCheckSharpen = $('#input-check-sharpen');
 var $inputCheckEmboss = $('#input-check-emboss');
-var $inputCheckRemoveWhite = $('#input-check-remove-white');
-var $inputRangeRemoveWhiteThreshold = $('#input-range-remove-white-threshold');
-var $inputRangeRemoveWhiteDistance = $('#input-range-remove-white-distance');
+var $inputCheckRemoveColor = $('#input-check-remove-color');
+var $inputRangeRemoveColorDistance = $('#input-range-remove-color-distance');
 var $inputCheckBrightness = $('#input-check-brightness');
 var $inputRangeBrightnessValue = $('#input-range-brightness-value');
 var $inputCheckNoise = $('#input-check-noise');
 var $inputRangeNoiseValue = $('#input-range-noise-value');
 var $inputCheckPixelate = $('#input-check-pixelate');
 var $inputRangePixelateValue = $('#input-range-pixelate-value');
-var $inputCheckTint = $('#input-check-tint');
-var $inputRangeTintOpacityValue = $('#input-range-tint-opacity-value');
-var $inputCheckMultiply = $('#input-check-multiply');
 var $inputCheckBlend = $('#input-check-blend');
-var $inputCheckColorFilter = $('#input-check-color-filter');
-var $inputRangeColorFilterValue = $('#input-range-color-filter-value');
+var $inputRangeBlendOpacity = $('#input-range-blend-opacity-value');
 
 // Sub menus
 var $displayingSubMenu = $();
@@ -132,14 +128,9 @@ var iconColorpicker = tui.colorPicker.create({
   color: '#000000',
 });
 
-var tintColorpicker = tui.colorPicker.create({
-  container: $('#tui-tint-color-picker')[0],
-  color: '#000000',
-});
-
-var multiplyColorpicker = tui.colorPicker.create({
-  container: $('#tui-multiply-color-picker')[0],
-  color: '#000000',
+var removeColorpicker = tui.colorPicker.create({
+  container: $('#tui-remove-color-color-picker')[0],
+  color: '#FFFFFF',
 });
 
 var blendColorpicker = tui.colorPicker.create({
@@ -333,15 +324,7 @@ imageEditor.on({
       setTextToolbar(obj);
       activateTextMode();
     }
-  },
-  mousedown: function (event, originPointer) {
-    if ($imageFilterSubMenu.is(':visible') && imageEditor.hasFilter('colorFilter')) {
-      imageEditor.applyFilter('colorFilter', {
-        x: parseInt(originPointer.x, 10),
-        y: parseInt(originPointer.y, 10),
-      });
-    }
-  },
+  }
 });
 
 // Attach button click event listeners
@@ -721,14 +704,11 @@ $btnImageFilter.on('click', function () {
     blur: $inputCheckBlur,
     shapren: $inputCheckSharpen,
     emboss: $inputCheckEmboss,
-    removeWhite: $inputCheckRemoveWhite,
+    removeColor: $inputCheckRemoveColor,
     brightness: $inputCheckBrightness,
     noise: $inputCheckNoise,
     pixelate: $inputCheckPixelate,
-    tint: $inputCheckTint,
-    multiply: $inputCheckMultiply,
-    blend: $inputCheckBlend,
-    colorFilter: $inputCheckColorFilter,
+    blend: $inputCheckBlend
   };
 
   tui.util.forEach(filters, function ($value, key) {
@@ -787,10 +767,6 @@ $inputCheckSepia2.on('change', function () {
   applyOrRemoveFilter(this.checked, 'vintage', null);
 });
 
-$inputCheckBlur.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'Blur', { blur: 0.1 });
-});
-
 $inputCheckSharpen.on('change', function () {
   applyOrRemoveFilter(this.checked, 'Sharpen', null);
 });
@@ -799,17 +775,24 @@ $inputCheckEmboss.on('change', function () {
   applyOrRemoveFilter(this.checked, 'Emboss', null);
 });
 
-$inputCheckRemoveWhite.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'removeColor', {
-    color: '#FFFFFF',
-    useAlpha: false,
-    distance: parseInt($inputRangeRemoveWhiteDistance.val(), 10) / 255,
+removeColorpicker.on('selectColor', function (e) {
+  applyOrRemoveFilter($inputCheckRemoveColor.is(':checked'), 'removeColor', {
+    color: e.color,
+    distance: $inputRangeRemoveColorDistance.val() / 255
   });
 });
 
-$inputRangeRemoveWhiteDistance.on('change', function () {
-  applyOrRemoveFilter($inputCheckRemoveWhite.is(':checked'), 'removeColor', {
-    distance: parseInt(this.value, 10) / 255,
+$inputCheckRemoveColor.on('change', function () {
+  applyOrRemoveFilter($inputCheckRemoveColor.is(':checked'), 'removeColor', {
+    color: removeColorpicker.getColor(),
+    distance: $inputRangeRemoveColorDistance.val() / 255,
+  });
+});
+
+$inputRangeRemoveColorDistance.on('change', function () {
+  applyOrRemoveFilter($inputCheckRemoveColor.is(':checked'), 'removeColor', {
+    color: removeColorpicker.getColor(),
+    distance: this.value / 255,
   });
 });
 
@@ -849,35 +832,13 @@ $inputRangePixelateValue.on('change', function () {
   });
 });
 
-$inputCheckTint.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'blendColor', {
-    mode: 'tint',
-    color: tintColorpicker.getColor(),
-    alpha: parseFloat($inputRangeTintOpacityValue.val()),
-  });
+$inputCheckBlur.on('change', function () {
+  applyOrRemoveFilter(this.checked, 'Blur', { blur: $inputRangeBlurValue.val()/ 100 });
 });
 
-tintColorpicker.on('selectColor', function (e) {
-  applyOrRemoveFilter($inputCheckTint.is(':checked'), 'blendColor', {
-    color: e.color,
-  });
-});
-
-$inputRangeTintOpacityValue.on('change', function () {
-  applyOrRemoveFilter($inputCheckTint.is(':checked'), 'blendColor', {
-    alpha: parseFloat($inputRangeTintOpacityValue.val()),
-  });
-});
-
-$inputCheckMultiply.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'blendColor', {
-    color: multiplyColorpicker.getColor(),
-  });
-});
-
-multiplyColorpicker.on('selectColor', function (e) {
-  applyOrRemoveFilter($inputCheckMultiply.is(':checked'), 'blendColor', {
-    color: e.color,
+$inputRangeBlurValue.on('change', function () {
+  applyOrRemoveFilter($inputCheckBlur.is(':checked'), 'blur', {
+    blur: this.value/ 100,
   });
 });
 
@@ -885,12 +846,24 @@ $inputCheckBlend.on('change', function () {
   applyOrRemoveFilter(this.checked, 'blendColor', {
     mode: $selectBlendType.val(),
     color: blendColorpicker.getColor(),
+    alpha: $inputRangeBlendOpacity.val()
+  });
+});
+
+
+$inputRangeBlendOpacity.on('change', function () {
+  applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blendColor', {
+    mode: $selectBlendType.val(),
+    color: blendColorpicker.getColor(),
+    alpha: $inputRangeBlendOpacity.val()
   });
 });
 
 blendColorpicker.on('selectColor', function (e) {
   applyOrRemoveFilter($inputCheckBlend.is(':checked'), 'blendColor', {
+    mode: $selectBlendType.val(),
     color: e.color,
+    alpha: $inputRangeBlendOpacity.val()
   });
 });
 
@@ -900,18 +873,6 @@ $selectBlendType.on('change', function () {
   });
 });
 
-$inputCheckColorFilter.on('change', function () {
-  applyOrRemoveFilter(this.checked, 'removeColor', {
-    color: '#FFFFFF',
-    distance: $inputRangeColorFilterValue.val() / 255,
-  });
-});
-
-$inputRangeColorFilterValue.on('change', function () {
-  applyOrRemoveFilter($inputCheckColorFilter.is(':checked'), 'removeColor', {
-    distance: this.value / 255,
-  });
-});
 
 // Etc..
 

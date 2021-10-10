@@ -56,13 +56,8 @@ export const OBJ_TYPE = {
  * @type {Object.<string, string>}
  */
 export const filterType = {
-  VINTAGE: 'vintage',
-  SEPIA2: 'sepia2',
-  REMOVE_COLOR: 'removeColor',
-  COLOR_FILTER: 'colorFilter',
-  REMOVE_WHITE: 'removeWhite',
-  BLEND_COLOR: 'blendColor',
-  BLEND: 'blend',
+  'blackWhite': 'Black/White',
+  'hueRotation': 'Hue'
 };
 
 /**
@@ -319,6 +314,43 @@ export const defaultIconPath = {
   'icon-bubble':
     'M44 48L34 58V48H12C5.373 48 0 42.627 0 36V12C0 5.373 5.373 0 12 0h40c6.627 0 12 5.373 12 12v24c0 6.627-5.373 12-12 12h-8z',
 };
+export const filterMenu = {
+  basic: [
+    'invert',
+    'grayscale',
+    'sepia',
+    'blackWhite',
+    'brownie',
+    'vintage',
+    'kodachrome',
+    'technicolor',
+    'polaroid',
+    'sharpen',
+    'emboss'
+  ],
+  range: [
+    'brightness',
+    'contrast',
+    'saturation',
+    'vibrance',
+    'hueRotation',
+    'noise',
+    'pixelate',
+    'blur'
+  ],
+  color: [
+    'removeColor',
+    'blendColor'
+  ]
+};
+
+export const filterOrder = ['basic', 'range', 'color'];
+
+export const filterOptions = (() => {
+  let list = [];
+  filterOrder.forEach((type) => list = list.concat(filterMenu[type]));
+  return list;
+})();
 
 export const defaultRotateRangeValues = {
   realTimeEvent: true,
@@ -348,50 +380,67 @@ export const defaultTextRangeValues = {
 };
 
 export const defaultFilterRangeValues = {
-  tintOpacityRange: {
+  brightness: {
     realTimeEvent: true,
-    min: 0,
-    max: 1,
-    value: 0.7,
-    useDecimal: true,
+    min: -100,
+    max: 100,
+    value: 50,
   },
-  removewhiteDistanceRange: {
+  saturation: {
     realTimeEvent: true,
-    min: 0,
-    max: 1,
-    value: 0.2,
-    useDecimal: true,
+    min: -100,
+    max: 100,
+    value: 50,
   },
-  brightnessRange: {
+  contrast: {
     realTimeEvent: true,
-    min: -1,
-    max: 1,
-    value: 0,
-    useDecimal: true,
+    min: -100,
+    max: 100,
+    value: 50,
   },
-  noiseRange: {
+  hueRotation: {
+    realTimeEvent: true,
+    min: -200,
+    max: 200,
+    value: 100,
+  },
+  vibrance: {
+    realTimeEvent: true,
+    min: -100,
+    max: 100,
+    value: 50,
+  },
+  noise: {
     realTimeEvent: true,
     min: 0,
     max: 1000,
     value: 100,
   },
-  pixelateRange: {
+  pixelate: {
     realTimeEvent: true,
     min: 2,
     max: 20,
     value: 4,
   },
-  colorfilterThresholdRange: {
+  blur: {
+    realTimeEvent: true,
+    min: 0,
+    max: 100,
+    value: 10,
+  },
+  removeColorThresholdRange: {
     realTimeEvent: true,
     min: 0,
     max: 1,
     value: 0.2,
     useDecimal: true,
-  },
-  blurFilterRange: {
-    value: 0.1,
-  },
+  }
 };
+
+export const defaultFilterColorValues = {
+  removeColor: '#FFFFFF',
+  blendColor: '#FFFF00'
+}
 
 export const emptyCropRectValues = {
   LEFT: 0,

@@ -207,9 +207,6 @@
                       <label><input type="checkbox" id="input-check-sepia2" />Sepia2</label>
                     </td>
                     <td>
-                      <label><input type="checkbox" id="input-check-blur" />Blur</label>
-                    </td>
-                    <td>
                       <label><input type="checkbox" id="input-check-sharpen" />Sharpen</label>
                     </td>
                   </tr>
@@ -220,26 +217,6 @@
                   </tr>
                 </tbody>
               </table>
-            </li>
-            <li class="menu-item align-left-top">
-              <p>
-                <label>
-                  <input type="checkbox" id="input-check-remove-white" />
-                  RemoveWhite
-                </label>
-                <br />
-                <label>
-                  Distance
-                  <input
-                    class="range-narrow"
-                    id="input-range-remove-white-distance"
-                    type="range"
-                    min="0"
-                    value="10"
-                    max="255"
-                  />
-                </label>
-              </p>
             </li>
             <li class="menu-item align-left-top">
               <p>
@@ -275,26 +252,6 @@
             </li>
             <li class="menu-item align-left-top">
               <p>
-                <label>
-                  <input type="checkbox" id="input-check-color-filter" />
-                  ColorFilter
-                </label>
-                <br />
-                <label>
-                  Threshold
-                  <input
-                    class="range-narrow"
-                    id="input-range-color-filter-value"
-                    type="range"
-                    min="0"
-                    value="45"
-                    max="255"
-                  />
-                </label>
-              </p>
-            </li>
-            <li class="menu-item align-left-top">
-              <p>
                 <label><input type="checkbox" id="input-check-pixelate" />Pixelate</label><br />
                 <label>
                   Value
@@ -311,27 +268,40 @@
             </li>
             <li class="menu-item align-left-top">
               <p>
-                <label><input type="checkbox" id="input-check-tint" />Tint</label><br />
+                <label><input type="checkbox" id="input-check-blur" />Blur</label><br />
+                <label>
+                  Value
+                  <input
+                    class="range-narrow"
+                    id="input-range-blur-value"
+                    type="range"
+                    min="1"
+                    value="10"
+                    max="100"
+                  />
+                </label>
               </p>
-              <div id="tui-tint-color-picker"></div>
-              <label>
-                Opacity
-                <input
-                  class="range-narrow"
-                  id="input-range-tint-opacity-value"
-                  type="range"
-                  min="0"
-                  value="1"
-                  max="1"
-                  step="0.1"
-                />
-              </label>
             </li>
             <li class="menu-item align-left-top">
               <p>
-                <label><input type="checkbox" id="input-check-multiply" />Multiply</label>
+                <label>
+                  <input type="checkbox" id="input-check-remove-color" />
+                  Remove Color
+                </label>
+                <br />
+                <label>
+                  Distance
+                  <input
+                    class="range-narrow"
+                    id="input-range-remove-color-distance"
+                    type="range"
+                    min="0"
+                    value="10"
+                    max="255"
+                  />
+                </label>
               </p>
-              <div id="tui-multiply-color-picker"></div>
+              <div id="tui-remove-color-color-picker"></div>
             </li>
             <li class="menu-item align-left-top">
               <p>
@@ -341,12 +311,27 @@
               <select name="select-blend-type">
                 <option value="add" selected>Add</option>
                 <option value="diff">Diff</option>
-                <option value="diff">Subtract</option>
+                <option value="subtract">Subtract</option>
                 <option value="multiply">Multiply</option>
                 <option value="screen">Screen</option>
                 <option value="lighten">Lighten</option>
                 <option value="darken">Darken</option>
+                <option value="tint">Tint</option>
               </select>
+              <p>
+              <label>
+                  Opacity
+                  <input
+                    class="range-narrow"
+                    id="input-range-blend-opacity-value"
+                    type="range"
+                    min="0"
+                    value="1"
+                    max="1"
+                    step="0.1"
+                  />
+                </label>
+              </p>
             </li>
             <li class="menu-item close">Close</li>
           </ul>
