@@ -198,7 +198,7 @@ For more information on PR's step, please see links of Contributing section.
 
 ## 🚀 Used By
 
-- [TOAST Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com/home/)
+- [NHN Dooray! - Collaboration Service (Project, Messenger, Mail, Calendar, Drive, Wiki, Contacts)](https://dooray.com/home/)
 - [Catalyst](https://catalystapp.co/)
 
 ## 📜 License
