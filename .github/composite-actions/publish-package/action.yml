@@ -17,7 +17,10 @@ runs:
       uses: actions/setup-node@v1
       with:
         node-version: '15.x'
-    - uses: actions/checkout@v2
+    - name: Checkout production branch
+      uses: actions/checkout@v2
+      with:
+        ref: production
     - name: Check root dependencies cache
       uses: actions/cache@v2
       with:

@@ -9,7 +9,10 @@ jobs:
     name: Check package version
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout production branch
+        uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Check package version
         id: check
         uses: PostHog/check-package-version@v2
@@ -24,8 +27,10 @@ jobs:
     needs: [check-version]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
+      - name: Checkout production branch
         uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Install dependencies
         id: cache-keys
         uses: ./.github/composite-actions/install-dependencies
@@ -37,7 +42,7 @@ jobs:
     needs: [install-dependencies]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
+      - name: Checkout production branch
         uses: actions/checkout@v2
         with:
           ref: production
@@ -95,7 +100,10 @@ jobs:
     name: Publish package
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout production branch
+        uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Publish package
         uses: ./.github/composite-actions/publish-package
         with:
@@ -108,8 +116,10 @@ jobs:
     name: Publish CDN
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
+      - name: Checkout production branch
         uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Publish CDN
         uses: ./.github/composite-actions/publish-cdn
         with:
@@ -125,8 +135,10 @@ jobs:
     name: Publish docs
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout branch
+      - name: Checkout production branch
         uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Publish docs
         uses: ./.github/composite-actions/publish-docs
         with:
