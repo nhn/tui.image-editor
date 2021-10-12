@@ -69,7 +69,7 @@ $ bower install tui-image-editor#<tag> # Specific version
 
 ### Via Contents Delivery Network (CDN)
 
-TOAST UI products are available over the CDN powered by [TOAST Cloud](https://www.toast.com).
+TOAST UI products are available over the CDN powered by [NHN Cloud](https://www.toast.com).
 
 You can use the CDN as below.
 
