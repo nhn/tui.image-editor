@@ -17,7 +17,7 @@ jobs:
         id: check
         uses: PostHog/check-package-version@v2
         with:
-          path: ./apps/image-editor
+          path: ./apps/image-editor/
       - name: Cancel actions when version is unchanged
         uses: andymckay/cancel-action@0.2
         if: steps.check.outputs.is-new-version == 'false'

@@ -21,7 +21,7 @@ runs:
       id: version
       uses: PostHog/check-package-version@v2
       with:
-        path: ./apps/image-editor
+        path: ./apps/image-editor/
     - name: Check root dependencies cache
       uses: actions/cache@v2
       with:
