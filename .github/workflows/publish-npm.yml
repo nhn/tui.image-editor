@@ -47,6 +47,11 @@ jobs:
         with:
           ROOT_CACHE_KEY: ${{ needs.install-dependencies.outputs.root_cache_key }}
           BUILD_CACHE_KEY: ${{ env.BUILD_CACHE_KEY }}
+      - name: Get package version
+        id: version
+        uses: PostHog/check-package-version@v2
+        with:
+          path: ./apps/image-editor/
       - name: Commit files
         run: |
           git config --local user.name "lja1018"
