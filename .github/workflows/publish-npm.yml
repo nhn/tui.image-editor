@@ -11,8 +11,6 @@ jobs:
     steps:
       - name: Checkout production branch
         uses: actions/checkout@v2
-        with:
-          ref: production
       - name: Check package version
         id: check
         uses: PostHog/check-package-version@v2
@@ -29,8 +27,6 @@ jobs:
     steps:
       - name: Checkout production branch
         uses: actions/checkout@v2
-        with:
-          ref: production
       - name: Install dependencies
         id: cache-keys
         uses: ./.github/composite-actions/install-dependencies

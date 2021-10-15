@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+        with:
+          ref: production
       - name: build
         uses: ./.github/composite-actions/build-package
         with:
@@ -39,6 +41,8 @@ jobs:
     steps:
       - name: Checkout branch
         uses: actions/checkout@v2
+        with:
+          ref: production
       - name: Publish docs
         uses: ./.github/composite-actions/publish-docs
         with:
