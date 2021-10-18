@@ -11,6 +11,7 @@ runs:
       uses: actions/setup-node@v1
       with:
         node-version: '15.x'
+        registry-url: https://registry.npmjs.org/
     - name: Compute root dependencies cache key
       id: root_lockfile_hash
       run: echo "::set-output name=hash::${{ hashFiles('package-lock.json') }}"
