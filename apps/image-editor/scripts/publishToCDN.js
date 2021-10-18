@@ -8,7 +8,7 @@ const LOCAL_DIST_PATH = path.join(__dirname, '../dist');
 const STORAGE_API_URL = 'https://api-storage.cloud.toast.com/v1';
 const IDENTITY_API_URL = 'https://api-identity.infrastructure.cloud.toast.com/v2.0';
 
-const TOAST_CLOUD_TENANTID = process.env.TOAST_CLOUD_TENENTID;
+const TOAST_CLOUD_TENANTID = process.env.TOAST_CLOUD_TENANTID;
 const TOAST_CLOUD_STORAGEID = process.env.TOAST_CLOUD_STORAGEID;
 const TOAST_CLOUD_USERNAME = process.env.TOAST_CLOUD_USERNAME;
 const TOAST_CLOUD_PASSWORD = process.env.TOAST_CLOUD_PASSWORD;
@@ -53,9 +53,13 @@ function publishToCdn(token, localPath, cdnPath) {
   files.forEach((fileName) => {
     const objectPath = `${cdnPath}/${fileName}`;
 
-    if (fileName.match(/(js|css)$/)) {
+    if (fileName.match(/.(js|css|svg)$/)) {
       const readStream = fs.createReadStream(`${localPath}/${fileName}`);
-      const contentType = /css$/.test(fileName) ? 'text/css' : 'text/javascript';
+      const contentType = /css$/.test(fileName)
+        ? 'text/css'
+        : /js$/.test(fileName)
+        ? 'text/javascript'
+        : 'image/svg+xml';
 
       fetch(`${STORAGE_API_URL}/${objectPath}`, {
         method: 'PUT',
@@ -76,7 +80,7 @@ async function publish() {
   const container = await getTOASTCloudContainer(token);
   const cdnPath = `${TOAST_CLOUD_STORAGEID}/${container}`;
 
-  [`v${pkg.version}`].forEach((dir) => {
+  [`v${pkg.version}`, 'latest'].forEach((dir) => {
     publishToCdn(token, LOCAL_DIST_PATH, `${cdnPath}/${dir}`);
   });
 }
