@@ -24,7 +24,7 @@
     "vue": "^2.6.14"
   },
   "devDependencies": {
-    "@storybook/vue": "^6.1.21",
+    "@storybook/vue": "^6.3.12",
     "vue": "^2.6.14"
   },
   "dependencies": {

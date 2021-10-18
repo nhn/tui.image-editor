@@ -10,6 +10,7 @@
     "@storybook/builder-webpack5": "^6.3.10",
     "@storybook/cli": "^5.1.11",
     "@storybook/manager-webpack5": "^6.3.10",
+    "@storybook/react": "^6.3.12",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.2.0",
     "css-minimizer-webpack-plugin": "^3.0.2",

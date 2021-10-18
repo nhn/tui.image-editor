@@ -31,7 +31,7 @@ jobs:
       - name: Update lock file of react wrapper
         working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
         run: |
-          npm install --legacy-peer-deps
+          npm install
       - name: Build react wrapper
         working-directory: ${{ env.REACT_WRAPPER_DIRECTORY }}
         run: |
