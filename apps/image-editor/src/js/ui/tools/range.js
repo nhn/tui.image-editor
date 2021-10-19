@@ -238,7 +238,7 @@ class Range {
     clearTimeout(this._userInputTimer);
 
     const keyCode = e.key.charCodeAt(0);
-    if (keyCode < 48 || keyCode > 57) {
+    if (keyCode < keyCodes.DIGIT_0 || keyCode > keyCodes.DIGIT_9) {
       e.preventDefault();
 
       return;
