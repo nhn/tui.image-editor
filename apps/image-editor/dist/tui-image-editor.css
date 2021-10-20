@@ -1,6 +1,6 @@
 /*!
  * TOAST UI ImageEditor
- * @version 3.15.1
+ * @version 3.15.2
  * @author NHN. FE Development Team <dl_javascript@nhn.com>
  * @license MIT
  */
