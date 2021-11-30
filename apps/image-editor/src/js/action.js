@@ -20,6 +20,7 @@ export default {
       text: this._textAction(),
       mask: this._maskAction(),
       draw: this._drawAction(),
+      mosaic: this._mosaicAction(),
       icon: this._iconAction(),
       filter: this._filterAction(),
       history: this._historyAction(),
@@ -254,6 +255,31 @@ export default {
         setColor: (color) => {
           this.setBrush({
             color,
+          });
+        },
+      },
+      this._commonAction()
+    );
+  },
+
+  /**
+   * Draw Action
+   * @returns {Object} actions for ui draw
+   * @private
+   */
+  _mosaicAction() {
+    return extend(
+      {
+        setDrawMode: (settings) => {
+          this.stopDrawingMode();
+          this.startDrawingMode('MOSAIC', settings);
+        },
+        loadImageFromURL: (imgUrl) => {
+          return this.loadImageFromURL(imgUrl, 'MosaicImage').then(() => {
+            // this.addImageObject(imgUrl).then(() => {
+            //   // URL.revokeObjectURL(file);
+            // });
+            // this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
           });
         },
       },

@@ -9,6 +9,7 @@ import Cropper from '@/component/cropper';
 import Flip from '@/component/flip';
 import Rotation from '@/component/rotation';
 import FreeDrawing from '@/component/freeDrawing';
+import MosaicDrawing from '@/component/mosaicDrawing';
 import Line from '@/component/line';
 import Text from '@/component/text';
 import Icon from '@/component/icon';
@@ -22,6 +23,7 @@ import ShapeDrawingMode from '@/drawingMode/shape';
 import TextDrawingMode from '@/drawingMode/text';
 import IconDrawingMode from '@/drawingMode/icon';
 import ZoomDrawingMode from '@/drawingMode/zoom';
+import MosaicDrawingMode from '@/drawingMode/mosaicDrawing';
 import {
   makeSelectionUndoData,
   makeSelectionUndoDatum,
@@ -995,6 +997,7 @@ class Graphics {
     this._register(this._drawingModeMap, new IconDrawingMode());
     this._register(this._drawingModeMap, new ZoomDrawingMode());
     this._register(this._drawingModeMap, new ResizeDrawingMode());
+    this._register(this._drawingModeMap, new MosaicDrawingMode());
   }
 
   /**
@@ -1007,6 +1010,7 @@ class Graphics {
     this._register(this._componentMap, new Flip(this));
     this._register(this._componentMap, new Rotation(this));
     this._register(this._componentMap, new FreeDrawing(this));
+    this._register(this._componentMap, new MosaicDrawing(this));
     this._register(this._componentMap, new Line(this));
     this._register(this._componentMap, new Text(this));
     this._register(this._componentMap, new Icon(this));

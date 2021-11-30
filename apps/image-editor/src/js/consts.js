@@ -220,7 +220,8 @@ export const drawingModes = keyMirror(
   'SHAPE',
   'ICON',
   'ZOOM',
-  'RESIZE'
+  'RESIZE',
+  'MOSAIC'
 );
 
 /**
@@ -330,6 +331,12 @@ export const defaultRotateRangeValues = {
 };
 
 export const defaultDrawRangeValues = {
+  min: 5,
+  max: 30,
+  value: 12,
+};
+
+export const defaultMosaicRangeValues = {
   min: 5,
   max: 30,
   value: 12,

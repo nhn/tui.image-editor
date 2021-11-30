@@ -20,6 +20,7 @@ import Text from '@/ui/text';
 import Mask from '@/ui/mask';
 import Icon from '@/ui/icon';
 import Draw from '@/ui/draw';
+import Mosaic from '@/ui/mosaic';
 import Filter from '@/ui/filter';
 import History from '@/ui/history';
 import Locale from '@/ui/locale/locale';
@@ -34,6 +35,7 @@ const SUB_UI_COMPONENT = {
   Mask,
   Icon,
   Draw,
+  Mosaic,
   Filter,
 };
 
@@ -255,6 +257,7 @@ class Ui {
           'flip',
           'rotate',
           'draw',
+          'mosaic',
           'shape',
           'icon',
           'text',

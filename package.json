@@ -41,7 +41,8 @@
     "webpack": "^5.52.0",
     "webpack-cli": "^4.8.0",
     "webpack-dev-server": "^4.2.0",
-    "webpack-merge": "^5.8.0"
+    "webpack-merge": "^5.8.0",
+    "stylus": "^0.55.0"
   },
   "dependencies": {
     "@babel/runtime-corejs3": "^7.15.4"
