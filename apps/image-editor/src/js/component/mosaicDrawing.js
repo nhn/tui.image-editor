@@ -33,13 +33,12 @@ class MosaicDrawing extends Component {
   /**
    * Start free drawing mode
    */
-  start({ width, loadImageFromURL }) {
+  start({ width }) {
     const canvas = this.getCanvas();
     canvas.discardActiveObject();
     canvas.selection = false;
     canvas.defaultCursor = 'crosshair';
     this.width = width;
-    this.loadImageFromURL = loadImageFromURL;
     canvas.on('mouse:down', this._listeners.mousedown);
   }
 
@@ -124,29 +123,16 @@ class MosaicDrawing extends Component {
 
     const ctx = canvas.getContext();
     ctx.putImageData(image, 0, 0);
-    // const ImageFilter = fabric.Image.filters.Pixelate;
-    //
-    // const filterObj = new ImageFilter();
-    // filterObj.applyTo2d({ imageData: image });
-    // this.getCanvasImage().applyFilters(filterObj);
   }
 
   _onFabricMouseUp() {
     const listeners = this._listeners;
     const canvas = this.getCanvas();
+    const image = this._getSourceImage();
 
-    if (this.loadImageFromURL) {
-      this.loadImageFromURL(canvas.getElement().toDataURL());
-
-      // const ImageFilter = fabric.Image.filters.BlendColor;
-      // const { width, height } = this._getSourceImage();
-      // const image = canvas.getContext().getImageData(0, 0, width, height);
-      // const filterObj = new ImageFilter();
-      // filterObj.applyTo2d({ imageData: image });
-      //
-      // this.getCanvasImage().applyFilters([filterObj]);
-      // canvas.renderAll();
-    }
+    image.setSrc(canvas.getElement().toDataURL(), null, {
+      crossOrigin: 'anonymous',
+    });
 
     canvas.off({
       'mouse:move': listeners.mousemove,

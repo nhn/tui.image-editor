@@ -81,7 +81,8 @@ export const componentNames = keyMirror(
   'FILTER',
   'SHAPE',
   'ZOOM',
-  'RESIZE'
+  'RESIZE',
+  'MOSAIC'
 );
 
 /**

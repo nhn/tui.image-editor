@@ -273,15 +273,7 @@ export default {
         setDrawMode: (settings) => {
           this.stopDrawingMode();
           this.startDrawingMode('MOSAIC', settings);
-        },
-        loadImageFromURL: (imgUrl) => {
-          return this.loadImageFromURL(imgUrl, 'MosaicImage').then(() => {
-            // this.addImageObject(imgUrl).then(() => {
-            //   // URL.revokeObjectURL(file);
-            // });
-            // this._invoker.fire(eventNames.EXECUTE_COMMAND, historyNames.LOAD_MASK_IMAGE);
-          });
-        },
+        }
       },
       this._commonAction()
     );
