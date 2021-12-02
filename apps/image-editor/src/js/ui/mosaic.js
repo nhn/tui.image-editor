@@ -5,7 +5,7 @@ import { assignmentForDestroy } from '@/util';
 import { defaultMosaicRangeValues } from '@/consts';
 
 /**
- * Draw ui class
+ * Mosaic ui class
  * @class
  * @ignore
  */

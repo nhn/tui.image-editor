@@ -1,12 +1,12 @@
 /**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview FreeDrawingMode class
+ * @author jkcs
+ * @fileoverview MosaicDrawingMode class
  */
 import DrawingMode from '@/interface/drawingMode';
 import { drawingModes, componentNames as components } from '@/consts';
 
 /**
- * FreeDrawingMode class
+ * MosaicDrawingMode class
  * @class
  * @ignore
  */
@@ -18,7 +18,7 @@ class MosaicDrawingMode extends DrawingMode {
   /**
    * start this drawing mode
    * @param {Graphics} graphics - Graphics instance
-   * @param {{width: ?number, color: ?string}} [options] - Brush width & color
+   * @param {{width: ?number}} [options] - Mosaic width
    * @override
    */
   start(graphics, options) {

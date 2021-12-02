@@ -776,6 +776,15 @@ class ImageEditor {
     return this.execute(commands.ADD_IMAGE_OBJECT, imgUrl);
   }
 
+  /**
+   * Set image src
+   * @param {string} imgUrl - Image url to make object
+   * @returns {Promise<ObjectProps, ErrorMsg>}
+   * @example
+   * imageEditor.setSrc('path/fileName.jpg').then(objectProps => {
+   *     console.log(objectProps.id);
+   * });
+   */
   setSrc(imgUrl) {
     if (!imgUrl) {
       return Promise.reject(rejectMessages.invalidParameters);

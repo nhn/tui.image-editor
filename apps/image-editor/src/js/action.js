@@ -263,7 +263,7 @@ export default {
   },
 
   /**
-   * Draw Action
+   * Mosaic Action
    * @returns {Object} actions for ui draw
    * @private
    */

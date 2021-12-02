@@ -695,11 +695,16 @@ class Graphics {
     });
   }
 
-  setSrc(imageUrl) {
+  /**
+   * set image src on canvas
+   * @param {string} imgUrl - Image url to make object
+   * @returns {Promise}
+   */
+  setSrc(imgUrl) {
     return new Promise((resolve) => {
       const image = this.getCanvasImage();
       image.setSrc(
-        imageUrl,
+        imgUrl,
         (newImage) => {
           this._canvas.renderAll();
           resolve(newImage);

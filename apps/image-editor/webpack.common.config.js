@@ -60,11 +60,10 @@ module.exports = ({ minify, WEBPACK_BUILD }) => ({
     ],
   },
   plugins: [
-    // TODO for test
-    // new ESLintPlugin({
-    //   extensions: ['js'],
-    //   failOnError: WEBPACK_BUILD,
-    // }),
+    new ESLintPlugin({
+      extensions: ['js'],
+      failOnError: WEBPACK_BUILD,
+    }),
     new MiniCssExtractPlugin({
       filename: `tui-image-editor${minify ? '.min' : ''}.css`,
     }),

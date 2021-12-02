@@ -1,6 +1,6 @@
 /**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Load a background (main) image
+ * @author jkcs
+ * @fileoverview Set/Reset image(main) src
  */
 import commandFactory from '@/factory/command';
 import { commandNames } from '@/consts';
@@ -9,7 +9,7 @@ const command = {
   name: commandNames.SET_SRC,
 
   /**
-   * Load a background (main) image
+   * Set/Reset image src
    * @param {Graphics} graphics - Graphics instance
    * @param {string} imgUrl - Image Url
    * @returns {Promise}

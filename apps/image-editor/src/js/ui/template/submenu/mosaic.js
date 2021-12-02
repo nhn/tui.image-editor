@@ -1,5 +1,5 @@
 /**
- * @param {Object} submenuInfo - submenu info for make template
+ * @param {Object} submenuInfo - submenu info for mosaic template
  *   @param {Locale} locale - Translate text
  * @returns {string}
  */

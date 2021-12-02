@@ -1,14 +1,13 @@
 /**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Free drawing module, Set brush
+ * @author jkcs
+ * @fileoverview mosaic drawing module, custom
  */
-import { fabric } from 'fabric';
 import Component from '@/interface/component';
 import { componentNames } from '@/consts';
 
 /**
- * FreeDrawing
- * @class FreeDrawing
+ * MosaicDrawing
+ * @class MosaicDrawing
  * @param {Graphics} graphics - Graphics instance
  * @extends {Component}
  * @ignore
@@ -31,7 +30,7 @@ class MosaicDrawing extends Component {
   }
 
   /**
-   * Start free drawing mode
+   * Start mosaic drawing mode
    */
   start({ width, resetImage }) {
     const canvas = this.getCanvas();
@@ -44,7 +43,7 @@ class MosaicDrawing extends Component {
   }
 
   /**
-   * End free drawing mode
+   * End mosaic drawing mode
    */
   end() {
     const canvas = this.getCanvas();
@@ -83,21 +82,19 @@ class MosaicDrawing extends Component {
 
   getXY(obj, x, y) {
     const w = obj.width;
-    const color = [];
-    color[0] = obj.data[4 * (y * w + x)];
-    color[1] = obj.data[4 * (y * w + x) + 1];
-    color[2] = obj.data[4 * (y * w + x) + 2];
-    color[3] = obj.data[4 * (y * w + x) + 3];
+    const base = 4 * (y * w + x);
 
-    return color;
+    return [obj.data[base], obj.data[base + 1], obj.data[base + 2], obj.data[base + 3]];
   }
 
   setXY(obj, x, y, color) {
     const w = obj.width;
-    obj.data[4 * (y * w + x)] = color[0];
-    obj.data[4 * (y * w + x) + 1] = color[1];
-    obj.data[4 * (y * w + x) + 2] = color[2];
-    obj.data[4 * (y * w + x) + 3] = color[3];
+    const base = 4 * (y * w + x);
+
+    obj.data[base] = color[0];
+    obj.data[base + 1] = color[1];
+    obj.data[base + 2] = color[2];
+    obj.data[base + 3] = color[3];
   }
 
   _onFabricMouseMove(fEvent) {
