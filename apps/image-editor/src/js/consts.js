@@ -206,6 +206,7 @@ export const historyNames = {
   CHANGE_TEXT_STYLE: 'Text',
   REMOVE_OBJECT: 'Delete',
   CLEAR_OBJECTS: 'Delete',
+  MOSAIC: 'Mosaic',
 };
 
 /**

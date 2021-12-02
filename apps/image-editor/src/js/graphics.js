@@ -695,6 +695,22 @@ class Graphics {
     });
   }
 
+  setSrc(imageUrl) {
+    return new Promise((resolve) => {
+      const image = this.getCanvasImage();
+      image.setSrc(
+        imageUrl,
+        (newImage) => {
+          this._canvas.renderAll();
+          resolve(newImage);
+        },
+        {
+          crossOrigin: 'anonymous',
+        }
+      );
+    });
+  }
+
   /**
    * Get center position of canvas
    * @returns {Object} {left, top}

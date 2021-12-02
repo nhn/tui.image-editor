@@ -431,6 +431,7 @@ export function getHistoryTitle(command) {
     ADD_IMAGE_OBJECT,
     REMOVE_OBJECT,
     RESIZE_IMAGE,
+    SET_SRC,
   } = commandNames;
   const { name, args } = command;
   let historyInfo;
@@ -471,6 +472,9 @@ export function getHistoryTitle(command) {
       break;
     case RESIZE_IMAGE:
       historyInfo = { name: historyNames.RESIZE, detail: `${~~args[1].width}x${~~args[1].height}` };
+      break;
+    case SET_SRC:
+      historyInfo = { name: historyNames.MOSAIC };
       break;
 
     default:

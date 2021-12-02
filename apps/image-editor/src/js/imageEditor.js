@@ -776,6 +776,14 @@ class ImageEditor {
     return this.execute(commands.ADD_IMAGE_OBJECT, imgUrl);
   }
 
+  setSrc(imgUrl) {
+    if (!imgUrl) {
+      return Promise.reject(rejectMessages.invalidParameters);
+    }
+
+    return this.execute(commands.SET_SRC, imgUrl);
+  }
+
   /**
    * Start a drawing mode. If the current mode is not 'NORMAL', 'stopDrawingMode()' will be called first.
    * @param {String} mode Can be one of <I>'CROPPER', 'FREE_DRAWING', 'LINE_DRAWING', 'TEXT', 'SHAPE'</I>

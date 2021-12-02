@@ -39,7 +39,7 @@ class Mosaic extends Submenu {
   changeStartMode() {
     this.actions.setDrawMode({
       width: this.width,
-      loadImageFromURL: this.actions.loadImageFromURL,
+      loadImageFromURL: this.actions.resetImage,
     });
   }
 

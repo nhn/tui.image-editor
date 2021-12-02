@@ -33,12 +33,13 @@ class MosaicDrawing extends Component {
   /**
    * Start free drawing mode
    */
-  start({ width }) {
+  start({ width, resetImage }) {
     const canvas = this.getCanvas();
     canvas.discardActiveObject();
     canvas.selection = false;
     canvas.defaultCursor = 'crosshair';
     this.width = width;
+    this.resetImage = resetImage;
     canvas.on('mouse:down', this._listeners.mousedown);
   }
 
@@ -128,11 +129,8 @@ class MosaicDrawing extends Component {
   _onFabricMouseUp() {
     const listeners = this._listeners;
     const canvas = this.getCanvas();
-    const image = this._getSourceImage();
 
-    image.setSrc(canvas.getElement().toDataURL(), null, {
-      crossOrigin: 'anonymous',
-    });
+    this.resetImage(canvas.getElement().toDataURL());
 
     canvas.off({
       'mouse:move': listeners.mousemove,
