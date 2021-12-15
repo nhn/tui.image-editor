@@ -1,12 +1,12 @@
 /**
  * @author jkcs
- * @fileoverview Set/Reset image(main) src
+ * @fileoverview Set/Reset image(main) data for mosaic
  */
 import commandFactory from '@/factory/command';
 import { commandNames } from '@/consts';
 
 const command = {
-  name: commandNames.SET_SRC,
+  name: commandNames.SET_MOSAIC,
 
   /**
    * Set/Reset image src

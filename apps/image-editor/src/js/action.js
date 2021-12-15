@@ -274,8 +274,8 @@ export default {
           this.stopDrawingMode();
           this.startDrawingMode('MOSAIC', settings);
         },
-        resetImage: (imgUrl) => {
-          return this.setSrc(imgUrl);
+        resetImage: (imageData) => {
+          return this.setMosaic(imageData);
         },
       },
       this._commonAction()

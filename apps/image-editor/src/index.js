@@ -24,7 +24,7 @@ import '@/command/setObjectProperties';
 import '@/command/setObjectPosition';
 import '@/command/changeSelection';
 import '@/command/resize';
-import '@/command/setSrc';
+import '@/command/setMosaic';
 
 export default ImageEditor;
 export { ImageEditor };

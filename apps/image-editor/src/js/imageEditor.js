@@ -777,20 +777,20 @@ class ImageEditor {
   }
 
   /**
-   * Set image src
-   * @param {string} imgUrl - Image url to make object
+   * Set image data for mosaic
+   * @param {string} imageData - Image Data
    * @returns {Promise<ObjectProps, ErrorMsg>}
    * @example
-   * imageEditor.setSrc('path/fileName.jpg').then(objectProps => {
+   * imageEditor.setMosaic('base64,image').then(objectProps => {
    *     console.log(objectProps.id);
    * });
    */
-  setSrc(imgUrl) {
-    if (!imgUrl) {
+  setMosaic(imageData) {
+    if (!imageData) {
       return Promise.reject(rejectMessages.invalidParameters);
     }
 
-    return this.execute(commands.SET_SRC, imgUrl);
+    return this.execute(commands.SET_MOSAIC, imageData);
   }
 
   /**
