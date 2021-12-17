@@ -1,10 +1,5 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Selection modification helper
- */
-
-import { extend } from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
 
 /**
  * Cached selection's info

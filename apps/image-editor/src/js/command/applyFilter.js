@@ -1,8 +1,4 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Apply a filter into an image
- */
-import snippet from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 import commandFactory from '@/factory/command';
 import { componentNames, rejectMessages, commandNames } from '@/consts';
 
@@ -55,7 +51,7 @@ const command = {
         return Promise.reject(rejectMessages.invalidParameters);
       }
 
-      snippet.extend(options, { mask: maskObj });
+      extend(options, { mask: maskObj });
       graphics.remove(options.mask);
     }
     if (!this.isRedo) {

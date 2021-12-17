@@ -1,6 +1,6 @@
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import ImageEditor from '@/imageEditor';
+import * as util from '@/util';
 import { eventNames, keyCodes } from '@/consts';
 
 const { OBJECT_ROTATED } = eventNames;

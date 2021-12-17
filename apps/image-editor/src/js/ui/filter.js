@@ -1,4 +1,6 @@
-import snippet from 'tui-code-snippet';
+import forEach from 'tui-code-snippet/collection/forEach';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import isExisty from 'tui-code-snippet/type/isExisty';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
@@ -92,21 +94,21 @@ class Filter extends Submenu {
    * Remove event for filter
    */
   _removeEvent() {
-    snippet.forEach(FILTER_OPTIONS, (filter) => {
+    forEach(FILTER_OPTIONS, (filter) => {
       const filterCheckElement = this.selector(`.tie-${filter}`);
       const filterNameCamelCase = toCamelCase(filter);
 
       filterCheckElement.removeEventListener('change', this.eventHandler[filterNameCamelCase]);
     });
 
-    snippet.forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], (instanceName) => {
+    forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], (instanceName) => {
       this._els[instanceName].off();
     });
 
     this._els.blendType.removeEventListener('change', this.eventHandler.changeBlendFilter);
     this._els.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
 
-    snippet.forEachArray(
+    forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
         inputBox.removeEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
@@ -117,7 +119,7 @@ class Filter extends Submenu {
   }
 
   _destroyToolInstance() {
-    snippet.forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], (instanceName) => {
+    forEach([...RANGE_INSTANCE_NAMES, ...COLORPICKER_INSTANCE_NAMES], (instanceName) => {
       this._els[instanceName].destroy();
     });
   }
@@ -138,7 +140,7 @@ class Filter extends Submenu {
       blandTypeClick: (event) => event.stopPropagation(),
     };
 
-    snippet.forEach(FILTER_OPTIONS, (filter) => {
+    forEach(FILTER_OPTIONS, (filter) => {
       const filterCheckElement = this.selector(`.tie-${filter}`);
       const filterNameCamelCase = toCamelCase(filter);
       this.checkedMap[filterNameCamelCase] = filterCheckElement;
@@ -164,7 +166,7 @@ class Filter extends Submenu {
     this._els.blendType.addEventListener('change', this.eventHandler.changeBlendFilter);
     this._els.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
 
-    snippet.forEachArray(
+    forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
         inputBox.addEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
@@ -197,7 +199,7 @@ class Filter extends Submenu {
    * Init all filter's checkbox to unchecked state
    */
   initFilterCheckBoxState() {
-    snippet.forEach(
+    forEach(
       this.checkedMap,
       (filter) => {
         filter.checked = false;
@@ -245,7 +247,7 @@ class Filter extends Submenu {
     let filterName = type;
 
     if (type === 'removeColor') {
-      filterName = snippet.isExisty(options.useAlpha) ? 'removeWhite' : 'colorFilter';
+      filterName = isExisty(options.useAlpha) ? 'removeWhite' : 'colorFilter';
     } else if (type === 'blendColor') {
       filterName = {
         add: 'blend',
@@ -453,7 +455,7 @@ class Filter extends Submenu {
    */
   _drawSelectOptionList(selectlist, optionlist) {
     const options = selectlist.querySelectorAll('option');
-    snippet.forEach(options, (option) => {
+    forEach(options, (option) => {
       const optionElement = document.createElement('li');
       optionElement.innerHTML = option.innerHTML;
       optionElement.setAttribute('data-item', option.value);
@@ -496,7 +498,7 @@ class Filter extends Submenu {
    * @private
    */
   _makeSelectOptionList(selectlist) {
-    snippet.forEach(BLEND_OPTIONS, (option) => {
+    forEach(BLEND_OPTIONS, (option) => {
       const selectOption = document.createElement('option');
       selectOption.setAttribute('value', option);
       selectOption.innerHTML = option.replace(/^[a-z]/, ($0) => $0.toUpperCase());

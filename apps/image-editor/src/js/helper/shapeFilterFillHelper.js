@@ -1,9 +1,6 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Shape resize helper
- */
 import { fabric } from 'fabric';
-import { forEach, map, extend } from 'tui-code-snippet';
+import forEach from 'tui-code-snippet/collection/forEach';
+import extend from 'tui-code-snippet/object/extend';
 import resizeHelper from '@/helper/shapeResizeHelper';
 import { capitalizeString, flipObject, setCustomProperty, getCustomProperty } from '@/util';
 
@@ -92,7 +89,7 @@ export function rePositionFilterTypeFillImage(shapeObj) {
  * @returns {object}
  */
 export function makeFilterOptionFromFabricImage(imageObject) {
-  return map(imageObject.filters, (filter) => {
+  return imageObject.filters.map((filter) => {
     const [key] = Object.keys(filter);
 
     return {
@@ -453,7 +450,7 @@ function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePoint
   const { startPointIndex, endPointIndex1, endPointIndex2 } = linePointsOfOneVertexIndex;
   const horizontalVerticalAngle = type === 'x' ? 180 : 270;
 
-  return map([endPointIndex1, endPointIndex2], (pointIndex) => {
+  return [endPointIndex1, endPointIndex2].map((pointIndex) => {
     const startPoint = shapePointNavigation[startPointIndex];
     const endPoint = shapePointNavigation[pointIndex];
     const diffY = startPoint.y - endPoint.y;

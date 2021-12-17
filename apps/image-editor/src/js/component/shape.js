@@ -1,9 +1,5 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Shape component
- */
-import { extend } from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
 import Component from '@/interface/component';
 import resizeHelper from '@/helper/shapeResizeHelper';
 import {

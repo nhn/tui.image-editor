@@ -1,4 +1,5 @@
-import snippet from 'tui-code-snippet';
+import forEach from 'tui-code-snippet/collection/forEach';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import { toInteger, clamp } from '@/util';
 import { keyCodes } from '@/consts';
 
@@ -64,7 +65,7 @@ class Range {
     this._removeDragEvent();
     this._removeInputEvent();
     this.rangeElement.innerHTML = '';
-    snippet.forEach(this, (value, key) => {
+    forEach(this, (value, key) => {
       this[key] = null;
     });
   }
@@ -234,18 +235,18 @@ class Range {
     return value;
   }
 
-  _changeInput(e) {
+  _changeInput(event) {
     clearTimeout(this._userInputTimer);
 
-    const keyCode = e.key.charCodeAt(0);
+    const { keyCode } = event;
     if (keyCode < keyCodes.DIGIT_0 || keyCode > keyCodes.DIGIT_9) {
-      e.preventDefault();
+      event.preventDefault();
 
       return;
     }
 
     this._userInputTimer = setTimeout(() => {
-      this._inputSetValue(e.target.value);
+      this._inputSetValue(event.target.value);
     }, 350);
   }
 
@@ -384,6 +385,6 @@ class Range {
   }
 }
 
-snippet.CustomEvents.mixin(Range);
+CustomEvents.mixin(Range);
 
 export default Range;
