@@ -29,11 +29,11 @@ describe('Range', () => {
   });
 
   it('should filter out any invalid input values', () => {
-    const ev = { target: input, keyCode: 83 };
+    const ev = { target: input, keyCode: 83, preventDefault: jest.fn() };
     input.value = '-3!!6s0s';
 
     range.eventHandler.changeInput(ev);
 
-    expect(range.value).toBe(-360);
+    expect(range.value).toBe(0);
   });
 });
