@@ -1,4 +1,4 @@
-// Type definitions for TOAST UI Image Editor v3.15.0
+// Type definitions for TOAST UI Image Editor v3.15.2
 // TypeScript Version: 3.2.2
 
 declare namespace tuiImageEditor {
@@ -88,6 +88,15 @@ declare namespace tuiImageEditor {
       y: number;
     };
   }
+
+  type IFilterOptions =
+    | { blur: number }
+    | { brightness: number }
+    | { noise: number }
+    | { blocksize: number }
+    | { color: string; distance: number; useAlpha?: boolean }
+    | { mode: string; color: string; alpha?: number }
+    | { maskObjId: number };
 
   interface ITextStyleConfig {
     fill?: string;
@@ -261,9 +270,7 @@ declare namespace tuiImageEditor {
     public addText(text: string, options?: IGenerateTextOptions): Promise<ITextObjectProps>;
     public applyFilter(
       type: string,
-      options?: {
-        maskObjId: number;
-      },
+      options?: IFilterOptions,
       isSilent?: boolean
     ): Promise<IFilterResolveObject>;
     public changeCursor(cursorType: string): void;
