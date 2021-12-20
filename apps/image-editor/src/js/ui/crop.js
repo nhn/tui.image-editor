@@ -126,7 +126,7 @@ class Crop extends Submenu {
    * @private
    */
   _setPresetButtonActive(button = this.defaultPresetButton) {
-    forEach([].slice.call(this._els.preset.querySelectorAll('.preset')), (presetButton) => {
+    forEach(this._els.preset.querySelectorAll('.preset'), (presetButton) => {
       presetButton.classList.remove('active');
     });
 
