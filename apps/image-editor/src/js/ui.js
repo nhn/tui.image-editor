@@ -1,4 +1,6 @@
-import snippet from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
+import extend from 'tui-code-snippet/object/extend';
+import forEach from 'tui-code-snippet/collection/forEach';
 import { getSelector, assignmentForDestroy, cls, getHistoryTitle, isSilentCommand } from '@/util';
 import {
   ZOOM_HELP_MENUS,
@@ -36,8 +38,6 @@ const SUB_UI_COMPONENT = {
   Draw,
   Filter,
 };
-
-const { CustomEvents } = snippet;
 
 const BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 const HISTORY_MENU = 'history';
@@ -109,7 +109,7 @@ class Ui {
    * @ignore
    */
   setUiDefaultSelectionStyle(option) {
-    return snippet.extend(
+    return extend(
       {
         applyCropSelectionStyle: true,
         applyGroupSelectionStyle: true,
@@ -241,7 +241,7 @@ class Ui {
    * @private
    */
   _initializeOption(options) {
-    return snippet.extend(
+    return extend(
       {
         loadImage: {
           path: '',
@@ -290,7 +290,7 @@ class Ui {
    * @private
    */
   _makeSubMenu() {
-    snippet.forEach(this.options.menu, (menuName) => {
+    forEach(this.options.menu, (menuName) => {
       const SubComponentClass =
         SUB_UI_COMPONENT[menuName.replace(/^[a-z]/, ($0) => $0.toUpperCase())];
 
@@ -339,8 +339,6 @@ class Ui {
    */
   _makeUiElement(element) {
     let selectedElement;
-
-    window.snippet = snippet;
 
     if (element.nodeType) {
       selectedElement = element;
@@ -397,7 +395,7 @@ class Ui {
    * @private
    */
   _activateZoomMenus() {
-    snippet.forEach(ZOOM_HELP_MENUS, (menu) => {
+    forEach(ZOOM_HELP_MENUS, (menu) => {
       this.changeHelpButtonEnabled(menu, true);
     });
   }
@@ -418,7 +416,7 @@ class Ui {
   _addHelpMenus() {
     const helpMenuWithPartition = this._makeHelpMenuWithPartition();
 
-    snippet.forEach(helpMenuWithPartition, (menuName) => {
+    forEach(helpMenuWithPartition, (menuName) => {
       if (!menuName) {
         this._makeMenuPartitionElement();
       } else {
@@ -472,7 +470,7 @@ class Ui {
    * @private
    */
   _addHelpActionEvent() {
-    snippet.forEach(HELP_MENUS, (helpName) => {
+    forEach(HELP_MENUS, (helpName) => {
       this.eventHandler[helpName] = (event) => this._actions.main[helpName](event);
       this._buttonElements[helpName].addEventListener('click', this.eventHandler[helpName]);
     });
@@ -483,7 +481,7 @@ class Ui {
    * @private
    */
   _removeHelpActionEvent() {
-    snippet.forEach(HELP_MENUS, (helpName) => {
+    forEach(HELP_MENUS, (helpName) => {
       this._buttonElements[helpName].removeEventListener('click', this.eventHandler[helpName]);
     });
   }
@@ -565,13 +563,13 @@ class Ui {
    */
   _addDownloadEvent() {
     this.eventHandler.download = () => this._actions.main.download();
-    snippet.forEach(this._buttonElements.download, (element) => {
+    forEach(this._buttonElements.download, (element) => {
       element.addEventListener('click', this.eventHandler.download);
     });
   }
 
   _removeDownloadEvent() {
-    snippet.forEach(this._buttonElements.download, (element) => {
+    forEach(this._buttonElements.download, (element) => {
       element.removeEventListener('click', this.eventHandler.download);
     });
   }
@@ -583,7 +581,7 @@ class Ui {
   _addLoadEvent() {
     this.eventHandler.loadImage = (event) => this._actions.main.load(event.target.files[0]);
 
-    snippet.forEach(this._buttonElements.load, (element) => {
+    forEach(this._buttonElements.load, (element) => {
       element.addEventListener('change', this.eventHandler.loadImage);
     });
   }
@@ -593,7 +591,7 @@ class Ui {
    * @private
    */
   _removeLoadEvent() {
-    snippet.forEach(this._buttonElements.load, (element) => {
+    forEach(this._buttonElements.load, (element) => {
       element.removeEventListener('change', this.eventHandler.loadImage);
     });
   }
@@ -628,7 +626,7 @@ class Ui {
    * @private
    */
   _addMenuEvent() {
-    snippet.forEach(this.options.menu, (menuName) => {
+    forEach(this.options.menu, (menuName) => {
       this._addMainMenuEvent(menuName);
       this._addSubMenuEvent(menuName);
     });
@@ -639,7 +637,7 @@ class Ui {
    * @private
    */
   _removeMainMenuEvent() {
-    snippet.forEach(this.options.menu, (menuName) => {
+    forEach(this.options.menu, (menuName) => {
       this._buttonElements[menuName].removeEventListener('click', this.eventHandler[menuName]);
       this[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
       this[menuName].off(eventNames.INPUT_BOX_EDITING_STOPPED);
@@ -689,7 +687,7 @@ class Ui {
    * @private
    */
   _destroyAllMenu() {
-    snippet.forEach(this.options.menu, (menuName) => {
+    forEach(this.options.menu, (menuName) => {
       this[menuName].destroy();
     });
 

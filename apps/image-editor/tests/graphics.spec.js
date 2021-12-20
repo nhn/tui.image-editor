@@ -1,6 +1,6 @@
-import { stamp } from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Graphics from '@/graphics';
+import { stamp } from '@/util';
 import { drawingModes, componentNames as components } from '@/consts';
 
 describe('Graphics', () => {

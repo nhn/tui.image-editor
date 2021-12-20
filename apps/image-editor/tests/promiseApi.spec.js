@@ -1,6 +1,6 @@
 import { fabric } from 'fabric';
-import { stamp } from 'tui-code-snippet';
 import ImageEditor from '@/imageEditor';
+import { stamp } from '@/util';
 import { rejectMessages } from '@/consts';
 
 import '@/command/loadImage';

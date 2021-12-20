@@ -1,8 +1,4 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Command interface
- */
-import snippet from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 import errorMessage from '@/factory/errorMessage';
 
 const createMessage = errorMessage.create;
@@ -100,7 +96,7 @@ class Command {
     }
 
     if (!isSilent) {
-      snippet.extend(this.undoData, undoData);
+      extend(this.undoData, undoData);
       cachedUndoDataForSilent = null;
     } else if (!cachedUndoDataForSilent) {
       cachedUndoDataForSilent = undoData;

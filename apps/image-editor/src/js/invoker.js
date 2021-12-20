@@ -1,8 +1,5 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Invoker - invoke commands
- */
-import { isString, CustomEvents } from 'tui-code-snippet';
+import isString from 'tui-code-snippet/type/isString';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import commandFactory from '@/factory/command';
 import { isFunction } from '@/util';
 import { eventNames, rejectMessages } from '@/consts';

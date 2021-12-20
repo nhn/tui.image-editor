@@ -93,12 +93,11 @@ describe('UI', () => {
     });
 
     it('should be run as required when initCanvas is executed', async () => {
-      const activeMenuEventSpy = jest.spyOn(ui, 'activeMenuEvent');
+      ui.activeMenuEvent = jest.fn();
       const addLoadEventSpy = jest.spyOn(ui, '_addLoadEvent');
 
       await ui.initCanvas();
 
-      expect(activeMenuEventSpy).toHaveBeenCalled();
       expect(addLoadEventSpy).toHaveBeenCalled();
     });
 

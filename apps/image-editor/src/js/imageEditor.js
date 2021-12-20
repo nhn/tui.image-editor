@@ -1,9 +1,8 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image-editor application class
- */
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import forEach from 'tui-code-snippet/collection/forEach';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import Invoker from '@/invoker';
 import UI from '@/ui';
 import action from '@/action';
@@ -18,8 +17,6 @@ import {
   rejectMessages,
   OBJ_TYPE,
 } from '@/consts';
-
-const { isUndefined, forEach, CustomEvents } = snippet;
 
 const {
   MOUSE_DOWN,
@@ -164,7 +161,7 @@ const {
  */
 class ImageEditor {
   constructor(wrapper, options) {
-    options = snippet.extend(
+    options = extend(
       {
         includeUI: false,
         usageStatistics: true,

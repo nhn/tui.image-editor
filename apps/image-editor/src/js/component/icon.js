@@ -1,9 +1,6 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add icon module
- */
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
+import forEach from 'tui-code-snippet/collection/forEach';
 import Component from '@/interface/component';
 import { eventNames as events, rejectMessages, componentNames, fObjectOptions } from '@/consts';
 
@@ -119,7 +116,7 @@ class Icon extends Component {
       }
 
       icon.set(
-        snippet.extend(
+        extend(
           {
             type: 'icon',
             fill: this._oColor,
@@ -141,7 +138,7 @@ class Icon extends Component {
    * @param {{key: string, value: string}} pathInfos - Path infos
    */
   registerPaths(pathInfos) {
-    snippet.forEach(
+    forEach(
       pathInfos,
       (path, type) => {
         this._pathMap[type] = path;

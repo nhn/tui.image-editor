@@ -1,4 +1,4 @@
-import snippet from 'tui-code-snippet';
+import forEach from 'tui-code-snippet/collection/forEach';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/flip';
 import { assignmentForDestroy } from '@/util';
@@ -71,7 +71,7 @@ class Flip extends Submenu {
         this.flipStatus = false;
 
         flipClassList.remove('resetFlip');
-        snippet.forEach(['flipX', 'flipY'], (type) => {
+        forEach(['flipX', 'flipY'], (type) => {
           flipClassList.remove(type);
           if (flipStatus[type]) {
             flipClassList.add(type);

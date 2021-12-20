@@ -1,9 +1,5 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Cropzone extending fabric.Rect
- */
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
 import { clamp } from '@/util';
 import { eventNames as events, keyCodes } from '@/consts';
 
@@ -67,7 +63,7 @@ const Cropzone = fabric.util.createClass(
      * @override
      */
     initialize(canvas, options, extendsOptions) {
-      options = snippet.extend(options, extendsOptions);
+      options = extend(options, extendsOptions);
       options.type = 'cropzone';
 
       this.callSuper('initialize', options);
@@ -266,24 +262,18 @@ const Cropzone = fabric.util.createClass(
       const canvasWidth = canvas.getWidth(); // fabric object
 
       return {
-        x: snippet.map(
-          [
-            -(halfWidth + left), // x0
-            -halfWidth, // x1
-            halfWidth, // x2
-            halfWidth + (canvasWidth - left - width), // x3
-          ],
-          Math.ceil
-        ),
-        y: snippet.map(
-          [
-            -(halfHeight + top), // y0
-            -halfHeight, // y1
-            halfHeight, // y2
-            halfHeight + (canvasHeight - top - height), // y3
-          ],
-          Math.ceil
-        ),
+        x: [
+          -(halfWidth + left), // x0
+          -halfWidth, // x1
+          halfWidth, // x2
+          halfWidth + (canvasWidth - left - width), // x3
+        ].map(Math.ceil),
+        y: [
+          -(halfHeight + top), // y0
+          -halfHeight, // y1
+          halfHeight, // y2
+          halfHeight + (canvasHeight - top - height), // y3
+        ].map(Math.ceil),
       };
     },
 

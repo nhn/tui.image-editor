@@ -1,9 +1,5 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image crop module (start cropping, end cropping)
- */
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
 import Component from '@/interface/component';
 import Cropzone from '@/extension/cropzone';
 import { keyCodes, componentNames, CROPZONE_DEFAULT_OPTIONS } from '@/consts';
@@ -87,7 +83,7 @@ class Cropper extends Component {
 
     this._cropzone = new Cropzone(
       canvas,
-      snippet.extend(
+      extend(
         {
           left: 0,
           top: 0,
@@ -341,12 +337,10 @@ class Cropper extends Component {
     let height = standardSize;
 
     const scaleWidth = getScale(width, originalWidth);
-    [width, height] = snippet.map([width, height], (sizeValue) => sizeValue * scaleWidth);
+    [width, height] = [width, height].map((sizeValue) => sizeValue * scaleWidth);
 
     const scaleHeight = getScale(height, originalHeight);
-    [width, height] = snippet.map([width, height], (sizeValue) =>
-      fixFloatingPoint(sizeValue * scaleHeight)
-    );
+    [width, height] = [width, height].map((sizeValue) => fixFloatingPoint(sizeValue * scaleHeight));
 
     return {
       presetRatio,

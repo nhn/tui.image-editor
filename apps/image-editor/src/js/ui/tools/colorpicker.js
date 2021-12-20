@@ -1,4 +1,5 @@
-import snippet from 'tui-code-snippet';
+import forEach from 'tui-code-snippet/collection/forEach';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import tuiColorPicker from 'tui-color-picker';
 
 const PICKER_COLOR = [
@@ -57,7 +58,7 @@ class Colorpicker {
     this._removeEvent();
     this.picker.destroy();
     this.colorpickerElement.innerHTML = '';
-    snippet.forEach(this, (value, key) => {
+    forEach(this, (value, key) => {
       this[key] = null;
     });
   }
@@ -244,6 +245,6 @@ class Colorpicker {
   }
 }
 
-snippet.CustomEvents.mixin(Colorpicker);
+CustomEvents.mixin(Colorpicker);
 
 export default Colorpicker;
