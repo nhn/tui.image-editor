@@ -735,6 +735,7 @@ class ImageEditor {
 
     return this.loadImageFromURL(imgUrl, imageName).then((value) => {
       URL.revokeObjectURL(imgFile);
+      this.ui.activeMenuEvent();
 
       return value;
     });
