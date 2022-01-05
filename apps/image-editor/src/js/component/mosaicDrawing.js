@@ -111,11 +111,11 @@ class MosaicDrawing extends Component {
 
     const color = this.getXY(image, x, y);
 
-    // eslint-disable-next-line no-plusplus
-    for (let k = 0; k < this.width; k++) {
-      // eslint-disable-next-line no-plusplus
-      for (let l = 0; l < this.width; l++) {
-        if (!isOut(x + l, y + k)) this.setXY(image, x + l, y + k, color);
+    for (let k = 0; k < this.width; k += 1) {
+      for (let l = 0; l < this.width; k += 1) {
+        if (!isOut(x + l, y + k)) {
+          this.setXY(image, x + l, y + k, color);
+        }
       }
     }
 
