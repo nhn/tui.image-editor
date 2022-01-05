@@ -47,7 +47,7 @@ class MosaicDrawing extends Component {
    */
   end() {
     const canvas = this.getCanvas();
-
+    canvas.defaultCursor = 'default';
     canvas.off('mouse:down', this._listeners.mousedown);
   }
 
@@ -112,7 +112,7 @@ class MosaicDrawing extends Component {
     const color = this.getXY(image, x, y);
 
     for (let k = 0; k < this.width; k += 1) {
-      for (let l = 0; l < this.width; k += 1) {
+      for (let l = 0; l < this.width; l += 1) {
         if (!isOut(x + l, y + k)) {
           this.setXY(image, x + l, y + k, color);
         }
