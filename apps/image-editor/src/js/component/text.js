@@ -223,6 +223,7 @@ class Text extends Component {
       if (options.autofocus) {
         newText.enterEditing();
         newText.selectAll();
+        this.fire(events.TEXT_EDITING);
       }
 
       if (!canvas.getActiveObject()) {
