@@ -146,6 +146,13 @@ class Shape extends Submenu {
   }
 
   /**
+   * set range stroke value
+   */
+  setStrokeRangeValue(strokeWidth){
+    this._els.strokeRange.value = strokeWidth;
+  }
+
+  /**
    * Executed when the menu starts.
    */
   changeStartMode() {
@@ -224,15 +231,21 @@ class Shape extends Submenu {
    * @private
    */
   _changeStrokeRangeHandler(value, isLast) {
-    this.options.strokeWidth = toInteger(value);
+    const { min } = this._els.strokeRange;
+    const integerValue = toInteger(value);
+    const strokeWidth = integerValue < min ? min : integerValue;
+
     this.actions.changeShape(
       {
-        strokeWidth: value,
+        strokeWidth,
       },
       !isLast
     );
 
     this.actions.setDrawingShape(this.type, this.options);
+
+    this.options.strokeWidth = strokeWidth;
+    this.setStrokeRangeValue(strokeWidth);
   }
 
   /**
