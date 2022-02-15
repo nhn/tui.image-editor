@@ -143,11 +143,7 @@ class Colorpicker {
    * @private
    */
   _addEvent() {
-    this.picker.on('selectColor', (value) => {
-      this._changeColorElement(value.color);
-      this._color = value.color;
-      this.fire('change', value.color);
-    });
+    this.picker.on('selectColor', (value) => this.changeColor(value.color));
 
     this.eventHandler = {
       pickerToggle: this._pickerToggleEventHandler.bind(this),
@@ -223,6 +219,17 @@ class Colorpicker {
   hide() {
     this._show = false;
     this.pickerControl.style.display = 'none';
+  }
+
+  /**
+   * Change color
+   * @param {string} color color value
+   * #public
+   */
+  changeColor(color){
+    this._changeColorElement(color);
+    this._color = color;
+    this.fire('change', color);
   }
 
   /**
