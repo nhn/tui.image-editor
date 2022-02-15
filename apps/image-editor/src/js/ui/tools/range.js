@@ -41,7 +41,9 @@ class Range {
 
     this.eventHandler = {
       startChangingSlide: this._startChangingSlide.bind(this),
+      startChangingSlideByMobile: this._startChangingSlideByMobile.bind(this),
       stopChangingSlide: this._stopChangingSlide.bind(this),
+      stopChangingSlideByMobile: this._stopChangingSlideByMobile.bind(this),
       changeSlide: this._changeSlide.bind(this),
       changeSlideFinally: this._changeSlideFinally.bind(this),
       changeInput: this._changeInput.bind(this),
@@ -51,6 +53,7 @@ class Range {
 
     this._addClickEvent();
     this._addDragEvent();
+    this._addMobileDragEvent();
     this._addInputEvent();
     this.value = options.value;
     this.trigger('change');
@@ -62,6 +65,7 @@ class Range {
   destroy() {
     this._removeClickEvent();
     this._removeDragEvent();
+    this._removeMobileDragEvent();
     this._removeInputEvent();
     this.rangeElement.innerHTML = '';
     snippet.forEach(this, (value, key) => {
@@ -198,10 +202,6 @@ class Range {
   _changeValueWithInputKeyEvent(event) {
     const { keyCode, target } = event;
 
-    if ([keyCodes.ARROW_UP, keyCodes.ARROW_DOWN].indexOf(keyCode) < 0) {
-      return;
-    }
-
     let value = Number(target.value);
 
     value = this._valueUpDownForKeyEvent(value, keyCode);
@@ -237,16 +237,9 @@ class Range {
   _changeInput(e) {
     clearTimeout(this._userInputTimer);
 
-    const keyCode = e.key.charCodeAt(0);
-    if (keyCode < keyCodes.DIGIT_0 || keyCode > keyCodes.DIGIT_9) {
-      e.preventDefault();
-
-      return;
-    }
-
     this._userInputTimer = setTimeout(() => {
       this._inputSetValue(e.target.value);
-    }, 350);
+    }, 1500);
   }
 
   _inputSetValue(stringValue) {
@@ -312,12 +305,35 @@ class Range {
   }
 
   /**
+   * Add Range drag event By Mobile
+   * @private
+   */
+  _addMobileDragEvent() {
+    this.pointer.addEventListener('touchstart', this.eventHandler.startChangingSlideByMobile);
+  }
+
+  /**
+   * Remove Range drag event By Mobile
+   * @private
+   */
+  _removeMobileDragEvent() {
+    this.pointer.removeEventListener('touchstart', this.eventHandler.stopChangingSlideByMobile);
+  }
+
+  _isTouchEvent(event){
+    return event?.touches?.length;
+  }
+
+  /**
    * change angle event
    * @param {object} event - change event
    * @private
    */
   _changeSlide(event) {
-    const changePosition = event.screenX;
+    event.preventDefault();
+    event.stopPropagation();
+
+    const changePosition = this._isTouchEvent(event) ? event.touches[0].clientX : event.screenX;
     const diffPosition = changePosition - this.firstPosition;
     let touchPx = this.firstLeft + diffPosition;
     touchPx = touchPx > this.rangeWidth ? this.rangeWidth : touchPx;
@@ -362,6 +378,17 @@ class Range {
     document.addEventListener('mouseup', this.eventHandler.stopChangingSlide);
   }
 
+  _startChangingSlideByMobile(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.firstPosition = event.touches[0].clientX;
+    this.firstLeft = toInteger(this.pointer.style.left) || 0;
+
+    document.addEventListener('touchmove', this.eventHandler.changeSlide);
+    document.addEventListener('touchend', this.eventHandler.stopChangingSlideByMobile);
+  }
+
   /**
    * stop change angle event
    * @private
@@ -371,6 +398,20 @@ class Range {
 
     document.removeEventListener('mousemove', this.eventHandler.changeSlide);
     document.removeEventListener('mouseup', this.eventHandler.stopChangingSlide);
+  }
+
+  /**
+   * stop change angle event by mobile
+   * @private
+   */
+  _stopChangingSlideByMobile(event) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.fire('change', this._value, true);
+
+    document.removeEventListener('touchmove', this.eventHandler.changeSlide);
+    document.removeEventListener('touchend', this.eventHandler.stopChangingSlideByMobile);
   }
 
   /**
