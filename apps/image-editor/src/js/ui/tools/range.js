@@ -204,6 +204,10 @@ class Range {
 
     let value = Number(target.value);
 
+    if (isNaN(value)) {
+      return;
+    }
+
     value = this._valueUpDownForKeyEvent(value, keyCode);
 
     const unChanged = value < this._min || value > this._max;
@@ -245,6 +249,10 @@ class Range {
   _inputSetValue(stringValue) {
     let value = this._useDecimal ? Number(stringValue) : toInteger(stringValue);
     value = clamp(value, this._min, this.max);
+
+    if (isNaN(value)) {
+      value = this.value;
+    }
 
     this.value = value;
     this.fire('change', value, true);
