@@ -133,6 +133,13 @@ class Icon extends Submenu {
   }
 
   /**
+   * Executed when the menu starts.
+   */
+  changeStartMode() {
+    this.actions.stopDrawingMode();
+  }
+
+  /**
    * Change icon color
    * @param {string} color - color for change
    * @private
