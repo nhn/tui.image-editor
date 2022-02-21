@@ -38,6 +38,7 @@ class Range {
     this._absMax = this._min * -1 + this._max;
     this.realTimeEvent = options.realTimeEvent || false;
     this._userInputTimer = null;
+    this.changeInputTimeout = 300;
 
     this.eventHandler = {
       startChangingSlide: this._startChangingSlide.bind(this),
@@ -241,9 +242,13 @@ class Range {
   _changeInput(e) {
     clearTimeout(this._userInputTimer);
 
+    if (!this.changeInputTimeout) {
+      return;
+    }
+
     this._userInputTimer = setTimeout(() => {
       this._inputSetValue(e.target.value);
-    }, 1500);
+    }, this.changeInputTimeout);
   }
 
   _inputSetValue(stringValue) {
