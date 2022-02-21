@@ -240,6 +240,8 @@ class Range {
   }
 
   _changeInput(e) {
+    e.stopPropagation();
+
     clearTimeout(this._userInputTimer);
 
     if (!this.changeInputTimeout) {
