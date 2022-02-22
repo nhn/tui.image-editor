@@ -1,4 +1,4 @@
-import snippet from 'tui-code-snippet';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Range from '@/ui/tools/range';
 import Submenu from '@/ui/submenuBase';
@@ -97,7 +97,7 @@ class Shape extends Submenu {
     this._els.fillColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
     this._els.strokeColorpicker.on('changeShow', this.colorPickerChangeShow.bind(this));
 
-    snippet.forEachArray(
+    forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
         inputBox.addEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));
@@ -117,7 +117,7 @@ class Shape extends Submenu {
     this._els.fillColorpicker.off();
     this._els.strokeColorpicker.off();
 
-    snippet.forEachArray(
+    forEachArray(
       this.colorPickerInputBoxes,
       (inputBox) => {
         inputBox.removeEventListener(eventNames.FOCUS, this._onStartEditingInputBox.bind(this));

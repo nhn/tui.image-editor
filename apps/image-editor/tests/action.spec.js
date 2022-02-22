@@ -1,7 +1,10 @@
+import { fabric } from 'fabric';
 import ImageEditor from '@/imageEditor';
 
+import '@/command/loadImage';
+
 describe('UI', () => {
-  let actions, imageEditorMock;
+  let actions, imageEditorMock, mockImage;
 
   beforeEach(() => {
     imageEditorMock = new ImageEditor(document.createElement('div'), {
@@ -13,6 +16,8 @@ describe('UI', () => {
       },
     });
     actions = imageEditorMock.getActions();
+    mockImage = new fabric.Image();
+    imageEditorMock._graphics.setCanvasImage('mockImage', mockImage);
   });
 
   describe('mainAction', () => {
@@ -128,22 +133,19 @@ describe('UI', () => {
       cropAction = actions.crop;
     });
 
-    it('should be executed When the crop action occurs', async () => {
+    it('should be executed when the crop action occurs', async () => {
       const getCropzoneRectSpy = jest
         .spyOn(imageEditorMock, 'getCropzoneRect')
         .mockReturnValue(true);
       const cropSpy = jest.spyOn(imageEditorMock, 'crop').mockReturnValue(Promise.resolve());
       const stopDrawingModeSpy = jest.spyOn(imageEditorMock, 'stopDrawingMode');
-      const resizeEditorSpy = jest.spyOn(imageEditorMock.ui, 'resizeEditor');
-      const changeMenuSpy = jest.spyOn(imageEditorMock.ui, 'changeMenu');
+      imageEditorMock.ui.changeMenu = jest.fn();
 
       await cropAction.crop();
 
       expect(getCropzoneRectSpy).toHaveBeenCalled();
       expect(cropSpy).toHaveBeenCalled();
       expect(stopDrawingModeSpy).toHaveBeenCalled();
-      expect(resizeEditorSpy).toHaveBeenCalled();
-      expect(changeMenuSpy).toHaveBeenCalled();
     });
 
     it('should be executed When the cancel action occurs', () => {

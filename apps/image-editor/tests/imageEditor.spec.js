@@ -1,19 +1,19 @@
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import ImageEditor from '@/imageEditor';
+import * as util from '@/util';
 import { eventNames, keyCodes } from '@/consts';
 
 const { OBJECT_ROTATED } = eventNames;
 
 describe('ImageEditor', () => {
   describe('constructor', () => {
-    let imageEditor, el;
+    let imageEditor, el, sendHostNameSpy;
 
     beforeEach(() => {
       el = document.createElement('div');
-      snippet.sendHostname = jest.fn();
 
       imageEditor = new ImageEditor(el, { usageStatistics: false });
+      sendHostNameSpy = jest.spyOn(util, 'sendHostName');
     });
 
     afterEach(() => {
@@ -23,13 +23,13 @@ describe('ImageEditor', () => {
     it('should send hostname by default', () => {
       imageEditor = new ImageEditor(el);
 
-      expect(snippet.sendHostname).toHaveBeenCalled();
+      expect(sendHostNameSpy).toHaveBeenCalled();
     });
 
     it('should not send hostname on usageStatistics option false', () => {
       imageEditor = new ImageEditor(el, { usageStatistics: false });
 
-      expect(snippet.sendHostname).not.toHaveBeenCalled();
+      expect(sendHostNameSpy).not.toHaveBeenCalled();
     });
 
     it('should not be executed when object is selected state', () => {

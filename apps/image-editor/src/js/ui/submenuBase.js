@@ -1,4 +1,4 @@
-import { CustomEvents } from 'tui-code-snippet';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import { eventNames } from '@/consts';
 
 /**

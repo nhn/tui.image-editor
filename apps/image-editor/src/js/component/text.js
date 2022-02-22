@@ -1,10 +1,9 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Text module
- */
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
+import isExisty from 'tui-code-snippet/type/isExisty';
+import forEach from 'tui-code-snippet/collection/forEach';
 import Component from '@/interface/component';
+import { stamp } from '@/util';
 import { componentNames, eventNames as events, fObjectOptions } from '@/consts';
 
 const defaultStyles = {
@@ -201,15 +200,15 @@ class Text extends Component {
       this._setInitPos(options.position);
 
       if (options.styles) {
-        styles = snippet.extend(styles, options.styles);
+        styles = extend(styles, options.styles);
       }
 
-      if (!snippet.isExisty(options.autofocus)) {
+      if (!isExisty(options.autofocus)) {
         options.autofocus = true;
       }
 
       newText = new fabric.IText(text, styles);
-      selectionStyle = snippet.extend({}, selectionStyle, {
+      selectionStyle = extend({}, selectionStyle, {
         originX: 'left',
         originY: 'top',
       });
@@ -265,7 +264,7 @@ class Text extends Component {
    */
   setStyle(activeObj, styleObj) {
     return new Promise((resolve) => {
-      snippet.forEach(
+      forEach(
         styleObj,
         (val, key) => {
           if (activeObj[key] === val && key !== 'fontSize') {
@@ -276,7 +275,7 @@ class Text extends Component {
       );
 
       if ('textDecoration' in styleObj) {
-        snippet.extend(styleObj, this._getTextDecorationAdaptObject(styleObj.textDecoration));
+        extend(styleObj, this._getTextDecorationAdaptObject(styleObj.textDecoration));
       }
 
       activeObj.set(styleObj);
@@ -423,7 +422,7 @@ class Text extends Component {
       this.getCanvas().add(editingObj);
 
       const params = {
-        id: snippet.stamp(editingObj),
+        id: stamp(editingObj),
         type: editingObj.type,
         text: textContent,
       };

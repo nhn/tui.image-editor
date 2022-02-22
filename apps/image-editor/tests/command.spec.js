@@ -1,8 +1,8 @@
-import { stamp, hasStamp } from 'tui-code-snippet';
 import { fabric } from 'fabric';
 import Graphics from '@/graphics';
 import Invoker from '@/invoker';
 import commandFactory from '@/factory/command';
+import { stamp, hasStamp } from '@/util';
 import { commandNames as commands } from '@/consts';
 
 import addObjectCommand from '@/command/addObject';

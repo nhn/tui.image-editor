@@ -1,8 +1,10 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Util
- */
-import { forEach, sendHostname, extend, isString, pick, inArray } from 'tui-code-snippet';
+import isUndefined from 'tui-code-snippet/type/isUndefined';
+import forEach from 'tui-code-snippet/collection/forEach';
+import sendHostname from 'tui-code-snippet/request/sendHostname';
+import extend from 'tui-code-snippet/object/extend';
+import isString from 'tui-code-snippet/type/isString';
+import pick from 'tui-code-snippet/object/pick';
+import inArray from 'tui-code-snippet/array/inArray';
 import {
   commandNames,
   filterType,
@@ -16,6 +18,25 @@ const FLOATING_POINT_DIGIT = 2;
 const CSS_PREFIX = 'tui-image-editor-';
 const { min, max } = Math;
 let hostnameSent = false;
+let lastId = 0;
+
+export function stamp(obj) {
+  if (!obj.__fe_id) {
+    lastId += 1;
+    // eslint-disable-next-line camelcase
+    obj.__fe_id = lastId;
+  }
+
+  return obj.__fe_id;
+}
+
+export function hasStamp(obj) {
+  return !isNil(obj?.__fe_id);
+}
+
+export function isNil(value) {
+  return isUndefined(value) || value === null;
+}
 
 export function isFunction(value) {
   return typeof value === 'function';

@@ -1,9 +1,5 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Free drawing module, Set brush
- */
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
 import Component from '@/interface/component';
 import ArrowLine from '@/extension/arrowLine';
 import { eventNames, componentNames, fObjectOptions } from '@/consts';
@@ -193,7 +189,7 @@ class Line extends Component {
     const params = this.graphics.createObjectProperties(this._line);
     const { x1, x2, y1, y2 } = this._line;
 
-    return snippet.extend({}, params, {
+    return extend({}, params, {
       startPosition: {
         x: x1,
         y: y1,

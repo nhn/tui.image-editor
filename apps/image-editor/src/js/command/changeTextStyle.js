@@ -1,8 +1,4 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Change text styles
- */
-import snippet from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import commandFactory from '@/factory/command';
 import { componentNames, rejectMessages, commandNames } from '@/consts';
 
@@ -25,7 +21,7 @@ function makeUndoData(styles, targetObj) {
     object: targetObj,
     styles: {},
   };
-  snippet.forEachOwnProperties(styles, (value, key) => {
+  forEachOwnProperties(styles, (value, key) => {
     const undoValue = targetObj[key];
     undoData.styles[key] = undoValue;
   });

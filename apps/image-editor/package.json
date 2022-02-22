@@ -46,7 +46,7 @@
   ],
   "dependencies": {
     "fabric": "^4.2.0",
-    "tui-code-snippet": "^1.5.0",
+    "tui-code-snippet": "^2.3.3",
     "tui-color-picker": "^2.2.6"
   }
 }

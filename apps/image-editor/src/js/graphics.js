@@ -1,9 +1,10 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Graphics module
- */
-import snippet from 'tui-code-snippet';
 import { fabric } from 'fabric';
+import extend from 'tui-code-snippet/object/extend';
+import isArray from 'tui-code-snippet/type/isArray';
+import isString from 'tui-code-snippet/type/isString';
+import forEachArray from 'tui-code-snippet/collection/forEachArray';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
 import ImageLoader from '@/component/imageLoader';
 import Cropper from '@/component/cropper';
 import Flip from '@/component/flip';
@@ -27,7 +28,7 @@ import {
   makeSelectionUndoDatum,
   setCachedUndoDataForDimension,
 } from '@/helper/selectionModifyHelper';
-import { getProperties, includes, isShape } from '@/util';
+import { getProperties, includes, isShape, stamp } from '@/util';
 import {
   componentNames as components,
   eventNames as events,
@@ -37,8 +38,6 @@ import {
 import Resize from '@/component/resize';
 import ResizeDrawingMode from '@/drawingMode/resize';
 
-const { extend, stamp, isArray, isString, forEachArray, forEachOwnProperties, CustomEvents } =
-  snippet;
 const DEFAULT_CSS_MAX_WIDTH = 1000;
 const DEFAULT_CSS_MAX_HEIGHT = 800;
 const EXTRA_PX_FOR_PASTE = 10;
@@ -1423,9 +1422,7 @@ class Graphics {
    * @private
    */
   _cloneObject(targetObjects) {
-    const addedObjects = snippet.map(targetObjects, (targetObject) =>
-      this._cloneObjectItem(targetObject)
-    );
+    const addedObjects = targetObjects.map((targetObject) => this._cloneObjectItem(targetObject));
 
     return Promise.all(addedObjects);
   }
@@ -1464,7 +1461,7 @@ class Graphics {
       const bottomEdge = top + height / 2;
 
       clonedObject.set(
-        snippet.extend(
+        extend(
           {
             left: addExtraPx(left, rightEdge + EXTRA_PX_FOR_PASTE > canvasWidth),
             top: addExtraPx(top, bottomEdge + EXTRA_PX_FOR_PASTE > canvasHeight),

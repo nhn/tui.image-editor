@@ -1,8 +1,4 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview change a shape
- */
-import snippet from 'tui-code-snippet';
+import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
 import commandFactory from '@/factory/command';
 import { componentNames, rejectMessages, commandNames } from '@/consts';
 
@@ -26,7 +22,7 @@ function makeUndoData(options, targetObj) {
     options: {},
   };
 
-  snippet.forEachOwnProperties(options, (value, key) => {
+  forEachOwnProperties(options, (value, key) => {
     undoData.options[key] = targetObj[key];
   });
 

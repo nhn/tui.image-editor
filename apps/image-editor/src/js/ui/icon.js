@@ -1,4 +1,4 @@
-import snippet from 'tui-code-snippet';
+import forEach from 'tui-code-snippet/collection/forEach';
 import Colorpicker from '@/ui/tools/colorpicker';
 import Submenu from '@/ui/submenuBase';
 import templateHtml from '@/ui/template/submenu/icon';
@@ -111,7 +111,7 @@ class Icon extends Submenu {
    * Register default icon
    */
   registerDefaultIcon() {
-    snippet.forEach(defaultIconPath, (path, type) => {
+    forEach(defaultIconPath, (path, type) => {
       this.actions.registerDefaultIcons(type, path);
     });
   }

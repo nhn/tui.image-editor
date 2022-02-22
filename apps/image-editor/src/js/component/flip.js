@@ -1,8 +1,4 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image flip module
- */
-import snippet from 'tui-code-snippet';
+import extend from 'tui-code-snippet/object/extend';
 import Component from '@/interface/component';
 import { componentNames, rejectMessages } from '@/consts';
 
@@ -45,7 +41,7 @@ class Flip extends Component {
       return Promise.reject(rejectMessages.flip);
     }
 
-    snippet.extend(setting, newSetting);
+    extend(setting, newSetting);
     this.setImageProperties(setting, true);
     this._invertAngle(isChangingFlipX, isChangingFlipY);
     this._flipObjects(isChangingFlipX, isChangingFlipY);
