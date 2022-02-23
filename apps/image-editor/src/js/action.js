@@ -339,6 +339,11 @@ export default {
         changeShape: (changeShapeObject, isSilent) => {
           if (this.activeObjectId) {
             this.changeShape(this.activeObjectId, changeShapeObject, isSilent);
+          } else {
+            this.setDrawingShape(this.ui.shape.type, {
+              ...this.ui.shape.options,
+              ...changeShapeObject,
+            });
           }
         },
         setDrawingShape: (shapeType) => {
@@ -589,7 +594,7 @@ export default {
           this.ui.shape.setShapeStatus({
             strokeColor: obj.stroke,
             strokeWidth: obj.strokeWidth,
-            fillColor: obj.fill,
+            fillColor: obj.fill.color,
           });
 
           this.ui.shape.setMaxStrokeValue(Math.min(obj.width, obj.height));
