@@ -668,6 +668,7 @@ class ImageEditor {
    * imageEditor.undo();
    */
   undo(iterationCount = 1) {
+    this.discardSelection();
     let promise = Promise.resolve();
 
     for (let i = 0; i < iterationCount; i += 1) {
@@ -685,6 +686,7 @@ class ImageEditor {
    * imageEditor.redo();
    */
   redo(iterationCount = 1) {
+    this.discardSelection();
     let promise = Promise.resolve();
 
     for (let i = 0; i < iterationCount; i += 1) {
