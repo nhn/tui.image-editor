@@ -7,5 +7,8 @@
   },
   "example03-mobile": {
     "title": "3. Mobile"
+  },
+  "example04-cdnNoDeps": {
+    "title": "4. CDN without dependencies"
   }
 }

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Toast UI Image Editor CDN example</title>
+    <!-- Based on https://github.com/nhn/tui.image-editor/blob/master/apps/image-editor/examples/example01-includeUi.html -->
+    <link
+            type="text/css"
+            href="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.css"
+            rel="stylesheet"
+    />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.2/tui-image-editor.css" integrity="sha512-vH/gDT1D+HjKY/fsEcvPMRLn/fB8qA63IAz2b0nV5xUtPKsqm3ya5OtkYMMdYW6MT/SJnqc+Ex4sTFnWuDVQfg==" crossorigin="anonymous" referrerpolicy="no-referrer" />    <style>
+        @import url(http://fonts.googleapis.com/css?family=Noto+Sans);
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="tui-image-editor-container"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.4.0/fabric.min.js" integrity="sha512-Ly9uI3QY88jVXCgkORH2A4Qqz5xYm1pew9jEgedgSpyEg9asvyPISK+CY7QNDN3CMftXU/KLNwQR7XUUo7Cqag==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/tui-code-snippet/1.5.0/tui-code-snippet.js" integrity="sha512-j6aaBuLOtRYukBqP0MSBeWTK6/dEY+4AbmGuoWw01i3G6jliiNofgVrSDA1/jyA5bi9yj19mUZf4PqmIUZEYWQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script
+        type="text/javascript"
+        src="https://uicdn.toast.com/tui-color-picker/v2.2.6/tui-color-picker.js"
+></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js" integrity="sha512-DvLlX4EDfBZuesenAya2TOiF+cR7GbRsV+IElolKTYIj8JJHr9BFTcznTuRFabG26vcVsmDCcv2dL7m8Ov1XfA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/tui-image-editor/3.15.2/tui-image-editor.js" integrity="sha512-EGPsMUvRte/xTbSBMN+PxsnMFL/rISID3g+7S4fQf4EzrvGigjfX54evHf3+MWf32qvNLnwii+kTgYgPWzEUtg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!--<script type="text/javascript" src="js/theme/white-theme.js"></script>-->
+<!--<script type="text/javascript" src="js/theme/black-theme.js"></script>-->
+<script>
+    // Image editor
+    const imageEditor = new tui.ImageEditor('#tui-image-editor-container', {
+        includeUI: {
+            // loadImage: {
+            //     path: 'img/sampleImage2.png',
+            //     name: 'SampleImage',
+            // },
+            // theme: blackTheme, // or whiteTheme,
+            initMenu: 'filter',
+            menuBarPosition: 'bottom',
+        },
+        cssMaxWidth: 700,
+        cssMaxHeight: 500,
+        usageStatistics: false,
+    });
+    window.onresize = function () {
+        imageEditor.ui.resizeEditor();
+    };
+</script>
+</body>
+</html>
