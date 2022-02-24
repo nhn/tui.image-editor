@@ -107,6 +107,7 @@ export default {
           }
         },
         reset: () => {
+          this.resetZoom()
           exitCropOnAction();
           this.loadImageFromURL(this.ui.initializeImgUrl, 'resetImage').then((sizeValue) => {
             exitCropOnAction();
@@ -173,6 +174,9 @@ export default {
         },
         zoomOut: () => {
           this._graphics.zoomOut();
+        },
+        resetZoom: () => {
+          this._graphics.resetZoom();
         },
         hand: () => {
           this.ui.offZoomInButtonStatus();
