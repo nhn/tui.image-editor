@@ -203,6 +203,10 @@ class Range {
   _changeValueWithInputKeyEvent(event) {
     const { keyCode, target } = event;
 
+    if (keyCode !== keyCodes.ARROW_UP && keyCode !== keyCodes.ARROW_DOWN) {
+      return;
+    }
+
     let value = Number(target.value);
 
     if (isNaN(value)) {
@@ -335,7 +339,7 @@ class Range {
     this.pointer.removeEventListener('touchstart', this.eventHandler.stopChangingSlideByMobile);
   }
 
-  _isTouchEvent(event){
+  _isTouchEvent(event) {
     return event?.touches?.length;
   }
 
