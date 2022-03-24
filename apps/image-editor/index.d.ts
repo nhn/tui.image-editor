@@ -316,7 +316,8 @@ declare namespace tuiImageEditor {
     public rotate(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
     public setAngle(angle: AngleType, isSilent?: boolean): Promise<AngleType>;
     public setBrush(option: IBrushOptions): void;
-    public setCropzoneRect(mode?: number): void;
+    public setCropzoneRect(rect: IRectConfig): void;
+    public setCropzoneRatio(mode?: number): void;
     public setDrawingShape(type: string, options?: IShapeOptions): void;
     public setObjectPosition(id: number, posInfo?: IPositionConfig): Promise<void>;
     public setObjectProperties(id: number, keyValue?: IGraphicObjectProps): Promise<void>;
