@@ -258,7 +258,7 @@ imageEditor.setBrush({
   width: 20,
   color: '#FFFFFF',
 });
-imageEditor.setCropzoneRect(1 / 1);
+imageEditor.setCropzoneRatio(1 / 1);
 imageEditor.setDrawingShape('rect', {
   fill: 'red',
   width: 100,
