@@ -1,6 +1,6 @@
 {
   "name": "tui-image-editor",
-  "authors": ["NHN FE Dev Lab <dl_javascript@nhn.com>"],
+  "authors": ["NHN Cloud. FE Dev Lab <dl_javascript@nhn.com>"],
   "license": "MIT",
   "main": ["dist/tui-image-editor.js"],
   "ignore": [
