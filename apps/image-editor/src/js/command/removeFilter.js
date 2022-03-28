@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Remove a filter from an image
- */
 import commandFactory from '@/factory/command';
 import { componentNames, commandNames } from '@/consts';
 

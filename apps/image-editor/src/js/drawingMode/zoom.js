@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview ZoomDrawingMode class
- */
 import DrawingMode from '@/interface/drawingMode';
 import { drawingModes, componentNames as components } from '@/consts';
 

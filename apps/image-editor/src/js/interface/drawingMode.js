@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview DrawingMode interface
- */
 import errorMessage from '@/factory/errorMessage';
 
 const createMessage = errorMessage.create;

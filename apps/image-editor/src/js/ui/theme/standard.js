@@ -1,9 +1,4 @@
 /**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview The standard theme
- */
-
-/**
  * Full configuration for theme.<br>
  * @typedef {object} themeConfig
  * @property {string} common.bi.image - Brand icon image

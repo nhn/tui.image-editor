@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview change selection
- */
 import commandFactory from '@/factory/command';
 import { commandNames } from '@/consts';
 import { getCachedUndoDataForDimension } from '@/helper/selectionModifyHelper';

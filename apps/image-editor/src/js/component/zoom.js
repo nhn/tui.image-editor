@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image zoom module (start zoom, end zoom)
- */
 import { fabric } from 'fabric';
 import Component from '@/interface/component';
 import { clamp } from '@/util';
