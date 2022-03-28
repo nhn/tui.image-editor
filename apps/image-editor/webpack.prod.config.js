@@ -1,5 +1,5 @@
 /* eslint-disable */
-const { version, author, license } = require('./package.json');
+const { version, license } = require('./package.json');
 
 const webpack = require('webpack');
 const TerserPlugin = require('terser-webpack-plugin');
@@ -10,12 +10,7 @@ module.exports = ({ minify }) => {
     mode: 'production',
     plugins: [
       new webpack.BannerPlugin({
-        banner: [
-          'TOAST UI ImageEditor',
-          `@version ${version}`,
-          `@author ${author}`,
-          `@license ${license}`,
-        ].join('\n'),
+        banner: ['TOAST UI ImageEditor', `@version ${version}`, `@license ${license}`].join('\n'),
       }),
     ],
     optimization: {
