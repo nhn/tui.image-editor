@@ -184,6 +184,40 @@ describe('Cropper', () => {
         height: 20,
       });
     });
+
+    it('should restrict cropzone dimensions to presetRatio', () => {
+      const dimension = cropper._calcRectDimensionFromPoint(50, 100, 16 / 9);
+
+      expect(dimension).toEqual({
+        left: 10,
+        top: 20,
+        width: 40,
+        height: 22.5, // width / presetRatio -> 60 / 1,777777778
+      });
+    });
+
+    it('should restrict cropzone within canvas and keep presetRatio when width too large', () => {
+      const dimension = cropper._calcRectDimensionFromPoint(110, 100, 16 / 9);
+
+      expect(dimension).toEqual({
+        left: 10,
+        top: 20,
+        width: 90, // maxwidth (100) minus start (10)
+        height: 50.625, // width / presetRatio -> 90 / (16/9)
+      });
+    });
+
+    it('should restrict cropzone within canvas and keep presetRatio when height too large', () => {
+      cropper._startY = 177.5;
+      const dimension = cropper._calcRectDimensionFromPoint(100, 250, 16 / 9);
+
+      expect(dimension).toEqual({
+        left: 10,
+        top: 177.5,
+        width: 40, // height * presetRatio -> 22.5 * (16/9)
+        height: 22.5, // maxwidth (200) minus start (177.5)
+      });
+    });
   });
 
   it('should activate cropzone', () => {
