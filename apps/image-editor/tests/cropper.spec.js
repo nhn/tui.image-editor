@@ -222,7 +222,7 @@ describe('Cropper', () => {
     });
   });
 
-  describe('presets - setCropzoneRect()', () => {
+  describe('presets - setCropzoneRatio()', () => {
     beforeEach(() => {
       cropper.start();
     });
@@ -233,7 +233,7 @@ describe('Cropper', () => {
 
     it('should return cropzone rect as a square', () => {
       jest.spyOn(cropper._cropzone, 'isValid').mockReturnValue(true);
-      cropper.setCropzoneRect(1);
+      cropper.setCropzoneRatio(1);
       const { width, height } = cropper.getCropzoneRect();
 
       expect(width).toBe(height);
@@ -241,7 +241,7 @@ describe('Cropper', () => {
 
     it('should return cropzone rect as a 3:2 aspect box', () => {
       jest.spyOn(cropper._cropzone, 'isValid').mockReturnValue(true);
-      cropper.setCropzoneRect(3 / 2);
+      cropper.setCropzoneRatio(3 / 2);
       const { width, height } = cropper.getCropzoneRect();
 
       expect((width / height).toFixed(1)).toBe((3 / 2).toFixed(1));
@@ -249,7 +249,7 @@ describe('Cropper', () => {
 
     it('should return cropzone rect as a 4:3 aspect box', () => {
       jest.spyOn(cropper._cropzone, 'isValid').mockReturnValue(true);
-      cropper.setCropzoneRect(4 / 3);
+      cropper.setCropzoneRatio(4 / 3);
       const { width, height } = cropper.getCropzoneRect();
 
       expect((width / height).toFixed(1)).toBe((4 / 3).toFixed(1));
@@ -257,7 +257,7 @@ describe('Cropper', () => {
 
     it('should return cropzone rect as a 5:4 aspect box', () => {
       jest.spyOn(cropper._cropzone, 'isValid').mockReturnValue(true);
-      cropper.setCropzoneRect(5 / 4);
+      cropper.setCropzoneRatio(5 / 4);
       const { width, height } = cropper.getCropzoneRect();
 
       expect((width / height).toFixed(1)).toBe((5 / 4).toFixed(1));
@@ -265,7 +265,7 @@ describe('Cropper', () => {
 
     it('should return cropzone rect as a 7:5 aspect box', () => {
       jest.spyOn(cropper._cropzone, 'isValid').mockReturnValue(true);
-      cropper.setCropzoneRect(7 / 5);
+      cropper.setCropzoneRatio(7 / 5);
       const { width, height } = cropper.getCropzoneRect();
 
       expect((width / height).toFixed(1)).toBe((7 / 5).toFixed(1));
@@ -273,7 +273,7 @@ describe('Cropper', () => {
 
     it('should return cropzone rect as a 16:9 aspect box', () => {
       jest.spyOn(cropper._cropzone, 'isValid').mockReturnValue(true);
-      cropper.setCropzoneRect(16 / 9);
+      cropper.setCropzoneRatio(16 / 9);
       const { width, height } = cropper.getCropzoneRect();
 
       expect((width / height).toFixed(1)).toBe((16 / 9).toFixed(1));
@@ -284,20 +284,33 @@ describe('Cropper', () => {
       jest.spyOn(canvas, 'getHeight').mockReturnValue(312);
       const setSpy = jest.spyOn(cropper._cropzone, 'set');
 
-      cropper.setCropzoneRect(16 / 9);
+      cropper.setCropzoneRatio(16 / 9);
 
       expect(setSpy).toHaveBeenCalledWith(expect.objectContaining({ width: 408 }));
     });
 
     it('should remove cropzone of cropper when falsy is passed', () => {
-      cropper.setCropzoneRect();
+      cropper.setCropzoneRatio();
       expect(cropper.getCropzoneRect()).toBeNull();
 
-      cropper.setCropzoneRect(0);
+      cropper.setCropzoneRatio(0);
       expect(cropper.getCropzoneRect()).toBeNull();
 
-      cropper.setCropzoneRect(null);
+      cropper.setCropzoneRatio(null);
       expect(cropper.getCropzoneRect()).toBeNull();
+    });
+  });
+
+  describe('setCropzoneRect()', () => {
+    it('should set cropzone rectangle', () => {
+      const [left, top, width, height] = [5, 5, 50, 50];
+      cropper.setCropzoneRect({left, top, width, height});
+
+      const rect = cropper.getCropzoneRect();
+      expect(rect.left).toBe(left);
+      expect(rect.top).toBe(top);
+      expect(rect.width).toBe(width);
+      expect(rect.height).toBe(height);
     });
   });
 
