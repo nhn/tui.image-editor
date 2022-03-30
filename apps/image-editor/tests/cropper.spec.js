@@ -304,7 +304,7 @@ describe('Cropper', () => {
   describe('setCropzoneRect()', () => {
     it('should set cropzone rectangle', () => {
       const [left, top, width, height] = [5, 5, 50, 50];
-      cropper.setCropzoneRect({left, top, width, height});
+      cropper.setCropzoneRect({ left, top, width, height });
 
       const rect = cropper.getCropzoneRect();
       expect(rect.left).toBe(left);
