@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Command factory
- */
 import Command from '@/interface/command';
 
 const commands = {};

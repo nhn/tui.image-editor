@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image loader
- */
 import Component from '@/interface/component';
 import { componentNames, rejectMessages } from '@/consts';
 

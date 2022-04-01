@@ -4,7 +4,7 @@
   "description": "TOAST UI ImageEditor",
   "keywords": [
     "nhn",
-    "nhnent",
+    "nhn cloud",
     "tui",
     "component",
     "image",
@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/nhn/tui.image-editor",
   "bugs": "https://github.com/nhn/tui.image-editor/issues",
-  "author": "NHN. FE Development Team <dl_javascript@nhn.com>",
+  "author": "NHN Cloud. FE Development Lab <dl_javascript@nhn.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/nhn/tui.image-editor.git"

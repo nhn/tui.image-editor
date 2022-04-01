@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Clear all objects
- */
 import commandFactory from '@/factory/command';
 import { commandNames } from '@/consts';
 

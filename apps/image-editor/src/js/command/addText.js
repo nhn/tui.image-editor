@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add a text object
- */
 import commandFactory from '@/factory/command';
 import { componentNames, commandNames, rejectMessages } from '@/consts';
 import {

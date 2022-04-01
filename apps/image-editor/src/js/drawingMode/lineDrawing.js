@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview LineDrawingMode class
- */
 import DrawingMode from '@/interface/drawingMode';
 import { drawingModes, componentNames as components } from '@/consts';
 

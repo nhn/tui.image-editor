@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Shape resize helper
- */
 const DIVISOR = {
   rect: 1,
   circle: 2,

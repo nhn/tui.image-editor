@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Set object properties
- */
 import commandFactory from '@/factory/command';
 import { commandNames, rejectMessages } from '@/consts';
 

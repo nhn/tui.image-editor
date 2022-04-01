@@ -1,9 +1,4 @@
 /**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Component interface
- */
-
-/**
  * Component interface
  * @class
  * @param {string} name - component name

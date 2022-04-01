@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Change icon color
- */
 import commandFactory from '@/factory/command';
 import { componentNames, rejectMessages, commandNames } from '@/consts';
 

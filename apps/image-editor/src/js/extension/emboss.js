@@ -1,7 +1,3 @@
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Emboss extending fabric.Image.filters.Convolute
- */
 import { fabric } from 'fabric';
 
 /**
