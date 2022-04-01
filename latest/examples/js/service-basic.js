@@ -1,8 +1,3 @@
-/**
- * service-basic.js
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview
- */
 /* eslint-disable vars-on-top,no-var,strict,prefer-template,prefer-arrow-callback,prefer-destructuring,object-shorthand,require-jsdoc,complexity,prefer-const,no-unused-vars */
 var PIXELATE_FILTER_DEFAULT_VALUE = 20;
 var supportingFileAPI = !!(window.File && window.FileList && window.FileReader);
