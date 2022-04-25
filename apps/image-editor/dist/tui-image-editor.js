@@ -1,19 +1,18 @@
 /*!
  * TOAST UI ImageEditor
- * @version 3.15.2
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
+ * @version 3.15.3
  * @license MIT
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("tui-code-snippet"), require("tui-color-picker"));
+		module.exports = factory(require("tui-color-picker"));
 	else if(typeof define === 'function' && define.amd)
-		define(["tui-code-snippet", "tui-color-picker"], factory);
+		define(["tui-color-picker"], factory);
 	else if(typeof exports === 'object')
-		exports["tui"] = factory(require("tui-code-snippet"), require("tui-color-picker"));
+		exports["tui"] = factory(require("tui-color-picker"));
 	else
-		root["tui"] = root["tui"] || {}, root["tui"]["ImageEditor"] = factory(root["tui"]["util"], root["tui"]["colorPicker"]);
-})(self, function(__WEBPACK_EXTERNAL_MODULE__624__, __WEBPACK_EXTERNAL_MODULE__4858__) {
+		root["tui"] = root["tui"] || {}, root["tui"]["ImageEditor"] = factory(root["tui"]["colorPicker"]);
+})(self, function(__WEBPACK_EXTERNAL_MODULE__4858__) {
 return /******/ (function() { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
@@ -30807,6 +30806,1288 @@ fabric.util.object.extend(fabric.IText.prototype, /** @lends fabric.IText.protot
 
 /***/ }),
 
+/***/ 3053:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+/* eslint-disable complexity */
+/**
+ * @fileoverview Returns the first index at which a given element can be found in the array.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isArray = __webpack_require__(602);
+
+/**
+ * @module array
+ */
+
+/**
+ * Returns the first index at which a given element can be found in the array
+ * from start index(default 0), or -1 if it is not present.
+ * It compares searchElement to elements of the Array using strict equality
+ * (the same method used by the ===, or triple-equals, operator).
+ * @param {*} searchElement Element to locate in the array
+ * @param {Array} array Array that will be traversed.
+ * @param {number} startIndex Start index in array for searching (default 0)
+ * @returns {number} the First index at which a given element, or -1 if it is not present
+ * @memberof module:array
+ * @example
+ * // ES6
+ * import inArray from 'tui-code-snippet/array/inArray';
+ * 
+ * // CommonJS
+ * const inArray = require('tui-code-snippet/array/inArray');
+ *
+ * const arr = ['one', 'two', 'three', 'four'];
+ * const idx1 = inArray('one', arr, 3); // -1
+ * const idx2 = inArray('one', arr); // 0
+ */
+function inArray(searchElement, array, startIndex) {
+  var i;
+  var length;
+  startIndex = startIndex || 0;
+
+  if (!isArray(array)) {
+    return -1;
+  }
+
+  if (Array.prototype.indexOf) {
+    return Array.prototype.indexOf.call(array, searchElement, startIndex);
+  }
+
+  length = array.length;
+  for (i = startIndex; startIndex >= 0 && i < length; i += 1) {
+    if (array[i] === searchElement) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+module.exports = inArray;
+
+
+/***/ }),
+
+/***/ 8592:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Execute the provided callback once for each property of object(or element of array) which actually exist.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isArray = __webpack_require__(602);
+var forEachArray = __webpack_require__(6092);
+var forEachOwnProperties = __webpack_require__(5573);
+
+/**
+ * @module collection
+ */
+
+/**
+ * Execute the provided callback once for each property of object(or element of array) which actually exist.
+ * If the object is Array-like object(ex-arguments object), It needs to transform to Array.(see 'ex2' of example).
+ * If the callback function returns false, the loop will be stopped.
+ * Callback function(iteratee) is invoked with three arguments:
+ *  1) The value of the property(or The value of the element)
+ *  2) The name of the property(or The index of the element)
+ *  3) The object being traversed
+ * @param {Object} obj The object that will be traversed
+ * @param {function} iteratee Callback function
+ * @param {Object} [context] Context(this) of callback function
+ * @memberof module:collection
+ * @example
+ * // ES6
+ * import forEach from 'tui-code-snippet/collection/forEach'; 
+ * 
+ * // CommonJS
+ * const forEach = require('tui-code-snippet/collection/forEach'); 
+ *
+ * let sum = 0;
+ *
+ * forEach([1,2,3], function(value){
+ *   sum += value;
+ * });
+ * alert(sum); // 6
+ *
+ * // In case of Array-like object
+ * const array = Array.prototype.slice.call(arrayLike); // change to array
+ * forEach(array, function(value){
+ *   sum += value;
+ * });
+ */
+function forEach(obj, iteratee, context) {
+  if (isArray(obj)) {
+    forEachArray(obj, iteratee, context);
+  } else {
+    forEachOwnProperties(obj, iteratee, context);
+  }
+}
+
+module.exports = forEach;
+
+
+/***/ }),
+
+/***/ 6092:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Execute the provided callback once for each element present in the array(or Array-like object) in ascending order.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Execute the provided callback once for each element present
+ * in the array(or Array-like object) in ascending order.
+ * If the callback function returns false, the loop will be stopped.
+ * Callback function(iteratee) is invoked with three arguments:
+ *  1) The value of the element
+ *  2) The index of the element
+ *  3) The array(or Array-like object) being traversed
+ * @param {Array|Arguments|NodeList} arr The array(or Array-like object) that will be traversed
+ * @param {function} iteratee Callback function
+ * @param {Object} [context] Context(this) of callback function
+ * @memberof module:collection
+ * @example
+ * // ES6
+ * import forEachArray from 'tui-code-snippet/collection/forEachArray';
+ * 
+ * // CommonJS
+ * const forEachArray = require('tui-code-snippet/collection/forEachArray'); 
+ *
+ * let sum = 0;
+ *
+ * forEachArray([1,2,3], function(value){
+ *   sum += value;
+ * });
+ * alert(sum); // 6
+ */
+function forEachArray(arr, iteratee, context) {
+  var index = 0;
+  var len = arr.length;
+
+  context = context || null;
+
+  for (; index < len; index += 1) {
+    if (iteratee.call(context, arr[index], index, arr) === false) {
+      break;
+    }
+  }
+}
+
+module.exports = forEachArray;
+
+
+/***/ }),
+
+/***/ 5573:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Execute the provided callback once for each property of object which actually exist.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Execute the provided callback once for each property of object which actually exist.
+ * If the callback function returns false, the loop will be stopped.
+ * Callback function(iteratee) is invoked with three arguments:
+ *  1) The value of the property
+ *  2) The name of the property
+ *  3) The object being traversed
+ * @param {Object} obj The object that will be traversed
+ * @param {function} iteratee  Callback function
+ * @param {Object} [context] Context(this) of callback function
+ * @memberof module:collection
+ * @example
+ * // ES6
+ * import forEachOwnProperties from 'tui-code-snippet/collection/forEachOwnProperties';
+ * 
+ * // CommonJS
+ * const forEachOwnProperties = require('tui-code-snippet/collection/forEachOwnProperties'); 
+ *
+ * let sum = 0;
+ *
+ * forEachOwnProperties({a:1,b:2,c:3}, function(value){
+ *   sum += value;
+ * });
+ * alert(sum); // 6
+ */
+function forEachOwnProperties(obj, iteratee, context) {
+  var key;
+
+  context = context || null;
+
+  for (key in obj) {
+    if (obj.hasOwnProperty(key)) {
+      if (iteratee.call(context, obj[key], key, obj) === false) {
+        break;
+      }
+    }
+  }
+}
+
+module.exports = forEachOwnProperties;
+
+
+/***/ }),
+
+/***/ 9052:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview This module provides some functions for custom events. And it is implemented in the observer design pattern.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var extend = __webpack_require__(961);
+var isExisty = __webpack_require__(9886);
+var isString = __webpack_require__(2560);
+var isObject = __webpack_require__(5393);
+var isArray = __webpack_require__(602);
+var isFunction = __webpack_require__(5183);
+var forEach = __webpack_require__(8592);
+
+var R_EVENTNAME_SPLIT = /\s+/g;
+
+/**
+ * @class
+ * @example
+ * // ES6
+ * import CustomEvents from 'tui-code-snippet/customEvents/customEvents';
+ * 
+ * // CommonJS
+ * const CustomEvents = require('tui-code-snippet/customEvents/customEvents'); 
+ */
+function CustomEvents() {
+  /**
+     * @type {HandlerItem[]}
+     */
+  this.events = null;
+
+  /**
+     * only for checking specific context event was binded
+     * @type {object[]}
+     */
+  this.contexts = null;
+}
+
+/**
+ * Mixin custom events feature to specific constructor
+ * @param {function} func - constructor
+ * @example
+ * //ES6
+ * import CustomEvents from 'tui-code-snippet/customEvents/customEvents'; 
+ * 
+ * // CommonJS
+ * const CustomEvents = require('tui-code-snippet/customEvents/customEvents'); 
+ *
+ * function Model() {
+ *     this.name = '';
+ * }
+ * CustomEvents.mixin(Model);
+ *
+ * const model = new Model();
+ * model.on('change', function() { this.name = 'model'; }, this);
+ * model.fire('change');
+ * alert(model.name); // 'model';
+ */
+CustomEvents.mixin = function(func) {
+  extend(func.prototype, CustomEvents.prototype);
+};
+
+/**
+ * Get HandlerItem object
+ * @param {function} handler - handler function
+ * @param {object} [context] - context for handler
+ * @returns {HandlerItem} HandlerItem object
+ * @private
+ */
+CustomEvents.prototype._getHandlerItem = function(handler, context) {
+  var item = {handler: handler};
+
+  if (context) {
+    item.context = context;
+  }
+
+  return item;
+};
+
+/**
+ * Get event object safely
+ * @param {string} [eventName] - create sub event map if not exist.
+ * @returns {(object|array)} event object. if you supplied `eventName`
+ *  parameter then make new array and return it
+ * @private
+ */
+CustomEvents.prototype._safeEvent = function(eventName) {
+  var events = this.events;
+  var byName;
+
+  if (!events) {
+    events = this.events = {};
+  }
+
+  if (eventName) {
+    byName = events[eventName];
+
+    if (!byName) {
+      byName = [];
+      events[eventName] = byName;
+    }
+
+    events = byName;
+  }
+
+  return events;
+};
+
+/**
+ * Get context array safely
+ * @returns {array} context array
+ * @private
+ */
+CustomEvents.prototype._safeContext = function() {
+  var context = this.contexts;
+
+  if (!context) {
+    context = this.contexts = [];
+  }
+
+  return context;
+};
+
+/**
+ * Get index of context
+ * @param {object} ctx - context that used for bind custom event
+ * @returns {number} index of context
+ * @private
+ */
+CustomEvents.prototype._indexOfContext = function(ctx) {
+  var context = this._safeContext();
+  var index = 0;
+
+  while (context[index]) {
+    if (ctx === context[index][0]) {
+      return index;
+    }
+
+    index += 1;
+  }
+
+  return -1;
+};
+
+/**
+ * Memorize supplied context for recognize supplied object is context or
+ *  name: handler pair object when off()
+ * @param {object} ctx - context object to memorize
+ * @private
+ */
+CustomEvents.prototype._memorizeContext = function(ctx) {
+  var context, index;
+
+  if (!isExisty(ctx)) {
+    return;
+  }
+
+  context = this._safeContext();
+  index = this._indexOfContext(ctx);
+
+  if (index > -1) {
+    context[index][1] += 1;
+  } else {
+    context.push([ctx, 1]);
+  }
+};
+
+/**
+ * Forget supplied context object
+ * @param {object} ctx - context object to forget
+ * @private
+ */
+CustomEvents.prototype._forgetContext = function(ctx) {
+  var context, contextIndex;
+
+  if (!isExisty(ctx)) {
+    return;
+  }
+
+  context = this._safeContext();
+  contextIndex = this._indexOfContext(ctx);
+
+  if (contextIndex > -1) {
+    context[contextIndex][1] -= 1;
+
+    if (context[contextIndex][1] <= 0) {
+      context.splice(contextIndex, 1);
+    }
+  }
+};
+
+/**
+ * Bind event handler
+ * @param {(string|{name:string, handler:function})} eventName - custom
+ *  event name or an object {eventName: handler}
+ * @param {(function|object)} [handler] - handler function or context
+ * @param {object} [context] - context for binding
+ * @private
+ */
+CustomEvents.prototype._bindEvent = function(eventName, handler, context) {
+  var events = this._safeEvent(eventName);
+  this._memorizeContext(context);
+  events.push(this._getHandlerItem(handler, context));
+};
+
+/**
+ * Bind event handlers
+ * @param {(string|{name:string, handler:function})} eventName - custom
+ *  event name or an object {eventName: handler}
+ * @param {(function|object)} [handler] - handler function or context
+ * @param {object} [context] - context for binding
+ * //-- #1. Get Module --//
+ * // ES6
+ * import CustomEvents from 'tui-code-snippet/customEvents/customEvents'; 
+ * 
+ * // CommonJS
+ * const CustomEvents = require('tui-code-snippet/customEvents/customEvents'); 
+ *
+ * //-- #2. Use method --//
+ * // # 2.1 Basic Usage
+ * CustomEvents.on('onload', handler);
+ *
+ * // # 2.2 With context
+ * CustomEvents.on('onload', handler, myObj);
+ *
+ * // # 2.3 Bind by object that name, handler pairs
+ * CustomEvents.on({
+ *     'play': handler,
+ *     'pause': handler2
+ * });
+ *
+ * // # 2.4 Bind by object that name, handler pairs with context object
+ * CustomEvents.on({
+ *     'play': handler
+ * }, myObj);
+ */
+CustomEvents.prototype.on = function(eventName, handler, context) {
+  var self = this;
+
+  if (isString(eventName)) {
+    // [syntax 1, 2]
+    eventName = eventName.split(R_EVENTNAME_SPLIT);
+    forEach(eventName, function(name) {
+      self._bindEvent(name, handler, context);
+    });
+  } else if (isObject(eventName)) {
+    // [syntax 3, 4]
+    context = handler;
+    forEach(eventName, function(func, name) {
+      self.on(name, func, context);
+    });
+  }
+};
+
+/**
+ * Bind one-shot event handlers
+ * @param {(string|{name:string,handler:function})} eventName - custom
+ *  event name or an object {eventName: handler}
+ * @param {function|object} [handler] - handler function or context
+ * @param {object} [context] - context for binding
+ */
+CustomEvents.prototype.once = function(eventName, handler, context) {
+  var self = this;
+
+  if (isObject(eventName)) {
+    context = handler;
+    forEach(eventName, function(func, name) {
+      self.once(name, func, context);
+    });
+
+    return;
+  }
+
+  function onceHandler() { // eslint-disable-line require-jsdoc
+    handler.apply(context, arguments);
+    self.off(eventName, onceHandler, context);
+  }
+
+  this.on(eventName, onceHandler, context);
+};
+
+/**
+ * Splice supplied array by callback result
+ * @param {array} arr - array to splice
+ * @param {function} predicate - function return boolean
+ * @private
+ */
+CustomEvents.prototype._spliceMatches = function(arr, predicate) {
+  var i = 0;
+  var len;
+
+  if (!isArray(arr)) {
+    return;
+  }
+
+  for (len = arr.length; i < len; i += 1) {
+    if (predicate(arr[i]) === true) {
+      arr.splice(i, 1);
+      len -= 1;
+      i -= 1;
+    }
+  }
+};
+
+/**
+ * Get matcher for unbind specific handler events
+ * @param {function} handler - handler function
+ * @returns {function} handler matcher
+ * @private
+ */
+CustomEvents.prototype._matchHandler = function(handler) {
+  var self = this;
+
+  return function(item) {
+    var needRemove = handler === item.handler;
+
+    if (needRemove) {
+      self._forgetContext(item.context);
+    }
+
+    return needRemove;
+  };
+};
+
+/**
+ * Get matcher for unbind specific context events
+ * @param {object} context - context
+ * @returns {function} object matcher
+ * @private
+ */
+CustomEvents.prototype._matchContext = function(context) {
+  var self = this;
+
+  return function(item) {
+    var needRemove = context === item.context;
+
+    if (needRemove) {
+      self._forgetContext(item.context);
+    }
+
+    return needRemove;
+  };
+};
+
+/**
+ * Get matcher for unbind specific hander, context pair events
+ * @param {function} handler - handler function
+ * @param {object} context - context
+ * @returns {function} handler, context matcher
+ * @private
+ */
+CustomEvents.prototype._matchHandlerAndContext = function(handler, context) {
+  var self = this;
+
+  return function(item) {
+    var matchHandler = (handler === item.handler);
+    var matchContext = (context === item.context);
+    var needRemove = (matchHandler && matchContext);
+
+    if (needRemove) {
+      self._forgetContext(item.context);
+    }
+
+    return needRemove;
+  };
+};
+
+/**
+ * Unbind event by event name
+ * @param {string} eventName - custom event name to unbind
+ * @param {function} [handler] - handler function
+ * @private
+ */
+CustomEvents.prototype._offByEventName = function(eventName, handler) {
+  var self = this;
+  var andByHandler = isFunction(handler);
+  var matchHandler = self._matchHandler(handler);
+
+  eventName = eventName.split(R_EVENTNAME_SPLIT);
+
+  forEach(eventName, function(name) {
+    var handlerItems = self._safeEvent(name);
+
+    if (andByHandler) {
+      self._spliceMatches(handlerItems, matchHandler);
+    } else {
+      forEach(handlerItems, function(item) {
+        self._forgetContext(item.context);
+      });
+
+      self.events[name] = [];
+    }
+  });
+};
+
+/**
+ * Unbind event by handler function
+ * @param {function} handler - handler function
+ * @private
+ */
+CustomEvents.prototype._offByHandler = function(handler) {
+  var self = this;
+  var matchHandler = this._matchHandler(handler);
+
+  forEach(this._safeEvent(), function(handlerItems) {
+    self._spliceMatches(handlerItems, matchHandler);
+  });
+};
+
+/**
+ * Unbind event by object(name: handler pair object or context object)
+ * @param {object} obj - context or {name: handler} pair object
+ * @param {function} handler - handler function
+ * @private
+ */
+CustomEvents.prototype._offByObject = function(obj, handler) {
+  var self = this;
+  var matchFunc;
+
+  if (this._indexOfContext(obj) < 0) {
+    forEach(obj, function(func, name) {
+      self.off(name, func);
+    });
+  } else if (isString(handler)) {
+    matchFunc = this._matchContext(obj);
+
+    self._spliceMatches(this._safeEvent(handler), matchFunc);
+  } else if (isFunction(handler)) {
+    matchFunc = this._matchHandlerAndContext(handler, obj);
+
+    forEach(this._safeEvent(), function(handlerItems) {
+      self._spliceMatches(handlerItems, matchFunc);
+    });
+  } else {
+    matchFunc = this._matchContext(obj);
+
+    forEach(this._safeEvent(), function(handlerItems) {
+      self._spliceMatches(handlerItems, matchFunc);
+    });
+  }
+};
+
+/**
+ * Unbind custom events
+ * @param {(string|object|function)} eventName - event name or context or
+ *  {name: handler} pair object or handler function
+ * @param {(function)} handler - handler function
+ * @example
+ * //-- #1. Get Module --//
+ * // ES6
+ * import CustomEvents from 'tui-code-snippet/customEvents/customEvents'; 
+ * 
+ * // CommonJS
+ * const CustomEvents = require('tui-code-snippet/customEvents/customEvents'); 
+ *
+ * //-- #2. Use method --//
+ * // # 2.1 off by event name
+ * CustomEvents.off('onload');
+ *
+ * // # 2.2 off by event name and handler
+ * CustomEvents.off('play', handler);
+ *
+ * // # 2.3 off by handler
+ * CustomEvents.off(handler);
+ *
+ * // # 2.4 off by context
+ * CustomEvents.off(myObj);
+ *
+ * // # 2.5 off by context and handler
+ * CustomEvents.off(myObj, handler);
+ *
+ * // # 2.6 off by context and event name
+ * CustomEvents.off(myObj, 'onload');
+ *
+ * // # 2.7 off by an Object.<string, function> that is {eventName: handler}
+ * CustomEvents.off({
+ *   'play': handler,
+ *   'pause': handler2
+ * });
+ *
+ * // # 2.8 off the all events
+ * CustomEvents.off();
+ */
+CustomEvents.prototype.off = function(eventName, handler) {
+  if (isString(eventName)) {
+    // [syntax 1, 2]
+    this._offByEventName(eventName, handler);
+  } else if (!arguments.length) {
+    // [syntax 8]
+    this.events = {};
+    this.contexts = [];
+  } else if (isFunction(eventName)) {
+    // [syntax 3]
+    this._offByHandler(eventName);
+  } else if (isObject(eventName)) {
+    // [syntax 4, 5, 6]
+    this._offByObject(eventName, handler);
+  }
+};
+
+/**
+ * Fire custom event
+ * @param {string} eventName - name of custom event
+ */
+CustomEvents.prototype.fire = function(eventName) {  // eslint-disable-line
+  this.invoke.apply(this, arguments);
+};
+
+/**
+ * Fire a event and returns the result of operation 'boolean AND' with all
+ *  listener's results.
+ *
+ * So, It is different from {@link CustomEvents#fire}.
+ *
+ * In service code, use this as a before event in component level usually
+ *  for notifying that the event is cancelable.
+ * @param {string} eventName - Custom event name
+ * @param {...*} data - Data for event
+ * @returns {boolean} The result of operation 'boolean AND'
+ * @example
+ * const map = new Map();
+ * map.on({
+ *   'beforeZoom': function() {
+ *     // It should cancel the 'zoom' event by some conditions.
+ *     if (that.disabled && this.getState()) {
+ *       return false;
+ *     }
+ *     return true;
+ *   }
+ * });
+ *
+ * if (this.invoke('beforeZoom')) {    // check the result of 'beforeZoom'
+ *   // if true,
+ *   // doSomething
+ * }
+ */
+CustomEvents.prototype.invoke = function(eventName) {
+  var events, args, index, item;
+
+  if (!this.hasListener(eventName)) {
+    return true;
+  }
+
+  events = this._safeEvent(eventName);
+  args = Array.prototype.slice.call(arguments, 1);
+  index = 0;
+
+  while (events[index]) {
+    item = events[index];
+
+    if (item.handler.apply(item.context, args) === false) {
+      return false;
+    }
+
+    index += 1;
+  }
+
+  return true;
+};
+
+/**
+ * Return whether at least one of the handlers is registered in the given
+ *  event name.
+ * @param {string} eventName - Custom event name
+ * @returns {boolean} Is there at least one handler in event name?
+ */
+CustomEvents.prototype.hasListener = function(eventName) {
+  return this.getListenerLength(eventName) > 0;
+};
+
+/**
+ * Return a count of events registered.
+ * @param {string} eventName - Custom event name
+ * @returns {number} number of event
+ */
+CustomEvents.prototype.getListenerLength = function(eventName) {
+  var events = this._safeEvent(eventName);
+
+  return events.length;
+};
+
+module.exports = CustomEvents;
+
+
+/***/ }),
+
+/***/ 961:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Extend the target object from other objects.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * @module object
+ */
+
+/**
+ * Extend the target object from other objects.
+ * @param {object} target - Object that will be extended
+ * @param {...object} objects - Objects as sources
+ * @returns {object} Extended object
+ * @memberof module:object
+ */
+function extend(target, objects) { // eslint-disable-line no-unused-vars
+  var hasOwnProp = Object.prototype.hasOwnProperty;
+  var source, prop, i, len;
+
+  for (i = 1, len = arguments.length; i < len; i += 1) {
+    source = arguments[i];
+    for (prop in source) {
+      if (hasOwnProp.call(source, prop)) {
+        target[prop] = source[prop];
+      }
+    }
+  }
+
+  return target;
+}
+
+module.exports = extend;
+
+
+/***/ }),
+
+/***/ 1610:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Retrieve a nested item from the given object/array.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isUndefined = __webpack_require__(5695);
+var isNull = __webpack_require__(3778);
+
+/**
+ * Retrieve a nested item from the given object/array.
+ * @param {object|Array} obj - Object for retrieving
+ * @param {...string|number} paths - Paths of property
+ * @returns {*} Value
+ * @memberof module:object
+ * @example
+ * // ES6
+ * import pick from 'tui-code-snippet/object/pick';
+ * 
+ * // CommonJS
+ * const pick = require('tui-code-snippet/object/pick');
+ *
+ * cosnt obj = {
+ *   'key1': 1,
+ *   'nested' : {
+ *     'key1': 11,
+ *     'nested': {
+ *       'key1': 21
+ *     }
+ *   }
+ * };
+ * pick(obj, 'nested', 'nested', 'key1'); // 21
+ * pick(obj, 'nested', 'nested', 'key2'); // undefined
+ *
+ * const arr = ['a', 'b', 'c'];
+ * pick(arr, 1); // 'b'
+ */
+function pick(obj, paths) { // eslint-disable-line no-unused-vars
+  var args = arguments;
+  var target = args[0];
+  var i = 1;
+  var length = args.length;
+
+  for (; i < length; i += 1) {
+    if (isUndefined(target) ||
+            isNull(target)) {
+      return;
+    }
+
+    target = target[args[i]];
+  }
+
+  return target; // eslint-disable-line consistent-return
+}
+
+module.exports = pick;
+
+
+/***/ }),
+
+/***/ 4564:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Request image ping.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var forEachOwnProperties = __webpack_require__(5573);
+
+/**
+ * @module request
+ */
+
+/**
+ * Request image ping.
+ * @param {String} url url for ping request
+ * @param {Object} trackingInfo infos for make query string
+ * @returns {HTMLElement}
+ * @memberof module:request
+ * @example
+ * // ES6
+ * import imagePing from 'tui-code-snippet/request/imagePing';
+ * 
+ * // CommonJS
+ * const imagePing = require('tui-code-snippet/request/imagePing');
+ *
+ * imagePing('https://www.google-analytics.com/collect', {
+ *   v: 1,
+ *   t: 'event',
+ *   tid: 'trackingid',
+ *   cid: 'cid',
+ *   dp: 'dp',
+ *   dh: 'dh'
+ * });
+ */
+function imagePing(url, trackingInfo) {
+  var trackingElement = document.createElement('img');
+  var queryString = '';
+  forEachOwnProperties(trackingInfo, function(value, key) {
+    queryString += '&' + key + '=' + value;
+  });
+  queryString = queryString.substring(1);
+
+  trackingElement.src = url + '?' + queryString;
+
+  trackingElement.style.display = 'none';
+  document.body.appendChild(trackingElement);
+  document.body.removeChild(trackingElement);
+
+  return trackingElement;
+}
+
+module.exports = imagePing;
+
+
+/***/ }),
+
+/***/ 4729:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Send hostname on DOMContentLoaded.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isUndefined = __webpack_require__(5695);
+var imagePing = __webpack_require__(4564);
+
+var ms7days = 7 * 24 * 60 * 60 * 1000;
+
+/**
+ * Check if the date has passed 7 days
+ * @param {number} date - milliseconds
+ * @returns {boolean}
+ * @private
+ */
+function isExpired(date) {
+  var now = new Date().getTime();
+
+  return now - date > ms7days;
+}
+
+/**
+ * Send hostname on DOMContentLoaded.
+ * To prevent hostname set tui.usageStatistics to false.
+ * @param {string} appName - application name
+ * @param {string} trackingId - GA tracking ID
+ * @ignore
+ */
+function sendHostname(appName, trackingId) {
+  var url = 'https://www.google-analytics.com/collect';
+  var hostname = location.hostname;
+  var hitType = 'event';
+  var eventCategory = 'use';
+  var applicationKeyForStorage = 'TOAST UI ' + appName + ' for ' + hostname + ': Statistics';
+  var date = window.localStorage.getItem(applicationKeyForStorage);
+
+  // skip if the flag is defined and is set to false explicitly
+  if (!isUndefined(window.tui) && window.tui.usageStatistics === false) {
+    return;
+  }
+
+  // skip if not pass seven days old
+  if (date && !isExpired(date)) {
+    return;
+  }
+
+  window.localStorage.setItem(applicationKeyForStorage, new Date().getTime());
+
+  setTimeout(function() {
+    if (document.readyState === 'interactive' || document.readyState === 'complete') {
+      imagePing(url, {
+        v: 1,
+        t: hitType,
+        tid: trackingId,
+        cid: hostname,
+        dp: hostname,
+        dh: appName,
+        el: appName,
+        ec: eventCategory
+      });
+    }
+  }, 1000);
+}
+
+module.exports = sendHostname;
+
+
+/***/ }),
+
+/***/ 602:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is an instance of Array or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is an instance of Array or not.
+ * If the given variable is an instance of Array, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is array instance?
+ * @memberof module:type
+ */
+function isArray(obj) {
+  return obj instanceof Array;
+}
+
+module.exports = isArray;
+
+
+/***/ }),
+
+/***/ 9886:
+/***/ (function(module, __unused_webpack_exports, __webpack_require__) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is existing or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+var isUndefined = __webpack_require__(5695);
+var isNull = __webpack_require__(3778);
+
+/**
+ * Check whether the given variable is existing or not.
+ * If the given variable is not null and not undefined, returns true.
+ * @param {*} param - Target for checking
+ * @returns {boolean} Is existy?
+ * @memberof module:type
+ * @example
+ * // ES6
+ * import isExisty from 'tui-code-snippet/type/isExisty');
+ * 
+ * // CommonJS
+ * const isExisty = require('tui-code-snippet/type/isExisty');
+ *
+ * isExisty(''); //true
+ * isExisty(0); //true
+ * isExisty([]); //true
+ * isExisty({}); //true
+ * isExisty(null); //false
+ * isExisty(undefined); //false
+*/
+function isExisty(param) {
+  return !isUndefined(param) && !isNull(param);
+}
+
+module.exports = isExisty;
+
+
+/***/ }),
+
+/***/ 5183:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is a function or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is a function or not.
+ * If the given variable is a function, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is function?
+ * @memberof module:type
+ */
+function isFunction(obj) {
+  return obj instanceof Function;
+}
+
+module.exports = isFunction;
+
+
+/***/ }),
+
+/***/ 3778:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is null or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is null or not.
+ * If the given variable(arguments[0]) is null, returns true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is null?
+ * @memberof module:type
+ */
+function isNull(obj) {
+  return obj === null;
+}
+
+module.exports = isNull;
+
+
+/***/ }),
+
+/***/ 5393:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is an object or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is an object or not.
+ * If the given variable is an object, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is object?
+ * @memberof module:type
+ */
+function isObject(obj) {
+  return obj === Object(obj);
+}
+
+module.exports = isObject;
+
+
+/***/ }),
+
+/***/ 2560:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is a string or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is a string or not.
+ * If the given variable is a string, return true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is string?
+ * @memberof module:type
+ */
+function isString(obj) {
+  return typeof obj === 'string' || obj instanceof String;
+}
+
+module.exports = isString;
+
+
+/***/ }),
+
+/***/ 5695:
+/***/ (function(module) {
+
+"use strict";
+/**
+ * @fileoverview Check whether the given variable is undefined or not.
+ * @author NHN FE Development Lab <dl_javascript@nhn.com>
+ */
+
+
+
+/**
+ * Check whether the given variable is undefined or not.
+ * If the given variable is undefined, returns true.
+ * @param {*} obj - Target for checking
+ * @returns {boolean} Is undefined?
+ * @memberof module:type
+ */
+function isUndefined(obj) {
+  return obj === undefined; // eslint-disable-line no-undefined
+}
+
+module.exports = isUndefined;
+
+
+/***/ }),
+
 /***/ 4426:
 /***/ (function(module, __unused_webpack_exports, __webpack_require__) {
 
@@ -31020,10 +32301,6 @@ module.exports = __webpack_require__(5659);
 /***/ 1801:
 /***/ (function(module) {
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Shape resize helper
- */
 var DIVISOR = {
   rect: 1,
   circle: 2,
@@ -38755,14 +40032,6 @@ module.exports = "data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGlu
 
 /***/ }),
 
-/***/ 624:
-/***/ (function(module) {
-
-"use strict";
-module.exports = __WEBPACK_EXTERNAL_MODULE__624__;
-
-/***/ }),
-
 /***/ 4858:
 /***/ (function(module) {
 
@@ -39558,9 +40827,6 @@ function _createClass(Constructor, protoProps, staticProps) {
   if (staticProps) _defineProperties(Constructor, staticProps);
   return Constructor;
 }
-// EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js
-var for_each = __webpack_require__(7636);
-var for_each_default = /*#__PURE__*/__webpack_require__.n(for_each);
 // EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/instance/bind.js
 var bind = __webpack_require__(4426);
 var bind_default = /*#__PURE__*/__webpack_require__.n(bind);
@@ -39573,11 +40839,23 @@ var promise_default = /*#__PURE__*/__webpack_require__.n(core_js_stable_promise)
 // EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/url.js
 var url = __webpack_require__(3972);
 var url_default = /*#__PURE__*/__webpack_require__.n(url);
-// EXTERNAL MODULE: external {"commonjs":"tui-code-snippet","commonjs2":"tui-code-snippet","amd":"tui-code-snippet","root":["tui","util"]}
-var external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_ = __webpack_require__(624);
-var external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_);
 // EXTERNAL MODULE: ./node_modules/fabric/dist/fabric.js
 var fabric = __webpack_require__(2777);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/object/extend.js
+var extend = __webpack_require__(961);
+var extend_default = /*#__PURE__*/__webpack_require__.n(extend);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/type/isUndefined.js
+var type_isUndefined = __webpack_require__(5695);
+var isUndefined_default = /*#__PURE__*/__webpack_require__.n(type_isUndefined);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/collection/forEach.js
+var collection_forEach = __webpack_require__(8592);
+var forEach_default = /*#__PURE__*/__webpack_require__.n(collection_forEach);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/customEvents/customEvents.js
+var customEvents = __webpack_require__(9052);
+var customEvents_default = /*#__PURE__*/__webpack_require__.n(customEvents);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/type/isString.js
+var isString = __webpack_require__(2560);
+var isString_default = /*#__PURE__*/__webpack_require__.n(isString);
 // EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/object/keys.js
 var keys = __webpack_require__(2461);
 var keys_default = /*#__PURE__*/__webpack_require__.n(keys);
@@ -39633,18 +40911,25 @@ function _slicedToArray(arr, i) {
 // EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/parse-int.js
 var parse_int = __webpack_require__(6397);
 var parse_int_default = /*#__PURE__*/__webpack_require__.n(parse_int);
+// EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/instance/for-each.js
+var for_each = __webpack_require__(7636);
+var for_each_default = /*#__PURE__*/__webpack_require__.n(for_each);
 // EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/instance/fill.js
 var instance_fill = __webpack_require__(789);
 var fill_default = /*#__PURE__*/__webpack_require__.n(instance_fill);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/request/sendHostname.js
+var sendHostname = __webpack_require__(4729);
+var sendHostname_default = /*#__PURE__*/__webpack_require__.n(sendHostname);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/object/pick.js
+var pick = __webpack_require__(1610);
+var pick_default = /*#__PURE__*/__webpack_require__.n(pick);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/array/inArray.js
+var inArray = __webpack_require__(3053);
+var inArray_default = /*#__PURE__*/__webpack_require__.n(inArray);
 ;// CONCATENATED MODULE: ./src/js/consts.js
 var _context;
 
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Constants
- */
 
 /**
  * Help features for zoom
@@ -39879,7 +41164,9 @@ var keyCodes = {
   DEL: 46,
   ARROW_DOWN: 40,
   ARROW_UP: 38,
-  SPACE: 32
+  SPACE: 32,
+  DIGIT_0: 48,
+  DIGIT_9: 57
 };
 /**
  * Fabric object options
@@ -40023,10 +41310,11 @@ var defaultResizePixelValues = {
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Util
- */
+
+
+
+
+
 
 
 var FLOATING_POINT_DIGIT = 2;
@@ -40034,6 +41322,22 @@ var CSS_PREFIX = 'tui-image-editor-';
 var min = Math.min,
     max = Math.max;
 var hostnameSent = false;
+var lastId = 0;
+function stamp(obj) {
+  if (!obj.__fe_id) {
+    lastId += 1; // eslint-disable-next-line camelcase
+
+    obj.__fe_id = lastId;
+  }
+
+  return obj.__fe_id;
+}
+function hasStamp(obj) {
+  return !isNil(obj === null || obj === void 0 ? void 0 : obj.__fe_id);
+}
+function isNil(value) {
+  return isUndefined(value) || value === null;
+}
 function isFunction(value) {
   return typeof value === 'function';
 }
@@ -40066,7 +41370,7 @@ function keyMirror() {
     args[_key] = arguments[_key];
   }
 
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(args, function (key) {
+  forEach_default()(args, function (key) {
     obj[key] = key;
   });
   return obj;
@@ -40171,7 +41475,7 @@ function sendHostName() {
   }
 
   hostnameSent = true;
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.sendHostname)('image-editor', 'UA-129999381-1');
+  sendHostname_default()('image-editor', 'UA-129999381-1');
 }
 /**
  * Apply css resource
@@ -40248,7 +41552,7 @@ function fixFloatingPoint(value) {
  */
 
 function assignmentForDestroy(targetObject) {
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(targetObject, function (value, key) {
+  forEach_default()(targetObject, function (value, key) {
     targetObject[key] = null;
   });
 }
@@ -40322,7 +41626,7 @@ function flipObject(targetObject) {
 
 function setCustomProperty(targetObject, props) {
   targetObject.customProps = targetObject.customProps || {};
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)(targetObject.customProps, props);
+  extend_default()(targetObject.customProps, props);
 }
 /**
  * Get custom property
@@ -40334,11 +41638,11 @@ function setCustomProperty(targetObject, props) {
 function getCustomProperty(fObject, propNames) {
   var resultObject = {};
 
-  if ((0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.isString)(propNames)) {
+  if (isString_default()(propNames)) {
     propNames = [propNames];
   }
 
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(propNames, function (propName) {
+  forEach_default()(propNames, function (propName) {
     resultObject[propName] = fObject.customProps[propName];
   });
   return resultObject;
@@ -40370,7 +41674,7 @@ function includes(targetArray, compareValue) {
 
 function getFillTypeFromOption() {
   var fillOption = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-  return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.pick)(fillOption, 'type') || SHAPE_FILL_TYPE.COLOR;
+  return pick_default()(fillOption, 'type') || SHAPE_FILL_TYPE.COLOR;
 }
 /**
  * Get fill type of shape type object
@@ -40395,7 +41699,7 @@ function getFillTypeFromObject(shapeObj) {
  */
 
 function isShape(obj) {
-  return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.inArray)(obj.get('type'), SHAPE_TYPE) >= 0;
+  return inArray_default()(obj.get('type'), SHAPE_TYPE) >= 0;
 }
 /**
  * Get object type
@@ -40658,10 +41962,6 @@ function isEmptyCropzone(cropRect) {
   return left === LEFT && top === TOP && width === WIDTH && height === HEIGHT;
 }
 ;// CONCATENATED MODULE: ./src/js/factory/errorMessage.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Error-message factory
- */
 
 
 var types = keyMirror('UN_IMPLEMENTATION', 'NO_COMPONENT_NAME');
@@ -40678,7 +41978,7 @@ var map = {
   }
 };
 /* harmony default export */ var errorMessage = ({
-  types: external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({}, types),
+  types: extend_default()({}, types),
   create: function create(type) {
     type = type.toLowerCase();
     var func = map[type];
@@ -40694,11 +41994,6 @@ var map = {
 
 
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Command interface
- */
 
 
 var createMessage = errorMessage.create;
@@ -40807,7 +42102,7 @@ var Command = /*#__PURE__*/function () {
       }
 
       if (!isSilent) {
-        external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend(this.undoData, undoData);
+        extend_default()(this.undoData, undoData);
         cachedUndoDataForSilent = null;
       } else if (!cachedUndoDataForSilent) {
         cachedUndoDataForSilent = undoData;
@@ -40846,10 +42141,6 @@ var Command = /*#__PURE__*/function () {
 
 /* harmony default export */ var command = (Command);
 ;// CONCATENATED MODULE: ./src/js/factory/command.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Command factory
- */
 
 var commands = {};
 /**
@@ -40898,10 +42189,6 @@ function register(command) {
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Invoker - invoke commands
- */
 
 
 
@@ -41094,7 +42381,7 @@ var Invoker = /*#__PURE__*/function () {
 
       var command = args[0];
 
-      if ((0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.isString)(command)) {
+      if (isString_default()(command)) {
         command = factory_command.create.apply(factory_command, args);
       }
 
@@ -41261,7 +42548,7 @@ var Invoker = /*#__PURE__*/function () {
   return Invoker;
 }();
 
-external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.CustomEvents.mixin(Invoker);
+customEvents_default().mixin(Invoker);
 /* harmony default export */ var invoker = (Invoker);
 // EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/parse-float.js
 var parse_float = __webpack_require__(5214);
@@ -41293,6 +42580,9 @@ var parse_float_default = /*#__PURE__*/__webpack_require__.n(parse_float);
       menuBarPosition = _ref.menuBarPosition;
   return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = "\n    <ul class=\"tui-image-editor-help-menu ".concat(getHelpMenuBarPosition(menuBarPosition), "\"></ul>\n    <div class=\"tui-image-editor-controls\">\n        <div class=\"tui-image-editor-controls-logo\">\n            <img src=\"")).call(_context5, biImage, "\" />\n        </div>\n        <ul class=\"tui-image-editor-menu\"></ul>\n\n        <div class=\"tui-image-editor-controls-buttons\">\n            <div style=\"")).call(_context4, loadButtonStyle, "\">\n                ")).call(_context3, locale.localize('Load'), "\n                <input type=\"file\" class=\"tui-image-editor-load-btn\" />\n            </div>\n            <button class=\"tui-image-editor-download-btn\" style=\"")).call(_context2, downloadButtonStyle, "\">\n                ")).call(_context, locale.localize('Download'), "\n            </button>\n        </div>\n    </div>\n");
 });
+// EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/instance/map.js
+var instance_map = __webpack_require__(899);
+var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
 ;// CONCATENATED MODULE: ./src/js/ui/template/style.js
 
 /* harmony default export */ var style = (function (_ref) {
@@ -41321,11 +42611,6 @@ var parse_float_default = /*#__PURE__*/__webpack_require__.n(parse_float);
   return concat_default()(_context = concat_default()(_context2 = concat_default()(_context3 = concat_default()(_context4 = concat_default()(_context5 = concat_default()(_context6 = concat_default()(_context7 = concat_default()(_context8 = concat_default()(_context9 = concat_default()(_context10 = concat_default()(_context11 = concat_default()(_context12 = concat_default()(_context13 = concat_default()(_context14 = concat_default()(_context15 = concat_default()(_context16 = concat_default()(_context17 = concat_default()(_context18 = concat_default()(_context19 = concat_default()(_context20 = concat_default()(_context21 = concat_default()(_context22 = concat_default()(_context23 = concat_default()(_context24 = concat_default()(_context25 = concat_default()(_context26 = concat_default()(_context27 = concat_default()(_context28 = concat_default()(_context29 = "\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-icon-add-button.icon-heart .tui-image-editor-button[data-icontype=\"icon-heart\"] label,\n    .tie-icon-add-button.icon-location .tui-image-editor-button[data-icontype=\"icon-location\"] label,\n    .tie-icon-add-button.icon-polygon .tui-image-editor-button[data-icontype=\"icon-polygon\"] label,\n    .tie-icon-add-button.icon-star .tui-image-editor-button[data-icontype=\"icon-star\"] label,\n    .tie-icon-add-button.icon-star-2 .tui-image-editor-button[data-icontype=\"icon-star-2\"] label,\n    .tie-icon-add-button.icon-arrow-3 .tui-image-editor-button[data-icontype=\"icon-arrow-3\"] label,\n    .tie-icon-add-button.icon-arrow-2 .tui-image-editor-button[data-icontype=\"icon-arrow-2\"] label,\n    .tie-icon-add-button.icon-arrow .tui-image-editor-button[data-icontype=\"icon-arrow\"] label,\n    .tie-icon-add-button.icon-bubble .tui-image-editor-button[data-icontype=\"icon-bubble\"] label,\n    .tie-draw-line-select-button.line .tui-image-editor-button.line label,\n    .tie-draw-line-select-button.free .tui-image-editor-button.free label,\n    .tie-flip-button.flipX .tui-image-editor-button.flipX label,\n    .tie-flip-button.flipY .tui-image-editor-button.flipY label,\n    .tie-flip-button.resetFlip .tui-image-editor-button.resetFlip label,\n    .tie-crop-button .tui-image-editor-button.apply.active label,\n    .tie-crop-preset-button .tui-image-editor-button.preset.active label,\n    .tie-resize-button .tui-image-editor-button.apply.active label,\n    .tie-resize-preset-button .tui-image-editor-button.preset.active label,\n    .tie-shape-button.rect .tui-image-editor-button.rect label,\n    .tie-shape-button.circle .tui-image-editor-button.circle label,\n    .tie-shape-button.triangle .tui-image-editor-button.triangle label,\n    .tie-text-effect-button .tui-image-editor-button.active label,\n    .tie-text-align-button.tie-text-align-left .tui-image-editor-button.left label,\n    .tie-text-align-button.tie-text-align-center .tui-image-editor-button.center label,\n    .tie-text-align-button.tie-text-align-right .tui-image-editor-button.right label,\n    .tie-mask-apply.apply.active .tui-image-editor-button.apply label,\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button:hover > label,\n    .tui-image-editor-container .tui-image-editor-checkbox label > span {\n        ".concat(subMenuLabelActive, "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button > label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label,\n    .tui-image-editor-container .tui-image-editor-range-wrap.tui-image-editor-newline.short label > span {\n        ")).call(_context29, subMenuLabelNormal, "\n    }\n    .tui-image-editor-container .tui-image-editor-range-wrap label > span {\n        ")).call(_context28, subMenuRangeTitle, "\n    }\n    .tui-image-editor-container .tui-image-editor-partition > div {\n        ")).call(_context27, submenuPartitionVertical, "\n    }\n    .tui-image-editor-container.left .tui-image-editor-submenu .tui-image-editor-partition > div,\n    .tui-image-editor-container.right .tui-image-editor-submenu .tui-image-editor-partition > div {\n        ")).call(_context26, submenuPartitionHorizontal, "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > span:before {\n        ")).call(_context25, submenuCheckbox, "\n    }\n    .tui-image-editor-container .tui-image-editor-checkbox label > input:checked + span:before {\n        border: 0;\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-pointer {\n        ")).call(_context24, submenuRangePointer, "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-bar {\n        ")).call(_context23, submenuRangeBar, "\n    }\n    .tui-image-editor-container .tui-image-editor-virtual-range-subbar {\n        ")).call(_context22, submenuRangeSubbar, "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-pointer {\n        ")).call(_context21, submenuDisabledRangePointer, "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-subbar {\n        ")).call(_context20, submenuDisabledRangeSubbar, "\n    }\n    .tui-image-editor-container .tui-image-editor-disabled .tui-image-editor-virtual-range-bar {\n        ")).call(_context19, submenuDisabledRangeBar, "\n    }\n    .tui-image-editor-container .tui-image-editor-range-value {\n        ")).call(_context18, submenuRangeValue, "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value + label {\n        ")).call(_context17, submenuColorpickerTitle, "\n    }\n    .tui-image-editor-container .tui-image-editor-submenu .tui-image-editor-button .color-picker-value {\n        ")).call(_context16, submenuColorpickerButton, "\n    }\n    .tui-image-editor-container .svg_ic-menu {\n        ")).call(_context15, menuIconSize, "\n    }\n    .tui-image-editor-container .svg_ic-submenu {\n        ")).call(_context14, submenuIconSize, "\n    }\n    .tui-image-editor-container .tui-image-editor-controls-logo > img,\n    .tui-image-editor-container .tui-image-editor-header-logo > img {\n        ")).call(_context13, biSize, "\n    }\n    .tui-image-editor-menu use.normal.use-default,\n    .tui-image-editor-help-menu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: ")).call(_context12, menuIconStyle.normal.color, ";\n        stroke: ")).call(_context11, menuIconStyle.normal.color, ";\n    }\n    .tui-image-editor-menu use.active.use-default,\n    .tui-image-editor-help-menu use.active.use-default {\n        fill-rule: evenodd;\n        fill: ")).call(_context10, menuIconStyle.active.color, ";\n        stroke: ")).call(_context9, menuIconStyle.active.color, ";\n    }\n    .tui-image-editor-menu use.hover.use-default,\n    .tui-image-editor-help-menu use.hover.use-default {\n        fill-rule: evenodd;\n        fill: ")).call(_context8, menuIconStyle.hover.color, ";\n        stroke: ")).call(_context7, menuIconStyle.hover.color, ";\n    }\n    .tui-image-editor-menu use.disabled.use-default,\n    .tui-image-editor-help-menu use.disabled.use-default {\n        fill-rule: evenodd;\n        fill: ")).call(_context6, menuIconStyle.disabled.color, ";\n        stroke: ")).call(_context5, menuIconStyle.disabled.color, ";\n    }\n    .tui-image-editor-submenu use.normal.use-default {\n        fill-rule: evenodd;\n        fill: ")).call(_context4, submenuIconStyle.normal.color, ";\n        stroke: ")).call(_context3, submenuIconStyle.normal.color, ";\n    }\n    .tui-image-editor-submenu use.active.use-default {\n        fill-rule: evenodd;\n        fill: ")).call(_context2, submenuIconStyle.active.color, ";\n        stroke: ")).call(_context, submenuIconStyle.active.color, ";\n    }\n");
 });
 ;// CONCATENATED MODULE: ./src/js/ui/theme/standard.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview The standard theme
- */
-
 /**
  * Full configuration for theme.<br>
  * @typedef {object} themeConfig
@@ -41545,6 +42830,8 @@ var svg_default = __webpack_require__(2534);
 
 
 
+
+
 /**
  * Theme manager
  * @class
@@ -41556,7 +42843,7 @@ var Theme = /*#__PURE__*/function () {
   function Theme(customTheme) {
     _classCallCheck(this, Theme);
 
-    this.styles = this._changeToObject((0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({}, standard, customTheme));
+    this.styles = this._changeToObject(extend_default()({}, standard, customTheme));
     styleLoad(this._styleMaker());
 
     this._loadDefaultSvgIcon();
@@ -41606,10 +42893,10 @@ var Theme = /*#__PURE__*/function () {
 
         case 'submenu.partition':
           result = {
-            vertical: this._makeCssText((0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({}, option, {
+            vertical: this._makeCssText(extend_default()({}, option, {
               borderLeft: "1px solid ".concat(option.color)
             })),
-            horizontal: this._makeCssText((0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({}, option, {
+            horizontal: this._makeCssText(extend_default()({}, option, {
               borderBottom: "1px solid ".concat(option.color)
             }))
           };
@@ -41677,7 +42964,7 @@ var Theme = /*#__PURE__*/function () {
     key: "_changeToObject",
     value: function _changeToObject(styleOptions) {
       var styleObject = {};
-      (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(styleOptions, function (value, key) {
+      forEach_default()(styleOptions, function (value, key) {
         var keyExplode = key.match(/^(.+)\.([a-z]+)$/i);
 
         var _keyExplode = _slicedToArray(keyExplode, 3),
@@ -41705,7 +42992,7 @@ var Theme = /*#__PURE__*/function () {
       var _this = this;
 
       var converterStack = [];
-      (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(styleObject, function (value, key) {
+      forEach_default()(styleObject, function (value, key) {
         var _context, _context2;
 
         if (index_of_default()(_context = ['backgroundImage']).call(_context, key) > -1 && value !== 'none') {
@@ -41795,7 +43082,7 @@ var Theme = /*#__PURE__*/function () {
     value: function _makeSvgItem(useIconTypes, menuName, isSubmenu) {
       var _this2 = this;
 
-      return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.map)(useIconTypes, function (iconType) {
+      return map_default()(useIconTypes).call(useIconTypes, function (iconType) {
         var _context4, _context5;
 
         var svgIconPrefix = _this2._makeSvgIconPrefix(iconType, isSubmenu);
@@ -41914,6 +43201,9 @@ function _getPrototypeOf(o) {
   };
   return _getPrototypeOf(o);
 }
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/collection/forEachArray.js
+var forEachArray = __webpack_require__(6092);
+var forEachArray_default = /*#__PURE__*/__webpack_require__.n(forEachArray);
 // EXTERNAL MODULE: external {"commonjs":"tui-color-picker","commonjs2":"tui-color-picker","amd":"tui-color-picker","root":["tui","colorPicker"]}
 var external_commonjs_tui_color_picker_commonjs2_tui_color_picker_amd_tui_color_picker_root_tui_colorPicker_ = __webpack_require__(4858);
 var external_commonjs_tui_color_picker_commonjs2_tui_color_picker_amd_tui_color_picker_root_tui_colorPicker_default = /*#__PURE__*/__webpack_require__.n(external_commonjs_tui_color_picker_commonjs2_tui_color_picker_amd_tui_color_picker_root_tui_colorPicker_);
@@ -41975,8 +43265,7 @@ var Colorpicker = /*#__PURE__*/function () {
 
       this.picker.destroy();
       this.colorpickerElement.innerHTML = '';
-
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this, function (value, key) {
+      forEach_default()(this, function (value, key) {
         _this[key] = null;
       });
     }
@@ -42192,9 +43481,10 @@ var Colorpicker = /*#__PURE__*/function () {
   return Colorpicker;
 }();
 
-external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().CustomEvents.mixin(Colorpicker);
+customEvents_default().mixin(Colorpicker);
 /* harmony default export */ var colorpicker = (Colorpicker);
 ;// CONCATENATED MODULE: ./src/js/ui/tools/range.js
+
 
 
 
@@ -42243,12 +43533,13 @@ var Range = /*#__PURE__*/function () {
     this._useDecimal = options.useDecimal;
     this._absMax = this._min * -1 + this._max;
     this.realTimeEvent = options.realTimeEvent || false;
+    this._userInputTimer = null;
     this.eventHandler = {
       startChangingSlide: bind_default()(_context = this._startChangingSlide).call(_context, this),
       stopChangingSlide: bind_default()(_context2 = this._stopChangingSlide).call(_context2, this),
       changeSlide: bind_default()(_context3 = this._changeSlide).call(_context3, this),
       changeSlideFinally: bind_default()(_context4 = this._changeSlideFinally).call(_context4, this),
-      changeInput: bind_default()(_context5 = this._changeValueWithInput).call(_context5, this, false),
+      changeInput: bind_default()(_context5 = this._changeInput).call(_context5, this),
       changeInputFinally: bind_default()(_context6 = this._changeValueWithInput).call(_context6, this, true),
       changeInputWithArrow: bind_default()(_context7 = this._changeValueWithInputKeyEvent).call(_context7, this)
     };
@@ -42279,8 +43570,7 @@ var Range = /*#__PURE__*/function () {
       this._removeInputEvent();
 
       this.rangeElement.innerHTML = '';
-
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this, function (value, key) {
+      forEach_default()(this, function (value, key) {
         _this[key] = null;
       });
     }
@@ -42398,7 +43688,7 @@ var Range = /*#__PURE__*/function () {
     value: function _addInputEvent() {
       if (this.rangeInputElement) {
         this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInputWithArrow);
-        this.rangeInputElement.addEventListener('keyup', this.eventHandler.changeInput);
+        this.rangeInputElement.addEventListener('keydown', this.eventHandler.changeInput);
         this.rangeInputElement.addEventListener('blur', this.eventHandler.changeInputFinally);
       }
     }
@@ -42412,7 +43702,7 @@ var Range = /*#__PURE__*/function () {
     value: function _removeInputEvent() {
       if (this.rangeInputElement) {
         this.rangeInputElement.removeEventListener('keydown', this.eventHandler.changeInputWithArrow);
-        this.rangeInputElement.removeEventListener('keyup', this.eventHandler.changeInput);
+        this.rangeInputElement.removeEventListener('keydown', this.eventHandler.changeInput);
         this.rangeInputElement.removeEventListener('blur', this.eventHandler.changeInputFinally);
       }
     }
@@ -42465,6 +43755,31 @@ var Range = /*#__PURE__*/function () {
 
       return value;
     }
+  }, {
+    key: "_changeInput",
+    value: function _changeInput(event) {
+      var _this2 = this;
+
+      clearTimeout(this._userInputTimer);
+      var keyCode = event.keyCode;
+
+      if (keyCode < keyCodes.DIGIT_0 || keyCode > keyCodes.DIGIT_9) {
+        event.preventDefault();
+        return;
+      }
+
+      this._userInputTimer = set_timeout_default()(function () {
+        _this2._inputSetValue(event.target.value);
+      }, 350);
+    }
+  }, {
+    key: "_inputSetValue",
+    value: function _inputSetValue(stringValue) {
+      var value = this._useDecimal ? Number(stringValue) : toInteger(stringValue);
+      value = clamp(value, this._min, this.max);
+      this.value = value;
+      this.fire('change', value, true);
+    }
     /**
      * change angle event
      * @param {boolean} isLast - Is last change
@@ -42490,10 +43805,7 @@ var Range = /*#__PURE__*/function () {
       target.value = stringValue;
 
       if (!waitForChange) {
-        var value = this._useDecimal ? Number(stringValue) : toInteger(stringValue);
-        value = clamp(value, this._min, this.max);
-        this.value = value;
-        this.fire('change', value, isLast);
+        this._inputSetValue(stringValue);
       }
     }
     /**
@@ -42619,7 +43931,7 @@ var Range = /*#__PURE__*/function () {
   return Range;
 }();
 
-external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().CustomEvents.mixin(Range);
+customEvents_default().mixin(Range);
 /* harmony default export */ var range = (Range);
 ;// CONCATENATED MODULE: ./src/js/ui/submenuBase.js
 
@@ -42777,7 +44089,7 @@ var Submenu = /*#__PURE__*/function () {
   return Submenu;
 }();
 
-external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.CustomEvents.mixin(Submenu);
+customEvents_default().mixin(Submenu);
 /* harmony default export */ var submenuBase = (Submenu);
 ;// CONCATENATED MODULE: ./src/js/ui/template/submenu/shape.js
 
@@ -42933,7 +44245,7 @@ var Shape = /*#__PURE__*/function (_Submenu) {
 
       this._els.strokeColorpicker.on('changeShow', bind_default()(_context6 = this.colorPickerChangeShow).call(_context6, this));
 
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+      forEachArray_default()(this.colorPickerInputBoxes, function (inputBox) {
         var _context7, _context8;
 
         inputBox.addEventListener(eventNames.FOCUS, bind_default()(_context7 = _this2._onStartEditingInputBox).call(_context7, _this2));
@@ -42958,7 +44270,7 @@ var Shape = /*#__PURE__*/function (_Submenu) {
 
       this._els.strokeColorpicker.off();
 
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+      forEachArray_default()(this.colorPickerInputBoxes, function (inputBox) {
         var _context9, _context10;
 
         inputBox.removeEventListener(eventNames.FOCUS, bind_default()(_context9 = _this3._onStartEditingInputBox).call(_context9, _this3));
@@ -43158,8 +44470,6 @@ var Shape = /*#__PURE__*/function (_Submenu) {
 
 
 
-
-
 function crop_createSuper(Derived) { var hasNativeReflectConstruct = crop_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function crop_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
@@ -43337,8 +44647,7 @@ var Crop = /*#__PURE__*/function (_Submenu) {
     key: "_setPresetButtonActive",
     value: function _setPresetButtonActive() {
       var button = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : this.defaultPresetButton;
-
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), slice_default()([]).call(this._els.preset.querySelectorAll('.preset')), function (presetButton) {
+      forEach_default()(this._els.preset.querySelectorAll('.preset'), function (presetButton) {
         presetButton.classList.remove('active');
       });
 
@@ -43691,7 +45000,6 @@ var Resize = /*#__PURE__*/function (_Submenu) {
 
 
 
-
 function flip_createSuper(Derived) { var hasNativeReflectConstruct = flip_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function flip_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
@@ -43797,8 +45105,7 @@ var Flip = /*#__PURE__*/function (_Submenu) {
           var flipClassList = _this2._els.flipButton.classList;
           _this2.flipStatus = false;
           flipClassList.remove('resetFlip');
-
-          for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), ['flipX', 'flipY'], function (type) {
+          forEach_default()(['flipX', 'flipY'], function (type) {
             flipClassList.remove(type);
 
             if (flipStatus[type]) {
@@ -44558,7 +45865,6 @@ var Mask = /*#__PURE__*/function (_Submenu) {
 
 
 
-
 function icon_createSuper(Derived) { var hasNativeReflectConstruct = icon_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function icon_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
@@ -44697,7 +46003,7 @@ var Icon = /*#__PURE__*/function (_Submenu) {
     value: function registerDefaultIcon() {
       var _this2 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), defaultIconPath, function (path, type) {
+      forEach_default()(defaultIconPath, function (path, type) {
         _this2.actions.registerDefaultIcons(type, path);
       });
     }
@@ -45040,6 +46346,9 @@ var Draw = /*#__PURE__*/function (_Submenu) {
 }(submenuBase);
 
 /* harmony default export */ var ui_draw = (Draw);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/type/isExisty.js
+var isExisty = __webpack_require__(9886);
+var isExisty_default = /*#__PURE__*/__webpack_require__.n(isExisty);
 ;// CONCATENATED MODULE: ./src/js/ui/template/submenu/filter.js
 
 
@@ -45064,10 +46373,11 @@ var Draw = /*#__PURE__*/function (_Submenu) {
 
 
 
-
 function filter_createSuper(Derived) { var hasNativeReflectConstruct = filter_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function filter_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
+
+
 
 
 
@@ -45161,14 +46471,13 @@ var Filter = /*#__PURE__*/function (_Submenu) {
       var _this2 = this,
           _context;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), FILTER_OPTIONS, function (filter) {
+      forEach_default()(FILTER_OPTIONS, function (filter) {
         var filterCheckElement = _this2.selector(".tie-".concat(filter));
 
         var filterNameCamelCase = toCamelCase(filter);
         filterCheckElement.removeEventListener('change', _this2.eventHandler[filterNameCamelCase]);
       });
-
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), concat_default()(_context = []).call(_context, RANGE_INSTANCE_NAMES, COLORPICKER_INSTANCE_NAMES), function (instanceName) {
+      forEach_default()(concat_default()(_context = []).call(_context, RANGE_INSTANCE_NAMES, COLORPICKER_INSTANCE_NAMES), function (instanceName) {
         _this2._els[instanceName].off();
       });
 
@@ -45176,7 +46485,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
 
       this._els.blendType.removeEventListener('click', this.eventHandler.changeBlendFilter);
 
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+      forEachArray_default()(this.colorPickerInputBoxes, function (inputBox) {
         var _context2, _context3;
 
         inputBox.removeEventListener(eventNames.FOCUS, bind_default()(_context2 = _this2._onStartEditingInputBox).call(_context2, _this2));
@@ -45189,7 +46498,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
       var _context4,
           _this3 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), concat_default()(_context4 = []).call(_context4, RANGE_INSTANCE_NAMES, COLORPICKER_INSTANCE_NAMES), function (instanceName) {
+      forEach_default()(concat_default()(_context4 = []).call(_context4, RANGE_INSTANCE_NAMES, COLORPICKER_INSTANCE_NAMES), function (instanceName) {
         _this3._els[instanceName].destroy();
       });
     }
@@ -45227,8 +46536,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
           return event.stopPropagation();
         }
       };
-
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), FILTER_OPTIONS, function (filter) {
+      forEach_default()(FILTER_OPTIONS, function (filter) {
         var filterCheckElement = _this4.selector(".tie-".concat(filter));
 
         var filterNameCamelCase = toCamelCase(filter);
@@ -45265,7 +46573,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
 
       this._els.blendType.addEventListener('click', this.eventHandler.blandTypeClick);
 
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEachArray(this.colorPickerInputBoxes, function (inputBox) {
+      forEachArray_default()(this.colorPickerInputBoxes, function (inputBox) {
         var _context9, _context10;
 
         inputBox.addEventListener(eventNames.FOCUS, bind_default()(_context9 = _this4._onStartEditingInputBox).call(_context9, _this4));
@@ -45304,7 +46612,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
   }, {
     key: "initFilterCheckBoxState",
     value: function initFilterCheckBoxState() {
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this.checkedMap, function (filter) {
+      forEach_default()(this.checkedMap, function (filter) {
         filter.checked = false;
       }, this);
     }
@@ -45352,7 +46660,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
       var filterName = type;
 
       if (type === 'removeColor') {
-        filterName = external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().isExisty(options.useAlpha) ? 'removeWhite' : 'colorFilter';
+        filterName = isExisty_default()(options.useAlpha) ? 'removeWhite' : 'colorFilter';
       } else if (type === 'blendColor') {
         filterName = {
           add: 'blend',
@@ -45566,8 +46874,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
     key: "_drawSelectOptionList",
     value: function _drawSelectOptionList(selectlist, optionlist) {
       var options = selectlist.querySelectorAll('option');
-
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), options, function (option) {
+      forEach_default()(options, function (option) {
         var optionElement = document.createElement('li');
         optionElement.innerHTML = option.innerHTML;
         optionElement.setAttribute('data-item', option.value);
@@ -45612,7 +46919,7 @@ var Filter = /*#__PURE__*/function (_Submenu) {
   }, {
     key: "_makeSelectOptionList",
     value: function _makeSelectOptionList(selectlist) {
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), BLEND_OPTIONS, function (option) {
+      forEach_default()(BLEND_OPTIONS, function (option) {
         var selectOption = document.createElement('option');
         selectOption.setAttribute('value', option);
         selectOption.innerHTML = option.replace(/^[a-z]/, function ($0) {
@@ -46104,6 +47411,7 @@ var Locale = /*#__PURE__*/function () {
 
 
 
+
 var SUB_UI_COMPONENT = {
   Shape: ui_shape,
   Crop: ui_crop,
@@ -46116,7 +47424,6 @@ var SUB_UI_COMPONENT = {
   Draw: ui_draw,
   Filter: ui_filter
 };
-var CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
 var BI_EXPRESSION_MINSIZE_WHEN_TOP_POSITION = '1300';
 var HISTORY_MENU = 'history';
 var HISTORY_PANEL_CLASS_NAME = 'tie-panel-history';
@@ -46198,7 +47505,7 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "setUiDefaultSelectionStyle",
     value: function setUiDefaultSelectionStyle(option) {
-      return external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+      return extend_default()({
         applyCropSelectionStyle: true,
         applyGroupSelectionStyle: true,
         selectionStyle: {
@@ -46339,7 +47646,7 @@ var Ui = /*#__PURE__*/function () {
   }, {
     key: "_initializeOption",
     value: function _initializeOption(options) {
-      return external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+      return extend_default()({
         loadImage: {
           path: '',
           name: ''
@@ -46381,7 +47688,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _makeSubMenu() {
       var _this = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this.options.menu, function (menuName) {
+      forEach_default()(this.options.menu, function (menuName) {
         var _context;
 
         var SubComponentClass = SUB_UI_COMPONENT[menuName.replace(/^[a-z]/, function ($0) {
@@ -46446,7 +47753,6 @@ var Ui = /*#__PURE__*/function () {
       var _context5;
 
       var selectedElement;
-      window.snippet = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default());
 
       if (element.nodeType) {
         selectedElement = element;
@@ -46505,7 +47811,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _activateZoomMenus() {
       var _this3 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), ZOOM_HELP_MENUS, function (menu) {
+      forEach_default()(ZOOM_HELP_MENUS, function (menu) {
         _this3.changeHelpButtonEnabled(menu, true);
       });
     }
@@ -46534,7 +47840,7 @@ var Ui = /*#__PURE__*/function () {
 
       var helpMenuWithPartition = this._makeHelpMenuWithPartition();
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), helpMenuWithPartition, function (menuName) {
+      forEach_default()(helpMenuWithPartition, function (menuName) {
         if (!menuName) {
           _this4._makeMenuPartitionElement();
         } else {
@@ -46599,7 +47905,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _addHelpActionEvent() {
       var _this5 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), HELP_MENUS, function (helpName) {
+      forEach_default()(HELP_MENUS, function (helpName) {
         _this5.eventHandler[helpName] = function (event) {
           return _this5._actions.main[helpName](event);
         };
@@ -46617,7 +47923,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _removeHelpActionEvent() {
       var _this6 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), HELP_MENUS, function (helpName) {
+      forEach_default()(HELP_MENUS, function (helpName) {
         _this6._buttonElements[helpName].removeEventListener('click', _this6.eventHandler[helpName]);
       });
     }
@@ -46719,7 +48025,7 @@ var Ui = /*#__PURE__*/function () {
         return _this7._actions.main.download();
       };
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this._buttonElements.download, function (element) {
+      forEach_default()(this._buttonElements.download, function (element) {
         element.addEventListener('click', _this7.eventHandler.download);
       });
     }
@@ -46728,7 +48034,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _removeDownloadEvent() {
       var _this8 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this._buttonElements.download, function (element) {
+      forEach_default()(this._buttonElements.download, function (element) {
         element.removeEventListener('click', _this8.eventHandler.download);
       });
     }
@@ -46746,7 +48052,7 @@ var Ui = /*#__PURE__*/function () {
         return _this9._actions.main.load(event.target.files[0]);
       };
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this._buttonElements.load, function (element) {
+      forEach_default()(this._buttonElements.load, function (element) {
         element.addEventListener('change', _this9.eventHandler.loadImage);
       });
     }
@@ -46760,7 +48066,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _removeLoadEvent() {
       var _this10 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this._buttonElements.load, function (element) {
+      forEach_default()(this._buttonElements.load, function (element) {
         element.removeEventListener('change', _this10.eventHandler.loadImage);
       });
     }
@@ -46810,7 +48116,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _addMenuEvent() {
       var _this13 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this.options.menu, function (menuName) {
+      forEach_default()(this.options.menu, function (menuName) {
         _this13._addMainMenuEvent(menuName);
 
         _this13._addSubMenuEvent(menuName);
@@ -46826,7 +48132,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _removeMainMenuEvent() {
       var _this14 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this.options.menu, function (menuName) {
+      forEach_default()(this.options.menu, function (menuName) {
         _this14._buttonElements[menuName].removeEventListener('click', _this14.eventHandler[menuName]);
 
         _this14[menuName].off(eventNames.INPUT_BOX_EDITING_STARTED);
@@ -46897,7 +48203,7 @@ var Ui = /*#__PURE__*/function () {
     value: function _destroyAllMenu() {
       var _this15 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), this.options.menu, function (menuName) {
+      forEach_default()(this.options.menu, function (menuName) {
         _this15[menuName].destroy();
       });
 
@@ -47097,7 +48403,7 @@ var Ui = /*#__PURE__*/function () {
   return Ui;
 }();
 
-CustomEvents.mixin(Ui);
+customEvents_default().mixin(Ui);
 /* harmony default export */ var ui = (Ui);
 // EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/instance/filter.js
 var instance_filter = __webpack_require__(381);
@@ -48637,7 +49943,7 @@ var ImageTracer = /*#__PURE__*/function () {
       }
     };
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       initLoadImage: function initLoadImage(imagePath, imageName) {
         return _this.loadImageFromURL(imagePath, imageName).then(function (sizeValue) {
           exitCropOnAction();
@@ -48784,7 +50090,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _iconAction: function _iconAction() {
     var _this2 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       changeColor: function changeColor(color) {
         if (_this2.activeObjectId) {
           _this2.changeIconColor(_this2.activeObjectId, color);
@@ -48839,7 +50145,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _drawAction: function _drawAction() {
     var _this3 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       setDrawMode: function setDrawMode(type, settings) {
         _this3.stopDrawingMode();
 
@@ -48865,7 +50171,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _maskAction: function _maskAction() {
     var _this4 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       loadImageFromURL: function loadImageFromURL(imgUrl, file) {
         return _this4.loadImageFromURL(_this4.toDataURL(), 'FilterImage').then(function () {
           _this4.addImageObject(imgUrl).then(function () {
@@ -48891,7 +50197,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _textAction: function _textAction() {
     var _this5 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       changeTextStyle: function changeTextStyle(styleObj, isSilent) {
         if (_this5.activeObjectId) {
           _this5.changeTextStyle(_this5.activeObjectId, styleObj, isSilent);
@@ -48908,7 +50214,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _rotateAction: function _rotateAction() {
     var _this6 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       rotate: function rotate(angle, isSilent) {
         _this6.rotate(angle, isSilent);
 
@@ -48934,7 +50240,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _shapeAction: function _shapeAction() {
     var _this7 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       changeShape: function changeShape(changeShapeObject, isSilent) {
         if (_this7.activeObjectId) {
           _this7.changeShape(_this7.activeObjectId, changeShapeObject, isSilent);
@@ -48954,7 +50260,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _cropAction: function _cropAction() {
     var _this8 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       crop: function crop() {
         var cropRect = _this8.getCropzoneRect();
 
@@ -49030,7 +50336,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _resizeAction: function _resizeAction() {
     var _this9 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       getCurrentDimensions: function getCurrentDimensions() {
         return _this9._graphics.getCurrentDimensions();
       },
@@ -49168,7 +50474,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _flipAction: function _flipAction() {
     var _this10 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       flip: function flip(flipType) {
         return _this10[flipType]();
       }
@@ -49183,7 +50489,7 @@ var ImageTracer = /*#__PURE__*/function () {
   _filterAction: function _filterAction() {
     var _this11 = this;
 
-    return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+    return extend_default()({
       applyFilter: function applyFilter(applying, type, options, isSilent) {
         if (applying) {
           _this11.applyFilter(type, options, isSilent);
@@ -49421,20 +50727,18 @@ var ImageTracer = /*#__PURE__*/function () {
    * @param {ImageEditor} ImageEditor instance
    */
   mixin: function mixin(ImageEditor) {
-    (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)(ImageEditor.prototype, this);
+    extend_default()(ImageEditor.prototype, this);
   }
 });
-// EXTERNAL MODULE: ../../node_modules/@babel/runtime-corejs3/core-js-stable/instance/map.js
-var instance_map = __webpack_require__(899);
-var map_default = /*#__PURE__*/__webpack_require__.n(instance_map);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/type/isArray.js
+var isArray = __webpack_require__(602);
+var isArray_default = /*#__PURE__*/__webpack_require__.n(isArray);
+// EXTERNAL MODULE: ./node_modules/tui-code-snippet/collection/forEachOwnProperties.js
+var forEachOwnProperties = __webpack_require__(5573);
+var forEachOwnProperties_default = /*#__PURE__*/__webpack_require__.n(forEachOwnProperties);
 ;// CONCATENATED MODULE: ./src/js/interface/component.js
 
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Component interface
- */
 
 /**
  * Component interface
@@ -49611,10 +50915,6 @@ function imageLoader_createSuper(Derived) { var hasNativeReflectConstruct = imag
 
 function imageLoader_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image loader
- */
 
 
 var imageOption = {
@@ -49720,11 +51020,6 @@ var ImageLoader = /*#__PURE__*/function (_Component) {
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Cropzone extending fabric.Rect
- */
-
 
 
 
@@ -49783,7 +51078,7 @@ var Cropzone = fabric.fabric.util.createClass(fabric.fabric.Rect,
    * @override
    */
   initialize: function initialize(canvas, options, extendsOptions) {
-    options = external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend(options, extendsOptions);
+    options = extend_default()(options, extendsOptions);
     options.type = 'cropzone';
     this.callSuper('initialize', options);
 
@@ -49974,6 +51269,8 @@ var Cropzone = fabric.fabric.util.createClass(fabric.fabric.Rect,
    * @private
    */
   _getCoordinates: function _getCoordinates() {
+    var _context6, _context7;
+
     var canvas = this.canvas,
         width = this.width,
         height = this.height,
@@ -49986,16 +51283,16 @@ var Cropzone = fabric.fabric.util.createClass(fabric.fabric.Rect,
     var canvasWidth = canvas.getWidth(); // fabric object
 
     return {
-      x: map_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), [-(halfWidth + left), // x0
+      x: map_default()(_context6 = [-(halfWidth + left), // x0
       -halfWidth, // x1
       halfWidth, // x2
       halfWidth + (canvasWidth - left - width) // x3
-      ], Math.ceil),
-      y: map_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), [-(halfHeight + top), // y0
+      ]).call(_context6, Math.ceil),
+      y: map_default()(_context7 = [-(halfHeight + top), // y0
       -halfHeight, // y1
       halfHeight, // y2
       halfHeight + (canvasHeight - top - height) // y3
-      ], Math.ceil)
+      ]).call(_context7, Math.ceil)
     };
   },
 
@@ -50132,9 +51429,9 @@ var Cropzone = fabric.fabric.util.createClass(fabric.fabric.Rect,
     var maxScaleFactor = Math.min(maxWidth / width, maxHeight / height);
 
     if (maxScaleFactor <= 1) {
-      var _context6;
+      var _context8;
 
-      var _map = map_default()(_context6 = [width, height]).call(_context6, function (v) {
+      var _map = map_default()(_context8 = [width, height]).call(_context8, function (v) {
         return v * maxScaleFactor;
       });
 
@@ -50361,10 +51658,6 @@ function cropper_createSuper(Derived) { var hasNativeReflectConstruct = cropper_
 
 function cropper_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image crop module (start cropping, end cropping)
- */
 
 
 
@@ -50460,7 +51753,7 @@ var Cropper = /*#__PURE__*/function (_Component) {
         // {@link http://fabricjs.com/docs/fabric.Object.html#evented}
         obj.evented = false;
       });
-      this._cropzone = new cropzone(canvas, external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+      this._cropzone = new cropzone(canvas, extend_default()({
         left: 0,
         top: 0,
         width: 0.5,
@@ -50559,7 +51852,7 @@ var Cropper = /*#__PURE__*/function (_Component) {
 
       if (Math.abs(x - this._startX) + Math.abs(y - this._startY) > MOUSE_MOVE_THRESHOLD) {
         canvas.remove(cropzone);
-        cropzone.set(this._calcRectDimensionFromPoint(x, y));
+        cropzone.set(this._calcRectDimensionFromPoint(x, y, cropzone.presetRatio));
         canvas.add(cropzone);
         canvas.setActiveObject(cropzone);
       }
@@ -50568,6 +51861,7 @@ var Cropper = /*#__PURE__*/function (_Component) {
      * Get rect dimension setting from Canvas-Mouse-Position(x, y)
      * @param {number} x - Canvas-Mouse-Position x
      * @param {number} y - Canvas-Mouse-Position Y
+     * @param {number|null} presetRatio - fixed aspect ratio (width/height) of the cropzone (null if not set)
      * @returns {{left: number, top: number, width: number, height: number}}
      * @private
      */
@@ -50575,6 +51869,7 @@ var Cropper = /*#__PURE__*/function (_Component) {
   }, {
     key: "_calcRectDimensionFromPoint",
     value: function _calcRectDimensionFromPoint(x, y) {
+      var presetRatio = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
       var canvas = this.getCanvas();
       var canvasWidth = canvas.getWidth();
       var canvasHeight = canvas.getHeight();
@@ -50586,7 +51881,7 @@ var Cropper = /*#__PURE__*/function (_Component) {
 
       var height = clamp(y, startY, canvasHeight) - top; // (startY <= y(mouse) <= canvasHeight) - top
 
-      if (this._withShiftKey) {
+      if (this._withShiftKey && !presetRatio) {
         // make fixed ratio cropzone
         if (width > height) {
           height = width;
@@ -50600,6 +51895,35 @@ var Cropper = /*#__PURE__*/function (_Component) {
 
         if (startY >= y) {
           top = startY - height;
+        }
+      } else if (presetRatio) {
+        // Restrict cropzone to given presetRatio
+        height = width / presetRatio; // If moving in a direction where the top left corner moves (ie. top-left, bottom-left, top-right)
+        // the left and/or top values has to be changed based on the new height/width
+
+        if (startX >= x) {
+          left = clamp(startX - width, 0, canvasWidth);
+        }
+
+        if (startY >= y) {
+          top = clamp(startY - height, 0, canvasHeight);
+        } // Check if the new height is too large
+
+
+        if (top + height > canvasHeight) {
+          height = canvasHeight - top; // Set height to max available height
+
+          width = height * presetRatio; // Restrict cropzone to given presetRatio based on the new height
+          // If moving in a direction where the top left corner moves (ie. top-left, bottom-left, top-right)
+          // the left and/or top values has to be changed based on the new height/width
+
+          if (startX >= x) {
+            left = clamp(startX - width, 0, canvasWidth);
+          }
+
+          if (startY >= y) {
+            top = clamp(startY - height, 0, canvasHeight);
+          }
         }
       }
 
@@ -50714,6 +52038,8 @@ var Cropper = /*#__PURE__*/function (_Component) {
   }, {
     key: "_getPresetPropertiesForCropSize",
     value: function _getPresetPropertiesForCropSize(presetRatio) {
+      var _context6, _context7;
+
       var canvas = this.getCanvas();
       var originalWidth = canvas.getWidth();
       var originalHeight = canvas.getHeight();
@@ -50727,24 +52053,24 @@ var Cropper = /*#__PURE__*/function (_Component) {
       var height = standardSize;
       var scaleWidth = getScale(width, originalWidth);
 
-      var _snippet$map = map_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), [width, height], function (sizeValue) {
+      var _map = map_default()(_context6 = [width, height]).call(_context6, function (sizeValue) {
         return sizeValue * scaleWidth;
       });
 
-      var _snippet$map2 = _slicedToArray(_snippet$map, 2);
+      var _map2 = _slicedToArray(_map, 2);
 
-      width = _snippet$map2[0];
-      height = _snippet$map2[1];
+      width = _map2[0];
+      height = _map2[1];
       var scaleHeight = getScale(height, originalHeight);
 
-      var _snippet$map3 = map_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), [width, height], function (sizeValue) {
+      var _map3 = map_default()(_context7 = [width, height]).call(_context7, function (sizeValue) {
         return fixFloatingPoint(sizeValue * scaleHeight);
       });
 
-      var _snippet$map4 = _slicedToArray(_snippet$map3, 2);
+      var _map4 = _slicedToArray(_map3, 2);
 
-      width = _snippet$map4[0];
-      height = _snippet$map4[1];
+      width = _map4[0];
+      height = _map4[1];
       return {
         presetRatio: presetRatio,
         top: (originalHeight - height) / 2,
@@ -50799,10 +52125,6 @@ function component_flip_createSuper(Derived) { var hasNativeReflectConstruct = c
 
 function component_flip_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image flip module
- */
 
 
 
@@ -50856,7 +52178,7 @@ var flip_Flip = /*#__PURE__*/function (_Component) {
         return promise_default().reject(rejectMessages.flip);
       }
 
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend(setting, newSetting);
+      extend_default()(setting, newSetting);
       this.setImageProperties(setting, true);
 
       this._invertAngle(isChangingFlipX, isChangingFlipY);
@@ -50987,10 +52309,6 @@ function rotation_createSuper(Derived) { var hasNativeReflectConstruct = rotatio
 
 function rotation_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image rotation module
- */
 
 
 
@@ -51111,10 +52429,6 @@ function freeDrawing_createSuper(Derived) { var hasNativeReflectConstruct = free
 
 function freeDrawing_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Free drawing module, Set brush
- */
 
 
 
@@ -51202,11 +52516,6 @@ var FreeDrawing = /*#__PURE__*/function (_Component) {
 ;// CONCATENATED MODULE: ./src/js/extension/arrowLine.js
 
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Blur extending fabric.Image.filters.Convolute
- */
 
 var ARROW_ANGLE = 30;
 var CHEVRON_SIZE_RATIO = 2.7;
@@ -51419,10 +52728,6 @@ function line_createSuper(Derived) { var hasNativeReflectConstruct = line_isNati
 
 function line_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Free drawing module, Set brush
- */
 
 
 
@@ -51635,7 +52940,7 @@ var Line = /*#__PURE__*/function (_Component) {
           x2 = _this$_line.x2,
           y1 = _this$_line.y1,
           y2 = _this$_line.y2;
-      return external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({}, params, {
+      return extend_default()({}, params, {
         startPosition: {
           x: x1,
           y: y1
@@ -51665,15 +52970,13 @@ var Line = /*#__PURE__*/function (_Component) {
 
 
 
-
 function component_text_createSuper(Derived) { var hasNativeReflectConstruct = component_text_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function component_text_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Text module
- */
+
+
+
 
 
 
@@ -51901,15 +53204,15 @@ var text_Text = /*#__PURE__*/function (_Component) {
         _this4._setInitPos(options.position);
 
         if (options.styles) {
-          styles = external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend(styles, options.styles);
+          styles = extend_default()(styles, options.styles);
         }
 
-        if (!external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().isExisty(options.autofocus)) {
+        if (!isExisty_default()(options.autofocus)) {
           options.autofocus = true;
         }
 
         newText = new fabric.fabric.IText(text, styles);
-        selectionStyle = external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({}, selectionStyle, {
+        selectionStyle = extend_default()({}, selectionStyle, {
           originX: 'left',
           originY: 'top'
         });
@@ -51972,14 +53275,14 @@ var text_Text = /*#__PURE__*/function (_Component) {
       var _this6 = this;
 
       return new (promise_default())(function (resolve) {
-        for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), styleObj, function (val, key) {
+        forEach_default()(styleObj, function (val, key) {
           if (activeObj[key] === val && key !== 'fontSize') {
             styleObj[key] = resetStyles[key] || '';
           }
         }, _this6);
 
         if ('textDecoration' in styleObj) {
-          external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend(styleObj, _this6._getTextDecorationAdaptObject(styleObj.textDecoration));
+          extend_default()(styleObj, _this6._getTextDecorationAdaptObject(styleObj.textDecoration));
         }
 
         activeObj.set(styleObj);
@@ -52147,7 +53450,7 @@ var text_Text = /*#__PURE__*/function (_Component) {
       if (textContent.length) {
         this.getCanvas().add(editingObj);
         var params = {
-          id: external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().stamp(editingObj),
+          id: stamp(editingObj),
           type: editingObj.type,
           text: textContent
         };
@@ -52322,15 +53625,11 @@ var text_Text = /*#__PURE__*/function (_Component) {
 
 
 
-
 function component_icon_createSuper(Derived) { var hasNativeReflectConstruct = component_icon_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function component_icon_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add icon module
- */
+
 
 
 
@@ -52466,7 +53765,7 @@ var icon_Icon = /*#__PURE__*/function (_Component) {
           reject(rejectMessages.invalidParameters);
         }
 
-        icon.set(external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+        icon.set(extend_default()({
           type: 'icon',
           fill: _this2._oColor
         }, selectionStyle, options, _this2.graphics.controlStyle));
@@ -52484,7 +53783,7 @@ var icon_Icon = /*#__PURE__*/function (_Component) {
     value: function registerPaths(pathInfos) {
       var _this3 = this;
 
-      for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), pathInfos, function (path, type) {
+      forEach_default()(pathInfos, function (path, type) {
         _this3._pathMap[type] = path;
       }, this);
     }
@@ -52605,10 +53904,6 @@ var icon_Icon = /*#__PURE__*/function (_Component) {
 
 /* harmony default export */ var component_icon = (icon_Icon);
 ;// CONCATENATED MODULE: ./src/js/extension/mask.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Mask extending fabric.Image.filters.Mask
- */
 
 /**
  * Mask object
@@ -52705,10 +54000,6 @@ var mask_Mask = fabric.fabric.util.createClass(fabric.fabric.Image.filters.Blend
 });
 /* harmony default export */ var extension_mask = (mask_Mask);
 ;// CONCATENATED MODULE: ./src/js/extension/sharpen.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Sharpen extending fabric.Image.filters.Convolute
- */
 
 /**
  * Sharpen object
@@ -52737,10 +54028,6 @@ var Sharpen = fabric.fabric.util.createClass(fabric.fabric.Image.filters.Convolu
 });
 /* harmony default export */ var sharpen = (Sharpen);
 ;// CONCATENATED MODULE: ./src/js/extension/emboss.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Emboss extending fabric.Image.filters.Convolute
- */
 
 /**
  * Emboss object
@@ -52769,10 +54056,6 @@ var Emboss = fabric.fabric.util.createClass(fabric.fabric.Image.filters.Convolut
 });
 /* harmony default export */ var emboss = (Emboss);
 ;// CONCATENATED MODULE: ./src/js/extension/colorFilter.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview ColorFilter extending fabric.Image.filters.BaseFilter
- */
 
 /**
  * ColorFilter object
@@ -52882,14 +54165,13 @@ var ColorFilter = fabric.fabric.util.createClass(fabric.fabric.Image.filters.Bas
 
 
 
+
 function component_filter_createSuper(Derived) { var hasNativeReflectConstruct = component_filter_isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = construct_default()(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
 function component_filter_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add filter module
- */
+
+
 
 
 
@@ -53023,7 +54305,7 @@ var filter_Filter = /*#__PURE__*/function (_Component) {
         return null;
       }
 
-      return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({}, imgFilter.options);
+      return extend_default()({}, imgFilter.options);
     }
     /**
      * Change filter values
@@ -53035,13 +54317,13 @@ var filter_Filter = /*#__PURE__*/function (_Component) {
   }, {
     key: "_changeFilterValues",
     value: function _changeFilterValues(imgFilter, options) {
-      (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(options, function (value, key) {
-        if (!(0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.isUndefined)(imgFilter[key])) {
+      forEach_default()(options, function (value, key) {
+        if (!isUndefined_default()(imgFilter[key])) {
           imgFilter[key] = value;
         }
       });
-      (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(imgFilter.options, function (value, key) {
-        if (!(0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.isUndefined)(options[key])) {
+      forEach_default()(imgFilter.options, function (value, key) {
+        if (!isUndefined_default()(options[key])) {
           imgFilter.options[key] = options[key];
         }
       });
@@ -53141,9 +54423,11 @@ var filter_Filter = /*#__PURE__*/function (_Component) {
   }, {
     key: "_removeFilter",
     value: function _removeFilter(sourceImg, type) {
+      var _context;
+
       var fabricType = this._getFabricFilterType(type);
 
-      sourceImg.filters = (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.filter)(sourceImg.filters, function (value) {
+      sourceImg.filters = filter_default()(_context = sourceImg.filters).call(_context, function (value) {
         return value.type !== fabricType;
       });
     }
@@ -53176,10 +54460,7 @@ var shapeResizeHelper_default = /*#__PURE__*/__webpack_require__.n(shapeResizeHe
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Shape resize helper
- */
+
 
 
 
@@ -53283,7 +54564,9 @@ function rePositionFilterTypeFillImage(shapeObj) {
  */
 
 function makeFilterOptionFromFabricImage(imageObject) {
-  return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.map)(imageObject.filters, function (filter) {
+  var _context;
+
+  return map_default()(_context = imageObject.filters).call(_context, function (filter) {
     var _Object$keys = keys_default()(filter),
         _Object$keys2 = _slicedToArray(_Object$keys, 1),
         key = _Object$keys2[0];
@@ -53419,7 +54702,7 @@ function calculateDimensionRightBottomEdge(overflowAreaPositionFixer, _ref3) {
     x: (insideCanvasRealImageWidth - width) / 2,
     y: (insideCanvasRealImageHeight - height) / 2
   };
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(['x', 'y'], function (type) {
+  forEach_default()(['x', 'y'], function (type) {
     var cropDistance2 = diff[type];
 
     if (cropDistance2 > 0) {
@@ -53459,7 +54742,7 @@ function calculateDimensionLeftTopEdge(overflowAreaPositionFixer, _ref4) {
     width: width,
     height: height
   };
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(['x', 'y'], function (type) {
+  forEach_default()(['x', 'y'], function (type) {
     var cropDistance = type === 'x' ? cropX : cropY;
     var compareSize = dimension[POSITION_DIMENSION_MAP[type]];
     var standardSize = cachedCanvasImageElement[POSITION_DIMENSION_MAP[type]];
@@ -53649,7 +54932,7 @@ function getReversePositionForFlip(_ref6) {
 function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeighborPointNavigation) {
   var minimumPoint = 0;
   var minimumPointIndex = 0;
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(shapePointNavigation, function (point, index) {
+  forEach_default()(shapePointNavigation, function (point, index) {
     if (point[type] < minimumPoint) {
       minimumPoint = point[type];
       minimumPointIndex = index;
@@ -53683,11 +54966,13 @@ function calculateLinePointsOutsideCanvas(type, shapePointNavigation, shapeNeigh
 
 
 function calculateLineAngleOfOutsideCanvas(type, shapePointNavigation, linePointsOfOneVertexIndex) {
+  var _context2;
+
   var startPointIndex = linePointsOfOneVertexIndex.startPointIndex,
       endPointIndex1 = linePointsOfOneVertexIndex.endPointIndex1,
       endPointIndex2 = linePointsOfOneVertexIndex.endPointIndex2;
   var horizontalVerticalAngle = type === 'x' ? 180 : 270;
-  return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.map)([endPointIndex1, endPointIndex2], function (pointIndex) {
+  return map_default()(_context2 = [endPointIndex1, endPointIndex2]).call(_context2, function (pointIndex) {
     var startPoint = shapePointNavigation[startPointIndex];
     var endPoint = shapePointNavigation[pointIndex];
     var diffY = startPoint.y - endPoint.y;
@@ -53784,10 +55069,10 @@ function getRotatedDimension(shapeObj) {
 
 
 function makeFillImage(copiedCanvasElement, currentCanvasImageAngle, filterOption) {
-  var _context;
+  var _context3;
 
   var fillImage = new fabric.fabric.Image(copiedCanvasElement);
-  (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.forEach)(external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend.apply(void 0, concat_default()(_context = [{}]).call(_context, _toConsumableArray(filterOption))), function (value, key) {
+  forEach_default()(extend_default().apply(void 0, concat_default()(_context3 = [{}]).call(_context3, _toConsumableArray(filterOption))), function (value, key) {
     var fabricFilterClassName = capitalizeString(key);
     var filter = new fabric.fabric.Image.filters[fabricFilterClassName](_defineProperty({}, FILTER_OPTION_MAP[key], value));
     fillImage.filters.push(filter);
@@ -53818,18 +55103,13 @@ function shape_isNativeReflectConstruct() { if (typeof Reflect === "undefined" |
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Shape component
- */
 
 
 
 
 
 
-
-var SHAPE_INIT_OPTIONS = (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+var SHAPE_INIT_OPTIONS = extend_default()({
   strokeWidth: 1,
   stroke: '#000000',
   fill: '#ffffff',
@@ -53871,7 +55151,7 @@ function makeFabricFillOption(options, canvasImage, createStaticCanvas) {
     };
   }
 
-  return (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({}, options, extOption);
+  return extend_default()({}, options, extOption);
 }
 /**
  * Shape
@@ -53915,7 +55195,7 @@ var shape_Shape = /*#__PURE__*/function (_Component) {
      * @private
      */
 
-    _this._options = (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({}, SHAPE_INIT_OPTIONS);
+    _this._options = extend_default()({}, SHAPE_INIT_OPTIONS);
     /**
      * Whether the shape object is selected or not
      * @type {boolean}
@@ -54012,7 +55292,7 @@ var shape_Shape = /*#__PURE__*/function (_Component) {
       this._type = type;
 
       if (options) {
-        this._options = (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)(this._options, options);
+        this._options = extend_default()(this._options, options);
       }
     }
     /**
@@ -54159,7 +55439,7 @@ var shape_Shape = /*#__PURE__*/function (_Component) {
           break;
 
         case 'circle':
-          instance = new fabric.fabric.Ellipse((0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+          instance = new fabric.fabric.Ellipse(extend_default()({
             type: 'circle'
           }, options));
           break;
@@ -54188,7 +55468,7 @@ var shape_Shape = /*#__PURE__*/function (_Component) {
       var _this$graphics = this.graphics,
           canvasImage = _this$graphics.canvasImage,
           createStaticCanvas = _this$graphics.createStaticCanvas;
-      options = (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
+      options = extend_default()({}, SHAPE_INIT_OPTIONS, this._options, selectionStyles, options);
       return makeFabricFillOption(options, canvasImage, createStaticCanvas);
     }
     /**
@@ -54466,10 +55746,6 @@ function zoom_createSuper(Derived) { var hasNativeReflectConstruct = zoom_isNati
 
 function zoom_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image zoom module (start zoom, end zoom)
- */
 
 
 
@@ -55328,11 +56604,6 @@ var Zoom = /*#__PURE__*/function (_Component) {
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview DrawingMode interface
- */
-
 var drawingMode_createMessage = errorMessage.create;
 var drawingMode_errorTypes = errorMessage.types;
 /**
@@ -55402,10 +56673,6 @@ function drawingMode_cropper_createSuper(Derived) { var hasNativeReflectConstruc
 
 function drawingMode_cropper_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview CropperDrawingMode class
- */
 
 
 /**
@@ -55467,10 +56734,6 @@ function drawingMode_freeDrawing_createSuper(Derived) { var hasNativeReflectCons
 
 function drawingMode_freeDrawing_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview FreeDrawingMode class
- */
 
 
 /**
@@ -55533,10 +56796,6 @@ function lineDrawing_createSuper(Derived) { var hasNativeReflectConstruct = line
 
 function lineDrawing_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview LineDrawingMode class
- */
 
 
 /**
@@ -55599,10 +56858,6 @@ function drawingMode_shape_createSuper(Derived) { var hasNativeReflectConstruct 
 
 function drawingMode_shape_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview ShapeDrawingMode class
- */
 
 
 /**
@@ -55664,10 +56919,6 @@ function drawingMode_text_createSuper(Derived) { var hasNativeReflectConstruct =
 
 function drawingMode_text_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview TextDrawingMode class
- */
 
 
 /**
@@ -55729,10 +56980,6 @@ function drawingMode_icon_createSuper(Derived) { var hasNativeReflectConstruct =
 
 function drawingMode_icon_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview IconDrawingMode class
- */
 
 
 /**
@@ -55794,10 +57041,6 @@ function drawingMode_zoom_createSuper(Derived) { var hasNativeReflectConstruct =
 
 function drawingMode_zoom_isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !(construct_default())) return false; if ((construct_default()).sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(construct_default()(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview ZoomDrawingMode class
- */
 
 
 /**
@@ -55849,11 +57092,6 @@ var ZoomDrawingMode = /*#__PURE__*/function (_DrawingMode) {
 /* harmony default export */ var drawingMode_zoom = (ZoomDrawingMode);
 ;// CONCATENATED MODULE: ./src/js/helper/selectionModifyHelper.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Selection modification helper
- */
 
 
 /**
@@ -55941,7 +57179,7 @@ function makeSelectionUndoDatum(id, obj, isSelection) {
     angle: obj.angle,
     scaleX: obj.scaleX,
     scaleY: obj.scaleY
-  } : (0,external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_.extend)({
+  } : extend_default()({
     id: id
   }, obj);
 }
@@ -56164,10 +57402,6 @@ var ResizeDrawingMode = /*#__PURE__*/function (_DrawingMode) {
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Graphics module
- */
 
 
 
@@ -56193,13 +57427,10 @@ var ResizeDrawingMode = /*#__PURE__*/function (_DrawingMode) {
 
 
 
-var extend = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).extend,
-    stamp = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).stamp,
-    isArray = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).isArray,
-    isString = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).isString,
-    forEachArray = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).forEachArray,
-    forEachOwnProperties = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).forEachOwnProperties,
-    graphics_CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
+
+
+
+
 var DEFAULT_CSS_MAX_WIDTH = 1000;
 var DEFAULT_CSS_MAX_HEIGHT = 800;
 var EXTRA_PX_FOR_PASTE = 10;
@@ -56404,7 +57635,7 @@ var Graphics = /*#__PURE__*/function () {
 
       var theArgs = [];
 
-      if (isArray(objects)) {
+      if (isArray_default()(objects)) {
         theArgs = objects;
       } else {
         theArgs.push(objects);
@@ -57108,7 +58339,7 @@ var Graphics = /*#__PURE__*/function () {
   }, {
     key: "setSelectionStyle",
     value: function setSelectionStyle(styles) {
-      extend(fObjectOptions.SELECTION_STYLE, styles);
+      extend_default()(fObjectOptions.SELECTION_STYLE, styles);
     }
     /**
      * Set object properties
@@ -57128,7 +58359,7 @@ var Graphics = /*#__PURE__*/function () {
     key: "setObjectProperties",
     value: function setObjectProperties(id, props) {
       var object = this.getObject(id);
-      var clone = extend({}, props);
+      var clone = extend_default()({}, props);
       object.set(clone);
       object.setCoords();
       this.getCanvas().renderAll();
@@ -57147,14 +58378,14 @@ var Graphics = /*#__PURE__*/function () {
       var object = this.getObject(id);
       var props = {};
 
-      if (isString(keys)) {
+      if (isString_default()(keys)) {
         props[keys] = object[keys];
-      } else if (isArray(keys)) {
-        forEachArray(keys, function (value) {
+      } else if (isArray_default()(keys)) {
+        forEachArray_default()(keys, function (value) {
           props[value] = object[value];
         });
       } else {
-        forEachOwnProperties(keys, function (value, key) {
+        forEachOwnProperties_default()(keys, function (value, key) {
           props[key] = object[key];
         });
       }
@@ -57619,7 +58850,7 @@ var Graphics = /*#__PURE__*/function () {
           left = _obj$path$getCenterPo.x,
           top = _obj$path$getCenterPo.y;
 
-      obj.path.set(extend({
+      obj.path.set(extend_default()({
         left: left,
         top: top
       }, fObjectOptions.SELECTION_STYLE));
@@ -57688,13 +58919,13 @@ var Graphics = /*#__PURE__*/function () {
         id: stamp(obj),
         type: obj.type
       };
-      extend(props, getProperties(obj, predefinedKeys));
+      extend_default()(props, getProperties(obj, predefinedKeys));
 
       if (includes(['i-text', 'text'], obj.type)) {
-        extend(props, this._createTextProperties(obj, props));
+        extend_default()(props, this._createTextProperties(obj, props));
       } else if (includes(['rect', 'triangle', 'circle'], obj.type)) {
         var shapeComp = this.getComponent(componentNames.SHAPE);
-        extend(props, {
+        extend_default()(props, {
           fill: shapeComp.makeFillPropertyForUserEvent(obj)
         });
       }
@@ -57713,7 +58944,7 @@ var Graphics = /*#__PURE__*/function () {
     value: function _createTextProperties(obj) {
       var predefinedKeys = ['text', 'fontFamily', 'fontSize', 'fontStyle', 'textAlign', 'textDecoration', 'fontWeight'];
       var props = {};
-      extend(props, getProperties(obj, predefinedKeys));
+      extend_default()(props, getProperties(obj, predefinedKeys));
       return props;
     }
     /**
@@ -57797,7 +59028,7 @@ var Graphics = /*#__PURE__*/function () {
     value: function _cloneObject(targetObjects) {
       var _this8 = this;
 
-      var addedObjects = map_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())).call((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()), targetObjects, function (targetObject) {
+      var addedObjects = map_default()(targetObjects).call(targetObjects, function (targetObject) {
         return _this8._cloneObjectItem(targetObject);
       });
 
@@ -57853,7 +59084,7 @@ var Graphics = /*#__PURE__*/function () {
 
         var rightEdge = left + width / 2;
         var bottomEdge = top + height / 2;
-        clonedObject.set(external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+        clonedObject.set(extend_default()({
           left: addExtraPx(left, rightEdge + EXTRA_PX_FOR_PASTE > canvasWidth),
           top: addExtraPx(top, bottomEdge + EXTRA_PX_FOR_PASTE > canvasHeight)
         }, fObjectOptions.SELECTION_STYLE));
@@ -57934,7 +59165,7 @@ var Graphics = /*#__PURE__*/function () {
   return Graphics;
 }();
 
-graphics_CustomEvents.mixin(Graphics);
+customEvents_default().mixin(Graphics);
 /* harmony default export */ var graphics = (Graphics);
 ;// CONCATENATED MODULE: ./src/js/imageEditor.js
 
@@ -57947,10 +59178,6 @@ graphics_CustomEvents.mixin(Graphics);
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Image-editor application class
- */
 
 
 
@@ -57961,10 +59188,6 @@ graphics_CustomEvents.mixin(Graphics);
 
 
 
-
-var isUndefined = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).isUndefined,
-    imageEditor_forEach = for_each_default()((external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default())),
-    imageEditor_CustomEvents = (external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default()).CustomEvents;
 
 var MOUSE_DOWN = eventNames.MOUSE_DOWN,
     OBJECT_MOVED = eventNames.OBJECT_MOVED,
@@ -58112,7 +59335,7 @@ var ImageEditor = /*#__PURE__*/function () {
 
     _classCallCheck(this, ImageEditor);
 
-    options = external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend({
+    options = extend_default()({
       includeUI: false,
       usageStatistics: true
     }, options);
@@ -59748,7 +60971,7 @@ var ImageEditor = /*#__PURE__*/function () {
         this.ui.destroy();
       }
 
-      imageEditor_forEach(this, function (value, key) {
+      forEach_default()(this, function (value, key) {
         _this6[key] = null;
       }, this);
     }
@@ -59763,11 +60986,11 @@ var ImageEditor = /*#__PURE__*/function () {
     value: function _setPositions(options) {
       var centerPosition = this._graphics.getCenter();
 
-      if (isUndefined(options.left)) {
+      if (isUndefined_default()(options.left)) {
         options.left = centerPosition.left;
       }
 
-      if (isUndefined(options.top)) {
+      if (isUndefined_default()(options.top)) {
         options.top = centerPosition.top;
       }
     }
@@ -59940,15 +61163,10 @@ var ImageEditor = /*#__PURE__*/function () {
 }();
 
 action.mixin(ImageEditor);
-imageEditor_CustomEvents.mixin(ImageEditor);
+customEvents_default().mixin(ImageEditor);
 /* harmony default export */ var imageEditor = (ImageEditor);
 ;// CONCATENATED MODULE: ./src/js/command/addIcon.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add an icon
- */
 
 
 var ICON = componentNames.ICON;
@@ -59989,11 +61207,6 @@ factory_command.register(addIcon_command);
 ;// CONCATENATED MODULE: ./src/js/command/addImageObject.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add an image object
- */
-
 
 var addImageObject_command = {
   name: commandNames.ADD_IMAGE_OBJECT,
@@ -60026,11 +61239,6 @@ factory_command.register(addImageObject_command);
 /* harmony default export */ var addImageObject = ((/* unused pure expression or super */ null && (addImageObject_command)));
 ;// CONCATENATED MODULE: ./src/js/command/addObject.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add an object
- */
 
 
 var addObject_command = {
@@ -60073,11 +61281,6 @@ factory_command.register(addObject_command);
 /* harmony default export */ var addObject = ((/* unused pure expression or super */ null && (addObject_command)));
 ;// CONCATENATED MODULE: ./src/js/command/addShape.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add a shape
- */
 
 
 var SHAPE = componentNames.SHAPE;
@@ -60125,11 +61328,6 @@ factory_command.register(addShape_command);
 /* harmony default export */ var addShape = ((/* unused pure expression or super */ null && (addShape_command)));
 ;// CONCATENATED MODULE: ./src/js/command/addText.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Add a text object
- */
 
 
 
@@ -60195,11 +61393,6 @@ factory_command.register(addText_command);
 ;// CONCATENATED MODULE: ./src/js/command/applyFilter.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Apply a filter into an image
- */
-
 
 
 var FILTER = componentNames.FILTER;
@@ -60250,7 +61443,7 @@ var applyFilter_command = {
         return promise_default().reject(rejectMessages.invalidParameters);
       }
 
-      external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().extend(options, {
+      extend_default()(options, {
         mask: maskObj
       });
       graphics.remove(options.mask);
@@ -60293,11 +61486,6 @@ factory_command.register(applyFilter_command);
 /* harmony default export */ var applyFilter = ((/* unused pure expression or super */ null && (applyFilter_command)));
 ;// CONCATENATED MODULE: ./src/js/command/changeIconColor.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Change icon color
- */
 
 
 var changeIconColor_ICON = componentNames.ICON;
@@ -60347,11 +61535,6 @@ factory_command.register(changeIconColor_command);
 ;// CONCATENATED MODULE: ./src/js/command/changeShape.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview change a shape
- */
-
 
 
 var changeShape_SHAPE = componentNames.SHAPE;
@@ -60373,7 +61556,7 @@ function changeShape_makeUndoData(options, targetObj) {
     object: targetObj,
     options: {}
   };
-  external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEachOwnProperties(options, function (value, key) {
+  forEachOwnProperties_default()(options, function (value, key) {
     undoData.options[key] = targetObj[key];
   });
   return undoData;
@@ -60433,11 +61616,6 @@ factory_command.register(changeShape_command);
 ;// CONCATENATED MODULE: ./src/js/command/changeText.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Change a text
- */
-
 
 var changeText_TEXT = componentNames.TEXT;
 var changeText_command = {
@@ -60480,11 +61658,6 @@ factory_command.register(changeText_command);
 ;// CONCATENATED MODULE: ./src/js/command/changeTextStyle.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Change text styles
- */
-
 
 
 var changeTextStyle_TEXT = componentNames.TEXT;
@@ -60506,7 +61679,7 @@ function changeTextStyle_makeUndoData(styles, targetObj) {
     object: targetObj,
     styles: {}
   };
-  external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEachOwnProperties(styles, function (value, key) {
+  forEachOwnProperties_default()(styles, function (value, key) {
     var undoValue = targetObj[key];
     undoData.styles[key] = undoValue;
   });
@@ -60564,11 +61737,6 @@ factory_command.register(changeTextStyle_command);
 ;// CONCATENATED MODULE: ./src/js/command/clearObjects.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Clear all objects
- */
-
 
 var clearObjects_command = {
   name: commandNames.CLEAR_OBJECTS,
@@ -60600,10 +61768,6 @@ var clearObjects_command = {
 factory_command.register(clearObjects_command);
 /* harmony default export */ var clearObjects = ((/* unused pure expression or super */ null && (clearObjects_command)));
 ;// CONCATENATED MODULE: ./src/js/command/flip.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Flip an image
- */
 
 
 var FLIP = componentNames.FLIP;
@@ -60636,11 +61800,6 @@ factory_command.register(flip_command);
 ;// CONCATENATED MODULE: ./src/js/command/loadImage.js
 
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Load a background (main) image
- */
 
 
 var IMAGE_LOADER = componentNames.IMAGE_LOADER;
@@ -60703,10 +61862,6 @@ var loadImage_command = {
 factory_command.register(loadImage_command);
 /* harmony default export */ var loadImage = ((/* unused pure expression or super */ null && (loadImage_command)));
 ;// CONCATENATED MODULE: ./src/js/command/removeFilter.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Remove a filter from an image
- */
 
 
 var removeFilter_FILTER = componentNames.FILTER;
@@ -60740,11 +61895,6 @@ factory_command.register(removeFilter_command);
 /* harmony default export */ var removeFilter = ((/* unused pure expression or super */ null && (removeFilter_command)));
 ;// CONCATENATED MODULE: ./src/js/command/removeObject.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Remove an object
- */
 
 
 var removeObject_command = {
@@ -60784,11 +61934,6 @@ factory_command.register(removeObject_command);
 ;// CONCATENATED MODULE: ./src/js/command/resizeCanvasDimension.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Resize a canvas
- */
-
 
 var resizeCanvasDimension_command = {
   name: commandNames.RESIZE_CANVAS_DIMENSION,
@@ -60827,11 +61972,6 @@ factory_command.register(resizeCanvasDimension_command);
 /* harmony default export */ var resizeCanvasDimension = ((/* unused pure expression or super */ null && (resizeCanvasDimension_command)));
 ;// CONCATENATED MODULE: ./src/js/command/rotate.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Rotate an image
- */
 
 
 var ROTATION = componentNames.ROTATION;
@@ -60898,11 +62038,6 @@ factory_command.register(rotate_command);
 ;// CONCATENATED MODULE: ./src/js/command/setObjectProperties.js
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Set object properties
- */
-
 
 
 var setObjectProperties_command = {
@@ -60932,7 +62067,7 @@ var setObjectProperties_command = {
     }
 
     this.undoData.props = {};
-    external_commonjs_tui_code_snippet_commonjs2_tui_code_snippet_amd_tui_code_snippet_root_tui_util_default().forEachOwnProperties(props, function (value, key) {
+    forEachOwnProperties_default()(props, function (value, key) {
       _this.undoData.props[key] = targetObj[key];
     });
     graphics.setObjectProperties(id, props);
@@ -60954,11 +62089,6 @@ factory_command.register(setObjectProperties_command);
 /* harmony default export */ var setObjectProperties = ((/* unused pure expression or super */ null && (setObjectProperties_command)));
 ;// CONCATENATED MODULE: ./src/js/command/setObjectPosition.js
 
-
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Set object properties
- */
 
 
 var setObjectPosition_command = {
@@ -61008,11 +62138,6 @@ factory_command.register(setObjectPosition_command);
 
 
 
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview change selection
- */
-
 
 
 var changeSelection_command = {
@@ -61041,10 +62166,6 @@ var changeSelection_command = {
 factory_command.register(changeSelection_command);
 /* harmony default export */ var changeSelection = ((/* unused pure expression or super */ null && (changeSelection_command)));
 ;// CONCATENATED MODULE: ./src/js/command/resize.js
-/**
- * @author NHN. FE Development Team <dl_javascript@nhn.com>
- * @fileoverview Resize an image
- */
 
 
 var RESIZE = componentNames.RESIZE;
