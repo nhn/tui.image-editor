@@ -116,6 +116,14 @@ class Range {
   set value(value) {
     value = this._useDecimal ? value : toInteger(value);
 
+    if(typeof value !== "number"){
+      return;
+    }
+
+    if(isNaN(value)){
+      return;
+    }
+
     const absValue = value - this._min;
     let leftPosition = (absValue * this.rangeWidth) / this._absMax;
 
