@@ -709,13 +709,20 @@ class Graphics {
   }
 
   /**
-   * Get cropped rect
-   * @param {number} [mode] cropzone rect mode
+   * Set cropped ratio
+   * @param {number} [mode] cropzone rect ratio
    */
-  setCropzoneRect(mode) {
-    this.getComponent(components.CROPPER).setCropzoneRect(mode);
+  setCropzoneRatio(mode) {
+    this.getComponent(components.CROPPER).setCropzoneRatio(mode);
   }
 
+  /**
+   * Set the cropping rect
+   * @param {Object} [rect]  {{left: number, top: number, width: number, height: number}} rect
+   */
+  setCropzoneRect(rect) {
+    this.getComponent(components.CROPPER).setCropzoneRect(rect);
+  }
   /**
    * Get cropped image data
    * @param {Object} cropRect cropzone rect

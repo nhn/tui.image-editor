@@ -328,10 +328,10 @@ class Cropper extends Component {
   }
 
   /**
-   * Set a cropzone square
+   * Set a cropzone rectangle ratio
    * @param {number} [presetRatio] - preset ratio
    */
-  setCropzoneRect(presetRatio) {
+  setCropzoneRatio(presetRatio) {
     const canvas = this.getCanvas();
     const cropzone = this._cropzone;
 
@@ -347,6 +347,14 @@ class Cropper extends Component {
     if (presetRatio) {
       canvas.setActiveObject(cropzone);
     }
+  }
+
+  /**
+   * Set cropzone rectangle
+   * @param {Object} [rect]  {{left: number, top: number, width: number, height: number}} rect
+   */
+  setCropzoneRect(rect) {
+    this._cropzone.set(rect);
   }
 
   /**
