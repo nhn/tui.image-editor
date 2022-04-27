@@ -582,18 +582,11 @@ class Zoom extends Component {
     const vpt = canvas.viewportTransform;
     const { zoomLevel } = this;
 
-    if (vpt[4] >= 0) {
-      vpt[4] = 0;
-    } else if (vpt[4] < canvasWidth - canvasWidth * zoomLevel) {
-      vpt[4] = canvasWidth - canvasWidth * zoomLevel;
-    }
+    vpt[4] = clamp(vpt[4], 0, canvasWidth - canvasWidth * zoomLevel);
+    vpt[5] = clamp(vpt[5], 0, canvasHeight - canvasHeight * zoomLevel);
 
-    if (vpt[5] >= 0) {
-      vpt[5] = 0;
-    } else if (vpt[5] < canvasHeight - canvasHeight * zoomLevel) {
-      vpt[5] = canvasHeight - canvasHeight * zoomLevel;
-    }
     canvas.setViewportTransform(vpt);
+
     this._fireZoomChanged(canvas, zoomLevel);
 
     canvas.off({
