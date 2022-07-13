@@ -63,6 +63,12 @@ class Resize extends Submenu {
 
     this.setWidthValue(dimensions.width);
     this.setHeightValue(dimensions.height);
+    this.setLimit({
+      minWidth: defaultResizePixelValues.min,
+      minHeight: defaultResizePixelValues.min,
+      maxWidth: dimensions.width,
+      maxHeight: dimensions.height,
+    });
   }
 
   /**
@@ -197,11 +203,7 @@ class Resize extends Submenu {
    */
   _changeLockAspectRatio(event) {
     this._lockState = event.target.checked;
-    this.actions.lockAspectRatio(
-      this._lockState,
-      defaultResizePixelValues.min,
-      defaultResizePixelValues.max
-    );
+    this.actions.lockAspectRatio(this._lockState);
   }
 
   /**
