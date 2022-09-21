@@ -1227,7 +1227,7 @@ class Graphics {
 
   /**
    * "object:selected" canvas event handler
-   * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+   * @param {{selected: fabric.Object, deselected: fabric.Object, e: MouseEvent}} fEvent - Fabric event
    * @private
    */
   _onObjectSelected(fEvent) {
@@ -1268,8 +1268,8 @@ class Graphics {
   }
 
   /**
-   * "selction:created" canvas event handler
-   * @param {{target: fabric.Object, e: MouseEvent}} fEvent - Fabric event
+   * "selection:created" canvas event handler
+   * @param {{selected: fabric.Object, e: MouseEvent}} fEvent - Fabric event
    * @private
    */
   _onSelectionCreated(fEvent) {
