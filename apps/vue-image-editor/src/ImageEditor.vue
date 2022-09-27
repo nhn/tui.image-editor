@@ -36,6 +36,9 @@ export default {
     this.addEventListener();
   },
   destroyed() {
+    if(!this.$listeners){
+      return;
+    }
     Object.keys(this.$listeners).forEach((eventName) => {
       this.editorInstance.off(eventName);
     });
@@ -44,6 +47,9 @@ export default {
   },
   methods: {
     addEventListener() {
+      if(!this.$listeners){
+        return;
+      }
       Object.keys(this.$listeners).forEach((eventName) => {
         this.editorInstance.on(eventName, (...args) => this.$emit(eventName, ...args));
       });
