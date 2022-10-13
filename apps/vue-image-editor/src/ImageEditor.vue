@@ -28,7 +28,7 @@ export default {
     },
   },
   mounted() {
-    let options = editorDefaultOptions;
+    let options = this.options;
     if (this.includeUi) {
       options = Object.assign(includeUIOptions, this.options);
     }
