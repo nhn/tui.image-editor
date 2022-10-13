@@ -245,6 +245,9 @@ class ImageEditor {
       this._attachColorPickerInputBoxEvents();
     }
     fabric.enableGLFiltering = false;
+    if (options.selectionStyle.rotatingPointOffset)
+      fabric.Object.prototype.controls.mtr.offsetY =
+        options.selectionStyle.rotatingPointOffset * -1;
   }
 
   _attachColorPickerInputBoxEvents() {
