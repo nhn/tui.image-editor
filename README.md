@@ -184,7 +184,7 @@ For more information on PR's steps, please see links in the Contributing section
 
 ## 🔩 Dependency
 
-- [fabric.js](https://github.com/fabricjs/fabric.js/releases) = 4.2.0
+- [fabric.js](https://github.com/fabricjs/fabric.js/releases) = 5.2.4
 - [tui.code-snippet](https://github.com/nhn/tui.code-snippet/releases/tag/v1.5.0) >= 1.5.0
 - [tui.color-picker](https://github.com/nhn/tui.color-picker/releases/tag/v2.2.6) >= 2.2.6
 

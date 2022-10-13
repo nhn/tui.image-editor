@@ -40,7 +40,7 @@ Object {
   "strokeWidth": 0,
   "top": 36.82,
   "type": "image",
-  "version": "4.6.0",
+  "version": "5.2.4",
   "visible": true,
   "width": 128.03,
 }
@@ -86,7 +86,7 @@ Object {
   "strokeWidth": 0,
   "top": 40,
   "type": "image",
-  "version": "4.6.0",
+  "version": "5.2.4",
   "visible": true,
   "width": 200,
 }

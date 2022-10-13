@@ -46,7 +46,7 @@ npm install --save @toast-ui/vue-image-editor
 > **If you install other packages**, you may lose dependency on fabric. You need to **reinstall the fabric**.
 
     ```
-    npm install --no-save --no-optional fabric@~4.2.0
+    npm install --no-save --no-optional fabric@~5.2.4
     ```
 
 ## 🔡 Usage

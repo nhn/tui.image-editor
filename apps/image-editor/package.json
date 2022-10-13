@@ -45,7 +45,7 @@
     "not ie <= 9"
   ],
   "dependencies": {
-    "fabric": "^4.2.0",
+    "fabric": "^5.2.4",
     "tui-code-snippet": "^2.3.3",
     "tui-color-picker": "^2.2.6"
   }
