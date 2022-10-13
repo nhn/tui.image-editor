@@ -160,6 +160,15 @@ class Graphics {
   }
 
   /**
+   * Load canvas data
+   */
+   loadCanvas(json) {
+    this._canvas.loadFromJSON(json, this.renderAll());
+
+    return this;
+  }
+
+  /**
    * Destroy canvas element
    */
   destroy() {

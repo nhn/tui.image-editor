@@ -1683,6 +1683,28 @@ class ImageEditor {
   }
 
   /**
+   * Load the FabricJS canvas obj to editor
+   * @param {String | Object} json - FabricJS Canvas object
+   * ref: http://fabricjs.com/docs/fabric.Canvas.html#loadFromJSON
+   * @example
+   * imageEditor.loadCanvas({canvasData});
+   */
+   loadCanvas(json) {
+    return this._graphics.loadCanvas(json);
+  }
+
+  /**
+   * Get the full FabricJS canvas obj
+   * @returns {Object} {{canvas}} FabricJS canvas object
+   * @example
+   * var canvasData = imageEditor.getCanvas();
+   * console.log(canvasData);
+   */
+     getCanvas() {
+      return this._graphics.getCanvas();
+    }
+
+  /**
    * Get the canvas size
    * @returns {Object} {{width: number, height: number}} canvas size
    * @example
