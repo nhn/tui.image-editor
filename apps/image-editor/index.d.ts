@@ -190,9 +190,15 @@ declare namespace tuiImageEditor {
     rotatingPointOffset?: number;
   }
 
+  interface IShapeFillOption {
+    type: 'color' | 'filter'
+    filter?: Array<Record<string, number>>
+    color?: string
+  }
+
   interface IObjectProps {
     // icon, shape
-    fill: string;
+    fill: string | IShapeFillOption;
     height: number;
     id: number;
     left: number;
