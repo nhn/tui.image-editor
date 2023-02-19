@@ -305,7 +305,7 @@ declare namespace tuiImageEditor {
     public isEmptyRedoStack(): boolean;
     public isEmptyUndoStack(): boolean;
     public loadImageFromFile(imgFile: File, imageName?: string): Promise<ICropResolveObject>;
-    public loadImageFromURL(url: string, imageName?: string): Promise<ICropResolveObject>;
+    public loadImageFromURL(url: string, imageName: string): Promise<ICropResolveObject>;
     public redo(iterationCount: number): Promise<any>;
     public registerIcons(infos: IIconInfo): void;
     public removeActiveObject(): void;
