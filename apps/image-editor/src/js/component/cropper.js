@@ -195,6 +195,7 @@ class Cropper extends Component {
    * @returns {{left: number, top: number, width: number, height: number}}
    * @private
    */
+  // eslint-disable-next-line complexity
   _calcRectDimensionFromPoint(x, y, presetRatio = null) {
     const canvas = this.getCanvas();
     const canvasWidth = canvas.getWidth();
