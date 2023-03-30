@@ -1481,15 +1481,16 @@ class Graphics {
    * @private
    */
   _copyFabricObject(targetObject) {
-    return new Promise((resolve) => {
-      targetObject.clone((cloned) => {
-        const shapeComp = this.getComponent(components.SHAPE);
-        if (isShape(cloned)) {
-          shapeComp.processForCopiedObject(cloned, targetObject);
-        }
+    // delete __fe_id so that new created object had not conflict and create new __fe_id for that
+    if (targetObject.__fe_id) delete targetObject.__fe_id;
 
-        resolve(cloned);
-      });
+    return new Promise((resolve) => {
+      const cloned = fabric.util.object.clone(targetObject);
+      const shapeComp = this.getComponent(components.SHAPE);
+      if (isShape(cloned)) {
+        shapeComp.processForCopiedObject(cloned, targetObject);
+      }
+      resolve(cloned);
     });
   }
 
