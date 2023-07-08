@@ -26,7 +26,7 @@
     "jest": "^27.0.6",
     "jest-canvas-mock": "^2.3.1",
     "jest-esm-transformer": "^1.0.0",
-    "lerna": "^4.0.0",
+    "lerna": "^7.1.1",
     "mini-css-extract-plugin": "^2.2.2",
     "mkdirp": "^1.0.4",
     "node-fetch": "^3.0.0",
