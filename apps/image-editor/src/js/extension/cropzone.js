@@ -422,7 +422,7 @@ const Cropzone = fabric.util.createClass(
         left: rectLeft,
         width: rectWidth,
         height: rectHeight,
-      } = this.getBoundingRect(false, true);
+      } = this.getBoundingRect(true, true);
 
       return {
         rectTop,
