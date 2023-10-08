@@ -170,7 +170,12 @@ class Line extends Component {
   _onFabricMouseUp() {
     const canvas = this.getCanvas();
 
-    this.fire(eventNames.OBJECT_ADDED, this._createLineEventObjectProperties());
+    const line = this._createLineEventObjectProperties();
+    if (line.width <= 0 && line.height <= 0) {
+      canvas.remove(this._line);
+    } else {
+      this.fire(eventNames.OBJECT_ADDED, line);
+    }
 
     this._line = null;
 

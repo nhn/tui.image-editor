@@ -40,8 +40,8 @@ const SHAPE_INIT_OPTIONS = extend(
   SHAPE_DEFAULT_OPTIONS
 );
 const DEFAULT_TYPE = 'rect';
-const DEFAULT_WIDTH = 20;
-const DEFAULT_HEIGHT = 20;
+// const DEFAULT_WIDTH = 20;
+// const DEFAULT_HEIGHT = 20;
 
 /**
  * Make fill option
@@ -480,22 +480,29 @@ export default class Shape extends Component {
    */
   _onFabricMouseUp() {
     const canvas = this.getCanvas();
-    const startPointX = this._startPoint.x;
-    const startPointY = this._startPoint.y;
+    // const startPointX = this._startPoint.x;
+    // const startPointY = this._startPoint.y;
     const shape = this._shapeObj;
 
-    if (!shape) {
-      this.add(this._type, {
-        left: startPointX,
-        top: startPointY,
-        width: DEFAULT_WIDTH,
-        height: DEFAULT_HEIGHT,
-      }).then((objectProps) => {
-        this.fire(eventNames.ADD_OBJECT, objectProps);
-      });
-    } else if (shape) {
-      resizeHelper.adjustOriginToCenter(shape);
-      this.fire(eventNames.OBJECT_ADDED, this.graphics.createObjectProperties(shape));
+    /*
+     if (!shape) {
+       this.add(this._type, {
+         left: startPointX,
+         top: startPointY,
+         width: DEFAULT_WIDTH,
+         height: DEFAULT_HEIGHT,
+       }).then((objectProps) => {
+         this.fire(eventNames.ADD_OBJECT, objectProps);
+       });
+     } else
+    */
+    if (shape) {
+      if (shape.width > 0 && shape.height > 0) {
+        resizeHelper.adjustOriginToCenter(shape);
+        this.fire(eventNames.OBJECT_ADDED, this.graphics.createObjectProperties(shape));
+      } else {
+        canvas.remove(shape);
+      }
     }
 
     canvas.off({
